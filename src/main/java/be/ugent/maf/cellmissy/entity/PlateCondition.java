@@ -154,7 +154,7 @@ public class PlateCondition implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.limsdesktop.entity.PlateCondition[ plateConditionid=" + plateConditionid + " ]";
+        return "be.ugent.maf.cellmissy.entity.PlateCondition[ plateConditionid=" + plateConditionid + " ]";
     }
     
 }

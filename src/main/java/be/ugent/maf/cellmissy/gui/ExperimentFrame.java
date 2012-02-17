@@ -323,7 +323,8 @@ public class ExperimentFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_parseExperimentManagerFileButtonActionPerformed
 
     public List<Double> getExperimentInfo(File obsepFile) {
-        ObsepFileParserImpl experimentManagerParserImpl = new ObsepFileParserImpl(obsepFile);
+        ObsepFileParserImpl experimentManagerParserImpl = new ObsepFileParserImpl();
+        experimentManagerParserImpl.parseObsepFile(obsepFile);
         List<Double> experimentInfo = experimentManagerParserImpl.getExperimentInfo();
         return experimentInfo;
     }

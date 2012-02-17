@@ -157,7 +157,7 @@ public class WellHasImagingType implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.limsdesktop.entity.WellHasImagingType[ wellHasImagingTypeid=" + wellHasImagingTypeid + " ]";
+        return "be.ugent.maf.cellmissy.entity.WellHasImagingType[ wellHasImagingTypeid=" + wellHasImagingTypeid + " ]";
     }
     
 }

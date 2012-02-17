@@ -130,6 +130,6 @@ public class Track implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.limsdesktop.entity.Track[ trackid=" + trackid + " ]";
+        return "be.ugent.maf.cellmissy.entity.Track[ trackid=" + trackid + " ]";
     }
 }
