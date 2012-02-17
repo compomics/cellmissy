@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="limspersistenceunit" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <class>be.ugent.maf.limsdesktop.entity.MatrixDimension</class>
+    <class>be.ugent.maf.limsdesktop.entity.ImagingType</class>
+    <class>be.ugent.maf.limsdesktop.entity.EcmCoating</class>
+    <class>be.ugent.maf.limsdesktop.entity.Well</class>
+    <class>be.ugent.maf.limsdesktop.entity.TrackPoint</class>
+    <class>be.ugent.maf.limsdesktop.entity.Track</class>
+    <class>be.ugent.maf.limsdesktop.entity.PlateCondition</class>
+    <class>be.ugent.maf.limsdesktop.entity.EcmDensity</class>
+    <class>be.ugent.maf.limsdesktop.entity.Magnification</class>
+    <class>be.ugent.maf.limsdesktop.entity.User</class>
+    <class>be.ugent.maf.limsdesktop.entity.WellHasImagingType</class>
+    <class>be.ugent.maf.limsdesktop.entity.Project</class>
+    <class>be.ugent.maf.limsdesktop.entity.CellLine</class>
+    <class>be.ugent.maf.limsdesktop.entity.TimeStep</class>
+    <class>be.ugent.maf.limsdesktop.entity.Ecm</class>
+    <class>be.ugent.maf.limsdesktop.entity.Experiment</class>
+    <class>be.ugent.maf.limsdesktop.entity.Treatment</class>
+    <class>be.ugent.maf.limsdesktop.entity.Assay</class>
+    <class>be.ugent.maf.limsdesktop.entity.Instrument</class>
+    <class>be.ugent.maf.limsdesktop.entity.PlateFormat</class>
+    <class>be.ugent.maf.limsdesktop.entity.EcmComposition</class>
+    <properties>
+      <property name="hibernate.connection.username" value="root"/>
+      <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
+      <property name="hibernate.connection.password" value="root"/>
+      <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/lims"/>
+      <property name="hibernate.hbm2dll.auto" value="create"/>
+    </properties>
+  </persistence-unit>
+</persistence>
