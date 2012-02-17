@@ -179,7 +179,7 @@ public class TimeStep implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.limsdesktop.entity.TimeStep[ timeStepid=" + timeStepid + " ]";
+        return "be.ugent.maf.cellmissy.entity.TimeStep[ timeStepid=" + timeStepid + " ]";
     }
     
 }

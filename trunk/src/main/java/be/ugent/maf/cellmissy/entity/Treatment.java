@@ -149,7 +149,7 @@ public class Treatment implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.limsdesktop.entity.Treatment[ treatmentid=" + treatmentid + " ]";
+        return "be.ugent.maf.cellmissy.entity.Treatment[ treatmentid=" + treatmentid + " ]";
     }
     
 }

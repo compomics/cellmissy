@@ -110,7 +110,7 @@ public class EcmComposition implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.limsdesktop.entity.EcmComposition[ compositionTypeid=" + compositionTypeid + " ]";
+        return "be.ugent.maf.cellmissy.entity.EcmComposition[ compositionTypeid=" + compositionTypeid + " ]";
     }
     
 }

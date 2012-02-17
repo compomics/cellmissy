@@ -91,6 +91,6 @@ public class Instrument implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.limsdesktop.entity.Instrument[ instrumentid=" + instrumentid + " ]";
+        return "be.ugent.maf.cellmissy.entity.Instrument[ instrumentid=" + instrumentid + " ]";
     }
 }

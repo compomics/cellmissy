@@ -97,7 +97,7 @@ public class EcmCoating implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.limsdesktop.entity.EcmCoating[ ecmCoatingid=" + ecmCoatingid + " ]";
+        return "be.ugent.maf.cellmissy.entity.EcmCoating[ ecmCoatingid=" + ecmCoatingid + " ]";
     }
     
 }

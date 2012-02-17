@@ -122,7 +122,7 @@ public class Well implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.limsdesktop.entity.Well[ wellid=" + wellid + " ]";
+        return "be.ugent.maf.cellmissy.entity.Well[ wellid=" + wellid + " ]";
     }
     
 }

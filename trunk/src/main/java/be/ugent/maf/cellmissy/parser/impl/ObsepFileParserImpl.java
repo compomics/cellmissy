@@ -39,13 +39,15 @@ public class ObsepFileParserImpl implements ObsepFileParser {
             this.unitValue = unitValue;
         }
     }
+
     private Node loopNode;
 
-    public ObsepFileParserImpl(File obsepFile) {
-        loopNode = parseLoopNode(obsepFile);
+    public ObsepFileParserImpl(){
+
     }
 
-    private Node parseLoopNode(File obsepFile) {
+    @Override
+    public void parseObsepFile(File obsepFile) {
 
         // get a document from xml
         // get a document builder
@@ -67,9 +69,7 @@ public class ObsepFileParserImpl implements ObsepFileParser {
         Node netNode = element.getFirstChild();
 
         // get "Loop" node
-        Node loopNode = getChildNodeByAttributeValue(netNode, "Loop");
-        return loopNode;
-
+        loopNode = getChildNodeByAttributeValue(netNode, "Loop");
     }
 
     @Override
@@ -237,11 +237,5 @@ public class ObsepFileParserImpl implements ObsepFileParser {
 
         }
         return foundNodes;
-    }
-
-    public static void main(String[] args) {
-        File obsepFile = new File("M:\\CM\\CM_P003_TES_Project_3\\CM_P003_E001\\CM_P003_E001_raw\\CM_P003_E001_microscope\\8T5H38DT_DocumentFiles\\D00000002\\gffp.obsep");
-        ObsepFileParserImpl experimentManagerParserImpl = new ObsepFileParserImpl(obsepFile);
-        Map<ImagingType, String> imagingTypePositionListMap = experimentManagerParserImpl.mapImagingTypetoPosList();
     }
 }

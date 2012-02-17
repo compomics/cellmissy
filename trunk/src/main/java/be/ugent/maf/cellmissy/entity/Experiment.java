@@ -222,7 +222,7 @@ public class Experiment implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.limsdesktop.entity.Experiment[ experimentid=" + experimentid + " ]";
+        return "be.ugent.maf.cellmissy.entity.Experiment[ experimentid=" + experimentid + " ]";
     }
     
 }

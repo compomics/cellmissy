@@ -107,7 +107,7 @@ public class Assay implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.limsdesktop.entity.Assay[ assayid=" + assayid + " ]";
+        return "be.ugent.maf.cellmissy.entity.Assay[ assayid=" + assayid + " ]";
     }
     
 }

@@ -187,7 +187,7 @@ public class Ecm implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.limsdesktop.entity.Ecm[ ecmid=" + ecmid + " ]";
+        return "be.ugent.maf.cellmissy.entity.Ecm[ ecmid=" + ecmid + " ]";
     }
     
 }
