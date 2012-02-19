@@ -10,18 +10,13 @@ import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.parser.CellMiaFileParser;
 import be.ugent.maf.cellmissy.parser.impl.CellMiaFileParserImpl;
-import be.ugent.maf.cellmissy.repository.WellHasImagingTypeRepository;
 import be.ugent.maf.cellmissy.service.CellMiaOutputService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 // test
 /**
@@ -29,8 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Paola
  */
 @Service("cellMiaOutputService")
-@Transactional
 public class CellMiaOutputServiceImpl implements CellMiaOutputService {
+
+    private CellMiaFileParser cellMiaParser = new CellMiaFileParserImpl();
 
     @Override
     public void processCellMiaOutput(Map<ImagingType, List<WellHasImagingType>> imagingTypePositionListMap, File cellMiaFolder) {
@@ -69,8 +65,6 @@ public class CellMiaOutputServiceImpl implements CellMiaOutputService {
 
                 for (int i = 0; i < sampleFiles.length; i++) {
 
-                    CellMiaFileParser cellMiaParser = new CellMiaFileParserImpl();
-
                     // iterate trough the folders and look for the text files, read them with cellmia parser
                     File[] resultsFiles = sampleFiles[i].listFiles(resultsFilter);
                     for (int j = 0; j < resultsFiles.length; j++) {
@@ -107,8 +101,8 @@ public class CellMiaOutputServiceImpl implements CellMiaOutputService {
 //
 //        //load applicationContext
 //        ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
-//        CellMiaOutputService cellMiaResultsService = (CellMiaOutputService) context.getBean("cellMiaResultsService");
+//        CellMiaOutputService cellMiaOutputService = (CellMiaOutputService) context.getBean("cellMiaOutputService");
 //        File cellMiaFolder = new File("M:\\CM\\CM_P002_Neuroblastoma_Project_2\\CM_P002_E001\\CM_P002_E001_MIA\\CM_P002_E001_MIA_algo-1\\batch--8U5T2801_DocumentFiles");
-//        cellMiaResultsService.processCellMiaOutput(cellMiaFolder);
+//        cellMiaOutputService.processCellMiaOutput(null, cellMiaFolder);
 //    }
 }

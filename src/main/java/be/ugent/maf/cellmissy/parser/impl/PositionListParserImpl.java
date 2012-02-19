@@ -55,10 +55,10 @@ public class PositionListParserImpl implements PositionListParser {
 
                             // add wellHasImagingType to the list
                             wellHasImagingTypeList.add(wellHasImagingType);
-                            
+
                             // set wellHasImagingType sequence number
                             wellHasImagingType.setSequenceNumber(wellHasImagingTypeList.size());
-                            
+
                             // set wellHasImagingTypeCollection of imaging type
                             imagingType.setWellHasImagingTypeCollection(wellHasImagingTypeList);
                         }
@@ -73,16 +73,5 @@ public class PositionListParserImpl implements PositionListParser {
             }
         }
         return map;
-    }
-
-    public static void main(String[] args) {
-        File obsepFile = new File("M:\\CM\\CM_P003_TES_Project_3\\CM_P003_E001\\CM_P003_E001_raw\\CM_P003_E001_microscope\\8T5H38DT_DocumentFiles\\D00000002\\gffp.obsep");
-        ObsepFileParserImpl experimentManagerParserImpl = new ObsepFileParserImpl();
-        experimentManagerParserImpl.parseObsepFile(obsepFile);
-        Map<ImagingType, String> imagingTypePositionListMap = experimentManagerParserImpl.mapImagingTypetoPosList();
-        PositionListParserImpl positionListParserImpl = new PositionListParserImpl();
-        File microscopeFolder = new File("M:\\CM\\CM_P003_TES_Project_3\\CM_P003_E001\\CM_P003_E001_raw");
-        Map<ImagingType, List<WellHasImagingType>> map = positionListParserImpl.parsePositionLists(imagingTypePositionListMap, microscopeFolder);
-
     }
 }
