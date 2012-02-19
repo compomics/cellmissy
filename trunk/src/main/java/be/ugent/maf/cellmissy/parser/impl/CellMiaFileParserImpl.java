@@ -158,16 +158,4 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
 
         return trackpoint;
     }
-
-    // test
-//    public static void main(String[] args) {
-//    CellMiaFileParser cellMiaParser = new CellMiaFileParserImpl();
-//    File trackingFile = new File("C:\\Users\\Paola\\Documents\\NetBeansProjects\\LimsDesktop\\src\\main\\resources\\0001_mode1_z000_f000_tracking.txt");
-//    List<Track> trackList = cellMiaParser.parseTrackingFile(trackingFile);
-//    }
-//    public static void main(String[] args) {
-//        CellMiaFileParser cellMiaParser = new CellMiaFileParserImpl();
-//        File bulkcellFile = new File("C:\\Users\\Paola\\Documents\\NetBeansProjects\\LimsDesktop\\src\\main\\resources\\0001_mode1_z000_f000_bulkcell.txt");
-//        List<TimeStep> timeStepList = cellMiaParser.parseBulkCellFile(bulkcellFile);
-//    }
 }

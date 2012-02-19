@@ -1,5 +1,6 @@
 package be.ugent.maf.cellmissy.parser;
 
+import be.ugent.maf.cellmissy.entity.ImagingType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import static junit.framework.Assert.*;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,13 +27,14 @@ public class ObsepFileParserTest {
     private ObsepFileParser obsepFileParser;
 
     @Test
-    public void testObsepFileParser(){
+    public void testObsepFileParser() {
         File obsepFile = new File(ObsepFileParserTest.class.getClassLoader().getResource("gffp.obsep").getPath());
 
         obsepFileParser.parseObsepFile(obsepFile);
         List<Double> info = obsepFileParser.getExperimentInfo();
-
+        Map<ImagingType, String> map = obsepFileParser.mapImagingTypetoPosList();
+        
+        assertTrue(!map.isEmpty());
         assertTrue(!info.isEmpty());
     }
-
 }
