@@ -9,7 +9,11 @@ import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.parser.CellMiaFileParser;
+import be.ugent.maf.cellmissy.parser.ObsepFileParser;
+import be.ugent.maf.cellmissy.parser.PositionListParser;
 import be.ugent.maf.cellmissy.parser.impl.CellMiaFileParserImpl;
+import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl;
+import be.ugent.maf.cellmissy.parser.impl.PositionListParserImpl;
 import be.ugent.maf.cellmissy.service.CellMiaOutputService;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -61,48 +65,36 @@ public class CellMiaOutputServiceImpl implements CellMiaOutputService {
         for (ImagingType imagingType : imagingTypePositionListMap.keySet()) {
             List<WellHasImagingType> wellHasImagingTypeList = imagingTypePositionListMap.get(imagingType);
 
-            for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
+            for (int i = 0; i < wellHasImagingTypeList.size(); i++) {
+                WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i);
 
-                for (int i = 0; i < sampleFiles.length; i++) {
+                // iterate trough the folders and look for the text files, read them with cellmia parser
+                File[] resultsFiles = sampleFiles[i].listFiles(resultsFilter);
+                for (int j = 0; j < resultsFiles.length; j++) {
+                    File[] textFiles = resultsFiles[j].listFiles(textfilesFilter);
 
-                    // iterate trough the folders and look for the text files, read them with cellmia parser
-                    File[] resultsFiles = sampleFiles[i].listFiles(resultsFilter);
-                    for (int j = 0; j < resultsFiles.length; j++) {
-                        File[] textFiles = resultsFiles[j].listFiles(textfilesFilter);
+                    for (int k = 0; k < textFiles.length; k++) {
 
-                        for (int n = 0; n < textFiles.length; n++) {
-
-                            if (textFiles[n].getName().endsWith("bulkcell.txt")) {
-                                List<TimeStep> timeStepList = cellMiaParser.parseBulkCellFile(textFiles[n]);
-                                for (TimeStep timeStep : timeStepList) {
-                                    timeStep.setWellHasImagingType(wellHasImagingType);
-                                }
-                                wellHasImagingType.setTimeStepCollection(timeStepList);
-
-                            } else if (textFiles[n].getName().endsWith("tracking.txt")) {
-                                List<Track> trackList = cellMiaParser.parseTrackingFile(textFiles[n]);
-                                for (Track track : trackList) {
-                                    track.setWellHasImagingType(wellHasImagingType);
-                                }
-                                wellHasImagingType.setTrackCollection(trackList);
-
-                            } else {
-                                continue;
+                        if (textFiles[k].getName().endsWith("bulkcell.txt")) {
+                            List<TimeStep> timeStepList = cellMiaParser.parseBulkCellFile(textFiles[k]);
+                            for (TimeStep timeStep : timeStepList) {
+                                timeStep.setWellHasImagingType(wellHasImagingType);
                             }
+                            wellHasImagingType.setTimeStepCollection(timeStepList);
+
+                        } else if (textFiles[k].getName().endsWith("tracking.txt")) {
+                            List<Track> trackList = cellMiaParser.parseTrackingFile(textFiles[k]);
+                            for (Track track : trackList) {
+                                track.setWellHasImagingType(wellHasImagingType);
+                            }
+                            wellHasImagingType.setTrackCollection(trackList);
+
+                        } else {
+                            continue;
                         }
                     }
                 }
-
-
             }
         }
     }
-//    public static void main(String[] args) {
-//
-//        //load applicationContext
-//        ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
-//        CellMiaOutputService cellMiaOutputService = (CellMiaOutputService) context.getBean("cellMiaOutputService");
-//        File cellMiaFolder = new File("M:\\CM\\CM_P002_Neuroblastoma_Project_2\\CM_P002_E001\\CM_P002_E001_MIA\\CM_P002_E001_MIA_algo-1\\batch--8U5T2801_DocumentFiles");
-//        cellMiaOutputService.processCellMiaOutput(null, cellMiaFolder);
-//    }
 }
