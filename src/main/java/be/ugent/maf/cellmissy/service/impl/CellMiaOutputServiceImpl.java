@@ -9,11 +9,7 @@ import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.parser.CellMiaFileParser;
-import be.ugent.maf.cellmissy.parser.ObsepFileParser;
-import be.ugent.maf.cellmissy.parser.PositionListParser;
 import be.ugent.maf.cellmissy.parser.impl.CellMiaFileParserImpl;
-import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl;
-import be.ugent.maf.cellmissy.parser.impl.PositionListParserImpl;
 import be.ugent.maf.cellmissy.service.CellMiaOutputService;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -33,7 +29,7 @@ public class CellMiaOutputServiceImpl implements CellMiaOutputService {
     private CellMiaFileParser cellMiaParser = new CellMiaFileParserImpl();
 
     @Override
-    public void processCellMiaOutput(Map<ImagingType, List<WellHasImagingType>> imagingTypePositionListMap, File cellMiaFolder) {
+    public void processCellMiaOutput(Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap, File cellMiaFolder) {
 
         //define filters to search for cellmia text files
         FilenameFilter sampleFilter = new FilenameFilter() {
@@ -62,8 +58,8 @@ public class CellMiaOutputServiceImpl implements CellMiaOutputService {
         // listFiles does not guarantee any order; sort files in alphabetical order
         Arrays.sort(sampleFiles);
 
-        for (ImagingType imagingType : imagingTypePositionListMap.keySet()) {
-            List<WellHasImagingType> wellHasImagingTypeList = imagingTypePositionListMap.get(imagingType);
+        for (ImagingType imagingType : imagingTypeListOfWellHasImagingTypeMap.keySet()) {
+            List<WellHasImagingType> wellHasImagingTypeList = imagingTypeListOfWellHasImagingTypeMap.get(imagingType);
 
             for (int i = 0; i < wellHasImagingTypeList.size(); i++) {
                 WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i);
@@ -73,17 +69,17 @@ public class CellMiaOutputServiceImpl implements CellMiaOutputService {
                 for (int j = 0; j < resultsFiles.length; j++) {
                     File[] textFiles = resultsFiles[j].listFiles(textfilesFilter);
 
-                    for (int k = 0; k < textFiles.length; k++) {
+                    for (File textFile: textFiles) {
 
-                        if (textFiles[k].getName().endsWith("bulkcell.txt")) {
-                            List<TimeStep> timeStepList = cellMiaParser.parseBulkCellFile(textFiles[k]);
+                        if (textFile.getName().endsWith("bulkcell.txt")) {
+                            List<TimeStep> timeStepList = cellMiaParser.parseBulkCellFile(textFile);
                             for (TimeStep timeStep : timeStepList) {
                                 timeStep.setWellHasImagingType(wellHasImagingType);
                             }
                             wellHasImagingType.setTimeStepCollection(timeStepList);
 
-                        } else if (textFiles[k].getName().endsWith("tracking.txt")) {
-                            List<Track> trackList = cellMiaParser.parseTrackingFile(textFiles[k]);
+                        } else if (textFile.getName().endsWith("tracking.txt")) {
+                            List<Track> trackList = cellMiaParser.parseTrackingFile(textFile);
                             for (Track track : trackList) {
                                 track.setWellHasImagingType(wellHasImagingType);
                             }

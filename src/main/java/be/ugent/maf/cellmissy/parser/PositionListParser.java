@@ -16,5 +16,5 @@ import java.util.Map;
  */
 public interface PositionListParser {
 
-    Map<ImagingType, List<WellHasImagingType>> parsePositionLists(Map<ImagingType, String> imagingTypePositionListMap, File microscopeFolder);
+    Map<ImagingType, List<WellHasImagingType>> parsePositionList(Map<ImagingType, String> imagingTypePositionListMap, File microscopeFolder);
 }

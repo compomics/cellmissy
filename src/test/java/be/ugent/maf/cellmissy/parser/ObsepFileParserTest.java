@@ -33,7 +33,7 @@ public class ObsepFileParserTest {
         obsepFileParser.parseObsepFile(obsepFile);
         List<Double> info = obsepFileParser.getExperimentInfo();
         Map<ImagingType, String> map = obsepFileParser.mapImagingTypetoPosList();
-        
+
         assertTrue(!map.isEmpty());
         assertTrue(!info.isEmpty());
     }

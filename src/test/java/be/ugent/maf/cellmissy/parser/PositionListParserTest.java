@@ -6,7 +6,6 @@ package be.ugent.maf.cellmissy.parser;
 
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
-import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +27,19 @@ public class PositionListParserTest {
 
     @Autowired
     private PositionListParser positionListParser;
-    private ObsepFileParser obsepFileParser = new ObsepFileParserImpl();
+    @Autowired
+    private ObsepFileParser obsepFileParser;
 
     @Test
     public void testPositionListParser() {
 
         File obsepFile = new File(ObsepFileParserTest.class.getClassLoader().getResource("gffp.obsep").getPath());
         obsepFileParser.parseObsepFile(obsepFile);
-        Map<ImagingType, String> map = obsepFileParser.mapImagingTypetoPosList();
+        Map<ImagingType, String> imagingTypePositionListMap = obsepFileParser.mapImagingTypetoPosList();
 
-        File microscopeFolder = new File("M:\\CM\\CM_P003_TES_Project_3\\CM_P003_E001\\CM_P003_E001_raw");
-        Map<ImagingType, List<WellHasImagingType>> map2 = positionListParser.parsePositionLists(map, microscopeFolder);
+        File microscopeFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
+        Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = positionListParser.parsePositionList(imagingTypePositionListMap, microscopeFolder);
 
-        assertTrue(!map2.isEmpty());
+        assertTrue(!imagingTypeListOfWellHasImagingTypeMap.isEmpty());
     }
 }
