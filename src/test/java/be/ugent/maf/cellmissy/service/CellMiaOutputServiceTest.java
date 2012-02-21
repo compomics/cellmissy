@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.service;
 
+import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Track;
@@ -12,8 +13,6 @@ import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.parser.ObsepFileParserTest;
 import be.ugent.maf.cellmissy.parser.PositionListParser;
 import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,14 +47,19 @@ public class CellMiaOutputServiceTest {
         File microscopeFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
         Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = positionListParser.parsePositionList(imagingTypePositionListMap, microscopeFolder);
 
-        File cellMiaFolder = new File("M:\\CM\\CM_P003_TES_Project_3\\CM_P003_E001\\CM_P003_E001_MIA\\CM_P003_E001_MIA_algo-1\\18-11-11 algo 1\\batch--8T5H38DT_DocumentFiles");
+        File cellMiaFolder = new File(PropertiesConfigurationHolder.getInstance().getString("cellmiafolder"));
         cellMiaOutputService.processCellMiaOutput(imagingTypeListOfWellHasImagingTypeMap, cellMiaFolder);
 
         Collection<List<WellHasImagingType>> values = imagingTypeListOfWellHasImagingTypeMap.values();
+
         for (List<WellHasImagingType> list : values) {
-            WellHasImagingType wellHasImagingType = list.get(15);
+
+            WellHasImagingType wellHasImagingType = list.get(7);
             Collection<TimeStep> timeStepCollection = wellHasImagingType.getTimeStepCollection();
             assertEquals(timeStepCollection.size(), 108);
+            
+            Collection<Track> trackCollection = wellHasImagingType.getTrackCollection();
+            assertEquals(trackCollection.size(), 80);
         }
 
     }
