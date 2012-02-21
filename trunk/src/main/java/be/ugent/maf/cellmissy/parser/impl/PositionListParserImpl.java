@@ -26,9 +26,9 @@ import org.springframework.stereotype.Service;
 public class PositionListParserImpl implements PositionListParser {
 
     @Override
-    public Map<ImagingType, List<WellHasImagingType>> parsePositionLists(Map<ImagingType, String> imagingTypePositionListMap, File microscopeFolder) {
+    public Map<ImagingType, List<WellHasImagingType>> parsePositionList(Map<ImagingType, String> imagingTypePositionListMap, File microscopeFolder) {
 
-        Map<ImagingType, List<WellHasImagingType>> map = new HashMap<ImagingType, List<WellHasImagingType>>();
+        Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = new HashMap<ImagingType, List<WellHasImagingType>>();
 
         // look for the text files to parse
         for (ImagingType imagingType : imagingTypePositionListMap.keySet()) {
@@ -68,10 +68,10 @@ public class PositionListParserImpl implements PositionListParser {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
-                    map.put(imagingType, wellHasImagingTypeList);
+                    imagingTypeListOfWellHasImagingTypeMap.put(imagingType, wellHasImagingTypeList);
                 }
             }
         }
-        return map;
+        return imagingTypeListOfWellHasImagingTypeMap;
     }
 }
