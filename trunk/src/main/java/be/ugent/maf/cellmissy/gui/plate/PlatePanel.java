@@ -27,8 +27,8 @@ import java.util.List;
 public class PlatePanel extends JPanel implements MouseListener, MouseMotionListener {
 
     private List<WellGUI> wellGUIList;
-    private int numberOfCols;
     private int numberOfRows;
+    private int numberOfCols;
     private static final int pixelsGrid = 5;
     private static final int pixelsBorders = 20;
 
@@ -37,9 +37,9 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
         addMouseMotionListener(this);
     }
 
-    public void initPanel(int numberOfCols, int numberOfRows, Dimension parentDimension) {
-        this.numberOfCols = numberOfCols;
+    public void initPanel(int numberOfRows, int numberOfCols, Dimension parentDimension) {
         this.numberOfRows = numberOfRows;
+        this.numberOfCols = numberOfCols;
 
         wellGUIList = new ArrayList<WellGUI>();
         doResize(parentDimension);
@@ -100,14 +100,14 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
 
         for (WellGUI wellGUI : wellGUIList) {
             if (wellGUI.getWellShape().contains(e.getX(), e.getY())) {
-                int columnNumber = wellGUI.getColumnNumber();
                 int rowNumber = wellGUI.getRowNumber();
+                int columnNumber = wellGUI.getColumnNumber();
                 Graphics g = getGraphics();
                 Graphics2D g2d = (Graphics2D) g;
                 setGraphics(g2d);
                 super.paint(g);
-                g2d.drawString("(" + (columnNumber + 1) + ", " + (rowNumber + 1) + ")", e.getX(), e.getY());
-                g.dispose();
+                g2d.drawString("(" + (rowNumber + 1) + ", " + (columnNumber + 1) + ")", e.getX(), e.getY());
+                g2d.dispose();
             }
 
         }

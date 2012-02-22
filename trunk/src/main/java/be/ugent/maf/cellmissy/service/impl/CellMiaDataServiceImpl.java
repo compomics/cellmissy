@@ -9,8 +9,6 @@ import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.parser.CellMiaFileParser;
-import be.ugent.maf.cellmissy.parser.ObsepFileParser;
-import be.ugent.maf.cellmissy.parser.PositionListParser;
 import be.ugent.maf.cellmissy.service.CellMiaDataService;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -30,10 +28,10 @@ import org.springframework.stereotype.Service;
 @Service("cellMiaDataService")
 public class CellMiaDataServiceImpl implements CellMiaDataService {
 
-    private MicroscopeDataService microscopeDataService;
-
     @Autowired
-    private CellMiaFileParser cellMiaParser;
+    private MicroscopeDataService microscopeDataService;
+    @Autowired
+    private CellMiaFileParser cellMiaFileParser;
 
     @Override
     public Map<ImagingType, List<WellHasImagingType>> processCellMiaData(File cellMiaFolder) {
@@ -78,17 +76,17 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                 for (int j = 0; j < resultsFiles.length; j++) {
                     File[] textFiles = resultsFiles[j].listFiles(textfilesFilter);
 
-                    for (File textFile: textFiles) {
+                    for (File textFile : textFiles) {
 
                         if (textFile.getName().endsWith("bulkcell.txt")) {
-                            List<TimeStep> timeStepList = cellMiaParser.parseBulkCellFile(textFile);
+                            List<TimeStep> timeStepList = cellMiaFileParser.parseBulkCellFile(textFile);
                             for (TimeStep timeStep : timeStepList) {
                                 timeStep.setWellHasImagingType(wellHasImagingType);
                             }
                             wellHasImagingType.setTimeStepCollection(timeStepList);
 
                         } else if (textFile.getName().endsWith("tracking.txt")) {
-                            List<Track> trackList = cellMiaParser.parseTrackingFile(textFile);
+                            List<Track> trackList = cellMiaFileParser.parseTrackingFile(textFile);
                             for (Track track : trackList) {
                                 track.setWellHasImagingType(wellHasImagingType);
                             }
@@ -103,5 +101,10 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
         }
 
         return imagingTypeListOfWellHasImagingTypeMap;
+    }
+
+    @Override
+    public MicroscopeDataService getMicroscopeDataService() {
+        return microscopeDataService;
     }
 }

@@ -9,9 +9,6 @@ import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
-import be.ugent.maf.cellmissy.parser.ObsepFileParser;
-import be.ugent.maf.cellmissy.parser.ObsepFileParserTest;
-import be.ugent.maf.cellmissy.parser.PositionListParser;
 import java.util.Collection;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,22 +30,19 @@ public class CellMiaDataServiceTest {
 
     @Autowired
     private CellMiaDataService cellMiaDataService;
-    @Autowired
-    private ObsepFileParser obsepFileParser;
-    @Autowired
-    private PositionListParser positionListParser;
 
     @Test
-    public void testCellMiaOutputService() {
+    public void testCellMiaDataService() {
 
-        File obsepFile = new File(ObsepFileParserTest.class.getClassLoader().getResource("gffp.obsep").getPath());
-        obsepFileParser.parseObsepFile(obsepFile);
-        Map<ImagingType, String> imagingTypePositionListMap = obsepFileParser.mapImagingTypetoPosList();
-        File microscopeFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
-        Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = positionListParser.parsePositionList(imagingTypePositionListMap, microscopeFolder);
+        MicroscopeDataService microscopeDataService = cellMiaDataService.getMicroscopeDataService();
+        
+        File microscopeFolder = new File(CellMiaDataServiceTest.class.getClassLoader().getResource("position_list_files").getPath());
+        File obsepFile = new File(CellMiaDataServiceTest.class.getClassLoader().getResource("gffp.obsep").getPath());
+
+        microscopeDataService.init(microscopeFolder, obsepFile);
 
         File cellMiaFolder = new File(PropertiesConfigurationHolder.getInstance().getString("cellmiafolder"));
-        cellMiaDataService.processCellMiaData(imagingTypeListOfWellHasImagingTypeMap, cellMiaFolder);
+        Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = cellMiaDataService.processCellMiaData(cellMiaFolder);
 
         Collection<List<WellHasImagingType>> values = imagingTypeListOfWellHasImagingTypeMap.values();
 
@@ -57,7 +51,7 @@ public class CellMiaDataServiceTest {
             WellHasImagingType wellHasImagingType = list.get(7);
             Collection<TimeStep> timeStepCollection = wellHasImagingType.getTimeStepCollection();
             assertEquals(timeStepCollection.size(), 108);
-            
+
             Collection<Track> trackCollection = wellHasImagingType.getTrackCollection();
             assertEquals(trackCollection.size(), 80);
         }

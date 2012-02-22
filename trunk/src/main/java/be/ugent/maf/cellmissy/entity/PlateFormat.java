@@ -29,7 +29,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "PlateFormat.findByPlateFormatid", query = "SELECT p FROM PlateFormat p WHERE p.plateFormatid = :plateFormatid"),
     @NamedQuery(name = "PlateFormat.findByFormat", query = "SELECT p FROM PlateFormat p WHERE p.format = :format"),
     @NamedQuery(name = "PlateFormat.findByNumberOfCols", query = "SELECT p FROM PlateFormat p WHERE p.numberOfCols = :numberOfCols"),
-    @NamedQuery(name = "PlateFormat.findByNumberOfRows", query = "SELECT p FROM PlateFormat p WHERE p.numberOfRows = :numberOfRows")})
+    @NamedQuery(name = "PlateFormat.findByNumberOfRows", query = "SELECT p FROM PlateFormat p WHERE p.numberOfRows = :numberOfRows"),
+    @NamedQuery(name = "PlateFormat.findByWellSize", query = "SELECT p FROM PlateFormat p WHERE p.wellSize = :wellSize")})
+
 public class PlateFormat implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,6 +48,8 @@ public class PlateFormat implements Serializable {
     private Integer numberOfCols;
     @Column(name = "number_of_rows")
     private Integer numberOfRows;
+    @Column(name = "well_size")
+    private Double wellSize;
 
     public PlateFormat() {
     }
@@ -90,6 +94,14 @@ public class PlateFormat implements Serializable {
     public void setNumberOfRows(Integer numberOfRows) {
         this.numberOfRows = numberOfRows;
     }
+    
+    public Double getWellSize() {
+        return wellSize;
+    }
+
+    public void setWellSize(Double wellSize) {
+        this.wellSize = wellSize;
+    }
 
     @Override
     public int hashCode() {
@@ -113,6 +125,6 @@ public class PlateFormat implements Serializable {
 
     @Override
     public String toString() {
-        return format + " (" + numberOfCols + "x" + numberOfRows + ")";
+        return format + " (" + numberOfRows + "x" + numberOfCols + ")";
     }
 }
