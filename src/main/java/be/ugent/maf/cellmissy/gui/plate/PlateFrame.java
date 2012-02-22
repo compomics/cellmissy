@@ -19,7 +19,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import javax.persistence.PersistenceException;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -69,7 +68,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
                 if (plateFormatComboBox.getSelectedIndex() != -1) {
                     PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateFormatComboBox.getSelectedIndex());
                     Dimension parentDimension = jPanel2.getSize();
-                    platePanel.initPanel(selectedPlateFormat.getNumberOfCols(), selectedPlateFormat.getNumberOfRows(), parentDimension);
+                    platePanel.initPanel(selectedPlateFormat.getNumberOfRows(), selectedPlateFormat.getNumberOfCols(), parentDimension);
                     repaint();
                 }
             }
@@ -210,7 +209,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 230, Short.MAX_VALUE)
+            .addGap(0, 100, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -234,20 +233,20 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         if (!numberOfColsTextField.getText().isEmpty() && !numberOfRowsTextField.getText().isEmpty()) {
             try {
                 PlateFormat plateFormat = new PlateFormat();
-                plateFormat.setNumberOfCols(Integer.parseInt(numberOfColsTextField.getText()));
                 plateFormat.setNumberOfRows(Integer.parseInt(numberOfRowsTextField.getText()));
-                plateFormat.setFormat(plateFormat.getNumberOfCols() * plateFormat.getNumberOfRows());
+                plateFormat.setNumberOfCols(Integer.parseInt(numberOfColsTextField.getText()));
+                plateFormat.setFormat(plateFormat.getNumberOfRows() * plateFormat.getNumberOfCols());
                 plateService.save(plateFormat);
                 // add to the JComboBox too                 
                 plateFormatBindingList.add(plateFormat);
-                numberOfColsTextField.setText("");
                 numberOfRowsTextField.setText("");
+                numberOfColsTextField.setText("");
             } // handle ConstraintViolationException            
             catch (PersistenceException e) {
                 // popup an error message                 
                 JOptionPane.showMessageDialog(this, "Plate format already present in the db", "Create new plate format problem", JOptionPane.ERROR_MESSAGE);
-                numberOfColsTextField.setText("");
                 numberOfRowsTextField.setText("");
+                numberOfColsTextField.setText("");
             }
         } else {
             JOptionPane.showMessageDialog(this, "Please insert data for a new plate format", "Create new plate format problem", JOptionPane.ERROR_MESSAGE);

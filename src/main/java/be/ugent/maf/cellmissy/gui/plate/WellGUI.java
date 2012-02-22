@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.plate;
 
+import be.ugent.maf.cellmissy.entity.Well;
 import java.awt.Color;
 import java.awt.geom.Ellipse2D;
 
@@ -15,22 +16,23 @@ public class WellGUI {
 
     private Ellipse2D wellShape;
     private Color wellColor;
-    private int columnNumber;
     private int rowNumber;
+    private int columnNumber;
+    private Well well;
 
-    public WellGUI(int columnNumber, int rowNumber){
-        this.columnNumber = columnNumber;
+    public WellGUI(int rowNumber, int columnNumber) {
         this.rowNumber = rowNumber;
+        this.columnNumber = columnNumber;
+    }
+
+    public int getRowNumber() {
+        return rowNumber;
     }
 
     public int getColumnNumber() {
         return columnNumber;
     }
 
-    public int getRowNumber() {
-        return rowNumber;
-    }
-    
     public void setWellShape(Ellipse2D wellShape) {
         this.wellShape = wellShape;
     }
@@ -45,5 +47,13 @@ public class WellGUI {
 
     public Color getWellColor() {
         return wellColor;
+    }
+
+    public void setWell(Well well) {
+        this.well = well;
+    }
+
+    public Well getWell() {
+        return well;
     }
 }
