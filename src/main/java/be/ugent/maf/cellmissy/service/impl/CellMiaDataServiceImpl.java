@@ -9,13 +9,17 @@ import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.parser.CellMiaFileParser;
-import be.ugent.maf.cellmissy.parser.impl.CellMiaFileParserImpl;
-import be.ugent.maf.cellmissy.service.CellMiaOutputService;
+import be.ugent.maf.cellmissy.parser.ObsepFileParser;
+import be.ugent.maf.cellmissy.parser.PositionListParser;
+import be.ugent.maf.cellmissy.service.CellMiaDataService;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import be.ugent.maf.cellmissy.service.MicroscopeDataService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 // test
@@ -23,13 +27,18 @@ import org.springframework.stereotype.Service;
  *
  * @author Paola
  */
-@Service("cellMiaOutputService")
-public class CellMiaOutputServiceImpl implements CellMiaOutputService {
+@Service("cellMiaDataService")
+public class CellMiaDataServiceImpl implements CellMiaDataService {
 
-    private CellMiaFileParser cellMiaParser = new CellMiaFileParserImpl();
+    private MicroscopeDataService microscopeDataService;
+
+    @Autowired
+    private CellMiaFileParser cellMiaParser;
 
     @Override
-    public void processCellMiaOutput(Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap, File cellMiaFolder) {
+    public Map<ImagingType, List<WellHasImagingType>> processCellMiaData(File cellMiaFolder) {
+
+        Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = microscopeDataService.processMicroscopeData();
 
         //define filters to search for cellmia text files
         FilenameFilter sampleFilter = new FilenameFilter() {
@@ -92,5 +101,7 @@ public class CellMiaOutputServiceImpl implements CellMiaOutputService {
                 }
             }
         }
+
+        return imagingTypeListOfWellHasImagingTypeMap;
     }
 }

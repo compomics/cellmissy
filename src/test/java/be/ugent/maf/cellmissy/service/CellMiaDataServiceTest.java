@@ -29,10 +29,10 @@ import java.util.Map;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:mySpringTestXMLConfig.xml")
-public class CellMiaOutputServiceTest {
+public class CellMiaDataServiceTest {
 
     @Autowired
-    private CellMiaOutputService cellMiaOutputService;
+    private CellMiaDataService cellMiaDataService;
     @Autowired
     private ObsepFileParser obsepFileParser;
     @Autowired
@@ -48,7 +48,7 @@ public class CellMiaOutputServiceTest {
         Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = positionListParser.parsePositionList(imagingTypePositionListMap, microscopeFolder);
 
         File cellMiaFolder = new File(PropertiesConfigurationHolder.getInstance().getString("cellmiafolder"));
-        cellMiaOutputService.processCellMiaOutput(imagingTypeListOfWellHasImagingTypeMap, cellMiaFolder);
+        cellMiaDataService.processCellMiaData(imagingTypeListOfWellHasImagingTypeMap, cellMiaFolder);
 
         Collection<List<WellHasImagingType>> values = imagingTypeListOfWellHasImagingTypeMap.values();
 
