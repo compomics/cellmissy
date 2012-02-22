@@ -14,8 +14,8 @@ import java.util.Map;
  *
  * @author Paola
  */
-public interface CellMiaOutputService {
+public interface CellMiaDataService {
     
-    void processCellMiaOutput (Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap, File cellMiaFolder);
+    Map<ImagingType, List<WellHasImagingType>> processCellMiaData(File cellMiaFolder);
     
 }
