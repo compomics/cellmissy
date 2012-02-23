@@ -16,7 +16,9 @@ import java.util.Map;
  */
 public interface CellMiaDataService {
     
-    Map<ImagingType, List<WellHasImagingType>> processCellMiaData(File cellMiaFolder);
+    void init(File cellMiaFolder);
+    
+    Map<ImagingType, List<WellHasImagingType>> processCellMiaData();
     
     MicroscopeDataService getMicroscopeDataService();
     
