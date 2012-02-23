@@ -28,13 +28,20 @@ import org.springframework.stereotype.Service;
 @Service("cellMiaDataService")
 public class CellMiaDataServiceImpl implements CellMiaDataService {
 
+    private File cellMiaFolder;
+    
     @Autowired
     private MicroscopeDataService microscopeDataService;
     @Autowired
     private CellMiaFileParser cellMiaFileParser;
 
     @Override
-    public Map<ImagingType, List<WellHasImagingType>> processCellMiaData(File cellMiaFolder) {
+    public void init(File cellMiaFolder) {
+        this.cellMiaFolder = cellMiaFolder;
+    }
+
+    @Override
+    public Map<ImagingType, List<WellHasImagingType>> processCellMiaData() {
 
         Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = microscopeDataService.processMicroscopeData();
 
