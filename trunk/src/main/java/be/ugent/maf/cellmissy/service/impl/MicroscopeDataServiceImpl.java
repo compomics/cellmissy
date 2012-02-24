@@ -23,10 +23,8 @@ import java.util.Map;
 public class MicroscopeDataServiceImpl implements MicroscopeDataService {
 
     private File microscopeFolder;
-
     @Autowired
     private ObsepFileParser obsepFileParser;
-
     @Autowired
     private PositionListParser positionListParser;
 

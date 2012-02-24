@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -15,5 +16,13 @@ import java.util.List;
  */
 public interface WellService {
 
-    List<Well> PositionWellsByImagingType(ImagingType imagingType, PlateFormat plateFormat, Well firstWell);
+    /**
+     * Initializes the service
+     * 
+     */
+    void init();
+
+    List<Well> positionWellsByImagingType(ImagingType imagingType, PlateFormat plateFormat, Well firstWell);
+
+    List<ImagingType> getImagingTypes();
 }

@@ -42,7 +42,8 @@ public class CellMiaDataServiceTest {
         microscopeDataService.init(microscopeFolder, obsepFile);
 
         File cellMiaFolder = new File(PropertiesConfigurationHolder.getInstance().getString("cellmiafolder"));
-        Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = cellMiaDataService.processCellMiaData(cellMiaFolder);
+        cellMiaDataService.init(cellMiaFolder);
+        Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = cellMiaDataService.processCellMiaData();
 
         Collection<List<WellHasImagingType>> values = imagingTypeListOfWellHasImagingTypeMap.values();
 

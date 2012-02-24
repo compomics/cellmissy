@@ -68,7 +68,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
                 if (plateFormatComboBox.getSelectedIndex() != -1) {
                     PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateFormatComboBox.getSelectedIndex());
                     Dimension parentDimension = jPanel2.getSize();
-                    platePanel.initPanel(selectedPlateFormat.getNumberOfRows(), selectedPlateFormat.getNumberOfCols(), parentDimension);
+                    platePanel.initPanel(selectedPlateFormat, parentDimension);
                     repaint();
                 }
             }
