@@ -15,11 +15,10 @@ import java.util.Map;
  * @author Paola
  */
 public interface CellMiaDataService {
-    
+
     void init(File cellMiaFolder);
-    
+
     Map<ImagingType, List<WellHasImagingType>> processCellMiaData();
-    
+
     MicroscopeDataService getMicroscopeDataService();
-    
 }

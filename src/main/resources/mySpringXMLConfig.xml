@@ -57,6 +57,5 @@
     <context:component-scan base-package="be.ugent.maf.cellmissy">
         <context:include-filter type="annotation"
                                 expression="org.springframework.stereotype.Service"/>
-    </context:component-scan>
-    
+    </context:component-scan>    
 </beans>

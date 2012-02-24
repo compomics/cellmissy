@@ -4,9 +4,11 @@
  */
 package be.ugent.maf.cellmissy.gui.plate;
 
+import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.service.WellService;
+import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -33,19 +36,22 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
     @Autowired
     private WellService wellService;
     private List<WellGUI> wellGUIList;
-    private int numberOfRows;
-    private int numberOfCols;
+    private PlateFormat plateFormat;
     private static final int pixelsGrid = 5;
     private static final int pixelsBorders = 20;
 
     public PlatePanel() {
+
+        //load applicationContext
+        ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
+        wellService = (WellService) context.getBean("wellService");
+
         addMouseListener(this);
         addMouseMotionListener(this);
     }
 
-    public void initPanel(int numberOfRows, int numberOfCols, Dimension parentDimension) {
-        this.numberOfRows = numberOfRows;
-        this.numberOfCols = numberOfCols;
+    public void initPanel(PlateFormat plateFormat, Dimension parentDimension) {
+        this.plateFormat = plateFormat;
 
         wellGUIList = new ArrayList<WellGUI>();
         doResize(parentDimension);
@@ -57,7 +63,7 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
         super.paintComponent(g);
 
         // width and heigth of squares around wells
-        int wellSize = (int) ((double) (this.getWidth()) - ((numberOfCols - 1) * pixelsGrid) - (2 * pixelsBorders)) / numberOfCols;
+        int wellSize = (int) ((double) (this.getWidth()) - ((plateFormat.getNumberOfCols() - 1) * pixelsGrid) - (2 * pixelsBorders)) / plateFormat.getNumberOfCols();
 
         if (wellGUIList.isEmpty()) {
             drawWells(wellSize, g);
@@ -67,7 +73,7 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
         }
     }
 
-    // if the mouse has been pressed and released on a well, change its color (first well has been selected)
+    // if the mouse has been pressed and released on a well, change its color (first well has been selected) and show imaged wells
     @Override
     public void mouseClicked(MouseEvent e) {
         Well firstWell = new Well();
@@ -87,16 +93,22 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
                 g.dispose();
 
                 // first well
-                firstWell.setColumnNumber(wellGUI.getColumnNumber());
-                firstWell.setRowNumber(wellGUI.getRowNumber());
+                firstWell.setColumnNumber(wellGUI.getColumnNumber() + 1);
+                firstWell.setRowNumber(wellGUI.getRowNumber() + 1);
                 wellGUI.setWell(firstWell);
 
-                PlateFormat plateFormat = new PlateFormat();
-                plateFormat.setFormat(this.numberOfRows * this.numberOfCols);
+                wellService.init();
+                List<ImagingType> imagingTypeList = wellService.getImagingTypes();
 
-                List<Well> wellList = wellService.PositionWellsByImagingType(null, plateFormat, firstWell);
+                for (ImagingType imagingType : imagingTypeList) {
+                    System.out.println("imaging type: " + imagingType);
+                }
+
+                //JOptionPane.showMessageDialog(this, imagingTypeList.size() + " imaging types were used.\n Please select first well for the first imaging type", "Imaging types info", JOptionPane.INFORMATION_MESSAGE);
+
+                List<Well> wellList = wellService.positionWellsByImagingType(imagingTypeList.get(0), plateFormat, firstWell);
                 for (Well well : wellList) {
-                    if (wellGUI.getRowNumber() == well.getRowNumber() && wellGUI.getColumnNumber() == well.getColumnNumber()) {
+                    if (wellGUI.getRowNumber() + 1 == well.getRowNumber() && wellGUI.getColumnNumber() + 1 == well.getColumnNumber()) {
                         g2d.fill(wellGUI.getWellShape());
                     }
                 }
@@ -155,8 +167,8 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
 
-        for (int i = 0; i < numberOfCols; i++) {
-            for (int j = 0; j < numberOfRows; j++) {
+        for (int i = 0; i < plateFormat.getNumberOfCols(); i++) {
+            for (int j = 0; j < plateFormat.getNumberOfRows(); j++) {
 
                 int topLeftX = (int) Math.round(wellSize * i + (i + 1) * pixelsGrid + pixelsBorders);
                 int topLeftY = (int) Math.round(wellSize * j + (j + 1) * pixelsGrid + pixelsBorders);
@@ -211,28 +223,28 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
     public void doResize(Dimension parentDimension) {
         int minimumParentDimension = Math.min(parentDimension.height, parentDimension.width);
 
-        if (numberOfCols != 0 && numberOfRows != 0) {
+        if (plateFormat.getNumberOfCols() != 0 && plateFormat.getNumberOfRows() != 0) {
             int panelHeight = parentDimension.height;
             int panelWidth = parentDimension.width;
-            if (numberOfCols >= numberOfRows) {
+            if (plateFormat.getNumberOfCols() >= plateFormat.getNumberOfRows()) {
                 if (minimumParentDimension == parentDimension.width) {
-                    panelHeight = (int) (Math.round((double) panelWidth * numberOfRows / numberOfCols));
+                    panelHeight = (int) (Math.round((double) panelWidth * plateFormat.getNumberOfRows() / plateFormat.getNumberOfCols()));
                 } else {
-                    if ((int) (Math.round((double) panelHeight * numberOfCols / numberOfRows)) < panelWidth) {
-                        panelWidth = (int) (Math.round((double) panelHeight * numberOfCols / numberOfRows));
+                    if ((int) (Math.round((double) panelHeight * plateFormat.getNumberOfCols() / plateFormat.getNumberOfRows())) < panelWidth) {
+                        panelWidth = (int) (Math.round((double) panelHeight * plateFormat.getNumberOfCols() / plateFormat.getNumberOfRows()));
                     } else {
-                        panelHeight = (int) (Math.round((double) panelWidth * numberOfRows / numberOfCols));
+                        panelHeight = (int) (Math.round((double) panelWidth * plateFormat.getNumberOfRows() / plateFormat.getNumberOfCols()));
                     }
                 }
             } else {
                 if (minimumParentDimension == parentDimension.width) {
-                    if ((int) (Math.round((double) panelWidth * numberOfRows / numberOfCols)) < panelHeight) {
-                        panelHeight = (int) (Math.round((double) panelWidth * numberOfRows / numberOfCols));
+                    if ((int) (Math.round((double) panelWidth * plateFormat.getNumberOfRows() / plateFormat.getNumberOfCols())) < panelHeight) {
+                        panelHeight = (int) (Math.round((double) panelWidth * plateFormat.getNumberOfRows() / plateFormat.getNumberOfCols()));
                     } else {
-                        panelWidth = (int) (Math.round((double) panelHeight * numberOfCols / numberOfRows));
+                        panelWidth = (int) (Math.round((double) panelHeight * plateFormat.getNumberOfCols() / plateFormat.getNumberOfRows()));
                     }
                 } else {
-                    panelWidth = (int) (Math.round((double) panelHeight * numberOfCols / numberOfRows));
+                    panelWidth = (int) (Math.round((double) panelHeight * plateFormat.getNumberOfCols() / plateFormat.getNumberOfRows()));
                 }
             }
             this.setSize(panelWidth, panelHeight);
