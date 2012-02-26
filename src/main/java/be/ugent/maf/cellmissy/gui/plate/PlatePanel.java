@@ -93,25 +93,33 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
                 g.dispose();
 
                 // first well
-                firstWell.setColumnNumber(wellGUI.getColumnNumber() + 1);
-                firstWell.setRowNumber(wellGUI.getRowNumber() + 1);
+                firstWell.setColumnNumber(wellGUI.getColumnNumber());
+                firstWell.setRowNumber(wellGUI.getRowNumber());
                 wellGUI.setWell(firstWell);
+            }
+        }
 
-                wellService.init();
-                List<ImagingType> imagingTypeList = wellService.getImagingTypes();
+        //JOptionPane.showMessageDialog(this, imagingTypeList.size() + " imaging types were used.\n Please select first well for the first imaging type", "Imaging types info", JOptionPane.INFORMATION_MESSAGE);
 
-                for (ImagingType imagingType : imagingTypeList) {
-                    System.out.println("imaging type: " + imagingType);
+        wellService.init();
+        List<ImagingType> imagingTypeList = wellService.getImagingTypes();
+        List<Well> wellList = wellService.positionWellsByImagingType(imagingTypeList.get(1), plateFormat, firstWell);
+
+        for (Well well : wellList) {
+            for (WellGUI wellGUI : wellGUIList) {
+                if (wellGUI.getRowNumber() == well.getRowNumber() && wellGUI.getColumnNumber() == well.getColumnNumber()) {
+                    Graphics g = getGraphics();
+                    Graphics2D g2d = (Graphics2D) g;
+                    g2d.setColor(Color.BLACK);
+                    g2d.fill(wellGUI.getWellShape());
+                    
+                    // set wellGUI color
+                    wellGUI.setWellColor(g2d.getColor());
+                    g.dispose();
                 }
+            }
+        }
 
-                //JOptionPane.showMessageDialog(this, imagingTypeList.size() + " imaging types were used.\n Please select first well for the first imaging type", "Imaging types info", JOptionPane.INFORMATION_MESSAGE);
-
-                List<Well> wellList = wellService.positionWellsByImagingType(imagingTypeList.get(0), plateFormat, firstWell);
-                for (Well well : wellList) {
-                    if (wellGUI.getRowNumber() + 1 == well.getRowNumber() && wellGUI.getColumnNumber() + 1 == well.getColumnNumber()) {
-                        g2d.fill(wellGUI.getWellShape());
-                    }
-                }
 
 
 //                int confirm = JOptionPane.showConfirmDialog(this, "First well selected is (" + (firstWell.getRowNumber() + 1) + ", " + (firstWell.getColumnNumber() + 1) + ") \n Are you sure?", "First well selected message", JOptionPane.YES_NO_OPTION);
@@ -120,8 +128,6 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
 //                    wellGUI.setWellColor(null);
 //                    g2d.draw(wellGUI.getWellShape());
 //                }
-            }
-        }
     }
 
     @Override
@@ -149,13 +155,11 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
 
         for (WellGUI wellGUI : wellGUIList) {
             if (wellGUI.getWellShape().contains(e.getX(), e.getY())) {
-                int rowNumber = wellGUI.getRowNumber();
-                int columnNumber = wellGUI.getColumnNumber();
                 Graphics g = getGraphics();
                 Graphics2D g2d = (Graphics2D) g;
                 setGraphics(g2d);
                 super.paint(g);
-                g2d.drawString("(" + (rowNumber + 1) + ", " + (columnNumber + 1) + ")", e.getX(), e.getY());
+                g2d.drawString("(" + wellGUI.getRowNumber() + ", " + wellGUI.getColumnNumber() + ")", e.getX(), e.getY());
                 g.dispose();
             }
 
@@ -167,13 +171,13 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
 
-        for (int i = 0; i < plateFormat.getNumberOfCols(); i++) {
-            for (int j = 0; j < plateFormat.getNumberOfRows(); j++) {
+        for (int i = 0; i < plateFormat.getNumberOfRows(); i++) {
+            for (int j = 0; j < plateFormat.getNumberOfCols(); j++) {
 
-                int topLeftX = (int) Math.round(wellSize * i + (i + 1) * pixelsGrid + pixelsBorders);
-                int topLeftY = (int) Math.round(wellSize * j + (j + 1) * pixelsGrid + pixelsBorders);
+                int topLeftX = (int) Math.round(wellSize * j + (j + 1) * pixelsGrid + pixelsBorders);
+                int topLeftY = (int) Math.round(wellSize * i + (i + 1) * pixelsGrid + pixelsBorders);
 
-                WellGUI wellGUI = new WellGUI(i, j);
+                WellGUI wellGUI = new WellGUI(i + 1, j + 1);
                 Ellipse2D ellipse2D = new Ellipse2D.Double(topLeftX, topLeftY, wellSize, wellSize);
                 // set the shape of the wellGUI and draw it
                 wellGUI.setWellShape(ellipse2D);
@@ -183,7 +187,7 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
 
                 if (i == 0 || j == 0) {
                     // draw the labels on the plate
-                    drawPlateLabel(wellGUI, g2d, i, j);
+                    drawPlateLabel(wellGUI, g2d, j + 1, i + 1);
                 }
             }
         }
@@ -197,8 +201,8 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
         // a list of WellGUI objects is present
         for (WellGUI wellGUI : wellGUIList) {
 
-            int topLeftX = (int) Math.round(wellSize * wellGUI.getRowNumber() + (wellGUI.getRowNumber() + 1) * pixelsGrid + pixelsBorders);
-            int topLeftY = (int) Math.round(wellSize * wellGUI.getColumnNumber() + (wellGUI.getColumnNumber() + 1) * pixelsGrid + pixelsBorders);
+            int topLeftX = (int) Math.round(wellSize * (wellGUI.getColumnNumber() - 1) + (wellGUI.getColumnNumber() - 1) * pixelsGrid + pixelsBorders);
+            int topLeftY = (int) Math.round(wellSize * (wellGUI.getRowNumber() - 1) + (wellGUI.getRowNumber() - 1) * pixelsGrid + pixelsBorders);
 
             Ellipse2D ellipse2D = new Ellipse2D.Double(topLeftX, topLeftY, wellSize, wellSize);
             wellGUI.setWellShape(ellipse2D);
@@ -212,8 +216,8 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
             }
 
             // draw the labels on the plate
-            if (wellGUI.getRowNumber() == 0 || wellGUI.getColumnNumber() == 0) {
-                drawPlateLabel(wellGUI, g2d, wellGUI.getRowNumber(), wellGUI.getColumnNumber());
+            if (wellGUI.getRowNumber() == 1 || wellGUI.getColumnNumber() == 1) {
+                drawPlateLabel(wellGUI, g2d, wellGUI.getColumnNumber(), wellGUI.getRowNumber());
             }
         }
 
@@ -259,25 +263,23 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
         g2d.setStroke(stroke);
     }
 
-    // draw numbers on upper-side and left-side of the plate
+    // draw numbers (labels) on upper-side and left-side of the plate
     private void drawPlateLabel(WellGUI wellGUI, Graphics2D g2d, int columnNumber, int rowNumber) {
         Font font = new Font("Arial", Font.BOLD, 12);
         g2d.setFont(font);
-        if (rowNumber == 0) {
-            String columnLabel = "" + (columnNumber + 1);
-            if (columnLabel.length() > 1) {
-                g2d.drawString(columnLabel, (int) Math.round(wellGUI.getWellShape().getCenterX()) - 5, pixelsBorders);
-            } else {
-                g2d.drawString(columnLabel, (int) Math.round(wellGUI.getWellShape().getCenterX()) - 3, pixelsBorders);
-            }
+        String columnLabel = "" + columnNumber;
+        if (columnLabel.length() > 1) {
+            g2d.drawString(columnLabel, (int) Math.round(wellGUI.getWellShape().getCenterX()) - 5, pixelsBorders);
+        } else {
+            g2d.drawString(columnLabel, (int) Math.round(wellGUI.getWellShape().getCenterX()) - 3, pixelsBorders);
         }
-        if (columnNumber == 0) {
-            String rowLabel = "" + (rowNumber + 1);
-            if (rowLabel.length() > 1) {
-                g2d.drawString(rowLabel, pixelsBorders - 12, (int) Math.round(wellGUI.getWellShape().getCenterY()) + 3);
-            } else {
-                g2d.drawString(rowLabel, pixelsBorders - 8, (int) Math.round(wellGUI.getWellShape().getCenterY()) + 3);
-            }
+
+        String rowLabel = "" + rowNumber;
+        if (rowLabel.length() > 1) {
+            g2d.drawString(rowLabel, pixelsBorders - 12, (int) Math.round(wellGUI.getWellShape().getCenterY()) + 3);
+        } else {
+            g2d.drawString(rowLabel, pixelsBorders - 8, (int) Math.round(wellGUI.getWellShape().getCenterY()) + 3);
         }
+
     }
 }
