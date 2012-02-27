@@ -137,7 +137,13 @@
             <artifactId>commons-configuration</artifactId>
             <version>1.7</version>
         </dependency>
-            
+        
+        <dependency>
+            <groupId>org.codeartisans.thirdparties.swing</groupId>
+            <artifactId>batik-all</artifactId>
+            <version>1.8pre-r1084380</version>
+        </dependency>
+
     </dependencies>    
     
 </project>
