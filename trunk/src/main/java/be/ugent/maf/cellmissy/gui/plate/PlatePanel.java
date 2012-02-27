@@ -21,6 +21,7 @@ import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import java.util.List;
+import javax.swing.SwingWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -31,12 +32,13 @@ import org.springframework.context.ApplicationContext;
  * @author Paola
  *
  */
-public class PlatePanel extends JPanel implements MouseListener, MouseMotionListener {
+public class PlatePanel extends JPanel implements MouseListener {
 
     @Autowired
     private WellService wellService;
     private List<WellGUI> wellGUIList;
     private PlateFormat plateFormat;
+    private Well firstWell;
     private static final int pixelsGrid = 5;
     private static final int pixelsBorders = 20;
 
@@ -47,7 +49,6 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
         wellService = (WellService) context.getBean("wellService");
 
         addMouseListener(this);
-        addMouseMotionListener(this);
     }
 
     public void initPanel(PlateFormat plateFormat, Dimension parentDimension) {
@@ -76,8 +77,7 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
     // if the mouse has been pressed and released on a well, change its color (first well has been selected) and show imaged wells
     @Override
     public void mouseClicked(MouseEvent e) {
-        Well firstWell = new Well();
-
+        firstWell = new Well();
         for (WellGUI wellGUI : wellGUIList) {
             if ((e.getButton() == 1) && wellGUI.getWellShape().contains(e.getX(), e.getY())) {
                 Graphics g = getGraphics();
@@ -92,42 +92,13 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
                 wellGUI.setWellColor(g2d.getColor());
                 g.dispose();
 
-                // first well
+                // first well used by the "wellService"
                 firstWell.setColumnNumber(wellGUI.getColumnNumber());
                 firstWell.setRowNumber(wellGUI.getRowNumber());
                 wellGUI.setWell(firstWell);
             }
         }
-
-        //JOptionPane.showMessageDialog(this, imagingTypeList.size() + " imaging types were used.\n Please select first well for the first imaging type", "Imaging types info", JOptionPane.INFORMATION_MESSAGE);
-
-        wellService.init();
-        List<ImagingType> imagingTypeList = wellService.getImagingTypes();
-        List<Well> wellList = wellService.positionWellsByImagingType(imagingTypeList.get(1), plateFormat, firstWell);
-
-        for (Well well : wellList) {
-            for (WellGUI wellGUI : wellGUIList) {
-                if (wellGUI.getRowNumber() == well.getRowNumber() && wellGUI.getColumnNumber() == well.getColumnNumber()) {
-                    Graphics g = getGraphics();
-                    Graphics2D g2d = (Graphics2D) g;
-                    g2d.setColor(Color.BLACK);
-                    g2d.fill(wellGUI.getWellShape());
-                    
-                    // set wellGUI color
-                    wellGUI.setWellColor(g2d.getColor());
-                    g.dispose();
-                }
-            }
-        }
-
-
-
-//                int confirm = JOptionPane.showConfirmDialog(this, "First well selected is (" + (firstWell.getRowNumber() + 1) + ", " + (firstWell.getColumnNumber() + 1) + ") \n Are you sure?", "First well selected message", JOptionPane.YES_NO_OPTION);
-//
-//                if (confirm == JOptionPane.NO_OPTION) {
-//                    wellGUI.setWellColor(null);
-//                    g2d.draw(wellGUI.getWellShape());
-//                }
+        showImagedWells();
     }
 
     @Override
@@ -144,26 +115,6 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
 
     @Override
     public void mouseExited(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-
-        for (WellGUI wellGUI : wellGUIList) {
-            if (wellGUI.getWellShape().contains(e.getX(), e.getY())) {
-                Graphics g = getGraphics();
-                Graphics2D g2d = (Graphics2D) g;
-                setGraphics(g2d);
-                super.paint(g);
-                g2d.drawString("(" + wellGUI.getRowNumber() + ", " + wellGUI.getColumnNumber() + ")", e.getX(), e.getY());
-                g.dispose();
-            }
-
-        }
     }
 
     // draw the wells for the first time
@@ -198,11 +149,11 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
 
-        // a list of WellGUI objects is present
+        // a list of WellGUI objects is present, iterate through it
         for (WellGUI wellGUI : wellGUIList) {
 
-            int topLeftX = (int) Math.round(wellSize * (wellGUI.getColumnNumber() - 1) + (wellGUI.getColumnNumber() - 1) * pixelsGrid + pixelsBorders);
-            int topLeftY = (int) Math.round(wellSize * (wellGUI.getRowNumber() - 1) + (wellGUI.getRowNumber() - 1) * pixelsGrid + pixelsBorders);
+            int topLeftX = (int) Math.round(wellSize * (wellGUI.getColumnNumber() - 1) + wellGUI.getColumnNumber() * pixelsGrid + pixelsBorders);
+            int topLeftY = (int) Math.round(wellSize * (wellGUI.getRowNumber() - 1) + wellGUI.getRowNumber() * pixelsGrid + pixelsBorders);
 
             Ellipse2D ellipse2D = new Ellipse2D.Double(topLeftX, topLeftY, wellSize, wellSize);
             wellGUI.setWellShape(ellipse2D);
@@ -227,7 +178,7 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
     public void doResize(Dimension parentDimension) {
         int minimumParentDimension = Math.min(parentDimension.height, parentDimension.width);
 
-        if (plateFormat.getNumberOfCols() != 0 && plateFormat.getNumberOfRows() != 0) {
+        if (plateFormat != null) {
             int panelHeight = parentDimension.height;
             int panelWidth = parentDimension.width;
             if (plateFormat.getNumberOfCols() >= plateFormat.getNumberOfRows()) {
@@ -281,5 +232,34 @@ public class PlatePanel extends JPanel implements MouseListener, MouseMotionList
             g2d.drawString(rowLabel, pixelsBorders - 8, (int) Math.round(wellGUI.getWellShape().getCenterY()) + 3);
         }
 
+    }
+
+    private void showImagedWells() {
+
+        // inizialites wellService
+        wellService.init();
+
+        // get List of imaging types
+        List<ImagingType> imagingTypeList = wellService.getImagingTypes();
+
+        // position the wells for each imaging types: get a list of Wells
+        for (ImagingType imagingType : imagingTypeList) {
+            List<Well> wellList = wellService.positionWellsByImagingType(imagingType, plateFormat, firstWell);
+            for (Well well : wellList) {
+                for (WellGUI wellGUI : wellGUIList) {
+                    if (wellGUI.getRowNumber() == well.getRowNumber() && wellGUI.getColumnNumber() == well.getColumnNumber()) {
+                        Graphics g = getGraphics();
+                        Graphics2D g2d = (Graphics2D) g;
+                        g2d.setColor(Color.BLACK);
+                        g2d.fill(wellGUI.getWellShape());
+
+                        // set wellGUI color
+                        wellGUI.setWellColor(g2d.getColor());
+                        g.dispose();
+                    }
+                }
+            }
+            //int confirm = JOptionPane.showConfirmDialog(this, "Sure?", "Confirm wells message", JOptionPane.YES_NO_OPTION);
+        }
     }
 }
