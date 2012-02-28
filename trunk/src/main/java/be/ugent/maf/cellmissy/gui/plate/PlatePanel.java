@@ -21,7 +21,6 @@ import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import java.util.List;
-import javax.swing.SwingWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -84,21 +83,23 @@ public class PlatePanel extends JPanel implements MouseListener {
                 Graphics2D g2d = (Graphics2D) g;
                 setGraphics(g2d);
 
-                // set color of graphics to fill the wellGUI shape
+                // set color of graphics to fill the wellGUI shape of first well
                 g2d.setColor(Color.BLACK);
                 g2d.fill(wellGUI.getWellShape());
 
-                // set wellGUI color
-                wellGUI.setWellColor(g2d.getColor());
-                g.dispose();
-
-                // first well used by the "wellService"
+                // first well used by the wellService
                 firstWell.setColumnNumber(wellGUI.getColumnNumber());
                 firstWell.setRowNumber(wellGUI.getRowNumber());
                 wellGUI.setWell(firstWell);
+                
+                 // set wellGUI color
+                Color [] wellColors = new Color[10];
+                wellColors[0] = g2d.getColor();
+                wellGUI.setWellColors(wellColors);
+                g.dispose();
             }
         }
-        showImagedWells();
+        //showImagedWells();
     }
 
     @Override
@@ -144,7 +145,7 @@ public class PlatePanel extends JPanel implements MouseListener {
         }
     }
 
-    // re-draw the wells if rezise event occours (keep color)
+    // re-draw the wells if rezise event occours (keep color(s) of the wells)
     public void reDrawWells(int wellSize, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
@@ -160,10 +161,13 @@ public class PlatePanel extends JPanel implements MouseListener {
             g2d.draw(ellipse2D);
 
             // if a color of a wellGUI has been changed, keep track of it when resizing
-            if (wellGUI.getWellColor() != null) {
-                g2d.setColor(wellGUI.getWellColor());
-                g2d.fill(wellGUI.getWellShape());
-                g2d.setColor(Color.BLACK);
+            Color[] wellColors = wellGUI.getWellColors();
+            for (Color wellColor : wellColors) {
+                if (wellColor != null) {
+                    g2d.fill(wellGUI.getWellShape());
+                    //g2d.setColor(Color.BLACK);
+                    g2d.setColor(wellColor);
+                }
             }
 
             // draw the labels on the plate
@@ -253,9 +257,10 @@ public class PlatePanel extends JPanel implements MouseListener {
                         g2d.setColor(Color.BLACK);
                         g2d.fill(wellGUI.getWellShape());
 
-                        // set wellGUI color
-                        wellGUI.setWellColor(g2d.getColor());
-                        g.dispose();
+//                        // set wellGUI color
+//                        wellColors[0] = g2d.getColor();
+//                        wellGUI.setWellColors(wellColors);
+//                        g.dispose();
                     }
                 }
             }
