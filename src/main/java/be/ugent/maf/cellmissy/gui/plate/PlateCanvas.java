@@ -34,21 +34,35 @@ public class PlateCanvas extends JSVGCanvas {
         Element svgRoot = doc.getDocumentElement();
 
         // set the width and height attribute on the svg root element
-        svgRoot.setAttributeNS(null, "width", "500");
-        svgRoot.setAttributeNS(null, "height", "500");
+        svgRoot.setAttributeNS(null, "width", "2000");
+        svgRoot.setAttributeNS(null, "height", "2000");
 
         Element circle = doc.createElementNS(svgNS, "path");
-        circle.setAttributeNS(null, "sodipodi:cx", "238.57143");
-        circle.setAttributeNS(null, "sodipodi:cy", "258.07648");
+        circle.setAttributeNS(null, "sodipodi:cx", "5");
+        circle.setAttributeNS(null, "sodipodi:cy", "5");
         circle.setAttributeNS(null, "sodipodi:type", "arc");
-        circle.setAttributeNS(null, "sodipodi:rx", "25");
-        circle.setAttributeNS(null, "sodipodi:ry", "25");
+        circle.setAttributeNS(null, "sodipodi:rx", "5");
+        circle.setAttributeNS(null, "sodipodi:ry", "5");
         circle.setAttributeNS(null, "style", "fill:#ff0000;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1");
         circle.setAttributeNS(null, "d", "m 400,258.07648 a 161.42857,157.14285 0 1 1 -322.857147,0 161.42857,157.14285 0 1 1 322.857147,0 z");
         circle.setAttributeNS(null, "sodipodi:type", "arc");
-        
+        circle.setAttributeNS(null, "id", "path3037");
+
+        Element rect = doc.createElementNS(svgNS, "g");
+        rect.setAttributeNS(null, "inkscape:corner0", "-0.25590551 : 0.52370775 : 0 : 1");
+        rect.setAttributeNS(null, "inkscape:corner7", "-0.3647974 : 0.42917823 : 0.25 : 1");
+        rect.setAttributeNS(null, "inkscape:perspectiveID", "#perspective2992");
+        rect.setAttributeNS(null, "sodipodi:type", "inkscape:box3d");
+        rect.setAttributeNS(null, "style", "fill:none;stroke:none");
+
+        Element top = doc.createElementNS(svgNS, "path");
+        top.setAttributeNS(null, "d", "M  44.5,54 L 49.5,50 L 54.5,54");
+        top.setAttributeNS(null, "style", "fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1");
+       
         svgRoot.appendChild(circle);
-        
+        svgRoot.appendChild(rect);
+        svgRoot.appendChild(top);
+
     }
 
     public static void main(String[] args) {

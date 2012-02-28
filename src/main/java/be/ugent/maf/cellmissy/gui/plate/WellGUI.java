@@ -15,7 +15,7 @@ import java.awt.geom.Ellipse2D;
 public class WellGUI {
 
     private Ellipse2D wellShape;
-    private Color wellColor;
+    private static Color[] wellColors;
     private int rowNumber;
     private int columnNumber;
     private Well well;
@@ -41,12 +41,12 @@ public class WellGUI {
         return wellShape;
     }
 
-    public void setWellColor(Color wellColor) {
-        this.wellColor = wellColor;
+    public void setWellColors(Color[] wellColors) {
+        WellGUI.wellColors = wellColors;
     }
 
-    public Color getWellColor() {
-        return wellColor;
+    public Color[] getWellColors() {
+        return wellColors;
     }
 
     public void setWell(Well well) {
