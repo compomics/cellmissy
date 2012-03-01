@@ -21,6 +21,8 @@ import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -38,8 +40,10 @@ public class PlatePanel extends JPanel implements MouseListener {
     private List<WellGUI> wellGUIList;
     private PlateFormat plateFormat;
     private Well firstWell;
+    private List<ImagingType> imagingTypeList;
     private static final int pixelsGrid = 5;
     private static final int pixelsBorders = 20;
+    private ImagingType currentImagingType;
 
     public PlatePanel() {
 
@@ -52,8 +56,7 @@ public class PlatePanel extends JPanel implements MouseListener {
 
     public void initPanel(PlateFormat plateFormat, Dimension parentDimension) {
         this.plateFormat = plateFormat;
-
-        wellGUIList = new ArrayList<WellGUI>();
+        wellGUIList = new ArrayList<>();
         doResize(parentDimension);
     }
 
@@ -62,7 +65,7 @@ public class PlatePanel extends JPanel implements MouseListener {
 
         super.paintComponent(g);
 
-        // width and heigth of squares around wells
+        // width and heigth of squares around wells (size)
         int wellSize = (int) ((double) (this.getWidth()) - ((plateFormat.getNumberOfCols() - 1) * pixelsGrid) - (2 * pixelsBorders)) / plateFormat.getNumberOfCols();
 
         if (wellGUIList.isEmpty()) {
@@ -76,30 +79,41 @@ public class PlatePanel extends JPanel implements MouseListener {
     // if the mouse has been pressed and released on a well, change its color (first well has been selected) and show imaged wells
     @Override
     public void mouseClicked(MouseEvent e) {
+        // create first well for each imaging type
         firstWell = new Well();
         for (WellGUI wellGUI : wellGUIList) {
-            if ((e.getButton() == 1) && wellGUI.getWellShape().contains(e.getX(), e.getY())) {
-                Graphics g = getGraphics();
-                Graphics2D g2d = (Graphics2D) g;
-                setGraphics(g2d);
+            List<Ellipse2D> ellipsi = wellGUI.getEllipsi();
+            for (Ellipse2D ellipse2D : ellipsi) {
+                if ((e.getButton() == 1) && ellipse2D.contains(e.getX(), e.getY())) {
+                    Graphics g = getGraphics();
+                    Graphics2D g2d = (Graphics2D) g;
+                    setGraphics(g2d);
 
-                // set color of graphics to fill the wellGUI shape of first well
-                g2d.setColor(Color.BLACK);
-                g2d.fill(wellGUI.getWellShape());
+                    // set color of graphics to fill the wellGUI shape of first well
+                    Color wellColor = WellGUI.getAvailableWellColors()[imagingTypeList.indexOf(currentImagingType)]; // first color is used as default
+                    g2d.setColor(wellColor);
+                    g2d.fill(ellipse2D);
 
-                // first well used by the wellService
-                firstWell.setColumnNumber(wellGUI.getColumnNumber());
-                firstWell.setRowNumber(wellGUI.getRowNumber());
-                wellGUI.setWell(firstWell);
-                
-                 // set wellGUI color
-                Color [] wellColors = new Color[10];
-                wellColors[0] = g2d.getColor();
-                wellGUI.setWellColors(wellColors);
-                g.dispose();
+                    // set wellGUI color
+                    List<Color> wellColors = new ArrayList<>();
+                    wellColors.add(wellColor);
+                    wellGUI.setWellColors(wellColors);
+
+                    // set first well used by the wellService
+                    firstWell.setColumnNumber(wellGUI.getColumnNumber());
+                    firstWell.setRowNumber(wellGUI.getRowNumber());
+                    wellGUI.setWell(firstWell);
+                    g.dispose();
+                }
             }
         }
-        //showImagedWells();
+        showImagedWells(currentImagingType);
+        int confirm = JOptionPane.showConfirmDialog(this, "Validate the wells?", "Validate wells message", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (confirm == JOptionPane.YES_OPTION) {
+            int currentImagingTypeIndex = imagingTypeList.indexOf(currentImagingType);
+            currentImagingType = imagingTypeList.get(currentImagingTypeIndex + 1);
+            JOptionPane.showMessageDialog(this, "Select first well for " + currentImagingType.getName() + " imaging type", "Selct first well message", JOptionPane.OK_OPTION);
+        }
     }
 
     @Override
@@ -118,7 +132,7 @@ public class PlatePanel extends JPanel implements MouseListener {
     public void mouseExited(MouseEvent e) {
     }
 
-    // draw the wells for the first time
+    // draw the wells for the first time - wells color is set to default (first item of wellGUI-AvailableColors)
     public void drawWells(int wellSize, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
@@ -131,15 +145,22 @@ public class PlatePanel extends JPanel implements MouseListener {
 
                 WellGUI wellGUI = new WellGUI(i + 1, j + 1);
                 Ellipse2D ellipse2D = new Ellipse2D.Double(topLeftX, topLeftY, wellSize, wellSize);
-                // set the shape of the wellGUI and draw it
-                wellGUI.setWellShape(ellipse2D);
-                g2d.draw(ellipse2D);
+
+                Color defaultColor = WellGUI.getAvailableWellColors()[0];
+                List<Ellipse2D> ellipsi = new ArrayList<>();
+                ellipsi.add(ellipse2D);
+                wellGUI.setEllipsi(ellipsi);
+                g2d.setColor(defaultColor);
+                g2d.fill(ellipse2D);
+                List<Color> wellColors = new ArrayList<>();
+                wellColors.add(defaultColor);
+                wellGUI.setWellColors(wellColors);
 
                 wellGUIList.add(wellGUI);
 
                 if (i == 0 || j == 0) {
                     // draw the labels on the plate
-                    drawPlateLabel(wellGUI, g2d, j + 1, i + 1);
+                    drawPlateLabel(ellipse2D, g2d, j + 1, i + 1);
                 }
             }
         }
@@ -152,27 +173,28 @@ public class PlatePanel extends JPanel implements MouseListener {
 
         // a list of WellGUI objects is present, iterate through it
         for (WellGUI wellGUI : wellGUIList) {
+            List<Ellipse2D> ellipsi = wellGUI.getEllipsi();
 
-            int topLeftX = (int) Math.round(wellSize * (wellGUI.getColumnNumber() - 1) + wellGUI.getColumnNumber() * pixelsGrid + pixelsBorders);
-            int topLeftY = (int) Math.round(wellSize * (wellGUI.getRowNumber() - 1) + wellGUI.getRowNumber() * pixelsGrid + pixelsBorders);
+            for (int i = 0; i < ellipsi.size(); i++) {
+                Ellipse2D ellipse2D = ellipsi.get(i);
+                int topLeftX = (int) Math.round(wellSize * (wellGUI.getColumnNumber() - 1) + wellGUI.getColumnNumber() * pixelsGrid + pixelsBorders);
+                int topLeftY = (int) Math.round(wellSize * (wellGUI.getRowNumber() - 1) + wellGUI.getRowNumber() * pixelsGrid + pixelsBorders);
+                ellipse2D = new Ellipse2D.Double(topLeftX, topLeftY, wellSize, wellSize);
+                g2d.draw(ellipse2D);
 
-            Ellipse2D ellipse2D = new Ellipse2D.Double(topLeftX, topLeftY, wellSize, wellSize);
-            wellGUI.setWellShape(ellipse2D);
-            g2d.draw(ellipse2D);
-
-            // if a color of a wellGUI has been changed, keep track of it when resizing
-            Color[] wellColors = wellGUI.getWellColors();
-            for (Color wellColor : wellColors) {
-                if (wellColor != null) {
-                    g2d.fill(wellGUI.getWellShape());
-                    //g2d.setColor(Color.BLACK);
-                    g2d.setColor(wellColor);
+                // if a color of a wellGUI has been changed, keep track of it when resizing
+                List<Color> wellColors = wellGUI.getWellColors();
+                for (Color wellColor : wellColors) {
+                    if (wellColor != null) {
+                        g2d.setColor(wellColor);
+                        g2d.fill(ellipse2D);
+                    }
                 }
             }
 
             // draw the labels on the plate
             if (wellGUI.getRowNumber() == 1 || wellGUI.getColumnNumber() == 1) {
-                drawPlateLabel(wellGUI, g2d, wellGUI.getColumnNumber(), wellGUI.getRowNumber());
+                drawPlateLabel(ellipsi.get(0), g2d, wellGUI.getColumnNumber(), wellGUI.getRowNumber());
             }
         }
 
@@ -219,52 +241,67 @@ public class PlatePanel extends JPanel implements MouseListener {
     }
 
     // draw numbers (labels) on upper-side and left-side of the plate
-    private void drawPlateLabel(WellGUI wellGUI, Graphics2D g2d, int columnNumber, int rowNumber) {
+    private void drawPlateLabel(Ellipse2D ellipse2D, Graphics2D g2d, int columnNumber, int rowNumber) {
         Font font = new Font("Arial", Font.BOLD, 12);
         g2d.setFont(font);
         String columnLabel = "" + columnNumber;
         if (columnLabel.length() > 1) {
-            g2d.drawString(columnLabel, (int) Math.round(wellGUI.getWellShape().getCenterX()) - 5, pixelsBorders);
+            g2d.drawString(columnLabel, (int) Math.round(ellipse2D.getCenterX()) - 5, pixelsBorders);
         } else {
-            g2d.drawString(columnLabel, (int) Math.round(wellGUI.getWellShape().getCenterX()) - 3, pixelsBorders);
+            g2d.drawString(columnLabel, (int) Math.round(ellipse2D.getCenterX()) - 3, pixelsBorders);
         }
 
         String rowLabel = "" + rowNumber;
         if (rowLabel.length() > 1) {
-            g2d.drawString(rowLabel, pixelsBorders - 12, (int) Math.round(wellGUI.getWellShape().getCenterY()) + 3);
+            g2d.drawString(rowLabel, pixelsBorders - 12, (int) Math.round(ellipse2D.getCenterY()) + 3);
         } else {
-            g2d.drawString(rowLabel, pixelsBorders - 8, (int) Math.round(wellGUI.getWellShape().getCenterY()) + 3);
+            g2d.drawString(rowLabel, pixelsBorders - 8, (int) Math.round(ellipse2D.getCenterY()) + 3);
         }
-
     }
 
-    private void showImagedWells() {
-
-        // inizialites wellService
-        wellService.init();
-
-        // get List of imaging types
-        List<ImagingType> imagingTypeList = wellService.getImagingTypes();
-
+    private void showImagedWells(ImagingType imagingType) {
         // position the wells for each imaging types: get a list of Wells
-        for (ImagingType imagingType : imagingTypeList) {
-            List<Well> wellList = wellService.positionWellsByImagingType(imagingType, plateFormat, firstWell);
-            for (Well well : wellList) {
-                for (WellGUI wellGUI : wellGUIList) {
-                    if (wellGUI.getRowNumber() == well.getRowNumber() && wellGUI.getColumnNumber() == well.getColumnNumber()) {
-                        Graphics g = getGraphics();
-                        Graphics2D g2d = (Graphics2D) g;
-                        g2d.setColor(Color.BLACK);
-                        g2d.fill(wellGUI.getWellShape());
+        List<Well> wellList = wellService.positionWellsByImagingType(imagingType, plateFormat, firstWell);
+        for (Well well : wellList) {
+            for (WellGUI wellGUI : wellGUIList) {
+                if (wellGUI.getRowNumber() == well.getRowNumber() && wellGUI.getColumnNumber() == well.getColumnNumber()) {
+                    Graphics g = getGraphics();
+                    Graphics2D g2d = (Graphics2D) g;
+                    g2d.setColor(WellGUI.getAvailableWellColors()[imagingTypeList.indexOf(imagingType) + 1]);
+                    List<Ellipse2D> ellipsi = wellGUI.getEllipsi();
+                    for (Ellipse2D ellipse2D : ellipsi) {
+                        double size = ellipse2D.getHeight();
+                        double newSize = (size / imagingTypeList.size()) * (imagingTypeList.size() - imagingTypeList.indexOf(imagingType));
+                        double newTopLeftX = ellipse2D.getCenterX() - (newSize / 2);
+                        double newTopLeftY = ellipse2D.getCenterY() - (newSize / 2);
 
-//                        // set wellGUI color
-//                        wellColors[0] = g2d.getColor();
-//                        wellGUI.setWellColors(wellColors);
-//                        g.dispose();
+                        Ellipse2D newEllipse2D = new Ellipse2D.Double(newTopLeftX, newTopLeftY, newSize, newSize);
+                        g2d.fill(newEllipse2D);
+                        List<Color> wellColors = new ArrayList<>();
+                        wellColors.add(WellGUI.getAvailableWellColors()[imagingTypeList.indexOf(imagingType) + 1]);
+                        wellGUI.setWellColors(wellColors);
+                        g.dispose();
                     }
                 }
             }
-            //int confirm = JOptionPane.showConfirmDialog(this, "Sure?", "Confirm wells message", JOptionPane.YES_NO_OPTION);
+        }
+    }
+
+    public class PlateWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            // inizialites wellService
+            wellService.init();
+            // get List of imaging types
+            imagingTypeList = wellService.getImagingTypes();
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            currentImagingType = imagingTypeList.get(0);
+            JOptionPane.showMessageDialog(PlatePanel.this, "Select first well for " + currentImagingType.getName() + " imaging type", "Selct first well message", JOptionPane.OK_OPTION);
         }
     }
 }

@@ -70,6 +70,8 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
                     Dimension parentDimension = jPanel2.getSize();
                     platePanel.initPanel(selectedPlateFormat, parentDimension);
                     repaint();
+                    PlatePanel.PlateWorker plateWorker = platePanel.new PlateWorker();
+                    plateWorker.execute();
                 }
             }
         };
