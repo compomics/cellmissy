@@ -10,6 +10,7 @@
  */
 package be.ugent.maf.cellmissy.gui.plate;
 
+import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
@@ -18,7 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import javax.persistence.PersistenceException;
+import java.util.List;
 import javax.swing.JOptionPane;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -53,26 +54,26 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         bindingGroup = new BindingGroup();
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
-        plateFormatComboBox.setSelectedIndex(-1);
+        plateFormatComboBox.setSelectedIndex(0);
 
         addComponentListener(this);
 
         //create new platePanel
         platePanel = new PlatePanel();
         jPanel2.add(platePanel);
+        PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateFormatComboBox.getSelectedIndex());
+        Dimension parentDimension = jPanel2.getSize();
+        platePanel.initPanel(selectedPlateFormat, parentDimension);
+        repaint();
 
         ActionListener actionListener = new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent evt) {
-                if (plateFormatComboBox.getSelectedIndex() != -1) {
-                    PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateFormatComboBox.getSelectedIndex());
-                    Dimension parentDimension = jPanel2.getSize();
-                    platePanel.initPanel(selectedPlateFormat, parentDimension);
-                    repaint();
-                    PlatePanel.PlateWorker plateWorker = platePanel.new PlateWorker();
-                    plateWorker.execute();
-                }
+                PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateFormatComboBox.getSelectedIndex());
+                Dimension parentDimension = jPanel2.getSize();
+                platePanel.initPanel(selectedPlateFormat, parentDimension);
+                repaint();
             }
         };
 
@@ -107,111 +108,70 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel1 = new javax.swing.JPanel();
-        numberOfRowsTextField = new javax.swing.JTextField();
-        addPlateFormatButton = new javax.swing.JToggleButton();
         plateFormatComboBox = new javax.swing.JComboBox();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        numberOfColsTextField = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        forwardButton = new javax.swing.JButton();
+        validateWellsButton = new javax.swing.JButton();
+        backwardButton = new javax.swing.JButton();
+        finishButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Plate");
-        setMinimumSize(new java.awt.Dimension(600, 700));
+        setMinimumSize(new java.awt.Dimension(900, 700));
         setName("plateFrame"); // NOI18N
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setAutoscrolls(true);
 
-        addPlateFormatButton.setText("add plate format");
-        addPlateFormatButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addPlateFormatButtonActionPerformed(evt);
-            }
-        });
-
         plateFormatComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jLabel2.setText("insert number of columns");
-
-        jLabel3.setText("insert number of rows");
-
-        jLabel1.setText("select a plate format ");
-
-        numberOfColsTextField.addActionListener(new java.awt.event.ActionListener() {
+        plateFormatComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                numberOfColsTextFieldActionPerformed(evt);
+                plateFormatComboBoxActionPerformed(evt);
             }
         });
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel1.setText("Select a plate format ");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(18, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(10, 10, 10)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(numberOfColsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(numberOfRowsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(29, 29, 29)
-                        .addComponent(addPlateFormatButton))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(plateFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(plateFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel3))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(numberOfColsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(5, 5, 5)
-                        .addComponent(numberOfRowsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(addPlateFormatButton)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(plateFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabel1)
+                    .addComponent(plateFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {addPlateFormatButton, jLabel1, jLabel2, jLabel3, numberOfColsTextField, numberOfRowsTextField, plateFormatComboBox});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabel1, plateFormatComboBox});
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 8;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(11, 10, 11, 16);
-        getContentPane().add(jPanel1, gridBagConstraints);
+        getContentPane().add(jPanel1, new java.awt.GridBagConstraints());
+
+        jPanel2.setPreferredSize(new java.awt.Dimension(412, 150));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 366, Short.MAX_VALUE)
+            .addGap(0, 458, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGap(0, 168, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -222,39 +182,102 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jPanel2, gridBagConstraints);
 
+        jPanel3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        forwardButton.setText("Forward");
+        forwardButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                forwardButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
+        jPanel3.add(forwardButton, gridBagConstraints);
+
+        validateWellsButton.setText("Validate Wells");
+        validateWellsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                validateWellsButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 15);
+        jPanel3.add(validateWellsButton, gridBagConstraints);
+
+        backwardButton.setText("Backward");
+        backwardButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backwardButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        jPanel3.add(backwardButton, gridBagConstraints);
+
+        finishButton.setText("Finish");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 14;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 15);
+        jPanel3.add(finishButton, gridBagConstraints);
+
+        jLabel2.setText("Select Forward to proceed. ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridheight = 2;
+        jPanel3.add(jLabel2, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        getContentPane().add(jPanel3, gridBagConstraints);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void numberOfColsTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numberOfColsTextFieldActionPerformed
-        // TODO add your handling code here:}//GEN-LAST:event_numberOfColsTextFieldActionPerformed
+    private void plateFormatComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plateFormatComboBoxActionPerformed
+        // TODO add your handling code here:}//GEN-LAST:event_plateFormatComboBoxActionPerformed
     }
+        private void forwardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardButtonActionPerformed
+            // TODO add your handling code here:
+            //create a new PlateWorker and execute it
+            PlatePanel.PlateWorker plateWorker = platePanel.new PlateWorker();
+            plateWorker.execute();
+    }//GEN-LAST:event_forwardButtonActionPerformed
 
-        private void addPlateFormatButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPlateFormatButtonActionPerformed
-
-        // TODO add your handling code here:         if (!numberOfColsTextField.getText().isEmpty() && !numberOfRowsTextField.getText().isEmpty()) {             try {                 PlateFormat plateFormat = new PlateFormat();                 plateFormat.setNumberOfCols(Integer.parseInt(numberOfColsTextField.getText()));                 plateFormat.setNumberOfRows(Integer.parseInt(numberOfRowsTextField.getText()));                 plateFormat.setFormat(plateFormat.getNumberOfCols() * plateFormat.getNumberOfRows());                 plateService.save(plateFormat);                 // add to the JComboBox too                 plateFormatBindingList.add(plateFormat);                 numberOfColsTextField.setText("");                 numberOfRowsTextField.setText("");             } // handle ConstraintViolationException             catch (PersistenceException e) {                 // popup an error message                 JOptionPane.showMessageDialog(this, "Plate format already present in the db", "Create new plate format problem", JOptionPane.ERROR_MESSAGE);                 numberOfColsTextField.setText("");                 numberOfRowsTextField.setText("");             }         } else {             JOptionPane.showMessageDialog(this, "Please insert data for a new plate format", "Create new plate format problem", JOptionPane.ERROR_MESSAGE);         }     }//GEN-LAST:event_addPlateFormatButtonActionPerformed
-        if (!numberOfColsTextField.getText().isEmpty() && !numberOfRowsTextField.getText().isEmpty()) {
-            try {
-                PlateFormat plateFormat = new PlateFormat();
-                plateFormat.setNumberOfRows(Integer.parseInt(numberOfRowsTextField.getText()));
-                plateFormat.setNumberOfCols(Integer.parseInt(numberOfColsTextField.getText()));
-                plateFormat.setFormat(plateFormat.getNumberOfRows() * plateFormat.getNumberOfCols());
-                plateService.save(plateFormat);
-                // add to the JComboBox too                 
-                plateFormatBindingList.add(plateFormat);
-                numberOfRowsTextField.setText("");
-                numberOfColsTextField.setText("");
-            } // handle ConstraintViolationException            
-            catch (PersistenceException e) {
-                // popup an error message                 
-                JOptionPane.showMessageDialog(this, "Plate format already present in the db", "Create new plate format problem", JOptionPane.ERROR_MESSAGE);
-                numberOfRowsTextField.setText("");
-                numberOfColsTextField.setText("");
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Please insert data for a new plate format", "Create new plate format problem", JOptionPane.ERROR_MESSAGE);
+    private void validateWellsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateWellsButtonActionPerformed
+        // TODO add your handling code here:
+        // get the current imaging type from the platePanel and ask the user to select the first well again
+        List<ImagingType> imagingTypeList = platePanel.getImagingTypeList();
+        int currentImagingTypeIndex = imagingTypeList.indexOf(platePanel.getCurrentImagingType());
+        if (currentImagingTypeIndex < imagingTypeList.size() - 1) {
+            ImagingType currentImagingType = imagingTypeList.get(currentImagingTypeIndex + 1);
+            platePanel.setCurrentImagingType(currentImagingType);
+            JOptionPane.showMessageDialog(this, "Please select first well for " + currentImagingType.getName() + " imaging type", "Selct first well message", JOptionPane.QUESTION_MESSAGE);
         }
-    }
-//    
+        else {
+            // there are no more imaging types, wells can be saved to DB
+            JOptionPane.showMessageDialog(this, "Save wells to DB", "Save wells message", JOptionPane.QUESTION_MESSAGE);
+        }
+    }//GEN-LAST:event_validateWellsButtonActionPerformed
+
+    private void backwardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backwardButtonActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_backwardButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -286,14 +309,15 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JToggleButton addPlateFormatButton;
+    private javax.swing.JButton backwardButton;
+    private javax.swing.JButton finishButton;
+    private javax.swing.JButton forwardButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JTextField numberOfColsTextField;
-    private javax.swing.JTextField numberOfRowsTextField;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JComboBox plateFormatComboBox;
+    private javax.swing.JButton validateWellsButton;
     // End of variables declaration//GEN-END:variables
 }

@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class WellGUI {
 
-    private static final Color[] availableWellColors = {Color.BLACK, Color.GREEN, Color.GRAY, Color.GREEN, Color.ORANGE};
+    private static final Color[] availableWellColors = {Color.BLACK, Color.RED, Color.GRAY, Color.GREEN, Color.ORANGE};
     private List<Color> wellColors;
     private int rowNumber;
     private int columnNumber;
