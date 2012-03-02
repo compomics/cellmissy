@@ -45,6 +45,18 @@ public class PlatePanel extends JPanel implements MouseListener {
     private static final int pixelsBorders = 20;
     private ImagingType currentImagingType;
 
+    public List<ImagingType> getImagingTypeList() {
+        return imagingTypeList;
+    }
+
+    public ImagingType getCurrentImagingType() {
+        return currentImagingType;
+    }
+
+    public void setCurrentImagingType(ImagingType currentImagingType) {
+        this.currentImagingType = currentImagingType;
+    }
+
     public PlatePanel() {
 
         //load applicationContext
@@ -108,12 +120,6 @@ public class PlatePanel extends JPanel implements MouseListener {
             }
         }
         showImagedWells(currentImagingType);
-        int confirm = JOptionPane.showConfirmDialog(this, "Validate the wells?", "Validate wells message", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (confirm == JOptionPane.YES_OPTION) {
-            int currentImagingTypeIndex = imagingTypeList.indexOf(currentImagingType);
-            currentImagingType = imagingTypeList.get(currentImagingTypeIndex + 1);
-            JOptionPane.showMessageDialog(this, "Select first well for " + currentImagingType.getName() + " imaging type", "Selct first well message", JOptionPane.OK_OPTION);
-        }
     }
 
     @Override
@@ -301,7 +307,7 @@ public class PlatePanel extends JPanel implements MouseListener {
         @Override
         protected void done() {
             currentImagingType = imagingTypeList.get(0);
-            JOptionPane.showMessageDialog(PlatePanel.this, "Select first well for " + currentImagingType.getName() + " imaging type", "Selct first well message", JOptionPane.OK_OPTION);
+            JOptionPane.showMessageDialog(PlatePanel.this, "Please select first well for " + currentImagingType.getName() + " imaging type", "Selct first well message", JOptionPane.QUESTION_MESSAGE);
         }
     }
 }
