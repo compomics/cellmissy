@@ -7,6 +7,8 @@ package be.ugent.maf.cellmissy.gui.plate;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
+import be.ugent.maf.cellmissy.gui.mediator.impl.PlateMediatorImpl;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.BasicStroke;
@@ -21,7 +23,6 @@ import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import java.util.List;
-import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -42,8 +43,9 @@ public class PlatePanel extends JPanel implements MouseListener {
     private Well firstWell;
     private List<ImagingType> imagingTypeList;
     private static final int pixelsGrid = 5;
-    private static final int pixelsBorders = 20;
+    private static final int pixelsBorders = 30;
     private ImagingType currentImagingType;
+    private PlateMediator plateMediator;
 
     public List<ImagingType> getImagingTypeList() {
         return imagingTypeList;
@@ -299,15 +301,17 @@ public class PlatePanel extends JPanel implements MouseListener {
         protected Void doInBackground() throws Exception {
             // inizialites wellService
             wellService.init();
-            // get List of imaging types
+            // get the list of imaging types
             imagingTypeList = wellService.getImagingTypes();
             return null;
         }
 
         @Override
         protected void done() {
+            // get first Imaging Type
             currentImagingType = imagingTypeList.get(0);
-            JOptionPane.showMessageDialog(PlatePanel.this, "Please select first well for " + currentImagingType.getName() + " imaging type", "Selct first well message", JOptionPane.QUESTION_MESSAGE);
+            plateMediator = new PlateMediatorImpl();
+            plateMediator.updateInfoLabel();
         }
     }
 }
