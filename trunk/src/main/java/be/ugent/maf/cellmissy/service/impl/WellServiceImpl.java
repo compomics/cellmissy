@@ -34,25 +34,25 @@ public class WellServiceImpl implements WellService {
     @Override
     public List<Well> positionWellsByImagingType(ImagingType imagingType, PlateFormat plateFormat, Well firstWell) {
 
-        List<Well> wellList = new ArrayList<Well>();
+        List<Well> wellList = new ArrayList<>();
 
         List<WellHasImagingType> wellHasImagingTypeList = map.get(imagingType);
         WellHasImagingType firstWellHasImagingType = wellHasImagingTypeList.get(0);
 
-        double xoffset = (Math.abs(firstWellHasImagingType.getXCoordinate()) / plateFormat.getWellSize()) - (firstWell.getColumnNumber() - offset);
-        double yoffset = (Math.abs(firstWellHasImagingType.getYCoordinate()) / plateFormat.getWellSize()) - (firstWell.getRowNumber() - offset);
+        double xOffset = (Math.abs(firstWellHasImagingType.getXCoordinate()) / plateFormat.getWellSize()) - (firstWell.getColumnNumber() - offset);
+        double yOffset = (Math.abs(firstWellHasImagingType.getYCoordinate()) / plateFormat.getWellSize()) - (firstWell.getRowNumber() - offset);
 
         for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
-            double scaledx = Math.abs(wellHasImagingType.getXCoordinate()) / plateFormat.getWellSize();
-            double scaledy = Math.abs(wellHasImagingType.getYCoordinate()) / plateFormat.getWellSize();
+            double scaledX = Math.abs(wellHasImagingType.getXCoordinate()) / plateFormat.getWellSize();
+            double scaledY = Math.abs(wellHasImagingType.getYCoordinate()) / plateFormat.getWellSize();
 
-            double shiftedx = scaledx - xoffset;
-            double shiftedy = scaledy - yoffset;
+            double shiftedX = scaledX - xOffset;
+            double shiftedY = scaledY - yOffset;
 
             // create new Well entity and set its rowNumber and columnNumber
             Well well = new Well();
-            well.setColumnNumber((int) Math.nextUp(shiftedx) + 1);
-            well.setRowNumber((int) Math.nextUp(shiftedy) + 1);
+            well.setColumnNumber((int) Math.nextUp(shiftedX) + 1);
+            well.setRowNumber((int) Math.nextUp(shiftedY) + 1);
             wellList.add(well);
         }
 
@@ -69,7 +69,7 @@ public class WellServiceImpl implements WellService {
     @Override
     public List<ImagingType> getImagingTypes() {
 
-        List<ImagingType> imagingTypeList = new ArrayList<ImagingType>();
+        List<ImagingType> imagingTypeList = new ArrayList<>();
         Set<ImagingType> imagingTypeSet = map.keySet();
 
         for (ImagingType imagingType : imagingTypeSet) {

@@ -42,7 +42,7 @@
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="jPanel3" alignment="0" max="32767" attributes="0"/>
                   <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
-                  <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jPanel1" alignment="0" pref="417" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -227,7 +227,7 @@
                       <Component id="searchUserLastNameTextField" linkSize="7" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
-                  <Component id="userSearchButton" min="-2" max="-2" attributes="0"/>
+                  <Component id="searchUserButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="127" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -238,7 +238,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
-                          <Component id="userSearchButton" min="-2" max="-2" attributes="0"/>
+                          <Component id="searchUserButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
@@ -269,12 +269,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchUserFirstNameTextFieldActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="userSearchButton">
+        <Component class="javax.swing.JButton" name="searchUserButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Search"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="userSearchButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchUserButtonActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel6">

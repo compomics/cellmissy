@@ -4,11 +4,17 @@
  */
 package be.ugent.maf.cellmissy.gui.mediator;
 
+import javax.swing.JLabel;
+
 /**
  *
  * @author Paola
  */
 public interface PlateMediator {
+
+    void setInfoLabel(JLabel infoLabel);
+
+    void setUpdatedInfo(String updatedInfo);
 
     void updateInfoLabel();
 }

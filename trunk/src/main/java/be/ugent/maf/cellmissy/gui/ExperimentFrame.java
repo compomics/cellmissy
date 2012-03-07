@@ -12,7 +12,7 @@ package be.ugent.maf.cellmissy.gui;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.Project;
-import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl;
+import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
@@ -42,6 +42,7 @@ public class ExperimentFrame extends javax.swing.JFrame {
     private ProjectService projectService;
     private ExperimentService experimentService;
     private ObservableList<Project> projectBindingList;
+    private ObsepFileParser obsepFileParser;
 
     /** Creates new form ExperimentFrame */
     public ExperimentFrame() {
@@ -51,7 +52,8 @@ public class ExperimentFrame extends javax.swing.JFrame {
         ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
         projectService = (ProjectService) context.getBean("projectService");
         experimentService = (ExperimentService) context.getBean("experimentService");
-
+        obsepFileParser = (ObsepFileParser) context.getBean("obsepFileParser");
+        
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, projectJList);
@@ -71,7 +73,7 @@ public class ExperimentFrame extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         projectJList = new javax.swing.JList();
-        createNewExperimentButton = new javax.swing.JButton();
+        createExperimentButton = new javax.swing.JButton();
         experimentNumberLabel = new javax.swing.JLabel();
         experimentNumberTextField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -79,7 +81,7 @@ public class ExperimentFrame extends javax.swing.JFrame {
         purposeLabel = new javax.swing.JLabel();
         dateTextField = new javax.swing.JTextField();
         purposeTextField = new javax.swing.JTextField();
-        parseExperimentManagerFileButton = new javax.swing.JButton();
+        parseObsepFileButton = new javax.swing.JButton();
         durationLabel = new javax.swing.JLabel();
         durationTextField = new javax.swing.JTextField();
         intervalLabel = new javax.swing.JLabel();
@@ -97,10 +99,10 @@ public class ExperimentFrame extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(projectJList);
 
-        createNewExperimentButton.setText("create new Experiment");
-        createNewExperimentButton.addActionListener(new java.awt.event.ActionListener() {
+        createExperimentButton.setText("create experiment");
+        createExperimentButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createNewExperimentButtonActionPerformed(evt);
+                createExperimentButtonActionPerformed(evt);
             }
         });
 
@@ -112,8 +114,8 @@ public class ExperimentFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel2.setText("select a project");
+        jLabel2.setText("Select a project to create a new experiment");
+        jLabel2.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
         dateLabel.setText("date");
 
@@ -131,10 +133,10 @@ public class ExperimentFrame extends javax.swing.JFrame {
             }
         });
 
-        parseExperimentManagerFileButton.setText("parse Experiment Manager file");
-        parseExperimentManagerFileButton.addActionListener(new java.awt.event.ActionListener() {
+        parseObsepFileButton.setText("parse obsep file");
+        parseObsepFileButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                parseExperimentManagerFileButtonActionPerformed(evt);
+                parseObsepFileButtonActionPerformed(evt);
             }
         });
 
@@ -150,9 +152,7 @@ public class ExperimentFrame extends javax.swing.JFrame {
 
         timeFramesLabel.setText("time frames");
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel1.setText("Please fill in experiment number, date and purpose");
-        jLabel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jLabel1.setText("Please fill in number, date and purpose of the experiment");
         jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -161,43 +161,37 @@ public class ExperimentFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(createNewExperimentButton)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 117, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(parseExperimentManagerFileButton)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(timeFramesLabel)
-                                            .addComponent(durationLabel)
-                                            .addComponent(intervalLabel))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(durationTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(intervalTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(timeFramesTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(dateLabel)
-                                            .addComponent(experimentNumberLabel))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(experimentNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(purposeLabel)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(purposeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jLabel2))
+                        .addGap(20, 20, 20)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(createExperimentButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(parseObsepFileButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(180, 180, 180)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(timeFramesLabel)
+                            .addComponent(durationLabel)
+                            .addComponent(intervalLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(durationTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(intervalTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(timeFramesTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(dateLabel)
+                            .addComponent(experimentNumberLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(experimentNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(purposeLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(purposeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
 
@@ -208,40 +202,41 @@ public class ExperimentFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
+                .addGap(26, 26, 26)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(experimentNumberLabel)
+                    .addComponent(experimentNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dateLabel)
+                    .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(purposeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(purposeLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(parseObsepFileButton)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(durationLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(intervalLabel)
+                    .addComponent(intervalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(timeFramesLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(createExperimentButton)
+                .addGap(26, 26, 26))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(44, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(experimentNumberLabel)
-                            .addComponent(experimentNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(dateLabel)
-                            .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(8, 8, 8)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(purposeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(purposeLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(parseExperimentManagerFileButton)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(durationLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(intervalLabel)
-                            .addComponent(intervalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(timeFramesLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(createNewExperimentButton))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(81, 81, 81))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(179, 179, 179))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {dateTextField, experimentNumberTextField, purposeTextField});
@@ -249,14 +244,14 @@ public class ExperimentFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void createNewExperimentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createNewExperimentButtonActionPerformed
+    private void createExperimentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createExperimentButtonActionPerformed
         // TODO add your handling code here:
         if (projectJList.getSelectedValue() != null && !experimentNumberTextField.getText().isEmpty()) {
             int experimentNumber = Integer.parseInt(experimentNumberTextField.getText());
             File projectFolder = new File(projectJList.getSelectedValue().toString());
             Experiment newExperiment = experimentService.createNewExperiment(experimentNumber, projectFolder);
             try {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
                 Date experimentDate = dateFormat.parse(dateTextField.getText());
                 dateTextField.setText("");
                 newExperiment.setExperimentDate(experimentDate);
@@ -276,7 +271,7 @@ public class ExperimentFrame extends javax.swing.JFrame {
         durationTextField.setText("");
         intervalTextField.setText("");
         timeFramesTextField.setText("");
-    }//GEN-LAST:event_createNewExperimentButtonActionPerformed
+    }//GEN-LAST:event_createExperimentButtonActionPerformed
 
     private void experimentNumberTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_experimentNumberTextFieldActionPerformed
         // TODO add your handling code here:
@@ -290,44 +285,36 @@ public class ExperimentFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_purposeTextFieldActionPerformed
 
-    private void parseExperimentManagerFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parseExperimentManagerFileButtonActionPerformed
+    private void parseObsepFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parseObsepFileButtonActionPerformed
         // TODO add your handling code here:
         JFileChooser chooseObsepFile = new JFileChooser();
-        // to select only .obsep files
-        FileFilter obsepFilter = new FileFilter() {
-
-            @Override
-            public boolean accept(File f) {
-                return f.getName().toLowerCase().endsWith(".obsep");
-            }
-
-            @Override
-            public String getDescription() {
-                return (".obsep files");
-            }
-        };
         chooseObsepFile.setFileFilter(obsepFilter);
 
-        //in response to the button click, show open dialog 
+        // in response to the button click, show open dialog 
         int returnVal = chooseObsepFile.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File obsepFile = chooseObsepFile.getSelectedFile();
-            timeFramesTextField.setText(getExperimentInfo(obsepFile).get(0).toString());
-            intervalTextField.setText(getExperimentInfo(obsepFile).get(1).toString());
-            durationTextField.setText(getExperimentInfo(obsepFile).get(2).toString());
-
-
+            obsepFileParser.parseObsepFile(obsepFile);
+            List<Double> experimentInfo = obsepFileParser.getExperimentInfo();
+            timeFramesTextField.setText(experimentInfo.get(0).toString());
+            intervalTextField.setText(experimentInfo.get(1).toString());
+            durationTextField.setText(experimentInfo.get(2).toString());
         } else {
             JOptionPane.showMessageDialog(this, "Open command cancelled by user", "Choose obsep file problem", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_parseExperimentManagerFileButtonActionPerformed
+    }//GEN-LAST:event_parseObsepFileButtonActionPerformed
+    private FileFilter obsepFilter = new FileFilter() {
+        // to select only (.obsep) files
+        @Override
+        public boolean accept(File f) {
+            return f.getName().toLowerCase().endsWith(".obsep");
+        }
 
-    public List<Double> getExperimentInfo(File obsepFile) {
-        ObsepFileParserImpl experimentManagerParserImpl = new ObsepFileParserImpl();
-        experimentManagerParserImpl.parseObsepFile(obsepFile);
-        List<Double> experimentInfo = experimentManagerParserImpl.getExperimentInfo();
-        return experimentInfo;
-    }
+        @Override
+        public String getDescription() {
+            return ("(.obsep)");
+        }
+    };
 
     private void durationTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_durationTextFieldActionPerformed
         // TODO add your handling code here:
@@ -369,7 +356,7 @@ public class ExperimentFrame extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton createNewExperimentButton;
+    private javax.swing.JButton createExperimentButton;
     private javax.swing.JLabel dateLabel;
     private javax.swing.JTextField dateTextField;
     private javax.swing.JLabel durationLabel;
@@ -381,7 +368,7 @@ public class ExperimentFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton parseExperimentManagerFileButton;
+    private javax.swing.JButton parseObsepFileButton;
     private javax.swing.JList projectJList;
     private javax.swing.JLabel purposeLabel;
     private javax.swing.JTextField purposeTextField;

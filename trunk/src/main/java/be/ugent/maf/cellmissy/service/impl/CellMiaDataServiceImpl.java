@@ -20,7 +20,6 @@ import be.ugent.maf.cellmissy.service.MicroscopeDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-// test
 /**
  *
  * @author Paola
@@ -28,8 +27,8 @@ import org.springframework.stereotype.Service;
 @Service("cellMiaDataService")
 public class CellMiaDataServiceImpl implements CellMiaDataService {
 
+    // batch folder
     private File cellMiaFolder;
-    
     @Autowired
     private MicroscopeDataService microscopeDataService;
     @Autowired
@@ -45,28 +44,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
 
         Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = microscopeDataService.processMicroscopeData();
 
-        //define filters to search for cellmia text files
-        FilenameFilter sampleFilter = new FilenameFilter() {
-
-            public boolean accept(File dir, String name) {
-                return name.startsWith("sample");
-            }
-        };
-
-        FilenameFilter resultsFilter = new FilenameFilter() {
-
-            public boolean accept(File dir, String name) {
-                return name.startsWith("results");
-            }
-        };
-
-        FilenameFilter textfilesFilter = new FilenameFilter() {
-
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".txt");
-            }
-        };
-
+        // sample folders
         File[] sampleFiles = cellMiaFolder.listFiles(sampleFilter);
 
         // listFiles does not guarantee any order; sort files in alphabetical order
@@ -78,13 +56,16 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
             for (int i = 0; i < wellHasImagingTypeList.size(); i++) {
                 WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i);
 
-                // iterate trough the folders and look for the text files, read them with cellmia parser
+                // iterate trough the folders and look for the text files, parse the files with cellMiaFileParser
+                // results folders
                 File[] resultsFiles = sampleFiles[i].listFiles(resultsFilter);
                 for (int j = 0; j < resultsFiles.length; j++) {
+                    // text files
                     File[] textFiles = resultsFiles[j].listFiles(textfilesFilter);
 
                     for (File textFile : textFiles) {
 
+                        // parse bulk cell files
                         if (textFile.getName().endsWith("bulkcell.txt")) {
                             List<TimeStep> timeStepList = cellMiaFileParser.parseBulkCellFile(textFile);
                             for (TimeStep timeStep : timeStepList) {
@@ -92,6 +73,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                             }
                             wellHasImagingType.setTimeStepCollection(timeStepList);
 
+                            // parse tracking cells
                         } else if (textFile.getName().endsWith("tracking.txt")) {
                             List<Track> trackList = cellMiaFileParser.parseTrackingFile(textFile);
                             for (Track track : trackList) {
@@ -109,6 +91,27 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
 
         return imagingTypeListOfWellHasImagingTypeMap;
     }
+    /**
+     * set file filters for CellMIA 
+     */
+    private FilenameFilter sampleFilter = new FilenameFilter() {
+
+        public boolean accept(File dir, String name) {
+            return name.startsWith("sample");
+        }
+    };
+    private FilenameFilter resultsFilter = new FilenameFilter() {
+
+        public boolean accept(File dir, String name) {
+            return name.startsWith("results");
+        }
+    };
+    private FilenameFilter textfilesFilter = new FilenameFilter() {
+
+        public boolean accept(File dir, String name) {
+            return name.endsWith(".txt");
+        }
+    };
 
     @Override
     public MicroscopeDataService getMicroscopeDataService() {

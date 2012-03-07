@@ -75,7 +75,7 @@ public class UserFrame extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         searchUserFirstNameTextField = new javax.swing.JTextField();
-        userSearchButton = new javax.swing.JButton();
+        searchUserButton = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         searchUserLastNameTextField = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
@@ -184,10 +184,10 @@ public class UserFrame extends javax.swing.JFrame {
             }
         });
 
-        userSearchButton.setText("Search");
-        userSearchButton.addActionListener(new java.awt.event.ActionListener() {
+        searchUserButton.setText("Search");
+        searchUserButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                userSearchButtonActionPerformed(evt);
+                searchUserButtonActionPerformed(evt);
             }
         });
 
@@ -213,7 +213,7 @@ public class UserFrame extends javax.swing.JFrame {
                     .addComponent(searchUserFirstNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(searchUserLastNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(75, 75, 75)
-                .addComponent(userSearchButton)
+                .addComponent(searchUserButton)
                 .addContainerGap(127, Short.MAX_VALUE))
         );
 
@@ -227,7 +227,7 @@ public class UserFrame extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(33, 33, 33)
-                        .addComponent(userSearchButton))
+                        .addComponent(searchUserButton))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(19, 19, 19)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -313,7 +313,7 @@ public class UserFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -333,7 +333,7 @@ public class UserFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void userSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userSearchButtonActionPerformed
+    private void searchUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchUserButtonActionPerformed
         if (!searchUserFirstNameTextField.getText().isEmpty() && !searchUserLastNameTextField.getText().isEmpty()) {
             User user = userService.findByFullName(searchUserFirstNameTextField.getText(), searchUserLastNameTextField.getText());
             if (user != null) {
@@ -341,7 +341,7 @@ public class UserFrame extends javax.swing.JFrame {
                 searchUserFirstNameTextField.setText("");
                 searchUserLastNameTextField.setText("");
             } else {
-                JOptionPane.showMessageDialog(this, "No user found", "Search user problem", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "No user found", "Search user problem", JOptionPane.INFORMATION_MESSAGE);
                 searchUserFirstNameTextField.setText("");
                 searchUserLastNameTextField.setText("");
             }
@@ -352,7 +352,7 @@ public class UserFrame extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.", "Search user result", JOptionPane.INFORMATION_MESSAGE);
                     searchUserFirstNameTextField.setText("");
                 } else {
-                    JOptionPane.showMessageDialog(this, "No user found", "Search user problem", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "No user found", "Search user problem", JOptionPane.INFORMATION_MESSAGE);
                     searchUserFirstNameTextField.setText("");
                 }
             } else {
@@ -362,7 +362,7 @@ public class UserFrame extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(this, "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.", "Search user result", JOptionPane.INFORMATION_MESSAGE);
                         searchUserLastNameTextField.setText("");
                     } else {
-                        JOptionPane.showMessageDialog(this, "No user found", "Search user problem", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "No user found", "Search user problem", JOptionPane.INFORMATION_MESSAGE);
                         searchUserLastNameTextField.setText("");
                     }
                 } else {
@@ -370,7 +370,7 @@ public class UserFrame extends javax.swing.JFrame {
                 }
             }
         }
-    }//GEN-LAST:event_userSearchButtonActionPerformed
+    }//GEN-LAST:event_searchUserButtonActionPerformed
 
     private void deleteUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteUserButtonActionPerformed
         if (userJList.getSelectedValue() != null) {
@@ -380,7 +380,7 @@ public class UserFrame extends javax.swing.JFrame {
             UserlastNameTextField.setText("");
             UserEmailTextField.setText("");
         } else {
-            JOptionPane.showMessageDialog(this, "Please select a user to delete", "Delete user problem", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select a user to delete", "Delete user problem", JOptionPane.INFORMATION_MESSAGE);
         }
 
     }//GEN-LAST:event_deleteUserButtonActionPerformed
@@ -499,10 +499,10 @@ public class UserFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private be.ugent.maf.cellmissy.entity.User newUser;
+    private javax.swing.JButton searchUserButton;
     private javax.swing.JTextField searchUserFirstNameTextField;
     private javax.swing.JTextField searchUserLastNameTextField;
     private javax.swing.JList userJList;
-    private javax.swing.JButton userSearchButton;
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }
