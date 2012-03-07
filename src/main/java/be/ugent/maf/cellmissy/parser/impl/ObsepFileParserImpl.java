@@ -39,11 +39,9 @@ public class ObsepFileParserImpl implements ObsepFileParser {
             this.unitValue = unitValue;
         }
     }
-
     private Node loopNode;
 
-    public ObsepFileParserImpl(){
-
+    public ObsepFileParserImpl() {
     }
 
     @Override
@@ -73,23 +71,23 @@ public class ObsepFileParserImpl implements ObsepFileParser {
     }
 
     @Override
-    public Map<ImagingType, String> mapImagingTypetoPosList() {
-        Map<ImagingType, String> imagingTypePositionListMap = new HashMap<ImagingType, String>();
+    public Map<ImagingType, String> mapImagingTypetoPositionList() {
+        Map<ImagingType, String> imagingTypeToPositionList = new HashMap<>();
         List<String> posListNames = this.getPosListNames();
         List<ImagingType> imagingInfo = this.getImagingInfo();
 
         for (int i = 0; i < imagingInfo.size(); i++) {
-            imagingTypePositionListMap.put(imagingInfo.get(i), posListNames.get(i));
+            imagingTypeToPositionList.put(imagingInfo.get(i), posListNames.get(i));
         }
 
-        return imagingTypePositionListMap;
+        return imagingTypeToPositionList;
     }
 
     @Override
     public List<Double> getExperimentInfo() {
 
         // create new Experiment entity and set class members
-        List<Double> experimentInfo = new ArrayList<Double>();
+        List<Double> experimentInfo = new ArrayList<>();
         NodeList loopChildNodes = loopNode.getChildNodes();
 
         // get time frame
@@ -98,7 +96,6 @@ public class ObsepFileParserImpl implements ObsepFileParser {
             String repeatTimesVal = repeatTimesAttr.item(i).getNodeValue();
             Double timesFrame = Double.parseDouble(repeatTimesVal);
             experimentInfo.add(timesFrame);
-
         }
 
         // get interval value
@@ -123,9 +120,13 @@ public class ObsepFileParserImpl implements ObsepFileParser {
         return experimentInfo;
     }
 
+    
+    /**
+     * Getting Position List names used in the Experiment
+     * @return a List of String (Position List names)
+     */
     private List<String> getPosListNames() {
-        List<String> posListNames = new ArrayList<String>();
-
+        List<String> posListNames = new ArrayList<>();
         // get "Stage loop" nodes
         List<Node> stageLoopNodes = getChildNodeListByAttributeValue(loopNode, "Stage loop");
         for (int i = 0; i < stageLoopNodes.size(); i++) {
@@ -135,24 +136,26 @@ public class ObsepFileParserImpl implements ObsepFileParser {
                 posListNames.add(posListName);
             }
         }
-
         return posListNames;
     }
 
+    /**
+     * Getting Imaging Types used in the Experiment
+     * @return a List of Imaging Type entities
+     */
     private List<ImagingType> getImagingInfo() {
-        List<ImagingType> imagingTypeList = new ArrayList<ImagingType>();
-
+        List<ImagingType> imagingTypeList = new ArrayList<>();
 
         // get "Stage loop" nodes
         List<Node> stageLoopNodes = getChildNodeListByAttributeValue(loopNode, "Stage loop");
         // get "Image" nodes
-        List<Node> imageNodes = new ArrayList<Node>();
+        List<Node> imageNodes = new ArrayList<>();
         for (int i = 0; i < stageLoopNodes.size(); i++) {
             Node imageNode = getChildNodeByAttributeValue(stageLoopNodes.get(i), "Image");
             imageNodes.add(imageNode);
         }
 
-        // create new imaging type entities and set class members
+        // create new imaging type entitie(s) and set class members
         for (int i = 0; i < imageNodes.size(); i++) {
             ImagingType imagingType = new ImagingType();
             NodeList imageChildNodes = imageNodes.get(i).getChildNodes();
@@ -162,14 +165,12 @@ public class ObsepFileParserImpl implements ObsepFileParser {
             for (int j = 0; j < exposureTimeAttr.getLength(); j++) {
                 String exposureTimeVal = exposureTimeAttr.item(j).getNodeValue();
                 imagingType.setExposureTime(Double.parseDouble(exposureTimeVal));
-
             }
 
             // get exposure time unit
             NamedNodeMap exposureTimeUnitAttr = imageChildNodes.item(1).getFirstChild().getAttributes();
             for (int j = 0; j < exposureTimeUnitAttr.getLength(); j++) {
             }
-
 
             // set name
             NamedNodeMap imageTypeAttr = imageChildNodes.item(4).getFirstChild().getAttributes();
@@ -189,9 +190,7 @@ public class ObsepFileParserImpl implements ObsepFileParser {
 
             // add imaging type entity to the list
             imagingTypeList.add(imagingType);
-
         }
-
         return imagingTypeList;
     }
 
@@ -206,35 +205,43 @@ public class ObsepFileParserImpl implements ObsepFileParser {
         return foundUnit;
     }
 
+    /**
+     * Get a Child Node of the XML document by Attribute Value
+     * @param parentNode
+     * @param attributeValue
+     * @return a Node
+     */
     private Node getChildNodeByAttributeValue(Node parentNode, String attributeValue) {
         NodeList childNodes = parentNode.getChildNodes();
         Node foundNode = null;
         for (int i = 0; i < childNodes.getLength(); i++) {
             NamedNodeMap attributeList = childNodes.item(i).getAttributes();
-
             for (int j = 0; j < attributeList.getLength(); j++) {
                 if (attributeList.item(j).getNodeValue().equals(attributeValue)) {
                     foundNode = childNodes.item(i);
                     break;
                 }
             }
-
         }
         return foundNode;
     }
 
+   /**
+     * Getting a List of Child Nodes by Attribute Value
+     * @param parentNode
+     * @param attributeValue
+     * @return List of Nodes
+     */
     private List<Node> getChildNodeListByAttributeValue(Node parentNode, String attributeValue) {
         NodeList childNodes = parentNode.getChildNodes();
-        List<Node> foundNodes = new ArrayList<Node>();
+        List<Node> foundNodes = new ArrayList<>();
         for (int i = 0; i < childNodes.getLength(); i++) {
             NamedNodeMap attributeList = childNodes.item(i).getAttributes();
-
             for (int j = 0; j < attributeList.getLength(); j++) {
                 if (attributeList.item(j).getNodeValue().equals(attributeValue)) {
                     foundNodes.add(childNodes.item(i));
                 }
             }
-
         }
         return foundNodes;
     }

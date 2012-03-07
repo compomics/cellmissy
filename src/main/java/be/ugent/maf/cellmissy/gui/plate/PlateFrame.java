@@ -12,6 +12,7 @@ package be.ugent.maf.cellmissy.gui.plate;
 
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
+import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Dimension;
@@ -26,6 +27,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -34,6 +36,8 @@ import org.springframework.context.ApplicationContext;
  */
 public class PlateFrame extends javax.swing.JFrame implements ComponentListener {
 
+    @Autowired
+    private PlateMediator plateMediator;
     private PlateService plateService;
     private ObservableList<PlateFormat> plateFormatBindingList;
     private BindingGroup bindingGroup;
@@ -42,7 +46,6 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
     /** Creates new form PlateFrame */
     public PlateFrame() {
         initComponents();
-
         //load applicationContext
         ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
         plateService = (PlateService) context.getBean("plateService");
@@ -59,7 +62,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         addComponentListener(this);
 
         //create new platePanel
-        platePanel = new PlatePanel();
+        platePanel = new PlatePanel(plateMediator);
         middlePanel.add(platePanel);
         PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateFormatComboBox.getSelectedIndex());
         Dimension parentDimension = middlePanel.getSize();
@@ -132,7 +135,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12));
         jLabel1.setText("Select a plate format ");
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
@@ -170,7 +173,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         );
         middlePanelLayout.setVerticalGroup(
             middlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 168, Short.MAX_VALUE)
+            .addGap(0, 159, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -182,7 +185,6 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         getContentPane().add(middlePanel, gridBagConstraints);
         middlePanel.getAccessibleContext().setAccessibleName("");
         middlePanel.getAccessibleContext().setAccessibleDescription("");
-        middlePanel.getAccessibleContext().setAccessibleParent(null);
 
         bottomPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         bottomPanel.setLayout(new java.awt.GridBagLayout());
@@ -228,13 +230,11 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.gridheight = 2;
         bottomPanel.add(infoLabel, gridBagConstraints);
-        infoLabel.getAccessibleContext().setAccessibleParent(null);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         getContentPane().add(bottomPanel, gridBagConstraints);
-        bottomPanel.getAccessibleContext().setAccessibleParent(null);
 
         getAccessibleContext().setAccessibleName("");
 
@@ -249,6 +249,8 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
             if (platePanel.getImagingTypeList() == null) {
                 //create a new PlateWorker and execute it (process first imaging type data)                
                 PlatePanel.PlateWorker plateWorker = platePanel.new PlateWorker();
+                //plateMediator.setInfoLabel(infoLabel);
+                
                 plateWorker.execute();
             } else {
                 List<ImagingType> imagingTypeList = platePanel.getImagingTypeList();

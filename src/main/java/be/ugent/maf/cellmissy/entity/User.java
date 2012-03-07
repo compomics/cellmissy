@@ -47,17 +47,17 @@ public class User implements Serializable {
     @Column(name = "userid")
     private Integer userid;
     @Basic(optional = false)
-    @NotBlank (message = "Please insert user first name")
+    @NotBlank(message = "Please insert user first name")
     @Column(name = "first_name")
     private String firstName;
     @Basic(optional = false)
-    @NotBlank (message = "Please insert user last name")
+    @NotBlank(message = "Please insert user last name")
     @Column(name = "last_name")
     private String lastName;
     @Basic(optional = false)
     @Column(name = "email")
     @Email(message = "Please insert a valid email address")
-    @NotBlank (message = "Please insert an email address")
+    @NotBlank(message = "Please insert an email address")
     private String email;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Collection<Experiment> experimentCollection;

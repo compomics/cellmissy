@@ -35,7 +35,7 @@ public class PositionListParserTest {
 
         File obsepFile = new File(ObsepFileParserTest.class.getClassLoader().getResource("gffp.obsep").getPath());
         obsepFileParser.parseObsepFile(obsepFile);
-        Map<ImagingType, String> imagingTypePositionListMap = obsepFileParser.mapImagingTypetoPosList();
+        Map<ImagingType, String> imagingTypePositionListMap = obsepFileParser.mapImagingTypetoPositionList();
 
         File microscopeFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
         Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = positionListParser.parsePositionList(imagingTypePositionListMap, microscopeFolder);

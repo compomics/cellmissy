@@ -26,7 +26,7 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
 
     @Override
     public List<TimeStep> parseBulkCellFile(File bulkCellFile) {
-        List<TimeStep> timeStepList = new ArrayList<TimeStep>();
+        List<TimeStep> timeStepList = new ArrayList<>();
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(bulkCellFile));
 
@@ -48,7 +48,7 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
                 timeStep.setMajorAxis(Double.parseDouble(splitarray[5]));
                 timeStep.setMinorAxis(Double.parseDouble(splitarray[6]));
 
-                //add timestep to list
+                //add timestep to the list
                 timeStepList.add(timeStep);
             }
         } catch (FileNotFoundException e) {
@@ -62,12 +62,12 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
 
     @Override
     public List<Track> parseTrackingFile(File trackingFile) {
-        List<Track> trackList = new ArrayList<Track>();
+        List<Track> trackList = new ArrayList<>();
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(trackingFile));
 
             Track currentTrack = null;
-            List<TrackPoint> currentTrackPointList = new ArrayList<TrackPoint>();
+            List<TrackPoint> currentTrackPointList = new ArrayList<>();
             int currentTrackID = 0;
 
             String strRead;
@@ -121,7 +121,11 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
         return trackList;
     }
 
-    // create a track point object and set its class members
+    /**
+     * this method creates a TrackPoint object and set its class members
+     * @param splitarray
+     * @return a TrackPoint object
+     */
     private TrackPoint getTrackPoint(String[] splitarray) {
 
         TrackPoint trackpoint = new TrackPoint();

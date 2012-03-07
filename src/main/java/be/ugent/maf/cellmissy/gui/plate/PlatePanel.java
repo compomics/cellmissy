@@ -8,7 +8,6 @@ import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
-import be.ugent.maf.cellmissy.gui.mediator.impl.PlateMediatorImpl;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.BasicStroke;
@@ -23,6 +22,7 @@ import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import java.util.List;
+import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -38,6 +38,8 @@ public class PlatePanel extends JPanel implements MouseListener {
 
     @Autowired
     private WellService wellService;
+    @Autowired
+    private PlateMediator plateMediator;
     private List<WellGUI> wellGUIList;
     private PlateFormat plateFormat;
     private Well firstWell;
@@ -45,7 +47,8 @@ public class PlatePanel extends JPanel implements MouseListener {
     private static final int pixelsGrid = 5;
     private static final int pixelsBorders = 30;
     private ImagingType currentImagingType;
-    private PlateMediator plateMediator;
+    private JLabel infoLabel;
+    private String updatedInfo;
 
     public List<ImagingType> getImagingTypeList() {
         return imagingTypeList;
@@ -59,11 +62,14 @@ public class PlatePanel extends JPanel implements MouseListener {
         this.currentImagingType = currentImagingType;
     }
 
-    public PlatePanel() {
+    public PlatePanel(PlateMediator newPlateMediator) {
+
+        this.plateMediator = newPlateMediator;
 
         //load applicationContext
         ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
         wellService = (WellService) context.getBean("wellService");
+        plateMediator =(PlateMediator) context.getBean("plateMediator");
 
         addMouseListener(this);
     }
@@ -310,8 +316,8 @@ public class PlatePanel extends JPanel implements MouseListener {
         protected void done() {
             // get first Imaging Type
             currentImagingType = imagingTypeList.get(0);
-            plateMediator = new PlateMediatorImpl();
-            plateMediator.updateInfoLabel();
+            // update infoLabel
+            
         }
     }
 }

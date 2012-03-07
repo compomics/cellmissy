@@ -12,7 +12,12 @@ import java.io.File;
  * @author Paola
  */
 public interface ProjectService extends GenericService<Project, Long> {
-    
+
+    /**
+     * this method set up a new project 
+     * @param projectNumber
+     * @param projectDirectory
+     * @return 
+     */
     Project setupProject(String projectNumber, File projectDirectory);
-    
 }

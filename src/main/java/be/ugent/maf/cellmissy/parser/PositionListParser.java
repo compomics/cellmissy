@@ -11,10 +11,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * This interface parses the PositionList(s) used in the Experiment
  * @author Paola
  */
 public interface PositionListParser {
 
-    Map<ImagingType, List<WellHasImagingType>> parsePositionList(Map<ImagingType, String> imagingTypePositionListMap, File microscopeFolder);
+    /**
+     * this method maps the Imaging Types to a List of WellHasImagingType entities
+     * @param imagingTypeToPositionList
+     * @param microscopeFolder
+     * @return a map from ImagingType to a List of WellHasImagingType entities
+     */
+    Map<ImagingType, List<WellHasImagingType>> parsePositionList(Map<ImagingType, String> imagingTypeToPositionList, File microscopeFolder);
 }

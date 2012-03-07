@@ -26,14 +26,14 @@ import org.springframework.stereotype.Service;
 public class PositionListParserImpl implements PositionListParser {
 
     @Override
-    public Map<ImagingType, List<WellHasImagingType>> parsePositionList(Map<ImagingType, String> imagingTypePositionListMap, File microscopeFolder) {
+    public Map<ImagingType, List<WellHasImagingType>> parsePositionList(Map<ImagingType, String> imagingTypeToPositionList, File microscopeFolder) {
 
-        Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = new HashMap<ImagingType, List<WellHasImagingType>>();
+        Map<ImagingType, List<WellHasImagingType>> imagingTypeToWellHasImagingType = new HashMap<>();
 
-        // look for the text files to parse
-        for (ImagingType imagingType : imagingTypePositionListMap.keySet()) {
-            String positionList = imagingTypePositionListMap.get(imagingType);
-            List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<WellHasImagingType>();
+        // in the microscope folder, look for the text files to parse
+        for (ImagingType imagingType : imagingTypeToPositionList.keySet()) {
+            String positionList = imagingTypeToPositionList.get(imagingType);
+            List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
             File[] listFiles = microscopeFolder.listFiles();
             for (int j = 0; j < listFiles.length; j++) {
 
@@ -43,7 +43,7 @@ public class PositionListParserImpl implements PositionListParser {
                         String strRead;
                         while ((strRead = bufferedReader.readLine()) != null) {
 
-                            // create a new WellHasImagingType entity
+                            // for each line of the position list create a new WellHasImagingType entity
                             WellHasImagingType wellHasImagingType = new WellHasImagingType();
 
                             String[] splitarray = strRead.split("\t");
@@ -59,19 +59,20 @@ public class PositionListParserImpl implements PositionListParser {
                             // set wellHasImagingType sequence number
                             wellHasImagingType.setSequenceNumber(wellHasImagingTypeList.size());
 
-                            // set wellHasImagingTypeCollection of imaging type
-                            imagingType.setWellHasImagingTypeCollection(wellHasImagingTypeList);
                         }
+                        // set the Collection of WellHasImagingTypes with the current List
+                        imagingType.setWellHasImagingTypeCollection(wellHasImagingTypeList);
 
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
-                    imagingTypeListOfWellHasImagingTypeMap.put(imagingType, wellHasImagingTypeList);
+                    // fill in the map
+                    imagingTypeToWellHasImagingType.put(imagingType, wellHasImagingTypeList);
                 }
             }
         }
-        return imagingTypeListOfWellHasImagingTypeMap;
+        return imagingTypeToWellHasImagingType;
     }
 }
