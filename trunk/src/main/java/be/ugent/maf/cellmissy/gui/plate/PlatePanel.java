@@ -22,9 +22,7 @@ import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import java.util.List;
-import javax.swing.JLabel;
 import javax.swing.SwingWorker;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -36,9 +34,7 @@ import org.springframework.context.ApplicationContext;
  */
 public class PlatePanel extends JPanel implements MouseListener {
 
-    @Autowired
     private WellService wellService;
-    @Autowired
     private PlateMediator plateMediator;
     private List<WellGUI> wellGUIList;
     private PlateFormat plateFormat;
@@ -47,8 +43,6 @@ public class PlatePanel extends JPanel implements MouseListener {
     private static final int pixelsGrid = 5;
     private static final int pixelsBorders = 30;
     private ImagingType currentImagingType;
-    private JLabel infoLabel;
-    private String updatedInfo;
 
     public List<ImagingType> getImagingTypeList() {
         return imagingTypeList;
@@ -62,14 +56,13 @@ public class PlatePanel extends JPanel implements MouseListener {
         this.currentImagingType = currentImagingType;
     }
 
-    public PlatePanel(PlateMediator newPlateMediator) {
+    public PlatePanel(PlateMediator plateMediator) {
 
-        this.plateMediator = newPlateMediator;
+        this.plateMediator = plateMediator;
 
         //load applicationContext
         ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
         wellService = (WellService) context.getBean("wellService");
-        plateMediator =(PlateMediator) context.getBean("plateMediator");
 
         addMouseListener(this);
     }
@@ -128,6 +121,11 @@ public class PlatePanel extends JPanel implements MouseListener {
             }
         }
         showImagedWells(currentImagingType);
+        if (imagingTypeList.indexOf(currentImagingType) == imagingTypeList.size() - 1) {
+            plateMediator.updateInfoMessage("Click on Finish to save the wells");
+        } else {
+            plateMediator.updateInfoMessage("Click on Forward to proceed with next Imaging Type");
+        }
     }
 
     @Override
@@ -309,6 +307,7 @@ public class PlatePanel extends JPanel implements MouseListener {
             wellService.init();
             // get the list of imaging types
             imagingTypeList = wellService.getImagingTypes();
+            plateMediator.disableFinishButton();
             return null;
         }
 
@@ -316,8 +315,7 @@ public class PlatePanel extends JPanel implements MouseListener {
         protected void done() {
             // get first Imaging Type
             currentImagingType = imagingTypeList.get(0);
-            // update infoLabel
-            
+            plateMediator.updateInfoMessage("Select first well for " + currentImagingType.getName() + " (imaging type " + (imagingTypeList.indexOf(currentImagingType) + 1) + "/" + imagingTypeList.size() + ")");
         }
     }
 }

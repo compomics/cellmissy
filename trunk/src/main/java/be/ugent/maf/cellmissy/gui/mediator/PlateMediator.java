@@ -4,7 +4,8 @@
  */
 package be.ugent.maf.cellmissy.gui.mediator;
 
-import javax.swing.JLabel;
+import be.ugent.maf.cellmissy.gui.ButtonPanel;
+import be.ugent.maf.cellmissy.gui.plate.PlatePanel;
 
 /**
  *
@@ -12,9 +13,15 @@ import javax.swing.JLabel;
  */
 public interface PlateMediator {
 
-    void setInfoLabel(JLabel infoLabel);
+    void setButtonPanel(ButtonPanel buttonPanel);
 
-    void setUpdatedInfo(String updatedInfo);
+    void setPlatePanel(PlatePanel platePanel);
 
-    void updateInfoLabel();
+    void updateInfoMessage(String infoMessage);
+
+    void onForward();
+
+    void disableFinishButton();
+    
+    void enableFinishButton();
 }

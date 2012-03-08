@@ -10,9 +10,10 @@
  */
 package be.ugent.maf.cellmissy.gui.plate;
 
-import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
+import be.ugent.maf.cellmissy.gui.ButtonPanel;
 import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
+import be.ugent.maf.cellmissy.gui.mediator.impl.PlateMediatorImpl;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Dimension;
@@ -20,14 +21,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.util.List;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -36,7 +35,6 @@ import org.springframework.context.ApplicationContext;
  */
 public class PlateFrame extends javax.swing.JFrame implements ComponentListener {
 
-    @Autowired
     private PlateMediator plateMediator;
     private PlateService plateService;
     private ObservableList<PlateFormat> plateFormatBindingList;
@@ -61,13 +59,26 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
 
         addComponentListener(this);
 
-        //create new platePanel
+        plateMediator = new PlateMediatorImpl();
+
+        //create new platePanel and add it to the middlePanel
         platePanel = new PlatePanel(plateMediator);
         middlePanel.add(platePanel);
+
+        // initializes platePanel
         PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateFormatComboBox.getSelectedIndex());
         Dimension parentDimension = middlePanel.getSize();
         platePanel.initPanel(selectedPlateFormat, parentDimension);
         repaint();
+
+        // create new buttonPanel and add it to the bottomPanel
+        ButtonPanel buttonPanel = new ButtonPanel(plateMediator);
+        bottomPanel.add(buttonPanel);
+
+        // set PlatePanel and ButtonPanel of PlateMediator
+        plateMediator.setPlatePanel(platePanel);
+        plateMediator.setButtonPanel(buttonPanel);
+
 
         ActionListener actionListener = new ActionListener() {
 
@@ -81,6 +92,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         };
 
         plateFormatComboBox.addActionListener(actionListener);
+
     }
 
     @Override
@@ -115,15 +127,13 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         jLabel1 = new javax.swing.JLabel();
         middlePanel = new javax.swing.JPanel();
         bottomPanel = new javax.swing.JPanel();
-        forwardButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
-        finishButton = new javax.swing.JButton();
-        infoLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Plate");
+        setAutoRequestFocus(false);
         setMinimumSize(new java.awt.Dimension(800, 600));
         setName("plateFrame"); // NOI18N
+        setResizable(false);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         topPanel.setAutoscrolls(true);
@@ -173,7 +183,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         );
         middlePanelLayout.setVerticalGroup(
             middlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 159, Short.MAX_VALUE)
+            .addGap(0, 145, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -187,50 +197,9 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         middlePanel.getAccessibleContext().setAccessibleDescription("");
 
         bottomPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        bottomPanel.setMinimumSize(new java.awt.Dimension(330, 60));
+        bottomPanel.setPreferredSize(new java.awt.Dimension(330, 60));
         bottomPanel.setLayout(new java.awt.GridBagLayout());
-
-        forwardButton.setText("Forward");
-        forwardButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                forwardButtonActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
-        bottomPanel.add(forwardButton, gridBagConstraints);
-
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        bottomPanel.add(cancelButton, gridBagConstraints);
-
-        finishButton.setText("Finish");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 14;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 6, 0, 15);
-        bottomPanel.add(finishButton, gridBagConstraints);
-
-        infoLabel.setText("Click on Forward to process wells");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.gridheight = 2;
-        bottomPanel.add(infoLabel, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -244,28 +213,6 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
     private void plateFormatComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plateFormatComboBoxActionPerformed
         // TODO add your handling code here:}//GEN-LAST:event_plateFormatComboBoxActionPerformed
     }
-        private void forwardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardButtonActionPerformed
-            // TODO add your handling code here:
-            if (platePanel.getImagingTypeList() == null) {
-                //create a new PlateWorker and execute it (process first imaging type data)                
-                PlatePanel.PlateWorker plateWorker = platePanel.new PlateWorker();
-                //plateMediator.setInfoLabel(infoLabel);
-                
-                plateWorker.execute();
-            } else {
-                List<ImagingType> imagingTypeList = platePanel.getImagingTypeList();
-                int currentImagingTypeIndex = imagingTypeList.indexOf(platePanel.getCurrentImagingType());
-                if (currentImagingTypeIndex < imagingTypeList.size() - 1) {
-                    ImagingType currentImagingType = imagingTypeList.get(currentImagingTypeIndex + 1);
-                    platePanel.setCurrentImagingType(currentImagingType);
-                    infoLabel.setText("Select first well for " + currentImagingType.getName() + " (imaging type " + (imagingTypeList.indexOf(currentImagingType) + 1) + "/" + imagingTypeList.size() + ")");
-                }
-            }
-    }//GEN-LAST:event_forwardButtonActionPerformed
-
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cancelButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -298,10 +245,6 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JButton finishButton;
-    private javax.swing.JButton forwardButton;
-    private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel middlePanel;
     private javax.swing.JComboBox plateFormatComboBox;
