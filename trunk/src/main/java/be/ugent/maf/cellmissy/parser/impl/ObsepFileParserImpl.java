@@ -72,15 +72,16 @@ public class ObsepFileParserImpl implements ObsepFileParser {
 
     @Override
     public Map<ImagingType, String> mapImagingTypetoPositionList() {
-        Map<ImagingType, String> imagingTypeToPositionList = new HashMap<>();
+        // this Map maps ImagingType (keys) to String (names of PositionList files, values)
+        Map<ImagingType, String> imagingTypeToPosListMap = new HashMap<>();
         List<String> posListNames = this.getPosListNames();
         List<ImagingType> imagingInfo = this.getImagingInfo();
 
         for (int i = 0; i < imagingInfo.size(); i++) {
-            imagingTypeToPositionList.put(imagingInfo.get(i), posListNames.get(i));
+            imagingTypeToPosListMap.put(imagingInfo.get(i), posListNames.get(i));
         }
 
-        return imagingTypeToPositionList;
+        return imagingTypeToPosListMap;
     }
 
     @Override

@@ -5,8 +5,10 @@
 package be.ugent.maf.cellmissy.gui.plate;
 
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import java.awt.Color;
 import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,23 +18,23 @@ import java.util.List;
 public class WellGUI {
 
     private static final Color[] availableWellColors = {Color.BLACK, Color.RED, Color.GRAY, Color.GREEN, Color.ORANGE};
-    private List<Color> wellColors;
-    private int rowNumber;
-    private int columnNumber;
+    
     private Well well;
     private List<Ellipse2D> ellipsi;
 
     public WellGUI(int rowNumber, int columnNumber) {
-        this.rowNumber = rowNumber;
-        this.columnNumber = columnNumber;
+        well = new Well();
+        well.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
+        well.setRowNumber(rowNumber);
+        well.setColumnNumber(columnNumber);
     }
 
     public int getRowNumber() {
-        return rowNumber;
+        return well.getRowNumber();
     }
 
     public int getColumnNumber() {
-        return columnNumber;
+        return well.getColumnNumber();
     }
 
     public static Color[] getAvailableWellColors() {
@@ -53,13 +55,5 @@ public class WellGUI {
 
     public void setEllipsi(List<Ellipse2D> ellipsi) {
         this.ellipsi = ellipsi;
-    }
-
-    public List<Color> getWellColors() {
-        return wellColors;
-    }
-
-    public void setWellColors(List<Color> wellColors) {
-        this.wellColors = wellColors;
     }
 }

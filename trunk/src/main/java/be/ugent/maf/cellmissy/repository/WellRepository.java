@@ -4,12 +4,12 @@
  */
 package be.ugent.maf.cellmissy.repository;
 
-import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.entity.Well;
 
 /**
  *
  * @author Paola
  */
-public interface WellHasImagingTypeRepository extends GenericRepository<WellHasImagingType, Long> {
+public interface WellRepository extends GenericRepository<Well, Long> {
     
 }

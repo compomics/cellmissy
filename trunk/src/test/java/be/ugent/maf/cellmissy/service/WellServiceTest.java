@@ -8,7 +8,6 @@ import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import java.util.List;
-import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +25,7 @@ public class WellServiceTest {
 
     @Autowired
     private WellService wellService;
+    private List<Well> wellList;
 
     @Test
     public void testWellService() {
@@ -42,7 +42,7 @@ public class WellServiceTest {
 
         List<ImagingType> imagingTypeList = wellService.getImagingTypes();
         for (ImagingType imagingType : imagingTypeList) {
-            List<Well> wellList = wellService.positionWellsByImagingType(imagingType, plateFormat, firstWell);
+            wellService.positionWellsByImagingType(wellList, imagingType, plateFormat, firstWell);
             assertTrue(!wellList.isEmpty());
         }
 

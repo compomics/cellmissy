@@ -5,11 +5,12 @@
 package be.ugent.maf.cellmissy.gui.mediator.impl;
 
 import be.ugent.maf.cellmissy.entity.ImagingType;
+import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.ButtonPanel;
 import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
 import be.ugent.maf.cellmissy.gui.plate.PlatePanel;
+import be.ugent.maf.cellmissy.gui.plate.WellGUI;
 import java.util.List;
-import javax.swing.JButton;
 
 /**
  *
@@ -52,12 +53,16 @@ public class PlateMediatorImpl implements PlateMediator {
     }
 
     @Override
+    public void enableFinishButton() {
+        buttonPanel.getFinishButton().setEnabled(true);
+    }
+
+    @Override
     public void disableFinishButton() {
         buttonPanel.getFinishButton().setEnabled(false);
     }
 
     @Override
-    public void enableFinishButton() {
-        buttonPanel.getFinishButton().setEnabled(true);
+    public void saveWells() {
     }
 }
