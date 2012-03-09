@@ -24,4 +24,6 @@ public interface PlateMediator {
     void disableFinishButton();
     
     void enableFinishButton();
+        
+    void saveWells();
 }

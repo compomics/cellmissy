@@ -42,7 +42,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
     @Override
     public Map<ImagingType, List<WellHasImagingType>> processCellMiaData() {
 
-        Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = microscopeDataService.processMicroscopeData();
+        Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = microscopeDataService.processMicroscopeData();
 
         // sample folders
         File[] sampleFiles = cellMiaFolder.listFiles(sampleFilter);
@@ -50,8 +50,8 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
         // listFiles does not guarantee any order; sort files in alphabetical order
         Arrays.sort(sampleFiles);
 
-        for (ImagingType imagingType : imagingTypeListOfWellHasImagingTypeMap.keySet()) {
-            List<WellHasImagingType> wellHasImagingTypeList = imagingTypeListOfWellHasImagingTypeMap.get(imagingType);
+        for (ImagingType imagingType : imagingTypeMap.keySet()) {
+            List<WellHasImagingType> wellHasImagingTypeList = imagingTypeMap.get(imagingType);
 
             for (int i = 0; i < wellHasImagingTypeList.size(); i++) {
                 WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i);
@@ -89,7 +89,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
             }
         }
 
-        return imagingTypeListOfWellHasImagingTypeMap;
+        return imagingTypeMap;
     }
     /**
      * set file filters for CellMIA 

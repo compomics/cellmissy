@@ -37,10 +37,10 @@ public class MicroscopeDataServiceImpl implements MicroscopeDataService {
     @Override
     public Map<ImagingType, List<WellHasImagingType>> processMicroscopeData() {
 
-        Map<ImagingType, String> imagingTypeToPositionList = obsepFileParser.mapImagingTypetoPositionList();
+        Map<ImagingType, String> imagingTypeToPosListMap = obsepFileParser.mapImagingTypetoPositionList();
 
-        Map<ImagingType, List<WellHasImagingType>> imagingTypeToWellHasImagingType = positionListParser.parsePositionList(imagingTypeToPositionList, microscopeFolder);
+        Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = positionListParser.parsePositionList(imagingTypeToPosListMap, microscopeFolder);
 
-        return imagingTypeToWellHasImagingType;
+        return imagingTypeMap;
     }
 }

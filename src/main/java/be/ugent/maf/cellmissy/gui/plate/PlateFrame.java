@@ -78,7 +78,8 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         // set PlatePanel and ButtonPanel of PlateMediator
         plateMediator.setPlatePanel(platePanel);
         plateMediator.setButtonPanel(buttonPanel);
-
+        // disable Finish button
+        plateMediator.disableFinishButton();
 
         ActionListener actionListener = new ActionListener() {
 

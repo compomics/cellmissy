@@ -51,6 +51,7 @@ public class ButtonPanel extends javax.swing.JPanel {
         finishButton = new javax.swing.JButton();
         infoLabel = new javax.swing.JLabel();
 
+        setPreferredSize(new java.awt.Dimension(330, 70));
         setLayout(new java.awt.GridBagLayout());
 
         forwardButton.setText("Forward");
@@ -61,7 +62,7 @@ public class ButtonPanel extends javax.swing.JPanel {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.ipadx = 10;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(forwardButton, gridBagConstraints);
@@ -73,29 +74,36 @@ public class ButtonPanel extends javax.swing.JPanel {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.ipadx = 10;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(cancelButton, gridBagConstraints);
 
         finishButton.setText("Finish");
+        finishButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                finishButtonActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.ipadx = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(finishButton, gridBagConstraints);
 
         infoLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         infoLabel.setText("Click on Forward to process wells");
         infoLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         infoLabel.setName(""); // NOI18N
-        infoLabel.setPreferredSize(new java.awt.Dimension(330, 35));
+        infoLabel.setPreferredSize(new java.awt.Dimension(330, 70));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.ipady = 10;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipady = 15;
         add(infoLabel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -107,6 +115,9 @@ public class ButtonPanel extends javax.swing.JPanel {
         private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // TODO add your handling code here:}//GEN-LAST:event_cancelButtonActionPerformed
     }
+        private void finishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishButtonActionPerformed
+            plateMediator.saveWells();
+    }//GEN-LAST:event_finishButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton finishButton;
