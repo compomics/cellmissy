@@ -6,7 +6,6 @@ package be.ugent.maf.cellmissy.gui.plate;
 
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
-import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
@@ -36,7 +35,7 @@ public class PlatePanel extends JPanel implements MouseListener {
 
     private WellService wellService;
     private PlateMediator plateMediator;
-    private List<WellGUI> wellGUIList;
+    private List<WellGui> wellGuiList;
     private PlateFormat plateFormat;
     private List<ImagingType> imagingTypeList;
     private static final int pixelsGrid = 5;
@@ -59,6 +58,10 @@ public class PlatePanel extends JPanel implements MouseListener {
         return wellService;
     }
 
+    public List<WellGui> getWellGuiList() {
+        return wellGuiList;
+    }
+
     public PlatePanel(PlateMediator plateMediator) {
 
         this.plateMediator = plateMediator;
@@ -72,7 +75,7 @@ public class PlatePanel extends JPanel implements MouseListener {
 
     public void initPanel(PlateFormat plateFormat, Dimension parentDimension) {
         this.plateFormat = plateFormat;
-        wellGUIList = new ArrayList<>();
+        wellGuiList = new ArrayList<>();
 
         doResize(parentDimension);
     }
@@ -85,28 +88,30 @@ public class PlatePanel extends JPanel implements MouseListener {
         // width and heigth of squares around wells (size)
         int wellSize = (int) ((double) (this.getWidth()) - ((plateFormat.getNumberOfCols() - 1) * pixelsGrid) - (2 * pixelsBorders)) / plateFormat.getNumberOfCols();
 
-        if (wellGUIList.isEmpty()) {
+        if (wellGuiList.isEmpty()) {
             drawWells(wellSize, g);
         } else {
             reDrawWells(wellSize, g);
         }
     }
 
-    // if the mouse has been pressed and released on a well, change its color (first well has been selected) and show imaged wells
+    // if the mouse has been pressed and released on a wellGui, set it as firstWellGui and show imaged wells
     @Override
     public void mouseClicked(MouseEvent e) {
-        WellGUI firstWellGui = null;
-        for (WellGUI wellGUI : wellGUIList) {
+        WellGui firstWellGui = null;
+        for (WellGui wellGUI : wellGuiList) {
             List<Ellipse2D> ellipsi = wellGUI.getEllipsi();
             if ((e.getButton() == 1) && ellipsi.get(0).contains(e.getX(), e.getY())) {
                 firstWellGui = wellGUI;
+                break;
             }
         }
 
         showImagedWells(firstWellGui);
 
+        // update info label
         if (imagingTypeList.indexOf(currentImagingType) == imagingTypeList.size() - 1) {
-            // there are no more imaging types, save the wells to the DB
+            // there are no more imaging types to process, save the wells to the DB
             plateMediator.updateInfoMessage("Click on Finish to save the wells");
             // enable Finish button
             plateMediator.enableFinishButton();
@@ -132,7 +137,7 @@ public class PlatePanel extends JPanel implements MouseListener {
     public void mouseExited(MouseEvent e) {
     }
 
-    // draw the wells for the first time - wells color is set to default (first item of wellGUI-AvailableColors)
+    // draw the wells for the first time - wells color is set to default
     public void drawWells(int wellSize, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
@@ -143,17 +148,21 @@ public class PlatePanel extends JPanel implements MouseListener {
                 int topLeftX = (int) Math.round(wellSize * j + (j + 1) * pixelsGrid + pixelsBorders);
                 int topLeftY = (int) Math.round(wellSize * i + (i + 1) * pixelsGrid + pixelsBorders);
 
-                WellGUI wellGUI = new WellGUI(i + 1, j + 1);
+                List<Ellipse2D> ellipsi = new ArrayList<>();
+
+                // create new WellGui object (rowNumber, columnNumber)
+                WellGui wellGui = new WellGui(i + 1, j + 1);
+                // create new Ellipse2D object to draw the well
                 Ellipse2D ellipse2D = new Ellipse2D.Double(topLeftX, topLeftY, wellSize, wellSize);
 
-                Color defaultColor = WellGUI.getAvailableWellColors()[0];
-                List<Ellipse2D> ellipsi = new ArrayList<>();
                 ellipsi.add(ellipse2D);
-                wellGUI.setEllipsi(ellipsi);
+                wellGui.setEllipsi(ellipsi);
+                // wells drawn for the first time are always shown in default color
+                Color defaultColor = WellGui.getAvailableWellColors()[0];
                 g2d.setColor(defaultColor);
                 g2d.fill(ellipse2D);
 
-                wellGUIList.add(wellGUI);
+                wellGuiList.add(wellGui);
 
                 if (i == 0 || j == 0) {
                     // draw the labels on the plate
@@ -163,13 +172,13 @@ public class PlatePanel extends JPanel implements MouseListener {
         }
     }
 
-    // re-draw the wells if rezise event occours (keep color(s) of the wells)
+    // this method takes into account resize event, using wellSize variable ----- to be changed
     public void reDrawWells2(int wellSize, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
 
-        // a list of WellGUI objects is present, iterate through it
-        for (WellGUI wellGUI : wellGUIList) {
+        // a list of WellGUI objects is present, iterate through them
+        for (WellGui wellGUI : wellGuiList) {
             List<Ellipse2D> ellipsi = wellGUI.getEllipsi();
 
             for (int i = 0; i < ellipsi.size(); i++) {
@@ -179,8 +188,8 @@ public class PlatePanel extends JPanel implements MouseListener {
                 ellipse2D = new Ellipse2D.Double(topLeftX, topLeftY, wellSize, wellSize);
                 g2d.draw(ellipse2D);
 
-                // if a color of a wellGUI has been changed, keep track of it when resizing
-                g2d.setColor(WellGUI.getAvailableWellColors()[i]);
+                // if a color of a wellGui has been changed, keep track of it when resizing
+                g2d.setColor(WellGui.getAvailableWellColors()[i]);
                 g2d.fill(ellipse2D);
             }
 
@@ -196,23 +205,21 @@ public class PlatePanel extends JPanel implements MouseListener {
     public void reDrawWells(int wellSize, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
-
         // a list of WellGUI objects is present, iterate through it
-        for (WellGUI wellGUI : wellGUIList) {
+        for (WellGui wellGUI : wellGuiList) {
             List<Ellipse2D> ellipsi = wellGUI.getEllipsi();
 
             for (int i = 0; i < ellipsi.size(); i++) {
                 Ellipse2D ellipse2D = ellipsi.get(i);
                 g2d.draw(ellipse2D);
 
-                // if a color of a wellGUI has been changed, keep track of it when resizing
-                if(wellGUI.getWell().getWellHasImagingTypeCollection().size() == 0){
-                    g2d.setColor(WellGUI.getAvailableWellColors()[0]);
+                // if a color of a wellGui has been changed, keep track of it when resizing
+                if (wellGUI.getWell().getWellHasImagingTypeCollection().isEmpty()) {
+                    g2d.setColor(WellGui.getAvailableWellColors()[0]);
+                } else {
+                    g2d.setColor(WellGui.getAvailableWellColors()[i + 1]);
                 }
-                else{
-                    g2d.setColor(WellGUI.getAvailableWellColors()[i + 1]);
-                }
-                
+
                 g2d.fill(ellipse2D);
             }
 
@@ -282,25 +289,28 @@ public class PlatePanel extends JPanel implements MouseListener {
         }
     }
 
-    private void showImagedWells(WellGUI firstWellGUI) {
-        // position the wells for each imaging type
-        wellService.updateWellGUIListWithImagingType(currentImagingType, plateFormat, firstWellGUI.getWell(), wellGUIList);
-        for (WellGUI wellGUI : wellGUIList) {
-            if (wellGUI.getWell().getWellHasImagingTypeCollection().size() == imagingTypeList.indexOf(currentImagingType) + 1) {
-                if (imagingTypeList.indexOf(currentImagingType) != 0) {
-                    List<Ellipse2D> ellipsi = wellGUI.getEllipsi();
-                    Ellipse2D ellipse2D = ellipsi.get(imagingTypeList.indexOf(currentImagingType) - 1);
+    private void showImagedWells(WellGui firstWellGUI) {
+        // update WellGuiList and show imaged wells positions on the plate
+        wellService.updateWellGuiListWithImagingType(currentImagingType, plateFormat, firstWellGUI, wellGuiList);
+        int currentImagingTypeIndex = imagingTypeList.indexOf(currentImagingType);
+        for (WellGui wellGui : wellGuiList) {
+            if (wellGui.getWell().getWellHasImagingTypeCollection().size() == currentImagingTypeIndex + 1) {
+                if (currentImagingTypeIndex != 0) {
+                    List<Ellipse2D> ellipsi = wellGui.getEllipsi();
+                    // get the bigger ellipsi and calculate factors for the new ones (concentric wells)
+                    Ellipse2D ellipse2D = ellipsi.get(currentImagingTypeIndex - 1);
                     double size = ellipse2D.getHeight();
-                    double newSize = (size / imagingTypeList.size()) * (imagingTypeList.size() - imagingTypeList.indexOf(currentImagingType));
+                    double newSize = (size / imagingTypeList.size()) * (imagingTypeList.size() - currentImagingTypeIndex);
                     double newTopLeftX = ellipse2D.getCenterX() - (newSize / 2);
                     double newTopLeftY = ellipse2D.getCenterY() - (newSize / 2);
 
                     Ellipse2D newEllipse2D = new Ellipse2D.Double(newTopLeftX, newTopLeftY, newSize, newSize);
-
+                    // add the new Ellipse2D to the ellipsi List
                     ellipsi.add(newEllipse2D);
                 }
             }
         }
+        // this calls the paintComponent method
         this.repaint();
     }
 
