@@ -9,8 +9,10 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.ButtonPanel;
 import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
 import be.ugent.maf.cellmissy.gui.plate.PlatePanel;
-import be.ugent.maf.cellmissy.gui.plate.WellGUI;
+import be.ugent.maf.cellmissy.gui.plate.WellGui;
+import be.ugent.maf.cellmissy.repository.WellRepository;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -37,16 +39,21 @@ public class PlateMediatorImpl implements PlateMediator {
 
     @Override
     public void onForward() {
+        // process first Imaging Type data:
+        // if ImagingTypeList is null, create a new PlateWorker and execute it             
         if (platePanel.getImagingTypeList() == null) {
-            //create a new PlateWorker and execute it (process first imaging type data)                
             PlatePanel.PlateWorker plateWorker = platePanel.new PlateWorker();
             plateWorker.execute();
         } else {
+            // forward to next Imaging Type
             List<ImagingType> imagingTypeList = platePanel.getImagingTypeList();
             int currentImagingTypeIndex = imagingTypeList.indexOf(platePanel.getCurrentImagingType());
+            // check if there are still more Imaging Types
             if (currentImagingTypeIndex < imagingTypeList.size() - 1) {
+                // get next Imaging Type
                 ImagingType currentImagingType = imagingTypeList.get(currentImagingTypeIndex + 1);
                 platePanel.setCurrentImagingType(currentImagingType);
+                // update info Label
                 buttonPanel.getInfoLabel().setText("Select first well for " + currentImagingType.getName() + " (imaging type " + (imagingTypeList.indexOf(currentImagingType) + 1) + "/" + imagingTypeList.size() + ")");
             }
         }
@@ -64,5 +71,12 @@ public class PlateMediatorImpl implements PlateMediator {
 
     @Override
     public void saveWells() {
+        List<WellGui> wellGuiList = platePanel.getWellGuiList();
+        for (WellGui wellGui : wellGuiList) {
+            Well well = wellGui.getWell();
+            if (!well.getWellHasImagingTypeCollection().isEmpty()) {
+                platePanel.getWellService().save(wellGui.getWell());
+            }
+        }
     }
 }

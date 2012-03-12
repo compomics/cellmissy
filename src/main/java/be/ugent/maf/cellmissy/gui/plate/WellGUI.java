@@ -12,17 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * This class wraps the Well entity class and it is used in the Plate GUI
  * @author Paola
  */
-public class WellGUI {
+public class WellGui {
 
     private static final Color[] availableWellColors = {Color.BLACK, Color.RED, Color.GRAY, Color.GREEN, Color.ORANGE};
     
     private Well well;
     private List<Ellipse2D> ellipsi;
 
-    public WellGUI(int rowNumber, int columnNumber) {
+    public WellGui(int rowNumber, int columnNumber) {
         well = new Well();
         well.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
         well.setRowNumber(rowNumber);
