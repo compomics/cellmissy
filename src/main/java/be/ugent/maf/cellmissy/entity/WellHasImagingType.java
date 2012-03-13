@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "WellHasImagingType.findByXCoordinate", query = "SELECT w FROM WellHasImagingType w WHERE w.xCoordinate = :xCoordinate"),
     @NamedQuery(name = "WellHasImagingType.findByYCoordinate", query = "SELECT w FROM WellHasImagingType w WHERE w.yCoordinate = :yCoordinate")})
 public class WellHasImagingType implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,7 +54,7 @@ public class WellHasImagingType implements Serializable {
     @ManyToOne
     private Well lIdwell;
     @JoinColumn(name = "l_idimaging_type", referencedColumnName = "imaging_typeid")
-    @ManyToOne(optional = true)
+    @ManyToOne(cascade = CascadeType.ALL, optional = true)
     private ImagingType imagingType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "wellHasImagingType")
     private Collection<TimeStep> timeStepCollection;
@@ -106,7 +107,7 @@ public class WellHasImagingType implements Serializable {
     public void setLIdwell(Well lIdwell) {
         this.lIdwell = lIdwell;
     }
-    
+
     public ImagingType getImagingType() {
         return imagingType;
     }
@@ -114,7 +115,7 @@ public class WellHasImagingType implements Serializable {
     public void setImagingType(ImagingType imagingType) {
         this.imagingType = imagingType;
     }
-    
+
     @XmlTransient
     public Collection<TimeStep> getTimeStepCollection() {
         return timeStepCollection;
@@ -157,5 +158,4 @@ public class WellHasImagingType implements Serializable {
     public String toString() {
         return "be.ugent.maf.cellmissy.entity.WellHasImagingType[ wellHasImagingTypeid=" + wellHasImagingTypeid + " ]";
     }
-    
 }
