@@ -74,8 +74,10 @@ public class PlateMediatorImpl implements PlateMediator {
         List<WellGui> wellGuiList = platePanel.getWellGuiList();
         for (WellGui wellGui : wellGuiList) {
             Well well = wellGui.getWell();
+            // if the well was imaged, save it to DB
             if (!well.getWellHasImagingTypeCollection().isEmpty()) {
-                platePanel.getWellService().save(wellGui.getWell());
+                platePanel.getWellService().save(well);
+                break;
             }
         }
     }

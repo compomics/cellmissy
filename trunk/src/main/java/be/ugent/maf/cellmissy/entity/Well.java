@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.entity;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -44,7 +45,7 @@ public class Well implements Serializable {
     private Integer columnNumber;
     @Column(name = "row_number")
     private Integer rowNumber;
-    @OneToMany(mappedBy = "lIdwell")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "lIdwell")
     private Collection<WellHasImagingType> wellHasImagingTypeCollection;
     @JoinColumn(name = "l_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = true)

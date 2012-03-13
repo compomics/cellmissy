@@ -56,6 +56,7 @@ public class WellServiceImpl implements WellService {
 
             WellGui wellGui = getWellGuiByCoords(wellGuiList, shiftedX, shiftedY);
             wellGui.getWell().getWellHasImagingTypeCollection().add(wellHasImagingType);
+            wellHasImagingType.setLIdwell(wellGui.getWell());
         }
     }
 
