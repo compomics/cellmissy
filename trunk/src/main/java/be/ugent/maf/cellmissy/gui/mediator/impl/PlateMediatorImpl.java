@@ -77,7 +77,6 @@ public class PlateMediatorImpl implements PlateMediator {
             // if the well was imaged, save it to DB
             if (!well.getWellHasImagingTypeCollection().isEmpty()) {
                 platePanel.getWellService().save(well);
-                break;
             }
         }
     }
