@@ -30,20 +30,8 @@ public class WellServiceTest {
     public void testWellService() {
 
         wellService.init();
-
-        PlateFormat plateFormat = new PlateFormat();
-        plateFormat.setFormat(96);
-        plateFormat.setWellSize(8991.880909);
-
-        Well firstWell = new Well();
-        firstWell.setColumnNumber(4);
-        firstWell.setRowNumber(2);
-
         List<ImagingType> imagingTypeList = wellService.getImagingTypes();
-        for (ImagingType imagingType : imagingTypeList) {
-            assertTrue(!imagingTypeList.isEmpty());
-        }
-
+        assertTrue(!imagingTypeList.isEmpty());
 
     }
 }
