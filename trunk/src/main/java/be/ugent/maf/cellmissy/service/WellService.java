@@ -8,7 +8,6 @@ import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
-import java.io.Serializable;
 import java.util.List;
 
 /**

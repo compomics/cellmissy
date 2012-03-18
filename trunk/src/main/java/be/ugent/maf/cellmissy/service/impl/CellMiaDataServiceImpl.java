@@ -45,6 +45,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
         Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = microscopeDataService.processMicroscopeData();
 
         // sample folders
+        // the number of sampleFiles is equal to the number of WellHasImagingType entities for an experiment
         File[] sampleFiles = cellMiaFolder.listFiles(sampleFilter);
 
         // listFiles does not guarantee any order; sort files in alphabetical order
@@ -65,7 +66,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
 
                     for (File textFile : textFiles) {
 
-                        // parse bulk cell files
+                        // parse bulk cell file
                         if (textFile.getName().endsWith("bulkcell.txt")) {
                             List<TimeStep> timeStepList = cellMiaFileParser.parseBulkCellFile(textFile);
                             for (TimeStep timeStep : timeStepList) {
@@ -73,17 +74,15 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                             }
                             wellHasImagingType.setTimeStepCollection(timeStepList);
 
-                            // parse tracking cells
+                            // parse tracking cell file
                         } else if (textFile.getName().endsWith("tracking.txt")) {
                             List<Track> trackList = cellMiaFileParser.parseTrackingFile(textFile);
                             for (Track track : trackList) {
                                 track.setWellHasImagingType(wellHasImagingType);
                             }
                             wellHasImagingType.setTrackCollection(trackList);
-
-                        } else {
-                            continue;
                         }
+
                     }
                 }
             }
