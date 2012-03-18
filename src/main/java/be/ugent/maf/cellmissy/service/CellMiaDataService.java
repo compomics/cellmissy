@@ -23,7 +23,7 @@ public interface CellMiaDataService {
     void init(File cellMiaFolder);
 
     /**
-     * this method gets the MicroscopeDataService, which is then used by this interface in the following processCellMiaData() method
+     * this method gets the MicroscopeDataService, which is then used by this interface in the processCellMiaData() method
      * @return MicroscopeDataService instance
      */
     MicroscopeDataService getMicroscopeDataService();
