@@ -33,4 +33,5 @@ public interface CellMiaDataService {
      * @return a map from ImagingType to WellHasImagingType entities
      */
     Map<ImagingType, List<WellHasImagingType>> processCellMiaData();
+
 }

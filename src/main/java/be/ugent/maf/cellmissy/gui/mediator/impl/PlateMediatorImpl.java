@@ -10,9 +10,7 @@ import be.ugent.maf.cellmissy.gui.ButtonPanel;
 import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
 import be.ugent.maf.cellmissy.gui.plate.PlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
-import be.ugent.maf.cellmissy.repository.WellRepository;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *

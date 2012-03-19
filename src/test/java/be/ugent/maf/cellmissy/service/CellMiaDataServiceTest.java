@@ -27,35 +27,28 @@ import java.util.Map;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:mySpringTestXMLConfig.xml")
 public class CellMiaDataServiceTest {
-
+    
     @Autowired
     private CellMiaDataService cellMiaDataService;
-
+    
     @Test
     public void testCellMiaDataService() {
-
+        
         MicroscopeDataService microscopeDataService = cellMiaDataService.getMicroscopeDataService();
         
-        File microscopeFolder = new File(CellMiaDataServiceTest.class.getClassLoader().getResource("position_list_files").getPath());
-        File obsepFile = new File(CellMiaDataServiceTest.class.getClassLoader().getResource("gffp.obsep").getPath());
-
+        File microscopeFolder = new File(PropertiesConfigurationHolder.getInstance().getString("microscopeFolder"));
+        File obsepFile = new File(PropertiesConfigurationHolder.getInstance().getString("obsepFile"));
+        
         microscopeDataService.init(microscopeFolder, obsepFile);
-
+        
         File cellMiaFolder = new File(PropertiesConfigurationHolder.getInstance().getString("cellMiaFolder"));
         cellMiaDataService.init(cellMiaFolder);
-        Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = cellMiaDataService.processCellMiaData();
-
-        Collection<List<WellHasImagingType>> values = imagingTypeListOfWellHasImagingTypeMap.values();
-
-        for (List<WellHasImagingType> list : values) {
-
-            WellHasImagingType wellHasImagingType = list.get(7);
-            Collection<TimeStep> timeStepCollection = wellHasImagingType.getTimeStepCollection();
-            assertEquals(timeStepCollection.size(), 108);
-
-            Collection<Track> trackCollection = wellHasImagingType.getTrackCollection();
-            assertEquals(trackCollection.size(), 80);
+        Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = cellMiaDataService.processCellMiaData();
+        
+        for (ImagingType imagingType : imagingTypeMap.keySet()) {
+            List<WellHasImagingType> list = imagingTypeMap.get(imagingType);
+            WellHasImagingType wellHasImagingType = list.get(0);
+            assertTrue(!wellHasImagingType.getTrackCollection().isEmpty());            
         }
-
     }
 }

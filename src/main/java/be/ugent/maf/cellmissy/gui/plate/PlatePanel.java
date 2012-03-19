@@ -85,7 +85,7 @@ public class PlatePanel extends JPanel implements MouseListener {
 
         super.paintComponent(g);
 
-        // width and heigth of squares around wells (size)
+        // width and heigth of squares around wells (wellSize)
         int wellSize = (int) ((double) (this.getWidth()) - ((plateFormat.getNumberOfCols() - 1) * pixelsGrid) - (2 * pixelsBorders)) / plateFormat.getNumberOfCols();
 
         if (wellGuiList.isEmpty()) {
@@ -158,6 +158,7 @@ public class PlatePanel extends JPanel implements MouseListener {
                 ellipsi.add(ellipse2D);
                 wellGui.setEllipsi(ellipsi);
                 // wells drawn for the first time are always shown in default color
+                // the default color is the first object of the WellGui's AvailableWellColors()List
                 Color defaultColor = WellGui.getAvailableWellColors()[0];
                 g2d.setColor(defaultColor);
                 g2d.fill(ellipse2D);
@@ -206,17 +207,19 @@ public class PlatePanel extends JPanel implements MouseListener {
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
         // a list of WellGUI objects is present, iterate through it
-        for (WellGui wellGUI : wellGuiList) {
-            List<Ellipse2D> ellipsi = wellGUI.getEllipsi();
+        for (WellGui wellGui : wellGuiList) {
+            List<Ellipse2D> ellipsi = wellGui.getEllipsi();
 
             for (int i = 0; i < ellipsi.size(); i++) {
                 Ellipse2D ellipse2D = ellipsi.get(i);
                 g2d.draw(ellipse2D);
 
                 // if a color of a wellGui has been changed, keep track of it when resizing
-                if (wellGUI.getWell().getWellHasImagingTypeCollection().isEmpty()) {
+                // if a well was not imaged, set its color to the default one
+                if (wellGui.getWell().getWellHasImagingTypeCollection().isEmpty()) {
                     g2d.setColor(WellGui.getAvailableWellColors()[0]);
                 } else {
+                    // if it has been imaged, set its color to a different one
                     g2d.setColor(WellGui.getAvailableWellColors()[i + 1]);
                 }
 
@@ -224,8 +227,8 @@ public class PlatePanel extends JPanel implements MouseListener {
             }
 
             // draw the labels on the plate
-            if (wellGUI.getRowNumber() == 1 || wellGUI.getColumnNumber() == 1) {
-                drawPlateLabel(ellipsi.get(0), g2d, wellGUI.getColumnNumber(), wellGUI.getRowNumber());
+            if (wellGui.getRowNumber() == 1 || wellGui.getColumnNumber() == 1) {
+                drawPlateLabel(ellipsi.get(0), g2d, wellGui.getColumnNumber(), wellGui.getRowNumber());
             }
         }
     }
@@ -262,7 +265,7 @@ public class PlatePanel extends JPanel implements MouseListener {
         }
     }
 
-    // set Graphics
+    // set Graphics (implement Rendering process)
     private void setGraphics(Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -270,7 +273,7 @@ public class PlatePanel extends JPanel implements MouseListener {
         g2d.setStroke(stroke);
     }
 
-    // draw numbers (labels) on upper-side and left-side of the plate
+    // draw numbers (plate labels) on upper-side and left-side of the plate
     private void drawPlateLabel(Ellipse2D ellipse2D, Graphics2D g2d, int columnNumber, int rowNumber) {
         Font font = new Font("Arial", Font.BOLD, 12);
         g2d.setFont(font);
