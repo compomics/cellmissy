@@ -33,6 +33,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
     private MicroscopeDataService microscopeDataService;
     @Autowired
     private CellMiaFileParser cellMiaFileParser;
+    private Map<ImagingType, List<WellHasImagingType>> imagingTypeMap;
 
     @Override
     public void init(File cellMiaFolder) {
@@ -42,20 +43,21 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
     @Override
     public Map<ImagingType, List<WellHasImagingType>> processCellMiaData() {
 
-        Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = microscopeDataService.processMicroscopeData();
+        imagingTypeMap = microscopeDataService.processMicroscopeData();
 
         // sample folders
-        // the number of sampleFiles is equal to the number of WellHasImagingType entities for an experiment
+        // the number of sampleFiles is equal to the number of WellHasImagingType entities for one experiment
         File[] sampleFiles = cellMiaFolder.listFiles(sampleFilter);
 
         // listFiles does not guarantee any order; sort files in alphabetical order
         Arrays.sort(sampleFiles);
 
+        int imageTypeStartFolder = 0;
         for (ImagingType imagingType : imagingTypeMap.keySet()) {
             List<WellHasImagingType> wellHasImagingTypeList = imagingTypeMap.get(imagingType);
 
-            for (int i = 0; i < wellHasImagingTypeList.size(); i++) {
-                WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i);
+            for (int i = imageTypeStartFolder; i < wellHasImagingTypeList.size() + imageTypeStartFolder; i++) {
+                WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i - imageTypeStartFolder);
 
                 // iterate trough the folders and look for the text files, parse the files with cellMiaFileParser
                 // results folders
@@ -86,6 +88,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                     }
                 }
             }
+            imageTypeStartFolder += wellHasImagingTypeList.size();
         }
 
         return imagingTypeMap;

@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -34,7 +35,8 @@ import org.springframework.context.ApplicationContext;
  * @author Paola
  */
 public class PlateFrame extends javax.swing.JFrame implements ComponentListener {
-
+    private static final Logger LOG = Logger.getLogger(PlateFrame.class);
+    
     private PlateMediator plateMediator;
     private PlateService plateService;
     private ObservableList<PlateFormat> plateFormatBindingList;
@@ -85,6 +87,8 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
 
             @Override
             public void actionPerformed(ActionEvent evt) {
+                LOG.debug("testing=================================");
+                
                 PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateFormatComboBox.getSelectedIndex());
                 Dimension parentDimension = middlePanel.getSize();
                 platePanel.initPanel(selectedPlateFormat, parentDimension);

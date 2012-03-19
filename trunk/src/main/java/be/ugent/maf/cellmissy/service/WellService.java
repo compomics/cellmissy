@@ -30,8 +30,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @return a List of Well entities
      */
     void updateWellGuiListWithImagingType(ImagingType imagingType, PlateFormat plateFormat, WellGui firstWellGui, List<WellGui> wellGUIList);
-
-    /**
+/**
      * This method gets a list of imaging types from the map in output from CellMiaDataService
      * @return a List of Imaging Types
      */

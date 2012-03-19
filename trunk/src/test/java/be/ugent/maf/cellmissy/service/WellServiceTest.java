@@ -5,8 +5,6 @@
 package be.ugent.maf.cellmissy.service;
 
 import be.ugent.maf.cellmissy.entity.ImagingType;
-import be.ugent.maf.cellmissy.entity.PlateFormat;
-import be.ugent.maf.cellmissy.entity.Well;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,8 +28,6 @@ public class WellServiceTest {
     public void testWellService() {
 
         wellService.init();
-        List<ImagingType> imagingTypeList = wellService.getImagingTypes();
-        assertTrue(!imagingTypeList.isEmpty());
 
     }
 }
