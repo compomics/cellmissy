@@ -82,13 +82,12 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         plateMediator.setButtonPanel(buttonPanel);
         // disable Finish button
         plateMediator.disableFinishButton();
+        plateMediator.hideProgressBar();
 
         ActionListener actionListener = new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent evt) {
-                LOG.debug("testing=================================");
-                
+            public void actionPerformed(ActionEvent evt) {               
                 PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateFormatComboBox.getSelectedIndex());
                 Dimension parentDimension = middlePanel.getSize();
                 platePanel.initPanel(selectedPlateFormat, parentDimension);
@@ -178,7 +177,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
 
         getContentPane().add(topPanel, new java.awt.GridBagConstraints());
 
-        middlePanel.setPreferredSize(new java.awt.Dimension(412, 150));
+        middlePanel.setPreferredSize(new java.awt.Dimension(412, 120));
 
         javax.swing.GroupLayout middlePanelLayout = new javax.swing.GroupLayout(middlePanel);
         middlePanel.setLayout(middlePanelLayout);
@@ -203,7 +202,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
 
         bottomPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         bottomPanel.setMinimumSize(new java.awt.Dimension(330, 60));
-        bottomPanel.setPreferredSize(new java.awt.Dimension(330, 60));
+        bottomPanel.setPreferredSize(new java.awt.Dimension(330, 100));
         bottomPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
