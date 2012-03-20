@@ -11,34 +11,36 @@ import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
 import be.ugent.maf.cellmissy.gui.plate.PlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Paola
  */
 public class PlateMediatorImpl implements PlateMediator {
-
+    
     private ButtonPanel buttonPanel;
     private PlatePanel platePanel;
-
+    private static final Logger LOG = Logger.getLogger(PlateMediator.class);
+    
     public void setButtonPanel(ButtonPanel buttonPanel) {
         this.buttonPanel = buttonPanel;
     }
-
+    
     @Override
     public void setPlatePanel(PlatePanel platePanel) {
         this.platePanel = platePanel;
     }
-
+    
     @Override
     public void updateInfoMessage(String infoMessage) {
         buttonPanel.getInfoLabel().setText(infoMessage);
     }
-
+    
     @Override
     public void onForward() {
         // process first Imaging Type data:
-        // if ImagingTypeList is null, create a new PlateWorker and execute it             
+        // ImagingTypeList is null, create a new PlateWorker and execute it             
         if (platePanel.getImagingTypeList() == null) {
             PlatePanel.PlateWorker plateWorker = platePanel.new PlateWorker();
             plateWorker.execute();
@@ -56,20 +58,21 @@ public class PlateMediatorImpl implements PlateMediator {
             }
         }
     }
-
+    
     @Override
     public void enableFinishButton() {
         buttonPanel.getFinishButton().setEnabled(true);
     }
-
+    
     @Override
     public void disableFinishButton() {
         buttonPanel.getFinishButton().setEnabled(false);
     }
-
+    
     @Override
     public void saveWells() {
         List<WellGui> wellGuiList = platePanel.getWellGuiList();
+        long currentTimeMillis = System.currentTimeMillis();
         for (WellGui wellGui : wellGuiList) {
             Well well = wellGui.getWell();
             // if the well was imaged, save it to DB
@@ -77,5 +80,17 @@ public class PlateMediatorImpl implements PlateMediator {
                 platePanel.getWellService().save(well);
             }
         }
+        long currentTimeMillis1 = System.currentTimeMillis();
+        LOG.debug("Time to save wells: " + ((currentTimeMillis1 - currentTimeMillis) / 1000) + " s");
+    }
+    
+    @Override
+    public void showProgressBar() {
+        buttonPanel.getjProgressBar1().setVisible(true);
+    }
+    
+    @Override
+    public void hideProgressBar() {
+        buttonPanel.getjProgressBar1().setVisible(false);
     }
 }

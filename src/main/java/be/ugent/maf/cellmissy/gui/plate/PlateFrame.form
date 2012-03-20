@@ -96,7 +96,7 @@
     <Container class="javax.swing.JPanel" name="middlePanel">
       <Properties>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[412, 150]"/>
+          <Dimension value="[412, 120]"/>
         </Property>
       </Properties>
       <AccessibilityProperties>
@@ -131,7 +131,7 @@
           <Dimension value="[330, 60]"/>
         </Property>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[330, 60]"/>
+          <Dimension value="[330, 100]"/>
         </Property>
       </Properties>
       <Constraints>

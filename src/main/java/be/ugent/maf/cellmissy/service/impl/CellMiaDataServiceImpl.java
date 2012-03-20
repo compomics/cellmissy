@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import be.ugent.maf.cellmissy.service.MicroscopeDataService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
     @Autowired
     private CellMiaFileParser cellMiaFileParser;
     private Map<ImagingType, List<WellHasImagingType>> imagingTypeMap;
+    private static final Logger LOG = Logger.getLogger(CellMiaDataService.class);
 
     @Override
     public void init(File cellMiaFolder) {
@@ -42,7 +44,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
 
     @Override
     public Map<ImagingType, List<WellHasImagingType>> processCellMiaData() {
-
+        long currentTimeMillis = System.currentTimeMillis();
         imagingTypeMap = microscopeDataService.processMicroscopeData();
 
         // sample folders
@@ -90,7 +92,8 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
             }
             imageTypeStartFolder += wellHasImagingTypeList.size();
         }
-
+        long currentTimeMillis1 = System.currentTimeMillis();
+        LOG.debug("Time to process CellMia data: " + (currentTimeMillis1 - currentTimeMillis) + " ms");
         return imagingTypeMap;
     }
     /**

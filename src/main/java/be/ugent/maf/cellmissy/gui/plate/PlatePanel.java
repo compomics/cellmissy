@@ -321,17 +321,22 @@ public class PlatePanel extends JPanel implements MouseListener {
 
         @Override
         protected Void doInBackground() throws Exception {
-            // inizialites wellService
+            // initializes wellService: CellMiaDataService and MicroscopeDataService are inizialized as well
+            // Imaging Types of the current Experiment are retrieved
             wellService.init();
             // get the list of imaging types
             imagingTypeList = wellService.getImagingTypes();
+            plateMediator.showProgressBar();
             return null;
         }
 
+        // SwingWorker calls this method after the doInBackground method finishes
         @Override
         protected void done() {
+            plateMediator.hideProgressBar();
             // get first Imaging Type
             currentImagingType = imagingTypeList.get(0);
+            // ask the user to select first well for the imaging type
             plateMediator.updateInfoMessage("Select first well for " + currentImagingType.getName() + " (imaging type " + (imagingTypeList.indexOf(currentImagingType) + 1) + "/" + imagingTypeList.size() + ")");
         }
     }

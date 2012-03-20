@@ -13,6 +13,7 @@ package be.ugent.maf.cellmissy.gui;
 import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JProgressBar;
 
 /**
  *
@@ -36,6 +37,10 @@ public class ButtonPanel extends javax.swing.JPanel {
         return finishButton;
     }
 
+    public JProgressBar getjProgressBar1() {
+        return jProgressBar1;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -50,8 +55,9 @@ public class ButtonPanel extends javax.swing.JPanel {
         cancelButton = new javax.swing.JButton();
         finishButton = new javax.swing.JButton();
         infoLabel = new javax.swing.JLabel();
+        jProgressBar1 = new javax.swing.JProgressBar();
 
-        setPreferredSize(new java.awt.Dimension(330, 70));
+        setPreferredSize(new java.awt.Dimension(330, 100));
         setLayout(new java.awt.GridBagLayout());
 
         forwardButton.setText("Forward");
@@ -93,7 +99,7 @@ public class ButtonPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(finishButton, gridBagConstraints);
 
-        infoLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        infoLabel.setFont(new java.awt.Font("Tahoma", 0, 12));
         infoLabel.setText("Click on Forward to process wells");
         infoLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         infoLabel.setName(""); // NOI18N
@@ -105,6 +111,17 @@ public class ButtonPanel extends javax.swing.JPanel {
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.ipady = 15;
         add(infoLabel, gridBagConstraints);
+
+        jProgressBar1.setBorderPainted(false);
+        jProgressBar1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jProgressBar1.setIndeterminate(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipady = 5;
+        add(jProgressBar1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void forwardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardButtonActionPerformed
@@ -123,5 +140,6 @@ public class ButtonPanel extends javax.swing.JPanel {
     private javax.swing.JButton finishButton;
     private javax.swing.JButton forwardButton;
     private javax.swing.JLabel infoLabel;
+    private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables
 }

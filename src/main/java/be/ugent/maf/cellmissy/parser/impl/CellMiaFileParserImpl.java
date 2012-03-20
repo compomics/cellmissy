@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,9 +25,12 @@ import org.springframework.stereotype.Service;
 @Service("cellMiaFileParser")
 public class CellMiaFileParserImpl implements CellMiaFileParser {
 
+    private static final Logger LOG = Logger.getLogger(CellMiaFileParser.class);
+
     @Override
     public List<TimeStep> parseBulkCellFile(File bulkCellFile) {
         List<TimeStep> timeStepList = new ArrayList<>();
+        long currentTimeMillis = System.currentTimeMillis();
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(bulkCellFile));
 
@@ -56,13 +60,15 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
+        long currentTimeMillis1 = System.currentTimeMillis();
+        LOG.debug("Time to parse a Tracking File: " + (currentTimeMillis1 - currentTimeMillis) + " ms");
         return timeStepList;
     }
 
     @Override
     public List<Track> parseTrackingFile(File trackingFile) {
         List<Track> trackList = new ArrayList<>();
+        long currentTimeMillis = System.currentTimeMillis();
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(trackingFile));
 
@@ -117,6 +123,8 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        long currentTimeMillis1 = System.currentTimeMillis();
+        LOG.debug("Time to parse a Bulk Cell File: " + (currentTimeMillis1 - currentTimeMillis) + " ms");
 
         return trackList;
     }
