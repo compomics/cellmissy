@@ -35,8 +35,8 @@ import org.springframework.context.ApplicationContext;
  * @author Paola
  */
 public class PlateFrame extends javax.swing.JFrame implements ComponentListener {
+
     private static final Logger LOG = Logger.getLogger(PlateFrame.class);
-    
     private PlateMediator plateMediator;
     private PlateService plateService;
     private ObservableList<PlateFormat> plateFormatBindingList;
@@ -82,12 +82,12 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         plateMediator.setButtonPanel(buttonPanel);
         // disable Finish button
         plateMediator.disableFinishButton();
-        plateMediator.hideProgressBar();
+        plateMediator.hideInitProgressBar();
 
         ActionListener actionListener = new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent evt) {               
+            public void actionPerformed(ActionEvent evt) {
                 PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateFormatComboBox.getSelectedIndex());
                 Dimension parentDimension = middlePanel.getSize();
                 platePanel.initPanel(selectedPlateFormat, parentDimension);

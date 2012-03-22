@@ -56,4 +56,8 @@ public class WellGui {
     public void setEllipsi(List<Ellipse2D> ellipsi) {
         this.ellipsi = ellipsi;
     }
+    
+    public String toString(){
+        return "row: " + well.getRowNumber() + ", column: " + well.getColumnNumber() + ", numer of wellHasImagingTypes: " + well.getWellHasImagingTypeCollection().size();
+    }
 }

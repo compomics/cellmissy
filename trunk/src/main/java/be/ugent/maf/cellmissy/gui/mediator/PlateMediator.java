@@ -27,7 +27,7 @@ public interface PlateMediator {
         
     void saveWells();
     
-    void showProgressBar();
+    void showInitProgressBar();
     
-    void hideProgressBar();
+    void hideInitProgressBar();
 }

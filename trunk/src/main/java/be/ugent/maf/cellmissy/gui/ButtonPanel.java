@@ -11,6 +11,8 @@
 package be.ugent.maf.cellmissy.gui;
 
 import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
@@ -37,8 +39,21 @@ public class ButtonPanel extends javax.swing.JPanel {
         return finishButton;
     }
 
-    public JProgressBar getjProgressBar1() {
-        return jProgressBar1;
+    public JProgressBar getInitProgressBar() {
+        return initProgressBar;
+    }
+
+    private class InitProgressBarListener implements PropertyChangeListener {
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            String strPropertyName = evt.getPropertyName();
+            if ("progress".equals(strPropertyName)) {
+                initProgressBar.setIndeterminate(false);
+                int progress = (Integer) evt.getNewValue();
+                initProgressBar.setValue(progress);
+            }
+        }
     }
 
     /** This method is called from within the constructor to
@@ -55,7 +70,7 @@ public class ButtonPanel extends javax.swing.JPanel {
         cancelButton = new javax.swing.JButton();
         finishButton = new javax.swing.JButton();
         infoLabel = new javax.swing.JLabel();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        initProgressBar = new javax.swing.JProgressBar();
 
         setPreferredSize(new java.awt.Dimension(330, 100));
         setLayout(new java.awt.GridBagLayout());
@@ -112,16 +127,17 @@ public class ButtonPanel extends javax.swing.JPanel {
         gridBagConstraints.ipady = 15;
         add(infoLabel, gridBagConstraints);
 
-        jProgressBar1.setBorderPainted(false);
-        jProgressBar1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jProgressBar1.setIndeterminate(true);
+        initProgressBar.setBorderPainted(false);
+        initProgressBar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        initProgressBar.setIndeterminate(true);
+        initProgressBar.setStringPainted(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipady = 5;
-        add(jProgressBar1, gridBagConstraints);
+        add(initProgressBar, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void forwardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardButtonActionPerformed
@@ -140,6 +156,6 @@ public class ButtonPanel extends javax.swing.JPanel {
     private javax.swing.JButton finishButton;
     private javax.swing.JButton forwardButton;
     private javax.swing.JLabel infoLabel;
-    private javax.swing.JProgressBar jProgressBar1;
+    private javax.swing.JProgressBar initProgressBar;
     // End of variables declaration//GEN-END:variables
 }

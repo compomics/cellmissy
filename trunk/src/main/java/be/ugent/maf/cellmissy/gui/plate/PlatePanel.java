@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.gui.plate;
 
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
+import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
@@ -19,6 +20,7 @@ import java.awt.RenderingHints;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import javax.swing.JPanel;
 import java.util.List;
 import javax.swing.SwingWorker;
@@ -297,7 +299,7 @@ public class PlatePanel extends JPanel implements MouseListener {
         wellService.updateWellGuiListWithImagingType(currentImagingType, plateFormat, firstWellGUI, wellGuiList);
         int currentImagingTypeIndex = imagingTypeList.indexOf(currentImagingType);
         for (WellGui wellGui : wellGuiList) {
-            if (wellGui.getWell().getWellHasImagingTypeCollection().size() == currentImagingTypeIndex + 1) {
+            if (wellGui.getWell().getWellHasImagingTypeCollection().size() == currentImagingTypeIndex + 1 && containsImagingType(wellGui.getWell().getWellHasImagingTypeCollection(), currentImagingType)) {
                 if (currentImagingTypeIndex != 0) {
                     List<Ellipse2D> ellipsi = wellGui.getEllipsi();
                     // get the bigger ellipsi and calculate factors for the new ones (concentric wells)
@@ -317,23 +319,32 @@ public class PlatePanel extends JPanel implements MouseListener {
         this.repaint();
     }
 
+    private boolean containsImagingType(Collection<WellHasImagingType> wellHasImagingTypes, ImagingType imagingType) {
+        for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
+            if (wellHasImagingType.getImagingType().equals(imagingType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public class PlateWorker extends SwingWorker<Void, Void> {
 
         @Override
         protected Void doInBackground() throws Exception {
-            // initializes wellService: CellMiaDataService and MicroscopeDataService are inizialized as well
-            // Imaging Types of the current Experiment are retrieved
+            plateMediator.showInitProgressBar();
+            // initializes wellService: CellMiaDataService and MicroscopeDataService are also inizialized
+            // Imaging Types of the current Experiment are retrieved and CellMia data are processed (txt files are read and collections are set)
             wellService.init();
             // get the list of imaging types
             imagingTypeList = wellService.getImagingTypes();
-            plateMediator.showProgressBar();
             return null;
         }
 
         // SwingWorker calls this method after the doInBackground method finishes
         @Override
         protected void done() {
-            plateMediator.hideProgressBar();
+            plateMediator.hideInitProgressBar();
             // get first Imaging Type
             currentImagingType = imagingTypeList.get(0);
             // ask the user to select first well for the imaging type
