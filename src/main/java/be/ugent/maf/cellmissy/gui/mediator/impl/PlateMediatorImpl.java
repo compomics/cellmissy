@@ -85,12 +85,12 @@ public class PlateMediatorImpl implements PlateMediator {
     }
     
     @Override
-    public void showProgressBar() {
-        buttonPanel.getjProgressBar1().setVisible(true);
+    public void showInitProgressBar() {
+        buttonPanel.getInitProgressBar().setVisible(true);
     }
     
     @Override
-    public void hideProgressBar() {
-        buttonPanel.getjProgressBar1().setVisible(false);
+    public void hideInitProgressBar() {
+        buttonPanel.getInitProgressBar().setVisible(false);
     }
 }
