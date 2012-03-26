@@ -93,7 +93,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
             imageTypeStartFolder += wellHasImagingTypeList.size();
         }
         long currentTimeMillis1 = System.currentTimeMillis();
-        LOG.debug("Time to process CellMia data: " + (currentTimeMillis1 - currentTimeMillis) + " ms");
+        LOG.debug("CellMia data processed in " + ((currentTimeMillis1 - currentTimeMillis) / 1000) + "s");
         return imagingTypeMap;
     }
     /**

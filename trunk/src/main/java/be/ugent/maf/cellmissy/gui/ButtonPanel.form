@@ -85,6 +85,7 @@
           <Color id="Default Cursor"/>
         </Property>
         <Property name="indeterminate" type="boolean" value="true"/>
+        <Property name="string" type="java.lang.String" value=""/>
         <Property name="stringPainted" type="boolean" value="true"/>
       </Properties>
       <Constraints>

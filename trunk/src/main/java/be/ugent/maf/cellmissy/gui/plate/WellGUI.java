@@ -58,6 +58,6 @@ public class WellGui {
     }
     
     public String toString(){
-        return "row: " + well.getRowNumber() + ", column: " + well.getColumnNumber() + ", numer of wellHasImagingTypes: " + well.getWellHasImagingTypeCollection().size();
+        return "row: " + well.getRowNumber() + ", column: " + well.getColumnNumber() + ", number of wellHasImagingTypes: " + well.getWellHasImagingTypeCollection().size();
     }
 }
