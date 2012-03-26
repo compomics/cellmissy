@@ -29,6 +29,7 @@ public class ButtonPanel extends javax.swing.JPanel {
     public ButtonPanel(PlateMediator plateMediator) {
         initComponents();
         this.plateMediator = plateMediator;
+        this.initProgressBar.addPropertyChangeListener(new InitProgressBarListener());
     }
 
     public JLabel getInfoLabel() {
@@ -48,6 +49,7 @@ public class ButtonPanel extends javax.swing.JPanel {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             String strPropertyName = evt.getPropertyName();
+            System.out.println("=========== " + strPropertyName);
             if ("progress".equals(strPropertyName)) {
                 initProgressBar.setIndeterminate(false);
                 int progress = (Integer) evt.getNewValue();
@@ -130,6 +132,7 @@ public class ButtonPanel extends javax.swing.JPanel {
         initProgressBar.setBorderPainted(false);
         initProgressBar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         initProgressBar.setIndeterminate(true);
+        initProgressBar.setString("");
         initProgressBar.setStringPainted(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

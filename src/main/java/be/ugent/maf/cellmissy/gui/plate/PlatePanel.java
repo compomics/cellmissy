@@ -299,7 +299,7 @@ public class PlatePanel extends JPanel implements MouseListener {
         wellService.updateWellGuiListWithImagingType(currentImagingType, plateFormat, firstWellGUI, wellGuiList);
         int currentImagingTypeIndex = imagingTypeList.indexOf(currentImagingType);
         for (WellGui wellGui : wellGuiList) {
-            if (wellGui.getWell().getWellHasImagingTypeCollection().size() == currentImagingTypeIndex + 1 && containsImagingType(wellGui.getWell().getWellHasImagingTypeCollection(), currentImagingType)) {
+            if (containsImagingType(wellGui.getWell().getWellHasImagingTypeCollection(), currentImagingType)) {
                 if (currentImagingTypeIndex != 0) {
                     List<Ellipse2D> ellipsi = wellGui.getEllipsi();
                     // get the bigger ellipsi and calculate factors for the new ones (concentric wells)

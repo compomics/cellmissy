@@ -61,7 +61,7 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
             ex.printStackTrace();
         }
         long currentTimeMillis1 = System.currentTimeMillis();
-        LOG.debug("Time to parse a Tracking File: " + (currentTimeMillis1 - currentTimeMillis) + " ms");
+        LOG.debug("Tracking File parsed in " + (currentTimeMillis1 - currentTimeMillis) + " ms");
         return timeStepList;
     }
 
@@ -124,7 +124,7 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
             ex.printStackTrace();
         }
         long currentTimeMillis1 = System.currentTimeMillis();
-        LOG.debug("Time to parse a Bulk Cell File: " + (currentTimeMillis1 - currentTimeMillis) + " ms");
+        LOG.debug("Bulk Cell File parsed in " + (currentTimeMillis1 - currentTimeMillis) + " ms");
 
         return trackList;
     }
