@@ -110,12 +110,20 @@ public class ImagingType implements Serializable {
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
+        if (!Objects.equals(this.lightIntensity, other.lightIntensity)) {
+            return false;
+        }
+        if (!Objects.equals(this.exposureTime, other.exposureTime)) {
+            return false;
+        }
         return true;
     }
 
     public int hashCode() {
-        int hash = 5;
-        hash = 79 * hash + Objects.hashCode(this.name);
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.name);
+        hash = 97 * hash + Objects.hashCode(this.lightIntensity);
+        hash = 97 * hash + Objects.hashCode(this.exposureTime);
         return hash;
     }
 
