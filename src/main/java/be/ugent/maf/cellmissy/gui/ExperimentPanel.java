@@ -4,7 +4,7 @@
  */
 
 /*
- * ExperimentFrame.java
+ * ExperimentPanel.java
  *
  * Created on Jan 18, 2012, 9:46:38 AM
  */
@@ -36,7 +36,7 @@ import org.springframework.context.ApplicationContext;
  *
  * @author Paola
  */
-public class ExperimentFrame extends javax.swing.JFrame {
+public class ExperimentPanel extends javax.swing.JFrame {
 
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     private ProjectService projectService;
@@ -44,8 +44,8 @@ public class ExperimentFrame extends javax.swing.JFrame {
     private ObservableList<Project> projectBindingList;
     private ObsepFileParser obsepFileParser;
 
-    /** Creates new form ExperimentFrame */
-    public ExperimentFrame() {
+    /** Creates new form ExperimentPanel */
+    public ExperimentPanel() {
         initComponents();
 
         //load applicationContext
@@ -337,13 +337,13 @@ public class ExperimentFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ExperimentFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ExperimentPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ExperimentFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ExperimentPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ExperimentFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ExperimentPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ExperimentFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ExperimentPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -351,7 +351,7 @@ public class ExperimentFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new ExperimentFrame().setVisible(true);
+                new ExperimentPanel().setVisible(true);
             }
         });
     }

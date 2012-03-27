@@ -4,7 +4,7 @@
  */
 
 /*
- * ProjectFrame.java
+ * ProjectPanel.java
  *
  * Created on Dec 14, 2011, 4:57:23 PM
  */
@@ -29,14 +29,14 @@ import org.springframework.context.ApplicationContext;
  *
  * @author Paola
  */
-public class ProjectFrame extends javax.swing.JFrame {
+public class ProjectPanel extends javax.swing.JFrame {
 
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     private ProjectService projectService;
     private ObservableList<Project> projectBindingList;
 
-    /** Creates new form ProjectFrame */
-    public ProjectFrame() {
+    /** Creates new form ProjectPanel */
+    public ProjectPanel() {
         initComponents();
 
         //load applicationContext
@@ -243,13 +243,13 @@ public class ProjectFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ProjectFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProjectPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ProjectFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProjectPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ProjectFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProjectPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ProjectFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProjectPanel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -257,7 +257,7 @@ public class ProjectFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new ProjectFrame().setVisible(true);
+                new ProjectPanel().setVisible(true);
             }
         });
     }

@@ -29,7 +29,14 @@ public class ButtonPanel extends javax.swing.JPanel {
     public ButtonPanel(PlateMediator plateMediator) {
         initComponents();
         this.plateMediator = plateMediator;
-        this.initProgressBar.addPropertyChangeListener(new InitProgressBarListener());
+        PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                initProgressBar.setValue(100);
+            }
+        };
+        initProgressBar.addPropertyChangeListener(propertyChangeListener);
     }
 
     public JLabel getInfoLabel() {
@@ -42,20 +49,6 @@ public class ButtonPanel extends javax.swing.JPanel {
 
     public JProgressBar getInitProgressBar() {
         return initProgressBar;
-    }
-
-    private class InitProgressBarListener implements PropertyChangeListener {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            String strPropertyName = evt.getPropertyName();
-            System.out.println("=========== " + strPropertyName);
-            if ("progress".equals(strPropertyName)) {
-                initProgressBar.setIndeterminate(false);
-                int progress = (Integer) evt.getNewValue();
-                initProgressBar.setValue(progress);
-            }
-        }
     }
 
     /** This method is called from within the constructor to
@@ -129,9 +122,9 @@ public class ButtonPanel extends javax.swing.JPanel {
         gridBagConstraints.ipady = 15;
         add(infoLabel, gridBagConstraints);
 
+        initProgressBar.setForeground(new java.awt.Color(153, 153, 255));
         initProgressBar.setBorderPainted(false);
         initProgressBar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        initProgressBar.setIndeterminate(true);
         initProgressBar.setString("");
         initProgressBar.setStringPainted(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
