@@ -6,22 +6,16 @@ package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
+import org.jasypt.hibernate.type.EncryptedStringType;
 
 /**
  *
@@ -30,6 +24,13 @@ import org.hibernate.validator.constraints.NotBlank;
 @Entity
 @Table(name = "user", uniqueConstraints =
 @UniqueConstraint(columnNames = {"first_name", "last_name"}))
+@TypeDef(
+        name = "encryptedString",
+        typeClass = EncryptedStringType.class,
+        parameters = {
+                @Parameter(name = "encryptorRegisteredName", value = "jasyptHibernateEncryptor")
+        }
+)
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
@@ -54,6 +55,14 @@ public class User implements Serializable {
     @NotBlank(message = "Please insert user last name")
     @Column(name = "last_name")
     private String lastName;
+    @Basic(optional = false)
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    @Basic(optional = false)
+    @Column(name = "password")
+    @Type(type = "encryptedString")
+    private String password;
     @Basic(optional = false)
     @Column(name = "email")
     @Email(message = "Please insert a valid email address")
@@ -98,6 +107,22 @@ public class User implements Serializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
