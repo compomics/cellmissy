@@ -16,9 +16,16 @@ package be.ugent.maf.cellmissy.gui;
  */
 public class CellMissyFrame extends javax.swing.JFrame {
 
+    private UserPanel userPanel;
+
     /** Creates new form CellMissyFrame */
     public CellMissyFrame() {
         initComponents();
+
+        // create new UserPanel and add it to the UserParentPanel
+        userPanel = new UserPanel();
+        UserParentPanel.add(userPanel);
+
     }
 
     /** This method is called from within the constructor to
@@ -29,22 +36,72 @@ public class CellMissyFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        OverviewPanel = new javax.swing.JPanel();
+        UserParentPanel = new javax.swing.JPanel();
+        ExperimentSetUpParentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(800, 600));
+        setResizable(false);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+        jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
+
+        javax.swing.GroupLayout OverviewPanelLayout = new javax.swing.GroupLayout(OverviewPanel);
+        OverviewPanel.setLayout(OverviewPanelLayout);
+        OverviewPanelLayout.setHorizontalGroup(
+            OverviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 381, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+        OverviewPanelLayout.setVerticalGroup(
+            OverviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 402, Short.MAX_VALUE)
         );
+
+        jTabbedPane1.addTab("Overview", OverviewPanel);
+
+        javax.swing.GroupLayout UserParentPanelLayout = new javax.swing.GroupLayout(UserParentPanel);
+        UserParentPanel.setLayout(UserParentPanelLayout);
+        UserParentPanelLayout.setHorizontalGroup(
+            UserParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 381, Short.MAX_VALUE)
+        );
+        UserParentPanelLayout.setVerticalGroup(
+            UserParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 402, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("User Management", UserParentPanel);
+
+        javax.swing.GroupLayout ExperimentSetUpParentPanelLayout = new javax.swing.GroupLayout(ExperimentSetUpParentPanel);
+        ExperimentSetUpParentPanel.setLayout(ExperimentSetUpParentPanelLayout);
+        ExperimentSetUpParentPanelLayout.setHorizontalGroup(
+            ExperimentSetUpParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 381, Short.MAX_VALUE)
+        );
+        ExperimentSetUpParentPanelLayout.setVerticalGroup(
+            ExperimentSetUpParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 402, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Experiment Set-up", ExperimentSetUpParentPanel);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(jTabbedPane1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    
 
     /**
      * @param args the command line arguments
@@ -82,5 +139,9 @@ public class CellMissyFrame extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel ExperimentSetUpParentPanel;
+    private javax.swing.JPanel OverviewPanel;
+    private javax.swing.JPanel UserParentPanel;
+    private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 }
