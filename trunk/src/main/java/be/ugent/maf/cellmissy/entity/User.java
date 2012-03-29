@@ -78,11 +78,13 @@ public class User implements Serializable {
         this.userid = userid;
     }
 
-    public User(Integer userid, String firstName, String lastName, String email) {
+    public User(Integer userid, String firstName, String lastName, String email, Role role, String password) {
         this.userid = userid;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.role = role;
+        this.password = password;
     }
 
     public Integer getUserid() {

@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.gui.plate;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
-import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
+import be.ugent.maf.cellmissy.gui.controller.PlateMediator;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.BasicStroke;

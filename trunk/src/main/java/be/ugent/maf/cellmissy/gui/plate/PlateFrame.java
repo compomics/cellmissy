@@ -12,7 +12,7 @@ package be.ugent.maf.cellmissy.gui.plate;
 
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.gui.ButtonPanel;
-import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
+import be.ugent.maf.cellmissy.gui.controller.PlateMediator;
 import be.ugent.maf.cellmissy.gui.mediator.impl.PlateMediatorImpl;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;

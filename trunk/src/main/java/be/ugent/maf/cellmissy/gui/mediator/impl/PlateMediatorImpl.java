@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.gui.mediator.impl;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.ButtonPanel;
-import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
+import be.ugent.maf.cellmissy.gui.controller.PlateMediator;
 import be.ugent.maf.cellmissy.gui.plate.PlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import java.util.List;
