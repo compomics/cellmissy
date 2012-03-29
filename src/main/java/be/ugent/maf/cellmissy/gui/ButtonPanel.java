@@ -10,7 +10,7 @@
  */
 package be.ugent.maf.cellmissy.gui;
 
-import be.ugent.maf.cellmissy.gui.mediator.PlateMediator;
+import be.ugent.maf.cellmissy.gui.controller.PlateMediator;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JButton;

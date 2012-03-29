@@ -8,24 +8,13 @@
  *
  * Created on Mar 28, 2012, 5:42:21 PM
  */
-package be.ugent.maf.cellmissy.gui;
+package be.ugent.maf.cellmissy.gui.user;
 
-import be.ugent.maf.cellmissy.entity.User;
-import be.ugent.maf.cellmissy.service.UserService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
-import java.util.Set;
-import javax.persistence.PersistenceException;
-import javax.swing.JOptionPane;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.observablecollections.ObservableCollections;
-import org.jdesktop.observablecollections.ObservableList;
-import org.jdesktop.swingbinding.JListBinding;
-import org.jdesktop.swingbinding.SwingBindings;
-import org.springframework.context.ApplicationContext;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 /**
  *
@@ -33,29 +22,67 @@ import org.springframework.context.ApplicationContext;
  */
 public class UserPanel extends javax.swing.JPanel {
 
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
-    private User newUser;
-    private UserService userService;
-    private ObservableList<User> userBindingList;
-
     /** Creates new form UserPanel */
     public UserPanel() {
         initComponents();
-
-        //load applicationContext
-        ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
-        userService = (UserService) context.getBean("userService");
-
-        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
-
-        //init userJList
-        userBindingList = ObservableCollections.observableList(userService.findAll());
-        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, userBindingList, userJList);
-        bindingGroup.addBinding(jListBinding);
-        bindingGroup.bind();
-
     }
 
+    public JButton getCreateUserButton() {
+        return createUserButton;
+    }
+
+    public JTextField getCreateUserEmailTextField() {
+        return createUserEmailTextField;
+    }
+
+    public JTextField getCreateUserFirstNameTextField() {
+        return createUserFirstNameTextField;
+    }
+
+    public JTextField getCreateUserLastNameTextField() {
+        return createUserLastNameTextField;
+    }
+
+    public JButton getDeleteUserButton() {
+        return deleteUserButton;
+    }
+
+    public JTextField getDeleteUserEmailTextField() {
+        return deleteUserEmailTextField;
+    }
+
+    public JTextField getDeleteUserFirstNameTextField() {
+        return deleteUserFirstNameTextField;
+    }
+
+    public JTextField getDeleteUserLastNameTextField() {
+        return deleteUserLastNameTextField;
+    }
+
+    public JButton getSearchUserButton() {
+        return searchUserButton;
+    }
+
+    public JTextField getSearchUserFirstNameTextField() {
+        return searchUserFirstNameTextField;
+    }
+
+    public JTextField getSearchUserLastNameTextField() {
+        return searchUserLastNameTextField;
+    }
+
+    public JList getUserJList() {
+        return userJList;
+    }
+
+    public JPasswordField getPasswordField() {
+        return passwordField;
+    }
+
+    public JComboBox getRoleComboBox() {
+        return roleComboBox;
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -74,6 +101,10 @@ public class UserPanel extends javax.swing.JPanel {
         createUserLastNameTextField = new javax.swing.JTextField();
         createUserEmailTextField = new javax.swing.JTextField();
         createUserButton = new javax.swing.JButton();
+        roleComboBox = new javax.swing.JComboBox();
+        selectRoleLabel = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        passwordField = new javax.swing.JPasswordField();
         SearchUserPanel = new javax.swing.JPanel();
         searchUserButton = new javax.swing.JButton();
         searchUserFirstNameTextField = new javax.swing.JTextField();
@@ -93,6 +124,8 @@ public class UserPanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.GridBagLayout());
 
+        CreateUserPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Create User"));
+
         firstNameLabel.setText("First Name");
 
         lastNameLabel.setText("Last Name");
@@ -100,48 +133,62 @@ public class UserPanel extends javax.swing.JPanel {
         emailLabel.setText("Email Address");
 
         createUserButton.setText("Create User");
-        createUserButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createUserButtonActionPerformed(evt);
-            }
-        });
+
+        selectRoleLabel.setText("Select a Role");
+
+        jLabel1.setText("Password");
 
         javax.swing.GroupLayout CreateUserPanelLayout = new javax.swing.GroupLayout(CreateUserPanel);
         CreateUserPanel.setLayout(CreateUserPanelLayout);
         CreateUserPanelLayout.setHorizontalGroup(
             CreateUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CreateUserPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(CreateUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(CreateUserPanelLayout.createSequentialGroup()
                         .addGroup(CreateUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(CreateUserPanelLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(firstNameLabel))
-                            .addGroup(CreateUserPanelLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(lastNameLabel))
-                            .addGroup(CreateUserPanelLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(emailLabel)))
+                            .addComponent(firstNameLabel)
+                            .addComponent(lastNameLabel)
+                            .addComponent(emailLabel))
                         .addGap(34, 34, 34)
                         .addGroup(CreateUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(createUserFirstNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(createUserLastNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(createUserEmailTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(createUserEmailTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(CreateUserPanelLayout.createSequentialGroup()
+                                .addGroup(CreateUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(createUserFirstNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(createUserLastNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(38, 38, 38)
+                                .addGroup(CreateUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(selectRoleLabel)
+                                    .addComponent(jLabel1))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(CreateUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(roleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addContainerGap(72, Short.MAX_VALUE))
                     .addGroup(CreateUserPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(createUserButton)))
-                .addContainerGap(272, Short.MAX_VALUE))
+                        .addComponent(createUserButton)
+                        .addContainerGap(385, Short.MAX_VALUE))))
         );
 
         CreateUserPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {createUserEmailTextField, createUserFirstNameTextField, createUserLastNameTextField});
+
+        CreateUserPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, selectRoleLabel});
 
         CreateUserPanelLayout.setVerticalGroup(
             CreateUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CreateUserPanelLayout.createSequentialGroup()
                 .addGap(5, 5, 5)
                 .addGroup(CreateUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(createUserFirstNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(CreateUserPanelLayout.createSequentialGroup()
+                        .addGroup(CreateUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(createUserFirstNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(selectRoleLabel)
+                            .addComponent(roleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(CreateUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(CreateUserPanelLayout.createSequentialGroup()
                         .addGap(32, 32, 32)
                         .addComponent(createUserLastNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -155,7 +202,7 @@ public class UserPanel extends javax.swing.JPanel {
                         .addComponent(emailLabel)))
                 .addGap(18, 18, 18)
                 .addComponent(createUserButton)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         CreateUserPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {createUserEmailTextField, createUserFirstNameTextField, createUserLastNameTextField});
@@ -169,12 +216,9 @@ public class UserPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         add(CreateUserPanel, gridBagConstraints);
 
+        SearchUserPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search User"));
+
         searchUserButton.setText("Search User");
-        searchUserButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchUserButtonActionPerformed(evt);
-            }
-        });
 
         firstNameLabel1.setText("First Name");
 
@@ -197,7 +241,7 @@ public class UserPanel extends javax.swing.JPanel {
                         .addComponent(searchUserLastNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(19, 19, 19)
                 .addComponent(searchUserButton)
-                .addContainerGap(237, Short.MAX_VALUE))
+                .addContainerGap(229, Short.MAX_VALUE))
         );
 
         SearchUserPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {searchUserFirstNameTextField, searchUserLastNameTextField});
@@ -218,7 +262,7 @@ public class UserPanel extends javax.swing.JPanel {
                     .addGroup(SearchUserPanelLayout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addComponent(searchUserButton)))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -229,12 +273,9 @@ public class UserPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         add(SearchUserPanel, gridBagConstraints);
 
+        DeleteUserPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Delete User"));
+
         deleteUserButton.setText("Delete User");
-        deleteUserButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteUserButtonActionPerformed(evt);
-            }
-        });
 
         userJList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -269,7 +310,7 @@ public class UserPanel extends javax.swing.JPanel {
                             .addComponent(deleteUserFirstNameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
                             .addComponent(deleteUserLastNameTextField)))
                     .addComponent(deleteUserButton))
-                .addContainerGap(196, Short.MAX_VALUE))
+                .addContainerGap(188, Short.MAX_VALUE))
         );
         DeleteUserPanelLayout.setVerticalGroup(
             DeleteUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -295,7 +336,7 @@ public class UserPanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addComponent(deleteUserButton)))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -308,105 +349,6 @@ public class UserPanel extends javax.swing.JPanel {
         add(DeleteUserPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
-    private boolean validateUser(User newUser) {
-        boolean isValid = false;
-
-        // validate user entity class
-        ValidatorFactory userValidator = Validation.buildDefaultValidatorFactory();
-        Validator validator = userValidator.getValidator();
-        Set<ConstraintViolation<User>> constraintViolations = validator.validate(newUser);
-
-        if (constraintViolations.isEmpty()) {
-            isValid = true;
-        } else {
-            String message = "";
-            for (ConstraintViolation<User> constraintViolation : constraintViolations) {
-                message += constraintViolation.getMessage() + "\n";
-            }
-            JOptionPane.showMessageDialog(this, message, "Validate user problem", JOptionPane.WARNING_MESSAGE);
-        }
-
-        return isValid;
-    }
-
-    private void resetCreateUserTextFields() {
-        // reset create user text fields
-        createUserFirstNameTextField.setText("");
-        createUserLastNameTextField.setText("");
-        createUserEmailTextField.setText("");
-    }
-
-    private void createUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createUserButtonActionPerformed
-        // TODO add your handling code here:
-        // if user validation was successful, save the new user to the db
-        if (validateUser(newUser)) {
-            try {
-                User savedUser = userService.save(newUser);
-                userBindingList.add(savedUser);
-                resetCreateUserTextFields();
-            } // handle ConstraintViolationException(UniqueConstraint)
-            catch (PersistenceException e) {
-                JOptionPane.showMessageDialog(this, "User already present in the db", "Create user problem", JOptionPane.ERROR_MESSAGE);
-                resetCreateUserTextFields();
-            }
-
-        } else {
-            resetCreateUserTextFields();
-        }
-    }//GEN-LAST:event_createUserButtonActionPerformed
-
-    private void searchUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchUserButtonActionPerformed
-        // TODO add your handling code here:
-        if (!searchUserFirstNameTextField.getText().isEmpty() && !searchUserLastNameTextField.getText().isEmpty()) {
-            User user = userService.findByFullName(searchUserFirstNameTextField.getText(), searchUserLastNameTextField.getText());
-            if (user != null) {
-                JOptionPane.showMessageDialog(this, "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.", "Search user result", JOptionPane.INFORMATION_MESSAGE);
-                searchUserFirstNameTextField.setText("");
-                searchUserLastNameTextField.setText("");
-            } else {
-                JOptionPane.showMessageDialog(this, "No user found", "Search user problem", JOptionPane.INFORMATION_MESSAGE);
-                searchUserFirstNameTextField.setText("");
-                searchUserLastNameTextField.setText("");
-            }
-        } else {
-            if (!searchUserFirstNameTextField.getText().isEmpty() && searchUserLastNameTextField.getText().isEmpty()) {
-                User user = userService.findByFirstName(searchUserFirstNameTextField.getText());
-                if (user != null) {
-                    JOptionPane.showMessageDialog(this, "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.", "Search user result", JOptionPane.INFORMATION_MESSAGE);
-                    searchUserFirstNameTextField.setText("");
-                } else {
-                    JOptionPane.showMessageDialog(this, "No user found", "Search user problem", JOptionPane.INFORMATION_MESSAGE);
-                    searchUserFirstNameTextField.setText("");
-                }
-            } else {
-                if (searchUserFirstNameTextField.getText().isEmpty() && !searchUserLastNameTextField.getText().isEmpty()) {
-                    User user = userService.findByLastName(searchUserLastNameTextField.getText());
-                    if (user != null) {
-                        JOptionPane.showMessageDialog(this, "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.", "Search user result", JOptionPane.INFORMATION_MESSAGE);
-                        searchUserLastNameTextField.setText("");
-                    } else {
-                        JOptionPane.showMessageDialog(this, "No user found", "Search user problem", JOptionPane.INFORMATION_MESSAGE);
-                        searchUserLastNameTextField.setText("");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, "Please fill in first and/or last name", "Search user problem", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        }
-    }//GEN-LAST:event_searchUserButtonActionPerformed
-
-    private void deleteUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteUserButtonActionPerformed
-        // TODO add your handling code here:
-        if (userJList.getSelectedValue() != null) {
-            userService.delete((User) userJList.getSelectedValue());
-            userBindingList.remove((User) userJList.getSelectedValue());
-            deleteUserFirstNameTextField.setText("");
-            deleteUserLastNameTextField.setText("");
-            deleteUserEmailTextField.setText("");
-        } else {
-            JOptionPane.showMessageDialog(this, "Please select a user to delete", "Delete user problem", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }//GEN-LAST:event_deleteUserButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel CreateUserPanel;
     private javax.swing.JPanel DeleteUserPanel;
@@ -424,13 +366,17 @@ public class UserPanel extends javax.swing.JPanel {
     private javax.swing.JLabel firstNameLabel;
     private javax.swing.JLabel firstNameLabel1;
     private javax.swing.JLabel firstNameLabel2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lastNameLabel;
     private javax.swing.JLabel lastNameLabel1;
     private javax.swing.JLabel lastNameLabel2;
+    private javax.swing.JPasswordField passwordField;
+    private javax.swing.JComboBox roleComboBox;
     private javax.swing.JButton searchUserButton;
     private javax.swing.JTextField searchUserFirstNameTextField;
     private javax.swing.JTextField searchUserLastNameTextField;
+    private javax.swing.JLabel selectRoleLabel;
     private javax.swing.JList userJList;
     // End of variables declaration//GEN-END:variables
 }

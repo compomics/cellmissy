@@ -10,24 +10,45 @@
  */
 package be.ugent.maf.cellmissy.gui;
 
+import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
+import be.ugent.maf.cellmissy.gui.experiment.ExperimentSetupPanel;
+import javax.swing.JPanel;
+
 /**
  *
  * @author Paola
  */
 public class CellMissyFrame extends javax.swing.JFrame {
-
-    private UserPanel userPanel;
+    
+    
+    //main controller
+    CellMissyController cellMissyController;
+    
+    private ExperimentSetupPanel experimentSetupPanel;
 
     /** Creates new form CellMissyFrame */
     public CellMissyFrame() {
         initComponents();
-
-        // create new UserPanel and add it to the UserParentPanel
-        userPanel = new UserPanel();
-        UserParentPanel.add(userPanel);
-
+        
+        cellMissyController = new CellMissyController(this);
     }
 
+    public JPanel getExperimentSetupParentPanel() {
+        return experimentSetupParentPanel;
+    }
+
+    public JPanel getOverviewPanel() {
+        return overviewPanel;
+    }
+
+    public JPanel getUserParentPanel() {
+        return userParentPanel;
+    }
+
+    public ExperimentSetupPanel getExperimentSetupPanel() {
+        return experimentSetupPanel;
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -39,9 +60,9 @@ public class CellMissyFrame extends javax.swing.JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        OverviewPanel = new javax.swing.JPanel();
-        UserParentPanel = new javax.swing.JPanel();
-        ExperimentSetUpParentPanel = new javax.swing.JPanel();
+        overviewPanel = new javax.swing.JPanel();
+        userParentPanel = new javax.swing.JPanel();
+        experimentSetupParentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
@@ -50,44 +71,14 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
 
-        javax.swing.GroupLayout OverviewPanelLayout = new javax.swing.GroupLayout(OverviewPanel);
-        OverviewPanel.setLayout(OverviewPanelLayout);
-        OverviewPanelLayout.setHorizontalGroup(
-            OverviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 381, Short.MAX_VALUE)
-        );
-        OverviewPanelLayout.setVerticalGroup(
-            OverviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 402, Short.MAX_VALUE)
-        );
+        overviewPanel.setLayout(new java.awt.GridBagLayout());
+        jTabbedPane1.addTab("Overview", overviewPanel);
 
-        jTabbedPane1.addTab("Overview", OverviewPanel);
+        userParentPanel.setLayout(new java.awt.GridBagLayout());
+        jTabbedPane1.addTab("User Management", userParentPanel);
 
-        javax.swing.GroupLayout UserParentPanelLayout = new javax.swing.GroupLayout(UserParentPanel);
-        UserParentPanel.setLayout(UserParentPanelLayout);
-        UserParentPanelLayout.setHorizontalGroup(
-            UserParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 381, Short.MAX_VALUE)
-        );
-        UserParentPanelLayout.setVerticalGroup(
-            UserParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 402, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("User Management", UserParentPanel);
-
-        javax.swing.GroupLayout ExperimentSetUpParentPanelLayout = new javax.swing.GroupLayout(ExperimentSetUpParentPanel);
-        ExperimentSetUpParentPanel.setLayout(ExperimentSetUpParentPanelLayout);
-        ExperimentSetUpParentPanelLayout.setHorizontalGroup(
-            ExperimentSetUpParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 381, Short.MAX_VALUE)
-        );
-        ExperimentSetUpParentPanelLayout.setVerticalGroup(
-            ExperimentSetUpParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 402, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("Experiment Set-up", ExperimentSetUpParentPanel);
+        experimentSetupParentPanel.setLayout(new java.awt.GridBagLayout());
+        jTabbedPane1.addTab("Experiment Set-up", experimentSetupParentPanel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -139,9 +130,9 @@ public class CellMissyFrame extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel ExperimentSetUpParentPanel;
-    private javax.swing.JPanel OverviewPanel;
-    private javax.swing.JPanel UserParentPanel;
+    private javax.swing.JPanel experimentSetupParentPanel;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JPanel overviewPanel;
+    private javax.swing.JPanel userParentPanel;
     // End of variables declaration//GEN-END:variables
 }

@@ -8,7 +8,7 @@
  *
  * Created on 5-dec-2011, 12:05:41
  */
-package be.ugent.maf.cellmissy.gui;
+package be.ugent.maf.cellmissy.gui.user;
 
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.service.UserService;

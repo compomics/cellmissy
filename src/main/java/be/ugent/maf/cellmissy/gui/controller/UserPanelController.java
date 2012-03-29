@@ -1,0 +1,213 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package be.ugent.maf.cellmissy.gui.controller;
+
+import be.ugent.maf.cellmissy.entity.Role;
+import be.ugent.maf.cellmissy.entity.User;
+import be.ugent.maf.cellmissy.gui.user.UserPanel;
+import be.ugent.maf.cellmissy.service.UserService;
+import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Set;
+import javax.persistence.PersistenceException;
+import javax.swing.JOptionPane;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.Binding;
+import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.observablecollections.ObservableList;
+import org.jdesktop.swingbinding.JListBinding;
+import org.jdesktop.swingbinding.SwingBindings;
+import org.springframework.context.ApplicationContext;
+
+/**
+ *
+ * @author Paola
+ */
+public class UserPanelController {
+
+    //model
+    private User newUser;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
+    private ObservableList<User> userBindingList;
+    //view
+    private UserPanel userPanel;
+    //parent controller
+    private CellMissyController cellMissyController;
+    //services
+    private UserService userService;
+
+    public UserPanelController(CellMissyController cellMissyController) {
+        newUser = new User();
+        userPanel = new UserPanel();
+        this.cellMissyController = cellMissyController;
+
+        //load applicationContext
+        ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
+        userService = (UserService) context.getBean("userService");
+
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
+        initPanel();
+    }
+
+    public UserPanel getUserPanel() {
+        return userPanel;
+    }
+
+    private void initPanel() {
+        //init userJList
+        userBindingList = ObservableCollections.observableList(userService.findAll());
+        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, userBindingList, userPanel.getUserJList());
+        bindingGroup.addBinding(jListBinding);
+        
+        //init user binding
+        Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, userPanel.getCreateUserEmailTextField(), org.jdesktop.beansbinding.ELProperty.create("${text}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("email"), "emailbinding");
+        bindingGroup.addBinding(binding);
+        binding = Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, userPanel.getCreateUserFirstNameTextField(), org.jdesktop.beansbinding.ELProperty.create("${text}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("firstName"), "firstnamebinding");
+        bindingGroup.addBinding(binding);
+        binding = Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, userPanel.getCreateUserLastNameTextField(), org.jdesktop.beansbinding.ELProperty.create("${text}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("lastName"), "lastnamebinding");
+        bindingGroup.addBinding(binding);
+        binding = Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, userPanel.getRoleComboBox(), org.jdesktop.beansbinding.ELProperty.create("${selectedItem}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("role"), "rolebinding");
+        bindingGroup.addBinding(binding);
+        binding = Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, userPanel.getPasswordField(), org.jdesktop.beansbinding.ELProperty.create("${text}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("password"), "passwordbinding");
+        bindingGroup.addBinding(binding);
+
+        bindingGroup.bind();
+        
+        //add actionlisteners
+        //create user action
+        userPanel.getCreateUserButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // if user validation was successful, save the new user to the db
+                if (validateUser(newUser)) {
+                    try {
+                        User savedUser = userService.save(newUser);
+                        userBindingList.add(savedUser);
+                        resetCreateUserTextFields();
+                    } // handle ConstraintViolationException(UniqueConstraint)
+                    catch (PersistenceException persistenceException) {
+                        JOptionPane.showMessageDialog(userPanel, "User already present in the db", "Create user problem", JOptionPane.ERROR_MESSAGE);
+                        resetCreateUserTextFields();
+                    }
+                } else {
+                    resetCreateUserTextFields();
+                }
+            }
+        });
+
+        //search user action
+        userPanel.getSearchUserButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!userPanel.getSearchUserFirstNameTextField().getText().isEmpty() && !userPanel.getSearchUserLastNameTextField().getText().isEmpty()) {
+                    User user = userService.findByFullName(userPanel.getSearchUserFirstNameTextField().getText(), userPanel.getSearchUserLastNameTextField().getText());
+                    if (user != null) {
+                        JOptionPane.showMessageDialog(userPanel, "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.", "Search user result", JOptionPane.INFORMATION_MESSAGE);
+                        userPanel.getSearchUserFirstNameTextField().setText("");
+                        userPanel.getSearchUserLastNameTextField().setText("");
+                    } else {
+                        JOptionPane.showMessageDialog(userPanel, "No user found", "Search user problem", JOptionPane.INFORMATION_MESSAGE);
+                        userPanel.getSearchUserFirstNameTextField().setText("");
+                        userPanel.getSearchUserLastNameTextField().setText("");
+                    }
+                } else {
+                    if (!userPanel.getSearchUserFirstNameTextField().getText().isEmpty() && userPanel.getSearchUserLastNameTextField().getText().isEmpty()) {
+                        User user = userService.findByFirstName(userPanel.getSearchUserFirstNameTextField().getText());
+                        if (user != null) {
+                            JOptionPane.showMessageDialog(userPanel, "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.", "Search user result", JOptionPane.INFORMATION_MESSAGE);
+                            userPanel.getSearchUserFirstNameTextField().setText("");
+                        } else {
+                            JOptionPane.showMessageDialog(userPanel, "No user found", "Search user problem", JOptionPane.INFORMATION_MESSAGE);
+                            userPanel.getSearchUserFirstNameTextField().setText("");
+                        }
+                    } else {
+                        if (userPanel.getSearchUserFirstNameTextField().getText().isEmpty() && !userPanel.getSearchUserLastNameTextField().getText().isEmpty()) {
+                            User user = userService.findByLastName(userPanel.getSearchUserLastNameTextField().getText());
+                            if (user != null) {
+                                JOptionPane.showMessageDialog(userPanel, "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.", "Search user result", JOptionPane.INFORMATION_MESSAGE);
+                                userPanel.getSearchUserLastNameTextField().setText("");
+                            } else {
+                                JOptionPane.showMessageDialog(userPanel, "No user found", "Search user problem", JOptionPane.INFORMATION_MESSAGE);
+                                userPanel.getSearchUserLastNameTextField().setText("");
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(userPanel, "Please fill in first and/or last name", "Search user problem", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            }
+        });
+
+        //delete user action
+        userPanel.getDeleteUserButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (userPanel.getUserJList().getSelectedValue() != null) {
+                    userService.delete((User) userPanel.getUserJList().getSelectedValue());
+                    userBindingList.remove((User) userPanel.getUserJList().getSelectedValue());
+                    userPanel.getDeleteUserFirstNameTextField().setText("");
+                    userPanel.getDeleteUserLastNameTextField().setText("");
+                    userPanel.getDeleteUserEmailTextField().setText("");
+                } else {
+                    JOptionPane.showMessageDialog(userPanel, "Please select a user to delete", "Delete user problem", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
+
+        //add items to the role ComboBox
+        for (Role role : Role.values()) {
+            userPanel.getRoleComboBox().addItem(role);
+        }
+        //show standard user
+        userPanel.getRoleComboBox().setSelectedIndex(1);
+    }
+
+    private boolean validateUser(User newUser) {
+        boolean isValid = false;
+
+        // create new user and set class members
+        //newUser = new User();
+
+        //newUser.setFirstName(userPanel.getCreateUserFirstNameTextField().getText());
+        //newUser.setLastName(userPanel.getCreateUserLastNameTextField().getText());
+        //newUser.setEmail(userPanel.getCreateUserEmailTextField().getText());
+        //Role[] roles = Role.values();
+        //newUser.setRole(roles[userPanel.getRoleComboBox().getSelectedIndex()]);
+        //newUser.setPassword(userPanel.getPasswordField().getPassword().toString());
+        
+        // validate user entity class
+        ValidatorFactory userValidator = Validation.buildDefaultValidatorFactory();
+        Validator validator = userValidator.getValidator();
+        Set<ConstraintViolation<User>> constraintViolations = validator.validate(newUser);
+
+        if (constraintViolations.isEmpty()) {
+            isValid = true;
+        } else {
+            String message = "";
+            for (ConstraintViolation<User> constraintViolation : constraintViolations) {
+                message += constraintViolation.getMessage() + "\n";
+            }
+            JOptionPane.showMessageDialog(userPanel, message, "Validate user problem", JOptionPane.WARNING_MESSAGE);
+        }
+
+        return isValid;
+    }
+
+    private void resetCreateUserTextFields() {
+        // reset create user text fields
+        userPanel.getCreateUserFirstNameTextField().setText("");
+        userPanel.getCreateUserLastNameTextField().setText("");
+        userPanel.getCreateUserEmailTextField().setText("");
+    }
+}

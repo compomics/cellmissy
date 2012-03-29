@@ -8,7 +8,7 @@
  *
  * Created on Jan 18, 2012, 9:46:38 AM
  */
-package be.ugent.maf.cellmissy.gui;
+package be.ugent.maf.cellmissy.gui.experiment;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.Project;
