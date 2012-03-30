@@ -8,7 +8,6 @@ import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.user.UserPanel;
 import be.ugent.maf.cellmissy.service.UserService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Set;
@@ -20,12 +19,12 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.Binding;
+import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -49,11 +48,10 @@ public class UserPanelController {
         userPanel = new UserPanel();
         this.cellMissyController = cellMissyController;
 
-        //load applicationContext
-        ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
-        userService = (UserService) context.getBean("userService");
+        //get beans
+        userService = (UserService) cellMissyController.getBeanByName("userService");
 
-        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
+        bindingGroup = new BindingGroup();
         initPanel();
     }
 
@@ -66,7 +64,7 @@ public class UserPanelController {
         userBindingList = ObservableCollections.observableList(userService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, userBindingList, userPanel.getUserJList());
         bindingGroup.addBinding(jListBinding);
-        
+
         //init user binding
         Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, userPanel.getCreateUserEmailTextField(), org.jdesktop.beansbinding.ELProperty.create("${text}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("email"), "emailbinding");
         bindingGroup.addBinding(binding);
@@ -80,9 +78,9 @@ public class UserPanelController {
         bindingGroup.addBinding(binding);
 
         bindingGroup.bind();
-        
+
         //add actionlisteners
-        //create user action
+        //"create user" action
         userPanel.getCreateUserButton().addActionListener(new ActionListener() {
 
             @Override
@@ -104,7 +102,7 @@ public class UserPanelController {
             }
         });
 
-        //search user action
+        //"search user" action
         userPanel.getSearchUserButton().addActionListener(new ActionListener() {
 
             @Override
@@ -148,7 +146,7 @@ public class UserPanelController {
             }
         });
 
-        //delete user action
+        //"delete user" action
         userPanel.getDeleteUserButton().addActionListener(new ActionListener() {
 
             @Override
@@ -165,7 +163,7 @@ public class UserPanelController {
             }
         });
 
-        //add items to the role ComboBox
+        //add items to the "role" ComboBox
         for (Role role : Role.values()) {
             userPanel.getRoleComboBox().addItem(role);
         }
@@ -176,16 +174,6 @@ public class UserPanelController {
     private boolean validateUser(User newUser) {
         boolean isValid = false;
 
-        // create new user and set class members
-        //newUser = new User();
-
-        //newUser.setFirstName(userPanel.getCreateUserFirstNameTextField().getText());
-        //newUser.setLastName(userPanel.getCreateUserLastNameTextField().getText());
-        //newUser.setEmail(userPanel.getCreateUserEmailTextField().getText());
-        //Role[] roles = Role.values();
-        //newUser.setRole(roles[userPanel.getRoleComboBox().getSelectedIndex()]);
-        //newUser.setPassword(userPanel.getPasswordField().getPassword().toString());
-        
         // validate user entity class
         ValidatorFactory userValidator = Validation.buildDefaultValidatorFactory();
         Validator validator = userValidator.getValidator();
@@ -209,5 +197,6 @@ public class UserPanelController {
         userPanel.getCreateUserFirstNameTextField().setText("");
         userPanel.getCreateUserLastNameTextField().setText("");
         userPanel.getCreateUserEmailTextField().setText("");
+        userPanel.getPasswordField().setText("");
     }
 }

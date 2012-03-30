@@ -41,7 +41,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
     private PlateService plateService;
     private ObservableList<PlateFormat> plateFormatBindingList;
     private BindingGroup bindingGroup;
-    private PlatePanel platePanel;
+    private PlatePanelOld platePanel;
 
     /** Creates new form PlateFrame */
     public PlateFrame() {
@@ -64,7 +64,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         plateMediator = new PlateMediatorImpl();
 
         //create new platePanel and add it to the middlePanel
-        platePanel = new PlatePanel(plateMediator);
+        platePanel = new PlatePanelOld(plateMediator);
         middlePanel.add(platePanel);
 
         // initializes platePanel
@@ -77,7 +77,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         ButtonPanel buttonPanel = new ButtonPanel(plateMediator);
         bottomPanel.add(buttonPanel);
 
-        // set PlatePanel and ButtonPanel of PlateMediator
+        // set PlatePanelOld and ButtonPanel of PlateMediator
         plateMediator.setPlatePanel(platePanel);
         plateMediator.setButtonPanel(buttonPanel);
         // disable Finish button

@@ -24,8 +24,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
     //main controller
     CellMissyController cellMissyController;
     
-    private ExperimentSetupPanel experimentSetupPanel;
-
     /** Creates new form CellMissyFrame */
     public CellMissyFrame() {
         initComponents();
@@ -38,15 +36,11 @@ public class CellMissyFrame extends javax.swing.JFrame {
     }
 
     public JPanel getOverviewPanel() {
-        return overviewPanel;
+        return overviewParentPanel;
     }
 
     public JPanel getUserParentPanel() {
         return userParentPanel;
-    }
-
-    public ExperimentSetupPanel getExperimentSetupPanel() {
-        return experimentSetupPanel;
     }
     
     /** This method is called from within the constructor to
@@ -60,19 +54,18 @@ public class CellMissyFrame extends javax.swing.JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        overviewPanel = new javax.swing.JPanel();
+        overviewParentPanel = new javax.swing.JPanel();
         userParentPanel = new javax.swing.JPanel();
         experimentSetupParentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
-        setResizable(false);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
 
-        overviewPanel.setLayout(new java.awt.GridBagLayout());
-        jTabbedPane1.addTab("Overview", overviewPanel);
+        overviewParentPanel.setLayout(new java.awt.GridBagLayout());
+        jTabbedPane1.addTab("Overview", overviewParentPanel);
 
         userParentPanel.setLayout(new java.awt.GridBagLayout());
         jTabbedPane1.addTab("User Management", userParentPanel);
@@ -132,7 +125,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel experimentSetupParentPanel;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JPanel overviewPanel;
+    private javax.swing.JPanel overviewParentPanel;
     private javax.swing.JPanel userParentPanel;
     // End of variables declaration//GEN-END:variables
 }

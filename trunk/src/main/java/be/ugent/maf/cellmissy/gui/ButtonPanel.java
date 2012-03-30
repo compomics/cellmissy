@@ -122,11 +122,10 @@ public class ButtonPanel extends javax.swing.JPanel {
         gridBagConstraints.ipady = 15;
         add(infoLabel, gridBagConstraints);
 
-        initProgressBar.setForeground(new java.awt.Color(153, 153, 255));
         initProgressBar.setBorderPainted(false);
         initProgressBar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        initProgressBar.setIndeterminate(true);
         initProgressBar.setString("");
-        initProgressBar.setStringPainted(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;

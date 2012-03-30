@@ -4,83 +4,28 @@
  */
 package be.ugent.maf.cellmissy.gui.plate;
 
-import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
-import be.ugent.maf.cellmissy.entity.WellHasImagingType;
-import be.ugent.maf.cellmissy.gui.controller.PlateMediator;
-import be.ugent.maf.cellmissy.service.WellService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import javax.swing.JPanel;
 import java.util.List;
-import javax.swing.SwingWorker;
-import org.springframework.context.ApplicationContext;
 
 /**
- *
- *
- *
+ * This class only shows the plate view (no actions are performed)
  * @author Paola
- *
  */
-public class PlatePanel extends JPanel implements MouseListener {
+public class PlatePanel extends JPanel {
 
-    private WellService wellService;
-    private PlateMediator plateMediator;
     private List<WellGui> wellGuiList;
     private PlateFormat plateFormat;
-    private List<ImagingType> imagingTypeList;
     private static final int pixelsGrid = 5;
     private static final int pixelsBorders = 30;
-    private ImagingType currentImagingType;
-
-    public List<ImagingType> getImagingTypeList() {
-        return imagingTypeList;
-    }
-
-    public ImagingType getCurrentImagingType() {
-        return currentImagingType;
-    }
-
-    public void setCurrentImagingType(ImagingType currentImagingType) {
-        this.currentImagingType = currentImagingType;
-    }
-
-    public WellService getWellService() {
-        return wellService;
-    }
-
-    public List<WellGui> getWellGuiList() {
-        return wellGuiList;
-    }
-
-    public PlatePanel(PlateMediator plateMediator) {
-
-        this.plateMediator = plateMediator;
-
-        //load applicationContext
-        ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
-        wellService = (WellService) context.getBean("wellService");
-
-        addMouseListener(this);
-    }
-
-    public void initPanel(PlateFormat plateFormat, Dimension parentDimension) {
-        this.plateFormat = plateFormat;
-        wellGuiList = new ArrayList<>();
-
-        doResize(parentDimension);
-    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -96,50 +41,12 @@ public class PlatePanel extends JPanel implements MouseListener {
             reDrawWells(wellSize, g);
         }
     }
-
-    // if the mouse has been pressed and released on a wellGui, set it as firstWellGui and show imaged wells
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        WellGui firstWellGui = null;
-        for (WellGui wellGUI : wellGuiList) {
-            List<Ellipse2D> ellipsi = wellGUI.getEllipsi();
-            if ((e.getButton() == 1) && ellipsi.get(0).contains(e.getX(), e.getY())) {
-                firstWellGui = wellGUI;
-                break;
-            }
-        }
-
-        showImagedWells(firstWellGui);
-
-        // update info label
-        if (imagingTypeList.indexOf(currentImagingType) == imagingTypeList.size() - 1) {
-            // there are no more imaging types to process, save the wells to the DB
-            plateMediator.updateInfoMessage("Click on Finish to save the wells");
-            // enable Finish button
-            plateMediator.enableFinishButton();
-        } else {
-            // ask the user to click on Forward button to proceed with next imaging type
-            plateMediator.updateInfoMessage("Click on Forward to proceed with next imaging type");
-        }
+    
+    public void initPanel(PlateFormat plateFormat) {
+        this.plateFormat = plateFormat;
+        wellGuiList = new ArrayList<>();
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-    }
-
-    // draw the wells for the first time - wells color is set to default
     public void drawWells(int wellSize, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
@@ -174,36 +81,7 @@ public class PlatePanel extends JPanel implements MouseListener {
             }
         }
     }
-
-    // this method takes into account resize event, using wellSize variable ----- to be changed
-    public void reDrawWells2(int wellSize, Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        setGraphics(g2d);
-
-        // a list of WellGUI objects is present, iterate through them
-        for (WellGui wellGUI : wellGuiList) {
-            List<Ellipse2D> ellipsi = wellGUI.getEllipsi();
-
-            for (int i = 0; i < ellipsi.size(); i++) {
-                Ellipse2D ellipse2D = ellipsi.get(i);
-                int topLeftX = (int) Math.round(wellSize * (wellGUI.getColumnNumber() - 1) + wellGUI.getColumnNumber() * pixelsGrid + pixelsBorders);
-                int topLeftY = (int) Math.round(wellSize * (wellGUI.getRowNumber() - 1) + wellGUI.getRowNumber() * pixelsGrid + pixelsBorders);
-                ellipse2D = new Ellipse2D.Double(topLeftX, topLeftY, wellSize, wellSize);
-                g2d.draw(ellipse2D);
-
-                // if a color of a wellGui has been changed, keep track of it when resizing
-                g2d.setColor(WellGui.getAvailableWellColors()[i]);
-                g2d.fill(ellipse2D);
-            }
-
-            // draw the labels on the plate
-            if (wellGUI.getRowNumber() == 1 || wellGUI.getColumnNumber() == 1) {
-                drawPlateLabel(ellipsi.get(0), g2d, wellGUI.getColumnNumber(), wellGUI.getRowNumber());
-            }
-        }
-
-    }
-
+    
     // re-draw the wells if rezise event occours (keep color(s) of the wells)
     public void reDrawWells(int wellSize, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -234,39 +112,7 @@ public class PlatePanel extends JPanel implements MouseListener {
             }
         }
     }
-
-    // compute plate panel sizes according to JFrame resize
-    public void doResize(Dimension parentDimension) {
-        int minimumParentDimension = Math.min(parentDimension.height, parentDimension.width);
-
-        if (plateFormat != null) {
-            int panelHeight = parentDimension.height;
-            int panelWidth = parentDimension.width;
-            if (plateFormat.getNumberOfCols() >= plateFormat.getNumberOfRows()) {
-                if (minimumParentDimension == parentDimension.width) {
-                    panelHeight = (int) (Math.round((double) panelWidth * plateFormat.getNumberOfRows() / plateFormat.getNumberOfCols()));
-                } else {
-                    if ((int) (Math.round((double) panelHeight * plateFormat.getNumberOfCols() / plateFormat.getNumberOfRows())) < panelWidth) {
-                        panelWidth = (int) (Math.round((double) panelHeight * plateFormat.getNumberOfCols() / plateFormat.getNumberOfRows()));
-                    } else {
-                        panelHeight = (int) (Math.round((double) panelWidth * plateFormat.getNumberOfRows() / plateFormat.getNumberOfCols()));
-                    }
-                }
-            } else {
-                if (minimumParentDimension == parentDimension.width) {
-                    if ((int) (Math.round((double) panelWidth * plateFormat.getNumberOfRows() / plateFormat.getNumberOfCols())) < panelHeight) {
-                        panelHeight = (int) (Math.round((double) panelWidth * plateFormat.getNumberOfRows() / plateFormat.getNumberOfCols()));
-                    } else {
-                        panelWidth = (int) (Math.round((double) panelHeight * plateFormat.getNumberOfCols() / plateFormat.getNumberOfRows()));
-                    }
-                } else {
-                    panelWidth = (int) (Math.round((double) panelHeight * plateFormat.getNumberOfCols() / plateFormat.getNumberOfRows()));
-                }
-            }
-            this.setSize(panelWidth, panelHeight);
-        }
-    }
-
+    
     // set Graphics (implement Rendering process)
     private void setGraphics(Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -294,62 +140,4 @@ public class PlatePanel extends JPanel implements MouseListener {
         }
     }
 
-    private void showImagedWells(WellGui firstWellGUI) {
-        // update WellGuiList and show imaged wells positions on the plate
-        wellService.updateWellGuiListWithImagingType(currentImagingType, plateFormat, firstWellGUI, wellGuiList);
-        int currentImagingTypeIndex = imagingTypeList.indexOf(currentImagingType);
-        for (WellGui wellGui : wellGuiList) {
-            if (currentImagingTypeIndex != 0) {
-                if (containsImagingType(wellGui.getWell().getWellHasImagingTypeCollection(), currentImagingType)) {
-
-                    List<Ellipse2D> ellipsi = wellGui.getEllipsi();
-                    // get the bigger ellipsi and calculate factors for the new ones (concentric wells)
-                    Ellipse2D ellipse2D = ellipsi.get(currentImagingTypeIndex - 1);
-                    double size = ellipse2D.getHeight();
-                    double newSize = (size / imagingTypeList.size()) * (imagingTypeList.size() - currentImagingTypeIndex);
-                    double newTopLeftX = ellipse2D.getCenterX() - (newSize / 2);
-                    double newTopLeftY = ellipse2D.getCenterY() - (newSize / 2);
-
-                    Ellipse2D newEllipse2D = new Ellipse2D.Double(newTopLeftX, newTopLeftY, newSize, newSize);
-                    // add the new Ellipse2D to the ellipsi List
-                    ellipsi.add(newEllipse2D);
-                }
-            }
-        }
-        // this calls the paintComponent method
-        this.repaint();
-    }
-
-    private boolean containsImagingType(Collection<WellHasImagingType> wellHasImagingTypes, ImagingType imagingType) {
-        for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
-            if (wellHasImagingType.getImagingType().equals(imagingType)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public class PlateWorker extends SwingWorker<Void, Void> {
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            plateMediator.showInitProgressBar();
-            // initializes wellService: CellMiaDataService and MicroscopeDataService are also inizialized
-            // Imaging Types of the current Experiment are retrieved and CellMia data are processed (txt files are read and collections are set)
-            wellService.init();
-            // get the list of imaging types
-            imagingTypeList = wellService.getImagingTypes();
-            return null;
-        }
-
-        // SwingWorker calls this method after the doInBackground method finishes
-        @Override
-        protected void done() {
-            plateMediator.hideInitProgressBar();
-            // get first Imaging Type
-            currentImagingType = imagingTypeList.get(0);
-            // ask the user to select first well for the imaging type
-            plateMediator.updateInfoMessage("Select first well for " + currentImagingType.getName() + " (imaging type " + (imagingTypeList.indexOf(currentImagingType) + 1) + "/" + imagingTypeList.size() + ")");
-        }
-    }
 }

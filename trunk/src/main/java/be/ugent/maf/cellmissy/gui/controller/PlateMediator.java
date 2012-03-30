@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.gui.ButtonPanel;
-import be.ugent.maf.cellmissy.gui.plate.PlatePanel;
+import be.ugent.maf.cellmissy.gui.plate.PlatePanelOld;
 
 /**
  *
@@ -15,7 +15,7 @@ public interface PlateMediator {
 
     void setButtonPanel(ButtonPanel buttonPanel);
 
-    void setPlatePanel(PlatePanel platePanel);
+    void setPlatePanel(PlatePanelOld platePanel);
 
     void updateInfoMessage(String infoMessage);
 
