@@ -10,16 +10,8 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment;
 
-import be.ugent.maf.cellmissy.entity.PlateFormat;
-import be.ugent.maf.cellmissy.service.PlateService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BindingGroup;
-import org.jdesktop.observablecollections.ObservableCollections;
-import org.jdesktop.observablecollections.ObservableList;
-import org.jdesktop.swingbinding.JComboBoxBinding;
-import org.jdesktop.swingbinding.SwingBindings;
-import org.springframework.context.ApplicationContext;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 
 /**
  *
@@ -27,27 +19,17 @@ import org.springframework.context.ApplicationContext;
  */
 public class PlateSetupPanel extends javax.swing.JPanel {
     
-    private PlateService plateService;
-    private ObservableList<PlateFormat> plateFormatBindingList;
-    private BindingGroup bindingGroup;
-
     /** Creates new form PlateSetupPanel */
     public PlateSetupPanel() {
-        initComponents();
-        
-        ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
-        plateService = (PlateService) context.getBean("plateService");
+        initComponents();       
+    }
 
-        //init plateFormatJcombo
-        plateFormatBindingList = ObservableCollections.observableList(plateService.findAll());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, plateFormatBindingList, plateFormatComboBox);
-        bindingGroup = new BindingGroup();
-        bindingGroup.addBinding(jComboBoxBinding);
-        bindingGroup.bind();
-        // show 96 plate format as default
-        plateFormatComboBox.setSelectedIndex(0);
-        
-        
+    public JComboBox getPlateFormatComboBox() {
+        return plateFormatComboBox;
+    }
+
+    public JPanel getBottomPanel() {
+        return bottomPanel;
     }
 
     /** This method is called from within the constructor to
@@ -63,9 +45,9 @@ public class PlateSetupPanel extends javax.swing.JPanel {
         topPanel = new javax.swing.JPanel();
         plateFormatComboBox = new javax.swing.JComboBox();
         selectFormatLabel = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        bottomPanel = new javax.swing.JPanel();
 
+        setBorder(javax.swing.BorderFactory.createTitledBorder("Plate Set-up"));
         setLayout(new java.awt.GridBagLayout());
 
         plateFormatComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -81,7 +63,7 @@ public class PlateSetupPanel extends javax.swing.JPanel {
                 .addComponent(selectFormatLabel)
                 .addGap(18, 18, 18)
                 .addComponent(plateFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(162, Short.MAX_VALUE))
+                .addContainerGap(150, Short.MAX_VALUE))
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -96,40 +78,20 @@ public class PlateSetupPanel extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(topPanel, gridBagConstraints);
 
-        jButton1.setText("jButton1");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(129, 129, 129)
-                .addComponent(jButton1)
-                .addContainerGap(198, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(175, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(60, 60, 60))
-        );
-
+        bottomPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        add(jPanel1, gridBagConstraints);
+        add(bottomPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel bottomPanel;
     private javax.swing.JComboBox plateFormatComboBox;
     private javax.swing.JLabel selectFormatLabel;
     private javax.swing.JPanel topPanel;

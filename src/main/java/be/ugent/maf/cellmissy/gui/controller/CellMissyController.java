@@ -5,34 +5,47 @@
 package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
+import be.ugent.maf.cellmissy.gui.GuiUtils;
+import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.GridBagConstraints;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
  * @author Paola
  */
 public class CellMissyController {
-    
+
     //main frame
     CellMissyFrame cellMissyFrame;
-    
     //child controllers
     UserPanelController userPanelController;
+    ExperimentSetupPanelController experimentSetupPanelController;
+    //application context
+    ApplicationContext context;
     
-    public CellMissyController(CellMissyFrame cellMissyFrame){
+    private GridBagConstraints gridBagConstraints;
+
+    public CellMissyController(CellMissyFrame cellMissyFrame) {
         this.cellMissyFrame = cellMissyFrame;
         userPanelController = new UserPanelController(this);
+
+        experimentSetupPanelController = new ExperimentSetupPanelController(this);
+        context = ApplicationContextProvider.getInstance().getApplicationContext();
+        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
+
         initFrame();
     }
-    
-    private void initFrame(){
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        
+
+    private void initFrame() {
+
         //add panel components to main frame
         cellMissyFrame.getUserParentPanel().add(userPanelController.getUserPanel(), gridBagConstraints);
+        cellMissyFrame.getExperimentSetupParentPanel().add(experimentSetupPanelController.getExperimentSetupPanel(), gridBagConstraints);
     }
-    
+
+    public Object getBeanByName(String beanName) {
+        ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
+        return context.getBean(beanName);
+    }
 }

@@ -8,7 +8,7 @@ import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.ButtonPanel;
 import be.ugent.maf.cellmissy.gui.controller.PlateMediator;
-import be.ugent.maf.cellmissy.gui.plate.PlatePanel;
+import be.ugent.maf.cellmissy.gui.plate.PlatePanelOld;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 public class PlateMediatorImpl implements PlateMediator {
 
     private ButtonPanel buttonPanel;
-    private PlatePanel platePanel;
+    private PlatePanelOld platePanel;
     private static final Logger LOG = Logger.getLogger(PlateMediator.class);
 
     public void setButtonPanel(ButtonPanel buttonPanel) {
@@ -28,7 +28,7 @@ public class PlateMediatorImpl implements PlateMediator {
     }
 
     @Override
-    public void setPlatePanel(PlatePanel platePanel) {
+    public void setPlatePanel(PlatePanelOld platePanel) {
         this.platePanel = platePanel;
     }
 
@@ -42,7 +42,7 @@ public class PlateMediatorImpl implements PlateMediator {
         // process first Imaging Type data:
         // ImagingTypeList is null, create a new PlateWorker and execute it             
         if (platePanel.getImagingTypeList() == null) {
-            PlatePanel.PlateWorker plateWorker = platePanel.new PlateWorker();
+            PlatePanelOld.PlateWorker plateWorker = platePanel.new PlateWorker();
             plateWorker.execute();
         } else {
             // forward to next Imaging Type

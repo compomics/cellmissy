@@ -164,11 +164,9 @@ public class UserPanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(CreateUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(roleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap(72, Short.MAX_VALUE))
-                    .addGroup(CreateUserPanelLayout.createSequentialGroup()
-                        .addComponent(createUserButton)
-                        .addContainerGap(385, Short.MAX_VALUE))))
+                                    .addComponent(roleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addComponent(createUserButton))
+                .addContainerGap(72, Short.MAX_VALUE))
         );
 
         CreateUserPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {createUserEmailTextField, createUserFirstNameTextField, createUserLastNameTextField});
@@ -202,7 +200,7 @@ public class UserPanel extends javax.swing.JPanel {
                         .addComponent(emailLabel)))
                 .addGap(18, 18, 18)
                 .addComponent(createUserButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         CreateUserPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {createUserEmailTextField, createUserFirstNameTextField, createUserLastNameTextField});
@@ -262,7 +260,7 @@ public class UserPanel extends javax.swing.JPanel {
                     .addGroup(SearchUserPanelLayout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addComponent(searchUserButton)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -277,11 +275,16 @@ public class UserPanel extends javax.swing.JPanel {
 
         deleteUserButton.setText("Delete User");
 
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Select a user", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.ABOVE_TOP));
+        jScrollPane1.setAutoscrolls(true);
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(45, 100));
+
         userJList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            String[] strings = { "Item 1", "Item 2" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+        userJList.setVisibleRowCount(2);
         jScrollPane1.setViewportView(userJList);
 
         firstNameLabel2.setText("First Name");
@@ -316,7 +319,7 @@ public class UserPanel extends javax.swing.JPanel {
             DeleteUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(DeleteUserPanelLayout.createSequentialGroup()
                 .addGroup(DeleteUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(DeleteUserPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(DeleteUserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -336,7 +339,7 @@ public class UserPanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addComponent(deleteUserButton)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
