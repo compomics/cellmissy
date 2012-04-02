@@ -125,7 +125,7 @@ public class CellLine implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.cellmissy.entity.CellLine[ cellLineid=" + cellLineid + " ]";
+        return name;
     }
     
 }
