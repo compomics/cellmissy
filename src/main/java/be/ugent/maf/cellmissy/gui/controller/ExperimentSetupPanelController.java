@@ -44,7 +44,6 @@ public class ExperimentSetupPanelController {
     //services
     private PlateService plateService;
     private ProjectService projectService;
-    
     private GridBagConstraints gridBagConstraints;
 
     public ExperimentSetupPanelController(CellMissyController cellMissyController) {
@@ -52,9 +51,8 @@ public class ExperimentSetupPanelController {
         this.cellMissyController = cellMissyController;
         experimentSetupPanel = new ExperimentSetupPanel();
         experimentInfoPanel = new ExperimentInfoPanel();
-        plateSetupPanel = new PlateSetupPanel();
-        platePanel = new PlatePanel();
-
+        plateSetupPanel = new PlateSetupPanel();        
+        
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
@@ -70,6 +68,10 @@ public class ExperimentSetupPanelController {
         return experimentSetupPanel;
     }
 
+    public CellMissyController getCellMissyController() {
+        return cellMissyController;
+    }
+
     private void initExperimentInfoPanel() {
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
@@ -79,14 +81,16 @@ public class ExperimentSetupPanelController {
     }
 
     private void initPlateSetupPanel() {
+        //init plate panel and add it to the bottom panel 
+        platePanel = new PlatePanel();
+        plateSetupPanel.getBottomPanel().add(platePanel);
+                        
         //init plateFormatJcombo
         plateFormatBindingList = ObservableCollections.observableList(plateService.findAll());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, plateFormatBindingList, plateSetupPanel.getPlateFormatComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
-        // show 96 plate format as default
-        plateSetupPanel.getPlateFormatComboBox().setSelectedIndex(0);
-
+        
         // add action listener
         plateSetupPanel.getPlateFormatComboBox().addActionListener(new ActionListener() {
 
@@ -94,14 +98,18 @@ public class ExperimentSetupPanelController {
             public void actionPerformed(ActionEvent e) {
                 PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateSetupPanel.getPlateFormatComboBox().getSelectedIndex());
                 platePanel.initPanel(selectedPlateFormat);
-                plateSetupPanel.getBottomPanel().add(platePanel, gridBagConstraints);
-                plateSetupPanel.repaint();
+                platePanel.repaint();
             }
         });
+         
+        // show 96 plate format as default
+        // after adding the listener
+        plateSetupPanel.getPlateFormatComboBox().setSelectedIndex(0);
+
     }
 
     private void initPanel() {
-        
+
         //add exp info panel and plate setup panel to main panel
         experimentSetupPanel.getExperimentInfoParentPanel().add(experimentInfoPanel, gridBagConstraints);
         experimentSetupPanel.getPlateSetupParentPanel().add(plateSetupPanel, gridBagConstraints);

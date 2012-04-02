@@ -11,7 +11,6 @@
 package be.ugent.maf.cellmissy.gui;
 
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
-import be.ugent.maf.cellmissy.gui.experiment.ExperimentSetupPanel;
 import javax.swing.JPanel;
 
 /**

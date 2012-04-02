@@ -47,8 +47,6 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
         purposeLabel = new javax.swing.JLabel();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment Info"));
-        setMinimumSize(new java.awt.Dimension(200, 100));
-        setPreferredSize(new java.awt.Dimension(200, 100));
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Select a project", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.ABOVE_TOP));
         jScrollPane1.setAutoscrolls(true);
@@ -115,7 +113,7 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
                                 .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(numberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addComponent(fillInDataLabel))
-                .addContainerGap(74, Short.MAX_VALUE))
+                .addContainerGap(78, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -147,7 +145,7 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(8, 8, 8)
                                 .addComponent(purposeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

@@ -116,7 +116,7 @@ public class MatrixDimension implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.cellmissy.entity.MatrixDimension[ matrixDimensionid=" + matrixDimensionid + " ]";
+        return matrixDimension;
     }
     
 }
