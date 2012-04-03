@@ -71,7 +71,7 @@ public class PlateFrame extends javax.swing.JFrame implements ComponentListener 
         PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateFormatComboBox.getSelectedIndex());
         Dimension parentDimension = middlePanel.getSize();
         platePanel.initPanel(selectedPlateFormat, parentDimension);
-        //repaint();
+        repaint();
 
         // create new buttonPanel and add it to the bottomPanel
         ButtonPanel buttonPanel = new ButtonPanel(plateMediator);

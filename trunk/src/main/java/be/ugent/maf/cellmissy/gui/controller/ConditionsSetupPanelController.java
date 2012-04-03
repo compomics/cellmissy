@@ -9,11 +9,10 @@ import be.ugent.maf.cellmissy.entity.MatrixDimension;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ConditionsSetupPanel;
 import be.ugent.maf.cellmissy.service.CellLineService;
-import be.ugent.maf.cellmissy.service.MatrixDimensionService;
+import be.ugent.maf.cellmissy.service.EcmService;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.Action;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -35,24 +34,35 @@ public class ConditionsSetupPanelController {
     private ConditionsSetupPanel conditionsSetupPanel;
     //parent controller
     private ExperimentSetupPanelController experimentSetupPanelController;
+    //child controllers
+    private AssayEcmPanelController assayEcmPanelController;
     //services
     private CellLineService cellLineService;
-    private MatrixDimensionService matrixDimensionService;
-    
+    private EcmService ecmService;
     private GridBagConstraints gridBagConstraints;
 
     public ConditionsSetupPanelController(ExperimentSetupPanelController experimentSetupPanelController) {
         this.experimentSetupPanelController = experimentSetupPanelController;
-        conditionsSetupPanel = new ConditionsSetupPanel();
 
+        //init child controllers
+        assayEcmPanelController = new AssayEcmPanelController(this);
+
+        //init services
         cellLineService = (CellLineService) experimentSetupPanelController.getCellMissyController().getBeanByName("cellLineService");
-        matrixDimensionService = (MatrixDimensionService) experimentSetupPanelController.getCellMissyController().getBeanByName("matrixDimensionService");
-        
+        ecmService = (EcmService) experimentSetupPanelController.getCellMissyController().getBeanByName("ecmService");
+
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
+
+        //init views
+        conditionsSetupPanel = new ConditionsSetupPanel();
         initCellLinePanel();
         initEcmPanel();
         initPanel();
+    }
+
+    public ExperimentSetupPanelController getExperimentSetupPanelController() {
+        return experimentSetupPanelController;
     }
 
     private void initCellLinePanel() {
@@ -79,17 +89,53 @@ public class ConditionsSetupPanelController {
             }
         });
     }
-    
-    private void initEcmPanel(){
+
+    private void initEcmPanel() {
         //init matrixDimensionJCombo
-        matrixDimensionBindingList = ObservableCollections.observableList(matrixDimensionService.findAll());
+        matrixDimensionBindingList = ObservableCollections.observableList(ecmService.findAll());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, matrixDimensionBindingList, conditionsSetupPanel.getMatrixDimensionComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
+
+        //add action listener
+        //show different assay-ecm, 2D-3D panels
+        conditionsSetupPanel.getMatrixDimensionComboBox().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (conditionsSetupPanel.getMatrixDimensionComboBox().getSelectedItem().equals(ecmService.findByDimension("2D"))) {
+                    showEcm2DPanel();
+                } else {
+                    showEcm3DPanel();
+                }
+            }
+        });
+        conditionsSetupPanel.getMatrixDimensionComboBox().setSelectedIndex(0);
+
     }
 
     private void initPanel() {
-        experimentSetupPanelController.experimentSetupPanel.getConditionsSetupParentPanel().add(conditionsSetupPanel, gridBagConstraints);
+        experimentSetupPanelController.getExperimentSetupPanel().getConditionsSetupParentPanel().add(conditionsSetupPanel, gridBagConstraints);
+    }
+
+    private void showEcm2DPanel() {
+        if (!GuiUtils.containsComponent(conditionsSetupPanel, assayEcmPanelController.getAssayEcm2DPanel()) && !GuiUtils.containsComponent(conditionsSetupPanel, assayEcmPanelController.getAssayEcm3DPanel())) {
+            conditionsSetupPanel.getAssayEcmParentPanel().add(assayEcmPanelController.getAssayEcm2DPanel(), gridBagConstraints);
+        } else {
+            conditionsSetupPanel.getAssayEcmParentPanel().remove(assayEcmPanelController.getAssayEcm2DPanel());
+            conditionsSetupPanel.getAssayEcmParentPanel().add(assayEcmPanelController.getAssayEcm2DPanel(), gridBagConstraints);
+        }
+
+    }
+
+    private void showEcm3DPanel() {
+        if (!GuiUtils.containsComponent(conditionsSetupPanel, assayEcmPanelController.getAssayEcm2DPanel()) && !GuiUtils.containsComponent(conditionsSetupPanel, assayEcmPanelController.getAssayEcm3DPanel())) {
+            conditionsSetupPanel.getAssayEcmParentPanel().add(assayEcmPanelController.getAssayEcm3DPanel(), gridBagConstraints);
+        }
+        else {
+            conditionsSetupPanel.getAssayEcmParentPanel().remove(assayEcmPanelController.getAssayEcm2DPanel());
+            conditionsSetupPanel.getAssayEcmParentPanel().add(assayEcmPanelController.getAssayEcm3DPanel(), gridBagConstraints);
+        }
 
     }
 }

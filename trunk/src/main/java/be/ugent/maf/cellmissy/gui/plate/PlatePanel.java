@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.plate;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -29,7 +30,6 @@ public class PlatePanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-
         super.paintComponent(g);
 
         // width and heigth of squares around wells (wellSize)
@@ -42,9 +42,10 @@ public class PlatePanel extends JPanel {
         }
     }
     
-    public void initPanel(PlateFormat plateFormat) {
+    public void initPanel(PlateFormat plateFormat, Dimension parentDimension) {
         this.plateFormat = plateFormat;
-        wellGuiList = new ArrayList<>();
+        wellGuiList = new ArrayList<>();   
+        doResize(parentDimension);
     }
 
     public void drawWells(int wellSize, Graphics g) {
@@ -137,6 +138,38 @@ public class PlatePanel extends JPanel {
             g2d.drawString(rowLabel, pixelsBorders - 12, (int) Math.round(ellipse2D.getCenterY()) + 3);
         } else {
             g2d.drawString(rowLabel, pixelsBorders - 8, (int) Math.round(ellipse2D.getCenterY()) + 3);
+        }
+    }
+    
+     // compute plate panel sizes according to JFrame resize
+    public void doResize(Dimension parentDimension) {
+        int minimumParentDimension = Math.min(parentDimension.height, parentDimension.width);
+
+        if (plateFormat != null) {
+            int panelHeight = parentDimension.height;
+            int panelWidth = parentDimension.width;
+            if (plateFormat.getNumberOfCols() >= plateFormat.getNumberOfRows()) {
+                if (minimumParentDimension == parentDimension.width) {
+                    panelHeight = (int) (Math.round((double) panelWidth * plateFormat.getNumberOfRows() / plateFormat.getNumberOfCols()));
+                } else {
+                    if ((int) (Math.round((double) panelHeight * plateFormat.getNumberOfCols() / plateFormat.getNumberOfRows())) < panelWidth) {
+                        panelWidth = (int) (Math.round((double) panelHeight * plateFormat.getNumberOfCols() / plateFormat.getNumberOfRows()));
+                    } else {
+                        panelHeight = (int) (Math.round((double) panelWidth * plateFormat.getNumberOfRows() / plateFormat.getNumberOfCols()));
+                    }
+                }
+            } else {
+                if (minimumParentDimension == parentDimension.width) {
+                    if ((int) (Math.round((double) panelWidth * plateFormat.getNumberOfRows() / plateFormat.getNumberOfCols())) < panelHeight) {
+                        panelHeight = (int) (Math.round((double) panelWidth * plateFormat.getNumberOfRows() / plateFormat.getNumberOfCols()));
+                    } else {
+                        panelWidth = (int) (Math.round((double) panelHeight * plateFormat.getNumberOfCols() / plateFormat.getNumberOfRows()));
+                    }
+                } else {
+                    panelWidth = (int) (Math.round((double) panelHeight * plateFormat.getNumberOfCols() / plateFormat.getNumberOfRows()));
+                }
+            }
+            this.setSize(panelWidth, panelHeight);
         }
     }
 

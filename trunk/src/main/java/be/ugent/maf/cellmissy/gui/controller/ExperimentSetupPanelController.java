@@ -13,6 +13,7 @@ import be.ugent.maf.cellmissy.gui.experiment.PlateSetupPanel;
 import be.ugent.maf.cellmissy.gui.plate.PlatePanel;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,30 +36,37 @@ public class ExperimentSetupPanelController {
     private ObservableList<Project> projectBindingList;
     private BindingGroup bindingGroup;
     //view
-    ExperimentSetupPanel experimentSetupPanel;
-    ExperimentInfoPanel experimentInfoPanel;
-    PlateSetupPanel plateSetupPanel;
-    PlatePanel platePanel;
+    private ExperimentSetupPanel experimentSetupPanel;
+    private ExperimentInfoPanel experimentInfoPanel;
+    private PlateSetupPanel plateSetupPanel;
+    private PlatePanel platePanel;
     //parent controller
     private CellMissyController cellMissyController;
+    //child controller
+    private ConditionsSetupPanelController conditionsSetupPanelController;
     //services
     private PlateService plateService;
     private ProjectService projectService;
     private GridBagConstraints gridBagConstraints;
 
     public ExperimentSetupPanelController(CellMissyController cellMissyController) {
-
         this.cellMissyController = cellMissyController;
+        
         experimentSetupPanel = new ExperimentSetupPanel();
         experimentInfoPanel = new ExperimentInfoPanel();
-        plateSetupPanel = new PlateSetupPanel();        
+        plateSetupPanel = new PlateSetupPanel();
+        
+        //init child controllers
+        conditionsSetupPanelController = new ConditionsSetupPanelController(this);
+        
+        //init services
+        plateService = (PlateService) cellMissyController.getBeanByName("plateService");
+        projectService = (ProjectService) cellMissyController.getBeanByName("projectService");
         
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-
-        plateService = (PlateService) cellMissyController.getBeanByName("plateService");
-        projectService = (ProjectService) cellMissyController.getBeanByName("projectService");
-
+        
+        //init views
         initExperimentInfoPanel();
         initPlateSetupPanel();
         initPanel();
@@ -83,25 +91,26 @@ public class ExperimentSetupPanelController {
     private void initPlateSetupPanel() {
         //init plate panel and add it to the bottom panel 
         platePanel = new PlatePanel();
-        plateSetupPanel.getBottomPanel().add(platePanel);
-                        
+        plateSetupPanel.getBottomPanel().add(platePanel, gridBagConstraints);
+
         //init plateFormatJcombo
         plateFormatBindingList = ObservableCollections.observableList(plateService.findAll());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, plateFormatBindingList, plateSetupPanel.getPlateFormatComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
-        
+
         // add action listener
         plateSetupPanel.getPlateFormatComboBox().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateSetupPanel.getPlateFormatComboBox().getSelectedIndex());
-                platePanel.initPanel(selectedPlateFormat);
-                platePanel.repaint();
+                Dimension parentDimension = plateSetupPanel.getBottomPanel().getSize();
+                platePanel.initPanel(selectedPlateFormat, parentDimension);
+                plateSetupPanel.getBottomPanel().repaint();
             }
         });
-         
+
         // show 96 plate format as default
         // after adding the listener
         plateSetupPanel.getPlateFormatComboBox().setSelectedIndex(0);
@@ -109,7 +118,6 @@ public class ExperimentSetupPanelController {
     }
 
     private void initPanel() {
-
         //add exp info panel and plate setup panel to main panel
         experimentSetupPanel.getExperimentInfoParentPanel().add(experimentInfoPanel, gridBagConstraints);
         experimentSetupPanel.getPlateSetupParentPanel().add(plateSetupPanel, gridBagConstraints);
