@@ -21,7 +21,6 @@ public class CellMissyController {
     //child controllers
     UserPanelController userPanelController;
     ExperimentSetupPanelController experimentSetupPanelController;
-    ConditionsSetupPanelController conditionsSetupPanelController;
     //application context
     ApplicationContext context;
     private GridBagConstraints gridBagConstraints;
@@ -29,14 +28,15 @@ public class CellMissyController {
     public CellMissyController(CellMissyFrame cellMissyFrame) {
         this.cellMissyFrame = cellMissyFrame;
         
-        //controllers
+        //init child controllers
         userPanelController = new UserPanelController(this);
         experimentSetupPanelController = new ExperimentSetupPanelController(this);
-        conditionsSetupPanelController = new ConditionsSetupPanelController(experimentSetupPanelController);
         
+        //load application contextS
         context = ApplicationContextProvider.getInstance().getApplicationContext();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-
+        
+        //init view
         initFrame();
     }
 

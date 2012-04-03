@@ -4,12 +4,17 @@
  */
 package be.ugent.maf.cellmissy.service;
 
+import be.ugent.maf.cellmissy.entity.Assay;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
+import java.util.List;
+
 
 /**
  *
  * @author Paola
  */
-public interface MatrixDimensionService extends GenericService<MatrixDimension, Long> {
+public interface AssayService extends GenericService<Assay, Long> {
+    
+    List<Assay> findByMatrixDimension(MatrixDimension matrixDimension);
     
 }

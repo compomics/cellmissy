@@ -4,13 +4,16 @@
  */
 package be.ugent.maf.cellmissy.repository;
 
+import be.ugent.maf.cellmissy.entity.Assay;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
+import java.util.List;
 
 /**
  *
  * @author Paola
  */
-public interface MatrixDimensionRepository extends GenericRepository<MatrixDimension, Long> {
-
-    MatrixDimension findByDimension(String dimension);
+public interface AssayRepository extends GenericRepository<Assay, Long> {
+    
+    List<Assay> findByMatrixDimension(MatrixDimension matrixDimension);
+    
 }

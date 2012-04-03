@@ -45,13 +45,15 @@ public class UserPanelController {
 
     public UserPanelController(CellMissyController cellMissyController) {
         newUser = new User();
-        userPanel = new UserPanel();
         this.cellMissyController = cellMissyController;
 
-        //get beans
+        //init services
         userService = (UserService) cellMissyController.getBeanByName("userService");
 
         bindingGroup = new BindingGroup();
+        //init views
+        userPanel = new UserPanel();
+
         initPanel();
     }
 

@@ -58,10 +58,13 @@ public class CellMissyFrame extends javax.swing.JFrame {
         experimentSetupParentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(800, 600));
+        setBounds(new java.awt.Rectangle(30, 5, 0, 0));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setMinimumSize(new java.awt.Dimension(1300, 700));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
+        jTabbedPane1.setMinimumSize(new java.awt.Dimension(400, 150));
 
         overviewParentPanel.setLayout(new java.awt.GridBagLayout());
         jTabbedPane1.addTab("Overview", overviewParentPanel);
