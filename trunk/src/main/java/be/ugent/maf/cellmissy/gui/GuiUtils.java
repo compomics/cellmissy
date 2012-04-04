@@ -23,12 +23,12 @@ public class GuiUtils {
     }
 
     public static boolean containsComponent(Container parentContainer, Component childComponent) {
-        Component[] components = parentContainer.getComponents();
-        for (Component component : components) {
-            if (component == childComponent) {
-                return true;
+        boolean containsComponent = false;
+        for (Component component : parentContainer.getComponents()) {
+            if (childComponent.equals(component)) {
+                containsComponent = true;
             }
         }
-        return false;
+        return containsComponent;
     }
 }
