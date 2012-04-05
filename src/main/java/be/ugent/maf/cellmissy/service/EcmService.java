@@ -17,5 +17,6 @@ public interface EcmService extends GenericService<Ecm, Long> {
 
     public List<MatrixDimension> findAllMatrixDimension();
 
-    public List<EcmComposition> findAllEcmComposition();
+    public List<EcmComposition> findEcmCompositionByMatrixDimensionName(String matrixDimensionName);
+    
 }

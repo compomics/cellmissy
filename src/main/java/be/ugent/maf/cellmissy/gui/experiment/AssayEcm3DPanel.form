@@ -107,11 +107,11 @@
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="compositionTextField" linkSize="2" min="-2" max="-2" attributes="0"/>
                       <Component id="densityTextField" linkSize="2" min="-2" pref="73" max="-2" attributes="0"/>
                       <Component id="volumeTextField" linkSize="2" min="-2" max="-2" attributes="0"/>
                       <Component id="polymerizationTimeTextField" linkSize="2" min="-2" max="-2" attributes="0"/>
                       <Component id="polymerizationTemperatureTextField" linkSize="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="compositionComboBox" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="163" max="32767" attributes="0"/>
               </Group>
@@ -123,7 +123,7 @@
                   <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="compositionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="compositionTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="compositionComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -178,13 +178,23 @@
             <Property name="text" type="java.lang.String" value="Polymerization temperature"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="compositionTextField">
-        </Component>
         <Component class="javax.swing.JTextField" name="volumeTextField">
         </Component>
         <Component class="javax.swing.JTextField" name="polymerizationTimeTextField">
         </Component>
         <Component class="javax.swing.JTextField" name="polymerizationTemperatureTextField">
+        </Component>
+        <Component class="javax.swing.JComboBox" name="compositionComboBox">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="4">
+                <StringItem index="0" value="Item 1"/>
+                <StringItem index="1" value="Item 2"/>
+                <StringItem index="2" value="Item 3"/>
+                <StringItem index="3" value="Item 4"/>
+              </StringArray>
+            </Property>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

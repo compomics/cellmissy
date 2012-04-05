@@ -5,7 +5,6 @@
 package be.ugent.maf.cellmissy.service;
 
 import be.ugent.maf.cellmissy.entity.Assay;
-import be.ugent.maf.cellmissy.entity.MatrixDimension;
 import java.util.List;
 
 
