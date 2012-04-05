@@ -32,7 +32,7 @@ public class CellMissyController {
         userPanelController = new UserPanelController(this);
         experimentSetupPanelController = new ExperimentSetupPanelController(this);
         
-        //load application contextS
+        //load application context
         context = ApplicationContextProvider.getInstance().getApplicationContext();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         

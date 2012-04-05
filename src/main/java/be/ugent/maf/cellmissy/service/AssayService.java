@@ -15,6 +15,6 @@ import java.util.List;
  */
 public interface AssayService extends GenericService<Assay, Long> {
     
-    List<Assay> findByMatrixDimension(MatrixDimension matrixDimension);
+    List<Assay> findByMatrixDimensionName(String matrixDimensionName);
     
 }

@@ -46,7 +46,7 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
         return assayEcmParentPanel;
     }
 
-    public JPanel getEcmPanel() {
+    public JPanel getAssayEcmPanel() {
         return assayEcmPanel;
     }
 

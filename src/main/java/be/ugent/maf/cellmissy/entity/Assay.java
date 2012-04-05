@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Assay.findAll", query = "SELECT a FROM Assay a"),
     @NamedQuery(name = "Assay.findByAssayid", query = "SELECT a FROM Assay a WHERE a.assayid = :assayid"),
     @NamedQuery(name = "Assay.findByAssayType", query = "SELECT a FROM Assay a WHERE a.assayType = :assayType"),
-    @NamedQuery(name = "Assay.findByMatrixDimension", query = "SELECT a FROM Assay a WHERE a.matrixDimension = :matrixDimension"),})
+    @NamedQuery(name = "Assay.findByMatrixDimensionName", query = "SELECT a FROM Assay a WHERE a.matrixDimension.matrixDimension = :matrixDimension"),})
 public class Assay implements Serializable {
 
     private static final long serialVersionUID = 1L;
