@@ -5,11 +5,13 @@
 package be.ugent.maf.cellmissy.repository;
 
 import be.ugent.maf.cellmissy.entity.EcmComposition;
+import java.util.List;
 
 /**
  *
  * @author Paola
  */
 public interface EcmCompositionRepository extends GenericRepository<EcmComposition, Long> {
-    
+
+    List<EcmComposition> findByMatrixDimensionName(String matrixDimensionName);
 }

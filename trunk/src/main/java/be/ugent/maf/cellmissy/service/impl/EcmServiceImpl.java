@@ -58,7 +58,7 @@ public class EcmServiceImpl implements EcmService {
     }
 
     @Override
-    public List<EcmComposition> findAllEcmComposition() {
-        return ecmCompositionRepository.findAll();
+    public List<EcmComposition> findEcmCompositionByMatrixDimensionName(String matrixDimensionName) {
+        return ecmCompositionRepository.findByMatrixDimensionName(matrixDimensionName);
     }
 }

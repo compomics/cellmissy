@@ -6,6 +6,8 @@ package be.ugent.maf.cellmissy.repository.impl;
 
 import be.ugent.maf.cellmissy.entity.EcmComposition;
 import be.ugent.maf.cellmissy.repository.EcmCompositionRepository;
+import java.util.List;
+import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,4 +16,17 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("ecmCompositionRepository")
 public class EcmCompositionJpaRepository extends GenericJpaRepository<EcmComposition, Long> implements EcmCompositionRepository {
+
+    @Override
+    public List<EcmComposition> findByMatrixDimensionName(String matrixDimensionName) {
+        //annotated query
+        Query byNameQuery = getEntityManager().createNamedQuery("EcmComposition.findByMatrixDimensionName");
+        byNameQuery.setParameter("matrixDimension", matrixDimensionName);
+        List<EcmComposition> resultList = byNameQuery.getResultList();
+        if (!resultList.isEmpty()) {
+            return resultList;
+        } else {
+            return null;
+        }
+    }
 }

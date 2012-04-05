@@ -27,8 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "MatrixDimension.findAll", query = "SELECT m FROM MatrixDimension m"),
-    @NamedQuery(name = "MatrixDimension.findByMatrixDimensionid", query = "SELECT m FROM MatrixDimension m WHERE m.matrixDimensionid = :matrixDimensionid"),
-    @NamedQuery(name = "MatrixDimension.findByDimension", query = "SELECT m FROM MatrixDimension m WHERE m.matrixDimension = :matrixDimension")})
+    @NamedQuery(name = "MatrixDimension.findByMatrixDimensionid", query = "SELECT m FROM MatrixDimension m WHERE m.matrixDimensionid = :matrixDimensionid")})
 public class MatrixDimension implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
