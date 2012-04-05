@@ -4,13 +4,18 @@
  */
 package be.ugent.maf.cellmissy.service;
 
+import be.ugent.maf.cellmissy.entity.Ecm;
+import be.ugent.maf.cellmissy.entity.EcmComposition;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
+import java.util.List;
 
 /**
  *
  * @author Paola
  */
-public interface EcmService extends GenericService<MatrixDimension, Long> {
-    
-    MatrixDimension findByDimension(String dimension);
+public interface EcmService extends GenericService<Ecm, Long> {
+
+    public List<MatrixDimension> findAllMatrixDimension();
+
+    public List<EcmComposition> findAllEcmComposition();
 }

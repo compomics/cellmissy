@@ -46,8 +46,8 @@ public class AssayServiceImpl implements AssayService {
     }
 
     @Override
-    public List<Assay> findByMatrixDimension(MatrixDimension matrixDimension) {
-        return assayRepository.findByMatrixDimension(matrixDimension);
+    public List<Assay> findByMatrixDimensionName(String matrixDimensionName) {
+        return assayRepository.findByMatrixDimensionName(matrixDimensionName);
     }    
     
 }

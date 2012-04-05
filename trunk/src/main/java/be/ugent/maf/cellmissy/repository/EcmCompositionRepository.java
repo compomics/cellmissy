@@ -4,11 +4,12 @@
  */
 package be.ugent.maf.cellmissy.repository;
 
-import be.ugent.maf.cellmissy.entity.MatrixDimension;
+import be.ugent.maf.cellmissy.entity.EcmComposition;
 
 /**
  *
  * @author Paola
  */
-public interface MatrixDimensionRepository extends GenericRepository<MatrixDimension, Long> {
+public interface EcmCompositionRepository extends GenericRepository<EcmComposition, Long> {
+    
 }

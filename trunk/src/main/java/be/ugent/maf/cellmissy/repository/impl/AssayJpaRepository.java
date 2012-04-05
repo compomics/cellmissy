@@ -20,11 +20,11 @@ import javax.persistence.Query;
 public class AssayJpaRepository extends GenericJpaRepository<Assay, Long> implements AssayRepository {
 
     @Override
-    public List<Assay> findByMatrixDimension(MatrixDimension matrixDimension) {
+    public List<Assay> findByMatrixDimensionName(String matrixDimensionName) {
 
         //annotated query
-        Query byNameQuery = getEntityManager().createNamedQuery("Assay.findByMatrixDimension");
-        byNameQuery.setParameter("matrixDimension", matrixDimension);
+        Query byNameQuery = getEntityManager().createNamedQuery("Assay.findByMatrixDimensionName");
+        byNameQuery.setParameter("matrixDimension", matrixDimensionName);
         List<Assay> resultList = byNameQuery.getResultList();
         if (!resultList.isEmpty()) {
             return resultList;

@@ -10,7 +10,6 @@ import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ConditionsSetupPanel;
 import be.ugent.maf.cellmissy.service.CellLineService;
 import be.ugent.maf.cellmissy.service.EcmService;
-import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,7 +29,6 @@ public class ConditionsSetupPanelController {
 
     //model
     private ObservableList<CellLine> cellLineBindingList;
-    private ObservableList<MatrixDimension> matrixDimensionBindingList;
     private BindingGroup bindingGroup;
     //view
     private ConditionsSetupPanel conditionsSetupPanel;
@@ -40,18 +38,13 @@ public class ConditionsSetupPanelController {
     private AssayEcmPanelController assayEcmPanelController;
     //services
     private CellLineService cellLineService;
-    private EcmService ecmService;
     private GridBagConstraints gridBagConstraints;
 
     public ConditionsSetupPanelController(ExperimentSetupPanelController experimentSetupPanelController) {
         this.experimentSetupPanelController = experimentSetupPanelController;
 
-        //init child controllers
-        assayEcmPanelController = new AssayEcmPanelController(this);
-
         //init services
         cellLineService = (CellLineService) experimentSetupPanelController.getCellMissyController().getBeanByName("cellLineService");
-        ecmService = (EcmService) experimentSetupPanelController.getCellMissyController().getBeanByName("ecmService");
 
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
@@ -59,8 +52,10 @@ public class ConditionsSetupPanelController {
         //init views
         conditionsSetupPanel = new ConditionsSetupPanel();
         initCellLinePanel();
-        initEcmPanel();
         initPanel();
+        
+        //init child controllers
+        assayEcmPanelController = new AssayEcmPanelController(this);
     }
 
     public ExperimentSetupPanelController getExperimentSetupPanelController() {
@@ -95,44 +90,8 @@ public class ConditionsSetupPanelController {
             }
         });
     }
-
-    private void initEcmPanel() {
-        //init matrixDimensionJCombo
-        matrixDimensionBindingList = ObservableCollections.observableList(ecmService.findAll());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, matrixDimensionBindingList, conditionsSetupPanel.getEcmDimensionComboBox());
-        bindingGroup.addBinding(jComboBoxBinding);
-        bindingGroup.bind();
-
-        //add action listener
-        //show different assay-ecm, 2D-3D panels
-        conditionsSetupPanel.getEcmDimensionComboBox().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (((MatrixDimension)(conditionsSetupPanel.getEcmDimensionComboBox().getSelectedItem())).getMatrixDimension().equals("2D")) {
-                    switchChildPanels(assayEcmPanelController.getAssayEcm2DPanel(), assayEcmPanelController.getAssayEcm3DPanel());
-                } else {
-                    switchChildPanels(assayEcmPanelController.getAssayEcm3DPanel(), assayEcmPanelController.getAssayEcm2DPanel());
-                }
-                conditionsSetupPanel.getAssayEcmParentPanel().revalidate();
-                conditionsSetupPanel.getAssayEcmParentPanel().repaint();
-            }
-        });
-        conditionsSetupPanel.getEcmDimensionComboBox().setSelectedIndex(0);
-
-    }
-
+    
     private void initPanel() {
         experimentSetupPanelController.getExperimentSetupPanel().getConditionsSetupParentPanel().add(conditionsSetupPanel, gridBagConstraints);
-    }
-    
-    private void switchChildPanels(JPanel panelToAdd, JPanel panelToRemove) {
-        if (!GuiUtils.containsComponent(conditionsSetupPanel.getAssayEcmParentPanel(), panelToAdd)) {
-            conditionsSetupPanel.getAssayEcmParentPanel().add(panelToAdd, gridBagConstraints);
-        }
-        if (GuiUtils.containsComponent(conditionsSetupPanel.getAssayEcmParentPanel(), panelToRemove)) {
-            conditionsSetupPanel.getAssayEcmParentPanel().remove(panelToRemove);
-        }
-
     }
 }
