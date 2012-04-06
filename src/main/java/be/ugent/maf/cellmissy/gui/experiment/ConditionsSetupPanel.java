@@ -76,6 +76,7 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
         treatmentPanel = new javax.swing.JPanel();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions Set-up"));
+        setLayout(new java.awt.GridBagLayout());
 
         cellLineComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -100,12 +101,12 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
                         .addComponent(cellLineComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(cellLinePanelLayout.createSequentialGroup()
                         .addComponent(cellLineNameLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(cellLineNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cellLineNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(insertCellLineButton))
                     .addComponent(jLabel1))
-                .addContainerGap(96, Short.MAX_VALUE))
+                .addContainerGap(138, Short.MAX_VALUE))
         );
         cellLinePanelLayout.setVerticalGroup(
             cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -121,7 +122,7 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
                     .addComponent(cellLineNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(insertCellLineButton)
                     .addComponent(cellLineNameLabel))
-                .addContainerGap(184, Short.MAX_VALUE))
+                .addContainerGap(229, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("cell line", cellLinePanel);
@@ -170,31 +171,23 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
         treatmentPanel.setLayout(treatmentPanelLayout);
         treatmentPanelLayout.setHorizontalGroup(
             treatmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 363, Short.MAX_VALUE)
+            .addGap(0, 405, Short.MAX_VALUE)
         );
         treatmentPanelLayout.setVerticalGroup(
             treatmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 299, Short.MAX_VALUE)
+            .addGap(0, 344, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("treatment", treatmentPanel);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.8;
+        gridBagConstraints.weighty = 1.0;
+        add(jTabbedPane1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -43,7 +43,7 @@ public class ExperimentSetupPanelController {
     //parent controller
     private CellMissyController cellMissyController;
     //child controller
-    private ConditionsSetupPanelController conditionsSetupPanelController;
+    private ConditionsPanelController conditionsSetupPanelController;
     //services
     private PlateService plateService;
     private ProjectService projectService;
@@ -57,7 +57,7 @@ public class ExperimentSetupPanelController {
         plateSetupPanel = new PlateSetupPanel();
         
         //init child controllers
-        conditionsSetupPanelController = new ConditionsSetupPanelController(this);
+        conditionsSetupPanelController = new ConditionsPanelController(this);
         
         //init services
         plateService = (PlateService) cellMissyController.getBeanByName("plateService");

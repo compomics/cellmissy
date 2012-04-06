@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.Assay;
+import be.ugent.maf.cellmissy.entity.EcmCoating;
 import be.ugent.maf.cellmissy.entity.EcmComposition;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
@@ -38,18 +39,20 @@ public class AssayEcmPanelController {
     //binding list for ecm composition (2D and 3D)
     private ObservableList<EcmComposition> ecm2DCompositionBindingList;
     private ObservableList<EcmComposition> ecm3DCompositionBindingList;
+    //binding list for ecm coating (only for 2D)
+    private ObservableList<EcmCoating> ecmCoatingBindingList;
     private BindingGroup bindingGroup;
     // view
     private AssayEcm2DPanel assayEcm2DPanel;
     private AssayEcm3DPanel assayEcm3DPanel;
     // parent controller
-    private ConditionsSetupPanelController conditionsSetupPanelController;
+    private ConditionsPanelController conditionsSetupPanelController;
     // services
     private AssayService assayService;
     private EcmService ecmService;
     private GridBagConstraints gridBagConstraints;
 
-    public AssayEcmPanelController(ConditionsSetupPanelController conditionsSetupPanelController) {
+    public AssayEcmPanelController(ConditionsPanelController conditionsSetupPanelController) {
         this.conditionsSetupPanelController = conditionsSetupPanelController;
 
         //init services
@@ -111,12 +114,19 @@ public class AssayEcmPanelController {
         //init assayJCombo (2D)
         JComboBoxBinding assayComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, assay2DBindingList, assayEcm2DPanel.getAssayComboBox());
         bindingGroup.addBinding(assayComboBoxBinding);
+        
         //init ecmCompositionBindingList
         ecm2DCompositionBindingList = ObservableCollections.observableList(ecmService.findEcmCompositionByMatrixDimensionName("2D"));
         //init ecmCompositionJCombo (2D)
         JComboBoxBinding ecmCompositionComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, ecm2DCompositionBindingList, assayEcm2DPanel.getCompositionComboBox());
         bindingGroup.addBinding(ecmCompositionComboBoxBinding);
-
+        
+        //init coatingBindingList
+        ecmCoatingBindingList = ObservableCollections.observableList(ecmService.findAllEcmCoating());
+        //init coatingJCombo
+        JComboBoxBinding ecmCoatingComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, ecmCoatingBindingList, assayEcm2DPanel.getCoatingComboBox());
+        bindingGroup.addBinding(ecmCoatingComboBoxBinding);
+        
         //do the binding
         bindingGroup.bind();
     }

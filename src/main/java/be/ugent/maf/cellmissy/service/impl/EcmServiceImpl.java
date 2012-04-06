@@ -5,8 +5,10 @@
 package be.ugent.maf.cellmissy.service.impl;
 
 import be.ugent.maf.cellmissy.entity.Ecm;
+import be.ugent.maf.cellmissy.entity.EcmCoating;
 import be.ugent.maf.cellmissy.entity.EcmComposition;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
+import be.ugent.maf.cellmissy.repository.EcmCoatingRepository;
 import be.ugent.maf.cellmissy.repository.EcmCompositionRepository;
 import be.ugent.maf.cellmissy.repository.EcmRepository;
 import be.ugent.maf.cellmissy.repository.MatrixDimensionRepository;
@@ -30,6 +32,8 @@ public class EcmServiceImpl implements EcmService {
     private MatrixDimensionRepository matrixDimensionRepository;
     @Autowired
     private EcmCompositionRepository ecmCompositionRepository;
+    @Autowired
+    private EcmCoatingRepository ecmCoatingRepository;
 
     @Override
     public Ecm findById(Long id) {
@@ -60,5 +64,10 @@ public class EcmServiceImpl implements EcmService {
     @Override
     public List<EcmComposition> findEcmCompositionByMatrixDimensionName(String matrixDimensionName) {
         return ecmCompositionRepository.findByMatrixDimensionName(matrixDimensionName);
+    }
+
+    @Override
+    public List<EcmCoating> findAllEcmCoating() {
+        return ecmCoatingRepository.findAll();
     }
 }

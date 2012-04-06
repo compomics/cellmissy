@@ -31,6 +31,10 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
         return compositionComboBox;
     }
 
+    public JComboBox getCoatingComboBox() {
+        return coatingComboBox;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -45,7 +49,6 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
         assayComboBox = new javax.swing.JComboBox();
         selectAssayLabel = new javax.swing.JLabel();
         ecmPanel = new javax.swing.JPanel();
-        coatingTypeTextField = new javax.swing.JTextField();
         coatingTypeLabel = new javax.swing.JLabel();
         concentrationLabel = new javax.swing.JLabel();
         compositionLabel = new javax.swing.JLabel();
@@ -57,6 +60,7 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
         coatingTimeTextField = new javax.swing.JTextField();
         coatingTemperatureTextField = new javax.swing.JTextField();
         compositionComboBox = new javax.swing.JComboBox();
+        coatingComboBox = new javax.swing.JComboBox();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -112,6 +116,8 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
 
         compositionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        coatingComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout ecmPanelLayout = new javax.swing.GroupLayout(ecmPanel);
         ecmPanel.setLayout(ecmPanelLayout);
         ecmPanelLayout.setHorizontalGroup(
@@ -126,18 +132,23 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
                     .addComponent(coatingTimeLabel, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(coatingTemperatureLabel, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(concentraionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(coatingTemperatureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(coatingTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(coatingTypeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(volumeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(compositionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(200, 200, 200))
+                .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(ecmPanelLayout.createSequentialGroup()
+                        .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(compositionComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(concentraionTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 56, Short.MAX_VALUE)
+                            .addComponent(volumeTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 56, Short.MAX_VALUE)
+                            .addComponent(coatingTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(coatingTemperatureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(209, 209, 209))
+                    .addGroup(ecmPanelLayout.createSequentialGroup()
+                        .addComponent(coatingComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
 
-        ecmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {coatingTemperatureTextField, coatingTimeTextField, coatingTypeTextField, concentraionTextField, volumeTextField});
+        ecmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {coatingComboBox, compositionComboBox});
+
+        ecmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {coatingTemperatureTextField, coatingTimeTextField, concentraionTextField, volumeTextField});
 
         ecmPanelLayout.setVerticalGroup(
             ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -149,7 +160,7 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(coatingTypeLabel)
-                    .addComponent(coatingTypeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(coatingComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(concentrationLabel)
@@ -181,12 +192,12 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox assayComboBox;
     private javax.swing.JPanel assayPanel;
+    private javax.swing.JComboBox coatingComboBox;
     private javax.swing.JLabel coatingTemperatureLabel;
     private javax.swing.JTextField coatingTemperatureTextField;
     private javax.swing.JLabel coatingTimeLabel;
     private javax.swing.JTextField coatingTimeTextField;
     private javax.swing.JLabel coatingTypeLabel;
-    private javax.swing.JTextField coatingTypeTextField;
     private javax.swing.JComboBox compositionComboBox;
     private javax.swing.JLabel compositionLabel;
     private javax.swing.JTextField concentraionTextField;
