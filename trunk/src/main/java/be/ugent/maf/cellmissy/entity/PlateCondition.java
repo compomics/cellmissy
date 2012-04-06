@@ -19,6 +19,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -59,6 +60,8 @@ public class PlateCondition implements Serializable {
     @JoinColumn(name = "l_experimentid", referencedColumnName = "experimentid")
     @ManyToOne(optional = false)
     private Experiment experiment;
+    @Transient
+    private String name;
 
     public PlateCondition() {
     }
@@ -132,6 +135,14 @@ public class PlateCondition implements Serializable {
         this.experiment = experiment;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -154,7 +165,7 @@ public class PlateCondition implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.cellmissy.entity.PlateCondition[ plateConditionid=" + plateConditionid + " ]";
+        return name;
     }
     
 }

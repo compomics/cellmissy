@@ -91,7 +91,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" alignment="0" max="-2" attributes="0">
                   <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="compositionLabel" alignment="1" min="-2" max="-2" attributes="1"/>
@@ -102,17 +102,22 @@
                       <Component id="coatingTemperatureLabel" alignment="1" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="concentraionTextField" linkSize="1" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                          <Component id="coatingTemperatureTextField" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Component id="coatingTimeTextField" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Group type="102" max="-2" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="compositionComboBox" linkSize="2" alignment="0" max="32767" attributes="1"/>
+                              <Component id="concentraionTextField" linkSize="3" alignment="0" pref="56" max="32767" attributes="1"/>
+                              <Component id="volumeTextField" linkSize="3" alignment="0" pref="56" max="32767" attributes="1"/>
+                              <Component id="coatingTimeTextField" linkSize="3" alignment="0" min="-2" pref="56" max="-2" attributes="0"/>
+                              <Component id="coatingTemperatureTextField" linkSize="3" alignment="0" min="-2" pref="56" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="209" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="coatingTypeTextField" linkSize="1" min="-2" pref="65" max="-2" attributes="0"/>
-                      <Component id="volumeTextField" linkSize="1" min="-2" max="-2" attributes="0"/>
-                      <Component id="compositionComboBox" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="coatingComboBox" linkSize="2" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="200" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -127,7 +132,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="coatingTypeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="coatingTypeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="coatingComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -155,8 +160,6 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JTextField" name="coatingTypeTextField">
-        </Component>
         <Component class="javax.swing.JLabel" name="coatingTypeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Coating type"/>
@@ -196,6 +199,18 @@
         <Component class="javax.swing.JTextField" name="coatingTemperatureTextField">
         </Component>
         <Component class="javax.swing.JComboBox" name="compositionComboBox">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="4">
+                <StringItem index="0" value="Item 1"/>
+                <StringItem index="1" value="Item 2"/>
+                <StringItem index="2" value="Item 3"/>
+                <StringItem index="3" value="Item 4"/>
+              </StringArray>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="coatingComboBox">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="4">

@@ -17,10 +17,12 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.Binding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.ELProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JListBinding;
@@ -34,8 +36,8 @@ public class UserPanelController {
 
     //model
     private User newUser;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     private ObservableList<User> userBindingList;
+    private BindingGroup bindingGroup;
     //view
     private UserPanel userPanel;
     //parent controller
@@ -49,11 +51,10 @@ public class UserPanelController {
 
         //init services
         userService = (UserService) cellMissyController.getBeanByName("userService");
-
         bindingGroup = new BindingGroup();
+
         //init views
         userPanel = new UserPanel();
-
         initPanel();
     }
 
@@ -64,19 +65,19 @@ public class UserPanelController {
     private void initPanel() {
         //init userJList
         userBindingList = ObservableCollections.observableList(userService.findAll());
-        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, userBindingList, userPanel.getUserJList());
-        bindingGroup.addBinding(jListBinding);
+        JListBinding userListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, userBindingList, userPanel.getUserJList());
+        bindingGroup.addBinding(userListBinding);
 
         //init user binding
-        Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, userPanel.getCreateUserEmailTextField(), org.jdesktop.beansbinding.ELProperty.create("${text}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("email"), "emailbinding");
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, userPanel.getCreateUserEmailTextField(), ELProperty.create("${text}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("email"), "emailbinding");
         bindingGroup.addBinding(binding);
-        binding = Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, userPanel.getCreateUserFirstNameTextField(), org.jdesktop.beansbinding.ELProperty.create("${text}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("firstName"), "firstnamebinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, userPanel.getCreateUserFirstNameTextField(), ELProperty.create("${text}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("firstName"), "firstnamebinding");
         bindingGroup.addBinding(binding);
-        binding = Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, userPanel.getCreateUserLastNameTextField(), org.jdesktop.beansbinding.ELProperty.create("${text}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("lastName"), "lastnamebinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, userPanel.getCreateUserLastNameTextField(), ELProperty.create("${text}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("lastName"), "lastnamebinding");
         bindingGroup.addBinding(binding);
-        binding = Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, userPanel.getRoleComboBox(), org.jdesktop.beansbinding.ELProperty.create("${selectedItem}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("role"), "rolebinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, userPanel.getRoleComboBox(), ELProperty.create("${selectedItem}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("role"), "rolebinding");
         bindingGroup.addBinding(binding);
-        binding = Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ, userPanel.getPasswordField(), org.jdesktop.beansbinding.ELProperty.create("${text}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("password"), "passwordbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, userPanel.getPasswordField(), ELProperty.create("${text}"), newUser, org.jdesktop.beansbinding.BeanProperty.create("password"), "passwordbinding");
         bindingGroup.addBinding(binding);
 
         bindingGroup.bind();
