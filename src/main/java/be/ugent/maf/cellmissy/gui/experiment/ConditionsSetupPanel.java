@@ -147,14 +147,16 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
         ecmDimensionPanelLayout.setVerticalGroup(
             ecmDimensionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ecmDimensionPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(21, Short.MAX_VALUE)
                 .addGroup(ecmDimensionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ecmDimensionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ecmDimensionLabel))
                 .addContainerGap())
         );
 
-        assayEcmPanel.add(ecmDimensionPanel, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipady = 10;
+        assayEcmPanel.add(ecmDimensionPanel, gridBagConstraints);
 
         assayEcmParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         assayEcmParentPanel.setLayout(new java.awt.GridBagLayout());

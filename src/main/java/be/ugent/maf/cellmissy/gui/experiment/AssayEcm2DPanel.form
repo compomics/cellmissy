@@ -84,7 +84,7 @@
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-          <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="0.9"/>
+          <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="0.6"/>
         </Constraint>
       </Constraints>
 
@@ -103,21 +103,16 @@
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Group type="102" max="-2" attributes="0">
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="compositionComboBox" linkSize="2" alignment="0" max="32767" attributes="1"/>
-                              <Component id="concentraionTextField" linkSize="3" alignment="0" pref="56" max="32767" attributes="1"/>
-                              <Component id="volumeTextField" linkSize="3" alignment="0" pref="56" max="32767" attributes="1"/>
-                              <Component id="coatingTimeTextField" linkSize="3" alignment="0" min="-2" pref="56" max="-2" attributes="0"/>
-                              <Component id="coatingTemperatureTextField" linkSize="3" alignment="0" min="-2" pref="56" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="209" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="compositionComboBox" linkSize="2" alignment="0" max="32767" attributes="1"/>
+                          <Component id="concentraionTextField" linkSize="3" alignment="0" pref="56" max="32767" attributes="1"/>
+                          <Component id="volumeTextField" linkSize="3" alignment="0" pref="56" max="32767" attributes="1"/>
+                          <Component id="coatingTimeTextField" linkSize="3" alignment="0" min="-2" pref="56" max="-2" attributes="0"/>
+                          <Component id="coatingTemperatureTextField" linkSize="3" alignment="0" min="-2" pref="56" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" attributes="0">
-                          <Component id="coatingComboBox" linkSize="2" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="coatingComboBox" linkSize="2" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <EmptySpace min="-2" pref="209" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -154,7 +149,7 @@
                       <Component id="coatingTemperatureTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="coatingTemperatureLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="21" max="32767" attributes="0"/>
+                  <EmptySpace pref="13" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

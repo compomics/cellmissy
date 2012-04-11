@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ExperimentInfoPanel;
 import be.ugent.maf.cellmissy.gui.experiment.ExperimentSetupPanel;
@@ -98,7 +99,7 @@ public class ExperimentSetupPanelController {
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, plateFormatBindingList, plateSetupPanel.getPlateFormatComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
-
+        
         // add action listener
         plateSetupPanel.getPlateFormatComboBox().addActionListener(new ActionListener() {
 
