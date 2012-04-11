@@ -57,6 +57,7 @@ public class ConditionsPanel extends javax.swing.JPanel {
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         conditionsJList.setPreferredSize(new java.awt.Dimension(33, 40));
+        conditionsJList.setRequestFocusEnabled(false);
         conditionsJList.setVisibleRowCount(6);
         jScrollPane1.setViewportView(conditionsJList);
 

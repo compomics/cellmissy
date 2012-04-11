@@ -81,6 +81,7 @@
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[33, 40]"/>
             </Property>
+            <Property name="requestFocusEnabled" type="boolean" value="false"/>
             <Property name="visibleRowCount" type="int" value="6"/>
           </Properties>
         </Component>

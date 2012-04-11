@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -143,24 +144,21 @@ public class PlateCondition implements Serializable {
         this.name = name;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (plateConditionid != null ? plateConditionid.hashCode() : 0);
-        return hash;
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PlateCondition other = (PlateCondition) obj;
+        return true;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PlateCondition)) {
-            return false;
-        }
-        PlateCondition other = (PlateCondition) object;
-        if ((this.plateConditionid == null && other.plateConditionid != null) || (this.plateConditionid != null && !this.plateConditionid.equals(other.plateConditionid))) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        int hash = 7;
+        hash = 61 * hash + Objects.hashCode(this.name);
+        return hash;
     }
 
     @Override
