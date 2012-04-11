@@ -47,7 +47,7 @@ public class Treatment implements Serializable {
     private String name;
     @Basic(optional = false)
     @Column(name = "type")
-    private String type;
+    private Integer type;
     @Column(name = "description")
     private String description;
     @Column(name = "concentration")
@@ -64,7 +64,7 @@ public class Treatment implements Serializable {
         this.treatmentid = treatmentid;
     }
 
-    public Treatment(Integer treatmentid, String name, String type) {
+    public Treatment(Integer treatmentid, String name, Integer type) {
         this.treatmentid = treatmentid;
         this.name = name;
         this.type = type;
@@ -86,11 +86,11 @@ public class Treatment implements Serializable {
         this.name = name;
     }
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 

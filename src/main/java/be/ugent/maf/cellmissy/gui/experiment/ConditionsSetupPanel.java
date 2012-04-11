@@ -74,11 +74,15 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
         ecmDimensionComboBox = new javax.swing.JComboBox();
         assayEcmParentPanel = new javax.swing.JPanel();
         treatmentPanel = new javax.swing.JPanel();
+        chooseTreatmentPanel = new javax.swing.JPanel();
+        jComboBox1 = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
+        treatmentParentpanel = new javax.swing.JPanel();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions Set-up"));
         setLayout(new java.awt.GridBagLayout());
 
-        cellLineComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cellLineComboBox.setSelectedIndex(-1);
 
         selectCellLineLabel.setText("Select a cell line");
 
@@ -147,7 +151,7 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
         ecmDimensionPanelLayout.setVerticalGroup(
             ecmDimensionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ecmDimensionPanelLayout.createSequentialGroup()
-                .addContainerGap(21, Short.MAX_VALUE)
+                .addContainerGap(71, Short.MAX_VALUE)
                 .addGroup(ecmDimensionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ecmDimensionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ecmDimensionLabel))
@@ -156,6 +160,7 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.ipady = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         assayEcmPanel.add(ecmDimensionPanel, gridBagConstraints);
 
         assayEcmParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -169,16 +174,58 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("assay-ecm", assayEcmPanel);
 
-        javax.swing.GroupLayout treatmentPanelLayout = new javax.swing.GroupLayout(treatmentPanel);
-        treatmentPanel.setLayout(treatmentPanelLayout);
-        treatmentPanelLayout.setHorizontalGroup(
-            treatmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 405, Short.MAX_VALUE)
+        treatmentPanel.setLayout(new java.awt.GridBagLayout());
+
+        chooseTreatmentPanel.setMinimumSize(new java.awt.Dimension(250, 150));
+        chooseTreatmentPanel.setPreferredSize(new java.awt.Dimension(250, 150));
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jLabel2.setText("jLabel2");
+
+        javax.swing.GroupLayout chooseTreatmentPanelLayout = new javax.swing.GroupLayout(chooseTreatmentPanel);
+        chooseTreatmentPanel.setLayout(chooseTreatmentPanelLayout);
+        chooseTreatmentPanelLayout.setHorizontalGroup(
+            chooseTreatmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, chooseTreatmentPanelLayout.createSequentialGroup()
+                .addContainerGap(55, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addGap(29, 29, 29)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(76, 76, 76))
         );
-        treatmentPanelLayout.setVerticalGroup(
-            treatmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 344, Short.MAX_VALUE)
+        chooseTreatmentPanelLayout.setVerticalGroup(
+            chooseTreatmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(chooseTreatmentPanelLayout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addGroup(chooseTreatmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(113, Short.MAX_VALUE))
         );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipady = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        treatmentPanel.add(chooseTreatmentPanel, gridBagConstraints);
+
+        javax.swing.GroupLayout treatmentParentpanelLayout = new javax.swing.GroupLayout(treatmentParentpanel);
+        treatmentParentpanel.setLayout(treatmentParentpanelLayout);
+        treatmentParentpanelLayout.setHorizontalGroup(
+            treatmentParentpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 250, Short.MAX_VALUE)
+        );
+        treatmentParentpanelLayout.setVerticalGroup(
+            treatmentParentpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 184, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 1.0;
+        treatmentPanel.add(treatmentParentpanel, gridBagConstraints);
 
         jTabbedPane1.addTab("treatment", treatmentPanel);
 
@@ -199,13 +246,17 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
     private javax.swing.JLabel cellLineNameLabel;
     private javax.swing.JTextField cellLineNameTextField;
     private javax.swing.JPanel cellLinePanel;
+    private javax.swing.JPanel chooseTreatmentPanel;
     private javax.swing.JComboBox ecmDimensionComboBox;
     private javax.swing.JLabel ecmDimensionLabel;
     private javax.swing.JPanel ecmDimensionPanel;
     private javax.swing.JButton insertCellLineButton;
+    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel selectCellLineLabel;
     private javax.swing.JPanel treatmentPanel;
+    private javax.swing.JPanel treatmentParentpanel;
     // End of variables declaration//GEN-END:variables
 }
