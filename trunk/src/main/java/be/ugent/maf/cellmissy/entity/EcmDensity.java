@@ -94,7 +94,7 @@ public class EcmDensity implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.cellmissy.entity.EcmDensity[ ecmDensityid=" + ecmDensityid + " ]";
+        return ecmDensity;
     }
     
 }

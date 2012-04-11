@@ -47,7 +47,7 @@ public class Treatment implements Serializable {
     private String name;
     @Basic(optional = false)
     @Column(name = "type")
-    private int type;
+    private String type;
     @Column(name = "description")
     private String description;
     @Column(name = "concentration")
@@ -64,7 +64,7 @@ public class Treatment implements Serializable {
         this.treatmentid = treatmentid;
     }
 
-    public Treatment(Integer treatmentid, String name, int type) {
+    public Treatment(Integer treatmentid, String name, String type) {
         this.treatmentid = treatmentid;
         this.name = name;
         this.type = type;
@@ -86,11 +86,11 @@ public class Treatment implements Serializable {
         this.name = name;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -149,7 +149,7 @@ public class Treatment implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.cellmissy.entity.Treatment[ treatmentid=" + treatmentid + " ]";
+        return type + ", " + name;
     }
     
 }

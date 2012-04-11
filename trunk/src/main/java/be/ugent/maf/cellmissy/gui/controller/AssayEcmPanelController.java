@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.entity.Assay;
 import be.ugent.maf.cellmissy.entity.EcmCoating;
 import be.ugent.maf.cellmissy.entity.EcmComposition;
+import be.ugent.maf.cellmissy.entity.EcmDensity;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.AssayEcm2DPanel;
@@ -41,6 +42,9 @@ public class AssayEcmPanelController {
     private ObservableList<EcmComposition> ecm3DCompositionBindingList;
     //binding list for ecm coating (only for 2D)
     private ObservableList<EcmCoating> ecmCoatingBindingList;
+    //binding list for ecm density (only for 3D)
+    private ObservableList<EcmDensity> ecmDensityBindingList;
+    
     private BindingGroup bindingGroup;
     // view
     private AssayEcm2DPanel assayEcm2DPanel;
@@ -114,19 +118,19 @@ public class AssayEcmPanelController {
         //init assayJCombo (2D)
         JComboBoxBinding assayComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, assay2DBindingList, assayEcm2DPanel.getAssayComboBox());
         bindingGroup.addBinding(assayComboBoxBinding);
-        
+
         //init ecmCompositionBindingList
         ecm2DCompositionBindingList = ObservableCollections.observableList(ecmService.findEcmCompositionByMatrixDimensionName("2D"));
         //init ecmCompositionJCombo (2D)
         JComboBoxBinding ecmCompositionComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, ecm2DCompositionBindingList, assayEcm2DPanel.getCompositionComboBox());
         bindingGroup.addBinding(ecmCompositionComboBoxBinding);
-        
-        //init coatingBindingList
+
+        //init coatingBindingList (only for 2D)
         ecmCoatingBindingList = ObservableCollections.observableList(ecmService.findAllEcmCoating());
         //init coatingJCombo
         JComboBoxBinding ecmCoatingComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, ecmCoatingBindingList, assayEcm2DPanel.getCoatingComboBox());
         bindingGroup.addBinding(ecmCoatingComboBoxBinding);
-        
+
         //do the binding
         bindingGroup.bind();
     }
@@ -137,12 +141,19 @@ public class AssayEcmPanelController {
         //init assayJCombo (3D)
         JComboBoxBinding assayComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, assay3DBindingList, assayEcm3DPanel.getAssayComboBox());
         bindingGroup.addBinding(assayComboBoxBinding);
+        
         //init ecmCompositionBindingList
         ecm3DCompositionBindingList = ObservableCollections.observableList(ecmService.findEcmCompositionByMatrixDimensionName("3D"));
-        //init ecmCompositionJCombo (2D)
+        //init ecmCompositionJCombo (3D)
         JComboBoxBinding ecmCompositionComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, ecm3DCompositionBindingList, assayEcm3DPanel.getCompositionComboBox());
         bindingGroup.addBinding(ecmCompositionComboBoxBinding);
-
+        
+        //init densityBindingList (only for 3D)
+        ecmDensityBindingList = ObservableCollections.observableList(ecmService.findAllEcmDensity());
+        //init densityJCombo
+        JComboBoxBinding ecmDensityComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, ecmDensityBindingList, assayEcm3DPanel.getDensityComboBox());
+        bindingGroup.addBinding(ecmDensityComboBoxBinding);
+        
         //do the binding
         bindingGroup.bind();
     }

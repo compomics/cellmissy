@@ -31,6 +31,10 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
         return compositionComboBox;
     }
 
+    public JComboBox getDensityComboBox() {
+        return densityComboBox;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -46,7 +50,6 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
         selectAssayLabel = new javax.swing.JLabel();
         ecmPanel = new javax.swing.JPanel();
         densityLabel = new javax.swing.JLabel();
-        densityTextField = new javax.swing.JTextField();
         compositionLabel = new javax.swing.JLabel();
         volumeLabel = new javax.swing.JLabel();
         polymerizationTimeLabel = new javax.swing.JLabel();
@@ -55,6 +58,7 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
         polymerizationTimeTextField = new javax.swing.JTextField();
         polymerizationTemperatureTextField = new javax.swing.JTextField();
         compositionComboBox = new javax.swing.JComboBox();
+        densityComboBox = new javax.swing.JComboBox();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -110,6 +114,8 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
 
         compositionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        densityComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout ecmPanelLayout = new javax.swing.GroupLayout(ecmPanel);
         ecmPanel.setLayout(ecmPanelLayout);
         ecmPanelLayout.setHorizontalGroup(
@@ -123,17 +129,14 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
                     .addComponent(polymerizationTimeLabel, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(polymerizationTemperatureLabel, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(densityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(volumeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(polymerizationTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(polymerizationTemperatureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(compositionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(compositionComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(densityComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(volumeTextField)
+                    .addComponent(polymerizationTimeTextField)
+                    .addComponent(polymerizationTemperatureTextField))
+                .addContainerGap(180, Short.MAX_VALUE))
         );
-
-        ecmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {densityTextField, polymerizationTemperatureTextField, polymerizationTimeTextField, volumeTextField});
-
         ecmPanelLayout.setVerticalGroup(
             ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ecmPanelLayout.createSequentialGroup()
@@ -143,8 +146,8 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
                     .addComponent(compositionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(densityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(densityLabel))
+                    .addComponent(densityLabel)
+                    .addComponent(densityComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(volumeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -157,7 +160,7 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
                 .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(polymerizationTemperatureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(polymerizationTemperatureLabel))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -165,7 +168,7 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.9;
+        gridBagConstraints.weighty = 0.6;
         add(ecmPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -173,8 +176,8 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
     private javax.swing.JPanel assayPanel;
     private javax.swing.JComboBox compositionComboBox;
     private javax.swing.JLabel compositionLabel;
+    private javax.swing.JComboBox densityComboBox;
     private javax.swing.JLabel densityLabel;
-    private javax.swing.JTextField densityTextField;
     private javax.swing.JPanel ecmPanel;
     private javax.swing.JLabel polymerizationTemperatureLabel;
     private javax.swing.JTextField polymerizationTemperatureTextField;
