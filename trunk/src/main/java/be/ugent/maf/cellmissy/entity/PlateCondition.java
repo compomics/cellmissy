@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "PlateCondition.findAll", query = "SELECT p FROM PlateCondition p"),
     @NamedQuery(name = "PlateCondition.findByPlateConditionid", query = "SELECT p FROM PlateCondition p WHERE p.plateConditionid = :plateConditionid")})
 public class PlateCondition implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -165,5 +166,4 @@ public class PlateCondition implements Serializable {
     public String toString() {
         return name;
     }
-    
 }

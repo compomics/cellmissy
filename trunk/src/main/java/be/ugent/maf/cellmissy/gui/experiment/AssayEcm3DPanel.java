@@ -73,9 +73,9 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
         assayPanelLayout.setHorizontalGroup(
             assayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(assayPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(selectAssayLabel)
                 .addGap(18, 18, 18)
+                .addComponent(selectAssayLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(assayComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(199, Short.MAX_VALUE))
         );
@@ -84,8 +84,8 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
             .addGroup(assayPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(assayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(selectAssayLabel)
-                    .addComponent(assayComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(assayComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(selectAssayLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 

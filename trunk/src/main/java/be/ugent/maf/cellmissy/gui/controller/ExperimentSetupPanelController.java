@@ -6,7 +6,6 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
-import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ExperimentInfoPanel;
 import be.ugent.maf.cellmissy.gui.experiment.ExperimentSetupPanel;
@@ -44,7 +43,7 @@ public class ExperimentSetupPanelController {
     //parent controller
     private CellMissyController cellMissyController;
     //child controller
-    private ConditionsPanelController conditionsSetupPanelController;
+    private ConditionsPanelController conditionsPanelController;
     //services
     private PlateService plateService;
     private ProjectService projectService;
@@ -58,7 +57,7 @@ public class ExperimentSetupPanelController {
         plateSetupPanel = new PlateSetupPanel();
         
         //init child controllers
-        conditionsSetupPanelController = new ConditionsPanelController(this);
+        conditionsPanelController = new ConditionsPanelController(this);
         
         //init services
         plateService = (PlateService) cellMissyController.getBeanByName("plateService");

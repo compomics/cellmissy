@@ -14,15 +14,10 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.Binding;
@@ -51,6 +46,7 @@ public class ConditionsPanelController {
     private ExperimentSetupPanelController experimentSetupPanelController;
     //child controllers
     private AssayEcmPanelController assayEcmPanelController;
+    private TreatmentPanelController treatmentPanelController;
     //services
     private CellLineService cellLineService;
     private GridBagConstraints gridBagConstraints;
@@ -69,13 +65,13 @@ public class ConditionsPanelController {
         //init views
         conditionsPanel = new ConditionsPanel();
         conditionsSetupPanel = new ConditionsSetupPanel();
-        initCellLinePanel();
-
-        initConditionsPanel();
 
         //init child controllers
         assayEcmPanelController = new AssayEcmPanelController(this);
+        treatmentPanelController = new TreatmentPanelController(this);
 
+        initCellLinePanel();
+        initConditionsPanel();
         initPanel();
     }
 
@@ -91,7 +87,7 @@ public class ConditionsPanelController {
 
         //init cellLineJCombo
         cellLineBindingList = ObservableCollections.observableList(cellLineService.findAll());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, cellLineBindingList, conditionsSetupPanel.getCellLineComboBox());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, cellLineBindingList, conditionsSetupPanel.getCellLineComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
 
@@ -129,16 +125,23 @@ public class ConditionsPanelController {
         plateConditionBindingList.add(secondPlateCondition);
 
         //set cell renderer for conditionJList (to show condition name instead of toString-method return)
-        //conditionsPanel.getConditionsJList().setCellRenderer(new ConditionsRenderer());
+        conditionsPanel.getConditionsJList().setCellRenderer(new ConditionsRenderer());
 
         //init conditionListBinding
-        JListBinding conditionListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, plateConditionBindingList, conditionsPanel.getConditionsJList());
+        JListBinding conditionListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, conditionsPanel.getConditionsJList());
         bindingGroup.addBinding(conditionListBinding);
-        //bind
         bindingGroup.bind();
 
-        //select as default the first condition (to init the binding)
-        //conditionsPanel.getConditionsJList().setSelectedIndex(0);
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine"), conditionsSetupPanel.getCellLineComboBox(), BeanProperty.create("selectedItem"), "celllinebinding");
+        bindingGroup.addBinding(binding);
+        bindingGroup.bind();
+
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.name"), conditionsSetupPanel.getCellLineNameTextField(), BeanProperty.create("text"), "celllinebinding2");
+        bindingGroup.addBinding(binding);
+        bindingGroup.bind();
+
+        //select as default the first condition
+        conditionsPanel.getConditionsJList().setSelectedIndex(0);
 
         //add action listeners
         //add a new condition to the List
@@ -151,7 +154,7 @@ public class ConditionsPanelController {
                 newPlateCondition.setName("Condition " + ++conditionIndex);
                 //add the new condition to the list
                 plateConditionBindingList.add(newPlateCondition);
-                bindingGroup.bind();
+                //bindingGroup.bind();
             }
         });
 
@@ -167,32 +170,31 @@ public class ConditionsPanelController {
         });
     }
 
-    private void initPlateCondition() {
-
-        //bind cell line
-        Binding binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine"), conditionsSetupPanel.getCellLineComboBox(), BeanProperty.create("selectedItem"), "celllinebinding");
-        bindingGroup.addBinding(binding);
-//        //bind ecm dimension
-//        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.matrixDimension"), conditionsSetupPanel.getEcmDimensionComboBox(), BeanProperty.create("selectedItem"), "matrixdimensionbinding");
+//    private void initPlateCondition() {
+//
+//        //bind cell line
+//        Binding binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine"), conditionsSetupPanel.getCellLineComboBox(), BeanProperty.create("selectedItem"), "celllinebinding");
 //        bindingGroup.addBinding(binding);
-        bindingGroup.bind();
-        
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.name"), conditionsSetupPanel.getCellLineNameTextField(), BeanProperty.create("text"), "celllinebinding2");
-        bindingGroup.addBinding(binding);
-        bindingGroup.bind();
-        //conditionsPanel.getConditionsJList().setSelectedIndex(1);
-
-//        //bind assay, depending on 2D/3D ecm
-//        if ((selectedPlateCondition.getMatrixDimension().getMatrixDimension().equals("2D"))) {
-//            binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, assayEcmPanelController.getAssayEcm2DPanel().getAssayComboBox(), BeanProperty.create("selectedItem"), conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assay"), "assaybinding");
-//        } else {
-//            binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, assayEcmPanelController.getAssayEcm3DPanel().getAssayComboBox(), BeanProperty.create("selectedItem"), conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assay"), "assaybinding");
-//        }
+////        //bind ecm dimension
+////        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.matrixDimension"), conditionsSetupPanel.getEcmDimensionComboBox(), BeanProperty.create("selectedItem"), "matrixdimensionbinding");
+////        bindingGroup.addBinding(binding);
+//        bindingGroup.bind();
+//        
+//        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.name"), conditionsSetupPanel.getCellLineNameTextField(), BeanProperty.create("text"), "celllinebinding2");
 //        bindingGroup.addBinding(binding);
 //        bindingGroup.bind();
-
-    }
-
+//        //conditionsPanel.getConditionsJList().setSelectedIndex(1);
+//
+////        //bind assay, depending on 2D/3D ecm
+////        if ((selectedPlateCondition.getMatrixDimension().getMatrixDimension().equals("2D"))) {
+////            binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, assayEcmPanelController.getAssayEcm2DPanel().getAssayComboBox(), BeanProperty.create("selectedItem"), conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assay"), "assaybinding");
+////        } else {
+////            binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, assayEcmPanelController.getAssayEcm3DPanel().getAssayComboBox(), BeanProperty.create("selectedItem"), conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assay"), "assaybinding");
+////        }
+////        bindingGroup.addBinding(binding);
+////        bindingGroup.bind();
+//
+//    }
     private class ConditionsRenderer extends DefaultListCellRenderer {
 
         public ConditionsRenderer() {
@@ -209,6 +211,5 @@ public class ConditionsPanelController {
     private void initPanel() {
         experimentSetupPanelController.getExperimentSetupPanel().getConditionsParentPanel().add(conditionsPanel, gridBagConstraints);
         experimentSetupPanelController.getExperimentSetupPanel().getConditionsSetupParentPanel().add(conditionsSetupPanel, gridBagConstraints);
-        initPlateCondition();
     }
 }
