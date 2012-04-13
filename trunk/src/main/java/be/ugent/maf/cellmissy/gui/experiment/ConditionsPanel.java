@@ -12,7 +12,6 @@ package be.ugent.maf.cellmissy.gui.experiment;
 
 import javax.swing.JButton;
 import javax.swing.JList;
-import javax.swing.JTextField;
 
 /**
  *
@@ -54,10 +53,16 @@ public class ConditionsPanel extends javax.swing.JPanel {
         setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions"));
         setMinimumSize(new java.awt.Dimension(30, 30));
 
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        jScrollPane1.setBorder(null);
+        jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        jScrollPane1.setAutoscrolls(true);
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(40, 45));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(45, 100));
 
+        conditionsJList.setMaximumSize(new java.awt.Dimension(45, 50));
+        conditionsJList.setMinimumSize(new java.awt.Dimension(45, 50));
         conditionsJList.setPreferredSize(new java.awt.Dimension(33, 40));
-        conditionsJList.setRequestFocusEnabled(false);
+        conditionsJList.setSelectedIndex(0);
         conditionsJList.setVisibleRowCount(6);
         jScrollPane1.setViewportView(conditionsJList);
 
