@@ -153,12 +153,23 @@ public class PlateCondition implements Serializable {
             return false;
         }
         final PlateCondition other = (PlateCondition) obj;
+        if (!Objects.equals(this.cellLine, other.cellLine)) {
+            return false;
+        }
+        if (!Objects.equals(this.matrixDimension, other.matrixDimension)) {
+            return false;
+        }
+        if (!Objects.equals(this.assay, other.assay)) {
+            return false;
+        }
         return true;
     }
 
     public int hashCode() {
         int hash = 7;
-        hash = 61 * hash + Objects.hashCode(this.name);
+        hash = 67 * hash + Objects.hashCode(this.cellLine);
+        hash = 67 * hash + Objects.hashCode(this.matrixDimension);
+        hash = 67 * hash + Objects.hashCode(this.assay);
         return hash;
     }
 

@@ -79,6 +79,18 @@ public class AssayEcmPanelController {
         return assayEcm3DPanel;
     }
 
+    public ObservableList<MatrixDimension> getMatrixDimensionBindingList() {
+        return matrixDimensionBindingList;
+    }
+
+    public ObservableList<Assay> getAssay2DBindingList() {
+        return assay2DBindingList;
+    }
+
+    public ObservableList<Assay> getAssay3DBindingList() {
+        return assay3DBindingList;
+    }
+
     private void initEcmPanel() {
         //init matrixDimensionJCombo
         matrixDimensionBindingList = ObservableCollections.observableList(ecmService.findAllMatrixDimension());
@@ -86,6 +98,12 @@ public class AssayEcmPanelController {
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
 
+        //init sub views
+        assayEcm2DPanel = new AssayEcm2DPanel();
+        assayEcm3DPanel = new AssayEcm3DPanel();
+        initAssayEcm2DPanel();
+        initAssayEcm3DPanel();
+        
         //add action listener
         //show different assay-ecm, 2D-3D panels
         conditionsPanelController.getConditionsSetupPanel().getEcmDimensionComboBox().addActionListener(new ActionListener() {
@@ -94,21 +112,17 @@ public class AssayEcmPanelController {
             public void actionPerformed(ActionEvent e) {
                 if (((MatrixDimension) (conditionsPanelController.getConditionsSetupPanel().getEcmDimensionComboBox().getSelectedItem())).getMatrixDimension().equals("2D")) {
                     switchChildPanels(assayEcm2DPanel, assayEcm3DPanel);
-                } else {
+                    conditionsPanelController.switchAssayBinding(assayEcm2DPanel.getAssayComboBox());
+                } else if(((MatrixDimension) (conditionsPanelController.getConditionsSetupPanel().getEcmDimensionComboBox().getSelectedItem())).getMatrixDimension().equals("3D")){
                     switchChildPanels(assayEcm3DPanel, assayEcm2DPanel);
+                    conditionsPanelController.switchAssayBinding(assayEcm3DPanel.getAssayComboBox());
                 }
                 conditionsPanelController.getConditionsSetupPanel().getAssayEcmParentPanel().revalidate();
                 conditionsPanelController.getConditionsSetupPanel().getAssayEcmParentPanel().repaint();
             }
         });
 
-        //init sub views
-        assayEcm2DPanel = new AssayEcm2DPanel();
-        assayEcm3DPanel = new AssayEcm3DPanel();
-        initAssayEcm2DPanel();
-        initAssayEcm3DPanel();
-
-        conditionsPanelController.getConditionsSetupPanel().getEcmDimensionComboBox().setSelectedIndex(0);
+        //conditionsPanelController.getConditionsSetupPanel().getEcmDimensionComboBox().setSelectedIndex(0);
 
     }
 
