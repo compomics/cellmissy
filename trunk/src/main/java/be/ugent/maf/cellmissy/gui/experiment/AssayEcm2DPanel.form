@@ -36,7 +36,7 @@
                   <Component id="selectAssayLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="assayComboBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="228" max="32767" attributes="0"/>
+                  <EmptySpace pref="200" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -57,7 +57,10 @@
         <Component class="javax.swing.JComboBox" name="assayComboBox">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="0"/>
+              <StringArray count="2">
+                <StringItem index="0" value="Item 1"/>
+                <StringItem index="1" value="Item 2"/>
+              </StringArray>
             </Property>
           </Properties>
         </Component>
@@ -105,7 +108,7 @@
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="compositionComboBox" linkSize="2" alignment="0" max="32767" attributes="1"/>
-                          <Component id="concentraionTextField" linkSize="3" alignment="0" pref="56" max="32767" attributes="1"/>
+                          <Component id="concentrationTextField" linkSize="3" alignment="0" pref="56" max="32767" attributes="1"/>
                           <Component id="volumeTextField" linkSize="3" alignment="0" pref="56" max="32767" attributes="1"/>
                           <Component id="coatingTimeTextField" linkSize="3" alignment="0" min="-2" pref="56" max="-2" attributes="0"/>
                           <Component id="coatingTemperatureTextField" linkSize="3" alignment="0" min="-2" pref="56" max="-2" attributes="0"/>
@@ -132,7 +135,7 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="concentrationLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="concentraionTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="concentrationTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -170,7 +173,10 @@
             <Property name="text" type="java.lang.String" value="Composition"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="concentraionTextField">
+        <Component class="javax.swing.JTextField" name="concentrationTextField">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="0"/>
+          </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="volumeLabel">
           <Properties>
@@ -188,6 +194,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="volumeTextField">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="0"/>
+          </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="coatingTimeTextField">
         </Component>
