@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Ecm.findByVolume", query = "SELECT e FROM Ecm e WHERE e.volume = :volume"),
     @NamedQuery(name = "Ecm.findByCoatingTime", query = "SELECT e FROM Ecm e WHERE e.coatingTime = :coatingTime"),
     @NamedQuery(name = "Ecm.findByCoatingTemperature", query = "SELECT e FROM Ecm e WHERE e.coatingTemperature = :coatingTemperature"),
-    @NamedQuery(name = "Ecm.findByPolymerisationType", query = "SELECT e FROM Ecm e WHERE e.polymerisationType = :polymerisationType"),
+    @NamedQuery(name = "Ecm.findByPolymerisationTime", query = "SELECT e FROM Ecm e WHERE e.polymerisationTime = :polymerisationTime"),
     @NamedQuery(name = "Ecm.findByPolymerisationTemperature", query = "SELECT e FROM Ecm e WHERE e.polymerisationTemperature = :polymerisationTemperature")})
 public class Ecm implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -53,8 +53,8 @@ public class Ecm implements Serializable {
     private String coatingTime;
     @Column(name = "coating_temperature")
     private String coatingTemperature;
-    @Column(name = "polymerisation_type")
-    private String polymerisationType;
+    @Column(name = "polymerisation_time")
+    private String polymerisationTime;
     @Column(name = "polymerisation_temperature")
     private String polymerisationTemperature;
     @JoinColumn(name = "l_ecm_coatingid", referencedColumnName = "ecm_coatingid")
@@ -116,12 +116,12 @@ public class Ecm implements Serializable {
         this.coatingTemperature = coatingTemperature;
     }
 
-    public String getPolymerisationType() {
-        return polymerisationType;
+    public String getPolymerisationTime() {
+        return polymerisationTime;
     }
 
-    public void setPolymerisationType(String polymerisationType) {
-        this.polymerisationType = polymerisationType;
+    public void setPolymerisationTime(String polymerisationTime) {
+        this.polymerisationTime = polymerisationTime;
     }
 
     public String getPolymerisationTemperature() {

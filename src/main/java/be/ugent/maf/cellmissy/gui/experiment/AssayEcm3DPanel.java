@@ -11,6 +11,7 @@
 package be.ugent.maf.cellmissy.gui.experiment;
 
 import javax.swing.JComboBox;
+import javax.swing.JTextField;
 
 /**
  *
@@ -33,6 +34,18 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
 
     public JComboBox getDensityComboBox() {
         return densityComboBox;
+    }
+
+    public JTextField getPolymerizationTemperatureTextField() {
+        return polymerizationTemperatureTextField;
+    }
+
+    public JTextField getPolymerizationTimeTextField() {
+        return polymerizationTimeTextField;
+    }
+
+    public JTextField getVolumeTextField() {
+        return volumeTextField;
     }
 
     /** This method is called from within the constructor to
@@ -111,6 +124,8 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
         polymerizationTimeLabel.setText("Polymerization time");
 
         polymerizationTemperatureLabel.setText("Polymerization temperature");
+
+        volumeTextField.setText("0");
 
         compositionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
