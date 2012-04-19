@@ -7,6 +7,8 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.entity.CellLine;
 import be.ugent.maf.cellmissy.entity.Ecm;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Treatment;
+import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ConditionsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.ConditionsSetupPanel;
@@ -129,6 +131,25 @@ public class ConditionsPanelController {
         bindingGroup.addBinding(binding);
         bindingGroup.bind();
 
+        //autobind treatment
+        //treatment type
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.type"), conditionsSetupPanel.getTreatmentTypeComboBox(), BeanProperty.create("selectedItem.databaseValue"), "treatmenttypebinding");
+        bindingGroup.addBinding(binding);
+        //treatment name
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.name"), conditionsSetupPanel.getDrugComboBox(), BeanProperty.create("selectedItem.name"), "treatmentnamebinding");
+        bindingGroup.addBinding(binding);
+        //treatment description
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.description"), conditionsSetupPanel.getAdditionalInfoTextField(), BeanProperty.create("text"), "treatmentdescriptionbinding");
+        bindingGroup.addBinding(binding);
+        //treatment timing
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.timing"), conditionsSetupPanel.getTimingTextField(), BeanProperty.create("text"), "treatmenttimingbinding");
+        bindingGroup.addBinding(binding);
+        //treatment concentration
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.concentration"), conditionsSetupPanel.getConcentrationTextField(), BeanProperty.create("text"), "treatmentconcentrationbinding");
+        bindingGroup.addBinding(binding);
+
+        bindingGroup.bind();
+
         //init conditionListBinding
         JListBinding conditionListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, conditionsPanel.getConditionsJList());
         bindingGroup.addBinding(conditionListBinding);
@@ -169,6 +190,10 @@ public class ConditionsPanelController {
                 ecm.setConcentration(0);
                 ecm.setVolume(0);
                 newPlateCondition.setEcm(ecm);
+                Treatment treatment = new Treatment();
+                treatment.setType(TreatmentType.DRUG.getDatabaseValue());
+                //treatment.setName(treatmentPanelController.getDrugList().get(0).getName());
+                newPlateCondition.setTreatment(treatment);
                 //add the new condition to the list
                 plateConditionBindingList.add(newPlateCondition);
             }

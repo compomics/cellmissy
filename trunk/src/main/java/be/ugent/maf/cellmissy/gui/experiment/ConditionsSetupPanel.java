@@ -54,6 +54,26 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
         return treatmentTypeComboBox;
     }
 
+    public JComboBox getDrugComboBox() {
+        return drugComboBox;
+    }
+
+    public JComboBox getGeneralTreatmentComboBox() {
+        return generalTreatmentComboBox;
+    }
+
+    public JTextField getTimingTextField() {
+        return timingTextField;
+    }
+
+    public JTextField getAdditionalInfoTextField() {
+        return additionalInfoTextField;
+    }
+
+    public JTextField getConcentrationTextField() {
+        return concentrationTextField;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -82,9 +102,15 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
         treatmentTypeComboBox = new javax.swing.JComboBox();
         chooseTreatmentTypeLabel = new javax.swing.JLabel();
         treatmentSetupPanel = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        nameLabel = new javax.swing.JLabel();
+        additionalInfoLabel = new javax.swing.JLabel();
+        timingLabel = new javax.swing.JLabel();
+        drugComboBox = new javax.swing.JComboBox();
+        additionalInfoTextField = new javax.swing.JTextField();
+        timingTextField = new javax.swing.JTextField();
+        concentrationLabel = new javax.swing.JLabel();
+        concentrationTextField = new javax.swing.JTextField();
+        generalTreatmentComboBox = new javax.swing.JComboBox();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions Set-up"));
         setLayout(new java.awt.GridBagLayout());
@@ -131,7 +157,7 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
                     .addComponent(cellLineNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(insertCellLineButton)
                     .addComponent(cellLineNameLabel))
-                .addContainerGap(229, Short.MAX_VALUE))
+                .addContainerGap(299, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("cell line", cellLinePanel);
@@ -215,35 +241,77 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         treatmentPanel.add(treatmentTypePanel, gridBagConstraints);
 
-        jLabel2.setText("Name");
+        treatmentSetupPanel.setLayout(new java.awt.GridBagLayout());
 
-        jLabel3.setText("Additional info");
+        nameLabel.setText("Name");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(32, 80, 0, 0);
+        treatmentSetupPanel.add(nameLabel, gridBagConstraints);
 
-        jLabel4.setText("Timing");
+        additionalInfoLabel.setText("Additional info");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(30, 80, 0, 0);
+        treatmentSetupPanel.add(additionalInfoLabel, gridBagConstraints);
 
-        javax.swing.GroupLayout treatmentSetupPanelLayout = new javax.swing.GroupLayout(treatmentSetupPanel);
-        treatmentSetupPanel.setLayout(treatmentSetupPanelLayout);
-        treatmentSetupPanelLayout.setHorizontalGroup(
-            treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
-                .addGap(80, 80, 80)
-                .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2))
-                .addContainerGap(257, Short.MAX_VALUE))
-        );
-        treatmentSetupPanelLayout.setVerticalGroup(
-            treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel3)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel4)
-                .addContainerGap(157, Short.MAX_VALUE))
-        );
+        timingLabel.setText("Timing");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(21, 80, 0, 0);
+        treatmentSetupPanel.add(timingLabel, gridBagConstraints);
+
+        drugComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(29, 18, 0, 0);
+        treatmentSetupPanel.add(drugComboBox, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 50;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(27, 18, 0, 0);
+        treatmentSetupPanel.add(additionalInfoTextField, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 50;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 0);
+        treatmentSetupPanel.add(timingTextField, gridBagConstraints);
+
+        concentrationLabel.setText("Concentration");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(21, 80, 0, 0);
+        treatmentSetupPanel.add(concentrationLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.ipadx = 50;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 92, 0);
+        treatmentSetupPanel.add(concentrationTextField, gridBagConstraints);
+
+        generalTreatmentComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(29, 6, 0, 121);
+        treatmentSetupPanel.add(generalTreatmentComboBox, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -265,6 +333,8 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel additionalInfoLabel;
+    private javax.swing.JTextField additionalInfoTextField;
     private javax.swing.JPanel assayEcmPanel;
     private javax.swing.JPanel assayEcmParentPanel;
     private javax.swing.JComboBox cellLineComboBox;
@@ -272,16 +342,20 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
     private javax.swing.JTextField cellLineNameTextField;
     private javax.swing.JPanel cellLinePanel;
     private javax.swing.JLabel chooseTreatmentTypeLabel;
+    private javax.swing.JLabel concentrationLabel;
+    private javax.swing.JTextField concentrationTextField;
+    private javax.swing.JComboBox drugComboBox;
     private javax.swing.JComboBox ecmDimensionComboBox;
     private javax.swing.JLabel ecmDimensionLabel;
     private javax.swing.JPanel ecmDimensionPanel;
+    private javax.swing.JComboBox generalTreatmentComboBox;
     private javax.swing.JButton insertCellLineButton;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JLabel nameLabel;
     private javax.swing.JLabel selectCellLineLabel;
+    private javax.swing.JLabel timingLabel;
+    private javax.swing.JTextField timingTextField;
     private javax.swing.JPanel treatmentPanel;
     private javax.swing.JPanel treatmentSetupPanel;
     private javax.swing.JComboBox treatmentTypeComboBox;

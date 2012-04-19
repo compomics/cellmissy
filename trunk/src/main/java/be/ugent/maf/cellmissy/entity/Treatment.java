@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -127,29 +128,33 @@ public class Treatment implements Serializable {
         this.plateConditionCollection = plateConditionCollection;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (treatmentid != null ? treatmentid.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Treatment)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        Treatment other = (Treatment) object;
-        if ((this.treatmentid == null && other.treatmentid != null) || (this.treatmentid != null && !this.treatmentid.equals(other.treatmentid))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Treatment other = (Treatment) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.type, other.type)) {
             return false;
         }
         return true;
     }
 
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.name);
+        hash = 17 * hash + Objects.hashCode(this.type);
+        return hash;
+    }
+
     @Override
     public String toString() {
-        return type + ", " + name;
+        return name;
     }
     
 }
