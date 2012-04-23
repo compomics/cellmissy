@@ -32,44 +32,38 @@ import org.jdesktop.swingbinding.SwingBindings;
 public class ExperimentSetupPanelController {
 
     //model
-    private ObservableList<PlateFormat> plateFormatBindingList;
     private ObservableList<Project> projectBindingList;
     private BindingGroup bindingGroup;
     //view
     private ExperimentSetupPanel experimentSetupPanel;
     private ExperimentInfoPanel experimentInfoPanel;
-    private PlateSetupPanel plateSetupPanel;
-    private PlatePanel platePanel;
     //parent controller
     private CellMissyController cellMissyController;
     //child controller
     private ConditionsPanelController conditionsPanelController;
+    private PlateSetupPanelController plateSetupPanelController;
     //services
-    private PlateService plateService;
     private ProjectService projectService;
     private GridBagConstraints gridBagConstraints;
 
     public ExperimentSetupPanelController(CellMissyController cellMissyController) {
         this.cellMissyController = cellMissyController;
-        
+
         experimentSetupPanel = new ExperimentSetupPanel();
         experimentInfoPanel = new ExperimentInfoPanel();
-        plateSetupPanel = new PlateSetupPanel();
-        
+
         //init child controllers
         conditionsPanelController = new ConditionsPanelController(this);
+        plateSetupPanelController = new PlateSetupPanelController(this);
         
         //init services
-        plateService = (PlateService) cellMissyController.getBeanByName("plateService");
         projectService = (ProjectService) cellMissyController.getBeanByName("projectService");
-        
+
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        
+
         //init views
         initExperimentInfoPanel();
-        initPlateSetupPanel();
-        initPanel();
     }
 
     public ExperimentSetupPanel getExperimentSetupPanel() {
@@ -86,40 +80,6 @@ public class ExperimentSetupPanelController {
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectJList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
-    }
-
-    private void initPlateSetupPanel() {
-        //init plate panel and add it to the bottom panel 
-        platePanel = new PlatePanel();
-        plateSetupPanel.getBottomPanel().add(platePanel, gridBagConstraints);
-
-        //init plateFormatJcombo
-        plateFormatBindingList = ObservableCollections.observableList(plateService.findAll());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, plateFormatBindingList, plateSetupPanel.getPlateFormatComboBox());
-        bindingGroup.addBinding(jComboBoxBinding);
-        bindingGroup.bind();
-        
-        // add action listener
-        plateSetupPanel.getPlateFormatComboBox().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PlateFormat selectedPlateFormat = plateFormatBindingList.get(plateSetupPanel.getPlateFormatComboBox().getSelectedIndex());
-                Dimension parentDimension = plateSetupPanel.getBottomPanel().getSize();
-                platePanel.initPanel(selectedPlateFormat, parentDimension);
-                plateSetupPanel.getBottomPanel().repaint();
-            }
-        });
-
-        // show 96 plate format as default
-        // after adding the listener
-        plateSetupPanel.getPlateFormatComboBox().setSelectedIndex(0);
-
-    }
-
-    private void initPanel() {
-        //add exp info panel and plate setup panel to main panel
         experimentSetupPanel.getExperimentInfoParentPanel().add(experimentInfoPanel, gridBagConstraints);
-        experimentSetupPanel.getPlateSetupParentPanel().add(plateSetupPanel, gridBagConstraints);
     }
 }

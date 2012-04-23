@@ -55,37 +55,37 @@ public class AssayEcmPanelController {
     private AssayService assayService;
     private EcmService ecmService;
     private GridBagConstraints gridBagConstraints;
-    
+
     public AssayEcmPanelController(ConditionsPanelController conditionsPanelController) {
         this.conditionsPanelController = conditionsPanelController;
 
         //init services
         assayService = (AssayService) conditionsPanelController.getExperimentSetupPanelController().getCellMissyController().getBeanByName("assayService");
         ecmService = (EcmService) conditionsPanelController.getExperimentSetupPanelController().getCellMissyController().getBeanByName("ecmService");
-        
+
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
         //init views
         initEcmPanel();
     }
-    
+
     public ObservableList<MatrixDimension> getMatrixDimensionBindingList() {
         return matrixDimensionBindingList;
     }
-    
+
     public ObservableList<Assay> getAssay2DBindingList() {
         return assay2DBindingList;
     }
-    
+
     public ObservableList<EcmComposition> getEcm2DCompositionBindingList() {
         return ecm2DCompositionBindingList;
     }
-    
+
     public ObservableList<EcmCoating> getEcmCoatingBindingList() {
         return ecmCoatingBindingList;
     }
-    
+
     private void initEcmPanel() {
         //init matrixDimensionJCombo
         matrixDimensionBindingList = ObservableCollections.observableList(ecmService.findAllMatrixDimension());
@@ -102,7 +102,7 @@ public class AssayEcmPanelController {
         //add action listener
         //show different assay-ecm, 2D-3D panels
         conditionsPanelController.getConditionsSetupPanel().getEcmDimensionComboBox().addActionListener(new ActionListener() {
-            
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 switch (((MatrixDimension) (conditionsPanelController.getConditionsSetupPanel().getEcmDimensionComboBox().getSelectedItem())).getMatrixDimension()) {
@@ -117,12 +117,12 @@ public class AssayEcmPanelController {
                 conditionsPanelController.getConditionsSetupPanel().getAssayEcmParentPanel().repaint();
             }
         });
-        
+
         conditionsPanelController.getConditionsSetupPanel().getEcmDimensionComboBox().setSelectedIndex(0);
-        
+
     }
-    
-    public void updatePlateConditionFields(PlateCondition plateCondition) {
+
+    public void updateAssayEcmConditionFields(PlateCondition plateCondition) {
         if (plateCondition.getMatrixDimension().getMatrixDimension().equals("2D")) {
             //set assay
             plateCondition.setAssay(assay2DBindingList.get(assayEcm2DPanel.getAssayComboBox().getSelectedIndex()));
@@ -152,9 +152,11 @@ public class AssayEcmPanelController {
             //ecm polymerization temperature
             plateCondition.getEcm().setPolymerisationTemperature(assayEcm3DPanel.getPolymerizationTemperatureTextField().getText());
         }
+
+
     }
-    
-    public void updateInputFields(PlateCondition plateCondition) {
+
+    public void updateAssayEcmInputFields(PlateCondition plateCondition) {
         if (plateCondition.getMatrixDimension().getMatrixDimension().equals("2D")) {
             assayEcm2DPanel.getAssayComboBox().setSelectedIndex(assay2DBindingList.indexOf(plateCondition.getAssay()));
             assayEcm2DPanel.getCompositionComboBox().setSelectedIndex(ecm2DCompositionBindingList.indexOf(plateCondition.getEcm().getEcmComposition()));
@@ -172,8 +174,8 @@ public class AssayEcmPanelController {
             assayEcm3DPanel.getPolymerizationTemperatureTextField().setText(plateCondition.getEcm().getPolymerisationTemperature());
         }
     }
-    
-    public void resetInputFields(PlateCondition plateCondition) {
+
+    public void resetAssayEcmInputFields(PlateCondition plateCondition) {
         if (plateCondition.getMatrixDimension().getMatrixDimension().equals("2D")) {
             //reset input fields in 3D panel
             assayEcm3DPanel.getAssayComboBox().setSelectedItem(assay3DBindingList.get(0));
@@ -193,7 +195,7 @@ public class AssayEcmPanelController {
             assayEcm2DPanel.getCoatingTemperatureTextField().setText("");
         }
     }
-    
+
     private void initAssayEcm2DPanel() {
         //init assayBindingList
         assay2DBindingList = ObservableCollections.observableList(assayService.findByMatrixDimensionName("2D"));
@@ -216,7 +218,7 @@ public class AssayEcmPanelController {
         //do the binding
         bindingGroup.bind();
     }
-    
+
     private void initAssayEcm3DPanel() {
         //init assayBindingList
         assay3DBindingList = ObservableCollections.observableList(assayService.findByMatrixDimensionName("3D"));
@@ -239,7 +241,7 @@ public class AssayEcmPanelController {
         //do the binding
         bindingGroup.bind();
     }
-    
+
     private void switchChildPanels(JPanel panelToAdd, JPanel panelToRemove) {
         if (!GuiUtils.containsComponent(conditionsPanelController.getConditionsSetupPanel().getAssayEcmParentPanel(), panelToAdd)) {
             conditionsPanelController.getConditionsSetupPanel().getAssayEcmParentPanel().add(panelToAdd, gridBagConstraints);

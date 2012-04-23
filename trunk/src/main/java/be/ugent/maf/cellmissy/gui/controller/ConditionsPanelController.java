@@ -132,12 +132,8 @@ public class ConditionsPanelController {
         bindingGroup.bind();
 
         //autobind treatment
-        //treatment type
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.type"), conditionsSetupPanel.getTreatmentTypeComboBox(), BeanProperty.create("selectedItem.databaseValue"), "treatmenttypebinding");
-        bindingGroup.addBinding(binding);
-        //treatment name
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.name"), conditionsSetupPanel.getDrugComboBox(), BeanProperty.create("selectedItem.name"), "treatmentnamebinding");
-        bindingGroup.addBinding(binding);
+        //treatment type and name are bound manually in the treatment panel controller
+
         //treatment description
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.description"), conditionsSetupPanel.getAdditionalInfoTextField(), BeanProperty.create("text"), "treatmentdescriptionbinding");
         bindingGroup.addBinding(binding);
@@ -162,9 +158,11 @@ public class ConditionsPanelController {
             public void mouseClicked(MouseEvent e) {
                 int locationToIndex = conditionsPanel.getConditionsJList().locationToIndex(e.getPoint());
                 if (previousConditionIndex != -1) {
-                    assayEcmPanelController.updatePlateConditionFields(plateConditionBindingList.get(previousConditionIndex));
-                    assayEcmPanelController.updateInputFields(plateConditionBindingList.get(locationToIndex));
-                    assayEcmPanelController.resetInputFields(plateConditionBindingList.get(locationToIndex));
+                    assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(previousConditionIndex));
+                    assayEcmPanelController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
+                    assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
+                    treatmentPanelController.updateTreatmentConditionFields(plateConditionBindingList.get(previousConditionIndex));
+                    treatmentPanelController.updateTreatmentInputFields(plateConditionBindingList.get(locationToIndex));
                 }
                 previousConditionIndex = locationToIndex;
             }
@@ -178,22 +176,7 @@ public class ConditionsPanelController {
             public void actionPerformed(ActionEvent e) {
                 //create and init a new condition
                 PlateCondition newPlateCondition = new PlateCondition();
-                newPlateCondition.setName("Condition " + ++conditionIndex);
-                newPlateCondition.setCellLine(cellLineBindingList.get(0));
-                newPlateCondition.setMatrixDimension(assayEcmPanelController.getMatrixDimensionBindingList().get(0));
-                newPlateCondition.setAssay(assayEcmPanelController.getAssay2DBindingList().get(0));
-                Ecm ecm = new Ecm();
-                ecm.setEcmComposition(assayEcmPanelController.getEcm2DCompositionBindingList().get(0));
-                ecm.setEcmCoating(assayEcmPanelController.getEcmCoatingBindingList().get(0));
-                ecm.setCoatingTemperature("");
-                ecm.setCoatingTime("");
-                ecm.setConcentration(0);
-                ecm.setVolume(0);
-                newPlateCondition.setEcm(ecm);
-                Treatment treatment = new Treatment();
-                treatment.setType(TreatmentType.DRUG.getDatabaseValue());
-                //treatment.setName(treatmentPanelController.getDrugList().get(0).getName());
-                newPlateCondition.setTreatment(treatment);
+                initCondition(newPlateCondition);
                 //add the new condition to the list
                 plateConditionBindingList.add(newPlateCondition);
             }
@@ -209,6 +192,27 @@ public class ConditionsPanelController {
                 }
             }
         });
+    }
+
+    private void initCondition(PlateCondition plateCondition) {
+
+        //assign defaults fields to a new condition
+        plateCondition.setName("Condition " + ++conditionIndex);
+        plateCondition.setCellLine(cellLineBindingList.get(0));
+        plateCondition.setMatrixDimension(assayEcmPanelController.getMatrixDimensionBindingList().get(0));
+        plateCondition.setAssay(assayEcmPanelController.getAssay2DBindingList().get(0));
+        Ecm ecm = new Ecm();
+        ecm.setEcmComposition(assayEcmPanelController.getEcm2DCompositionBindingList().get(0));
+        ecm.setEcmCoating(assayEcmPanelController.getEcmCoatingBindingList().get(0));
+        ecm.setCoatingTemperature("");
+        ecm.setCoatingTime("");
+        ecm.setConcentration(0);
+        ecm.setVolume(0);
+        plateCondition.setEcm(ecm);
+        Treatment treatment = new Treatment();
+        treatment.setType(TreatmentType.DRUG.getDatabaseValue());
+        treatment.setName(treatmentPanelController.getDrugBindingList().get(0).getName());
+        plateCondition.setTreatment(treatment);
     }
 
     private class ConditionsRenderer extends DefaultListCellRenderer {

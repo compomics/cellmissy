@@ -131,33 +131,33 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(cellLinePanelLayout.createSequentialGroup()
-                        .addComponent(selectCellLineLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cellLineComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(cellLinePanelLayout.createSequentialGroup()
                         .addComponent(cellLineNameLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cellLineNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(insertCellLineButton))
-                    .addComponent(jLabel1))
-                .addContainerGap(138, Short.MAX_VALUE))
+                    .addComponent(jLabel1)
+                    .addGroup(cellLinePanelLayout.createSequentialGroup()
+                        .addComponent(selectCellLineLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(cellLineComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(374, Short.MAX_VALUE))
         );
         cellLinePanelLayout.setVerticalGroup(
             cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(cellLinePanelLayout.createSequentialGroup()
-                .addGap(29, 29, 29)
+                .addGap(57, 57, 57)
                 .addGroup(cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(selectCellLineLabel)
                     .addComponent(cellLineComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
-                .addGap(11, 11, 11)
+                .addGap(18, 18, 18)
                 .addGroup(cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cellLineNameLabel)
                     .addComponent(cellLineNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(insertCellLineButton)
-                    .addComponent(cellLineNameLabel))
-                .addContainerGap(299, Short.MAX_VALUE))
+                    .addComponent(insertCellLineButton))
+                .addContainerGap(381, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("cell line", cellLinePanel);
@@ -208,7 +208,7 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
 
         treatmentPanel.setLayout(new java.awt.GridBagLayout());
 
-        treatmentTypePanel.setMinimumSize(new java.awt.Dimension(250, 150));
+        treatmentTypePanel.setMinimumSize(new java.awt.Dimension(250, 80));
         treatmentTypePanel.setPreferredSize(new java.awt.Dimension(250, 80));
 
         treatmentTypeComboBox.setToolTipText("");
@@ -219,99 +219,90 @@ public class ConditionsSetupPanel extends javax.swing.JPanel {
         treatmentTypePanel.setLayout(treatmentTypePanelLayout);
         treatmentTypePanelLayout.setHorizontalGroup(
             treatmentTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, treatmentTypePanelLayout.createSequentialGroup()
-                .addContainerGap(180, Short.MAX_VALUE)
+            .addGroup(treatmentTypePanelLayout.createSequentialGroup()
+                .addGap(55, 55, 55)
                 .addComponent(chooseTreatmentTypeLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(treatmentTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(66, 66, 66))
+                .addContainerGap(419, Short.MAX_VALUE))
         );
         treatmentTypePanelLayout.setVerticalGroup(
             treatmentTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(treatmentTypePanelLayout.createSequentialGroup()
-                .addGap(62, 62, 62)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, treatmentTypePanelLayout.createSequentialGroup()
+                .addContainerGap(39, Short.MAX_VALUE)
                 .addGroup(treatmentTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(treatmentTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chooseTreatmentTypeLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(chooseTreatmentTypeLabel)
+                    .addComponent(treatmentTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(21, 21, 21))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         treatmentPanel.add(treatmentTypePanel, gridBagConstraints);
 
-        treatmentSetupPanel.setLayout(new java.awt.GridBagLayout());
-
         nameLabel.setText("Name");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(32, 80, 0, 0);
-        treatmentSetupPanel.add(nameLabel, gridBagConstraints);
 
         additionalInfoLabel.setText("Additional info");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(30, 80, 0, 0);
-        treatmentSetupPanel.add(additionalInfoLabel, gridBagConstraints);
 
         timingLabel.setText("Timing");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(21, 80, 0, 0);
-        treatmentSetupPanel.add(timingLabel, gridBagConstraints);
 
         drugComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2" }));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(29, 18, 0, 0);
-        treatmentSetupPanel.add(drugComboBox, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(27, 18, 0, 0);
-        treatmentSetupPanel.add(additionalInfoTextField, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 0);
-        treatmentSetupPanel.add(timingTextField, gridBagConstraints);
 
         concentrationLabel.setText("Concentration");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(21, 80, 0, 0);
-        treatmentSetupPanel.add(concentrationLabel, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(18, 18, 92, 0);
-        treatmentSetupPanel.add(concentrationTextField, gridBagConstraints);
 
         generalTreatmentComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(29, 6, 0, 121);
-        treatmentSetupPanel.add(generalTreatmentComboBox, gridBagConstraints);
+
+        javax.swing.GroupLayout treatmentSetupPanelLayout = new javax.swing.GroupLayout(treatmentSetupPanel);
+        treatmentSetupPanel.setLayout(treatmentSetupPanelLayout);
+        treatmentSetupPanelLayout.setHorizontalGroup(
+            treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, treatmentSetupPanelLayout.createSequentialGroup()
+                .addGap(80, 80, 80)
+                .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
+                        .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(concentrationLabel)
+                            .addComponent(timingLabel)
+                            .addComponent(additionalInfoLabel))
+                        .addGap(18, 18, 18)
+                        .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(concentrationTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                            .addComponent(timingTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                            .addComponent(additionalInfoTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, treatmentSetupPanelLayout.createSequentialGroup()
+                        .addComponent(nameLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(drugComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(generalTreatmentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(387, 387, 387))
+        );
+        treatmentSetupPanelLayout.setVerticalGroup(
+            treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(drugComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(generalTreatmentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nameLabel))
+                .addGap(18, 18, 18)
+                .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(additionalInfoLabel)
+                    .addComponent(additionalInfoTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(timingLabel)
+                    .addComponent(timingTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(9, 9, 9)
+                .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(concentrationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(concentrationLabel))
+                .addGap(234, 234, 234))
+        );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

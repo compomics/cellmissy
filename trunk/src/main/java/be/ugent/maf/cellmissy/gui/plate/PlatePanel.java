@@ -25,7 +25,7 @@ public class PlatePanel extends JPanel {
 
     private List<WellGui> wellGuiList;
     private PlateFormat plateFormat;
-    private static final int pixelsGrid = 5;
+    private static final int pixelsGrid = 7;
     private static final int pixelsBorders = 30;
 
     @Override
@@ -41,10 +41,14 @@ public class PlatePanel extends JPanel {
             reDrawWells(wellSize, g);
         }
     }
-    
+
+    public List<WellGui> getWellGuiList() {
+        return wellGuiList;
+    }
+
     public void initPanel(PlateFormat plateFormat, Dimension parentDimension) {
         this.plateFormat = plateFormat;
-        wellGuiList = new ArrayList<>();   
+        wellGuiList = new ArrayList<>();
         doResize(parentDimension);
     }
 
@@ -82,7 +86,7 @@ public class PlatePanel extends JPanel {
             }
         }
     }
-    
+
     // re-draw the wells if rezise event occours (keep color(s) of the wells)
     public void reDrawWells(int wellSize, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -113,7 +117,7 @@ public class PlatePanel extends JPanel {
             }
         }
     }
-    
+
     // set Graphics (implement Rendering process)
     private void setGraphics(Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -140,8 +144,8 @@ public class PlatePanel extends JPanel {
             g2d.drawString(rowLabel, pixelsBorders - 8, (int) Math.round(ellipse2D.getCenterY()) + 3);
         }
     }
-    
-     // compute plate panel sizes according to JFrame resize
+
+    // compute plate panel sizes according to JFrame resize
     public void doResize(Dimension parentDimension) {
         int minimumParentDimension = Math.min(parentDimension.height, parentDimension.width);
 
@@ -172,5 +176,4 @@ public class PlatePanel extends JPanel {
             this.setSize(panelWidth, panelHeight);
         }
     }
-
 }
