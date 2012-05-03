@@ -4,7 +4,7 @@
  */
 
 /*
- * ExperimentSetupPanel.java
+ * SetupExperimentPanel.java
  *
  * Created on Mar 29, 2012, 9:01:25 AM
  */
@@ -16,10 +16,10 @@ import javax.swing.JPanel;
  *
  * @author Paola
  */
-public class ExperimentSetupPanel extends javax.swing.JPanel {
+public class SetupExperimentPanel extends javax.swing.JPanel {
 
-    /** Creates new form ExperimentSetupPanel */
-    public ExperimentSetupPanel() {
+    /** Creates new form SetupExperimentPanel */
+    public SetupExperimentPanel() {
         initComponents();
     }
 
@@ -27,12 +27,12 @@ public class ExperimentSetupPanel extends javax.swing.JPanel {
         return experimentInfoParentPanel;
     }
 
-    public JPanel getPlateSetupParentPanel() {
-        return plateSetupParentPanel;
+    public JPanel getSetupPlateParentPanel() {
+        return setupPlateParentPanel;
     }
 
-    public JPanel getConditionsSetupParentPanel() {
-        return conditionsSetupParentPanel;
+    public JPanel getSetupConditionsParentPanel() {
+        return setupConditionsParentPanel;
     }
 
     public JPanel getConditionsParentPanel() {
@@ -50,9 +50,9 @@ public class ExperimentSetupPanel extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         experimentInfoParentPanel = new javax.swing.JPanel();
-        plateSetupParentPanel = new javax.swing.JPanel();
+        setupPlateParentPanel = new javax.swing.JPanel();
         conditionsParentPanel = new javax.swing.JPanel();
-        conditionsSetupParentPanel = new javax.swing.JPanel();
+        setupConditionsParentPanel = new javax.swing.JPanel();
 
         setPreferredSize(new java.awt.Dimension(20, 20));
         setLayout(new java.awt.GridBagLayout());
@@ -69,16 +69,16 @@ public class ExperimentSetupPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.3;
         add(experimentInfoParentPanel, gridBagConstraints);
 
-        plateSetupParentPanel.setMinimumSize(new java.awt.Dimension(30, 30));
-        plateSetupParentPanel.setPreferredSize(new java.awt.Dimension(150, 150));
-        plateSetupParentPanel.setLayout(new java.awt.GridBagLayout());
+        setupPlateParentPanel.setMinimumSize(new java.awt.Dimension(30, 30));
+        setupPlateParentPanel.setPreferredSize(new java.awt.Dimension(150, 150));
+        setupPlateParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.6;
         gridBagConstraints.weighty = 0.65;
-        add(plateSetupParentPanel, gridBagConstraints);
+        add(setupPlateParentPanel, gridBagConstraints);
 
         conditionsParentPanel.setMinimumSize(new java.awt.Dimension(40, 30));
         conditionsParentPanel.setPreferredSize(new java.awt.Dimension(40, 30));
@@ -92,9 +92,9 @@ public class ExperimentSetupPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         add(conditionsParentPanel, gridBagConstraints);
 
-        conditionsSetupParentPanel.setMinimumSize(new java.awt.Dimension(30, 20));
-        conditionsSetupParentPanel.setPreferredSize(new java.awt.Dimension(30, 10));
-        conditionsSetupParentPanel.setLayout(new java.awt.GridBagLayout());
+        setupConditionsParentPanel.setMinimumSize(new java.awt.Dimension(30, 20));
+        setupConditionsParentPanel.setPreferredSize(new java.awt.Dimension(30, 10));
+        setupConditionsParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -103,12 +103,12 @@ public class ExperimentSetupPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.6;
         gridBagConstraints.weighty = 1.0;
-        add(conditionsSetupParentPanel, gridBagConstraints);
+        add(setupConditionsParentPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel conditionsParentPanel;
-    private javax.swing.JPanel conditionsSetupParentPanel;
     private javax.swing.JPanel experimentInfoParentPanel;
-    private javax.swing.JPanel plateSetupParentPanel;
+    private javax.swing.JPanel setupConditionsParentPanel;
+    private javax.swing.JPanel setupPlateParentPanel;
     // End of variables declaration//GEN-END:variables
 }

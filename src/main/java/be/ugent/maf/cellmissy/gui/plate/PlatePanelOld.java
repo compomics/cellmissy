@@ -93,7 +93,7 @@ public class PlatePanelOld extends JPanel implements MouseListener {
         if (wellGuiList.isEmpty()) {
             drawWells(wellSize, g);
         } else {
-            reDrawWells(wellSize, g);
+            reDrawWells(g);
         }
     }
 
@@ -205,7 +205,7 @@ public class PlatePanelOld extends JPanel implements MouseListener {
     }
 
     // re-draw the wells if rezise event occours (keep color(s) of the wells)
-    public void reDrawWells(int wellSize, Graphics g) {
+    public void reDrawWells(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
         // a list of WellGUI objects is present, iterate through it
