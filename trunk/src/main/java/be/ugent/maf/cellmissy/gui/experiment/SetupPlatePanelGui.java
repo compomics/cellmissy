@@ -4,7 +4,7 @@
  */
 
 /*
- * PlateSetupPanel.java
+ * SetupPlatePanelGui.java
  *
  * Created on Mar 29, 2012, 9:26:13 AM
  */
@@ -17,10 +17,10 @@ import javax.swing.JPanel;
  *
  * @author Paola
  */
-public class PlateSetupPanel extends javax.swing.JPanel {
+public class SetupPlatePanelGui extends javax.swing.JPanel {
     
-    /** Creates new form PlateSetupPanel */
-    public PlateSetupPanel() {
+    /** Creates new form SetupPlatePanelGui */
+    public SetupPlatePanelGui() {
         initComponents();       
     }
 

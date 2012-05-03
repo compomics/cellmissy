@@ -11,7 +11,7 @@ import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ConditionsPanel;
-import be.ugent.maf.cellmissy.gui.experiment.ConditionsSetupPanel;
+import be.ugent.maf.cellmissy.gui.experiment.SetupConditionsPanel;
 import be.ugent.maf.cellmissy.service.CellLineService;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -45,9 +45,9 @@ public class ConditionsPanelController {
     private BindingGroup bindingGroup;
     //view
     private ConditionsPanel conditionsPanel;
-    private ConditionsSetupPanel conditionsSetupPanel;
+    private SetupConditionsPanel setupConditionsPanel;
     //parent controller
-    private ExperimentSetupPanelController experimentSetupPanelController;
+    private SetupExperimentPanelController setupExperimentPanelController;
     //child controllers
     private AssayEcmPanelController assayEcmPanelController;
     private TreatmentPanelController treatmentPanelController;
@@ -57,19 +57,19 @@ public class ConditionsPanelController {
     private Integer conditionIndex;
     private Integer previousConditionIndex;
 
-    public ConditionsPanelController(ExperimentSetupPanelController experimentSetupPanelController) {
+    public ConditionsPanelController(SetupExperimentPanelController setupExperimentPanelController) {
 
-        this.experimentSetupPanelController = experimentSetupPanelController;
+        this.setupExperimentPanelController = setupExperimentPanelController;
 
         //init services
-        cellLineService = (CellLineService) experimentSetupPanelController.getCellMissyController().getBeanByName("cellLineService");
+        cellLineService = (CellLineService) setupExperimentPanelController.getCellMissyController().getBeanByName("cellLineService");
 
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
         //init views
         conditionsPanel = new ConditionsPanel();
-        conditionsSetupPanel = new ConditionsSetupPanel();
+        setupConditionsPanel = new SetupConditionsPanel();
 
         //init child controllers
         assayEcmPanelController = new AssayEcmPanelController(this);
@@ -80,30 +80,38 @@ public class ConditionsPanelController {
         initPanel();
     }
 
-    public ExperimentSetupPanelController getExperimentSetupPanelController() {
-        return experimentSetupPanelController;
+    public SetupExperimentPanelController getSetupExperimentPanelController() {
+        return setupExperimentPanelController;
     }
 
-    public ConditionsSetupPanel getConditionsSetupPanel() {
-        return conditionsSetupPanel;
+    public ConditionsPanel getConditionsPanel() {
+        return conditionsPanel;
+    }
+
+    public SetupConditionsPanel getSetupConditionsPanel() {
+        return setupConditionsPanel;
+    }
+
+    public ObservableList<PlateCondition> getPlateConditionBindingList() {
+        return plateConditionBindingList;
     }
 
     private void initCellLinePanel() {
 
         //init cellLineJCombo
         cellLineBindingList = ObservableCollections.observableList(cellLineService.findAll());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, cellLineBindingList, conditionsSetupPanel.getCellLineComboBox());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, cellLineBindingList, setupConditionsPanel.getCellLineComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
 
         //add action listeners
-        conditionsSetupPanel.getInsertCellLineButton().addActionListener(new ActionListener() {
+        setupConditionsPanel.getInsertCellLineButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!conditionsSetupPanel.getCellLineNameTextField().getText().isEmpty()) {
+                if (!setupConditionsPanel.getCellLineNameTextField().getText().isEmpty()) {
                     CellLine newCellLine = new CellLine();
-                    newCellLine.setName(conditionsSetupPanel.getCellLineNameTextField().getText());
+                    newCellLine.setName(setupConditionsPanel.getCellLineNameTextField().getText());
                     //insert cell line to DB
                     cellLineService.save(newCellLine);
                     //add the new cell line to the list
@@ -125,9 +133,9 @@ public class ConditionsPanelController {
         plateConditionBindingList = ObservableCollections.observableList(new ArrayList<PlateCondition>());
 
         //autobind cell line and matrix dimension
-        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine"), conditionsSetupPanel.getCellLineComboBox(), BeanProperty.create("selectedItem"), "celllinebinding");
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine"), setupConditionsPanel.getCellLineComboBox(), BeanProperty.create("selectedItem"), "celllinebinding");
         bindingGroup.addBinding(binding);
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.matrixDimension"), conditionsSetupPanel.getEcmDimensionComboBox(), BeanProperty.create("selectedItem"), "matrixdimensionbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.matrixDimension"), setupConditionsPanel.getEcmDimensionComboBox(), BeanProperty.create("selectedItem"), "matrixdimensionbinding");
         bindingGroup.addBinding(binding);
         bindingGroup.bind();
 
@@ -135,13 +143,13 @@ public class ConditionsPanelController {
         //treatment type and name are bound manually in the treatment panel controller
 
         //treatment description
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.description"), conditionsSetupPanel.getAdditionalInfoTextField(), BeanProperty.create("text"), "treatmentdescriptionbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.description"), setupConditionsPanel.getAdditionalInfoTextField(), BeanProperty.create("text"), "treatmentdescriptionbinding");
         bindingGroup.addBinding(binding);
         //treatment timing
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.timing"), conditionsSetupPanel.getTimingTextField(), BeanProperty.create("text"), "treatmenttimingbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.timing"), setupConditionsPanel.getTimingTextField(), BeanProperty.create("text"), "treatmenttimingbinding");
         bindingGroup.addBinding(binding);
         //treatment concentration
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.concentration"), conditionsSetupPanel.getConcentrationTextField(), BeanProperty.create("text"), "treatmentconcentrationbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.concentration"), setupConditionsPanel.getConcentrationTextField(), BeanProperty.create("text"), "treatmentconcentrationbinding");
         bindingGroup.addBinding(binding);
 
         bindingGroup.bind();
@@ -163,6 +171,7 @@ public class ConditionsPanelController {
                     assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
                     treatmentPanelController.updateTreatmentConditionFields(plateConditionBindingList.get(previousConditionIndex));
                     treatmentPanelController.updateTreatmentInputFields(plateConditionBindingList.get(locationToIndex));
+                    setupExperimentPanelController.updateWellsCollection(plateConditionBindingList.get(previousConditionIndex));
                 }
                 previousConditionIndex = locationToIndex;
             }
@@ -229,7 +238,7 @@ public class ConditionsPanelController {
     }
 
     private void initPanel() {
-        experimentSetupPanelController.getExperimentSetupPanel().getConditionsParentPanel().add(conditionsPanel, gridBagConstraints);
-        experimentSetupPanelController.getExperimentSetupPanel().getConditionsSetupParentPanel().add(conditionsSetupPanel, gridBagConstraints);
+        setupExperimentPanelController.getSetupExperimentPanel().getConditionsParentPanel().add(conditionsPanel, gridBagConstraints);
+        setupExperimentPanelController.getSetupExperimentPanel().getSetupConditionsParentPanel().add(setupConditionsPanel, gridBagConstraints);
     }
 }

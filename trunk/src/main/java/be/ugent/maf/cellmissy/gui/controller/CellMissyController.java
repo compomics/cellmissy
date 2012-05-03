@@ -20,7 +20,7 @@ public class CellMissyController {
     CellMissyFrame cellMissyFrame;
     //child controllers
     UserPanelController userPanelController;
-    ExperimentSetupPanelController experimentSetupPanelController;
+    SetupExperimentPanelController setupExperimentPanelController;
     //application context
     ApplicationContext context;
     private GridBagConstraints gridBagConstraints;
@@ -30,7 +30,7 @@ public class CellMissyController {
         
         //init child controllers
         userPanelController = new UserPanelController(this);
-        experimentSetupPanelController = new ExperimentSetupPanelController(this);
+        setupExperimentPanelController = new SetupExperimentPanelController(this);
         
         //load application context
         context = ApplicationContextProvider.getInstance().getApplicationContext();
@@ -44,7 +44,7 @@ public class CellMissyController {
 
         //add panel components to main frame
         cellMissyFrame.getUserParentPanel().add(userPanelController.getUserPanel(), gridBagConstraints);
-        cellMissyFrame.getExperimentSetupParentPanel().add(experimentSetupPanelController.getExperimentSetupPanel(), gridBagConstraints);
+        cellMissyFrame.getExperimentSetupParentPanel().add(setupExperimentPanelController.getSetupExperimentPanel(), gridBagConstraints);
 
     }
 

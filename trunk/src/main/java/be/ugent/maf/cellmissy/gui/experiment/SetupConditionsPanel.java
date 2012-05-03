@@ -4,7 +4,7 @@
  */
 
 /*
- * ConditionsSetupPanel.java
+ * SetupConditionsPanel.java
  *
  * Created on Apr 2, 2012, 10:41:55 AM
  */
@@ -19,10 +19,10 @@ import javax.swing.JTextField;
  *
  * @author Paola
  */
-public class ConditionsSetupPanel extends javax.swing.JPanel {
+public class SetupConditionsPanel extends javax.swing.JPanel {
 
-    /** Creates new form ConditionsSetupPanel */
-    public ConditionsSetupPanel() {
+    /** Creates new form SetupConditionsPanel */
+    public SetupConditionsPanel() {
         initComponents();
     }
 
