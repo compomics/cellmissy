@@ -4,13 +4,15 @@
  */
 package be.ugent.maf.cellmissy.gui.plate;
 
+import be.ugent.maf.cellmissy.gui.GuiUtils;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -20,10 +22,15 @@ public class SetupPlatePanel extends AbstractPlatePanel {
 
     private Point startPoint;
     private Point endPoint;
-    private List<Rectangle> rectanglesToDrawList;
+    private Map<Integer, List<Rectangle>> rectangles;
+    private Integer currentConditionIndex;
 
-    public List<Rectangle> getRectanglesToDrawList() {
-        return rectanglesToDrawList;
+    public Map<Integer, List<Rectangle>> getRectangles() {
+        return rectangles;
+    }
+
+    public void setRectangles(Map<Integer, List<Rectangle>> rectangles) {
+        this.rectangles = rectangles;
     }
 
     public Point getEndPoint() {
@@ -46,10 +53,14 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         return wellGuiList;
     }
 
+    public void setCurrentConditionIndex(Integer currentConditionIndex) {
+        this.currentConditionIndex = currentConditionIndex;
+    }
+
     public SetupPlatePanel() {
         startPoint = null;
         endPoint = null;
-        rectanglesToDrawList = new ArrayList<>();
+        rectangles = new HashMap<>();
     }
 
     @Override
@@ -60,9 +71,10 @@ public class SetupPlatePanel extends AbstractPlatePanel {
             drawRect(g);
         }
 
-        if (!rectanglesToDrawList.isEmpty()) {
+        if (!rectangles.values().isEmpty()) {
             drawRectangles(g);
         }
+
     }
 
     private void drawRect(Graphics g) {
@@ -81,16 +93,23 @@ public class SetupPlatePanel extends AbstractPlatePanel {
             height = this.getHeight() - y;
         }
 
+        g2d.setColor(GuiUtils.getAvailableColors()[currentConditionIndex]);
         g2d.drawRect(x, y, width, height);
+
     }
 
     private void drawRectangles(Graphics g) {
 
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
-        for (Rectangle r : rectanglesToDrawList) {
-            g2d.drawRect(r.x, r.y, r.width, r.height);
+
+        for (Integer conditionIndex : rectangles.keySet()) {
+            g2d.setColor(GuiUtils.getAvailableColors()[conditionIndex]);
+            for (Rectangle rectangle : rectangles.get(conditionIndex)) {
+                g2d.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+            }
         }
+
     }
 
     @Override

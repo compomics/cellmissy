@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.gui.plate;
 
 import be.ugent.maf.cellmissy.entity.PlateFormat;
+import be.ugent.maf.cellmissy.gui.GuiUtils;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -69,7 +70,7 @@ public abstract class AbstractPlatePanel extends JPanel {
                 wellGui.setEllipsi(ellipsi);
                 // wells drawn for the first time are always shown in default color
                 // the default color is the first object of the WellGui's AvailableWellColors()List
-                Color defaultColor = WellGui.getAvailableWellColors()[0];
+                Color defaultColor = GuiUtils.getAvailableColors()[0];
                 g2d.setColor(defaultColor);
                 g2d.fill(ellipse2D);
 

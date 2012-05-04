@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.plate;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.controller.PlateMediator;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
@@ -161,7 +162,7 @@ public class PlatePanelOld extends JPanel implements MouseListener {
                 wellGui.setEllipsi(ellipsi);
                 // wells drawn for the first time are always shown in default color
                 // the default color is the first object of the WellGui's AvailableWellColors()List
-                Color defaultColor = WellGui.getAvailableWellColors()[0];
+                Color defaultColor = GuiUtils.getAvailableColors()[0];
                 g2d.setColor(defaultColor);
                 g2d.fill(ellipse2D);
 
@@ -192,7 +193,7 @@ public class PlatePanelOld extends JPanel implements MouseListener {
                 g2d.draw(ellipse2D);
 
                 // if a color of a wellGui has been changed, keep track of it when resizing
-                g2d.setColor(WellGui.getAvailableWellColors()[i]);
+                g2d.setColor(GuiUtils.getAvailableColors()[i]);
                 g2d.fill(ellipse2D);
             }
 
@@ -219,10 +220,10 @@ public class PlatePanelOld extends JPanel implements MouseListener {
                 // if a color of a wellGui has been changed, keep track of it when resizing
                 // if a well was not imaged, set its color to the default one
                 if (wellGui.getWell().getWellHasImagingTypeCollection().isEmpty()) {
-                    g2d.setColor(WellGui.getAvailableWellColors()[0]);
+                    g2d.setColor(GuiUtils.getAvailableColors()[0]);
                 } else {
                     // if it has been imaged, set its color to a different one
-                    g2d.setColor(WellGui.getAvailableWellColors()[i + 1]);
+                    g2d.setColor(GuiUtils.getAvailableColors()[i + 1]);
                 }
 
                 g2d.fill(ellipse2D);
