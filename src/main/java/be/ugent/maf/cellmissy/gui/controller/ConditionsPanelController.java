@@ -9,10 +9,12 @@ import be.ugent.maf.cellmissy.entity.Ecm;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
+import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ConditionsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.SetupConditionsPanel;
 import be.ugent.maf.cellmissy.service.CellLineService;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -20,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -43,6 +46,7 @@ public class ConditionsPanelController {
     private ObservableList<CellLine> cellLineBindingList;
     private ObservableList<PlateCondition> plateConditionBindingList;
     private BindingGroup bindingGroup;
+    private List<Well> selectedWellsList;
     //view
     private ConditionsPanel conditionsPanel;
     private SetupConditionsPanel setupConditionsPanel;
@@ -94,6 +98,10 @@ public class ConditionsPanelController {
 
     public ObservableList<PlateCondition> getPlateConditionBindingList() {
         return plateConditionBindingList;
+    }
+
+    public Integer getCurrentConditionIndex() {
+        return conditionsPanel.getConditionsJList().getSelectedIndex();
     }
 
     private void initCellLinePanel() {
@@ -171,7 +179,8 @@ public class ConditionsPanelController {
                     assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
                     treatmentPanelController.updateTreatmentConditionFields(plateConditionBindingList.get(previousConditionIndex));
                     treatmentPanelController.updateTreatmentInputFields(plateConditionBindingList.get(locationToIndex));
-                    setupExperimentPanelController.updateWellsCollection(plateConditionBindingList.get(previousConditionIndex));
+//                    setupExperimentPanelController.updateConditionOfSelectedWells(plateConditionBindingList.get(previousConditionIndex));
+//                    setupExperimentPanelController.updateWellsCollection(plateConditionBindingList.get(previousConditionIndex));
                 }
                 previousConditionIndex = locationToIndex;
             }
@@ -188,6 +197,7 @@ public class ConditionsPanelController {
                 initCondition(newPlateCondition);
                 //add the new condition to the list
                 plateConditionBindingList.add(newPlateCondition);
+                setupExperimentPanelController.onNewConditionAdded(conditionIndex - 1);
             }
         });
 
@@ -207,9 +217,13 @@ public class ConditionsPanelController {
 
         //assign defaults fields to a new condition
         plateCondition.setName("Condition " + ++conditionIndex);
+        //MDA MB 231 cell line
         plateCondition.setCellLine(cellLineBindingList.get(0));
+        //2D matrix dimension
         plateCondition.setMatrixDimension(assayEcmPanelController.getMatrixDimensionBindingList().get(0));
+        //Oris platform
         plateCondition.setAssay(assayEcmPanelController.getAssay2DBindingList().get(0));
+        //default values for ECM
         Ecm ecm = new Ecm();
         ecm.setEcmComposition(assayEcmPanelController.getEcm2DCompositionBindingList().get(0));
         ecm.setEcmCoating(assayEcmPanelController.getEcmCoatingBindingList().get(0));
@@ -218,21 +232,28 @@ public class ConditionsPanelController {
         ecm.setConcentration(0);
         ecm.setVolume(0);
         plateCondition.setEcm(ecm);
+        //default treatment, drug: ROCK inhibitor
         Treatment treatment = new Treatment();
         treatment.setType(TreatmentType.DRUG.getDatabaseValue());
         treatment.setName(treatmentPanelController.getDrugBindingList().get(0).getName());
         plateCondition.setTreatment(treatment);
+        //set an empty collection of wells
+        selectedWellsList = new ArrayList<>();
+        plateCondition.setWellCollection(selectedWellsList);
+
     }
 
     private class ConditionsRenderer extends DefaultListCellRenderer {
 
         public ConditionsRenderer() {
+            
         }
 
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             PlateCondition newPlateCondition = (PlateCondition) value;
             setText(newPlateCondition.getName());
+            setForeground(GuiUtils.getAvailableColors()[conditionIndex - 1]);
             return this;
         }
     }

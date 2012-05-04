@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.gui.plate;
 
 import be.ugent.maf.cellmissy.entity.PlateFormat;
+import be.ugent.maf.cellmissy.gui.GuiUtils;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -111,7 +112,7 @@ public class PlatePanel extends JPanel {
                 wellGui.setEllipsi(ellipsi);
                 // wells drawn for the first time are always shown in default color
                 // the default color is the first object of the WellGui's AvailableWellColors()List
-                Color defaultColor = WellGui.getAvailableWellColors()[0];
+                Color defaultColor = GuiUtils.getAvailableColors()[0];
                 g2d.setColor(defaultColor);
                 g2d.fill(ellipse2D);
 
@@ -140,10 +141,10 @@ public class PlatePanel extends JPanel {
                 // if a color of a wellGui has been changed, keep track of it when resizing
                 // if a well was not imaged, set its color to the default one
                 if (wellGui.getWell().getWellHasImagingTypeCollection().isEmpty()) {
-                    g2d.setColor(WellGui.getAvailableWellColors()[0]);
+                    g2d.setColor(GuiUtils.getAvailableColors()[0]);
                 } else {
                     // if it has been imaged, set its color to a different one
-                    g2d.setColor(WellGui.getAvailableWellColors()[i + 1]);
+                    g2d.setColor(GuiUtils.getAvailableColors()[i + 1]);
                 }
 
                 g2d.fill(ellipse2D);

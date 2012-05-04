@@ -5,11 +5,9 @@
 package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.PlateFormat;
-import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.SetupPlatePanelGui;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
-import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.PlateService;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -17,7 +15,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.event.MouseInputAdapter;
@@ -36,7 +33,6 @@ public class SetupPlatePanelController {
 
     //model
     private ObservableList<PlateFormat> plateFormatBindingList;
-    private List<Well> selectedWellsList;
     private Rectangle rectangle;
     private BindingGroup bindingGroup;
     //view
@@ -56,7 +52,6 @@ public class SetupPlatePanelController {
         //init services
         plateService = (PlateService) setupExperimentPanelController.getCellMissyController().getBeanByName("plateService");
 
-        selectedWellsList = new ArrayList<>();
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
@@ -64,8 +59,12 @@ public class SetupPlatePanelController {
         initSetupPlatePanel();
     }
 
-    public List<Well> getSelectedWellsList() {
-        return selectedWellsList;
+    public SetupPlatePanel getSetupPlatePanel() {
+        return setupPlatePanel;
+    }
+
+    public void addNewRectangleEntry(Integer conditionIndex) {
+        setupPlatePanel.getRectangles().put(conditionIndex, new ArrayList<Rectangle>());
     }
 
     private void initSetupPlatePanel() {
@@ -92,9 +91,10 @@ public class SetupPlatePanelController {
                 PlateFormat selectedPlateFormat = plateFormatBindingList.get(setupPlatePanelGui.getPlateFormatComboBox().getSelectedIndex());
                 Dimension parentDimension = setupPlatePanelGui.getBottomPanel().getSize();
                 setupPlatePanel.initPanel(selectedPlateFormat, parentDimension);
-                //setupPlatePanel.getRectanglesToDrawList().clear();
+                for(List<Rectangle> rectangleList : setupPlatePanel.getRectangles().values()){
+                    rectangleList.clear();
+                }
                 setupPlatePanel.repaint();
-                //setupPlatePanelGui.getBottomPanel().repaint();
             }
         });
 
@@ -131,6 +131,7 @@ public class SetupPlatePanelController {
             xMax = Math.max(xMax, setupPlatePanel.getEndPoint().x);
             yMin = Math.min(yMin, setupPlatePanel.getEndPoint().y);
             yMax = Math.max(yMax, setupPlatePanel.getEndPoint().y);
+            setupPlatePanel.setCurrentConditionIndex(setupExperimentPanelController.getCurrentConditionIndex());
             setupPlatePanel.repaint(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1);
         }
 
@@ -144,30 +145,11 @@ public class SetupPlatePanelController {
             rectangle = new Rectangle(x, y, width, height);
 
             if (rectangle.width != 0 || rectangle.height != 0) {
-                setupPlatePanel.getRectanglesToDrawList().add(rectangle);
+                setupPlatePanel.getRectangles().get(setupExperimentPanelController.getCurrentConditionIndex()).add(rectangle);
             }
 
             setupPlatePanel.setStartPoint(null);
-            setConditionOfSelectedWells();
+            setupPlatePanel.repaint();
         }
-    }
-
-    private void setConditionOfSelectedWells() {
-
-        if (setupExperimentPanelController.getConditionsPanelController().getConditionsPanel().getConditionsJList().getSelectedValue() != null) {
-            int selectedConditionIndex = setupExperimentPanelController.getConditionsPanelController().getConditionsPanel().getConditionsJList().getSelectedIndex();
-
-            for (WellGui wellGui : setupPlatePanel.getWellGuiList()) {
-                //get only the bigger default ellipse2D
-                Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
-
-                if (rectangle.contains(defaultWell.getX(), defaultWell.getY(), defaultWell.getWidth(), defaultWell.getHeight())) {
-                    wellGui.getWell().setPlateCondition(setupExperimentPanelController.getConditionsPanelController().getPlateConditionBindingList().get(selectedConditionIndex));
-                    selectedWellsList.add(wellGui.getWell());
-                }
-            }
-        }
-
-        setupPlatePanel.repaint(rectangle);
     }
 }

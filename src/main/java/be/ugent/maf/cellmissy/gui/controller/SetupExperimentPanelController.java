@@ -6,11 +6,18 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ExperimentInfoPanel;
 import be.ugent.maf.cellmissy.gui.experiment.SetupExperimentPanel;
+import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.awt.GridBagConstraints;
+import java.awt.Rectangle;
+import java.awt.geom.Ellipse2D;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -79,9 +86,36 @@ public class SetupExperimentPanelController {
         bindingGroup.bind();
         setupExperimentPanel.getExperimentInfoParentPanel().add(experimentInfoPanel, gridBagConstraints);
     }
-
-    public void updateWellsCollection(PlateCondition plateCondition) {
-        plateCondition.setWellCollection(setupPlatePanelController.getSelectedWellsList());
-        setupPlatePanelController.getSelectedWellsList().clear();
+    
+    public void onNewConditionAdded(Integer conditionIndex){
+        setupPlatePanelController.addNewRectangleEntry(conditionIndex);
     }
+    
+    public Integer getCurrentConditionIndex(){
+        return conditionsPanelController.getCurrentConditionIndex();
+    }
+
+//    public void updateWellsCollection(PlateCondition plateCondition) {
+//        Collection<Well> wellCollection = plateCondition.getWellCollection();
+//        List<Well> selectedWellsList = setupPlatePanelController.getSelectedWellsList();
+//        for (Well well : selectedWellsList) {
+//            wellCollection.add(well);
+//        }
+//        plateCondition.setWellCollection(wellCollection);
+//        setupPlatePanelController.getSelectedWellsList().clear();
+//    }
+//
+//    public void updateConditionOfSelectedWells(PlateCondition plateCondition) {
+//        for (WellGui wellGui : setupPlatePanelController.getSetupPlatePanel().getWellGuiList()) {
+//            //get only the bigger default ellipse2D
+//            Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
+//            for (Rectangle rectangle : setupPlatePanelController.getSetupPlatePanel().getRectanglesToDrawList()) {
+//                if (rectangle.contains(defaultWell.getX(), defaultWell.getY(), defaultWell.getWidth(), defaultWell.getHeight())) {
+//                    wellGui.getWell().setPlateCondition(plateCondition);
+//                    setupPlatePanelController.getSelectedWellsList().add(wellGui.getWell());
+//                }
+//            }
+//        }
+        //setupPlatePanelController.getSetupPlatePanel().repaint(setupPlatePanelController.getRectangle());
+//    }
 }
