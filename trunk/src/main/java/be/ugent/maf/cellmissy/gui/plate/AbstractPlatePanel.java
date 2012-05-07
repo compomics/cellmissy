@@ -85,7 +85,7 @@ public abstract class AbstractPlatePanel extends JPanel {
     }
 
     // set Graphics (implement Rendering process)
-    protected void setGraphics(Graphics2D g2d) {
+    public void setGraphics(Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         BasicStroke stroke = new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);

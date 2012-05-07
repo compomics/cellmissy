@@ -16,6 +16,9 @@ import be.ugent.maf.cellmissy.gui.experiment.SetupConditionsPanel;
 import be.ugent.maf.cellmissy.service.CellLineService;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,7 +26,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
 import javax.swing.JList;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -100,8 +105,8 @@ public class ConditionsPanelController {
         return plateConditionBindingList;
     }
 
-    public Integer getCurrentConditionIndex() {
-        return conditionsPanel.getConditionsJList().getSelectedIndex();
+    public PlateCondition getCurrentCondition() {
+        return ((PlateCondition) (conditionsPanel.getConditionsJList().getSelectedValue()));
     }
 
     private void initCellLinePanel() {
@@ -132,10 +137,7 @@ public class ConditionsPanelController {
     private void initConditionsPanel() {
 
         conditionIndex = 0;
-        previousConditionIndex = -1;
-
-        //set cell renderer for conditionJList (to show condition name instead of to String)
-        conditionsPanel.getConditionsJList().setCellRenderer(new ConditionsRenderer());
+        previousConditionIndex = 0;
 
         //init conditionJList (create new empty list) (conditions are NOT retrieved from DB)
         plateConditionBindingList = ObservableCollections.observableList(new ArrayList<PlateCondition>());
@@ -167,46 +169,55 @@ public class ConditionsPanelController {
         bindingGroup.addBinding(conditionListBinding);
         bindingGroup.bind();
 
+        //create and init Condition 1
+        PlateCondition firstCondition = new PlateCondition();
+        initCondition(firstCondition);
+        //add Condition 1 to the list
+        plateConditionBindingList.add(firstCondition);
+
+        //set cell renderer for conditionJList
+        conditionsPanel.getConditionsJList().setCellRenderer(new ConditionsRenderer());
+
         //add mouse listener
         conditionsPanel.getConditionsJList().addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
                 int locationToIndex = conditionsPanel.getConditionsJList().locationToIndex(e.getPoint());
-                if (previousConditionIndex != -1) {
-                    assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(previousConditionIndex));
-                    assayEcmPanelController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                    assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                    treatmentPanelController.updateTreatmentConditionFields(plateConditionBindingList.get(previousConditionIndex));
-                    treatmentPanelController.updateTreatmentInputFields(plateConditionBindingList.get(locationToIndex));
-//                    setupExperimentPanelController.updateConditionOfSelectedWells(plateConditionBindingList.get(previousConditionIndex));
-//                    setupExperimentPanelController.updateWellsCollection(plateConditionBindingList.get(previousConditionIndex));
-                }
+                assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(previousConditionIndex));
+                assayEcmPanelController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
+                assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
+                treatmentPanelController.updateTreatmentConditionFields(plateConditionBindingList.get(previousConditionIndex));
+                treatmentPanelController.updateTreatmentInputFields(plateConditionBindingList.get(locationToIndex));
                 previousConditionIndex = locationToIndex;
             }
         });
 
+        conditionsPanel.getConditionsJList().setSelectedIndex(0);
+        setupExperimentPanelController.onNewConditionAdded(firstCondition);
+
         //add action listeners
-        //add a new condition to the List
+        //add a new firstCondition to the List
         conditionsPanel.getAddButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //create and init a new condition
+                //create and init a new firstCondition
                 PlateCondition newPlateCondition = new PlateCondition();
                 initCondition(newPlateCondition);
-                //add the new condition to the list
+                //add the new firstCondition to the list
                 plateConditionBindingList.add(newPlateCondition);
-                setupExperimentPanelController.onNewConditionAdded(conditionIndex - 1);
+                setupExperimentPanelController.onNewConditionAdded(newPlateCondition);
             }
         });
 
-        //remove a condition from the list (if the user makes mistakes)
+        //remove a firstCondition from the list (if the user makes mistakes)
         conditionsPanel.getRemoveButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (conditionsPanel.getConditionsJList().getSelectedValue() != null) {
+                    setupExperimentPanelController.onConditionToRemove((PlateCondition) (conditionsPanel.getConditionsJList().getSelectedValue()));
                     plateConditionBindingList.remove(conditionsPanel.getConditionsJList().getSelectedIndex());
                 }
             }
@@ -215,7 +226,7 @@ public class ConditionsPanelController {
 
     private void initCondition(PlateCondition plateCondition) {
 
-        //assign defaults fields to a new condition
+        //assign defaults fields to a new firstCondition
         plateCondition.setName("Condition " + ++conditionIndex);
         //MDA MB 231 cell line
         plateCondition.setCellLine(cellLineBindingList.get(0));
@@ -246,15 +257,51 @@ public class ConditionsPanelController {
     private class ConditionsRenderer extends DefaultListCellRenderer {
 
         public ConditionsRenderer() {
-            
+            setOpaque(true);
+            setIconTextGap(10);
         }
 
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             PlateCondition newPlateCondition = (PlateCondition) value;
             setText(newPlateCondition.getName());
-            setForeground(GuiUtils.getAvailableColors()[conditionIndex - 1]);
+            setIcon(new rectIcon(GuiUtils.getAvailableColors()[((PlateCondition) value).getConditionIndex() - 1]));
+            if (isSelected) {
+                setBackground(Color.lightGray);
+                setBorder(BorderFactory.createLineBorder(Color.black, 2));
+                setFont(new Font("Roman", Font.BOLD, 14));
+            } else {
+                setFont(new Font("Roman", Font.BOLD, 12));
+            }
             return this;
+        }
+    }
+
+    private class rectIcon implements Icon {
+
+        private final Integer rectSize = 10;
+        private Color color;
+
+        public rectIcon(Color color) {
+            this.color = color;
+        }
+
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2d = (Graphics2D) g;
+            setupExperimentPanelController.getSetupPlatePanel().setGraphics(g2d);
+            g2d.setColor(color);
+            g2d.fillRect(x, y, rectSize, rectSize);
+        }
+
+        @Override
+        public int getIconWidth() {
+            return rectSize;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return rectSize;
         }
     }
 

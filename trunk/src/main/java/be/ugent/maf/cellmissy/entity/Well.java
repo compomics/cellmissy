@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -99,24 +100,32 @@ public class Well implements Serializable {
         this.plateCondition = plateCondition;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (wellid != null ? wellid.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Well)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        Well other = (Well) object;
-        if ((this.wellid == null && other.wellid != null) || (this.wellid != null && !this.wellid.equals(other.wellid))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Well other = (Well) obj;
+        if (!Objects.equals(this.wellid, other.wellid)) {
+            return false;
+        }
+        if (!Objects.equals(this.columnNumber, other.columnNumber)) {
+            return false;
+        }
+        if (!Objects.equals(this.rowNumber, other.rowNumber)) {
             return false;
         }
         return true;
+    }
+
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.wellid);
+        hash = 29 * hash + Objects.hashCode(this.columnNumber);
+        hash = 29 * hash + Objects.hashCode(this.rowNumber);
+        return hash;
     }
 
     @Override

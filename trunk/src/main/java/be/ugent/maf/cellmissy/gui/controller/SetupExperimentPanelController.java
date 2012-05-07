@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ExperimentInfoPanel;
 import be.ugent.maf.cellmissy.gui.experiment.SetupExperimentPanel;
+import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.awt.GridBagConstraints;
@@ -53,8 +54,8 @@ public class SetupExperimentPanelController {
         experimentInfoPanel = new ExperimentInfoPanel();
 
         //init child controllers
-        conditionsPanelController = new ConditionsPanelController(this);
         setupPlatePanelController = new SetupPlatePanelController(this);
+        conditionsPanelController = new ConditionsPanelController(this);
 
         //init services
         projectService = (ProjectService) cellMissyController.getBeanByName("projectService");
@@ -86,36 +87,67 @@ public class SetupExperimentPanelController {
         bindingGroup.bind();
         setupExperimentPanel.getExperimentInfoParentPanel().add(experimentInfoPanel, gridBagConstraints);
     }
-    
-    public void onNewConditionAdded(Integer conditionIndex){
-        setupPlatePanelController.addNewRectangleEntry(conditionIndex);
-    }
-    
-    public Integer getCurrentConditionIndex(){
-        return conditionsPanelController.getCurrentConditionIndex();
+
+    public void onNewConditionAdded(PlateCondition newPlateCondition) {
+        setupPlatePanelController.addNewRectangleEntry(newPlateCondition);
     }
 
-//    public void updateWellsCollection(PlateCondition plateCondition) {
-//        Collection<Well> wellCollection = plateCondition.getWellCollection();
-//        List<Well> selectedWellsList = setupPlatePanelController.getSelectedWellsList();
-//        for (Well well : selectedWellsList) {
-//            wellCollection.add(well);
-//        }
-//        plateCondition.setWellCollection(wellCollection);
-//        setupPlatePanelController.getSelectedWellsList().clear();
-//    }
-//
-//    public void updateConditionOfSelectedWells(PlateCondition plateCondition) {
-//        for (WellGui wellGui : setupPlatePanelController.getSetupPlatePanel().getWellGuiList()) {
-//            //get only the bigger default ellipse2D
-//            Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
-//            for (Rectangle rectangle : setupPlatePanelController.getSetupPlatePanel().getRectanglesToDrawList()) {
-//                if (rectangle.contains(defaultWell.getX(), defaultWell.getY(), defaultWell.getWidth(), defaultWell.getHeight())) {
-//                    wellGui.getWell().setPlateCondition(plateCondition);
-//                    setupPlatePanelController.getSelectedWellsList().add(wellGui.getWell());
-//                }
-//            }
-//        }
-        //setupPlatePanelController.getSetupPlatePanel().repaint(setupPlatePanelController.getRectangle());
-//    }
+    public void onConditionToRemove(PlateCondition conditionToRemove) {
+        //set plate condition of wells again to null
+        for (WellGui wellGui : setupPlatePanelController.getSetupPlatePanel().getWellGuiList()) {
+            //get only the bigger default ellipse2D
+            Ellipse2D ellipse = wellGui.getEllipsi().get(0);
+            for (Rectangle rectangle : setupPlatePanelController.getSetupPlatePanel().getRectangles().get(conditionToRemove)) {
+                if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
+                    wellGui.getWell().setPlateCondition(null);
+                }
+            }
+        }
+        setupPlatePanelController.removeRectangleEntry(conditionToRemove);
+        setupPlatePanelController.getSetupPlatePanel().repaint();
+    }
+
+    public PlateCondition getCurrentCondition() {
+        return conditionsPanelController.getCurrentCondition();
+    }
+
+    public SetupPlatePanel getSetupPlatePanel() {
+        return setupPlatePanelController.getSetupPlatePanel();
+    }
+
+    public void updateWellCollection(PlateCondition plateCondition) {
+        Collection<Well> wellCollection = plateCondition.getWellCollection();
+        for (WellGui wellGui : setupPlatePanelController.getSetupPlatePanel().getWellGuiList()) {
+            //get only the bigger default ellipse2D
+            Ellipse2D ellipse = wellGui.getEllipsi().get(0);
+            for (Rectangle rectangle : setupPlatePanelController.getSetupPlatePanel().getRectangles().get(plateCondition)) {
+
+                if (rectangle != null && rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
+                    //check if the collection already contains that well
+                    if (!wellCollection.contains(wellGui.getWell())) {
+                        //check if the well already has a condition
+                        if (!hasCondition(wellGui)) {
+                            wellCollection.add(wellGui.getWell());
+                            wellGui.getWell().setPlateCondition(plateCondition);
+                        } else {
+                            System.out.println("watch out!!!");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean hasCondition(WellGui wellGui) {
+        boolean hasCondition = false;
+        Ellipse2D ellipse = wellGui.getEllipsi().get(0);
+        for (List<Rectangle> list : setupPlatePanelController.getSetupPlatePanel().getRectangles().values()) {
+            for (Rectangle rectangle : list) {
+                if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight()) && wellGui.getWell().getPlateCondition() != null) {
+                    hasCondition = true;
+                }
+            }
+        }
+        return hasCondition;
+    }
 }
