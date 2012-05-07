@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.plate;
 
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -22,14 +23,14 @@ public class SetupPlatePanel extends AbstractPlatePanel {
 
     private Point startPoint;
     private Point endPoint;
-    private Map<Integer, List<Rectangle>> rectangles;
-    private Integer currentConditionIndex;
+    private Map<PlateCondition, List<Rectangle>> rectangles;
+    private PlateCondition currentCondition;
 
-    public Map<Integer, List<Rectangle>> getRectangles() {
+    public Map<PlateCondition, List<Rectangle>> getRectangles() {
         return rectangles;
     }
 
-    public void setRectangles(Map<Integer, List<Rectangle>> rectangles) {
+    public void setRectangles(Map<PlateCondition, List<Rectangle>> rectangles) {
         this.rectangles = rectangles;
     }
 
@@ -53,8 +54,8 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         return wellGuiList;
     }
 
-    public void setCurrentConditionIndex(Integer currentConditionIndex) {
-        this.currentConditionIndex = currentConditionIndex;
+    public void setCurrentCondition(PlateCondition currentCondition) {
+        this.currentCondition = currentCondition;
     }
 
     public SetupPlatePanel() {
@@ -93,23 +94,20 @@ public class SetupPlatePanel extends AbstractPlatePanel {
             height = this.getHeight() - y;
         }
 
-        g2d.setColor(GuiUtils.getAvailableColors()[currentConditionIndex]);
+        g2d.setColor(GuiUtils.getAvailableColors()[currentCondition.getConditionIndex() - 1]);
         g2d.drawRect(x, y, width, height);
 
     }
 
     private void drawRectangles(Graphics g) {
-
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
-
-        for (Integer conditionIndex : rectangles.keySet()) {
-            g2d.setColor(GuiUtils.getAvailableColors()[conditionIndex]);
-            for (Rectangle rectangle : rectangles.get(conditionIndex)) {
+        for (PlateCondition plateCondition : rectangles.keySet()) {
+            g2d.setColor(GuiUtils.getAvailableColors()[plateCondition.getConditionIndex() - 1]);
+            for (Rectangle rectangle : rectangles.get(plateCondition)) {
                 g2d.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
             }
         }
-
     }
 
     @Override

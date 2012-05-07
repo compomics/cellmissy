@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.SetupPlatePanelGui;
@@ -63,8 +64,12 @@ public class SetupPlatePanelController {
         return setupPlatePanel;
     }
 
-    public void addNewRectangleEntry(Integer conditionIndex) {
-        setupPlatePanel.getRectangles().put(conditionIndex, new ArrayList<Rectangle>());
+    public void addNewRectangleEntry(PlateCondition newPlateCondition) {
+        setupPlatePanel.getRectangles().put(newPlateCondition, new ArrayList<Rectangle>());
+    }
+
+    public void removeRectangleEntry(PlateCondition plateConditionToRemove) {
+        setupPlatePanel.getRectangles().remove(plateConditionToRemove);
     }
 
     private void initSetupPlatePanel() {
@@ -91,7 +96,7 @@ public class SetupPlatePanelController {
                 PlateFormat selectedPlateFormat = plateFormatBindingList.get(setupPlatePanelGui.getPlateFormatComboBox().getSelectedIndex());
                 Dimension parentDimension = setupPlatePanelGui.getBottomPanel().getSize();
                 setupPlatePanel.initPanel(selectedPlateFormat, parentDimension);
-                for(List<Rectangle> rectangleList : setupPlatePanel.getRectangles().values()){
+                for (List<Rectangle> rectangleList : setupPlatePanel.getRectangles().values()) {
                     rectangleList.clear();
                 }
                 setupPlatePanel.repaint();
@@ -131,7 +136,7 @@ public class SetupPlatePanelController {
             xMax = Math.max(xMax, setupPlatePanel.getEndPoint().x);
             yMin = Math.min(yMin, setupPlatePanel.getEndPoint().y);
             yMax = Math.max(yMax, setupPlatePanel.getEndPoint().y);
-            setupPlatePanel.setCurrentConditionIndex(setupExperimentPanelController.getCurrentConditionIndex());
+            setupPlatePanel.setCurrentCondition(setupExperimentPanelController.getCurrentCondition());
             setupPlatePanel.repaint(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1);
         }
 
@@ -145,7 +150,8 @@ public class SetupPlatePanelController {
             rectangle = new Rectangle(x, y, width, height);
 
             if (rectangle.width != 0 || rectangle.height != 0) {
-                setupPlatePanel.getRectangles().get(setupExperimentPanelController.getCurrentConditionIndex()).add(rectangle);
+                setupPlatePanel.getRectangles().get(setupExperimentPanelController.getCurrentCondition()).add(rectangle);
+                setupExperimentPanelController.updateWellCollection(setupExperimentPanelController.getCurrentCondition());
             }
 
             setupPlatePanel.setStartPoint(null);

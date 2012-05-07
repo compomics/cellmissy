@@ -15,7 +15,7 @@ import java.awt.GridBagConstraints;
  */
 public class GuiUtils {
 
-    private static final Color[] availableColors = {Color.BLACK, Color.RED, Color.GRAY, Color.GREEN, Color.ORANGE, Color.MAGENTA, Color.CYAN, Color.YELLOW};
+    private static final Color[] availableColors = {Color.BLACK, Color.RED, Color.GRAY, Color.GREEN, Color.ORANGE, Color.MAGENTA, Color.CYAN, Color.YELLOW, Color.BLUE, Color.DARK_GRAY};
 
     public static GridBagConstraints getDefaultGridBagConstraints() {
         GridBagConstraints gridBagConstraints = new GridBagConstraints();

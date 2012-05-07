@@ -59,9 +59,15 @@ public class ConditionsPanel extends javax.swing.JPanel {
         jScrollPane1.setMinimumSize(new java.awt.Dimension(40, 45));
         jScrollPane1.setPreferredSize(new java.awt.Dimension(45, 100));
 
+        conditionsJList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
         conditionsJList.setMaximumSize(new java.awt.Dimension(45, 50));
         conditionsJList.setMinimumSize(new java.awt.Dimension(45, 50));
         conditionsJList.setPreferredSize(new java.awt.Dimension(33, 70));
+        conditionsJList.setSelectedIndex(0);
         conditionsJList.setVisibleRowCount(6);
         jScrollPane1.setViewportView(conditionsJList);
 
