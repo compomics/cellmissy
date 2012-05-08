@@ -112,7 +112,7 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
         concentrationTextField = new javax.swing.JTextField();
         generalTreatmentComboBox = new javax.swing.JComboBox();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions Set-up"));
+        setBorder(javax.swing.BorderFactory.createTitledBorder("Set-up Conditions"));
         setLayout(new java.awt.GridBagLayout());
 
         selectCellLineLabel.setText("Select a cell line");

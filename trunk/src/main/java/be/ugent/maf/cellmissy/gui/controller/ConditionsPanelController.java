@@ -137,7 +137,7 @@ public class ConditionsPanelController {
     private void initConditionsPanel() {
 
         conditionIndex = 0;
-        previousConditionIndex = 0;
+        previousConditionIndex = -1;
 
         //init conditionJList (create new empty list) (conditions are NOT retrieved from DB)
         plateConditionBindingList = ObservableCollections.observableList(new ArrayList<PlateCondition>());
@@ -184,11 +184,13 @@ public class ConditionsPanelController {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int locationToIndex = conditionsPanel.getConditionsJList().locationToIndex(e.getPoint());
-                assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(previousConditionIndex));
-                assayEcmPanelController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                treatmentPanelController.updateTreatmentConditionFields(plateConditionBindingList.get(previousConditionIndex));
-                treatmentPanelController.updateTreatmentInputFields(plateConditionBindingList.get(locationToIndex));
+                if (previousConditionIndex < plateConditionBindingList.size() && previousConditionIndex != -1) {
+                    assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(previousConditionIndex));
+                    assayEcmPanelController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
+                    assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
+                    treatmentPanelController.updateTreatmentConditionFields(plateConditionBindingList.get(previousConditionIndex));
+                    treatmentPanelController.updateTreatmentInputFields(plateConditionBindingList.get(locationToIndex));
+                }
                 previousConditionIndex = locationToIndex;
             }
         });
@@ -291,7 +293,7 @@ public class ConditionsPanelController {
             Graphics2D g2d = (Graphics2D) g;
             setupExperimentPanelController.getSetupPlatePanel().setGraphics(g2d);
             g2d.setColor(color);
-            g2d.fillRect(x, y, rectSize, rectSize);
+            g2d.drawRect(x, y, rectSize, rectSize);
         }
 
         @Override

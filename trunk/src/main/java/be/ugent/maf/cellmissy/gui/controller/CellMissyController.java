@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.GridBagConstraints;
+import javax.swing.JOptionPane;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -16,6 +17,7 @@ import org.springframework.context.ApplicationContext;
  */
 public class CellMissyController {
 
+    //view
     //main frame
     CellMissyFrame cellMissyFrame;
     //child controllers
@@ -51,5 +53,9 @@ public class CellMissyController {
     public Object getBeanByName(String beanName) {
         ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
         return context.getBean(beanName);
+    }
+    
+    public void showMessage(String message, Integer messageType){
+        JOptionPane.showMessageDialog(cellMissyFrame, message, "", messageType);
     }
 }
