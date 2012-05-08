@@ -68,8 +68,8 @@ public class SetupPlatePanelController {
         setupPlatePanel.getRectangles().put(newPlateCondition, new ArrayList<Rectangle>());
     }
 
-    public void removeRectangleEntry(PlateCondition plateConditionToRemove) {
-        setupPlatePanel.getRectangles().remove(plateConditionToRemove);
+    public void removeRectangleEntry(PlateCondition conditionToRemove) {
+        setupPlatePanel.getRectangles().remove(conditionToRemove);
     }
 
     private void initSetupPlatePanel() {
@@ -150,8 +150,9 @@ public class SetupPlatePanelController {
             rectangle = new Rectangle(x, y, width, height);
 
             if (rectangle.width != 0 || rectangle.height != 0) {
-                setupPlatePanel.getRectangles().get(setupExperimentPanelController.getCurrentCondition()).add(rectangle);
-                setupExperimentPanelController.updateWellCollection(setupExperimentPanelController.getCurrentCondition());
+                if (setupExperimentPanelController.updateWellCollection(setupExperimentPanelController.getCurrentCondition(), rectangle)) {
+                    setupPlatePanel.getRectangles().get(setupExperimentPanelController.getCurrentCondition()).add(rectangle);
+                }
             }
 
             setupPlatePanel.setStartPoint(null);

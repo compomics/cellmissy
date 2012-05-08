@@ -18,7 +18,6 @@ import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -115,27 +114,29 @@ public class SetupExperimentPanelController {
         return setupPlatePanelController.getSetupPlatePanel();
     }
 
-    public void updateWellCollection(PlateCondition plateCondition) {
+    public boolean updateWellCollection(PlateCondition plateCondition, Rectangle rectangle) {
+        boolean isSelectionValid = true;
         Collection<Well> wellCollection = plateCondition.getWellCollection();
+        outerloop:
         for (WellGui wellGui : setupPlatePanelController.getSetupPlatePanel().getWellGuiList()) {
             //get only the bigger default ellipse2D
             Ellipse2D ellipse = wellGui.getEllipsi().get(0);
-            for (Rectangle rectangle : setupPlatePanelController.getSetupPlatePanel().getRectangles().get(plateCondition)) {
-
-                if (rectangle != null && rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
-                    //check if the collection already contains that well
-                    if (!wellCollection.contains(wellGui.getWell())) {
-                        //check if the well already has a condition
-                        if (!hasCondition(wellGui)) {
-                            wellCollection.add(wellGui.getWell());
-                            wellGui.getWell().setPlateCondition(plateCondition);
-                        } else {
-                            System.out.println("watch out!!!");
-                        }
+            if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
+                //check if the collection already contains that well
+                if (!wellCollection.contains(wellGui.getWell())) {
+                    //check if the well already has a condition
+                    if (!hasCondition(wellGui)) {
+                        wellCollection.add(wellGui.getWell());
+                        wellGui.getWell().setPlateCondition(plateCondition);
+                    } else {
+                        isSelectionValid = false;
+                        cellMissyController.showMessage("Wells cannot have more than one condition assigned\nPlease select again the wells", 1);
+                        break outerloop;
                     }
                 }
             }
         }
+        return isSelectionValid;
     }
 
     private boolean hasCondition(WellGui wellGui) {
