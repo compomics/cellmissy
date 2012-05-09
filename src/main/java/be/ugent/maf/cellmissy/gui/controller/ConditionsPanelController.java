@@ -51,7 +51,6 @@ public class ConditionsPanelController {
     private ObservableList<CellLine> cellLineBindingList;
     private ObservableList<PlateCondition> plateConditionBindingList;
     private BindingGroup bindingGroup;
-    private List<Well> selectedWellsList;
     //view
     private ConditionsPanel conditionsPanel;
     private SetupConditionsPanel setupConditionsPanel;
@@ -66,6 +65,10 @@ public class ConditionsPanelController {
     private Integer conditionIndex;
     private Integer previousConditionIndex;
 
+    /**
+     * constructor
+     * @param setupExperimentPanelController 
+     */
     public ConditionsPanelController(SetupExperimentPanelController setupExperimentPanelController) {
 
         this.setupExperimentPanelController = setupExperimentPanelController;
@@ -89,6 +92,10 @@ public class ConditionsPanelController {
         initPanel();
     }
 
+    /**
+     * setters and getters
+     * 
+     */
     public SetupExperimentPanelController getSetupExperimentPanelController() {
         return setupExperimentPanelController;
     }
@@ -105,10 +112,21 @@ public class ConditionsPanelController {
         return plateConditionBindingList;
     }
 
+    /**
+     * public  methods
+     * 
+     */
+    /**
+     * get the current plate condition
+     * @return the selected value of the conditions List
+     */
     public PlateCondition getCurrentCondition() {
         return ((PlateCondition) (conditionsPanel.getConditionsJList().getSelectedValue()));
     }
 
+    /**
+     * private methods and classes
+     */
     private void initCellLinePanel() {
 
         //init cellLineJCombo
@@ -117,7 +135,12 @@ public class ConditionsPanelController {
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
 
-        //add action listeners
+        /**
+         * add action listeners
+         */
+        /**
+         * insert a new cell line in the DB if it's not present yet
+         */
         setupConditionsPanel.getInsertCellLineButton().addActionListener(new ActionListener() {
 
             @Override
@@ -136,6 +159,7 @@ public class ConditionsPanelController {
 
     private void initConditionsPanel() {
 
+        //set current and previous conditions indexes
         conditionIndex = 0;
         previousConditionIndex = -1;
 
@@ -169,7 +193,7 @@ public class ConditionsPanelController {
         bindingGroup.addBinding(conditionListBinding);
         bindingGroup.bind();
 
-        //create and init Condition 1
+        //create and init the first condition (Condition 1)
         PlateCondition firstCondition = new PlateCondition();
         initCondition(firstCondition);
         //add Condition 1 to the list
@@ -178,7 +202,9 @@ public class ConditionsPanelController {
         //set cell renderer for conditionJList
         conditionsPanel.getConditionsJList().setCellRenderer(new ConditionsRenderer());
 
-        //add mouse listener
+        /**
+         * add mouse listeners
+         */
         conditionsPanel.getConditionsJList().addMouseListener(new MouseAdapter() {
 
             @Override
@@ -195,48 +221,71 @@ public class ConditionsPanelController {
             }
         });
 
+        //select Condition 1 as default
         conditionsPanel.getConditionsJList().setSelectedIndex(0);
+        //add an empty list of rectangles for Condition 1
         setupExperimentPanelController.onNewConditionAdded(firstCondition);
+        //disable the Remove Button
+        conditionsPanel.getRemoveButton().setEnabled(false);
 
-        //add action listeners
-        //add a new firstCondition to the List
+        /** 
+         * add action listeners
+         */
+        //add a new Condition to the List
         conditionsPanel.getAddButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //create and init a new firstCondition
-                PlateCondition newPlateCondition = new PlateCondition();
-                initCondition(newPlateCondition);
-                //add the new firstCondition to the list
-                plateConditionBindingList.add(newPlateCondition);
-                setupExperimentPanelController.onNewConditionAdded(newPlateCondition);
+                //create and init a new Condition
+                PlateCondition newCondition = new PlateCondition();
+                initCondition(newCondition);
+                //add the new Condition to the list
+                plateConditionBindingList.add(newCondition);
+                //add a new empty list of rectangles for the just added Condition
+                setupExperimentPanelController.onNewConditionAdded(newCondition);
+                //after a new condition is added enable the remove button
+                if (!conditionsPanel.getRemoveButton().isEnabled()) {
+                    conditionsPanel.getRemoveButton().setEnabled(true);
+                }
             }
         });
 
-        //remove a firstCondition from the list (if the user makes mistakes)
+        //remove a Condition from the list
         conditionsPanel.getRemoveButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (conditionsPanel.getConditionsJList().getSelectedValue() != null) {
+                    //empty the list of rectangles for this Condition and reset to null the Condition of the associated wells
                     setupExperimentPanelController.onConditionToRemove((PlateCondition) (conditionsPanel.getConditionsJList().getSelectedValue()));
+                    //remove the Condition from the list
                     plateConditionBindingList.remove(conditionsPanel.getConditionsJList().getSelectedIndex());
+                    //select first condition after removing
+                    conditionsPanel.getConditionsJList().setSelectedIndex(0);
+                    //if there's only one condition left, disable again the remove button
+                    if (plateConditionBindingList.size() == 1) {
+                        conditionsPanel.getRemoveButton().setEnabled(false);
+                    }
                 }
             }
         });
     }
 
+    /**
+     * this method assigns default member fields to a plateCondition entity
+     * @param plateCondition 
+     */
     private void initCondition(PlateCondition plateCondition) {
 
-        //assign defaults fields to a new firstCondition
+        //set the name
         plateCondition.setName("Condition " + ++conditionIndex);
-        //MDA MB 231 cell line
+        //set the cell line: MDA MB 231 cell line
         plateCondition.setCellLine(cellLineBindingList.get(0));
-        //2D matrix dimension
+        //set matrix dimension: 2D
         plateCondition.setMatrixDimension(assayEcmPanelController.getMatrixDimensionBindingList().get(0));
-        //Oris platform
+        //set the migration assay: Oris platform
         plateCondition.setAssay(assayEcmPanelController.getAssay2DBindingList().get(0));
-        //default values for ECM
+        //create a new ECM object and set its class memebers
         Ecm ecm = new Ecm();
         ecm.setEcmComposition(assayEcmPanelController.getEcm2DCompositionBindingList().get(0));
         ecm.setEcmCoating(assayEcmPanelController.getEcmCoatingBindingList().get(0));
@@ -245,28 +294,35 @@ public class ConditionsPanelController {
         ecm.setConcentration(0);
         ecm.setVolume(0);
         plateCondition.setEcm(ecm);
-        //default treatment, drug: ROCK inhibitor
+        //set a default treatment, drug: ROCK inhibitor
         Treatment treatment = new Treatment();
         treatment.setType(TreatmentType.DRUG.getDatabaseValue());
         treatment.setName(treatmentPanelController.getDrugBindingList().get(0).getName());
         plateCondition.setTreatment(treatment);
         //set an empty collection of wells
-        selectedWellsList = new ArrayList<>();
-        plateCondition.setWellCollection(selectedWellsList);
+        List<Well> wellList = new ArrayList<>();
+        plateCondition.setWellCollection(wellList);
 
     }
 
+    /**
+     * renderer for the Conditions JList
+     */
     private class ConditionsRenderer extends DefaultListCellRenderer {
 
+        /*
+         *constructor
+         */
         public ConditionsRenderer() {
             setOpaque(true);
             setIconTextGap(10);
         }
 
+        //Overrides method from the DefaultListCellRenderer
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            PlateCondition newPlateCondition = (PlateCondition) value;
-            setText(newPlateCondition.getName());
+            PlateCondition newCondition = (PlateCondition) value;
+            setText(newCondition.getName());
             setIcon(new rectIcon(GuiUtils.getAvailableColors()[((PlateCondition) value).getConditionIndex() - 1]));
             if (isSelected) {
                 setBackground(Color.lightGray);
@@ -279,11 +335,18 @@ public class ConditionsPanelController {
         }
     }
 
+    /**
+     * rectangular icon for the Condition list
+     */
     private class rectIcon implements Icon {
 
         private final Integer rectSize = 10;
         private Color color;
 
+        /**
+         * constructor
+         * @param color 
+         */
         public rectIcon(Color color) {
             this.color = color;
         }
@@ -307,6 +370,9 @@ public class ConditionsPanelController {
         }
     }
 
+    /**
+     * add the Condition Panel and the Setup Condition Panel to their parent panels
+     */
     private void initPanel() {
         setupExperimentPanelController.getSetupExperimentPanel().getConditionsParentPanel().add(conditionsPanel, gridBagConstraints);
         setupExperimentPanelController.getSetupExperimentPanel().getSetupConditionsParentPanel().add(setupConditionsPanel, gridBagConstraints);

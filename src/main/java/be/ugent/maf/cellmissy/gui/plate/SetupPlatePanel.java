@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ *this class is used in the setup step: show wells and let the user select them, assigning conditions
  * @author Paola
  */
 public class SetupPlatePanel extends AbstractPlatePanel {
@@ -26,6 +26,19 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     private Map<PlateCondition, List<Rectangle>> rectangles;
     private PlateCondition currentCondition;
 
+    /**
+     * constructor
+     */
+    public SetupPlatePanel() {
+        startPoint = null;
+        endPoint = null;
+        rectangles = new HashMap<>();
+    }
+
+    /**
+     * setters and getters
+     * 
+     */
     public Map<PlateCondition, List<Rectangle>> getRectangles() {
         return rectangles;
     }
@@ -58,12 +71,6 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         this.currentCondition = currentCondition;
     }
 
-    public SetupPlatePanel() {
-        startPoint = null;
-        endPoint = null;
-        rectangles = new HashMap<>();
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -75,7 +82,6 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         if (!rectangles.values().isEmpty()) {
             drawRectangles(g);
         }
-
     }
 
     private void drawRect(Graphics g) {

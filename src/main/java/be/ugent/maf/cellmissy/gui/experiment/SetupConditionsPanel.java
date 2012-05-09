@@ -112,7 +112,7 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
         concentrationTextField = new javax.swing.JTextField();
         generalTreatmentComboBox = new javax.swing.JComboBox();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Set-up Conditions"));
+        setBorder(javax.swing.BorderFactory.createTitledBorder("Setup Conditions"));
         setLayout(new java.awt.GridBagLayout());
 
         selectCellLineLabel.setText("Select a cell line");
@@ -321,6 +321,8 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 0.8;
         gridBagConstraints.weighty = 1.0;
         add(jTabbedPane1, gridBagConstraints);
+
+        getAccessibleContext().setAccessibleName("Setup Conditions");
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
