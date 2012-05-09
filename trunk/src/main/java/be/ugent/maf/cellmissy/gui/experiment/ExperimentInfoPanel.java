@@ -42,9 +42,10 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
         numberLabel = new javax.swing.JLabel();
         numberTextField = new javax.swing.JTextField();
         dateTextField = new javax.swing.JTextField();
-        purposeTextField = new javax.swing.JTextField();
         dateLabel = new javax.swing.JLabel();
         purposeLabel = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        purposeTextArea = new javax.swing.JTextArea();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment Info"));
 
@@ -66,27 +67,14 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
 
         numberLabel.setText("Number");
 
-        numberTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                numberTextFieldActionPerformed(evt);
-            }
-        });
-
-        dateTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dateTextFieldActionPerformed(evt);
-            }
-        });
-
-        purposeTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                purposeTextFieldActionPerformed(evt);
-            }
-        });
-
         dateLabel.setText("Date");
 
         purposeLabel.setText("Purpose");
+
+        purposeTextArea.setColumns(20);
+        purposeTextArea.setRows(5);
+        purposeTextArea.setBorder(null);
+        jScrollPane2.setViewportView(purposeTextArea);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -107,13 +95,13 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
                                 .addComponent(dateLabel))
                             .addComponent(purposeLabel))
                         .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(purposeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(numberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(numberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(fillInDataLabel))
-                .addContainerGap(78, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -143,30 +131,22 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
                                 .addGap(11, 11, 11)
                                 .addComponent(purposeLabel))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(8, 8, 8)
-                                .addComponent(purposeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(38, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void numberTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numberTextFieldActionPerformed
-        // TODO add your handling code here:}//GEN-LAST:event_numberTextFieldActionPerformed
-    }
-        private void dateTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateTextFieldActionPerformed
-        // TODO add your handling code here:}//GEN-LAST:event_dateTextFieldActionPerformed
-    }
-        private void purposeTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_purposeTextFieldActionPerformed
-        // TODO add your handling code here:}//GEN-LAST:event_purposeTextFieldActionPerformed
-    }
+            
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel dateLabel;
     private javax.swing.JTextField dateTextField;
     private javax.swing.JLabel fillInDataLabel;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel numberLabel;
     private javax.swing.JTextField numberTextField;
     private javax.swing.JList projectJList;
     private javax.swing.JLabel purposeLabel;
-    private javax.swing.JTextField purposeTextField;
+    private javax.swing.JTextArea purposeTextArea;
     // End of variables declaration//GEN-END:variables
 }

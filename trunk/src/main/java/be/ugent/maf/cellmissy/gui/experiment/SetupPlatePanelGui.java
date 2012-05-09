@@ -47,7 +47,8 @@ public class SetupPlatePanelGui extends javax.swing.JPanel {
         selectFormatLabel = new javax.swing.JLabel();
         bottomPanel = new javax.swing.JPanel();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Plate Set-up"));
+        setBorder(javax.swing.BorderFactory.createTitledBorder("Setup Plate"));
+        setPreferredSize(new java.awt.Dimension(250, 80));
         setLayout(new java.awt.GridBagLayout());
 
         plateFormatComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -59,11 +60,11 @@ public class SetupPlatePanelGui extends javax.swing.JPanel {
         topPanelLayout.setHorizontalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(topPanelLayout.createSequentialGroup()
-                .addGap(70, 70, 70)
+                .addGap(37, 37, 37)
                 .addComponent(selectFormatLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(plateFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(150, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -78,6 +79,7 @@ public class SetupPlatePanelGui extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
         add(topPanel, gridBagConstraints);
 
         bottomPanel.setLayout(new java.awt.GridBagLayout());

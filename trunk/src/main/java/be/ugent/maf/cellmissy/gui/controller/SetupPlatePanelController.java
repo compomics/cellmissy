@@ -45,10 +45,14 @@ public class SetupPlatePanelController {
     private PlateService plateService;
     private GridBagConstraints gridBagConstraints;
 
+    /**
+     * constructor
+     * @param setupExperimentPanelController 
+     */
     public SetupPlatePanelController(SetupExperimentPanelController setupExperimentPanelController) {
         this.setupExperimentPanelController = setupExperimentPanelController;
 
-        //a new set up plate panel needs to be added to a new set up plate panel gui
+        //init setup plate panel gui
         setupPlatePanelGui = new SetupPlatePanelGui();
         //init services
         plateService = (PlateService) setupExperimentPanelController.getCellMissyController().getBeanByName("plateService");
@@ -60,19 +64,39 @@ public class SetupPlatePanelController {
         initSetupPlatePanel();
     }
 
+    /**
+     * setters and getters
+     * 
+     */
     public SetupPlatePanel getSetupPlatePanel() {
         return setupPlatePanel;
     }
 
-    public void addNewRectangleEntry(PlateCondition newPlateCondition) {
-        setupPlatePanel.getRectangles().put(newPlateCondition, new ArrayList<Rectangle>());
+    /**
+     * public methods
+     *  
+     */
+    /**
+     * add to the map a new entry: new condition-empty list of rectangles
+     * @param newCondition added to the list
+     */
+    public void addNewRectangleEntry(PlateCondition newCondition) {
+        setupPlatePanel.getRectangles().put(newCondition, new ArrayList<Rectangle>());
     }
 
+    /**
+     * remove from the map the list of rectangles of a condition that the user wants to delete
+     * @param conditionToRemove 
+     */
     public void removeRectangleEntry(PlateCondition conditionToRemove) {
         setupPlatePanel.getRectangles().remove(conditionToRemove);
     }
 
+    /**
+     * private methods and classes
+     */
     private void initSetupPlatePanel() {
+
         //init set up plate panel and add it to the bottom panel of the set up plate panel gui
         setupPlatePanel = new SetupPlatePanel();
         setupPlatePanelGui.getBottomPanel().add(setupPlatePanel, gridBagConstraints);
@@ -83,12 +107,17 @@ public class SetupPlatePanelController {
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
 
-        //add mouse listener
+        /**
+         * add mouse listeners
+         */
         SetupPlateListener setupPlateListener = new SetupPlateListener();
         setupPlatePanel.addMouseListener(setupPlateListener);
         setupPlatePanel.addMouseMotionListener(setupPlateListener);
 
-        // add action listener
+        /**
+         * add action listeners
+         */
+        //plate format combo box
         setupPlatePanelGui.getPlateFormatComboBox().addActionListener(new ActionListener() {
 
             @Override
@@ -96,6 +125,7 @@ public class SetupPlatePanelController {
                 PlateFormat selectedPlateFormat = plateFormatBindingList.get(setupPlatePanelGui.getPlateFormatComboBox().getSelectedIndex());
                 Dimension parentDimension = setupPlatePanelGui.getBottomPanel().getSize();
                 setupPlatePanel.initPanel(selectedPlateFormat, parentDimension);
+                //if selections were made on the plate, reset everything: clear the map and repaint the panel
                 for (List<Rectangle> rectangleList : setupPlatePanel.getRectangles().values()) {
                     rectangleList.clear();
                 }
@@ -103,8 +133,35 @@ public class SetupPlatePanelController {
             }
         });
 
-        // show 96 plate format as default
-        // after adding the action listener
+        //clear last selection: clear rectangles of the last condition (condition is not removed)
+        setupExperimentPanelController.getSetupExperimentPanel().getClearLastButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //reset to null the condition of the selected wells
+                setupExperimentPanelController.resetWellsCondition(setupExperimentPanelController.getCurrentCondition());
+                //remove the rectangles from the map and call the repaint
+                setupPlatePanel.getRectangles().get(setupExperimentPanelController.getCurrentCondition()).clear();
+                setupPlatePanel.repaint();
+            }
+        });
+
+        //clear all selections: clear rectangles of all conditions (conditions are not removed)
+        setupExperimentPanelController.getSetupExperimentPanel().getClearAllButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //reset to null the conditions of all the wells
+                setupExperimentPanelController.resetAllWellsCondition();
+                //remove all the rectangles from the map and call the repaint
+                for (List<Rectangle> rectangleList : setupPlatePanel.getRectangles().values()) {
+                    rectangleList.clear();
+                }
+                setupPlatePanel.repaint();
+            }
+        });
+
+        //show 96 plate format as default
         setupPlatePanelGui.getPlateFormatComboBox().setSelectedIndex(0);
 
         setupExperimentPanelController.getSetupExperimentPanel().getSetupPlateParentPanel().add(setupPlatePanelGui, gridBagConstraints);
@@ -150,6 +207,7 @@ public class SetupPlatePanelController {
             rectangle = new Rectangle(x, y, width, height);
 
             if (rectangle.width != 0 || rectangle.height != 0) {
+                //if the selection of wells is valid (wells do not already have a condition set), add the rectangle to the map
                 if (setupExperimentPanelController.updateWellCollection(setupExperimentPanelController.getCurrentCondition(), rectangle)) {
                     setupPlatePanel.getRectangles().get(setupExperimentPanelController.getCurrentCondition()).add(rectangle);
                 }

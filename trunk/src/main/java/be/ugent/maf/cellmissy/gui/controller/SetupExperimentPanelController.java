@@ -46,6 +46,10 @@ public class SetupExperimentPanelController {
     private ProjectService projectService;
     private GridBagConstraints gridBagConstraints;
 
+    /**
+     * constructor
+     * @param cellMissyController 
+     */
     public SetupExperimentPanelController(CellMissyController cellMissyController) {
         this.cellMissyController = cellMissyController;
 
@@ -66,6 +70,10 @@ public class SetupExperimentPanelController {
         initExperimentInfoPanel();
     }
 
+    /**
+     * setters and getters
+     *  
+     */
     public SetupExperimentPanel getSetupExperimentPanel() {
         return setupExperimentPanel;
     }
@@ -78,42 +86,55 @@ public class SetupExperimentPanelController {
         return conditionsPanelController;
     }
 
-    private void initExperimentInfoPanel() {
-        //init projectJList
-        projectBindingList = ObservableCollections.observableList(projectService.findAll());
-        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectJList());
-        bindingGroup.addBinding(jListBinding);
-        bindingGroup.bind();
-        setupExperimentPanel.getExperimentInfoParentPanel().add(experimentInfoPanel, gridBagConstraints);
+    /**
+     * public methods
+     */
+    
+    /**
+     * 
+     * if the user adds a new condition, add a new entry to the map: new condition-empty list of rectangles
+     * @param newCondition added to the list
+     */
+    public void onNewConditionAdded(PlateCondition newCondition) {
+        setupPlatePanelController.addNewRectangleEntry(newCondition);
     }
 
-    public void onNewConditionAdded(PlateCondition newPlateCondition) {
-        setupPlatePanelController.addNewRectangleEntry(newPlateCondition);
-    }
-
+    /**
+     * if the user removes a condition from the list, wells conditions are set back to null, rectangles are removed from the map and repaint is called
+     * @param conditionToRemove 
+     */
     public void onConditionToRemove(PlateCondition conditionToRemove) {
-        //set plate condition of wells again to null
-        for (WellGui wellGui : setupPlatePanelController.getSetupPlatePanel().getWellGuiList()) {
-            //get only the bigger default ellipse2D
-            Ellipse2D ellipse = wellGui.getEllipsi().get(0);
-            for (Rectangle rectangle : setupPlatePanelController.getSetupPlatePanel().getRectangles().get(conditionToRemove)) {
-                if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
-                    wellGui.getWell().setPlateCondition(null);
-                }
-            }
-        }
+        //set back to null the condition of the wells selected 
+        resetWellsCondition(conditionToRemove);
+        //remove the rectangles from the map
         setupPlatePanelController.removeRectangleEntry(conditionToRemove);
+        //repaint
         setupPlatePanelController.getSetupPlatePanel().repaint();
     }
 
+    /**
+     * get the current condition from the child controller
+     * @return the current condition
+     */
     public PlateCondition getCurrentCondition() {
         return conditionsPanelController.getCurrentCondition();
     }
 
+    /**
+     * get the setup plate panel from the child controller
+     * @return setup plate panel
+     */
     public SetupPlatePanel getSetupPlatePanel() {
         return setupPlatePanelController.getSetupPlatePanel();
     }
 
+    /**
+     * when the mouse is released and the rectangle has been drawn, this method is called:
+     * set well collection of the current condition and set the condition of the selected wells
+     * @param plateCondition, the current condition
+     * @param rectangle, the just drawn rectangle
+     * @return true if the selection of wells is valid, else show a message
+     */
     public boolean updateWellCollection(PlateCondition plateCondition, Rectangle rectangle) {
         boolean isSelectionValid = true;
         Collection<Well> wellCollection = plateCondition.getWellCollection();
@@ -124,13 +145,17 @@ public class SetupExperimentPanelController {
             if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
                 //check if the collection already contains that well
                 if (!wellCollection.contains(wellGui.getWell())) {
-                    //check if the well already has a condition
+                    //the selection is valid if the wells do not have a condition yet
                     if (!hasCondition(wellGui)) {
+                        //in this case, add the well to the collection and set the condition of the well
                         wellCollection.add(wellGui.getWell());
                         wellGui.getWell().setPlateCondition(plateCondition);
                     } else {
+                        //if the wells do have a condition already, the selection is not valid
                         isSelectionValid = false;
-                        cellMissyController.showMessage("Wells cannot have more than one condition assigned\nPlease select again the wells", 1);
+                        //in this case, show a message through the main controller
+                        cellMissyController.showMessage("Wells cannot have more than one condition\nPlease select again the wells", 1);
+                        //exit from the outer loop
                         break outerloop;
                     }
                 }
@@ -138,8 +163,56 @@ public class SetupExperimentPanelController {
         }
         return isSelectionValid;
     }
-
-    private boolean hasCondition(WellGui wellGui) {
+    
+    /**
+     * set back to null the condition of the wells selected (for a certain Condition)
+     * @param plateCondition 
+     */
+    public void resetWellsCondition(PlateCondition plateCondition) {
+        //set plate condition of wells again to null
+        for (WellGui wellGui : setupPlatePanelController.getSetupPlatePanel().getWellGuiList()) {
+            //get only the bigger default ellipse2D
+            Ellipse2D ellipse = wellGui.getEllipsi().get(0);
+            for (Rectangle rectangle : setupPlatePanelController.getSetupPlatePanel().getRectangles().get(plateCondition)) {
+                if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
+                    wellGui.getWell().setPlateCondition(null);
+                }
+            }
+        }
+    }
+    
+    /**
+     * set back to null the conditions of all wells selected (for all conditions)
+     */
+    public void resetAllWellsCondition(){
+        //set plate condition of all wells selected again to null
+        for(PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()){
+            resetWellsCondition(plateCondition);
+        }
+    }
+    
+    /**
+     * initializes the experiment info panel
+     */
+     private void initExperimentInfoPanel() {
+        //init projectJList
+        projectBindingList = ObservableCollections.observableList(projectService.findAll());
+        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectJList());
+        bindingGroup.addBinding(jListBinding);
+        bindingGroup.bind();
+        setupExperimentPanel.getExperimentInfoParentPanel().add(experimentInfoPanel, gridBagConstraints);
+    }
+    
+     /*
+      * private methods and classes
+      */
+    
+     /**
+      * check if a well already has a condition
+      * @param wellGui
+      * @return true if a well already has a condition assigned
+      */
+     private boolean hasCondition(WellGui wellGui) {
         boolean hasCondition = false;
         Ellipse2D ellipse = wellGui.getEllipsi().get(0);
         for (List<Rectangle> list : setupPlatePanelController.getSetupPlatePanel().getRectangles().values()) {
@@ -151,4 +224,5 @@ public class SetupExperimentPanelController {
         }
         return hasCondition;
     }
+
 }
