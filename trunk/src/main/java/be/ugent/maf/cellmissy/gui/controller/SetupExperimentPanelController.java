@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -16,7 +17,14 @@ import be.ugent.maf.cellmissy.service.ProjectService;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -34,6 +42,7 @@ public class SetupExperimentPanelController {
     //model
     private ObservableList<Project> projectBindingList;
     private BindingGroup bindingGroup;
+    private Experiment experiment;
     //view
     private SetupExperimentPanel setupExperimentPanel;
     private ExperimentInfoPanel experimentInfoPanel;
@@ -89,7 +98,6 @@ public class SetupExperimentPanelController {
     /**
      * public methods
      */
-    
     /**
      * 
      * if the user adds a new condition, add a new entry to the map: new condition-empty list of rectangles
@@ -163,7 +171,7 @@ public class SetupExperimentPanelController {
         }
         return isSelectionValid;
     }
-    
+
     /**
      * set back to null the condition of the wells selected (for a certain Condition)
      * @param plateCondition 
@@ -180,39 +188,56 @@ public class SetupExperimentPanelController {
             }
         }
     }
-    
+
     /**
      * set back to null the conditions of all wells selected (for all conditions)
      */
-    public void resetAllWellsCondition(){
+    public void resetAllWellsCondition() {
         //set plate condition of all wells selected again to null
-        for(PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()){
+        for (PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()) {
             resetWellsCondition(plateCondition);
         }
     }
-    
+
     /**
      * initializes the experiment info panel
      */
-     private void initExperimentInfoPanel() {
+    private void initExperimentInfoPanel() {
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectJList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
         setupExperimentPanel.getExperimentInfoParentPanel().add(experimentInfoPanel, gridBagConstraints);
+
+        /**
+         * add property change listener
+         */
+        /**
+         * calendar button
+         */
+        experimentInfoPanel.getCalendarButton().addPropertyChangeListener(new PropertyChangeListener() {
+
+            @Override
+            public void propertyChange(PropertyChangeEvent e) {
+                if (e.getNewValue() instanceof Date) {
+                    setDate((Date) e.getNewValue());
+                }
+            }
+        });
+        
+         cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please fill in Experiment data to create a new Experiment");
     }
-    
-     /*
-      * private methods and classes
-      */
-    
-     /**
-      * check if a well already has a condition
-      * @param wellGui
-      * @return true if a well already has a condition assigned
-      */
-     private boolean hasCondition(WellGui wellGui) {
+
+    /*
+     * private methods and classes
+     */
+    /**
+     * check if a well already has a condition
+     * @param wellGui
+     * @return true if a well already has a condition assigned
+     */
+    private boolean hasCondition(WellGui wellGui) {
         boolean hasCondition = false;
         Ellipse2D ellipse = wellGui.getEllipsi().get(0);
         for (List<Rectangle> list : setupPlatePanelController.getSetupPlatePanel().getRectangles().values()) {
@@ -225,4 +250,19 @@ public class SetupExperimentPanelController {
         return hasCondition;
     }
 
+    /**
+     * format the date to set the text
+     * @param date 
+     */
+    private void setDate(Date date) {
+        String dateString = "";
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        if (date != null) {
+            dateString = simpleDateFormat.format(date);
+        }
+        experimentInfoPanel.getDateTextField().setText(dateString);
+        //let the calendar remind about last date selected
+        experimentInfoPanel.getCalendarButton().setTargetDate(date);
+    }
 }

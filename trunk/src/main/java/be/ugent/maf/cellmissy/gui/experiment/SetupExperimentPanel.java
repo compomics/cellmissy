@@ -11,6 +11,7 @@
 package be.ugent.maf.cellmissy.gui.experiment;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -48,6 +49,10 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
         return clearLastButton;
     }
 
+    public JLabel getInfolabel() {
+        return infolabel;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -58,78 +63,80 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        leftPanel = new javax.swing.JPanel();
+        jButton3 = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         experimentInfoParentPanel = new javax.swing.JPanel();
-        bigPanel = new javax.swing.JPanel();
-        setupPlateParentPanel = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        clearLastButton = new javax.swing.JButton();
-        clearAllButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
         conditionsParentPanel = new javax.swing.JPanel();
         setupConditionsParentPanel = new javax.swing.JPanel();
+        setupPlateParentPanel = new javax.swing.JPanel();
+        clearLastButton = new javax.swing.JButton();
+        clearAllButton = new javax.swing.JButton();
+        bottomPanel = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        infolabel = new javax.swing.JLabel();
+
+        jButton3.setText("jButton3");
 
         setPreferredSize(new java.awt.Dimension(20, 20));
         setLayout(new java.awt.GridBagLayout());
 
-        leftPanel.setMinimumSize(new java.awt.Dimension(30, 30));
-        leftPanel.setPreferredSize(new java.awt.Dimension(150, 150));
-        leftPanel.setLayout(new java.awt.GridBagLayout());
-
         experimentInfoParentPanel.setLayout(new java.awt.GridBagLayout());
         jTabbedPane1.addTab("Experiment Info", experimentInfoParentPanel);
 
-        bigPanel.setLayout(new java.awt.GridBagLayout());
+        jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        setupPlateParentPanel.setMinimumSize(new java.awt.Dimension(50, 50));
-        setupPlateParentPanel.setLayout(new java.awt.GridBagLayout());
+        conditionsParentPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        conditionsParentPanel.setMinimumSize(new java.awt.Dimension(10, 10));
+        conditionsParentPanel.setName(""); // NOI18N
+        conditionsParentPanel.setPreferredSize(new java.awt.Dimension(10, 10));
+        conditionsParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.8;
-        bigPanel.add(setupPlateParentPanel, gridBagConstraints);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.3;
+        gridBagConstraints.weighty = 0.3;
+        jPanel2.add(conditionsParentPanel, gridBagConstraints);
 
-        jPanel1.setMinimumSize(new java.awt.Dimension(30, 30));
-        jPanel1.setPreferredSize(new java.awt.Dimension(250, 70));
+        setupConditionsParentPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        setupConditionsParentPanel.setMinimumSize(new java.awt.Dimension(10, 10));
+        setupConditionsParentPanel.setPreferredSize(new java.awt.Dimension(10, 10));
+        setupConditionsParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.4;
+        gridBagConstraints.weighty = 1.0;
+        jPanel2.add(setupConditionsParentPanel, gridBagConstraints);
+
+        setupPlateParentPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        setupPlateParentPanel.setMinimumSize(new java.awt.Dimension(10, 10));
+        setupPlateParentPanel.setName(""); // NOI18N
+        setupPlateParentPanel.setPreferredSize(new java.awt.Dimension(10, 10));
+        setupPlateParentPanel.setLayout(new java.awt.GridBagLayout());
 
         clearLastButton.setText("Clear Last Selection");
+        setupPlateParentPanel.add(clearLastButton, new java.awt.GridBagConstraints());
 
         clearAllButton.setText("Clear All");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(clearLastButton)
-                .addGap(18, 18, 18)
-                .addComponent(clearAllButton)
-                .addContainerGap(24, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(clearAllButton)
-                    .addComponent(clearLastButton))
-                .addContainerGap(78, Short.MAX_VALUE))
-        );
+        setupPlateParentPanel.add(clearAllButton, new java.awt.GridBagConstraints());
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.2;
-        bigPanel.add(jPanel1, gridBagConstraints);
+        gridBagConstraints.weightx = 0.6;
+        gridBagConstraints.weighty = 0.7;
+        jPanel2.add(setupPlateParentPanel, gridBagConstraints);
 
-        jTabbedPane1.addTab("Setup Plate", bigPanel);
+        jTabbedPane1.addTab("Setup Plate", jPanel2);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -138,51 +145,65 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        leftPanel.add(jTabbedPane1, gridBagConstraints);
+        add(jTabbedPane1, gridBagConstraints);
+
+        bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        bottomPanel.setPreferredSize(new java.awt.Dimension(20, 10));
+
+        jButton1.setText("Previous");
+
+        jButton2.setText("Next");
+
+        javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
+        bottomPanel.setLayout(bottomPanelLayout);
+        bottomPanelLayout.setHorizontalGroup(
+            bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton2)
+                .addGap(22, 22, 22))
+        );
+
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButton1, jButton2});
+
+        bottomPanelLayout.setVerticalGroup(
+            bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bottomPanelLayout.createSequentialGroup()
+                .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton2)
+                        .addComponent(jButton1))
+                    .addGroup(bottomPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(29, Short.MAX_VALUE))
+        );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        add(leftPanel, gridBagConstraints);
-
-        conditionsParentPanel.setMinimumSize(new java.awt.Dimension(40, 30));
-        conditionsParentPanel.setPreferredSize(new java.awt.Dimension(40, 30));
-        conditionsParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 1.0;
-        add(conditionsParentPanel, gridBagConstraints);
-
-        setupConditionsParentPanel.setMinimumSize(new java.awt.Dimension(50, 20));
-        setupConditionsParentPanel.setPreferredSize(new java.awt.Dimension(80, 10));
-        setupConditionsParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        add(setupConditionsParentPanel, gridBagConstraints);
+        gridBagConstraints.weighty = 0.2;
+        add(bottomPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel bigPanel;
+    private javax.swing.JPanel bottomPanel;
     private javax.swing.JButton clearAllButton;
     private javax.swing.JButton clearLastButton;
     private javax.swing.JPanel conditionsParentPanel;
     private javax.swing.JPanel experimentInfoParentPanel;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel infolabel;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JPanel leftPanel;
     private javax.swing.JPanel setupConditionsParentPanel;
     private javax.swing.JPanel setupPlateParentPanel;
     // End of variables declaration//GEN-END:variables

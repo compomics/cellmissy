@@ -100,7 +100,7 @@ public class SetupPlatePanel extends AbstractPlatePanel {
             height = this.getHeight() - y;
         }
 
-        g2d.setColor(GuiUtils.getAvailableColors()[currentCondition.getConditionIndex() - 1]);
+        g2d.setColor(GuiUtils.getAvailableColors()[currentCondition.getConditionIndex()]);
         g2d.drawRect(x, y, width, height);
 
     }
@@ -109,7 +109,7 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
         for (PlateCondition plateCondition : rectangles.keySet()) {
-            g2d.setColor(GuiUtils.getAvailableColors()[plateCondition.getConditionIndex() - 1]);
+            g2d.setColor(GuiUtils.getAvailableColors()[plateCondition.getConditionIndex()]);
             for (Rectangle rectangle : rectangles.get(plateCondition)) {
                 g2d.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
             }

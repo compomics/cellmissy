@@ -50,30 +50,31 @@ public class ConditionsPanel extends javax.swing.JPanel {
         addButton = new javax.swing.JButton();
         removeButton = new javax.swing.JButton();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions"));
+        setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions List"));
         setMinimumSize(new java.awt.Dimension(30, 30));
 
         jScrollPane1.setBorder(null);
         jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createTitledBorder(""));
         jScrollPane1.setAutoscrolls(true);
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(40, 45));
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(45, 100));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(150, 45));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(200, 100));
+        jScrollPane1.setVerifyInputWhenFocusTarget(false);
 
         conditionsJList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        conditionsJList.setMaximumSize(new java.awt.Dimension(45, 50));
-        conditionsJList.setMinimumSize(new java.awt.Dimension(45, 50));
-        conditionsJList.setPreferredSize(new java.awt.Dimension(33, 70));
+        conditionsJList.setMaximumSize(new java.awt.Dimension(70, 50));
+        conditionsJList.setMinimumSize(new java.awt.Dimension(10, 10));
+        conditionsJList.setPreferredSize(new java.awt.Dimension(50, 10));
         conditionsJList.setSelectedIndex(0);
-        conditionsJList.setVisibleRowCount(6);
+        conditionsJList.setVisibleRowCount(2);
         jScrollPane1.setViewportView(conditionsJList);
 
-        addButton.setText("Add");
+        addButton.setText("Add New Condition");
 
-        removeButton.setText("Remove");
+        removeButton.setText("Remove Condition");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -81,26 +82,24 @@ public class ConditionsPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(removeButton)
-                        .addComponent(addButton)))
-                .addContainerGap(242, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(removeButton, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addButton, removeButton});
-
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(addButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(removeButton)
-                .addGap(86, 86, 86))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(addButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(removeButton))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
