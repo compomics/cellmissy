@@ -112,7 +112,7 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
         concentrationTextField = new javax.swing.JTextField();
         generalTreatmentComboBox = new javax.swing.JComboBox();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Setup Conditions"));
+        setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions Setup"));
         setLayout(new java.awt.GridBagLayout());
 
         selectCellLineLabel.setText("Select a cell line");
@@ -141,7 +141,7 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
                         .addComponent(selectCellLineLabel)
                         .addGap(18, 18, 18)
                         .addComponent(cellLineComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(374, Short.MAX_VALUE))
+                .addContainerGap(113, Short.MAX_VALUE))
         );
         cellLinePanelLayout.setVerticalGroup(
             cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -157,14 +157,14 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
                     .addComponent(cellLineNameLabel)
                     .addComponent(cellLineNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(insertCellLineButton))
-                .addContainerGap(381, Short.MAX_VALUE))
+                .addContainerGap(105, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("cell line", cellLinePanel);
 
         assayEcmPanel.setLayout(new java.awt.GridBagLayout());
 
-        ecmDimensionPanel.setPreferredSize(new java.awt.Dimension(250, 80));
+        ecmDimensionPanel.setPreferredSize(new java.awt.Dimension(250, 50));
 
         ecmDimensionLabel.setText("Choose ECM dimension");
 
@@ -184,7 +184,7 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
         ecmDimensionPanelLayout.setVerticalGroup(
             ecmDimensionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ecmDimensionPanelLayout.createSequentialGroup()
-                .addContainerGap(49, Short.MAX_VALUE)
+                .addContainerGap(19, Short.MAX_VALUE)
                 .addGroup(ecmDimensionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ecmDimensionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ecmDimensionLabel))
@@ -192,6 +192,8 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         assayEcmPanel.add(ecmDimensionPanel, gridBagConstraints);
 
@@ -201,7 +203,7 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.weighty = 0.6;
         assayEcmPanel.add(assayEcmParentPanel, gridBagConstraints);
 
         jTabbedPane1.addTab("assay-ecm", assayEcmPanel);
@@ -224,7 +226,7 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
                 .addComponent(chooseTreatmentTypeLabel)
                 .addGap(18, 18, 18)
                 .addComponent(treatmentTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(419, Short.MAX_VALUE))
+                .addContainerGap(158, Short.MAX_VALUE))
         );
         treatmentTypePanelLayout.setVerticalGroup(
             treatmentTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -269,10 +271,11 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
                             .addComponent(timingLabel)
                             .addComponent(additionalInfoLabel))
                         .addGap(18, 18, 18)
-                        .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(concentrationTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-                            .addComponent(timingTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-                            .addComponent(additionalInfoTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(concentrationTextField)
+                            .addComponent(timingTextField)
+                            .addComponent(additionalInfoTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, treatmentSetupPanelLayout.createSequentialGroup()
                         .addComponent(nameLabel)
                         .addGap(18, 18, 18)
@@ -321,8 +324,6 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 0.8;
         gridBagConstraints.weighty = 1.0;
         add(jTabbedPane1, gridBagConstraints);
-
-        getAccessibleContext().setAccessibleName("Setup Conditions");
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

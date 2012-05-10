@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.GridBagConstraints;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import org.springframework.context.ApplicationContext;
 
@@ -57,5 +58,9 @@ public class CellMissyController {
     
     public void showMessage(String message, Integer messageType){
         JOptionPane.showMessageDialog(cellMissyFrame, message, "", messageType);
+    }
+    
+    public void updateInfoLabel(JLabel infoLabel, String message){
+        infoLabel.setText(message);        
     }
 }

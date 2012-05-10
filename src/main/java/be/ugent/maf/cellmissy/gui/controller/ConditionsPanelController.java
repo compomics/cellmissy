@@ -323,7 +323,7 @@ public class ConditionsPanelController {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             PlateCondition newCondition = (PlateCondition) value;
             setText(newCondition.getName());
-            setIcon(new rectIcon(GuiUtils.getAvailableColors()[((PlateCondition) value).getConditionIndex() - 1]));
+            setIcon(new rectIcon(GuiUtils.getAvailableColors()[((PlateCondition) value).getConditionIndex()]));
             if (isSelected) {
                 setBackground(Color.lightGray);
                 setBorder(BorderFactory.createLineBorder(Color.black, 2));
