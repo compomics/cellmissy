@@ -13,6 +13,7 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ConditionsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.SetupConditionsPanel;
+import be.ugent.maf.cellmissy.gui.experiment.SetupPanel;
 import be.ugent.maf.cellmissy.service.CellLineService;
 import java.awt.Color;
 import java.awt.Component;
@@ -111,7 +112,7 @@ public class ConditionsPanelController {
     public ObservableList<PlateCondition> getPlateConditionBindingList() {
         return plateConditionBindingList;
     }
-
+    
     /**
      * public  methods
      * 
@@ -374,7 +375,7 @@ public class ConditionsPanelController {
      * add the Condition Panel and the Setup Condition Panel to their parent panels
      */
     private void initPanel() {
-        setupExperimentPanelController.getSetupExperimentPanel().getConditionsParentPanel().add(conditionsPanel, gridBagConstraints);
-        setupExperimentPanelController.getSetupExperimentPanel().getSetupConditionsParentPanel().add(setupConditionsPanel, gridBagConstraints);
+        setupExperimentPanelController.getSetupPanel().getConditionsParentPanel().add(conditionsPanel, gridBagConstraints);
+        setupExperimentPanelController.getSetupPanel().getSetupConditionsParentPanel().add(setupConditionsPanel, gridBagConstraints);
     }
 }

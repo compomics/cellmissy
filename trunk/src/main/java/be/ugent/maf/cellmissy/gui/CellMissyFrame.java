@@ -64,7 +64,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
-        jTabbedPane1.setMinimumSize(new java.awt.Dimension(400, 150));
+        jTabbedPane1.setMinimumSize(new java.awt.Dimension(100, 100));
 
         overviewParentPanel.setLayout(new java.awt.GridBagLayout());
         jTabbedPane1.addTab("Overview", overviewParentPanel);

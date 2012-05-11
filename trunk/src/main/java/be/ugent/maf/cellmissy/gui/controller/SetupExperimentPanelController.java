@@ -11,20 +11,18 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ExperimentInfoPanel;
 import be.ugent.maf.cellmissy.gui.experiment.SetupExperimentPanel;
+import be.ugent.maf.cellmissy.gui.experiment.SetupPanel;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.geom.Ellipse2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -42,10 +40,10 @@ public class SetupExperimentPanelController {
     //model
     private ObservableList<Project> projectBindingList;
     private BindingGroup bindingGroup;
-    private Experiment experiment;
     //view
     private SetupExperimentPanel setupExperimentPanel;
     private ExperimentInfoPanel experimentInfoPanel;
+    private SetupPanel setupPanel;
     //parent controller
     private CellMissyController cellMissyController;
     //child controller
@@ -64,6 +62,7 @@ public class SetupExperimentPanelController {
 
         setupExperimentPanel = new SetupExperimentPanel();
         experimentInfoPanel = new ExperimentInfoPanel();
+        setupPanel = new SetupPanel();
 
         //init child controllers
         setupPlatePanelController = new SetupPlatePanelController(this);
@@ -93,6 +92,10 @@ public class SetupExperimentPanelController {
 
     public ConditionsPanelController getConditionsPanelController() {
         return conditionsPanelController;
+    }
+
+    public SetupPanel getSetupPanel() {
+        return setupPanel;
     }
 
     /**
@@ -208,25 +211,38 @@ public class SetupExperimentPanelController {
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectJList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
-        setupExperimentPanel.getExperimentInfoParentPanel().add(experimentInfoPanel, gridBagConstraints);
+        setupExperimentPanel.getTopPanel().add(experimentInfoPanel, gridBagConstraints);
+
+        cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and fill in experiment data");
+
+        //disable Next and Previous buttons
+        setupExperimentPanel.getNextButton().setEnabled(false);
+        setupExperimentPanel.getPreviousButton().setEnabled(false);
 
         /**
-         * add property change listener
+         * add action listener
          */
-        /**
-         * calendar button
-         */
-        experimentInfoPanel.getCalendarButton().addPropertyChangeListener(new PropertyChangeListener() {
+        setupExperimentPanel.getNextButton().addActionListener(new ActionListener() {
 
             @Override
-            public void propertyChange(PropertyChangeEvent e) {
-                if (e.getNewValue() instanceof Date) {
-                    setDate((Date) e.getNewValue());
-                }
+            public void actionPerformed(ActionEvent e) {
+                GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), setupPanel, experimentInfoPanel);
             }
         });
-        
-         cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please fill in Experiment data to create a new Experiment");
+
+        experimentInfoPanel.getNumberTextField().requestFocus();
+        experimentInfoPanel.getNumberTextField().addFocusListener(new FocusListener() {
+
+            @Override
+            public void focusGained(FocusEvent e) {
+                System.out.println("focus gained");
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                System.out.println("focus lost");
+            }
+        });
     }
 
     /*
@@ -248,21 +264,5 @@ public class SetupExperimentPanelController {
             }
         }
         return hasCondition;
-    }
-
-    /**
-     * format the date to set the text
-     * @param date 
-     */
-    private void setDate(Date date) {
-        String dateString = "";
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        if (date != null) {
-            dateString = simpleDateFormat.format(date);
-        }
-        experimentInfoPanel.getDateTextField().setText(dateString);
-        //let the calendar remind about last date selected
-        experimentInfoPanel.getCalendarButton().setTargetDate(date);
     }
 }

@@ -107,10 +107,10 @@ public class AssayEcmPanelController {
             public void actionPerformed(ActionEvent e) {
                 switch (((MatrixDimension) (conditionsPanelController.getSetupConditionsPanel().getEcmDimensionComboBox().getSelectedItem())).getMatrixDimension()) {
                     case "2D":
-                        switchChildPanels(assayEcm2DPanel, assayEcm3DPanel);
+                        GuiUtils.switchChildPanels(conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel(), assayEcm2DPanel, assayEcm3DPanel);
                         break;
                     case "3D":
-                        switchChildPanels(assayEcm3DPanel, assayEcm2DPanel);
+                        GuiUtils.switchChildPanels(conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel(), assayEcm3DPanel, assayEcm2DPanel);
                         break;
                 }
                 conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel().revalidate();
@@ -240,14 +240,5 @@ public class AssayEcmPanelController {
 
         //do the binding
         bindingGroup.bind();
-    }
-
-    private void switchChildPanels(JPanel panelToAdd, JPanel panelToRemove) {
-        if (!GuiUtils.containsComponent(conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel(), panelToAdd)) {
-            conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel().add(panelToAdd, gridBagConstraints);
-        }
-        if (GuiUtils.containsComponent(conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel(), panelToRemove)) {
-            conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel().remove(panelToRemove);
-        }
     }
 }

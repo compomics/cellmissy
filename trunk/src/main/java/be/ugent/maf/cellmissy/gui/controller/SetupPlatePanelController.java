@@ -134,7 +134,7 @@ public class SetupPlatePanelController {
         });
 
         //clear last selection: clear rectangles of the last condition (condition is not removed)
-        setupExperimentPanelController.getSetupExperimentPanel().getClearLastButton().addActionListener(new ActionListener() {
+        setupExperimentPanelController.getSetupPanel().getClearLastButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -147,7 +147,7 @@ public class SetupPlatePanelController {
         });
 
         //clear all selections: clear rectangles of all conditions (conditions are not removed)
-        setupExperimentPanelController.getSetupExperimentPanel().getClearAllButton().addActionListener(new ActionListener() {
+        setupExperimentPanelController.getSetupPanel().getClearAllButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -164,7 +164,7 @@ public class SetupPlatePanelController {
         //show 96 plate format as default
         setupPlatePanelGui.getPlateFormatComboBox().setSelectedIndex(0);
 
-        setupExperimentPanelController.getSetupExperimentPanel().getSetupPlateParentPanel().add(setupPlatePanelGui, gridBagConstraints);
+        setupExperimentPanelController.getSetupPanel().getSetupPlateParentPanel().add(setupPlatePanelGui, gridBagConstraints);
     }
 
     private class SetupPlateListener extends MouseInputAdapter {

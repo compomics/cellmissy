@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
+import javax.swing.JPanel;
 
 /**
  *
@@ -37,5 +38,14 @@ public class GuiUtils {
             }
         }
         return containsComponent;
+    }
+
+    public static void switchChildPanels(JPanel parentPanel, JPanel panelToAdd, JPanel panelToRemove) {
+        if (!GuiUtils.containsComponent(parentPanel, panelToAdd)) {
+            parentPanel.add(panelToAdd, getDefaultGridBagConstraints());
+        }
+        if (GuiUtils.containsComponent(parentPanel, panelToRemove)) {
+            parentPanel.remove(panelToRemove);
+        }
     }
 }
