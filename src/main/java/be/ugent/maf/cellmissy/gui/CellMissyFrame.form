@@ -35,7 +35,7 @@
       <Properties>
         <Property name="tabPlacement" type="int" value="4"/>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[400, 150]"/>
+          <Dimension value="[100, 100]"/>
         </Property>
       </Properties>
       <Constraints>
