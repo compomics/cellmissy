@@ -30,15 +30,15 @@ public class CellMissyController {
 
     public CellMissyController(CellMissyFrame cellMissyFrame) {
         this.cellMissyFrame = cellMissyFrame;
-        
+
         //init child controllers
         userPanelController = new UserPanelController(this);
         setupExperimentPanelController = new SetupExperimentPanelController(this);
-        
+
         //load application context
         context = ApplicationContextProvider.getInstance().getApplicationContext();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        
+
         //init view
         initFrame();
     }
@@ -55,12 +55,22 @@ public class CellMissyController {
         ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
         return context.getBean(beanName);
     }
-    
-    public void showMessage(String message, Integer messageType){
+
+    public void showMessage(String message, Integer messageType) {
         JOptionPane.showMessageDialog(cellMissyFrame, message, "", messageType);
     }
-    
-    public void updateInfoLabel(JLabel infoLabel, String message){
-        infoLabel.setText(message);        
+
+    public void updateInfoLabel(JLabel infoLabel, String message) {
+        infoLabel.setText(message);
+    }
+
+    public boolean validateUser() {
+
+        boolean isValid = false;
+        if (userPanelController.validateUser().isEmpty()) {
+            isValid = true;
+        }
+        return isValid;
+
     }
 }

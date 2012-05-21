@@ -13,7 +13,6 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ConditionsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.SetupConditionsPanel;
-import be.ugent.maf.cellmissy.gui.experiment.SetupPanel;
 import be.ugent.maf.cellmissy.service.CellLineService;
 import java.awt.Color;
 import java.awt.Component;
