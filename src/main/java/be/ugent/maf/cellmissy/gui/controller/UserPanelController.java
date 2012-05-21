@@ -10,9 +10,10 @@ import be.ugent.maf.cellmissy.gui.user.UserPanel;
 import be.ugent.maf.cellmissy.service.UserService;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.PersistenceException;
-import javax.swing.JOptionPane;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -95,14 +96,15 @@ public class UserPanelController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // if user validation was successful, save the new user to the db
-                if (validateUser(newUser)) {
+                if (cellMissyController.validateUser()) {
                     try {
                         User savedUser = userService.save(newUser);
                         userBindingList.add(savedUser);
                         resetCreateUserTextFields();
                     } // handle ConstraintViolationException(UniqueConstraint)
                     catch (PersistenceException persistenceException) {
-                        JOptionPane.showMessageDialog(userPanel, "User already present in the db", "Create user problem", JOptionPane.ERROR_MESSAGE);
+                        String message = "User already present in the db";
+                        cellMissyController.showMessage(message, 0);
                         resetCreateUserTextFields();
                     }
                 } else {
@@ -119,11 +121,13 @@ public class UserPanelController {
                 if (!userPanel.getSearchUserFirstNameTextField().getText().isEmpty() && !userPanel.getSearchUserLastNameTextField().getText().isEmpty()) {
                     User user = userService.findByFullName(userPanel.getSearchUserFirstNameTextField().getText(), userPanel.getSearchUserLastNameTextField().getText());
                     if (user != null) {
-                        JOptionPane.showMessageDialog(userPanel, "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.", "Search user result", JOptionPane.INFORMATION_MESSAGE);
+                        String message = "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.";
+                        cellMissyController.showMessage(message, 1);
                         userPanel.getSearchUserFirstNameTextField().setText("");
                         userPanel.getSearchUserLastNameTextField().setText("");
                     } else {
-                        JOptionPane.showMessageDialog(userPanel, "No user found", "Search user problem", JOptionPane.INFORMATION_MESSAGE);
+                        String message = "No user found";
+                        cellMissyController.showMessage(message, 1);
                         userPanel.getSearchUserFirstNameTextField().setText("");
                         userPanel.getSearchUserLastNameTextField().setText("");
                     }
@@ -131,24 +135,29 @@ public class UserPanelController {
                     if (!userPanel.getSearchUserFirstNameTextField().getText().isEmpty() && userPanel.getSearchUserLastNameTextField().getText().isEmpty()) {
                         User user = userService.findByFirstName(userPanel.getSearchUserFirstNameTextField().getText());
                         if (user != null) {
-                            JOptionPane.showMessageDialog(userPanel, "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.", "Search user result", JOptionPane.INFORMATION_MESSAGE);
+                            String message = "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.";
+                            cellMissyController.showMessage(message, 1);
                             userPanel.getSearchUserFirstNameTextField().setText("");
                         } else {
-                            JOptionPane.showMessageDialog(userPanel, "No user found", "Search user problem", JOptionPane.INFORMATION_MESSAGE);
+                            String message = "No user found";
+                            cellMissyController.showMessage(message, 1);
                             userPanel.getSearchUserFirstNameTextField().setText("");
                         }
                     } else {
                         if (userPanel.getSearchUserFirstNameTextField().getText().isEmpty() && !userPanel.getSearchUserLastNameTextField().getText().isEmpty()) {
                             User user = userService.findByLastName(userPanel.getSearchUserLastNameTextField().getText());
                             if (user != null) {
-                                JOptionPane.showMessageDialog(userPanel, "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.", "Search user result", JOptionPane.INFORMATION_MESSAGE);
+                                String message = "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.";
+                                cellMissyController.showMessage(message, 1);
                                 userPanel.getSearchUserLastNameTextField().setText("");
                             } else {
-                                JOptionPane.showMessageDialog(userPanel, "No user found", "Search user problem", JOptionPane.INFORMATION_MESSAGE);
+                                String message = "No user found";
+                                cellMissyController.showMessage(message, 1);
                                 userPanel.getSearchUserLastNameTextField().setText("");
                             }
                         } else {
-                            JOptionPane.showMessageDialog(userPanel, "Please fill in first and/or last name", "Search user problem", JOptionPane.ERROR_MESSAGE);
+                            String message = "Please fill in first and/or last name";
+                            cellMissyController.showMessage(message, 1);
                         }
                     }
                 }
@@ -167,7 +176,8 @@ public class UserPanelController {
                     userPanel.getDeleteUserLastNameTextField().setText("");
                     userPanel.getDeleteUserEmailTextField().setText("");
                 } else {
-                    JOptionPane.showMessageDialog(userPanel, "Please select a user to delete", "Delete user problem", JOptionPane.INFORMATION_MESSAGE);
+                    String message = "Please select a user to delete";
+                    cellMissyController.showMessage(message, 1);
                 }
             }
         });
@@ -180,25 +190,25 @@ public class UserPanelController {
         userPanel.getRoleComboBox().setSelectedIndex(1);
     }
 
-    private boolean validateUser(User newUser) {
-        boolean isValid = false;
+    public List<String> validateUser() {
+        List<String> messages = new ArrayList<>();
 
         // validate user entity class
         ValidatorFactory userValidator = Validation.buildDefaultValidatorFactory();
         Validator validator = userValidator.getValidator();
         Set<ConstraintViolation<User>> constraintViolations = validator.validate(newUser);
 
-        if (constraintViolations.isEmpty()) {
-            isValid = true;
-        } else {
+        if (!constraintViolations.isEmpty()) {
+
             String message = "";
             for (ConstraintViolation<User> constraintViolation : constraintViolations) {
+                messages.add(constraintViolation.getMessage());
                 message += constraintViolation.getMessage() + "\n";
             }
-            JOptionPane.showMessageDialog(userPanel, message, "Validate user problem", JOptionPane.WARNING_MESSAGE);
+            cellMissyController.showMessage(message, 2);
         }
 
-        return isValid;
+        return messages;
     }
 
     private void resetCreateUserTextFields() {

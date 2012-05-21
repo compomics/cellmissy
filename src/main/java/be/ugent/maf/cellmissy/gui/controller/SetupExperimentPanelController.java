@@ -4,7 +4,6 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
-import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -19,11 +18,18 @@ import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.geom.Ellipse2D;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -211,13 +217,27 @@ public class SetupExperimentPanelController {
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectJList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
+        //add experimentInfoPanel to parent panel
         setupExperimentPanel.getTopPanel().add(experimentInfoPanel, gridBagConstraints);
 
-        cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and fill in experiment data");
+        //select first project in the ProjectList
+        experimentInfoPanel.getProjectJList().setSelectedIndex(0);
 
         //disable Next and Previous buttons
         setupExperimentPanel.getNextButton().setEnabled(false);
         setupExperimentPanel.getPreviousButton().setEnabled(false);
+        //hide Report and Finish buttons
+        setupExperimentPanel.getFinishButton().setVisible(false);
+        setupExperimentPanel.getReportButton().setVisible(false);
+
+        cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and fill in experiment data");
+
+        //date cannot be modified manually
+        experimentInfoPanel.getDateChooser().getDateEditor().setEnabled(false);
+
+        //get current date with Date()
+        Date date = new Date();
+        experimentInfoPanel.getDateChooser().setDate(date);
 
         /**
          * add action listener
@@ -226,23 +246,36 @@ public class SetupExperimentPanelController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                //show the setupPanel and hide the experimentInfoPanel
                 GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), setupPanel, experimentInfoPanel);
+                cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Add conditions and select wells for each condition. Conditions details can be chosen in the right panel.");
+                //enable the Previous Button
+                setupExperimentPanel.getPreviousButton().setEnabled(true);
+                setupExperimentPanel.getNextButton().setEnabled(false);
+                setupExperimentPanel.getFinishButton().setVisible(true);
+                setupExperimentPanel.getTopPanel().revalidate();
+                setupExperimentPanel.getTopPanel().repaint();
             }
         });
 
-        experimentInfoPanel.getNumberTextField().requestFocus();
-        experimentInfoPanel.getNumberTextField().addFocusListener(new FocusListener() {
+        setupExperimentPanel.getPreviousButton().addActionListener(new ActionListener() {
 
             @Override
-            public void focusGained(FocusEvent e) {
-                System.out.println("focus gained");
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                System.out.println("focus lost");
+            public void actionPerformed(ActionEvent e) {
+                GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), experimentInfoPanel, setupPanel);
+                cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and fill in experiment data");
+                setupExperimentPanel.getPreviousButton().setEnabled(false);
+                setupExperimentPanel.getNextButton().setEnabled(true);
+                setupExperimentPanel.getFinishButton().setVisible(false);
+                setupExperimentPanel.getTopPanel().revalidate();
+                setupExperimentPanel.getTopPanel().repaint();
             }
         });
+
+        ExperimentListener experimentListener = new ExperimentListener(setupExperimentPanel.getNextButton());
+        experimentListener.registerDoc(experimentInfoPanel.getNumberTextField().getDocument());
+        experimentListener.registerDoc(experimentInfoPanel.getPurposeTextArea().getDocument());
+        experimentListener.registerDoc(((JTextField) experimentInfoPanel.getDateChooser().getDateEditor().getUiComponent()).getDocument());
     }
 
     /*
@@ -264,5 +297,49 @@ public class SetupExperimentPanelController {
             }
         }
         return hasCondition;
+    }
+
+    /**
+     * document listener 
+     */
+    private class ExperimentListener implements DocumentListener {
+
+        private List<Document> documentList = new ArrayList<>();
+        private JButton button;
+
+        public ExperimentListener(JButton button) {
+            this.button = button;
+        }
+
+        public void registerDoc(Document document) {
+            documentList.add(document);
+            document.addDocumentListener(this);
+        }
+
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            update();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            update();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            update();
+        }
+
+        private void update() {
+            //for each document check the lenght, when it's not zero enable the button
+            for (Document document : documentList) {
+                if (document.getLength() == 0) {
+                    button.setEnabled(false);
+                    return;
+                }
+            }
+            button.setEnabled(true);
+        }
     }
 }

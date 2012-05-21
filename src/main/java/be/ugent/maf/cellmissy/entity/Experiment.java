@@ -11,6 +11,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -64,6 +66,10 @@ public class Experiment implements Serializable {
     private Double experimentInterval;
     @Column(name = "time_frames")
     private Double timeFrames;
+    @Basic(optional = false)
+    @Column(name = "experiment_status")
+    @Enumerated(EnumType.STRING)
+    private ExperimentStatus experimentStatus;
     @JoinColumn(name = "l_magnificationid", referencedColumnName = "magnificationid")
     @ManyToOne(optional = false)
     private Magnification magnification;
@@ -89,10 +95,11 @@ public class Experiment implements Serializable {
         this.experimentid = experimentid;
     }
 
-    public Experiment(Integer experimentid, int experimentNumber, Date experimentDate) {
+    public Experiment(Integer experimentid, int experimentNumber, Date experimentDate, ExperimentStatus experimentStatus) {
         this.experimentid = experimentid;
         this.experimentNumber = experimentNumber;
         this.experimentDate = experimentDate;
+        this.experimentStatus = experimentStatus;
     }
 
     public Integer getExperimentid() {
@@ -189,6 +196,14 @@ public class Experiment implements Serializable {
 
     public void setPlateFormat(PlateFormat plateFormat) {
         this.plateFormat = plateFormat;
+    }
+
+    public ExperimentStatus getExperimentStatus() {
+        return experimentStatus;
+    }
+
+    public void setExperimentStatus(ExperimentStatus experimentStatus) {
+        this.experimentStatus = experimentStatus;
     }
 
     @XmlTransient
