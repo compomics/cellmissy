@@ -5,10 +5,11 @@
 package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.CellLine;
+import be.ugent.maf.cellmissy.entity.CellLineType;
 import be.ugent.maf.cellmissy.entity.Ecm;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
-import be.ugent.maf.cellmissy.entity.TreatmentType;
+import be.ugent.maf.cellmissy.entity.TreatmentCategory;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ConditionsPanel;
@@ -48,7 +49,7 @@ import org.jdesktop.swingbinding.SwingBindings;
 public class ConditionsPanelController {
 
     //model
-    private ObservableList<CellLine> cellLineBindingList;
+    private ObservableList<CellLineType> cellLineTypeBindingList;
     private ObservableList<PlateCondition> plateConditionBindingList;
     private BindingGroup bindingGroup;
     //view
@@ -130,8 +131,8 @@ public class ConditionsPanelController {
     private void initCellLinePanel() {
 
         //init cellLineJCombo
-        cellLineBindingList = ObservableCollections.observableList(cellLineService.findAll());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, cellLineBindingList, setupConditionsPanel.getCellLineComboBox());
+        cellLineTypeBindingList = ObservableCollections.observableList(cellLineService.findAllCellLineTypes());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, cellLineTypeBindingList, setupConditionsPanel.getCellLineComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
 
@@ -146,12 +147,12 @@ public class ConditionsPanelController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!setupConditionsPanel.getCellLineNameTextField().getText().isEmpty()) {
-                    CellLine newCellLine = new CellLine();
-                    newCellLine.setName(setupConditionsPanel.getCellLineNameTextField().getText());
+                    CellLineType newCellLineType = new CellLineType();
+                    newCellLineType.setName(setupConditionsPanel.getCellLineNameTextField().getText());
                     //insert cell line to DB
-                    cellLineService.save(newCellLine);
+                    cellLineService.saveCellLineType(newCellLineType);
                     //add the new cell line to the list
-                    cellLineBindingList.add(newCellLine);
+                    cellLineTypeBindingList.add(newCellLineType);
                 }
             }
         });
@@ -167,9 +168,9 @@ public class ConditionsPanelController {
         plateConditionBindingList = ObservableCollections.observableList(new ArrayList<PlateCondition>());
 
         //autobind cell line and matrix dimension
-        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine"), setupConditionsPanel.getCellLineComboBox(), BeanProperty.create("selectedItem"), "celllinebinding");
-        bindingGroup.addBinding(binding);
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.matrixDimension"), setupConditionsPanel.getEcmDimensionComboBox(), BeanProperty.create("selectedItem"), "matrixdimensionbinding");
+//        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine"), setupConditionsPanel.getCellLineComboBox(), BeanProperty.create("selectedItem"), "celllinebinding");
+//        bindingGroup.addBinding(binding);
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.matrixDimension"), setupConditionsPanel.getEcmDimensionComboBox(), BeanProperty.create("selectedItem"), "matrixdimensionbinding");
         bindingGroup.addBinding(binding);
         bindingGroup.bind();
 
@@ -214,8 +215,8 @@ public class ConditionsPanelController {
                     assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(previousConditionIndex));
                     assayEcmPanelController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
                     assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                    treatmentPanelController.updateTreatmentConditionFields(plateConditionBindingList.get(previousConditionIndex));
-                    treatmentPanelController.updateTreatmentInputFields(plateConditionBindingList.get(locationToIndex));
+                    //treatmentPanelController.updateTreatmentConditionFields(plateConditionBindingList.get(previousConditionIndex));
+                    //treatmentPanelController.updateTreatmentInputFields(plateConditionBindingList.get(locationToIndex));
                 }
                 previousConditionIndex = locationToIndex;
             }
@@ -279,8 +280,10 @@ public class ConditionsPanelController {
 
         //set the name
         plateCondition.setName("Condition " + ++conditionIndex);
-        //set the cell line: MDA MB 231 cell line
-        plateCondition.setCellLine(cellLineBindingList.get(0));
+        //set the cell line
+        CellLine cellLine = new CellLine();
+        cellLine.setCellLineType(cellLineTypeBindingList.get(0));
+        plateCondition.setCellLine(cellLine);
         //set matrix dimension: 2D
         plateCondition.setMatrixDimension(assayEcmPanelController.getMatrixDimensionBindingList().get(0));
         //set the migration assay: Oris platform
@@ -296,9 +299,9 @@ public class ConditionsPanelController {
         plateCondition.setEcm(ecm);
         //set a default treatment, drug: ROCK inhibitor
         Treatment treatment = new Treatment();
-        treatment.setType(TreatmentType.DRUG.getDatabaseValue());
-        treatment.setName(treatmentPanelController.getDrugBindingList().get(0).getName());
-        plateCondition.setTreatment(treatment);
+        treatment.setTreatmentType(treatmentPanelController.getDrugBindingList().get(0));
+       
+        //plateCondition.setTreatment(treatment);
         //set an empty collection of wells
         List<Well> wellList = new ArrayList<>();
         plateCondition.setWellCollection(wellList);

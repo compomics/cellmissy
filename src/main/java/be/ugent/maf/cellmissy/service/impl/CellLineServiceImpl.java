@@ -5,7 +5,9 @@
 package be.ugent.maf.cellmissy.service.impl;
 
 import be.ugent.maf.cellmissy.entity.CellLine;
+import be.ugent.maf.cellmissy.entity.CellLineType;
 import be.ugent.maf.cellmissy.repository.CellLineRepository;
+import be.ugent.maf.cellmissy.repository.CellLineTypeRepository;
 import be.ugent.maf.cellmissy.service.CellLineService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class CellLineServiceImpl implements CellLineService {
 
     @Autowired
     private CellLineRepository cellLineRepository;
+    
+    @Autowired
+    private CellLineTypeRepository cellLineTypeRepository;
 
     @Override
     public CellLine findById(Long id) {
@@ -43,4 +48,20 @@ public class CellLineServiceImpl implements CellLineService {
         entity = cellLineRepository.save(entity);
         cellLineRepository.delete(entity);
     }
+
+    @Override
+    public List<CellLineType> findAllCellLineTypes() {
+        return cellLineTypeRepository.findAll();
+    }
+
+    @Override
+    public CellLineType saveCellLineType(CellLineType entity) {
+        return cellLineTypeRepository.save(entity);
+    }
+
+    @Override
+    public List<String> findAllGrowthMedia() {
+        return cellLineRepository.findAllGrowthMedia();
+    }
+ 
 }

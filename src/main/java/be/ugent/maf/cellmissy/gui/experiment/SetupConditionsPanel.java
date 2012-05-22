@@ -92,6 +92,12 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
         cellLineNameTextField = new javax.swing.JTextField();
         insertCellLineButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        seedingDensityLabel = new javax.swing.JLabel();
+        seedingTimeLabel = new javax.swing.JLabel();
+        growthMediumLabel = new javax.swing.JLabel();
+        seedingDensityTextField = new javax.swing.JTextField();
+        seedingTimeTextField = new javax.swing.JTextField();
+        growthMediumComboBox = new javax.swing.JComboBox();
         assayEcmPanel = new javax.swing.JPanel();
         ecmDimensionPanel = new javax.swing.JPanel();
         ecmDimensionLabel = new javax.swing.JLabel();
@@ -118,9 +124,17 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
 
         cellLineNameLabel.setText("Cell line name");
 
-        insertCellLineButton.setText("Insert cell line");
+        insertCellLineButton.setText("Add Cell Line");
 
-        jLabel1.setText("If the cell line is not present, insert it into DB");
+        jLabel1.setText("If the cell line you want to use is not present, add it:");
+
+        seedingDensityLabel.setText("seeding density");
+
+        seedingTimeLabel.setText("seeding time");
+
+        growthMediumLabel.setText("growth medium");
+
+        growthMediumComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout cellLinePanelLayout = new javax.swing.GroupLayout(cellLinePanel);
         cellLinePanel.setLayout(cellLinePanelLayout);
@@ -130,18 +144,31 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(cellLinePanelLayout.createSequentialGroup()
+                        .addComponent(growthMediumLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(growthMediumComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(cellLinePanelLayout.createSequentialGroup()
+                        .addGroup(cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(selectCellLineLabel)
+                            .addComponent(seedingDensityLabel)
+                            .addComponent(seedingTimeLabel))
+                        .addGap(18, 18, 18)
+                        .addGroup(cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(seedingTimeTextField)
+                            .addComponent(cellLineComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(seedingDensityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel1)
+                    .addGroup(cellLinePanelLayout.createSequentialGroup()
                         .addComponent(cellLineNameLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cellLineNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(insertCellLineButton))
-                    .addComponent(jLabel1)
-                    .addGroup(cellLinePanelLayout.createSequentialGroup()
-                        .addComponent(selectCellLineLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(cellLineComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(125, Short.MAX_VALUE))
+                        .addComponent(insertCellLineButton)))
+                .addContainerGap(130, Short.MAX_VALUE))
         );
+
+        cellLinePanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {seedingDensityLabel, seedingTimeLabel});
+
         cellLinePanelLayout.setVerticalGroup(
             cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(cellLinePanelLayout.createSequentialGroup()
@@ -149,14 +176,26 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
                 .addGroup(cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(selectCellLineLabel)
                     .addComponent(cellLineComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(30, 30, 30)
+                .addGroup(cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(seedingDensityLabel)
+                    .addComponent(seedingDensityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addGroup(cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(seedingTimeLabel)
+                    .addComponent(seedingTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(growthMediumLabel)
+                    .addComponent(growthMediumComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(36, 36, 36)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addGroup(cellLinePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cellLineNameLabel)
                     .addComponent(cellLineNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(insertCellLineButton))
-                .addContainerGap(335, Short.MAX_VALUE))
+                .addContainerGap(191, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("cell line", cellLinePanel);
@@ -342,10 +381,16 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
     private javax.swing.JLabel ecmDimensionLabel;
     private javax.swing.JPanel ecmDimensionPanel;
     private javax.swing.JComboBox generalTreatmentComboBox;
+    private javax.swing.JComboBox growthMediumComboBox;
+    private javax.swing.JLabel growthMediumLabel;
     private javax.swing.JButton insertCellLineButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel nameLabel;
+    private javax.swing.JLabel seedingDensityLabel;
+    private javax.swing.JTextField seedingDensityTextField;
+    private javax.swing.JLabel seedingTimeLabel;
+    private javax.swing.JTextField seedingTimeTextField;
     private javax.swing.JLabel selectCellLineLabel;
     private javax.swing.JLabel timingLabel;
     private javax.swing.JTextField timingTextField;

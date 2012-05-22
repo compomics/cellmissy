@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -44,11 +45,10 @@ public class PlateCondition implements Serializable {
     private Integer plateConditionid;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition")
     private Collection<Well> wellCollection;
-    @JoinColumn(name = "l_treatmentid", referencedColumnName = "treatmentid")
-    @ManyToOne(optional = true)
-    private Treatment treatment;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition")
+    private Collection<Treatment> tratmentCollection;
     @JoinColumn(name = "l_cell_lineid", referencedColumnName = "cell_lineid")
-    @ManyToOne(optional = false)
+    @OneToOne(optional = false)
     private CellLine cellLine;
     @JoinColumn(name = "l_matrix_dimensionid", referencedColumnName = "matrix_dimensionid")
     @ManyToOne(optional = false)
@@ -89,12 +89,12 @@ public class PlateCondition implements Serializable {
         this.wellCollection = wellCollection;
     }
 
-    public Treatment getTreatment() {
-        return treatment;
+    public Collection<Treatment> getTratmentCollection() {
+        return tratmentCollection;
     }
 
-    public void setTreatment(Treatment treatment) {
-        this.treatment = treatment;
+    public void setTratmentCollection(Collection<Treatment> tratmentCollection) {
+        this.tratmentCollection = tratmentCollection;
     }
 
     public CellLine getCellLine() {

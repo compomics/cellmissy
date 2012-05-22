@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.service.impl;
 
 import be.ugent.maf.cellmissy.entity.Treatment;
+import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.repository.TreatmentRepository;
 import be.ugent.maf.cellmissy.service.TreatmentService;
 import java.util.List;
@@ -45,7 +46,7 @@ public class TreatmentServiceImpl implements TreatmentService {
     }
     
     @Override
-    public List<Treatment> findByType(Integer treatmentType) {
-        return treatmentRepository.findByType(treatmentType);
+    public List<TreatmentType> findByCategory(Integer treatmentCategory) {
+        return treatmentRepository.findByCategory(treatmentCategory);
     }
 }

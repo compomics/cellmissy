@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.repository;
 
 import be.ugent.maf.cellmissy.entity.CellLine;
+import java.util.List;
 
 /**
  *
@@ -12,4 +13,5 @@ import be.ugent.maf.cellmissy.entity.CellLine;
  */
 public interface CellLineRepository extends GenericRepository<CellLine, Long> {
     
+    List<String> findAllGrowthMedia();
 }
