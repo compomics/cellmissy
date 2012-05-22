@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.repository;
 
 import be.ugent.maf.cellmissy.entity.Treatment;
+import be.ugent.maf.cellmissy.entity.TreatmentType;
 import java.util.List;
 
 /**
@@ -13,5 +14,5 @@ import java.util.List;
  */
 public interface TreatmentRepository extends GenericRepository<Treatment, Long> {
 
-    List<Treatment> findByType(Integer treatmentType);
+    List<TreatmentType> findByCategory(Integer treatmentCategory);
 }

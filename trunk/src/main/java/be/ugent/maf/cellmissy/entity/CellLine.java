@@ -5,18 +5,18 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Objects;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -31,25 +31,28 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "CellLine.findAll", query = "SELECT c FROM CellLine c"),
     @NamedQuery(name = "CellLine.findByCellLineid", query = "SELECT c FROM CellLine c WHERE c.cellLineid = :cellLineid"),
-    @NamedQuery(name = "CellLine.findByName", query = "SELECT c FROM CellLine c WHERE c.name = :name"),
+    @NamedQuery(name = "CellLine.findByGrowthMedium", query = "SELECT c FROM CellLine c WHERE c.growthMedium = :growthMedium"),
     @NamedQuery(name = "CellLine.findBySeedingTime", query = "SELECT c FROM CellLine c WHERE c.seedingTime = :seedingTime"),
     @NamedQuery(name = "CellLine.findBySeedingDensity", query = "SELECT c FROM CellLine c WHERE c.seedingDensity = :seedingDensity")})
 public class CellLine implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "cell_lineid")
     private Integer cellLineid;
-    @Basic(optional = false)
-    @Column(name = "name")
-    private String name;
     @Column(name = "seeding_time")
     private String seedingTime;
     @Column(name = "seeding_density")
     private Integer seedingDensity;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cellLine")
-    private Collection<PlateCondition> plateConditionCollection;
+    @Column(name = "growth_medium")
+    private String growthMedium;
+    @OneToOne(mappedBy = "cellLine")
+    private PlateCondition plateCondition;
+    @JoinColumn(name = "l_cell_line_typeid", referencedColumnName = "cell_line_typeid")
+    @ManyToOne(optional = false)
+    private CellLineType cellLineType;
 
     public CellLine() {
     }
@@ -58,9 +61,11 @@ public class CellLine implements Serializable {
         this.cellLineid = cellLineid;
     }
 
-    public CellLine(Integer cellLineid, String name) {
+    public CellLine(Integer cellLineid, String seedingTime, Integer seedingDensity, String growthMedium) {
         this.cellLineid = cellLineid;
-        this.name = name;
+        this.seedingTime = seedingTime;
+        this.seedingDensity = seedingDensity;
+        this.growthMedium = growthMedium;
     }
 
     public Integer getCellLineid() {
@@ -71,12 +76,12 @@ public class CellLine implements Serializable {
         this.cellLineid = cellLineid;
     }
 
-    public String getName() {
-        return name;
+    public String getGrowthMedium() {
+        return growthMedium;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setGrowthMedium(String growthMedium) {
+        this.growthMedium = growthMedium;
     }
 
     public String getSeedingTime() {
@@ -95,13 +100,21 @@ public class CellLine implements Serializable {
         this.seedingDensity = seedingDensity;
     }
 
-    @XmlTransient
-    public Collection<PlateCondition> getPlateConditionCollection() {
-        return plateConditionCollection;
+    public CellLineType getCellLineType() {
+        return cellLineType;
     }
 
-    public void setPlateConditionCollection(Collection<PlateCondition> plateConditionCollection) {
-        this.plateConditionCollection = plateConditionCollection;
+    public void setCellLineType(CellLineType cellLineType) {
+        this.cellLineType = cellLineType;
+    }
+
+    @XmlTransient
+    public PlateCondition getPlateCondition() {
+        return plateCondition;
+    }
+
+    public void setPlateConditionCollection(PlateCondition plateCondition) {
+        this.plateCondition = plateCondition;
     }
 
     public boolean equals(Object obj) {
@@ -112,7 +125,10 @@ public class CellLine implements Serializable {
             return false;
         }
         final CellLine other = (CellLine) obj;
-        if (!Objects.equals(this.name, other.name)) {
+        if (!Objects.equals(this.seedingTime, other.seedingTime)) {
+            return false;
+        }
+        if (!Objects.equals(this.seedingDensity, other.seedingDensity)) {
             return false;
         }
         return true;
@@ -120,13 +136,13 @@ public class CellLine implements Serializable {
 
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + Objects.hashCode(this.name);
+        hash = 97 * hash + Objects.hashCode(this.seedingTime);
+        hash = 97 * hash + Objects.hashCode(this.seedingDensity);
+        hash = 97 * hash + Objects.hashCode(this.growthMedium);
         return hash;
     }
-    
-    @Override
+
     public String toString() {
-        return name;
+        return "CellLine{" + "seedingTime=" + seedingTime + ", seedingDensity=" + seedingDensity + ", growthMedium=" + growthMedium + '}';
     }
-    
 }

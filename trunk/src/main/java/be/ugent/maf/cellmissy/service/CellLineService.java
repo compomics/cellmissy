@@ -5,6 +5,8 @@
 package be.ugent.maf.cellmissy.service;
 
 import be.ugent.maf.cellmissy.entity.CellLine;
+import be.ugent.maf.cellmissy.entity.CellLineType;
+import java.util.List;
 
 /**
  *
@@ -12,4 +14,9 @@ import be.ugent.maf.cellmissy.entity.CellLine;
  */
 public interface CellLineService extends GenericService<CellLine, Long> {
     
+    List<CellLineType> findAllCellLineTypes();
+    
+    CellLineType saveCellLineType(CellLineType entity);
+    
+    List<String> findAllGrowthMedia();
 }

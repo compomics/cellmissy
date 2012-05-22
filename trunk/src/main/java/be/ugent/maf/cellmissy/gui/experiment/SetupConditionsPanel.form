@@ -41,20 +41,33 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
+                              <Component id="growthMediumLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="growthMediumComboBox" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="selectCellLineLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="seedingDensityLabel" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="seedingTimeLabel" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="seedingTimeTextField" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="cellLineComboBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="seedingDensityTextField" alignment="0" min="-2" pref="80" max="-2" attributes="1"/>
+                              </Group>
+                          </Group>
+                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
                               <Component id="cellLineNameLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="cellLineNameTextField" min="-2" pref="77" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="insertCellLineButton" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="selectCellLineLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="cellLineComboBox" min="-2" max="-2" attributes="0"/>
-                          </Group>
                       </Group>
-                      <EmptySpace pref="125" max="32767" attributes="0"/>
+                      <EmptySpace pref="130" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -66,7 +79,22 @@
                           <Component id="selectCellLineLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="cellLineComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="seedingDensityLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="seedingDensityTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="seedingTimeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="seedingTimeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="growthMediumLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="growthMediumComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -74,7 +102,7 @@
                           <Component id="cellLineNameTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="insertCellLineButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="335" max="32767" attributes="0"/>
+                      <EmptySpace pref="191" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -101,12 +129,43 @@
             </Component>
             <Component class="javax.swing.JButton" name="insertCellLineButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Insert cell line"/>
+                <Property name="text" type="java.lang.String" value="Add Cell Line"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="If the cell line is not present, insert it into DB"/>
+                <Property name="text" type="java.lang.String" value="If the cell line you want to use is not present, add it:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="seedingDensityLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="seeding density"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="seedingTimeLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="seeding time"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="growthMediumLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="growth medium"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="seedingDensityTextField">
+            </Component>
+            <Component class="javax.swing.JTextField" name="seedingTimeTextField">
+            </Component>
+            <Component class="javax.swing.JComboBox" name="growthMediumComboBox">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="4">
+                    <StringItem index="0" value="Item 1"/>
+                    <StringItem index="1" value="Item 2"/>
+                    <StringItem index="2" value="Item 3"/>
+                    <StringItem index="3" value="Item 4"/>
+                  </StringArray>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>

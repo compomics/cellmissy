@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.repository.impl;
 
 import be.ugent.maf.cellmissy.entity.CellLine;
 import be.ugent.maf.cellmissy.repository.CellLineRepository;
+import java.util.List;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,5 +15,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("cellLineRepository")
 public class CellLineJpaRepository extends GenericJpaRepository<CellLine, Long> implements CellLineRepository{
+
+    @Override
+    public List<String> findAllGrowthMedia() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }

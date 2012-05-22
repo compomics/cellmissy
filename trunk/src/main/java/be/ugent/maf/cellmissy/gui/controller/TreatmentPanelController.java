@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
+import be.ugent.maf.cellmissy.entity.TreatmentCategory;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.service.TreatmentService;
 import java.awt.event.ActionEvent;
@@ -25,9 +26,9 @@ public class TreatmentPanelController {
 
     //model
     //binding list for drugs
-    private ObservableList<Treatment> drugBindingList;
+    private ObservableList<TreatmentType> drugBindingList;
     //binding list for general treatments
-    private ObservableList<Treatment> generalTreatmentBindingList;
+    private ObservableList<TreatmentType> generalTreatmentBindingList;
     private BindingGroup bindingGroup;
     //view
     //parent controller
@@ -48,39 +49,39 @@ public class TreatmentPanelController {
         initTreatmentSetupPanel();
     }
 
-    public ObservableList<Treatment> getDrugBindingList() {
+    public ObservableList<TreatmentType> getDrugBindingList() {
         return drugBindingList;
     }
 
-    public void updateTreatmentConditionFields(PlateCondition plateCondition) {
-        plateCondition.getTreatment().setType(((TreatmentType) (conditionsPanelController.getSetupConditionsPanel().getTreatmentTypeComboBox().getSelectedItem())).getDatabaseValue());
-        switch (plateCondition.getTreatment().getType()) {
-            case 1:
-                //if the type is a drug, bind to drug comboboxgetName
-                plateCondition.getTreatment().setName(((Treatment) (conditionsPanelController.getSetupConditionsPanel().getDrugComboBox().getSelectedItem())).getName());
-                break;
-            case 2:
-                //if it's a general treatment, bind to the other combobox
-                plateCondition.getTreatment().setName(((Treatment) (conditionsPanelController.getSetupConditionsPanel().getGeneralTreatmentComboBox().getSelectedItem())).getName());
-                break;
-        }
-    }
-
-    public void updateTreatmentInputFields(PlateCondition plateCondition) {
-        conditionsPanelController.getSetupConditionsPanel().getTreatmentTypeComboBox().setSelectedIndex(plateCondition.getTreatment().getType() - 1);
-        switch (plateCondition.getTreatment().getType()) {
-            case 1:
-                conditionsPanelController.getSetupConditionsPanel().getDrugComboBox().setSelectedIndex(drugBindingList.indexOf(plateCondition.getTreatment()));
-                break;
-            case 2:
-                conditionsPanelController.getSetupConditionsPanel().getGeneralTreatmentComboBox().setSelectedIndex(generalTreatmentBindingList.indexOf(plateCondition.getTreatment()));
-        }
-    }
+//    public void updateTreatmentConditionFields(PlateCondition plateCondition) {
+//        plateCondition.getTreatment().setType(((TreatmentCategory) (conditionsPanelController.getSetupConditionsPanel().getTreatmentTypeComboBox().getSelectedItem())).getDatabaseValue());
+//        switch (plateCondition.getTreatment().getType()) {
+//            case 1:
+//                //if the type is a drug, bind to drug comboboxgetName
+//                plateCondition.getTreatment().setName(((Treatment) (conditionsPanelController.getSetupConditionsPanel().getDrugComboBox().getSelectedItem())).getName());
+//                break;
+//            case 2:
+//                //if it's a general treatment, bind to the other combobox
+//                plateCondition.getTreatment().setName(((Treatment) (conditionsPanelController.getSetupConditionsPanel().getGeneralTreatmentComboBox().getSelectedItem())).getName());
+//                break;
+//        }
+//    }
+//
+//    public void updateTreatmentInputFields(PlateCondition plateCondition) {
+//        conditionsPanelController.getSetupConditionsPanel().getTreatmentTypeComboBox().setSelectedIndex(plateCondition.getTreatment().getType() - 1);
+//        switch (plateCondition.getTreatment().getType()) {
+//            case 1:
+//                conditionsPanelController.getSetupConditionsPanel().getDrugComboBox().setSelectedIndex(drugBindingList.indexOf(plateCondition.getTreatment()));
+//                break;
+//            case 2:
+//                conditionsPanelController.getSetupConditionsPanel().getGeneralTreatmentComboBox().setSelectedIndex(generalTreatmentBindingList.indexOf(plateCondition.getTreatment()));
+//        }
+//    }
 
     private void initTreatmentTypePanel() {
 
         //fill in tratment type ComboBox 
-        for (TreatmentType treatmentType : TreatmentType.values()) {
+        for (TreatmentCategory treatmentType : TreatmentCategory.values()) {
             conditionsPanelController.getSetupConditionsPanel().getTreatmentTypeComboBox().addItem(treatmentType);
         }
     }
@@ -88,8 +89,8 @@ public class TreatmentPanelController {
     private void initTreatmentSetupPanel() {
 
         //init drug and general treatment binding lists
-        drugBindingList = ObservableCollections.observableList(treatmentService.findByType(1));
-        generalTreatmentBindingList = ObservableCollections.observableList(treatmentService.findByType(2));
+        drugBindingList = ObservableCollections.observableList(treatmentService.findByCategory(1));
+        generalTreatmentBindingList = ObservableCollections.observableList(treatmentService.findByCategory(2));
 
         //init drug combobox binding
         JComboBoxBinding drugComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, drugBindingList, conditionsPanelController.getSetupConditionsPanel().getDrugComboBox());
@@ -105,7 +106,7 @@ public class TreatmentPanelController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                switch (((TreatmentType) conditionsPanelController.getSetupConditionsPanel().getTreatmentTypeComboBox().getSelectedItem())) {
+                switch (((TreatmentCategory) conditionsPanelController.getSetupConditionsPanel().getTreatmentTypeComboBox().getSelectedItem())) {
                     case DRUG:
                         conditionsPanelController.getSetupConditionsPanel().getGeneralTreatmentComboBox().setVisible(false);
                         conditionsPanelController.getSetupConditionsPanel().getDrugComboBox().setVisible(true);
