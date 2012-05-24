@@ -51,6 +51,7 @@ public class Treatment implements Serializable {
     @JoinColumn(name = "l_plate_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = true)
     private PlateCondition plateCondition;
+    @JoinColumn(name = "l_tratment_typeid", referencedColumnName = "treatment_typeid")
     @ManyToOne(optional = true)
     private TreatmentType treatmentType;
 

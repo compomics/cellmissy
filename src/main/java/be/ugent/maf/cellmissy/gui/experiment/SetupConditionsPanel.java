@@ -13,6 +13,7 @@ package be.ugent.maf.cellmissy.gui.experiment;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
@@ -50,28 +51,44 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
         return assayEcmPanel;
     }
 
-    public JComboBox getTreatmentTypeComboBox() {
-        return treatmentTypeComboBox;
-    }
-
-    public JComboBox getDrugComboBox() {
-        return drugComboBox;
-    }
-
-    public JComboBox getGeneralTreatmentComboBox() {
-        return generalTreatmentComboBox;
+    public JPanel getTreatmentDualListParent() {
+        return treatmentDualListParent;
     }
 
     public JTextField getTimingTextField() {
         return timingTextField;
     }
 
-    public JTextField getAdditionalInfoTextField() {
-        return additionalInfoTextField;
+    public JTextArea getAdditionalInfoTextArea() {
+        return additionalInfoTextArea;
     }
 
     public JTextField getConcentrationTextField() {
         return concentrationTextField;
+    }
+
+    public JComboBox getGrowthMediumComboBox() {
+        return growthMediumComboBox;
+    }
+
+    public void setGrowthMediumComboBox(JComboBox growthMediumComboBox) {
+        this.growthMediumComboBox = growthMediumComboBox;
+    }
+
+    public JTextField getSeedingDensityTextField() {
+        return seedingDensityTextField;
+    }
+
+    public void setSeedingDensityTextField(JTextField seedingDensityTextField) {
+        this.seedingDensityTextField = seedingDensityTextField;
+    }
+
+    public JTextField getSeedingTimeTextField() {
+        return seedingTimeTextField;
+    }
+
+    public void setSeedingTimeTextField(JTextField seedingTimeTextField) {
+        this.seedingTimeTextField = seedingTimeTextField;
     }
 
     /** This method is called from within the constructor to
@@ -104,19 +121,15 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
         ecmDimensionComboBox = new javax.swing.JComboBox();
         assayEcmParentPanel = new javax.swing.JPanel();
         treatmentPanel = new javax.swing.JPanel();
-        treatmentTypePanel = new javax.swing.JPanel();
-        treatmentTypeComboBox = new javax.swing.JComboBox();
-        chooseTreatmentTypeLabel = new javax.swing.JLabel();
+        treatmentDualListParent = new javax.swing.JPanel();
         treatmentSetupPanel = new javax.swing.JPanel();
-        nameLabel = new javax.swing.JLabel();
         additionalInfoLabel = new javax.swing.JLabel();
         timingLabel = new javax.swing.JLabel();
-        drugComboBox = new javax.swing.JComboBox();
-        additionalInfoTextField = new javax.swing.JTextField();
         timingTextField = new javax.swing.JTextField();
         concentrationLabel = new javax.swing.JLabel();
         concentrationTextField = new javax.swing.JTextField();
-        generalTreatmentComboBox = new javax.swing.JComboBox();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        additionalInfoTextArea = new javax.swing.JTextArea();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -128,11 +141,11 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
 
         jLabel1.setText("If the cell line you want to use is not present, add it:");
 
-        seedingDensityLabel.setText("seeding density");
+        seedingDensityLabel.setText("Seeding Density");
 
-        seedingTimeLabel.setText("seeding time");
+        seedingTimeLabel.setText("Seeding Time");
 
-        growthMediumLabel.setText("growth medium");
+        growthMediumLabel.setText("Growth Medium");
 
         growthMediumComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -248,108 +261,71 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
 
         treatmentPanel.setLayout(new java.awt.GridBagLayout());
 
-        treatmentTypePanel.setMinimumSize(new java.awt.Dimension(250, 80));
-        treatmentTypePanel.setPreferredSize(new java.awt.Dimension(250, 80));
-
-        treatmentTypeComboBox.setToolTipText("");
-
-        chooseTreatmentTypeLabel.setText("Choose a treatment type");
-
-        javax.swing.GroupLayout treatmentTypePanelLayout = new javax.swing.GroupLayout(treatmentTypePanel);
-        treatmentTypePanel.setLayout(treatmentTypePanelLayout);
-        treatmentTypePanelLayout.setHorizontalGroup(
-            treatmentTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(treatmentTypePanelLayout.createSequentialGroup()
-                .addGap(55, 55, 55)
-                .addComponent(chooseTreatmentTypeLabel)
-                .addGap(18, 18, 18)
-                .addComponent(treatmentTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(170, Short.MAX_VALUE))
-        );
-        treatmentTypePanelLayout.setVerticalGroup(
-            treatmentTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, treatmentTypePanelLayout.createSequentialGroup()
-                .addContainerGap(39, Short.MAX_VALUE)
-                .addGroup(treatmentTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(chooseTreatmentTypeLabel)
-                    .addComponent(treatmentTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21))
-        );
-
+        treatmentDualListParent.setMinimumSize(new java.awt.Dimension(20, 20));
+        treatmentDualListParent.setPreferredSize(new java.awt.Dimension(20, 20));
+        treatmentDualListParent.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        treatmentPanel.add(treatmentTypePanel, gridBagConstraints);
+        gridBagConstraints.weighty = 0.6;
+        treatmentPanel.add(treatmentDualListParent, gridBagConstraints);
 
-        nameLabel.setText("Name");
+        treatmentSetupPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        treatmentSetupPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         additionalInfoLabel.setText("Additional info");
 
         timingLabel.setText("Timing");
 
-        drugComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2" }));
-
         concentrationLabel.setText("Concentration");
 
-        generalTreatmentComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        additionalInfoTextArea.setColumns(20);
+        additionalInfoTextArea.setRows(5);
+        jScrollPane1.setViewportView(additionalInfoTextArea);
 
         javax.swing.GroupLayout treatmentSetupPanelLayout = new javax.swing.GroupLayout(treatmentSetupPanel);
         treatmentSetupPanel.setLayout(treatmentSetupPanelLayout);
         treatmentSetupPanelLayout.setHorizontalGroup(
             treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, treatmentSetupPanelLayout.createSequentialGroup()
-                .addGap(80, 80, 80)
+            .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
+                .addGap(88, 88, 88)
+                .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(timingLabel)
+                    .addComponent(concentrationLabel)
+                    .addComponent(additionalInfoLabel))
+                .addGap(10, 10, 10)
                 .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
-                        .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(concentrationLabel)
-                            .addComponent(timingLabel)
-                            .addComponent(additionalInfoLabel))
-                        .addGap(18, 18, 18)
-                        .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(concentrationTextField)
-                            .addComponent(timingTextField)
-                            .addComponent(additionalInfoTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, treatmentSetupPanelLayout.createSequentialGroup()
-                        .addComponent(nameLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(drugComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(generalTreatmentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(387, 387, 387))
+                    .addComponent(jScrollPane1)
+                    .addComponent(timingTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                    .addComponent(concentrationTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         treatmentSetupPanelLayout.setVerticalGroup(
             treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(drugComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(generalTreatmentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nameLabel))
-                .addGap(18, 18, 18)
-                .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addContainerGap()
+                .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(additionalInfoLabel)
-                    .addComponent(additionalInfoTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(timingLabel)
                     .addComponent(timingTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(9, 9, 9)
+                .addGap(18, 18, 18)
                 .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(concentrationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(concentrationLabel))
-                .addGap(258, 258, 258))
+                    .addComponent(concentrationLabel)
+                    .addComponent(concentrationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(38, 38, 38))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.4;
         treatmentPanel.add(treatmentSetupPanel, gridBagConstraints);
 
         jTabbedPane1.addTab("treatment", treatmentPanel);
@@ -366,27 +342,24 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel additionalInfoLabel;
-    private javax.swing.JTextField additionalInfoTextField;
+    private javax.swing.JTextArea additionalInfoTextArea;
     private javax.swing.JPanel assayEcmPanel;
     private javax.swing.JPanel assayEcmParentPanel;
     private javax.swing.JComboBox cellLineComboBox;
     private javax.swing.JLabel cellLineNameLabel;
     private javax.swing.JTextField cellLineNameTextField;
     private javax.swing.JPanel cellLinePanel;
-    private javax.swing.JLabel chooseTreatmentTypeLabel;
     private javax.swing.JLabel concentrationLabel;
     private javax.swing.JTextField concentrationTextField;
-    private javax.swing.JComboBox drugComboBox;
     private javax.swing.JComboBox ecmDimensionComboBox;
     private javax.swing.JLabel ecmDimensionLabel;
     private javax.swing.JPanel ecmDimensionPanel;
-    private javax.swing.JComboBox generalTreatmentComboBox;
     private javax.swing.JComboBox growthMediumComboBox;
     private javax.swing.JLabel growthMediumLabel;
     private javax.swing.JButton insertCellLineButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JLabel nameLabel;
     private javax.swing.JLabel seedingDensityLabel;
     private javax.swing.JTextField seedingDensityTextField;
     private javax.swing.JLabel seedingTimeLabel;
@@ -394,9 +367,8 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
     private javax.swing.JLabel selectCellLineLabel;
     private javax.swing.JLabel timingLabel;
     private javax.swing.JTextField timingTextField;
+    private javax.swing.JPanel treatmentDualListParent;
     private javax.swing.JPanel treatmentPanel;
     private javax.swing.JPanel treatmentSetupPanel;
-    private javax.swing.JComboBox treatmentTypeComboBox;
-    private javax.swing.JPanel treatmentTypePanel;
     // End of variables declaration//GEN-END:variables
 }

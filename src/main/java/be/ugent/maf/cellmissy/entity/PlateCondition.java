@@ -46,7 +46,7 @@ public class PlateCondition implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition")
     private Collection<Well> wellCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition")
-    private Collection<Treatment> tratmentCollection;
+    private Collection<Treatment> treatmentCollection;
     @JoinColumn(name = "l_cell_lineid", referencedColumnName = "cell_lineid")
     @OneToOne(optional = false)
     private CellLine cellLine;
@@ -89,12 +89,12 @@ public class PlateCondition implements Serializable {
         this.wellCollection = wellCollection;
     }
 
-    public Collection<Treatment> getTratmentCollection() {
-        return tratmentCollection;
+    public Collection<Treatment> getTreatmentCollection() {
+        return treatmentCollection;
     }
 
-    public void setTratmentCollection(Collection<Treatment> tratmentCollection) {
-        this.tratmentCollection = tratmentCollection;
+    public void setTreatmentCollection(Collection<Treatment> treatmentCollection) {
+        this.treatmentCollection = treatmentCollection;
     }
 
     public CellLine getCellLine() {

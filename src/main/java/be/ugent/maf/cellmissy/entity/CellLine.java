@@ -33,7 +33,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "CellLine.findByCellLineid", query = "SELECT c FROM CellLine c WHERE c.cellLineid = :cellLineid"),
     @NamedQuery(name = "CellLine.findByGrowthMedium", query = "SELECT c FROM CellLine c WHERE c.growthMedium = :growthMedium"),
     @NamedQuery(name = "CellLine.findBySeedingTime", query = "SELECT c FROM CellLine c WHERE c.seedingTime = :seedingTime"),
-    @NamedQuery(name = "CellLine.findBySeedingDensity", query = "SELECT c FROM CellLine c WHERE c.seedingDensity = :seedingDensity")})
+    @NamedQuery(name = "CellLine.findBySeedingDensity", query = "SELECT c FROM CellLine c WHERE c.seedingDensity = :seedingDensity"),
+    @NamedQuery(name = "CellLine.findAllGrowthMedia", query = "SELECT distinct c.growthMedium FROM CellLine c")})
+
 public class CellLine implements Serializable {
 
     private static final long serialVersionUID = 1L;
