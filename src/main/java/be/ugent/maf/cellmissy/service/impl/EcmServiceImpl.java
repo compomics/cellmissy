@@ -79,4 +79,9 @@ public class EcmServiceImpl implements EcmService {
     public List<EcmDensity> findAllEcmDensity() {
         return ecmDensityRepository.findAll();
     }
+
+    @Override
+    public void saveEcmComposition(EcmComposition ecmComposition) {
+        ecmCompositionRepository.saveEcmComposition(ecmComposition);
+    }
 }

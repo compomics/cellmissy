@@ -70,16 +70,19 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(20, 20));
         setLayout(new java.awt.GridBagLayout());
 
+        topPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        topPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         topPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.9;
         add(topPanel, gridBagConstraints);
 
-        bottomPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        bottomPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
         bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        bottomPanel.setPreferredSize(new java.awt.Dimension(20, 10));
+        bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         previousButton.setText("Previous");
 
@@ -120,14 +123,14 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
                         .addComponent(nextButton)
                         .addComponent(finishButton)
                         .addComponent(reportButton)))
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.1;
         add(bottomPanel, gridBagConstraints);

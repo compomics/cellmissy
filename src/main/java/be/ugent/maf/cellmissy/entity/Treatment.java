@@ -48,6 +48,8 @@ public class Treatment implements Serializable {
     private Integer concentration;
     @Column(name = "timing")
     private String timing;
+    @Column(name = "assay_medium")
+    private String assayMedium;
     @JoinColumn(name = "l_plate_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = true)
     private PlateCondition plateCondition;
@@ -107,6 +109,14 @@ public class Treatment implements Serializable {
         return plateCondition;
     }
 
+    public String getAssayMedium() {
+        return assayMedium;
+    }
+
+    public void setAssayMedium(String assayMedium) {
+        this.assayMedium = assayMedium;
+    }
+
     public void setPlateConditionCollection(PlateCondition plateCondition) {
         this.plateCondition = plateCondition;
     }
@@ -119,9 +129,6 @@ public class Treatment implements Serializable {
             return false;
         }
         final Treatment other = (Treatment) obj;
-        if (!Objects.equals(this.treatmentid, other.treatmentid)) {
-            return false;
-        }
         if (!Objects.equals(this.description, other.description)) {
             return false;
         }
@@ -129,6 +136,9 @@ public class Treatment implements Serializable {
             return false;
         }
         if (!Objects.equals(this.timing, other.timing)) {
+            return false;
+        }
+        if (!Objects.equals(this.assayMedium, other.assayMedium)) {
             return false;
         }
         if (!Objects.equals(this.treatmentType, other.treatmentType)) {
@@ -139,15 +149,15 @@ public class Treatment implements Serializable {
 
     public int hashCode() {
         int hash = 5;
-        hash = 17 * hash + Objects.hashCode(this.treatmentid);
-        hash = 17 * hash + Objects.hashCode(this.description);
-        hash = 17 * hash + Objects.hashCode(this.concentration);
-        hash = 17 * hash + Objects.hashCode(this.timing);
-        hash = 17 * hash + Objects.hashCode(this.treatmentType);
+        hash = 31 * hash + Objects.hashCode(this.description);
+        hash = 31 * hash + Objects.hashCode(this.concentration);
+        hash = 31 * hash + Objects.hashCode(this.timing);
+        hash = 31 * hash + Objects.hashCode(this.assayMedium);
+        hash = 31 * hash + Objects.hashCode(this.treatmentType);
         return hash;
     }
 
     public String toString() {
-        return "Treatment{" + "description=" + description + ", concentration=" + concentration + ", timing=" + timing + ", treatmentType=" + treatmentType + '}';
+        return treatmentType.getName();
     }
 }

@@ -15,4 +15,6 @@ import java.util.List;
 public interface TreatmentRepository extends GenericRepository<Treatment, Long> {
 
     List<TreatmentType> findByCategory(Integer treatmentCategory);
+    
+    void saveTreatmentType(TreatmentType treatmentType);
 }

@@ -9,7 +9,6 @@ import be.ugent.maf.cellmissy.entity.CellLineType;
 import be.ugent.maf.cellmissy.entity.Ecm;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
-import be.ugent.maf.cellmissy.entity.TreatmentCategory;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ConditionsPanel;
@@ -51,7 +50,7 @@ public class ConditionsPanelController {
     //model
     private ObservableList<CellLineType> cellLineTypeBindingList;
     private ObservableList<PlateCondition> plateConditionBindingList;
-    private ObservableList<String> growthMediumBindingList;
+    private ObservableList<String> mediumBindingList;
     private BindingGroup bindingGroup;
     //view
     private ConditionsPanel conditionsPanel;
@@ -114,6 +113,10 @@ public class ConditionsPanelController {
         return plateConditionBindingList;
     }
 
+    public ObservableList<String> getMediumBindingList() {
+        return mediumBindingList;
+    }
+
     /**
      * public  methods
      * 
@@ -135,9 +138,16 @@ public class ConditionsPanelController {
         cellLineTypeBindingList = ObservableCollections.observableList(cellLineService.findAllCellLineTypes());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, cellLineTypeBindingList, setupConditionsPanel.getCellLineComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
-        growthMediumBindingList = ObservableCollections.observableList(cellLineService.findAllGrowthMedia());
-        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, growthMediumBindingList, setupConditionsPanel.getGrowthMediumComboBox());
+        //init growth medium JCombo
+        mediumBindingList = ObservableCollections.observableList(cellLineService.findAllGrowthMedia());
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, mediumBindingList, setupConditionsPanel.getGrowthMediumComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
+
+        //init assay medium JCombo (it's actually in the treatment panel, but ca not be bind before since the mediumBindingList would be still null)
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, mediumBindingList, treatmentPanelController.getTreatmentPanel().getAssayMediumComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+        bindingGroup.bind();
+
         bindingGroup.bind();
 
         /**
@@ -181,24 +191,13 @@ public class ConditionsPanelController {
         //autobind growth medium
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine.growthMedium"), setupConditionsPanel.getGrowthMediumComboBox(), BeanProperty.create("selectedItem"), "growthmediumbinding");
         bindingGroup.addBinding(binding);
+        //autobind cell line type
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine.cellLineType"), setupConditionsPanel.getCellLineComboBox(), BeanProperty.create("selectedItem"), "celllinetypebinding");
+        bindingGroup.addBinding(binding);
+
         //autobind matrix dimension
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.matrixDimension"), setupConditionsPanel.getEcmDimensionComboBox(), BeanProperty.create("selectedItem"), "matrixdimensionbinding");
         bindingGroup.addBinding(binding);
-        bindingGroup.bind();
-
-        //autobind treatment
-        //treatment type and name are bound manually in the treatment panel controller
-
-        //treatment description
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.description"), setupConditionsPanel.getAdditionalInfoTextArea(), BeanProperty.create("text"), "treatmentdescriptionbinding");
-        bindingGroup.addBinding(binding);
-        //treatment timing
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.timing"), setupConditionsPanel.getTimingTextField(), BeanProperty.create("text"), "treatmenttimingbinding");
-        bindingGroup.addBinding(binding);
-        //treatment concentration
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.treatment.concentration"), setupConditionsPanel.getConcentrationTextField(), BeanProperty.create("text"), "treatmentconcentrationbinding");
-        bindingGroup.addBinding(binding);
-
         bindingGroup.bind();
 
         //init conditionListBinding
@@ -227,8 +226,7 @@ public class ConditionsPanelController {
                     assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(previousConditionIndex));
                     assayEcmPanelController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
                     assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                    //treatmentPanelController.updateTreatmentConditionFields(plateConditionBindingList.get(previousConditionIndex));
-                    //treatmentPanelController.updateTreatmentInputFields(plateConditionBindingList.get(locationToIndex));
+                    treatmentPanelController.updateTreatments(plateConditionBindingList.get(previousConditionIndex));
                 }
                 previousConditionIndex = locationToIndex;
             }
@@ -298,7 +296,7 @@ public class ConditionsPanelController {
         cellLine.setCellLineType(cellLineTypeBindingList.get(0));
         cellLine.setSeedingDensity(5000);
         cellLine.setSeedingTime("24 hours");
-        cellLine.setGrowthMedium("RPMI");
+        cellLine.setGrowthMedium(mediumBindingList.get(0));
         plateCondition.setCellLine(cellLine);
 
         //set matrix dimension: 2D
@@ -307,21 +305,22 @@ public class ConditionsPanelController {
         //set the migration assay: Oris platform
         plateCondition.setAssay(assayEcmPanelController.getAssay2DBindingList().get(0));
 
-        //create a new ECM object and set its class memebers
+        //create a new ECM object and set its class members
         Ecm ecm = new Ecm();
         ecm.setEcmComposition(assayEcmPanelController.getEcm2DCompositionBindingList().get(0));
         ecm.setEcmCoating(assayEcmPanelController.getEcmCoatingBindingList().get(0));
-        ecm.setCoatingTemperature("");
-        ecm.setCoatingTime("");
-        ecm.setConcentration(0);
-        ecm.setVolume(0);
+        ecm.setCoatingTemperature("37");
+        ecm.setCoatingTime("12h");
+        ecm.setConcentration(1);
+        ecm.setVolume(3);
         plateCondition.setEcm(ecm);
 
-        //set the treatment
+        //set the treatment, empty collection of treatments
         Treatment treatment = new Treatment();
-        treatment.setTreatmentType(treatmentPanelController.getDrugBindingList().get(0));
+        
         List<Treatment> treatmentList = new ArrayList<>();
         treatmentList.add(treatment);
+        treatment.setAssayMedium(mediumBindingList.get(0));
         plateCondition.setTreatmentCollection(treatmentList);
 
         //set an empty collection of wells
