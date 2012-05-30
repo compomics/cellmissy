@@ -49,4 +49,9 @@ public class TreatmentServiceImpl implements TreatmentService {
     public List<TreatmentType> findByCategory(Integer treatmentCategory) {
         return treatmentRepository.findByCategory(treatmentCategory);
     }
+
+    @Override
+    public void saveTreatmentType(TreatmentType treatmentType) {
+        treatmentRepository.saveTreatmentType(treatmentType);
+    }
 }

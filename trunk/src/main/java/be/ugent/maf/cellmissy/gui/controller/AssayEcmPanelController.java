@@ -15,10 +15,8 @@ import be.ugent.maf.cellmissy.gui.experiment.AssayEcm2DPanel;
 import be.ugent.maf.cellmissy.gui.experiment.AssayEcm3DPanel;
 import be.ugent.maf.cellmissy.service.AssayService;
 import be.ugent.maf.cellmissy.service.EcmService;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JPanel;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -54,7 +52,6 @@ public class AssayEcmPanelController {
     // services
     private AssayService assayService;
     private EcmService ecmService;
-    private GridBagConstraints gridBagConstraints;
 
     public AssayEcmPanelController(ConditionsPanelController conditionsPanelController) {
         this.conditionsPanelController = conditionsPanelController;
@@ -64,7 +61,6 @@ public class AssayEcmPanelController {
         ecmService = (EcmService) conditionsPanelController.getSetupExperimentPanelController().getCellMissyController().getBeanByName("ecmService");
 
         bindingGroup = new BindingGroup();
-        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
         //init views
         initEcmPanel();
@@ -217,6 +213,28 @@ public class AssayEcmPanelController {
 
         //do the binding
         bindingGroup.bind();
+        
+        //set default fields
+        assayEcm2DPanel.getCompositionComboBox().setSelectedIndex(0);
+        assayEcm2DPanel.getCoatingComboBox().setSelectedIndex(0);
+        assayEcm2DPanel.getConcentrationTextField().setText("1");
+        assayEcm2DPanel.getVolumeTextField().setText("3");
+        assayEcm2DPanel.getCoatingTimeTextField().setText("12h");
+        assayEcm2DPanel.getCoatingTemperatureTextField().setText("37C");
+        
+        //add action listeners
+        assayEcm2DPanel.getAddCompositionButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                EcmComposition ecmComposition = new EcmComposition();
+                ecmComposition.setCompositionType(assayEcm2DPanel.getCompositionTextField().getText());
+                ecmComposition.setMatrixDimension(matrixDimensionBindingList.get(0));
+                ecm2DCompositionBindingList.add(ecmComposition);
+                ecmService.saveEcmComposition(ecmComposition);
+                assayEcm2DPanel.getCompositionTextField().setText("");
+            }
+        });
     }
 
     private void initAssayEcm3DPanel() {
@@ -240,5 +258,19 @@ public class AssayEcmPanelController {
 
         //do the binding
         bindingGroup.bind();
+
+        //add action listeners
+        assayEcm3DPanel.getAddCompositionButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                EcmComposition ecmComposition = new EcmComposition();
+                ecmComposition.setCompositionType(assayEcm3DPanel.getCompositionTextField().getText());
+                ecmComposition.setMatrixDimension(matrixDimensionBindingList.get(1));
+                ecm3DCompositionBindingList.add(ecmComposition);
+                ecmService.saveEcmComposition(ecmComposition);
+                assayEcm3DPanel.getCompositionTextField().setText("");
+            }
+        });
     }
 }

@@ -29,4 +29,9 @@ public class EcmCompositionJpaRepository extends GenericJpaRepository<EcmComposi
             return null;
         }
     }
+
+    @Override
+    public void saveEcmComposition(EcmComposition ecmComposition) {
+        getEntityManager().persist(ecmComposition);
+    }
 }

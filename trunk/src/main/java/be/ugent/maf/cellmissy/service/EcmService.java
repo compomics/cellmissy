@@ -21,6 +21,8 @@ public interface EcmService extends GenericService<Ecm, Long> {
 
     public List<EcmComposition> findEcmCompositionByMatrixDimensionName(String matrixDimensionName);
     
+    public void saveEcmComposition(EcmComposition ecmComposition);
+    
     public List<EcmCoating> findAllEcmCoating();
     
     public List<EcmDensity> findAllEcmDensity();

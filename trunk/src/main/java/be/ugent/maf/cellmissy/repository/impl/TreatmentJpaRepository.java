@@ -30,4 +30,9 @@ public class TreatmentJpaRepository extends GenericJpaRepository<Treatment, Long
             return null;
         }
     }
+
+    @Override
+    public void saveTreatmentType(TreatmentType treatmentType) {
+        getEntityManager().persist(treatmentType);
+    }
 }
