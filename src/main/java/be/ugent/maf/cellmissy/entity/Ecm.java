@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Ecm.findByPolymerisationTime", query = "SELECT e FROM Ecm e WHERE e.polymerisationTime = :polymerisationTime"),
     @NamedQuery(name = "Ecm.findByPolymerisationTemperature", query = "SELECT e FROM Ecm e WHERE e.polymerisationTemperature = :polymerisationTemperature")})
 public class Ecm implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,9 +47,9 @@ public class Ecm implements Serializable {
     @Column(name = "ecmid")
     private Integer ecmid;
     @Column(name = "concentration")
-    private Integer concentration;
+    private Double concentration;
     @Column(name = "volume")
-    private Integer volume;
+    private Double volume;
     @Column(name = "coating_time")
     private String coatingTime;
     @Column(name = "coating_temperature")
@@ -58,12 +59,12 @@ public class Ecm implements Serializable {
     @Column(name = "polymerisation_temperature")
     private String polymerisationTemperature;
     @JoinColumn(name = "l_ecm_coatingid", referencedColumnName = "ecm_coatingid")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     private EcmCoating ecmCoating;
     @JoinColumn(name = "l_composition_typeid", referencedColumnName = "composition_typeid")
     @ManyToOne(optional = false)
     private EcmComposition ecmComposition;
-    @JoinColumn(name = "l_idecm_density", referencedColumnName = "ecm_densityid")
+    @JoinColumn(name = "l_ecm_densityid", referencedColumnName = "ecm_densityid")
     @ManyToOne(optional = false)
     private EcmDensity ecmDensity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecm")
@@ -84,19 +85,19 @@ public class Ecm implements Serializable {
         this.ecmid = ecmid;
     }
 
-    public Integer getConcentration() {
+    public Double getConcentration() {
         return concentration;
     }
 
-    public void setConcentration(Integer concentration) {
+    public void setConcentration(Double concentration) {
         this.concentration = concentration;
     }
 
-    public Integer getVolume() {
+    public Double getVolume() {
         return volume;
     }
 
-    public void setVolume(Integer volume) {
+    public void setVolume(Double volume) {
         this.volume = volume;
     }
 
@@ -189,5 +190,4 @@ public class Ecm implements Serializable {
     public String toString() {
         return "be.ugent.maf.cellmissy.entity.Ecm[ ecmid=" + ecmid + " ]";
     }
-    
 }

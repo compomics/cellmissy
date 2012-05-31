@@ -115,7 +115,7 @@ public class CellLine implements Serializable {
         return plateCondition;
     }
 
-    public void setPlateConditionCollection(PlateCondition plateCondition) {
+    public void setPlateCondition(PlateCondition plateCondition) {
         this.plateCondition = plateCondition;
     }
 

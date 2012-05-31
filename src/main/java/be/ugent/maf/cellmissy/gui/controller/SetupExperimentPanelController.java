@@ -4,8 +4,14 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.ExperimentStatus;
+import be.ugent.maf.cellmissy.entity.Instrument;
+import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ExperimentInfoPanel;
@@ -13,14 +19,14 @@ import be.ugent.maf.cellmissy.gui.experiment.SetupExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.SetupPanel;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
+import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
+import be.ugent.maf.cellmissy.service.UserService;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -34,6 +40,7 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
+import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 
@@ -45,6 +52,8 @@ public class SetupExperimentPanelController {
 
     //model
     private ObservableList<Project> projectBindingList;
+    private ObservableList<Instrument> instrumentBindingList;
+    private ObservableList<Magnification> magnificationBindingList;
     private BindingGroup bindingGroup;
     //view
     private SetupExperimentPanel setupExperimentPanel;
@@ -57,6 +66,7 @@ public class SetupExperimentPanelController {
     private SetupPlatePanelController setupPlatePanelController;
     //services
     private ProjectService projectService;
+    private ExperimentService experimentService;
     private GridBagConstraints gridBagConstraints;
 
     /**
@@ -76,7 +86,7 @@ public class SetupExperimentPanelController {
 
         //init services
         projectService = (ProjectService) cellMissyController.getBeanByName("projectService");
-
+        experimentService = (ExperimentService) cellMissyController.getBeanByName("experimentService");
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
@@ -216,6 +226,15 @@ public class SetupExperimentPanelController {
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectJList());
         bindingGroup.addBinding(jListBinding);
+        //init instrument combo box
+        instrumentBindingList = ObservableCollections.observableList(experimentService.findAllInstruments());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, instrumentBindingList, experimentInfoPanel.getInstrumentComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+        //init magnification combo box
+        magnificationBindingList = ObservableCollections.observableList(experimentService.findAllMagnifications());
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, magnificationBindingList, experimentInfoPanel.getMagnificationComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+
         bindingGroup.bind();
         //add experimentInfoPanel to parent panel
         setupExperimentPanel.getTopPanel().add(experimentInfoPanel, gridBagConstraints);
@@ -240,7 +259,7 @@ public class SetupExperimentPanelController {
         experimentInfoPanel.getDateChooser().setDate(date);
 
         /**
-         * add action listener
+         * add action listeners
          */
         setupExperimentPanel.getNextButton().addActionListener(new ActionListener() {
 
@@ -269,6 +288,36 @@ public class SetupExperimentPanelController {
                 setupExperimentPanel.getFinishButton().setVisible(false);
                 setupExperimentPanel.getTopPanel().revalidate();
                 setupExperimentPanel.getTopPanel().repaint();
+            }
+        });
+
+        //click on Finish button: save the experiment
+        setupExperimentPanel.getFinishButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                //create a new experiment entity and set its fields
+                Experiment experiment = new Experiment();
+                experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());
+                experiment.setInstrument((Instrument) experimentInfoPanel.getInstrumentComboBox().getSelectedItem());
+                experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());
+                experiment.setExperimentNumber(Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()));
+                experiment.setExperimentStatus(ExperimentStatus.IN_PROGRESS);
+                experiment.setPurpose(experimentInfoPanel.getPurposeTextArea().getText());
+                experiment.setProject((Project) experimentInfoPanel.getProjectJList().getSelectedValue());
+                experiment.setPlateFormat((PlateFormat) setupPlatePanelController.getSetupPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
+                
+                //need to set the user like this NOW, to be changed!!!=====================================================================================
+                experiment.setUser(cellMissyController.getAUser());
+                
+                experiment.setPlateConditionCollection(conditionsPanelController.getPlateConditionBindingList());
+
+                for(PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()){
+                    plateCondition.setExperiment(experiment);
+                }
+                //save the new experiment to the DB
+                experimentService.save(experiment);
             }
         });
 
