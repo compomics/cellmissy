@@ -64,6 +64,10 @@ public class UserPanelController {
         return userPanel;
     }
 
+    public ObservableList<User> getUserBindingList() {
+        return userBindingList;
+    }
+
     private void initPanel() {
         //init userJList
         userBindingList = ObservableCollections.observableList(userService.findAll());

@@ -48,7 +48,7 @@ public class PlateCondition implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition")
     private Collection<Treatment> treatmentCollection;
     @JoinColumn(name = "l_cell_lineid", referencedColumnName = "cell_lineid")
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     private CellLine cellLine;
     @JoinColumn(name = "l_matrix_dimensionid", referencedColumnName = "matrix_dimensionid")
     @ManyToOne(optional = false)
@@ -57,10 +57,10 @@ public class PlateCondition implements Serializable {
     @ManyToOne(optional = false)
     private Assay assay;
     @JoinColumn(name = "l_ecmid", referencedColumnName = "ecmid")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private Ecm ecm;
     @JoinColumn(name = "l_experimentid", referencedColumnName = "experimentid")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private Experiment experiment;
     @Transient
     private String name;

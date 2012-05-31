@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
@@ -72,5 +73,9 @@ public class CellMissyController {
         }
         return isValid;
 
+    }
+    
+    public User getAUser(){
+        return userPanelController.getUserBindingList().get(0);
     }
 }

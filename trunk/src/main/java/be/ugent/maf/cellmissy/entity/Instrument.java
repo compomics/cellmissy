@@ -5,7 +5,9 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -40,6 +43,8 @@ public class Instrument implements Serializable {
     @Basic(optional = false)
     @Column(name = "name", unique=true)
     private String name;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "instrument")
+    private Collection<Experiment> experimentCollection;
 
     public Instrument() {
     }
@@ -69,6 +74,10 @@ public class Instrument implements Serializable {
         this.name = name;
     }
 
+    public Collection<Experiment> getExperimentCollection() {
+        return experimentCollection;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -91,6 +100,6 @@ public class Instrument implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.cellmissy.entity.Instrument[ instrumentid=" + instrumentid + " ]";
+        return name;
     }
 }

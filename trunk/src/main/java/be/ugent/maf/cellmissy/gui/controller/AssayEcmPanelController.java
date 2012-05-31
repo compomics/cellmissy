@@ -127,9 +127,9 @@ public class AssayEcmPanelController {
             //ecm coating type
             plateCondition.getEcm().setEcmCoating(ecmCoatingBindingList.get(assayEcm2DPanel.getCoatingComboBox().getSelectedIndex()));
             //ecm concentration
-            plateCondition.getEcm().setConcentration(Integer.parseInt(assayEcm2DPanel.getConcentrationTextField().getText()));
+            plateCondition.getEcm().setConcentration(Double.parseDouble(assayEcm2DPanel.getConcentrationTextField().getText()));
             //ecm volume
-            plateCondition.getEcm().setVolume(Integer.parseInt(assayEcm2DPanel.getVolumeTextField().getText()));
+            plateCondition.getEcm().setVolume(Double.parseDouble(assayEcm2DPanel.getVolumeTextField().getText()));
             //ecm coating time
             plateCondition.getEcm().setCoatingTime(assayEcm2DPanel.getCoatingTimeTextField().getText());
             //ecm coating temperature
@@ -142,7 +142,7 @@ public class AssayEcmPanelController {
             //ecm density
             plateCondition.getEcm().setEcmDensity(ecmDensityBindingList.get(assayEcm3DPanel.getDensityComboBox().getSelectedIndex()));
             //ecm volume
-            plateCondition.getEcm().setVolume(Integer.parseInt(assayEcm3DPanel.getVolumeTextField().getText()));
+            plateCondition.getEcm().setVolume(Double.parseDouble(assayEcm3DPanel.getVolumeTextField().getText()));
             //ecm polymerization time
             plateCondition.getEcm().setPolymerisationTime(assayEcm3DPanel.getPolymerizationTimeTextField().getText());
             //ecm polymerization temperature
@@ -213,15 +213,15 @@ public class AssayEcmPanelController {
 
         //do the binding
         bindingGroup.bind();
-        
+
         //set default fields
         assayEcm2DPanel.getCompositionComboBox().setSelectedIndex(0);
         assayEcm2DPanel.getCoatingComboBox().setSelectedIndex(0);
-        assayEcm2DPanel.getConcentrationTextField().setText("1");
-        assayEcm2DPanel.getVolumeTextField().setText("3");
+        assayEcm2DPanel.getConcentrationTextField().setText("0.5");
+        assayEcm2DPanel.getVolumeTextField().setText("0.5");
         assayEcm2DPanel.getCoatingTimeTextField().setText("12h");
         assayEcm2DPanel.getCoatingTemperatureTextField().setText("37C");
-        
+
         //add action listeners
         assayEcm2DPanel.getAddCompositionButton().addActionListener(new ActionListener() {
 
@@ -259,6 +259,13 @@ public class AssayEcmPanelController {
         //do the binding
         bindingGroup.bind();
 
+        //set default fields
+        assayEcm3DPanel.getCompositionComboBox().setSelectedIndex(0);
+        assayEcm3DPanel.getDensityComboBox().setSelectedIndex(0);
+        assayEcm3DPanel.getVolumeTextField().setText("0.5");
+        assayEcm3DPanel.getPolymerizationTimeTextField().setText("12h");
+        assayEcm3DPanel.getPolymerizationTemperatureTextField().setText("37C");
+        
         //add action listeners
         assayEcm3DPanel.getAddCompositionButton().addActionListener(new ActionListener() {
 

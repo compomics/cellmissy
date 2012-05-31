@@ -117,6 +117,7 @@ public class TreatmentPanelController {
                 if (treatmentPanel.getSourceList1().getSelectedValue() != null) {
                     //remove it from the source List and add it to the destination List
                     Treatment treatment = new Treatment();
+                    treatment.setTreatmentType((TreatmentType) treatmentPanel.getSourceList1().getSelectedValue());
                     initTreatment(treatment);
                     drugBindingList.remove((TreatmentType) treatmentPanel.getSourceList1().getSelectedValue());
                 }
@@ -124,6 +125,7 @@ public class TreatmentPanelController {
                 if (treatmentPanel.getSourceList2().getSelectedValue() != null) {
                     //remove it from the source List and add it to the destination List
                     Treatment treatment = new Treatment();
+                    treatment.setTreatmentType((TreatmentType) treatmentPanel.getSourceList2().getSelectedValue());
                     initTreatment(treatment);
                     generalTreatmentBindingList.remove((TreatmentType) treatmentPanel.getSourceList2().getSelectedValue());
                 }
@@ -201,17 +203,29 @@ public class TreatmentPanelController {
     }
 
     /**
-     * update treatments for a condition
+     * update treatment collection for previously selected condition
      */
-    public void updateTreatments(PlateCondition plateCondition) {
+    public void updateTreatmentCollection(PlateCondition plateCondition) {
         for (Treatment treatment : treatmentBindingList) {
-            plateCondition.getTreatmentCollection().add(treatment);
+            //set plate condition of the treatment
+            treatment.setPlateConditionCollection(plateCondition);
+            //update treatment collection of the plate condition
+            if (!plateCondition.getTreatmentCollection().contains(treatment)) {
+                plateCondition.getTreatmentCollection().add(treatment);
+            }
+        }
+    }
+
+    public void updateTreatmentList(PlateCondition plateCondition) {
+        //clear treatment list and show the actual one
+        treatmentBindingList.clear();
+        for (Treatment treatment : plateCondition.getTreatmentCollection()) {
+            treatmentBindingList.add(treatment);
         }
     }
 
     private void initTreatment(Treatment treatment) {
-        treatment.setTreatmentType((TreatmentType) treatmentPanel.getSourceList1().getSelectedValue());
-        treatment.setConcentration(10);
+        treatment.setConcentration(0.5);
         treatment.setDescription("Please add some information here");
         treatment.setTiming("10 hours");
         treatment.setAssayMedium(conditionsPanelController.getMediumBindingList().get(0));

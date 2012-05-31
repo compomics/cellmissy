@@ -72,6 +72,10 @@ public class SetupPlatePanelController {
         return setupPlatePanel;
     }
 
+    public SetupPlatePanelGui getSetupPlatePanelGui() {
+        return setupPlatePanelGui;
+    }
+
     /**
      * public methods
      *  

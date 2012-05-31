@@ -5,7 +5,11 @@
 package be.ugent.maf.cellmissy.service.impl;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.Instrument;
+import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.repository.ExperimentRepository;
+import be.ugent.maf.cellmissy.repository.InstrumentRepository;
+import be.ugent.maf.cellmissy.repository.MagnificationRepository;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import java.io.File;
 import java.util.List;
@@ -23,6 +27,10 @@ public class ExperimentServiceImpl implements ExperimentService {
 
     @Autowired
     private ExperimentRepository experimentRepository;
+    @Autowired
+    private InstrumentRepository instrumentRepository;
+    @Autowired
+    private MagnificationRepository magnificationRepository;
 
     @Override
     public Experiment createNewExperiment(int experimentNumber, File projectFolder) {
@@ -32,7 +40,7 @@ public class ExperimentServiceImpl implements ExperimentService {
         newExperiment.setExperimentNumber(experimentNumber);
 
         // create experiment folder from project folder
-        String experimentFolder = projectFolder.getName() + "_E" +Integer.toString(experimentNumber);
+        String experimentFolder = projectFolder.getName() + "_E" + Integer.toString(experimentNumber);
         File subdirectory = new File(projectFolder, experimentFolder);
         subdirectory.mkdir();
 
@@ -59,10 +67,14 @@ public class ExperimentServiceImpl implements ExperimentService {
         entity = experimentRepository.save(entity);
         experimentRepository.delete(entity);
     }
-    
-    public static void main (String[] args) {
-        ExperimentService experimentService = new ExperimentServiceImpl();
-        File projectFolder = new File ("C:\\Users\\Paola\\Desktop\\2");
-        experimentService.createNewExperiment(12, projectFolder);
+
+    @Override
+    public List<Instrument> findAllInstruments() {
+        return instrumentRepository.findAll();        
+    }
+
+    @Override
+    public List<Magnification> findAllMagnifications() {
+        return magnificationRepository.findAll();
     }
 }

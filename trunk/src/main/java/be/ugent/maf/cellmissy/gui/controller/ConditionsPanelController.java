@@ -226,7 +226,10 @@ public class ConditionsPanelController {
                     assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(previousConditionIndex));
                     assayEcmPanelController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
                     assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                    treatmentPanelController.updateTreatments(plateConditionBindingList.get(previousConditionIndex));
+                    treatmentPanelController.updateTreatmentCollection(plateConditionBindingList.get(previousConditionIndex));
+                    if (!plateConditionBindingList.get(locationToIndex).getTreatmentCollection().isEmpty()) {
+                        treatmentPanelController.updateTreatmentList(plateConditionBindingList.get(locationToIndex));
+                    }
                 }
                 previousConditionIndex = locationToIndex;
             }
@@ -283,7 +286,7 @@ public class ConditionsPanelController {
     }
 
     /**
-     * this method assigns default member fields to a plateCondition entity
+     * this method assigns default fields to the first Condition of the experiment
      * @param plateCondition 
      */
     private void initCondition(PlateCondition plateCondition) {
@@ -294,11 +297,12 @@ public class ConditionsPanelController {
         //set the cell line
         CellLine cellLine = new CellLine();
         cellLine.setCellLineType(cellLineTypeBindingList.get(0));
-        cellLine.setSeedingDensity(5000);
+        cellLine.setSeedingDensity(50000);
         cellLine.setSeedingTime("24 hours");
         cellLine.setGrowthMedium(mediumBindingList.get(0));
         plateCondition.setCellLine(cellLine);
-
+        cellLine.setPlateCondition(plateCondition);
+        
         //set matrix dimension: 2D
         plateCondition.setMatrixDimension(assayEcmPanelController.getMatrixDimensionBindingList().get(0));
 
@@ -309,18 +313,15 @@ public class ConditionsPanelController {
         Ecm ecm = new Ecm();
         ecm.setEcmComposition(assayEcmPanelController.getEcm2DCompositionBindingList().get(0));
         ecm.setEcmCoating(assayEcmPanelController.getEcmCoatingBindingList().get(0));
-        ecm.setCoatingTemperature("37");
+        ecm.setCoatingTemperature("37C");
         ecm.setCoatingTime("12h");
-        ecm.setConcentration(1);
-        ecm.setVolume(3);
+        ecm.setConcentration(0.5);
+        ecm.setVolume(0.5);
         plateCondition.setEcm(ecm);
 
-        //set the treatment, empty collection of treatments
-        Treatment treatment = new Treatment();
-        
+        //set an empty collection of treatments
+
         List<Treatment> treatmentList = new ArrayList<>();
-        treatmentList.add(treatment);
-        treatment.setAssayMedium(mediumBindingList.get(0));
         plateCondition.setTreatmentCollection(treatmentList);
 
         //set an empty collection of wells

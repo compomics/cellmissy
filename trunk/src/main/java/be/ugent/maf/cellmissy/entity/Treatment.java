@@ -45,7 +45,7 @@ public class Treatment implements Serializable {
     @Column(name = "description")
     private String description;
     @Column(name = "concentration")
-    private Integer concentration;
+    private Double concentration;
     @Column(name = "timing")
     private String timing;
     @Column(name = "assay_medium")
@@ -80,11 +80,11 @@ public class Treatment implements Serializable {
         this.description = description;
     }
 
-    public Integer getConcentration() {
+    public Double getConcentration() {
         return concentration;
     }
 
-    public void setConcentration(Integer concentration) {
+    public void setConcentration(Double concentration) {
         this.concentration = concentration;
     }
 
