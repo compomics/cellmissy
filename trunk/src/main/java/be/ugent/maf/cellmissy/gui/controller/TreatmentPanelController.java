@@ -208,7 +208,7 @@ public class TreatmentPanelController {
     public void updateTreatmentCollection(PlateCondition plateCondition) {
         for (Treatment treatment : treatmentBindingList) {
             //set plate condition of the treatment
-            treatment.setPlateConditionCollection(plateCondition);
+            treatment.setPlateCondition(plateCondition);
             //update treatment collection of the plate condition
             if (!plateCondition.getTreatmentCollection().contains(treatment)) {
                 plateCondition.getTreatmentCollection().add(treatment);
@@ -216,14 +216,77 @@ public class TreatmentPanelController {
         }
     }
 
-    public void updateTreatmentList(PlateCondition plateCondition) {
-        //clear treatment list and show the actual one
+    /**
+     * this method is used inn the condition panel controller to actually show the current treatment list and sync the source lists according to the last one
+     * @param plateCondition 
+     */
+    public void updateTreatmentLists(PlateCondition plateCondition) {
+
+        //update source lists: drugBindingList and generalTreatmentBindingList
+        updateSourceLists();
+        //empty the treatment binding list to show the actual one
         treatmentBindingList.clear();
+        //update the treatment list
+        updateDestinationList(plateCondition);
+    }
+
+     /**
+     * private methods and classes
+     *  
+     */
+    /**
+     * this method updates drug and general treatment lists according to actual list of treatment for current condition
+     */
+    private void updateSourceLists() {
+        for (Treatment treatment : treatmentBindingList) {
+            switch (treatment.getTreatmentType().getTreatmentCategory()) {
+                //drug
+                case 1:
+                    if (!drugBindingList.contains(treatment.getTreatmentType())) {
+                        drugBindingList.add(treatment.getTreatmentType());
+                    }
+                    break;
+                //general treatment
+                case 2:
+                    if (!generalTreatmentBindingList.contains(treatment.getTreatmentType())) {
+                        generalTreatmentBindingList.add(treatment.getTreatmentType());
+                    }
+                    break;
+            }
+        }
+    }
+    
+    /**
+     * this method updates the destination list (actual treatment list for current condition) and sync its changes with the two source lists
+     * @param plateCondition 
+     */
+    private void updateDestinationList(PlateCondition plateCondition) {
+        //fill in the treatment binding list with the acutually treatments for the current condition
         for (Treatment treatment : plateCondition.getTreatmentCollection()) {
-            treatmentBindingList.add(treatment);
+            if (!treatmentBindingList.contains(treatment)) {
+                treatmentBindingList.add(treatment);
+            }
+            switch (treatment.getTreatmentType().getTreatmentCategory()) {
+                //drug
+                case 1:
+                    if (drugBindingList.contains(treatment.getTreatmentType())) {
+                        drugBindingList.remove(treatment.getTreatmentType());
+                    }
+                    break;
+                //general treatment
+                case 2:
+                    if (generalTreatmentBindingList.contains(treatment.getTreatmentType())) {
+                        generalTreatmentBindingList.remove(treatment.getTreatmentType());
+                    }
+                    break;
+            }
         }
     }
 
+    /**
+     * this method sets some default parameters for a treatment
+     * @param treatment 
+     */
     private void initTreatment(Treatment treatment) {
         treatment.setConcentration(0.5);
         treatment.setDescription("Please add some information here");
