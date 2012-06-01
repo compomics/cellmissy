@@ -130,6 +130,14 @@ public class ConditionsPanelController {
     }
 
     /**
+     * this method updates assay ecm parameters for the previous condition and it's also used in the setup experiment panel controller to update the last condition
+     */
+    public void updateCondition(Integer conditionToBeUpdatedIndex) {
+        assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(conditionToBeUpdatedIndex));
+        treatmentPanelController.updateTreatmentCollection(plateConditionBindingList.get(conditionToBeUpdatedIndex));
+    }
+
+    /**
      * private methods and classes
      */
     private void initCellLinePanel() {
@@ -223,12 +231,14 @@ public class ConditionsPanelController {
             public void mouseClicked(MouseEvent e) {
                 int locationToIndex = conditionsPanel.getConditionsJList().locationToIndex(e.getPoint());
                 if (previousConditionIndex < plateConditionBindingList.size() && previousConditionIndex != -1) {
-                    assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(previousConditionIndex));
+                    //update fields of previous condition
+                    updateCondition(previousConditionIndex);
+                    //update and reset fields for the assay-ecm panel
                     assayEcmPanelController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
                     assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                    treatmentPanelController.updateTreatmentCollection(plateConditionBindingList.get(previousConditionIndex));
                     if (!plateConditionBindingList.get(locationToIndex).getTreatmentCollection().isEmpty()) {
-                        treatmentPanelController.updateTreatmentList(plateConditionBindingList.get(locationToIndex));
+                        //keep source and destination lists sync: show actual treatment collection
+                        treatmentPanelController.updateTreatmentLists(plateConditionBindingList.get(locationToIndex));
                     }
                 }
                 previousConditionIndex = locationToIndex;
@@ -236,7 +246,7 @@ public class ConditionsPanelController {
         });
 
         //select Condition 1 as default
-        conditionsPanel.getConditionsJList().setSelectedIndex(0);
+        conditionsPanel.getConditionsJList().setSelectedIndex(-1);
         //add an empty list of rectangles for Condition 1
         setupExperimentPanelController.onNewConditionAdded(firstCondition);
         //disable the Remove Button
@@ -302,7 +312,7 @@ public class ConditionsPanelController {
         cellLine.setGrowthMedium(mediumBindingList.get(0));
         plateCondition.setCellLine(cellLine);
         cellLine.setPlateCondition(plateCondition);
-        
+
         //set matrix dimension: 2D
         plateCondition.setMatrixDimension(assayEcmPanelController.getMatrixDimensionBindingList().get(0));
 

@@ -282,7 +282,7 @@ public class SetupExperimentPanelController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), experimentInfoPanel, setupPanel);
-                cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and fill in experiment data");
+                cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and provide microscope/experiment data");
                 setupExperimentPanel.getPreviousButton().setEnabled(false);
                 setupExperimentPanel.getNextButton().setEnabled(true);
                 setupExperimentPanel.getFinishButton().setVisible(false);
@@ -311,6 +311,8 @@ public class SetupExperimentPanelController {
                 //need to set the user like this NOW, to be changed!!!=====================================================================================
                 experiment.setUser(cellMissyController.getAUser());
                 
+                //update last condition of the experiment and then set the collection
+                updateLastCondition();
                 experiment.setPlateConditionCollection(conditionsPanelController.getPlateConditionBindingList());
 
                 for(PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()){
@@ -390,5 +392,9 @@ public class SetupExperimentPanelController {
             }
             button.setEnabled(true);
         }
+    }
+    
+    private void updateLastCondition(){
+        conditionsPanelController.updateCondition(conditionsPanelController.getPlateConditionBindingList().size() - 1);
     }
 }

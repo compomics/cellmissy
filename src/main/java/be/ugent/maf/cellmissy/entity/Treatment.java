@@ -109,16 +109,16 @@ public class Treatment implements Serializable {
         return plateCondition;
     }
 
+    public void setPlateCondition(PlateCondition plateCondition) {
+        this.plateCondition = plateCondition;
+    }
+
     public String getAssayMedium() {
         return assayMedium;
     }
 
     public void setAssayMedium(String assayMedium) {
         this.assayMedium = assayMedium;
-    }
-
-    public void setPlateConditionCollection(PlateCondition plateCondition) {
-        this.plateCondition = plateCondition;
     }
 
     public boolean equals(Object obj) {
