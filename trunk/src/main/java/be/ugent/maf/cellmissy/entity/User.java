@@ -14,6 +14,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jasypt.hibernate.type.EncryptedStringType;
 
@@ -24,13 +25,11 @@ import org.jasypt.hibernate.type.EncryptedStringType;
 @Entity
 @Table(name = "user", uniqueConstraints =
 @UniqueConstraint(columnNames = {"first_name", "last_name"}))
-@TypeDef(
-        name = "encryptedString",
-        typeClass = EncryptedStringType.class,
-        parameters = {
-                @Parameter(name = "encryptorRegisteredName", value = "jasyptHibernateEncryptor")
-        }
-)
+@TypeDef(name = "encryptedString",
+typeClass = EncryptedStringType.class,
+parameters = {
+    @Parameter(name = "encryptorRegisteredName", value = "jasyptHibernateEncryptor")
+})
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
@@ -61,6 +60,7 @@ public class User implements Serializable {
     private Role role;
     @Basic(optional = false)
     @Column(name = "password")
+    @Length(min = 6, max = 10, message="Please select a password between 6 and 10 characters")
     @Type(type = "encryptedString")
     private String password;
     @Basic(optional = false)

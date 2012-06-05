@@ -10,14 +10,8 @@ import be.ugent.maf.cellmissy.gui.user.UserPanel;
 import be.ugent.maf.cellmissy.service.UserService;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.PersistenceException;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -195,24 +189,7 @@ public class UserPanelController {
     }
 
     public List<String> validateUser() {
-        List<String> messages = new ArrayList<>();
-
-        // validate user entity class
-        ValidatorFactory userValidator = Validation.buildDefaultValidatorFactory();
-        Validator validator = userValidator.getValidator();
-        Set<ConstraintViolation<User>> constraintViolations = validator.validate(newUser);
-
-        if (!constraintViolations.isEmpty()) {
-
-            String message = "";
-            for (ConstraintViolation<User> constraintViolation : constraintViolations) {
-                messages.add(constraintViolation.getMessage());
-                message += constraintViolation.getMessage() + "\n";
-            }
-            cellMissyController.showMessage(message, 2);
-        }
-
-        return messages;
+        return cellMissyController.validateObject(newUser);
     }
 
     private void resetCreateUserTextFields() {

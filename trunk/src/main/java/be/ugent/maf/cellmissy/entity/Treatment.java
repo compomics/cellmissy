@@ -53,11 +53,19 @@ public class Treatment implements Serializable {
     @JoinColumn(name = "l_plate_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = true)
     private PlateCondition plateCondition;
-    @JoinColumn(name = "l_tratment_typeid", referencedColumnName = "treatment_typeid")
+    @JoinColumn(name = "l_treatment_typeid", referencedColumnName = "treatment_typeid")
     @ManyToOne(optional = true)
     private TreatmentType treatmentType;
 
     public Treatment() {
+    }
+
+    public Treatment(String description, Double concentration, String timing, String assayMedium, TreatmentType treatmentType) {
+        this.description = description;
+        this.concentration = concentration;
+        this.timing = timing;
+        this.assayMedium = assayMedium;
+        this.treatmentType = treatmentType;
     }
 
     public Treatment(Integer treatmentid) {

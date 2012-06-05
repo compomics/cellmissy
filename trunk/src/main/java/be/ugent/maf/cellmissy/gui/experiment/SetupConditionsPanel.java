@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -66,6 +67,10 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
 
     public JPanel getTreatmentParentPanel() {
         return treatmentParentPanel;
+    }
+
+    public JTabbedPane getjTabbedPane1() {
+        return jTabbedPane1;
     }
 
     /** This method is called from within the constructor to

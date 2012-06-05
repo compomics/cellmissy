@@ -25,15 +25,18 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.hibernate.validator.constraints.Range;
 
 /**
  *
  * @author Paola
  */
 @Entity
-@Table(name = "experiment", uniqueConstraints=@UniqueConstraint(columnNames="experiment_number"))
+@Table(name = "experiment", uniqueConstraints =
+@UniqueConstraint(columnNames = {"experiment_number", "l_projectid"}))
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Experiment.findAll", query = "SELECT e FROM Experiment e"),
@@ -43,17 +46,21 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Experiment.findByExperimentDate", query = "SELECT e FROM Experiment e WHERE e.experimentDate = :experimentDate"),
     @NamedQuery(name = "Experiment.findByDuration", query = "SELECT e FROM Experiment e WHERE e.duration = :duration"),
     @NamedQuery(name = "Experiment.findByExperimentInterval", query = "SELECT e FROM Experiment e WHERE e.experimentInterval = :experimentInterval"),
-    @NamedQuery(name = "Experiment.findByTimeFrames", query = "SELECT e FROM Experiment e WHERE e.timeFrames = :timeFrames")})
+    @NamedQuery(name = "Experiment.findByTimeFrames", query = "SELECT e FROM Experiment e WHERE e.timeFrames = :timeFrames"),
+    @NamedQuery(name = "Experiment.findExperimentNumbersByProjectId", query = "SELECT e.experimentNumber FROM Experiment e WHERE e.project.projectid = :projectid")})
 public class Experiment implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "experimentid")
     private Integer experimentid;
-    @Basic(optional = true)
+    @Basic(optional = false)
+    @Range(min = 1, max = 100, message = "Please insert a valid experiment number")
     @Column(name = "experiment_number")
     private int experimentNumber;
+    @Size(min = 3, max = 150, message = "Please insert a purpose")
     @Column(name = "purpose")
     private String purpose;
     @Basic(optional = true)
@@ -79,7 +86,7 @@ public class Experiment implements Serializable {
     @JoinColumn(name = "l_instrumentid", referencedColumnName = "instrumentid")
     @ManyToOne(optional = false)
     private Instrument instrument;
-    @JoinColumn(name = "l_idproject", referencedColumnName = "projectid")
+    @JoinColumn(name = "l_projectid", referencedColumnName = "projectid")
     @ManyToOne(optional = false)
     private Project project;
     @JoinColumn(name = "l_plate_formatid", referencedColumnName = "plate_formatid")
@@ -239,5 +246,4 @@ public class Experiment implements Serializable {
     public String toString() {
         return "be.ugent.maf.cellmissy.entity.Experiment[ experimentid=" + experimentid + " ]";
     }
-    
 }

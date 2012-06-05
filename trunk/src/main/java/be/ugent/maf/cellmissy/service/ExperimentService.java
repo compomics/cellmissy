@@ -21,4 +21,6 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
     List<Instrument> findAllInstruments(); 
     
     List<Magnification> findAllMagnifications();
+    
+    List<Integer> findExperimentNumbersByProjectId(Integer projectId);
 }
