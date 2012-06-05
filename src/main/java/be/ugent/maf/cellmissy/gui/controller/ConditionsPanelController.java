@@ -126,15 +126,20 @@ public class ConditionsPanelController {
      * @return the selected value of the conditions List
      */
     public PlateCondition getCurrentCondition() {
-        return ((PlateCondition) (conditionsPanel.getConditionsJList().getSelectedValue()));
+        PlateCondition currentCondition = new PlateCondition();
+        if (conditionsPanel.getConditionsJList().getSelectedValue() != null) {
+            currentCondition = ((PlateCondition) (conditionsPanel.getConditionsJList().getSelectedValue()));
+        }
+        return currentCondition;
     }
 
     /**
-     * this method updates assay ecm parameters for the previous condition and it's also used in the setup experiment panel controller to update the last condition
+     * this method updates fields of a condition (assay/ecm and treatments fields)
+     * @param conditionIndex 
      */
-    public void updateCondition(Integer conditionToBeUpdatedIndex) {
-        assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(conditionToBeUpdatedIndex));
-        treatmentPanelController.updateTreatmentCollection(plateConditionBindingList.get(conditionToBeUpdatedIndex));
+    public void updateCondition(Integer conditionIndex) {
+        assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(conditionIndex));
+        treatmentPanelController.updateTreatmentCollection(plateConditionBindingList.get(conditionIndex));
     }
 
     /**
@@ -181,6 +186,8 @@ public class ConditionsPanelController {
     }
 
     private void initConditionsPanel() {
+
+        setupConditionsPanel.getjTabbedPane1().setEnabled(false);
 
         //set current and previous conditions indexes
         conditionIndex = 0;
@@ -229,6 +236,7 @@ public class ConditionsPanelController {
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                setupConditionsPanel.getjTabbedPane1().setEnabled(true);
                 int locationToIndex = conditionsPanel.getConditionsJList().locationToIndex(e.getPoint());
                 if (previousConditionIndex < plateConditionBindingList.size() && previousConditionIndex != -1) {
                     //update fields of previous condition
@@ -236,10 +244,10 @@ public class ConditionsPanelController {
                     //update and reset fields for the assay-ecm panel
                     assayEcmPanelController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
                     assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                    if (!plateConditionBindingList.get(locationToIndex).getTreatmentCollection().isEmpty()) {
-                        //keep source and destination lists sync: show actual treatment collection
-                        treatmentPanelController.updateTreatmentLists(plateConditionBindingList.get(locationToIndex));
-                    }
+                    //empty the treatments list and fill it in with other objects
+                    treatmentPanelController.initTreatmentList(plateConditionBindingList.get(previousConditionIndex));
+                    //keep source and destination lists sync: show actual treatment collection
+                    treatmentPanelController.updateTreatmentLists(plateConditionBindingList.get(locationToIndex));
                 }
                 previousConditionIndex = locationToIndex;
             }
@@ -267,6 +275,7 @@ public class ConditionsPanelController {
                 plateConditionBindingList.add(newCondition);
                 //add a new empty list of rectangles for the just added Condition
                 setupExperimentPanelController.onNewConditionAdded(newCondition);
+
                 //after a new condition is added enable the remove button
                 if (!conditionsPanel.getRemoveButton().isEnabled()) {
                     conditionsPanel.getRemoveButton().setEnabled(true);
@@ -296,7 +305,7 @@ public class ConditionsPanelController {
     }
 
     /**
-     * this method assigns default fields to the first Condition of the experiment
+     * this method assigns default fields to each new condition created
      * @param plateCondition 
      */
     private void initCondition(PlateCondition plateCondition) {
@@ -330,7 +339,6 @@ public class ConditionsPanelController {
         plateCondition.setEcm(ecm);
 
         //set an empty collection of treatments
-
         List<Treatment> treatmentList = new ArrayList<>();
         plateCondition.setTreatmentCollection(treatmentList);
 

@@ -11,7 +11,6 @@ import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
-import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ExperimentInfoPanel;
@@ -21,7 +20,6 @@ import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
-import be.ugent.maf.cellmissy.service.UserService;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -31,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.PersistenceException;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -51,6 +50,7 @@ import org.jdesktop.swingbinding.SwingBindings;
 public class SetupExperimentPanelController {
 
     //model
+    private Experiment experiment;
     private ObservableList<Project> projectBindingList;
     private ObservableList<Instrument> instrumentBindingList;
     private ObservableList<Magnification> magnificationBindingList;
@@ -92,6 +92,7 @@ public class SetupExperimentPanelController {
 
         //init views
         initExperimentInfoPanel();
+        initSetupExperimentPanel();
     }
 
     /**
@@ -218,6 +219,23 @@ public class SetupExperimentPanelController {
         }
     }
 
+    public boolean validateExperimentInfo() {
+        boolean isValid = false;
+        //if experiment number is OK, set it
+        if (!projectHasExperiment(((Project) experimentInfoPanel.getProjectJList().getSelectedValue()).getProjectid(), Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()))) {
+            experiment.setExperimentNumber(Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()));
+        } else {
+            String message = "Experiment number " + experimentInfoPanel.getNumberTextField().getText() + " already exists for this project";
+            cellMissyController.showMessage(message, 0);
+            //reset number text field
+            experimentInfoPanel.getNumberTextField().setText("");
+        }
+        if (cellMissyController.validateObject(experiment).isEmpty()) {
+            isValid = true;
+        }
+        return isValid;
+    }
+
     /**
      * initializes the experiment info panel
      */
@@ -242,6 +260,20 @@ public class SetupExperimentPanelController {
         //select first project in the ProjectList
         experimentInfoPanel.getProjectJList().setSelectedIndex(0);
 
+        //date cannot be modified manually
+        experimentInfoPanel.getDateChooser().getDateEditor().setEnabled(false);
+
+        //get current date with Date()
+        Date date = new Date();
+        experimentInfoPanel.getDateChooser().setDate(date);
+
+        ExperimentListener experimentListener = new ExperimentListener(setupExperimentPanel.getNextButton());
+        experimentListener.registerDoc(experimentInfoPanel.getNumberTextField().getDocument());
+        experimentListener.registerDoc(experimentInfoPanel.getPurposeTextArea().getDocument());
+        experimentListener.registerDoc(((JTextField) experimentInfoPanel.getDateChooser().getDateEditor().getUiComponent()).getDocument());
+    }
+
+    private void initSetupExperimentPanel() {
         //disable Next and Previous buttons
         setupExperimentPanel.getNextButton().setEnabled(false);
         setupExperimentPanel.getPreviousButton().setEnabled(false);
@@ -251,13 +283,6 @@ public class SetupExperimentPanelController {
 
         cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and fill in experiment data");
 
-        //date cannot be modified manually
-        experimentInfoPanel.getDateChooser().getDateEditor().setEnabled(false);
-
-        //get current date with Date()
-        Date date = new Date();
-        experimentInfoPanel.getDateChooser().setDate(date);
-
         /**
          * add action listeners
          */
@@ -265,15 +290,26 @@ public class SetupExperimentPanelController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //show the setupPanel and hide the experimentInfoPanel
-                GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), setupPanel, experimentInfoPanel);
-                cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Add conditions and select wells for each condition. Conditions details can be chosen in the right panel.");
-                //enable the Previous Button
-                setupExperimentPanel.getPreviousButton().setEnabled(true);
-                setupExperimentPanel.getNextButton().setEnabled(false);
-                setupExperimentPanel.getFinishButton().setVisible(true);
-                setupExperimentPanel.getTopPanel().revalidate();
-                setupExperimentPanel.getTopPanel().repaint();
+                //create a new experiment entity and set its fields
+                experiment = new Experiment();
+                experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());
+                experiment.setInstrument((Instrument) experimentInfoPanel.getInstrumentComboBox().getSelectedItem());
+                experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());
+                experiment.setExperimentStatus(ExperimentStatus.IN_PROGRESS);
+                experiment.setPurpose(experimentInfoPanel.getPurposeTextArea().getText());
+                experiment.setProject((Project) experimentInfoPanel.getProjectJList().getSelectedValue());
+                experiment.setPlateFormat((PlateFormat) setupPlatePanelController.getSetupPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
+                if (validateExperimentInfo()) {
+                    //show the setupPanel and hide the experimentInfoPanel
+                    GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), setupPanel, experimentInfoPanel);
+                    cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Add conditions and select wells for each condition. Conditions details can be chosen in the right panel.");
+                    //enable the Previous Button
+                    setupExperimentPanel.getPreviousButton().setEnabled(true);
+                    setupExperimentPanel.getNextButton().setEnabled(false);
+                    setupExperimentPanel.getFinishButton().setVisible(true);
+                    setupExperimentPanel.getTopPanel().revalidate();
+                    setupExperimentPanel.getTopPanel().repaint();
+                }
             }
         });
 
@@ -297,36 +333,22 @@ public class SetupExperimentPanelController {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                //create a new experiment entity and set its fields
-                Experiment experiment = new Experiment();
-                experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());
-                experiment.setInstrument((Instrument) experimentInfoPanel.getInstrumentComboBox().getSelectedItem());
-                experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());
-                experiment.setExperimentNumber(Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()));
-                experiment.setExperimentStatus(ExperimentStatus.IN_PROGRESS);
-                experiment.setPurpose(experimentInfoPanel.getPurposeTextArea().getText());
-                experiment.setProject((Project) experimentInfoPanel.getProjectJList().getSelectedValue());
-                experiment.setPlateFormat((PlateFormat) setupPlatePanelController.getSetupPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
-                
                 //need to set the user like this NOW, to be changed!!!=====================================================================================
                 experiment.setUser(cellMissyController.getAUser());
-                
+
                 //update last condition of the experiment and then set the collection
                 updateLastCondition();
                 experiment.setPlateConditionCollection(conditionsPanelController.getPlateConditionBindingList());
 
-                for(PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()){
+                for (PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()) {
                     plateCondition.setExperiment(experiment);
                 }
-                //save the new experiment to the DB
-                experimentService.save(experiment);
+                if (cellMissyController.validateExperiment()) {
+                    //save the new experiment to the DB
+                    experimentService.save(experiment);
+                }
             }
         });
-
-        ExperimentListener experimentListener = new ExperimentListener(setupExperimentPanel.getNextButton());
-        experimentListener.registerDoc(experimentInfoPanel.getNumberTextField().getDocument());
-        experimentListener.registerDoc(experimentInfoPanel.getPurposeTextArea().getDocument());
-        experimentListener.registerDoc(((JTextField) experimentInfoPanel.getDateChooser().getDateEditor().getUiComponent()).getDocument());
     }
 
     /*
@@ -393,8 +415,19 @@ public class SetupExperimentPanelController {
             button.setEnabled(true);
         }
     }
-    
-    private void updateLastCondition(){
+
+    private boolean projectHasExperiment(Integer projectId, Integer experimentNumber) {
+        boolean hasExperiment = false;
+        for (Integer number : experimentService.findExperimentNumbersByProjectId(projectId)) {
+            if (number == experimentNumber) {
+                hasExperiment = true;
+            }
+        }
+        return hasExperiment;
+    }
+
+    private void updateLastCondition() {
+
         conditionsPanelController.updateCondition(conditionsPanelController.getPlateConditionBindingList().size() - 1);
     }
 }
