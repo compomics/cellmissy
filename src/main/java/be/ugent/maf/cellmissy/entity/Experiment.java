@@ -24,7 +24,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -35,8 +34,7 @@ import org.hibernate.validator.constraints.Range;
  * @author Paola
  */
 @Entity
-@Table(name = "experiment", uniqueConstraints =
-@UniqueConstraint(columnNames = {"experiment_number", "l_projectid"}))
+@Table(name = "experiment")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Experiment.findAll", query = "SELECT e FROM Experiment e"),
@@ -57,10 +55,10 @@ public class Experiment implements Serializable {
     @Column(name = "experimentid")
     private Integer experimentid;
     @Basic(optional = false)
-    @Range(min = 1, max = 100, message = "Please insert a valid experiment number")
+    @Range(min = 1, max = 100, message = "Experiment number must be between 1 and 100")
     @Column(name = "experiment_number")
     private int experimentNumber;
-    @Size(min = 3, max = 150, message = "Please insert a purpose")
+    @Size(min = 3, max = 150, message = "Purpose field must have between 3 and 150 characters")
     @Column(name = "purpose")
     private String purpose;
     @Basic(optional = true)

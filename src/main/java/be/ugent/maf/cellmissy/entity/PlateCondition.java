@@ -22,8 +22,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  *
@@ -44,6 +46,7 @@ public class PlateCondition implements Serializable {
     @Column(name = "plate_conditionid")
     private Integer plateConditionid;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition")
+    @NotEmpty(message = "Condition must have at least one well")
     private Collection<Well> wellCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition")
     private Collection<Treatment> treatmentCollection;

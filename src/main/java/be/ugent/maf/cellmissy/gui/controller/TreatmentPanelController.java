@@ -16,9 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JList;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -78,6 +76,47 @@ public class TreatmentPanelController {
         return treatmentPanel;
     }
 
+    /**
+     * update treatment collection for previously selected condition
+     */
+    public void updateTreatmentCollection(PlateCondition plateCondition) {
+        for (Treatment treatment : treatmentBindingList) {
+            //set plate condition of the treatment
+            treatment.setPlateCondition(plateCondition);
+            //update treatment collection of the plate condition
+            if (!plateCondition.getTreatmentCollection().contains(treatment)) {
+                plateCondition.getTreatmentCollection().add(treatment);
+            }
+        }
+    }
+
+    /**
+     * this method is used inn the condition panel controller to actually show the current treatment list and sync the source lists according to the last one
+     * @param plateCondition 
+     */
+    public void updateTreatmentLists(PlateCondition plateCondition) {
+        //update source lists: drugBindingList and generalTreatmentBindingList
+        updateSourceLists();
+        //empty the treatment binding list to show the actual one
+        treatmentBindingList.clear();
+        //update the treatment list
+        updateDestinationList(plateCondition);
+    }
+
+    public void initTreatmentList(PlateCondition plateCondition) {
+        //empty the list and fill it with new treatments, copying all fields from previous treatment collection
+        treatmentBindingList.clear();
+
+        for (Treatment treatment : plateCondition.getTreatmentCollection()) {
+            Treatment newTreatment = new Treatment(treatment.getDescription(), treatment.getConcentration(), treatment.getTiming(), treatment.getAssayMedium(), treatment.getTreatmentType());
+            treatmentBindingList.add(newTreatment);
+        }
+    }
+
+    /**
+     * private methods and classes
+     *  
+     */
     private void initTreatmentSetupPanel() {
 
         //init drug and general treatment binding lists
@@ -202,47 +241,6 @@ public class TreatmentPanelController {
         });
     }
 
-    /**
-     * update treatment collection for previously selected condition
-     */
-    public void updateTreatmentCollection(PlateCondition plateCondition) {
-        for (Treatment treatment : treatmentBindingList) {
-            //set plate condition of the treatment
-            treatment.setPlateCondition(plateCondition);
-            //update treatment collection of the plate condition
-            if (!plateCondition.getTreatmentCollection().contains(treatment)) {
-                plateCondition.getTreatmentCollection().add(treatment);
-            }
-        }
-    }
-
-    /**
-     * this method is used inn the condition panel controller to actually show the current treatment list and sync the source lists according to the last one
-     * @param plateCondition 
-     */
-    public void updateTreatmentLists(PlateCondition plateCondition) {
-        //update source lists: drugBindingList and generalTreatmentBindingList
-        updateSourceLists();
-        //empty the treatment binding list to show the actual one
-        treatmentBindingList.clear();
-        //update the treatment list
-        updateDestinationList(plateCondition);
-    }
-
-    public void initTreatmentList(PlateCondition plateCondition) {
-        //empty the list and fill it with new treatments, copying all fields from previous treatment collection
-        treatmentBindingList.clear();
-
-        for (Treatment treatment : plateCondition.getTreatmentCollection()) {
-            Treatment newTreatment = new Treatment(treatment.getDescription(), treatment.getConcentration(), treatment.getTiming(), treatment.getAssayMedium(), treatment.getTreatmentType());
-            treatmentBindingList.add(newTreatment);
-        }
-    }
-
-    /**
-     * private methods and classes
-     *  
-     */
     /**
      * this method updates drug and general treatment lists according to actual list of treatment for current condition
      */

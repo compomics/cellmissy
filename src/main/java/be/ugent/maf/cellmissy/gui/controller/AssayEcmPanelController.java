@@ -5,18 +5,23 @@
 package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.Assay;
+import be.ugent.maf.cellmissy.entity.Ecm;
 import be.ugent.maf.cellmissy.entity.EcmCoating;
 import be.ugent.maf.cellmissy.entity.EcmComposition;
 import be.ugent.maf.cellmissy.entity.EcmDensity;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
+import be.ugent.maf.cellmissy.gui.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.AssayEcm2DPanel;
 import be.ugent.maf.cellmissy.gui.experiment.AssayEcm3DPanel;
 import be.ugent.maf.cellmissy.service.AssayService;
 import be.ugent.maf.cellmissy.service.EcmService;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.validation.Validation;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -82,42 +87,6 @@ public class AssayEcmPanelController {
         return ecmCoatingBindingList;
     }
 
-    private void initEcmPanel() {
-        //init matrixDimensionJCombo
-        matrixDimensionBindingList = ObservableCollections.observableList(ecmService.findAllMatrixDimension());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, matrixDimensionBindingList, conditionsPanelController.getSetupConditionsPanel().getEcmDimensionComboBox());
-        bindingGroup.addBinding(jComboBoxBinding);
-        bindingGroup.bind();
-
-        //init sub views
-        assayEcm2DPanel = new AssayEcm2DPanel();
-        assayEcm3DPanel = new AssayEcm3DPanel();
-        initAssayEcm2DPanel();
-        initAssayEcm3DPanel();
-
-        //add action listener
-        //show different assay-ecm, 2D-3D panels
-        conditionsPanelController.getSetupConditionsPanel().getEcmDimensionComboBox().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                switch (((MatrixDimension) (conditionsPanelController.getSetupConditionsPanel().getEcmDimensionComboBox().getSelectedItem())).getMatrixDimension()) {
-                    case "2D":
-                        GuiUtils.switchChildPanels(conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel(), assayEcm2DPanel, assayEcm3DPanel);
-                        break;
-                    case "3D":
-                        GuiUtils.switchChildPanels(conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel(), assayEcm3DPanel, assayEcm2DPanel);
-                        break;
-                }
-                conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel().revalidate();
-                conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel().repaint();
-            }
-        });
-
-        conditionsPanelController.getSetupConditionsPanel().getEcmDimensionComboBox().setSelectedIndex(0);
-
-    }
-
     public void updateAssayEcmConditionFields(PlateCondition plateCondition) {
         if (plateCondition.getMatrixDimension().getMatrixDimension().equals("2D")) {
             //set assay
@@ -127,9 +96,24 @@ public class AssayEcmPanelController {
             //ecm coating type
             plateCondition.getEcm().setEcmCoating(ecmCoatingBindingList.get(assayEcm2DPanel.getCoatingComboBox().getSelectedIndex()));
             //ecm concentration
-            plateCondition.getEcm().setConcentration(Double.parseDouble(assayEcm2DPanel.getConcentrationTextField().getText()));
+            try {
+                plateCondition.getEcm().setConcentration(Double.parseDouble(assayEcm2DPanel.getConcentrationTextField().getText()));
+            } catch (NumberFormatException e) {
+                String message = "Please insert a valid Concentration";
+                conditionsPanelController.showMessage(message, 2);
+                conditionsPanelController.getConditionsPanel().getConditionsJList().setSelectedIndex(conditionsPanelController.getPreviousConditionIndex());
+                assayEcm2DPanel.getConcentrationTextField().requestFocusInWindow();
+            }
             //ecm volume
-            plateCondition.getEcm().setVolume(Double.parseDouble(assayEcm2DPanel.getVolumeTextField().getText()));
+            try {
+                plateCondition.getEcm().setVolume(Double.parseDouble(assayEcm2DPanel.getVolumeTextField().getText()));
+            } catch (NumberFormatException e) {
+                String message = "Please insert a valid Volume";
+                conditionsPanelController.showMessage(message, 2);
+                conditionsPanelController.getConditionsPanel().getConditionsJList().setSelectedIndex(conditionsPanelController.getPreviousConditionIndex());
+                assayEcm2DPanel.getVolumeTextField().requestFocusInWindow();
+            }
+
             //ecm coating time
             plateCondition.getEcm().setCoatingTime(assayEcm2DPanel.getCoatingTimeTextField().getText());
             //ecm coating temperature
@@ -142,13 +126,19 @@ public class AssayEcmPanelController {
             //ecm density
             plateCondition.getEcm().setEcmDensity(ecmDensityBindingList.get(assayEcm3DPanel.getDensityComboBox().getSelectedIndex()));
             //ecm volume
-            plateCondition.getEcm().setVolume(Double.parseDouble(assayEcm3DPanel.getVolumeTextField().getText()));
+            try {
+                plateCondition.getEcm().setVolume(Double.parseDouble(assayEcm3DPanel.getVolumeTextField().getText()));
+            } catch (NumberFormatException e) {
+                String message = "Please insert a valid Volume";
+                conditionsPanelController.showMessage(message, 2);
+                conditionsPanelController.getConditionsPanel().getConditionsJList().setSelectedIndex(conditionsPanelController.getPreviousConditionIndex());
+                assayEcm3DPanel.getVolumeTextField().requestFocusInWindow();
+            }
             //ecm polymerization time
             plateCondition.getEcm().setPolymerisationTime(assayEcm3DPanel.getPolymerizationTimeTextField().getText());
             //ecm polymerization temperature
             plateCondition.getEcm().setPolymerisationTemperature(assayEcm3DPanel.getPolymerizationTemperatureTextField().getText());
         }
-
 
     }
 
@@ -190,6 +180,78 @@ public class AssayEcmPanelController {
             assayEcm2DPanel.getCoatingTimeTextField().setText("");
             assayEcm2DPanel.getCoatingTemperatureTextField().setText("");
         }
+    }
+
+    /**
+     * validate user input for the ECM 2D panel
+     * @return 
+     */
+    public List<String> validate2DEcm() {
+
+        List<String> messages = new ArrayList<>();
+        if (assayEcm2DPanel.getConcentrationTextField().getText().isEmpty()) {
+            String message = "ECM Concentration cannot be null";
+            messages.add(message);
+            assayEcm2DPanel.getConcentrationTextField().requestFocusInWindow();
+        }
+
+        if (assayEcm2DPanel.getVolumeTextField().getText().isEmpty()) {
+            String message = "ECM Volume cannot be null";
+            messages.add(message);
+            assayEcm2DPanel.getVolumeTextField().requestFocusInWindow();
+        }
+        return messages;
+
+    }
+
+    /**
+     * validate user input for the ECM 3D panel
+     * @return 
+     */
+    public List<String> validate3DEcm() {
+        List<String> messages = new ArrayList<>();
+        if (assayEcm3DPanel.getVolumeTextField().getText().isEmpty()) {
+           String message = "ECM Volume cannot be null";
+           messages.add(message);
+           assayEcm3DPanel.getVolumeTextField().requestFocusInWindow();
+        }
+        return messages;
+    }
+
+    private void initEcmPanel() {
+        //init matrixDimensionJCombo
+        matrixDimensionBindingList = ObservableCollections.observableList(ecmService.findAllMatrixDimension());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, matrixDimensionBindingList, conditionsPanelController.getSetupConditionsPanel().getEcmDimensionComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+        bindingGroup.bind();
+
+        //init sub views
+        assayEcm2DPanel = new AssayEcm2DPanel();
+        assayEcm3DPanel = new AssayEcm3DPanel();
+        initAssayEcm2DPanel();
+        initAssayEcm3DPanel();
+
+        //add action listener
+        //show different assay-ecm, 2D-3D panels
+        conditionsPanelController.getSetupConditionsPanel().getEcmDimensionComboBox().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                switch (((MatrixDimension) (conditionsPanelController.getSetupConditionsPanel().getEcmDimensionComboBox().getSelectedItem())).getMatrixDimension()) {
+                    case "2D":
+                        GuiUtils.switchChildPanels(conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel(), assayEcm2DPanel, assayEcm3DPanel);
+                        break;
+                    case "3D":
+                        GuiUtils.switchChildPanels(conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel(), assayEcm3DPanel, assayEcm2DPanel);
+                        break;
+                }
+                conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel().revalidate();
+                conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel().repaint();
+            }
+        });
+
+        conditionsPanelController.getSetupConditionsPanel().getEcmDimensionComboBox().setSelectedIndex(0);
+
     }
 
     private void initAssayEcm2DPanel() {
@@ -265,7 +327,7 @@ public class AssayEcmPanelController {
         assayEcm3DPanel.getVolumeTextField().setText("0.5");
         assayEcm3DPanel.getPolymerizationTimeTextField().setText("12h");
         assayEcm3DPanel.getPolymerizationTemperatureTextField().setText("37C");
-        
+
         //add action listeners
         assayEcm3DPanel.getAddCompositionButton().addActionListener(new ActionListener() {
 

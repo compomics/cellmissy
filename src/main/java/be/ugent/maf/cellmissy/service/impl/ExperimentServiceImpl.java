@@ -7,7 +7,6 @@ package be.ugent.maf.cellmissy.service.impl;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.Instrument;
 import be.ugent.maf.cellmissy.entity.Magnification;
-import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.repository.ExperimentRepository;
 import be.ugent.maf.cellmissy.repository.InstrumentRepository;
 import be.ugent.maf.cellmissy.repository.MagnificationRepository;
