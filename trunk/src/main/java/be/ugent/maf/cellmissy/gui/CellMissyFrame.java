@@ -56,6 +56,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
         overviewParentPanel = new javax.swing.JPanel();
         userParentPanel = new javax.swing.JPanel();
         experimentSetupParentPanel = new javax.swing.JPanel();
+        loadingCellMiaDataPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBounds(new java.awt.Rectangle(30, 5, 0, 0));
@@ -74,6 +75,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         experimentSetupParentPanel.setLayout(new java.awt.GridBagLayout());
         jTabbedPane1.addTab("Experiment Set-up", experimentSetupParentPanel);
+        jTabbedPane1.addTab("Load CellMIA Data", loadingCellMiaDataPanel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -127,6 +129,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel experimentSetupParentPanel;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JPanel loadingCellMiaDataPanel;
     private javax.swing.JPanel overviewParentPanel;
     private javax.swing.JPanel userParentPanel;
     // End of variables declaration//GEN-END:variables

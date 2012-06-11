@@ -13,6 +13,8 @@ import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
+import be.ugent.maf.cellmissy.gui.SetupReport;
+import be.ugent.maf.cellmissy.gui.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ExperimentInfoPanel;
 import be.ugent.maf.cellmissy.gui.experiment.SetupExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.SetupPanel;
@@ -29,8 +31,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.PersistenceException;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -157,6 +159,13 @@ public class SetupExperimentPanelController {
     }
 
     /**
+     * show a message through the main frame
+     */
+    public void showMessage(String message, Integer messageType) {
+        cellMissyController.showMessage(message, messageType);
+    }
+
+    /**
      * when the mouse is released and the rectangle has been drawn, this method is called:
      * set well collection of the current condition and set the condition of the selected wells
      * @param plateCondition, the current condition
@@ -182,7 +191,7 @@ public class SetupExperimentPanelController {
                         //if the wells do have a condition already, the selection is not valid
                         isSelectionValid = false;
                         //in this case, show a message through the main controller
-                        cellMissyController.showMessage("Wells cannot have more than one condition\nPlease select again the wells", 1);
+                        cellMissyController.showMessage("Some wells already have a condition\nPlease make another selection", 1);
                         //exit from the outer loop
                         break outerloop;
                     }
@@ -219,19 +228,44 @@ public class SetupExperimentPanelController {
         }
     }
 
-    public boolean validateExperimentInfo() {
-        boolean isValid = false;
-        //if experiment number is OK, set it
-        if (!projectHasExperiment(((Project) experimentInfoPanel.getProjectJList().getSelectedValue()).getProjectid(), Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()))) {
-            experiment.setExperimentNumber(Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()));
-        } else {
-            String message = "Experiment number " + experimentInfoPanel.getNumberTextField().getText() + " already exists for this project";
-            cellMissyController.showMessage(message, 0);
-            //reset number text field
-            experimentInfoPanel.getNumberTextField().setText("");
+    /**
+     * this method checks experiment Info
+     * @return messages to show if validation was not successful 
+     */
+    public List<String> validateExperimentInfo() {
+        List<String> messages = new ArrayList<>();
+        try {
+            //if the selected project does not have already the current experiment number, set the experiment number
+            if (!projectHasExperiment(((Project) experimentInfoPanel.getProjectJList().getSelectedValue()).getProjectid(), Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()))) {
+                experiment.setExperimentNumber(Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()));
+            } else {
+                String message = "Experiment number " + experimentInfoPanel.getNumberTextField().getText() + " already exists for this project";
+                messages.add(message);
+                experimentInfoPanel.getNumberTextField().requestFocusInWindow();
+            }
+
+        } catch (NumberFormatException e) {
+            messages.add("Please insert a valid Experiment Number");
+            experimentInfoPanel.getNumberTextField().requestFocusInWindow();
         }
-        if (cellMissyController.validateObject(experiment).isEmpty()) {
+        if (messages.isEmpty()) {
+            messages.addAll(ValidationUtils.validateObject(experiment));
+        }
+        return messages;
+    }
+
+    public boolean validateCondition(PlateCondition plateCondition) {
+        boolean isValid = false;
+
+        if (conditionsPanelController.validateCondition(plateCondition).isEmpty()) {
             isValid = true;
+        } else {
+            String message = "";
+            for (String string : conditionsPanelController.validateCondition(plateCondition)) {
+                message += string + "\n";
+            }
+            cellMissyController.showMessage(message, 2);
+            conditionsPanelController.getConditionsPanel().getConditionsJList().setSelectedIndex(conditionsPanelController.getPreviousConditionIndex());
         }
         return isValid;
     }
@@ -290,16 +324,17 @@ public class SetupExperimentPanelController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //create a new experiment entity and set its fields
+                //create a new experiment (in progress) and set its fields
                 experiment = new Experiment();
-                experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());
+                experiment.setExperimentStatus(ExperimentStatus.IN_PROGRESS);
+                experiment.setProject((Project) experimentInfoPanel.getProjectJList().getSelectedValue());
                 experiment.setInstrument((Instrument) experimentInfoPanel.getInstrumentComboBox().getSelectedItem());
                 experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());
-                experiment.setExperimentStatus(ExperimentStatus.IN_PROGRESS);
+                experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());
                 experiment.setPurpose(experimentInfoPanel.getPurposeTextArea().getText());
-                experiment.setProject((Project) experimentInfoPanel.getProjectJList().getSelectedValue());
                 experiment.setPlateFormat((PlateFormat) setupPlatePanelController.getSetupPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
-                if (validateExperimentInfo()) {
+                //check if the info was filled in properly
+                if (cellMissyController.validateExperimentInfo()) {
                     //show the setupPanel and hide the experimentInfoPanel
                     GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), setupPanel, experimentInfoPanel);
                     cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Add conditions and select wells for each condition. Conditions details can be chosen in the right panel.");
@@ -307,6 +342,7 @@ public class SetupExperimentPanelController {
                     setupExperimentPanel.getPreviousButton().setEnabled(true);
                     setupExperimentPanel.getNextButton().setEnabled(false);
                     setupExperimentPanel.getFinishButton().setVisible(true);
+                    setupExperimentPanel.getReportButton().setVisible(true);
                     setupExperimentPanel.getTopPanel().revalidate();
                     setupExperimentPanel.getTopPanel().repaint();
                 }
@@ -322,8 +358,23 @@ public class SetupExperimentPanelController {
                 setupExperimentPanel.getPreviousButton().setEnabled(false);
                 setupExperimentPanel.getNextButton().setEnabled(true);
                 setupExperimentPanel.getFinishButton().setVisible(false);
+                setupExperimentPanel.getReportButton().setVisible(false);
                 setupExperimentPanel.getTopPanel().revalidate();
                 setupExperimentPanel.getTopPanel().repaint();
+            }
+        });
+
+        //create a pdf from the plate panel 
+        setupExperimentPanel.getReportButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //update last condition of the experiment
+                updateLastCondition();
+                //create Pdf Report
+                SetupReport pdfReport = new SetupReport(setupPlatePanelController.getSetupPlatePanel());
+                pdfReport.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                pdfReport.setVisible(true);
             }
         });
 
@@ -333,20 +384,17 @@ public class SetupExperimentPanelController {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                //set the User and the conditions' collection of the experiment, and if everything is OK, save the Exp to the DB
                 //need to set the user like this NOW, to be changed!!!=====================================================================================
                 experiment.setUser(cellMissyController.getAUser());
 
-                //update last condition of the experiment and then set the collection
-                updateLastCondition();
                 experiment.setPlateConditionCollection(conditionsPanelController.getPlateConditionBindingList());
 
                 for (PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()) {
                     plateCondition.setExperiment(experiment);
                 }
-                if (cellMissyController.validateExperiment()) {
-                    //save the new experiment to the DB
-                    experimentService.save(experiment);
-                }
+                //save the new experiment to the DB
+                experimentService.save(experiment);
             }
         });
     }
@@ -355,7 +403,7 @@ public class SetupExperimentPanelController {
      * private methods and classes
      */
     /**
-     * check if a well already has a condition
+     * this method checks if a well already has a condition
      * @param wellGui
      * @return true if a well already has a condition assigned
      */
@@ -373,7 +421,8 @@ public class SetupExperimentPanelController {
     }
 
     /**
-     * document listener 
+     * this class extends a document listener 
+     * on "next" button
      */
     private class ExperimentListener implements DocumentListener {
 
@@ -416,6 +465,12 @@ public class SetupExperimentPanelController {
         }
     }
 
+    /**
+     * this method checks if a project already has a certain experiment
+     * @param projectId
+     * @param experimentNumber
+     * @return 
+     */
     private boolean projectHasExperiment(Integer projectId, Integer experimentNumber) {
         boolean hasExperiment = false;
         for (Integer number : experimentService.findExperimentNumbersByProjectId(projectId)) {
@@ -426,8 +481,10 @@ public class SetupExperimentPanelController {
         return hasExperiment;
     }
 
+    /**
+     * update last condition before creating the pdf report and saving the experiment
+     */
     private void updateLastCondition() {
-
         conditionsPanelController.updateCondition(conditionsPanelController.getPlateConditionBindingList().size() - 1);
     }
 }

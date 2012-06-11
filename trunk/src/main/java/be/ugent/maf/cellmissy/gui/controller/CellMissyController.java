@@ -9,15 +9,8 @@ import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.GridBagConstraints;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -72,41 +65,35 @@ public class CellMissyController {
         infoLabel.setText(message);
     }
 
-    public List<String> validateObject(Object object) {
-        List<String> messages = new ArrayList<>();
-        ValidatorFactory entityValidator = Validation.buildDefaultValidatorFactory();
-        Validator validator = entityValidator.getValidator();
-        Set<ConstraintViolation<Object>> constraintViolations = validator.validate(object);
-
-        if (!constraintViolations.isEmpty()) {
-
-            String message = "";
-            for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
-                messages.add(constraintViolation.getMessage());
-                message += constraintViolation.getMessage() + "\n";
-            }
-            showMessage(message, 2);
-        }
-        return messages;
-    }
-
     public boolean validateUser() {
-
+        String message = "";
         boolean isValid = false;
         if (userPanelController.validateUser().isEmpty()) {
             isValid = true;
+        } else {
+            for (String string : userPanelController.validateUser()) {
+                message += string + "\n";
+            }
+            showMessage(message, 2);
         }
         return isValid;
-
     }
 
     public User getAUser() {
         return userPanelController.getUserBindingList().get(0);
     }
 
-    public boolean validateExperiment() {
+    public boolean validateExperimentInfo() {
+        String message = "";
         boolean isValid = false;
-
+        if(setupExperimentPanelController.validateExperimentInfo().isEmpty()){
+            isValid = true;
+        } else {
+            for(String string : setupExperimentPanelController.validateExperimentInfo()){
+                message += string + "\n";
+            }
+            showMessage(message, 2);
+        }
 
         return isValid;
     }

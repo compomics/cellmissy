@@ -11,6 +11,7 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
+import be.ugent.maf.cellmissy.gui.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ConditionsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.SetupConditionsPanel;
 import be.ugent.maf.cellmissy.service.CellLineService;
@@ -117,6 +118,10 @@ public class ConditionsPanelController {
         return mediumBindingList;
     }
 
+    public Integer getPreviousConditionIndex() {
+        return previousConditionIndex;
+    }
+
     /**
      * public  methods
      * 
@@ -134,12 +139,42 @@ public class ConditionsPanelController {
     }
 
     /**
-     * this method updates fields of a condition (assay/ecm and treatments fields)
+     * show a message through the main frame
+     */
+    public void showMessage(String message, Integer messageType) {
+        setupExperimentPanelController.showMessage(message, messageType);
+    }
+
+    /**
+     * this method updates fields of a condition (assay/ECM and treatments fields)
      * @param conditionIndex 
      */
     public void updateCondition(Integer conditionIndex) {
         assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(conditionIndex));
         treatmentPanelController.updateTreatmentCollection(plateConditionBindingList.get(conditionIndex));
+    }
+
+    public List<String> validateCondition(PlateCondition plateCondition) {
+        List<String> messages = new ArrayList<>();
+        //validate cell line
+        if (!validateCellLine(plateCondition.getCellLine()).isEmpty()) {
+            messages.addAll(validateCellLine(plateCondition.getCellLine()));
+        }
+        //validate ECM (2D and 3D) input
+        if (!assayEcmPanelController.validate2DEcm().isEmpty()) {
+            messages.addAll(assayEcmPanelController.validate2DEcm());
+        }
+        if (assayEcmPanelController.validate3DEcm().isEmpty()) {
+            messages.addAll(assayEcmPanelController.validate3DEcm());
+        }
+        //validate treatments
+
+        //if validation was OK, validate the condition
+        if (messages.isEmpty()) {
+            messages.addAll(ValidationUtils.validateObject(plateCondition));
+        }
+
+        return messages;
     }
 
     /**
@@ -167,7 +202,7 @@ public class ConditionsPanelController {
          * add action listeners
          */
         /**
-         * insert a new cell line in the DB if it's not present yet
+         * insert a new cell line Type in the DB if it's not present yet
          */
         setupConditionsPanel.getInsertCellLineButton().addActionListener(new ActionListener() {
 
@@ -239,15 +274,17 @@ public class ConditionsPanelController {
                 setupConditionsPanel.getjTabbedPane1().setEnabled(true);
                 int locationToIndex = conditionsPanel.getConditionsJList().locationToIndex(e.getPoint());
                 if (previousConditionIndex < plateConditionBindingList.size() && previousConditionIndex != -1) {
-                    //update fields of previous condition
-                    updateCondition(previousConditionIndex);
-                    //update and reset fields for the assay-ecm panel
-                    assayEcmPanelController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                    assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                    //empty the treatments list and fill it in with other objects
-                    treatmentPanelController.initTreatmentList(plateConditionBindingList.get(previousConditionIndex));
-                    //keep source and destination lists sync: show actual treatment collection
-                    treatmentPanelController.updateTreatmentLists(plateConditionBindingList.get(locationToIndex));
+                    if (setupExperimentPanelController.validateCondition(plateConditionBindingList.get(previousConditionIndex))) {
+                        //update fields of previous condition
+                        updateCondition(previousConditionIndex);
+                        //update and reset fields for the assay-ecm panel
+                        assayEcmPanelController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
+                        assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
+                        //empty the treatments list and fill it in with other objects
+                        treatmentPanelController.initTreatmentList(plateConditionBindingList.get(previousConditionIndex));
+                        //keep source and destination lists sync: show actual treatment collection
+                        treatmentPanelController.updateTreatmentLists(plateConditionBindingList.get(locationToIndex));
+                    }
                 }
                 previousConditionIndex = locationToIndex;
             }
@@ -346,6 +383,10 @@ public class ConditionsPanelController {
         List<Well> wellList = new ArrayList<>();
         plateCondition.setWellCollection(wellList);
 
+    }
+
+    private List<String> validateCellLine(CellLine cellLine) {
+        return ValidationUtils.validateObject(cellLine);
     }
 
     /**

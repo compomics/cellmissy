@@ -28,8 +28,8 @@
         <Container class="javax.swing.JPanel" name="cellLinePanel">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="cell line">
-                <Property name="tabTitle" type="java.lang.String" value="cell line"/>
+              <JTabbedPaneConstraints tabName="Cell Line">
+                <Property name="tabTitle" type="java.lang.String" value="Cell Line"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -241,8 +241,8 @@
         <Container class="javax.swing.JPanel" name="assayEcmPanel">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="assay-ecm">
-                <Property name="tabTitle" type="java.lang.String" value="assay-ecm"/>
+              <JTabbedPaneConstraints tabName="Assay-Ecm">
+                <Property name="tabTitle" type="java.lang.String" value="Assay-Ecm"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -328,8 +328,8 @@
         <Container class="javax.swing.JPanel" name="treatmentParentPanel">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="treatment">
-                <Property name="tabTitle" type="java.lang.String" value="treatment"/>
+              <JTabbedPaneConstraints tabName="Treatments">
+                <Property name="tabTitle" type="java.lang.String" value="Treatments"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>

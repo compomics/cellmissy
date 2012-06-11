@@ -226,7 +226,7 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
                 .addContainerGap(37, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("cell line", cellLinePanel);
+        jTabbedPane1.addTab("Cell Line", cellLinePanel);
 
         assayEcmPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -277,10 +277,10 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.9;
         assayEcmPanel.add(assayEcmParentPanel, gridBagConstraints);
 
-        jTabbedPane1.addTab("assay-ecm", assayEcmPanel);
+        jTabbedPane1.addTab("Assay-Ecm", assayEcmPanel);
 
         treatmentParentPanel.setLayout(new java.awt.GridBagLayout());
-        jTabbedPane1.addTab("treatment", treatmentParentPanel);
+        jTabbedPane1.addTab("Treatments", treatmentParentPanel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;

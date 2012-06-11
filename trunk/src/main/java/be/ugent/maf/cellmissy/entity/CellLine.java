@@ -18,8 +18,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Range;
 
 /**
  *
@@ -35,7 +38,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "CellLine.findBySeedingTime", query = "SELECT c FROM CellLine c WHERE c.seedingTime = :seedingTime"),
     @NamedQuery(name = "CellLine.findBySeedingDensity", query = "SELECT c FROM CellLine c WHERE c.seedingDensity = :seedingDensity"),
     @NamedQuery(name = "CellLine.findAllGrowthMedia", query = "SELECT distinct c.growthMedium FROM CellLine c")})
-
 public class CellLine implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,8 +47,11 @@ public class CellLine implements Serializable {
     @Column(name = "cell_lineid")
     private Integer cellLineid;
     @Column(name = "seeding_time")
+    @NotBlank(message = "Seeding Time must be not null")
     private String seedingTime;
     @Column(name = "seeding_density")
+    @NotNull(message = "Seeding Density must be not null")
+    @Range(min = 30000, max = 90000, message = "Seeding density must be between 30000 and 90000")
     private Integer seedingDensity;
     @Column(name = "growth_medium")
     private String growthMedium;
