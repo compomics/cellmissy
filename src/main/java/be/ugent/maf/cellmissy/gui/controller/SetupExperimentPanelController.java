@@ -22,11 +22,13 @@ import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
+import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -372,9 +374,12 @@ public class SetupExperimentPanelController {
                 //update last condition of the experiment
                 updateLastCondition();
                 //create Pdf Report
-                SetupReport pdfReport = new SetupReport(setupPlatePanelController.getSetupPlatePanel());
-                pdfReport.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                pdfReport.setVisible(true);
+                SetupReport setupReport = new SetupReport(setupPlatePanelController.getSetupPlatePanel());
+                try {
+                    Desktop.getDesktop().open(setupReport.getFile());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 

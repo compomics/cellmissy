@@ -169,11 +169,13 @@ public class ConditionsPanelController {
         }
         //validate treatments
 
-        //if validation was OK, validate the condition
+        //if validation was OK, validate the condition: check for wells collection
         if (messages.isEmpty()) {
-            messages.addAll(ValidationUtils.validateObject(plateCondition));
+                if(plateCondition.getWellCollection().isEmpty()){
+                    String message = "Conditions must have at least one well";
+                    messages.add(message);
+                }
         }
-
         return messages;
     }
 
