@@ -373,8 +373,17 @@ public class SetupExperimentPanelController {
             public void actionPerformed(ActionEvent e) {
                 //update last condition of the experiment
                 updateLastCondition();
+                //set the User and the conditions' collection of the experiment
+                //need to set the user like this NOW, to be changed!!!=====================================================================================
+                experiment.setUser(cellMissyController.getAUser());
+
+                experiment.setPlateConditionCollection(conditionsPanelController.getPlateConditionBindingList());
+
+                for (PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()) {
+                    plateCondition.setExperiment(experiment);
+                }
                 //create Pdf Report
-                SetupReport setupReport = new SetupReport(setupPlatePanelController.getSetupPlatePanel());
+                SetupReport setupReport = new SetupReport(setupPlatePanelController.getSetupPlatePanel(), conditionsPanelController.getConditionsPanel().getConditionsJList(), experiment);
                 try {
                     Desktop.getDesktop().open(setupReport.getFile());
                 } catch (IOException ex) {
@@ -389,15 +398,6 @@ public class SetupExperimentPanelController {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                //set the User and the conditions' collection of the experiment, and if everything is OK, save the Exp to the DB
-                //need to set the user like this NOW, to be changed!!!=====================================================================================
-                experiment.setUser(cellMissyController.getAUser());
-
-                experiment.setPlateConditionCollection(conditionsPanelController.getPlateConditionBindingList());
-
-                for (PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()) {
-                    plateCondition.setExperiment(experiment);
-                }
                 //save the new experiment to the DB
                 experimentService.save(experiment);
             }
