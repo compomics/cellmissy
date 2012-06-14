@@ -23,6 +23,7 @@ import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -35,7 +36,10 @@ import java.util.Date;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
@@ -59,10 +63,12 @@ public class SetupExperimentPanelController {
     private ObservableList<Instrument> instrumentBindingList;
     private ObservableList<Magnification> magnificationBindingList;
     private BindingGroup bindingGroup;
+    private SetupReport setupReport;
     //view
     private SetupExperimentPanel setupExperimentPanel;
     private ExperimentInfoPanel experimentInfoPanel;
     private SetupPanel setupPanel;
+    private JFrame frame;
     //parent controller
     private CellMissyController cellMissyController;
     //child controller
@@ -382,13 +388,10 @@ public class SetupExperimentPanelController {
                 for (PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()) {
                     plateCondition.setExperiment(experiment);
                 }
-                //create Pdf Report
-                SetupReport setupReport = new SetupReport(setupPlatePanelController.getSetupPlatePanel(), conditionsPanelController.getConditionsPanel().getConditionsJList(), experiment);
-                try {
-                    Desktop.getDesktop().open(setupReport.getFile());
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+
+                //create PDF report, execute SwingWorker
+                SetupReportWorker setupReportWorker = new SetupReportWorker();
+                setupReportWorker.execute();
             }
         });
 
@@ -491,5 +494,43 @@ public class SetupExperimentPanelController {
      */
     private void updateLastCondition() {
         conditionsPanelController.updateCondition(conditionsPanelController.getPlateConditionBindingList().size() - 1);
+    }
+
+    private class SetupReportWorker extends SwingWorker<Object, Object> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            //create Pdf Report
+            setupReport = new SetupReport(setupPlatePanelController.getSetupPlatePanel(), conditionsPanelController.getConditionsPanel().getConditionsJList(), experiment);
+            JPanel reportPanel = setupReport.createReportPanel();
+            //create a new frame, set the size and add the report panel to it.
+            frame = new JFrame();
+            Dimension reportDimension = new Dimension(1200, 700);
+            frame.setSize(reportDimension);
+            frame.add(reportPanel);
+            frame.setVisible(true);
+            setupReport.exportPanelToPdf();
+            frame.setVisible(false);
+            frame.dispose();
+            try {
+                Desktop.getDesktop().open(setupReport.getFile());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            
+            //add back the two components to the panel
+            conditionsPanelController.getConditionsPanel().getjScrollPane1().add(conditionsPanelController.getConditionsPanel().getConditionsJList());
+            setupPlatePanelController.getSetupPlatePanelGui().getBottomPanel().add(setupPlatePanelController.getSetupPlatePanel(), gridBagConstraints);
+
+            cellMissyController.cellMissyFrame.getContentPane().revalidate();
+            cellMissyController.cellMissyFrame.getContentPane().repaint();
+
+        }
     }
 }

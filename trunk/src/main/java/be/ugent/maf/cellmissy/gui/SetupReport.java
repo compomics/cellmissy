@@ -9,17 +9,18 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import com.compomics.util.Export;
 import com.compomics.util.enumeration.ImageType;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.JTableHeader;
 import org.apache.batik.transcoder.TranscoderException;
 
@@ -34,7 +35,7 @@ public class SetupReport {
     private Experiment experiment;
     private File file;
     private JPanel reportPanel;
-
+    
     /**
      * constructor
      * @param setupPlatePanel
@@ -44,8 +45,6 @@ public class SetupReport {
         this.setupPlatePanel = setupPlatePanel;
         this.conditionsJList = conditionsJList;
         this.experiment = experiment;
-        createReportPanel();
-        exportPanelToPdf();
     }
 
     /**
@@ -57,48 +56,13 @@ public class SetupReport {
     }
 
     /**
-     * create reportPanel that must be printed to PDF. This panel contains all the other panels
-     */
-    private void createReportPanel() {
-
-        //new panel and new Layout
-        reportPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-                
-        //add info panel
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        reportPanel.add(createInfoPanel(), gridBagConstraints);
-        //add setupPlatePanel
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        reportPanel.add(setupPlatePanel, gridBagConstraints);
-        //add conditionsJList
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        reportPanel.add(conditionsJList, gridBagConstraints);
-        //add report panel (report table)
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        reportPanel.add(createTablePanel(), gridBagConstraints);
-
-        //to be removed **************************
-        JFrame frame = new JFrame();
-        frame.add(reportPanel);
-        frame.setVisible(true);
-
-    }
-
-    /**
      * print to PDF (Export class from Compomics Utilities)
      */
-    private void exportPanelToPdf() {
+    public void exportPanelToPdf() {
 
-        file = new File("Report for Experiment " + experiment.getExperimentNumber() + ", Project " + experiment.getProject().getProjectNumber() + ".pdf");
+        file = new File("Experiment " + experiment.getExperimentNumber() + " - Project " + experiment.getProject().getProjectNumber() + ".pdf");
         try {
+
             Export.exportComponent(reportPanel, reportPanel.getBounds(), file, ImageType.PDF);
         } catch (IOException | TranscoderException ex) {
             ex.printStackTrace();
@@ -107,21 +71,30 @@ public class SetupReport {
     }
 
     /**
-     * infoPanel is a panel shown at the beginning of the PDF report, with experiment info, project, purpose, user and date
+     * infoPanel is shown at the beginning of the PDF report, with experiment number, project, user and date
      * @return 
      */
     private JPanel createInfoPanel() {
         JPanel infoPanel = new JPanel(new BorderLayout());
-        //add info text
-        String info = "Report for experiment " + experiment.getExperimentNumber() + " of project " + experiment.getProject().getProjectNumber();
-        JTextField infoField = new JTextField(info);
+
+        //font fot info label
+        Font font = new Font("Arial", Font.BOLD, 20);
+        //first info label
+        String info = "Experiment " + experiment.getExperimentNumber() + " - Project " + experiment.getProject().getProjectNumber();
+        JLabel infoField = new JLabel(info);
+        infoField.setFont(font);
+        //second info label
+        String info2 = "User: " + experiment.getUser() + " - Date: " + experiment.getExperimentDate();
+        JLabel info2Field = new JLabel(info2);
+        info2Field.setFont(font);
 
         infoPanel.add(infoField, BorderLayout.NORTH);
+        infoPanel.add(info2Field, BorderLayout.CENTER);
         return infoPanel;
     }
 
     /**
-     * reportPanel is a JPanel containing a JTable listing all the conditions and their setup details
+     * reportPanel contains a JTable listing all the conditions and their setup details
      * @return 
      */
     private JPanel createTablePanel() {
@@ -130,7 +103,7 @@ public class SetupReport {
         JPanel reportPanel = new JPanel(new BorderLayout());
         //creta a JTable
         //column names
-        Object columnNames[] = {"Condition", "Cell Line", "Matrix Dimension", "Assay", "ECM"};
+        Object columnNames[] = {"Condition", "Cell Line", "Matrix Dimension", "Assay", "ECM", "Treatments"};
 
         //do not work with collection, create a plateCondition List
         List<PlateCondition> plateConditionList = new ArrayList<>();
@@ -143,24 +116,80 @@ public class SetupReport {
 
         for (int i = 0; i < data.length; i++) {
             PlateCondition plateCondition = plateConditionList.get(i);
-            data[i] = new Object[]{plateCondition.getName(), plateCondition.getCellLine().getCellLineType(), plateCondition.getMatrixDimension().getMatrixDimension(), plateCondition.getAssay().getAssayType(), plateCondition.getEcm()};
+            data[i] = new Object[]{plateCondition.getName(), plateCondition.getCellLine().getCellLineType(), plateCondition.getMatrixDimension().getMatrixDimension(), plateCondition.getAssay().getAssayType(), plateCondition.getEcm(), plateCondition.getTreatmentCollection()};
         }
 
         //create new table with the defined row data and column names 
         JTable reportTable = new JTable(data, columnNames);
         //JTable is Not used in a Jscrollable pane, then its header needs to be explicitly shown
         JTableHeader tableHeader = reportTable.getTableHeader();
-        //adjust table column width
-        reportTable.getColumnModel().getColumn(0).setPreferredWidth(40);
-        reportTable.getColumnModel().getColumn(1).setPreferredWidth(40);
-        reportTable.getColumnModel().getColumn(2).setPreferredWidth(10);
-        reportTable.getColumnModel().getColumn(3).setPreferredWidth(50);
-        reportTable.getColumnModel().getColumn(4).setPreferredWidth(50);
 
         reportPanel.add(tableHeader, BorderLayout.NORTH);
         reportPanel.add(reportTable, BorderLayout.CENTER);
 
+        //adjust table column width
+        reportTable.getColumnModel().getColumn(0).setPreferredWidth(10);
+        reportTable.getColumnModel().getColumn(1).setPreferredWidth(10);
+        reportTable.getColumnModel().getColumn(2).setPreferredWidth(5);
+        reportTable.getColumnModel().getColumn(3).setPreferredWidth(8);
+        reportTable.getColumnModel().getColumn(4).setPreferredWidth(15);
+        reportTable.getColumnModel().getColumn(4).setPreferredWidth(20);
+
         return reportPanel;
 
+    }
+
+    private JPanel createViewPanel() {
+
+        JPanel viewPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        //add conditions list
+        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        viewPanel.add(conditionsJList, gridBagConstraints);
+        //add plate view
+        gridBagConstraints.weightx = 0.8;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        viewPanel.add(setupPlatePanel, gridBagConstraints);
+        return viewPanel;
+    }
+
+    /**
+     * create reportPanel that must be printed to PDF. This panel contains all the other panels
+     */
+    public JPanel createReportPanel() {
+        //new panel and new Layout
+        reportPanel = new JPanel(new GridBagLayout());
+        reportPanel.setPreferredSize(new Dimension(100, 100));
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+
+        //add info panel (exp number, project, user and date)
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.2;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        reportPanel.add(createInfoPanel(), gridBagConstraints);
+
+        //add view panel (with condition list and plate view)
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.6;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        reportPanel.add(createViewPanel(), gridBagConstraints);
+
+        //add report panel (report table with conditions' details)
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.2;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        reportPanel.add(createTablePanel(), gridBagConstraints);
+        
+        return reportPanel;
     }
 }
