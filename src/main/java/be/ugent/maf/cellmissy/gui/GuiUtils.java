@@ -16,7 +16,7 @@ import javax.swing.JPanel;
  */
 public class GuiUtils {
 
-    private static final Color[] availableColors = {Color.BLACK, Color.BLUE, Color.RED, Color.GRAY, Color.GREEN, Color.ORANGE, Color.MAGENTA, Color.CYAN, Color.YELLOW, Color.DARK_GRAY};
+    private static final Color[] availableColors = {Color.BLACK, Color.BLUE, Color.RED, Color.GREEN, Color.ORANGE, Color.MAGENTA, Color.CYAN, Color.YELLOW, Color.GRAY, Color.DARK_GRAY};
 
     public static GridBagConstraints getDefaultGridBagConstraints() {
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
