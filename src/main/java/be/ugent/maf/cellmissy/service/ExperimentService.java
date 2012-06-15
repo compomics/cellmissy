@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.service;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.Instrument;
 import be.ugent.maf.cellmissy.entity.Magnification;
 import java.io.File;
@@ -23,4 +24,6 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
     List<Magnification> findAllMagnifications();
     
     List<Integer> findExperimentNumbersByProjectId(Integer projectId);
+    
+    List<Experiment> findExperimentsByProjectIdAndStatus(Integer projectId, ExperimentStatus experimentStatus);
 }

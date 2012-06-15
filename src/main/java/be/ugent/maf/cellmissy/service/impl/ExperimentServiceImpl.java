@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.service.impl;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.Instrument;
 import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.repository.ExperimentRepository;
@@ -81,5 +82,10 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Override
     public List<Integer> findExperimentNumbersByProjectId(Integer projectId) {
         return experimentRepository.findExperimentNumbersByProjectId(projectId);
+    }
+
+    @Override
+    public List<Experiment> findExperimentsByProjectIdAndStatus(Integer projectId, ExperimentStatus experimentStatus) {
+        return experimentRepository.findExperimentsByProjectIdAndStatus(projectId, experimentStatus);
     }
 }

@@ -33,7 +33,6 @@ public class SetupReport {
     private JPanel setupPlatePanel;
     private JList conditionsJList;
     private Experiment experiment;
-    private File file;
     private JPanel reportPanel;
     
     /**
@@ -45,29 +44,6 @@ public class SetupReport {
         this.setupPlatePanel = setupPlatePanel;
         this.conditionsJList = conditionsJList;
         this.experiment = experiment;
-    }
-
-    /**
-     * getters and setters
-     * @return 
-     */
-    public File getFile() {
-        return file;
-    }
-
-    /**
-     * print to PDF (Export class from Compomics Utilities)
-     */
-    public void exportPanelToPdf() {
-
-        file = new File("Experiment " + experiment.getExperimentNumber() + " - Project " + experiment.getProject().getProjectNumber() + ".pdf");
-        try {
-
-            Export.exportComponent(reportPanel, reportPanel.getBounds(), file, ImageType.PDF);
-        } catch (IOException | TranscoderException ex) {
-            ex.printStackTrace();
-        }
-
     }
 
     /**
@@ -103,7 +79,7 @@ public class SetupReport {
         JPanel reportPanel = new JPanel(new BorderLayout());
         //creta a JTable
         //column names
-        Object columnNames[] = {"Condition", "Cell Line", "Matrix Dimension", "Assay", "ECM", "Treatments"};
+        Object columnNames[] = {"Condition", "Cell Line (Type, Seeding Density, Growth Medium)", "Matrix Dimension", "Assay", "ECM", "Treatments (Type, Concentration)"};
 
         //do not work with collection, create a plateCondition List
         List<PlateCondition> plateConditionList = new ArrayList<>();
@@ -116,7 +92,7 @@ public class SetupReport {
 
         for (int i = 0; i < data.length; i++) {
             PlateCondition plateCondition = plateConditionList.get(i);
-            data[i] = new Object[]{plateCondition.getName(), plateCondition.getCellLine().getCellLineType(), plateCondition.getMatrixDimension().getMatrixDimension(), plateCondition.getAssay().getAssayType(), plateCondition.getEcm(), plateCondition.getTreatmentCollection()};
+            data[i] = new Object[]{plateCondition.getName(), plateCondition.getCellLine(), plateCondition.getMatrixDimension().getMatrixDimension(), plateCondition.getAssay().getAssayType(), plateCondition.getEcm(), plateCondition.getTreatmentCollection()};
         }
 
         //create new table with the defined row data and column names 
@@ -128,17 +104,21 @@ public class SetupReport {
         reportPanel.add(reportTable, BorderLayout.CENTER);
 
         //adjust table column width
-        reportTable.getColumnModel().getColumn(0).setPreferredWidth(10);
-        reportTable.getColumnModel().getColumn(1).setPreferredWidth(10);
-        reportTable.getColumnModel().getColumn(2).setPreferredWidth(5);
+        reportTable.getColumnModel().getColumn(0).setPreferredWidth(2);
+        reportTable.getColumnModel().getColumn(1).setPreferredWidth(20);
+        reportTable.getColumnModel().getColumn(2).setPreferredWidth(2);
         reportTable.getColumnModel().getColumn(3).setPreferredWidth(8);
         reportTable.getColumnModel().getColumn(4).setPreferredWidth(15);
-        reportTable.getColumnModel().getColumn(4).setPreferredWidth(20);
+        reportTable.getColumnModel().getColumn(5).setPreferredWidth(20);
 
         return reportPanel;
 
     }
 
+    /**
+     * view Panel contains Condition List and Setup Plate Panel (Wells view)
+     * @return 
+     */
     private JPanel createViewPanel() {
 
         JPanel viewPanel = new JPanel(new GridBagLayout());
@@ -171,14 +151,14 @@ public class SetupReport {
 
         //add info panel (exp number, project, user and date)
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.2;
+        gridBagConstraints.weighty = 0.1;
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         reportPanel.add(createInfoPanel(), gridBagConstraints);
 
         //add view panel (with condition list and plate view)
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.6;
+        gridBagConstraints.weighty = 0.7;
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         reportPanel.add(createViewPanel(), gridBagConstraints);

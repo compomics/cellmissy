@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.TreatmentPanel;
 import be.ugent.maf.cellmissy.service.TreatmentService;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +18,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -136,6 +138,7 @@ public class TreatmentPanelController {
         JListBinding actualTreatmentListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, treatmentBindingList, treatmentPanel.getDestinationList());
         bindingGroup.addBinding(actualTreatmentListBinding);
 
+        treatmentPanel.getDestinationList().setCellRenderer(new TreatmentsRenderer());
         //autobind treatment
         //treatment description
         Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.description"), treatmentPanel.getAdditionalInfoTextArea(), BeanProperty.create("text"), "treatmentdescriptionbinding");
@@ -313,5 +316,20 @@ public class TreatmentPanelController {
 
     private void initPanel() {
         conditionsPanelController.getSetupConditionsPanel().getTreatmentParentPanel().add(treatmentPanel, gridBagConstraints);
+    }
+
+    private class TreatmentsRenderer extends DefaultListCellRenderer {
+
+        public TreatmentsRenderer() {
+            setOpaque(true);
+        }
+        
+        //Overrides method from the DefaultListCellRenderer
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus){
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            Treatment treatment = (Treatment)value;
+            setText(treatment.getTreatmentType().getName());
+            return this;
+        }
     }
 }

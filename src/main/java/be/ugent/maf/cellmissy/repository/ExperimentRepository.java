@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.repository;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import java.util.List;
 
 /**
@@ -14,4 +15,6 @@ import java.util.List;
 public interface ExperimentRepository extends GenericRepository<Experiment, Long> {
 
     List<Integer> findExperimentNumbersByProjectId(Integer projectId);
+    
+    List<Experiment> findExperimentsByProjectIdAndStatus(Integer projectId, ExperimentStatus experimentStatus);
 }

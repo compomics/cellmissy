@@ -25,6 +25,7 @@ public class CellMissyController {
     //child controllers
     UserPanelController userPanelController;
     SetupExperimentPanelController setupExperimentPanelController;
+    LoadExperimentPanelController loadExperimentPanelController;
     //application context
     ApplicationContext context;
     private GridBagConstraints gridBagConstraints;
@@ -35,7 +36,8 @@ public class CellMissyController {
         //init child controllers
         userPanelController = new UserPanelController(this);
         setupExperimentPanelController = new SetupExperimentPanelController(this);
-
+        loadExperimentPanelController = new LoadExperimentPanelController(this);
+        
         //load application context
         context = ApplicationContextProvider.getInstance().getApplicationContext();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
@@ -49,7 +51,7 @@ public class CellMissyController {
         //add panel components to main frame
         cellMissyFrame.getUserParentPanel().add(userPanelController.getUserPanel(), gridBagConstraints);
         cellMissyFrame.getExperimentSetupParentPanel().add(setupExperimentPanelController.getSetupExperimentPanel(), gridBagConstraints);
-
+        cellMissyFrame.getLoadExperimentParentPanel().add(loadExperimentPanelController.getLoadExperimentPanel(), gridBagConstraints);
     }
 
     public Object getBeanByName(String beanName) {
