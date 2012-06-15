@@ -150,6 +150,6 @@ public class CellLine implements Serializable {
     }
 
     public String toString() {
-        return "CellLine{" + "seedingTime=" + seedingTime + ", seedingDensity=" + seedingDensity + ", growthMedium=" + growthMedium + '}';
+        return cellLineType + ", " + seedingDensity + ", " + growthMedium;
     }
 }

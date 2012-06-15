@@ -166,6 +166,6 @@ public class Treatment implements Serializable {
     }
 
     public String toString() {
-        return treatmentType.getName();
+        return treatmentType.getName() + ", " + concentration;
     }
 }

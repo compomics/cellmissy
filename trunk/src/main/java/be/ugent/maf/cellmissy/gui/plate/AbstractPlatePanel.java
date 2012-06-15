@@ -72,7 +72,7 @@ public abstract class AbstractPlatePanel extends JPanel {
                 // the default color is the first object of the WellGui's AvailableWellColors()List
                 Color defaultColor = GuiUtils.getAvailableColors()[0];
                 g2d.setColor(defaultColor);
-                g2d.fill(ellipse2D);
+                g2d.draw(ellipse2D);
 
                 wellGuiList.add(wellGui);
 

@@ -123,7 +123,7 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         for (WellGui wellGui : wellGuiList) {
             //get only the bigger default ellipse2D
             Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
-            g2d.fill(defaultWell);
+            g2d.draw(defaultWell);
             // draw the labels on the plate
             if (wellGui.getRowNumber() == 1 || wellGui.getColumnNumber() == 1) {
                 drawPlateLabel(defaultWell, g2d, wellGui.getColumnNumber(), wellGui.getRowNumber());

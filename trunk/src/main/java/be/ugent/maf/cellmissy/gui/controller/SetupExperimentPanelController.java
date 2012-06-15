@@ -22,6 +22,8 @@ import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
+import com.compomics.util.Export;
+import com.compomics.util.enumeration.ImageType;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -29,6 +31,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,12 +40,12 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
+import org.apache.batik.transcoder.TranscoderException;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -262,6 +265,11 @@ public class SetupExperimentPanelController {
         return messages;
     }
 
+    /**
+     * validate PlateCondition, if PlateCondition is not valid, go back to the previous one
+     * @param plateCondition
+     * @return 
+     */
     public boolean validateCondition(PlateCondition plateCondition) {
         boolean isValid = false;
 
@@ -278,6 +286,9 @@ public class SetupExperimentPanelController {
         return isValid;
     }
 
+    /*
+     * private methods and classes
+     */
     /**
      * initializes the experiment info panel
      */
@@ -335,6 +346,9 @@ public class SetupExperimentPanelController {
                 //create a new experiment (in progress) and set its fields
                 experiment = new Experiment();
                 experiment.setExperimentStatus(ExperimentStatus.IN_PROGRESS);
+                //set the User of the experiment
+                //need to set the user like this NOW, to be changed!!!=====================================================================================
+                experiment.setUser(cellMissyController.getAUser());
                 experiment.setProject((Project) experimentInfoPanel.getProjectJList().getSelectedValue());
                 experiment.setInstrument((Instrument) experimentInfoPanel.getInstrumentComboBox().getSelectedItem());
                 experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());
@@ -350,6 +364,7 @@ public class SetupExperimentPanelController {
                     setupExperimentPanel.getPreviousButton().setEnabled(true);
                     setupExperimentPanel.getNextButton().setEnabled(false);
                     setupExperimentPanel.getFinishButton().setVisible(true);
+                    setupExperimentPanel.getFinishButton().setEnabled(false);
                     setupExperimentPanel.getReportButton().setVisible(true);
                     setupExperimentPanel.getTopPanel().revalidate();
                     setupExperimentPanel.getTopPanel().repaint();
@@ -372,26 +387,32 @@ public class SetupExperimentPanelController {
             }
         });
 
-        //create a pdf from the plate panel 
+        //create a pdf from the plate panel (ONLY if experiment set up is OK)
         setupExperimentPanel.getReportButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //update last condition of the experiment
-                updateLastCondition();
-                //set the User and the conditions' collection of the experiment
-                //need to set the user like this NOW, to be changed!!!=====================================================================================
-                experiment.setUser(cellMissyController.getAUser());
 
-                experiment.setPlateConditionCollection(conditionsPanelController.getPlateConditionBindingList());
+                if (validateCondition(conditionsPanelController.getCurrentCondition())) {
 
-                for (PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()) {
-                    plateCondition.setExperiment(experiment);
+                    //update last condition of the experiment
+                    updateLastCondition();
+
+                    //set the experiment for each plate condition in the List
+                    for (PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()) {
+                        plateCondition.setExperiment(experiment);
+                    }
+
+                    //set the condition's collection of the experiment
+                    experiment.setPlateConditionCollection(conditionsPanelController.getPlateConditionBindingList());
+
+                    //create PDF report, execute SwingWorker
+                    SetupReportWorker setupReportWorker = new SetupReportWorker();
+                    setupReportWorker.execute();
+                    //update info label (>>next step: save the experiment)
+                    cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Pdf report was successfully created. Click on Finish to save the Experiment");
+                    setupExperimentPanel.getFinishButton().setEnabled(true);
                 }
-
-                //create PDF report, execute SwingWorker
-                SetupReportWorker setupReportWorker = new SetupReportWorker();
-                setupReportWorker.execute();
             }
         });
 
@@ -407,9 +428,6 @@ public class SetupExperimentPanelController {
         });
     }
 
-    /*
-     * private methods and classes
-     */
     /**
      * this method checks if a well already has a condition
      * @param wellGui
@@ -490,47 +508,68 @@ public class SetupExperimentPanelController {
     }
 
     /**
-     * update last condition before creating the pdf report and saving the experiment
+     * update last condition before creating the PDf report and saving the experiment
      */
     private void updateLastCondition() {
         conditionsPanelController.updateCondition(conditionsPanelController.getPlateConditionBindingList().size() - 1);
     }
 
+    /**
+     * SwingWorker to create PDF file (REPORT)
+     */
     private class SetupReportWorker extends SwingWorker<Object, Object> {
+
+        private File file;
+        private JPanel reportPanel;
 
         @Override
         protected Void doInBackground() throws Exception {
-            //create Pdf Report
+            //create a new instance of SetupReport (with the current setupPlatePanel, conditionsList and experiment)
             setupReport = new SetupReport(setupPlatePanelController.getSetupPlatePanel(), conditionsPanelController.getConditionsPanel().getConditionsJList(), experiment);
-            JPanel reportPanel = setupReport.createReportPanel();
+            //create JPanel for the report
+            reportPanel = setupReport.createReportPanel();
             //create a new frame, set the size and add the report panel to it.
             frame = new JFrame();
             Dimension reportDimension = new Dimension(1200, 700);
             frame.setSize(reportDimension);
             frame.add(reportPanel);
+            //set the frame to visible
             frame.setVisible(true);
-            setupReport.exportPanelToPdf();
+            //export Panel to Pdf
+            exportPanelToPdf();
+            //hide the frame and dispose all its resources
             frame.setVisible(false);
             frame.dispose();
+            //if export to PDF was successfull, open the PDF file from the desktop
             try {
-                Desktop.getDesktop().open(setupReport.getFile());
+                Desktop.getDesktop().open(file);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                showMessage(ex.getMessage(), 1);
             }
-
             return null;
         }
 
         @Override
         protected void done() {
-            
+
             //add back the two components to the panel
-            conditionsPanelController.getConditionsPanel().getjScrollPane1().add(conditionsPanelController.getConditionsPanel().getConditionsJList());
+            conditionsPanelController.getConditionsPanel().getjScrollPane1().setViewportView(conditionsPanelController.getConditionsPanel().getConditionsJList());
             setupPlatePanelController.getSetupPlatePanelGui().getBottomPanel().add(setupPlatePanelController.getSetupPlatePanel(), gridBagConstraints);
 
             cellMissyController.cellMissyFrame.getContentPane().revalidate();
             cellMissyController.cellMissyFrame.getContentPane().repaint();
 
+        }
+
+        //print to PDF (Export class from COmpomics Utilities)
+        private void exportPanelToPdf() {
+            //file to which export the panel
+            file = new File("Experiment " + experiment.getExperimentNumber() + " - Project " + experiment.getProject().getProjectNumber() + ".pdf");
+            try {
+                Export.exportComponent(reportPanel, reportPanel.getBounds(), file, ImageType.PDF);
+            } catch (IOException | TranscoderException ex) {
+                showMessage(ex.getMessage(), 1);
+            }
         }
     }
 }

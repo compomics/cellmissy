@@ -45,7 +45,8 @@ import org.hibernate.validator.constraints.Range;
     @NamedQuery(name = "Experiment.findByDuration", query = "SELECT e FROM Experiment e WHERE e.duration = :duration"),
     @NamedQuery(name = "Experiment.findByExperimentInterval", query = "SELECT e FROM Experiment e WHERE e.experimentInterval = :experimentInterval"),
     @NamedQuery(name = "Experiment.findByTimeFrames", query = "SELECT e FROM Experiment e WHERE e.timeFrames = :timeFrames"),
-    @NamedQuery(name = "Experiment.findExperimentNumbersByProjectId", query = "SELECT e.experimentNumber FROM Experiment e WHERE e.project.projectid = :projectid")})
+    @NamedQuery(name = "Experiment.findExperimentNumbersByProjectId", query = "SELECT e.experimentNumber FROM Experiment e WHERE e.project.projectid = :projectid"),
+    @NamedQuery(name = "Experiment.findExperimentsByProjectIdAndStatus", query = "SELECT e FROM Experiment e WHERE e.project.projectid = :projectid AND e.experimentStatus = :experimentStatus")})
 public class Experiment implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -242,6 +243,6 @@ public class Experiment implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.cellmissy.entity.Experiment[ experimentid=" + experimentid + " ]";
+        return "exp " + experimentNumber;
     }
 }

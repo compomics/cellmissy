@@ -108,6 +108,6 @@ public class Project implements Serializable {
 
     @Override
     public String toString() {
-        return projectNumber;
+        return "proj " + projectNumber;
     }
 }
