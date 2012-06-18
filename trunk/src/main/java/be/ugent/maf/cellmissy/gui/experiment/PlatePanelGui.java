@@ -4,7 +4,7 @@
  */
 
 /*
- * SetupPlatePanelGui.java
+ * PlatePanelGui.java
  *
  * Created on Mar 29, 2012, 9:26:13 AM
  */
@@ -17,10 +17,10 @@ import javax.swing.JPanel;
  *
  * @author Paola
  */
-public class SetupPlatePanelGui extends javax.swing.JPanel {
+public class PlatePanelGui extends javax.swing.JPanel {
     
-    /** Creates new form SetupPlatePanelGui */
-    public SetupPlatePanelGui() {
+    /** Creates new form PlatePanelGui */
+    public PlatePanelGui() {
         initComponents();       
     }
 
@@ -51,9 +51,6 @@ public class SetupPlatePanelGui extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(250, 80));
         setLayout(new java.awt.GridBagLayout());
 
-        topPanel.setMinimumSize(new java.awt.Dimension(10, 10));
-        topPanel.setPreferredSize(new java.awt.Dimension(10, 10));
-
         plateFormatComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         selectFormatLabel.setText("Select a Plate Format");
@@ -76,7 +73,7 @@ public class SetupPlatePanelGui extends javax.swing.JPanel {
                 .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(plateFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(selectFormatLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -88,8 +85,6 @@ public class SetupPlatePanelGui extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.08;
         add(topPanel, gridBagConstraints);
 
-        bottomPanel.setMinimumSize(new java.awt.Dimension(10, 10));
-        bottomPanel.setPreferredSize(new java.awt.Dimension(10, 10));
         bottomPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

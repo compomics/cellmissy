@@ -171,10 +171,10 @@ public class ConditionsPanelController {
 
         //if validation was OK, validate the condition: check for wells collection
         if (messages.isEmpty()) {
-                if(plateCondition.getWellCollection().isEmpty()){
-                    String message = "Conditions must have at least one well";
-                    messages.add(message);
-                }
+            if (plateCondition.getWellCollection().isEmpty()) {
+                String message = "Conditions must have at least one well";
+                messages.add(message);
+            }
         }
         return messages;
     }
@@ -273,8 +273,12 @@ public class ConditionsPanelController {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                setupConditionsPanel.getjTabbedPane1().setEnabled(true);
                 int locationToIndex = conditionsPanel.getConditionsJList().locationToIndex(e.getPoint());
+                //add mouse listener and enable tabbed pane on the right (only once, for Condition 1)
+                if (locationToIndex == 0) {
+                    setupExperimentPanelController.addMouseListener();
+                    setupConditionsPanel.getjTabbedPane1().setEnabled(true);
+                }
                 if (previousConditionIndex < plateConditionBindingList.size() && previousConditionIndex != -1) {
                     if (setupExperimentPanelController.validateCondition(plateConditionBindingList.get(previousConditionIndex))) {
                         //update fields of previous condition

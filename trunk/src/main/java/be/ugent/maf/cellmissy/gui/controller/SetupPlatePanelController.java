@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
-import be.ugent.maf.cellmissy.gui.experiment.SetupPlatePanelGui;
+import be.ugent.maf.cellmissy.gui.experiment.PlatePanelGui;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.service.PlateService;
 import java.awt.Dimension;
@@ -37,7 +37,7 @@ public class SetupPlatePanelController {
     private Rectangle rectangle;
     private BindingGroup bindingGroup;
     //view
-    private SetupPlatePanelGui setupPlatePanelGui;
+    private PlatePanelGui platePanelGui;
     private SetupPlatePanel setupPlatePanel;
     //parent controller
     private SetupExperimentPanelController setupExperimentPanelController;
@@ -53,7 +53,7 @@ public class SetupPlatePanelController {
         this.setupExperimentPanelController = setupExperimentPanelController;
 
         //init setup plate panel gui
-        setupPlatePanelGui = new SetupPlatePanelGui();
+        platePanelGui = new PlatePanelGui();
         //init services
         plateService = (PlateService) setupExperimentPanelController.getCellMissyController().getBeanByName("plateService");
 
@@ -72,8 +72,8 @@ public class SetupPlatePanelController {
         return setupPlatePanel;
     }
 
-    public SetupPlatePanelGui getSetupPlatePanelGui() {
-        return setupPlatePanelGui;
+    public PlatePanelGui getSetupPlatePanelGui() {
+        return platePanelGui;
     }
 
     /**
@@ -97,37 +97,39 @@ public class SetupPlatePanelController {
     }
 
     /**
+     * add mouse listener
+     */
+    public void addMouseListener() {
+        SetupPlateListener setupPlateListener = new SetupPlateListener();
+        setupPlatePanel.addMouseListener(setupPlateListener);
+        setupPlatePanel.addMouseMotionListener(setupPlateListener);
+    }
+
+    /**
      * private methods and classes
      */
     private void initSetupPlatePanel() {
 
         //init set up plate panel and add it to the bottom panel of the set up plate panel gui
         setupPlatePanel = new SetupPlatePanel();
-        setupPlatePanelGui.getBottomPanel().add(setupPlatePanel, gridBagConstraints);
+        platePanelGui.getBottomPanel().add(setupPlatePanel, gridBagConstraints);
 
         //init plateFormatJcombo
         plateFormatBindingList = ObservableCollections.observableList(plateService.findAll());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, plateFormatBindingList, setupPlatePanelGui.getPlateFormatComboBox());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, plateFormatBindingList, platePanelGui.getPlateFormatComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
-
-        /**
-         * add mouse listeners
-         */
-        SetupPlateListener setupPlateListener = new SetupPlateListener();
-        setupPlatePanel.addMouseListener(setupPlateListener);
-        setupPlatePanel.addMouseMotionListener(setupPlateListener);
 
         /**
          * add action listeners
          */
         //plate format combo box
-        setupPlatePanelGui.getPlateFormatComboBox().addActionListener(new ActionListener() {
+        platePanelGui.getPlateFormatComboBox().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                PlateFormat selectedPlateFormat = plateFormatBindingList.get(setupPlatePanelGui.getPlateFormatComboBox().getSelectedIndex());
-                Dimension parentDimension = setupPlatePanelGui.getBottomPanel().getSize();
+                PlateFormat selectedPlateFormat = plateFormatBindingList.get(platePanelGui.getPlateFormatComboBox().getSelectedIndex());
+                Dimension parentDimension = platePanelGui.getBottomPanel().getSize();
                 setupPlatePanel.initPanel(selectedPlateFormat, parentDimension);
                 //if selections were made on the plate, reset everything: clear the map and repaint the panel
                 for (List<Rectangle> rectangleList : setupPlatePanel.getRectangles().values()) {
@@ -166,9 +168,9 @@ public class SetupPlatePanelController {
         });
 
         //show 96 plate format as default
-        setupPlatePanelGui.getPlateFormatComboBox().setSelectedIndex(0);
+        platePanelGui.getPlateFormatComboBox().setSelectedIndex(0);
 
-        setupExperimentPanelController.getSetupPanel().getSetupPlateParentPanel().add(setupPlatePanelGui, gridBagConstraints);
+        setupExperimentPanelController.getSetupPanel().getSetupPlateParentPanel().add(platePanelGui, gridBagConstraints);
     }
 
     private class SetupPlateListener extends MouseInputAdapter {

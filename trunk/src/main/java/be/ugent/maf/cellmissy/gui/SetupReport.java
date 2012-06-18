@@ -6,15 +6,11 @@ package be.ugent.maf.cellmissy.gui;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import com.compomics.util.Export;
-import com.compomics.util.enumeration.ImageType;
+import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JLabel;
@@ -22,7 +18,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.JTableHeader;
-import org.apache.batik.transcoder.TranscoderException;
 
 /**
  *
@@ -30,20 +25,54 @@ import org.apache.batik.transcoder.TranscoderException;
  */
 public class SetupReport {
 
-    private JPanel setupPlatePanel;
+    private SetupPlatePanel setupPlatePanel;
     private JList conditionsJList;
     private Experiment experiment;
     private JPanel reportPanel;
-    
+
     /**
      * constructor
      * @param setupPlatePanel
      * @param experiment 
      */
-    public SetupReport(JPanel setupPlatePanel, JList conditionsJList, Experiment experiment) {
+    public SetupReport(SetupPlatePanel setupPlatePanel, JList conditionsJList, Experiment experiment) {
         this.setupPlatePanel = setupPlatePanel;
         this.conditionsJList = conditionsJList;
         this.experiment = experiment;
+    }
+
+    /**
+     * create reportPanel that must be printed to PDF. This panel contains all the other panels
+     */
+    public JPanel createReportPanel() {
+        //new panel and new Layout
+        reportPanel = new JPanel(new GridBagLayout());
+        //reportPanel.setPreferredSize(new Dimension(100, 100));
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+
+        //add info panel (exp number, project, user and date)
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        reportPanel.add(createInfoPanel(), gridBagConstraints);
+
+        //add view panel (with condition list and plate view)
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.7;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        reportPanel.add(createViewPanel(), gridBagConstraints);
+
+        //add report panel (report table with conditions' details)
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.2;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        reportPanel.add(createTablePanel(), gridBagConstraints);
+
+        return reportPanel;
     }
 
     /**
@@ -97,22 +126,27 @@ public class SetupReport {
 
         //create new table with the defined row data and column names 
         JTable reportTable = new JTable(data, columnNames);
+        
+        //disabel auto resizing for the JTable
+        reportTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        //adjust table columns width
+        for(int i = 0; i < reportTable.getColumnCount(); i ++ ){
+            reportTable.getColumnModel().getColumn(i).setMinWidth(10);
+        }
+        reportTable.getColumnModel().getColumn(0).setPreferredWidth(10);
+        reportTable.getColumnModel().getColumn(1).setPreferredWidth(100);
+        reportTable.getColumnModel().getColumn(2).setPreferredWidth(10);
+        reportTable.getColumnModel().getColumn(3).setPreferredWidth(10);
+        reportTable.getColumnModel().getColumn(4).setPreferredWidth(60);
+        reportTable.getColumnModel().getColumn(5).setPreferredWidth(100);
+        
         //JTable is Not used in a Jscrollable pane, then its header needs to be explicitly shown
         JTableHeader tableHeader = reportTable.getTableHeader();
 
         reportPanel.add(tableHeader, BorderLayout.NORTH);
         reportPanel.add(reportTable, BorderLayout.CENTER);
 
-        //adjust table column width
-        reportTable.getColumnModel().getColumn(0).setPreferredWidth(2);
-        reportTable.getColumnModel().getColumn(1).setPreferredWidth(20);
-        reportTable.getColumnModel().getColumn(2).setPreferredWidth(2);
-        reportTable.getColumnModel().getColumn(3).setPreferredWidth(8);
-        reportTable.getColumnModel().getColumn(4).setPreferredWidth(15);
-        reportTable.getColumnModel().getColumn(5).setPreferredWidth(20);
-
         return reportPanel;
-
     }
 
     /**
@@ -125,51 +159,17 @@ public class SetupReport {
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         //add conditions list
-        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.weightx = 0.1;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         viewPanel.add(conditionsJList, gridBagConstraints);
         //add plate view
-        gridBagConstraints.weightx = 0.8;
+        gridBagConstraints.weightx = 0.9;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         viewPanel.add(setupPlatePanel, gridBagConstraints);
         return viewPanel;
-    }
-
-    /**
-     * create reportPanel that must be printed to PDF. This panel contains all the other panels
-     */
-    public JPanel createReportPanel() {
-        //new panel and new Layout
-        reportPanel = new JPanel(new GridBagLayout());
-        reportPanel.setPreferredSize(new Dimension(100, 100));
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-
-        //add info panel (exp number, project, user and date)
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        reportPanel.add(createInfoPanel(), gridBagConstraints);
-
-        //add view panel (with condition list and plate view)
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.7;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        reportPanel.add(createViewPanel(), gridBagConstraints);
-
-        //add report panel (report table with conditions' details)
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.2;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        reportPanel.add(createTablePanel(), gridBagConstraints);
-        
-        return reportPanel;
     }
 }

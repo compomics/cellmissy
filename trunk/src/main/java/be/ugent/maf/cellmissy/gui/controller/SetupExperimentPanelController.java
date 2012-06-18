@@ -177,6 +177,13 @@ public class SetupExperimentPanelController {
     }
 
     /**
+     * add mouse listener to setup plate panel (Only when a condition is selected)
+     */
+    public void addMouseListener() {
+        setupPlatePanelController.addMouseListener();
+    }
+
+    /**
      * when the mouse is released and the rectangle has been drawn, this method is called:
      * set well collection of the current condition and set the condition of the selected wells
      * @param plateCondition, the current condition
@@ -332,6 +339,7 @@ public class SetupExperimentPanelController {
         setupExperimentPanel.getPreviousButton().setEnabled(false);
         //hide Report and Finish buttons
         setupExperimentPanel.getFinishButton().setVisible(false);
+        setupExperimentPanel.getFinishButton().setEnabled(false);
         setupExperimentPanel.getReportButton().setVisible(false);
 
         cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and fill in experiment data");
@@ -364,7 +372,11 @@ public class SetupExperimentPanelController {
                     setupExperimentPanel.getPreviousButton().setEnabled(true);
                     setupExperimentPanel.getNextButton().setEnabled(false);
                     setupExperimentPanel.getFinishButton().setVisible(true);
-                    setupExperimentPanel.getFinishButton().setEnabled(false);
+                    if (setupExperimentPanel.getFinishButton().isEnabled()) {
+                        setupExperimentPanel.getFinishButton().setEnabled(true);
+                    } else {
+                        setupExperimentPanel.getFinishButton().setEnabled(false);
+                    }
                     setupExperimentPanel.getReportButton().setVisible(true);
                     setupExperimentPanel.getTopPanel().revalidate();
                     setupExperimentPanel.getTopPanel().repaint();
