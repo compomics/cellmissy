@@ -246,31 +246,31 @@ public class ExperimentFrame extends javax.swing.JFrame {
 
     private void createExperimentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createExperimentButtonActionPerformed
         // TODO add your handling code here:
-        if (projectJList.getSelectedValue() != null && !experimentNumberTextField.getText().isEmpty()) {
-            int experimentNumber = Integer.parseInt(experimentNumberTextField.getText());
-            File projectFolder = new File(projectJList.getSelectedValue().toString());
-            Experiment newExperiment = experimentService.createNewExperiment(experimentNumber, projectFolder);
-            try {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
-                Date experimentDate = dateFormat.parse(dateTextField.getText());
-                dateTextField.setText("");
-                newExperiment.setExperimentDate(experimentDate);
-            } catch (ParseException ex) {
-                JOptionPane.showMessageDialog(this, "Please insert a date in the format: yyyy/mm/dd", "Experiment date problem", JOptionPane.ERROR_MESSAGE);
-                dateTextField.setText("");
-            }
-            newExperiment.setPurpose(purposeTextField.getText());
-            experimentNumberTextField.setText("");
-            purposeTextField.setText("");
-            newExperiment.setDuration(Double.parseDouble(durationTextField.getText()));
-            newExperiment.setExperimentInterval(Double.parseDouble(intervalTextField.getText()));
-            newExperiment.setTimeFrames(Double.parseDouble(timeFramesTextField.getText()));
-            // save experiment to the db
-            experimentService.save(newExperiment);
-        }
-        durationTextField.setText("");
-        intervalTextField.setText("");
-        timeFramesTextField.setText("");
+//        if (projectJList.getSelectedValue() != null && !experimentNumberTextField.getText().isEmpty()) {
+//            int experimentNumber = Integer.parseInt(experimentNumberTextField.getText());
+//            File projectFolder = new File(projectJList.getSelectedValue().toString());
+//            Experiment newExperiment = experimentService.setupExperiment(experimentNumber, projectFolder);
+//            try {
+//                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
+//                Date experimentDate = dateFormat.parse(dateTextField.getText());
+//                dateTextField.setText("");
+//                newExperiment.setExperimentDate(experimentDate);
+//            } catch (ParseException ex) {
+//                JOptionPane.showMessageDialog(this, "Please insert a date in the format: yyyy/mm/dd", "Experiment date problem", JOptionPane.ERROR_MESSAGE);
+//                dateTextField.setText("");
+//            }
+//            newExperiment.setPurpose(purposeTextField.getText());
+//            experimentNumberTextField.setText("");
+//            purposeTextField.setText("");
+//            newExperiment.setDuration(Double.parseDouble(durationTextField.getText()));
+//            newExperiment.setExperimentInterval(Double.parseDouble(intervalTextField.getText()));
+//            newExperiment.setTimeFrames(Double.parseDouble(timeFramesTextField.getText()));
+//            // save experiment to the db
+//            experimentService.save(newExperiment);
+//        }
+//        durationTextField.setText("");
+//        intervalTextField.setText("");
+//        timeFramesTextField.setText("");
     }//GEN-LAST:event_createExperimentButtonActionPerformed
 
     private void experimentNumberTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_experimentNumberTextFieldActionPerformed

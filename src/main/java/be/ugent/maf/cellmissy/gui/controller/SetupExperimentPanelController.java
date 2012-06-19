@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.Instrument;
@@ -22,6 +23,7 @@ import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
+import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import com.compomics.util.Export;
 import com.compomics.util.enumeration.ImageType;
 import java.awt.Desktop;
@@ -37,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.PersistenceException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -53,6 +56,7 @@ import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -67,6 +71,7 @@ public class SetupExperimentPanelController {
     private ObservableList<Magnification> magnificationBindingList;
     private BindingGroup bindingGroup;
     private SetupReport setupReport;
+    private File microscopeDirectory;
     //view
     private SetupExperimentPanel setupExperimentPanel;
     private ExperimentInfoPanel experimentInfoPanel;
@@ -78,6 +83,7 @@ public class SetupExperimentPanelController {
     private ConditionsPanelController conditionsPanelController;
     private SetupPlatePanelController setupPlatePanelController;
     //services
+    private ApplicationContext context;
     private ProjectService projectService;
     private ExperimentService experimentService;
     private GridBagConstraints gridBagConstraints;
@@ -98,11 +104,13 @@ public class SetupExperimentPanelController {
         conditionsPanelController = new ConditionsPanelController(this);
 
         //init services
-        projectService = (ProjectService) cellMissyController.getBeanByName("projectService");
-        experimentService = (ExperimentService) cellMissyController.getBeanByName("experimentService");
+        context = ApplicationContextProvider.getInstance().getApplicationContext();
+        projectService = (ProjectService) context.getBean("projectService");
+        experimentService = (ExperimentService) context.getBean("experimentService");
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
+        microscopeDirectory = new File(PropertiesConfigurationHolder.getInstance().getString("microscopeDirectory"));
         //init views
         initExperimentInfoPanel();
         initSetupExperimentPanel();
@@ -331,6 +339,36 @@ public class SetupExperimentPanelController {
         experimentListener.registerDoc(experimentInfoPanel.getNumberTextField().getDocument());
         experimentListener.registerDoc(experimentInfoPanel.getPurposeTextArea().getDocument());
         experimentListener.registerDoc(((JTextField) experimentInfoPanel.getDateChooser().getDateEditor().getUiComponent()).getDocument());
+
+        /**
+         * add action listeners
+         */
+        //create new project: save it to DB and create folder on the server
+        experimentInfoPanel.getCreateProjectButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!experimentInfoPanel.getProjectNumberTextField().getText().isEmpty()) {
+                    try {
+                        int projectNumber = Integer.parseInt(experimentInfoPanel.getProjectNumberTextField().getText());
+                        Project savedProject = projectService.setupProject(projectNumber, microscopeDirectory);
+                        projectBindingList.add(savedProject);
+                        experimentInfoPanel.getProjectNumberTextField().setText("");
+                    } catch (PersistenceException exception) {
+                        cellMissyController.showMessage("Project already present in the DB", 1);
+                        experimentInfoPanel.getProjectNumberTextField().setText("");
+                        experimentInfoPanel.getProjectNumberTextField().requestFocusInWindow();
+                    } catch (NumberFormatException exception) {
+                        cellMissyController.showMessage("Please insert a valid number", 1);
+                        experimentInfoPanel.getProjectNumberTextField().setText("");
+                        experimentInfoPanel.getProjectNumberTextField().requestFocusInWindow();
+                    }
+                } else {
+                    cellMissyController.showMessage("Please insert a number for the project you want to create", 1);
+                    experimentInfoPanel.getProjectNumberTextField().requestFocusInWindow();
+                }
+            }
+        });
     }
 
     private void initSetupExperimentPanel() {
@@ -362,7 +400,7 @@ public class SetupExperimentPanelController {
                 experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());
                 experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());
                 experiment.setPurpose(experimentInfoPanel.getPurposeTextArea().getText());
-                experiment.setPlateFormat((PlateFormat) setupPlatePanelController.getSetupPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
+
                 //check if the info was filled in properly
                 if (cellMissyController.validateExperimentInfo()) {
                     //show the setupPanel and hide the experimentInfoPanel
@@ -415,25 +453,26 @@ public class SetupExperimentPanelController {
                         plateCondition.setExperiment(experiment);
                     }
 
+                    //set experiment plate format
+                    experiment.setPlateFormat((PlateFormat) setupPlatePanelController.getPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
                     //set the condition's collection of the experiment
                     experiment.setPlateConditionCollection(conditionsPanelController.getPlateConditionBindingList());
+
+                    //create experiment' folder structure on the server (the report needs to be saved in the setup subfolder)
+                    experimentService.createFolderStructure(experiment, microscopeDirectory);
 
                     //create PDF report, execute SwingWorker
                     SetupReportWorker setupReportWorker = new SetupReportWorker();
                     setupReportWorker.execute();
-                    //update info label (>>next step: save the experiment)
-                    cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Pdf report was successfully created. Click on Finish to save the Experiment");
-                    setupExperimentPanel.getFinishButton().setEnabled(true);
                 }
             }
         });
 
-        //click on Finish button: save the experiment
+        //click on Finish button: save the experiment: create also experiment folders on the server
         setupExperimentPanel.getFinishButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 //save the new experiment to the DB
                 experimentService.save(experiment);
             }
@@ -511,9 +550,11 @@ public class SetupExperimentPanelController {
      */
     private boolean projectHasExperiment(Integer projectId, Integer experimentNumber) {
         boolean hasExperiment = false;
-        for (Integer number : experimentService.findExperimentNumbersByProjectId(projectId)) {
-            if (number == experimentNumber) {
-                hasExperiment = true;
+        if (experimentService.findExperimentNumbersByProjectId(projectId) != null) {
+            for (Integer number : experimentService.findExperimentNumbersByProjectId(projectId)) {
+                if (number == experimentNumber) {
+                    hasExperiment = true;
+                }
             }
         }
         return hasExperiment;
@@ -566,10 +607,14 @@ public class SetupExperimentPanelController {
 
             //add back the two components to the panel
             conditionsPanelController.getConditionsPanel().getjScrollPane1().setViewportView(conditionsPanelController.getConditionsPanel().getConditionsJList());
-            setupPlatePanelController.getSetupPlatePanelGui().getBottomPanel().add(setupPlatePanelController.getSetupPlatePanel(), gridBagConstraints);
+            setupPlatePanelController.getPlatePanelGui().getBottomPanel().add(setupPlatePanelController.getSetupPlatePanel(), gridBagConstraints);
 
             cellMissyController.cellMissyFrame.getContentPane().revalidate();
             cellMissyController.cellMissyFrame.getContentPane().repaint();
+
+            //update info label (>>next step: save the experiment)
+            cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Pdf report was successfully created. Click on Finish to save the Experiment");
+            setupExperimentPanel.getFinishButton().setEnabled(true);
 
         }
 

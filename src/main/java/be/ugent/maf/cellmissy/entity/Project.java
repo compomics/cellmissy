@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -20,7 +21,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.hibernate.validator.constraints.NotBlank;
 
 /**
  *
@@ -43,9 +43,8 @@ public class Project implements Serializable {
     @Column(name = "projectid")
     private Integer projectid;
     @Basic(optional = false)
-    @NotBlank(message = "Please insert a project number")
     @Column(name = "project_number", unique = true)
-    private String projectNumber;
+    private int projectNumber;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private Collection<Experiment> experimentCollection;
 
@@ -56,7 +55,7 @@ public class Project implements Serializable {
         this.projectid = projectid;
     }
 
-    public Project(Integer projectid, String projectNumber) {
+    public Project(Integer projectid, int projectNumber) {
         this.projectid = projectid;
         this.projectNumber = projectNumber;
     }
@@ -69,11 +68,11 @@ public class Project implements Serializable {
         this.projectid = projectid;
     }
 
-    public String getProjectNumber() {
+    public int getProjectNumber() {
         return projectNumber;
     }
 
-    public void setProjectNumber(String projectNumber) {
+    public void setProjectNumber(int projectNumber) {
         this.projectNumber = projectNumber;
     }
 
@@ -108,6 +107,7 @@ public class Project implements Serializable {
 
     @Override
     public String toString() {
-        return "proj " + projectNumber;
+        DecimalFormat df = new DecimalFormat("000");        
+        return "P" + df.format(projectNumber);
     }
 }

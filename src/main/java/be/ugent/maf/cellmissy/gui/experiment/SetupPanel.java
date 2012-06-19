@@ -75,7 +75,7 @@ public class SetupPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.6;
-        gridBagConstraints.weighty = 0.3;
+        gridBagConstraints.weighty = 0.25;
         add(conditionsParentPanel, gridBagConstraints);
 
         setupConditionsParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Conditions Setup", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
@@ -93,9 +93,9 @@ public class SetupPanel extends javax.swing.JPanel {
         add(setupConditionsParentPanel, gridBagConstraints);
 
         leftPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Plate", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12), new java.awt.Color(0, 0, 0))); // NOI18N
-        leftPanel.setMinimumSize(new java.awt.Dimension(10, 10));
+        leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         leftPanel.setName(""); // NOI18N
-        leftPanel.setPreferredSize(new java.awt.Dimension(10, 10));
+        leftPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         leftPanel.setLayout(new java.awt.GridBagLayout());
 
         buttonsPanel.setMaximumSize(new java.awt.Dimension(20, 20));
@@ -120,7 +120,7 @@ public class SetupPanel extends javax.swing.JPanel {
         buttonsPanelLayout.setVerticalGroup(
             buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, buttonsPanelLayout.createSequentialGroup()
-                .addContainerGap(306, Short.MAX_VALUE)
+                .addContainerGap(336, Short.MAX_VALUE)
                 .addComponent(clearLastButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(clearAllButton)
@@ -156,7 +156,7 @@ public class SetupPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.6;
-        gridBagConstraints.weighty = 0.7;
+        gridBagConstraints.weighty = 0.75;
         add(leftPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables

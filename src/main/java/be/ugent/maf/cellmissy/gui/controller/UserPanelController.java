@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.user.UserPanel;
 import be.ugent.maf.cellmissy.service.UserService;
+import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -40,6 +42,7 @@ public class UserPanelController {
     //parent controller
     private CellMissyController cellMissyController;
     //services
+    private ApplicationContext context;
     private UserService userService;
 
     public UserPanelController(CellMissyController cellMissyController) {
@@ -47,7 +50,8 @@ public class UserPanelController {
         this.cellMissyController = cellMissyController;
 
         //init services
-        userService = (UserService) cellMissyController.getBeanByName("userService");
+        context = ApplicationContextProvider.getInstance().getApplicationContext();
+        userService = (UserService) context.getBean("userService");
         bindingGroup = new BindingGroup();
 
         //init views

@@ -15,6 +15,7 @@ import be.ugent.maf.cellmissy.gui.experiment.AssayEcm2DPanel;
 import be.ugent.maf.cellmissy.gui.experiment.AssayEcm3DPanel;
 import be.ugent.maf.cellmissy.service.AssayService;
 import be.ugent.maf.cellmissy.service.EcmService;
+import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -52,6 +54,7 @@ public class AssayEcmPanelController {
     // parent controller
     private ConditionsPanelController conditionsPanelController;
     // services
+    private ApplicationContext context;
     private AssayService assayService;
     private EcmService ecmService;
 
@@ -59,8 +62,9 @@ public class AssayEcmPanelController {
         this.conditionsPanelController = conditionsPanelController;
 
         //init services
-        assayService = (AssayService) conditionsPanelController.getSetupExperimentPanelController().getCellMissyController().getBeanByName("assayService");
-        ecmService = (EcmService) conditionsPanelController.getSetupExperimentPanelController().getCellMissyController().getBeanByName("ecmService");
+        context = ApplicationContextProvider.getInstance().getApplicationContext();
+        assayService = (AssayService) context.getBean("assayService");
+        ecmService = (EcmService) context.getBean("ecmService");
 
         bindingGroup = new BindingGroup();
 

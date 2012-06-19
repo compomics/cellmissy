@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.TreatmentPanel;
 import be.ugent.maf.cellmissy.service.TreatmentService;
+import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -29,6 +30,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -49,6 +51,7 @@ public class TreatmentPanelController {
     //parent controller
     private ConditionsPanelController conditionsPanelController;
     //services
+    private ApplicationContext context;
     private TreatmentService treatmentService;
     private GridBagConstraints gridBagConstraints;
 
@@ -57,7 +60,8 @@ public class TreatmentPanelController {
         this.conditionsPanelController = conditionsPanelController;
 
         //init services
-        treatmentService = (TreatmentService) conditionsPanelController.getSetupExperimentPanelController().getCellMissyController().getBeanByName("treatmentService");
+        context = ApplicationContextProvider.getInstance().getApplicationContext();
+        treatmentService = (TreatmentService) context.getBean("treatmentService");
         bindingGroup = new BindingGroup();
 
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
@@ -322,11 +326,11 @@ public class TreatmentPanelController {
         public TreatmentsRenderer() {
             setOpaque(true);
         }
-        
+
         //Overrides method from the DefaultListCellRenderer
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus){
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            Treatment treatment = (Treatment)value;
+            Treatment treatment = (Treatment) value;
             setText(treatment.getTreatmentType().getName());
             return this;
         }

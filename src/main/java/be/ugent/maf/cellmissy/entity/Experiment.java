@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -243,6 +244,7 @@ public class Experiment implements Serializable {
 
     @Override
     public String toString() {
-        return "exp " + experimentNumber;
+        DecimalFormat df = new DecimalFormat("000");       
+        return "E" + df.format(experimentNumber);
     }
 }

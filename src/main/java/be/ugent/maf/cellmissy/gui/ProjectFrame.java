@@ -204,17 +204,17 @@ public class ProjectFrame extends javax.swing.JFrame {
             // declare parameters for setupProject method
             String projectNumber = setupProjectNumberTextField.getText();
             File projectDirectory = new File(chooseDirectoryTextField.getText());
-            try {
-                Project savedProject = projectService.setupProject(projectNumber, projectDirectory);
-                projectBindingList.add(savedProject);
-                setupProjectNumberTextField.setText("");
-                chooseDirectoryTextField.setText("");
-            } // handle ConstraintViolationException
-            catch (PersistenceException e) {
-                // popup an error message
-                JOptionPane.showMessageDialog(this, "Project already present in the db", "Create project problem", JOptionPane.ERROR_MESSAGE);
-                setupProjectNumberTextField.setText("");
-            }
+//            try {
+//                Project savedProject = projectService.setupProject(projectNumber, projectDirectory);
+//                projectBindingList.add(savedProject);
+//                setupProjectNumberTextField.setText("");
+//                chooseDirectoryTextField.setText("");
+//            } // handle ConstraintViolationException
+//            catch (PersistenceException e) {
+//                // popup an error message
+//                JOptionPane.showMessageDialog(this, "Project already present in the db", "Create project problem", JOptionPane.ERROR_MESSAGE);
+//                setupProjectNumberTextField.setText("");
+//            }
 
         } else {
             JOptionPane.showMessageDialog(this, "Please insert a project number and choose a directory to create a new project", "Create project problem", JOptionPane.ERROR_MESSAGE);

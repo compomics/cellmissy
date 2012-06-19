@@ -31,17 +31,29 @@
         </plugins>
     </build>
     <repositories>
-        <repository>
+<!--        <repository>
             <url>http://ftp.ing.umu.se/mirror/eclipse/rt/eclipselink/maven.repo/</url>
             <id>eclipselink</id>
             <layout>default</layout>
             <name>Repository for library Library[eclipselink]</name>
-        </repository>
+        </repository>-->
         <repository>
             <id>genesis-maven2-repository</id>
             <name>Genesis maven2 repository</name>
             <url>http://genesis.UGent.be/maven2</url>
-        </repository>        
+        </repository> 
+        <repository>
+            <id>genesis-maven2-repo</id>
+            <name>Genesis maven2 repository</name>
+            <url>http://genesis.UGent.be/maven2</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>genesis-maven-repo</id>
+            <name>Genesis maven repository</name>
+            <url>http://genesis.UGent.be/maven</url>
+            <layout>default</layout>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
