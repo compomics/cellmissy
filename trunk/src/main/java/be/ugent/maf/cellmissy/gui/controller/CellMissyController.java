@@ -54,11 +54,6 @@ public class CellMissyController {
         cellMissyFrame.getLoadExperimentParentPanel().add(loadExperimentPanelController.getLoadExperimentPanel(), gridBagConstraints);
     }
 
-    public Object getBeanByName(String beanName) {
-        ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
-        return context.getBean(beanName);
-    }
-
     public void showMessage(String message, Integer messageType) {
         JOptionPane.showMessageDialog(cellMissyFrame, message, "", messageType);
     }

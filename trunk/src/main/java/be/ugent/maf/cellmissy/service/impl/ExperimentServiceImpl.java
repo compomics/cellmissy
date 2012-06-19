@@ -33,19 +33,34 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Autowired
     private MagnificationRepository magnificationRepository;
 
+    /**
+     * create experiment folders from microscope directory
+     * @param newExperiment
+     * @param microscopeDirectory 
+     */
     @Override
-    public Experiment createNewExperiment(int experimentNumber, File projectFolder) {
+    public void createFolderStructure(Experiment newExperiment, File microscopeDirectory) {
 
-        // create new experiment entity and set experiment number
-        Experiment newExperiment = new Experiment();
-        newExperiment.setExperimentNumber(experimentNumber);
+        //create main folder
+        File experimentFolder = null;
+        String projectFolderName = "CM_" + newExperiment.getProject().toString();
+        File[] listFiles = microscopeDirectory.listFiles();
+        for (File file : listFiles) {
+            if (file.getName().equals(projectFolderName)) {
+                String experimentFolderName = file.getName() + "_" + newExperiment.toString();
+                experimentFolder = new File(file, experimentFolderName);
+                experimentFolder.mkdir();
+                break;
+            }
+        }
 
-        // create experiment folder from project folder
-        String experimentFolder = projectFolder.getName() + "_E" + Integer.toString(experimentNumber);
-        File subdirectory = new File(projectFolder, experimentFolder);
-        subdirectory.mkdir();
-
-        return newExperiment;
+        //create subfolders
+        File miaFolder = new File(experimentFolder, experimentFolder.getName() + "_MIA");
+        miaFolder.mkdir();
+        File outputFolder = new File(experimentFolder, experimentFolder.getName() + "_output");
+        outputFolder.mkdir();
+        File rawFolder = new File(experimentFolder, experimentFolder.getName() + "_raw");
+        rawFolder.mkdir();
     }
 
     @Override
@@ -71,7 +86,7 @@ public class ExperimentServiceImpl implements ExperimentService {
 
     @Override
     public List<Instrument> findAllInstruments() {
-        return instrumentRepository.findAll();        
+        return instrumentRepository.findAll();
     }
 
     @Override

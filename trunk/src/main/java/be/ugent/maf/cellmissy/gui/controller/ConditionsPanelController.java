@@ -15,6 +15,7 @@ import be.ugent.maf.cellmissy.gui.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ConditionsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.SetupConditionsPanel;
 import be.ugent.maf.cellmissy.service.CellLineService;
+import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -41,6 +42,7 @@ import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -63,6 +65,7 @@ public class ConditionsPanelController {
     private TreatmentPanelController treatmentPanelController;
     //services
     private CellLineService cellLineService;
+    private ApplicationContext context;
     private GridBagConstraints gridBagConstraints;
     private Integer conditionIndex;
     private Integer previousConditionIndex;
@@ -76,7 +79,8 @@ public class ConditionsPanelController {
         this.setupExperimentPanelController = setupExperimentPanelController;
 
         //init services
-        cellLineService = (CellLineService) setupExperimentPanelController.getCellMissyController().getBeanByName("cellLineService");
+        context = ApplicationContextProvider.getInstance().getApplicationContext();
+        cellLineService = (CellLineService) context.getBean("cellLineService");
 
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();

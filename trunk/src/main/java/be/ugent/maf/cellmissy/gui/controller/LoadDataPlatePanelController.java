@@ -63,7 +63,7 @@ public class LoadDataPlatePanelController {
 
     private void initLoadDataPlatePanel() {
 
-        //init set up plate panel and add it to the bottom panel of the set up plate panel gui
+        //init load data plate panel and add it to the bottom panel of the plate panel gui
         loadDataPlatePanel = new LoadDataPlatePanel();
         platePanelGui.getBottomPanel().add(loadDataPlatePanel, gridBagConstraints);
 
@@ -83,9 +83,13 @@ public class LoadDataPlatePanelController {
             public void actionPerformed(ActionEvent e) {
                 PlateFormat selectedPlateFormat = plateFormatBindingList.get(platePanelGui.getPlateFormatComboBox().getSelectedIndex());
                 Dimension parentDimension = platePanelGui.getBottomPanel().getSize();
-                loadDataPlatePanel.initPanel(selectedPlateFormat, parentDimension);
-                loadDataPlatePanel.repaint();
+                loadDataPlatePanel.initPanel(selectedPlateFormat, parentDimension);              
             }
         });
+        
+        //show 96 plate format as default
+        platePanelGui.getPlateFormatComboBox().setSelectedIndex(0);
+        
+        loadExperimentPanelController.getLoadExperimentPanel().getLoadDataPlateParentPanel().add(platePanelGui, gridBagConstraints);
     }
 }

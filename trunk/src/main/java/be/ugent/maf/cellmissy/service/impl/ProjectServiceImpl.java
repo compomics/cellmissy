@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.repository.ProjectRepository;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,24 +26,19 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectRepository projectRepository;
 
     @Override
-    public Project setupProject(String projectNumber, File projectDirectory) {
+    public Project setupProject(int projectNumber, File microscopeDirectory) {
 
         //make new project entity and save to DB
         Project newProject = new Project();
         newProject.setProjectNumber(projectNumber);
 
         newProject = projectRepository.save(newProject);
-        
-        //create project files
-        File subDirectory = new File(projectDirectory, newProject.getProjectNumber());
+
+        //create project folder on the server
+        DecimalFormat df = new DecimalFormat("000");
+        String folderName = "CM_P" + df.format(projectNumber);
+        File subDirectory = new File(microscopeDirectory, folderName);
         subDirectory.mkdir();
-//        String E01 = newProject.getProjectNumber()+"_E01";
-//        File expFolder1 = new File (subDirectory, E01);
-//        expFolder1.mkdir();
-//        String E02 = newProject.getProjectNumber()+"_E02";
-//        File expFolder2 = new File (subDirectory, E02);
-//        expFolder2.mkdir();
-        
         return newProject;
     }
 

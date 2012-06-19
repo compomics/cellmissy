@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface ExperimentService extends GenericService<Experiment, Long> {
 
-    Experiment createNewExperiment(int experimentNumber, File projectFolder);
+    void createFolderStructure(Experiment newExperiment, File projectFolder);
     
     List<Instrument> findAllInstruments(); 
     

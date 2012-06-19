@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.PlatePanelGui;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.service.PlateService;
+import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
@@ -25,6 +26,7 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -42,6 +44,7 @@ public class SetupPlatePanelController {
     //parent controller
     private SetupExperimentPanelController setupExperimentPanelController;
     //services
+    private ApplicationContext context;
     private PlateService plateService;
     private GridBagConstraints gridBagConstraints;
 
@@ -55,7 +58,8 @@ public class SetupPlatePanelController {
         //init setup plate panel gui
         platePanelGui = new PlatePanelGui();
         //init services
-        plateService = (PlateService) setupExperimentPanelController.getCellMissyController().getBeanByName("plateService");
+        context = ApplicationContextProvider.getInstance().getApplicationContext();
+        plateService = (PlateService) context.getBean("plateService");
 
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
@@ -72,7 +76,7 @@ public class SetupPlatePanelController {
         return setupPlatePanel;
     }
 
-    public PlatePanelGui getSetupPlatePanelGui() {
+    public PlatePanelGui getPlatePanelGui() {
         return platePanelGui;
     }
 
@@ -110,7 +114,7 @@ public class SetupPlatePanelController {
      */
     private void initSetupPlatePanel() {
 
-        //init set up plate panel and add it to the bottom panel of the set up plate panel gui
+        //init set up plate panel and add it to the bottom panel of the plate panel gui
         setupPlatePanel = new SetupPlatePanel();
         platePanelGui.getBottomPanel().add(setupPlatePanel, gridBagConstraints);
 
