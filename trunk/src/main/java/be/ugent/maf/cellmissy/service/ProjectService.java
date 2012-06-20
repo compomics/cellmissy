@@ -19,5 +19,5 @@ public interface ProjectService extends GenericService<Project, Long> {
      * @param projectDirectory
      * @return 
      */
-    Project setupProject(int projectNumber, File projectDirectory);
+    Project setupProject(int projectNumber, String description, File projectDirectory);
 }

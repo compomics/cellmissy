@@ -24,19 +24,27 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private ProjectRepository projectRepository;
+    
+    private String folderName;
 
     @Override
-    public Project setupProject(int projectNumber, File microscopeDirectory) {
+    public Project setupProject(int projectNumber, String description, File microscopeDirectory) {
 
         //make new project entity and save to DB
         Project newProject = new Project();
         newProject.setProjectNumber(projectNumber);
+        newProject.setProjectDescription(description);
 
         newProject = projectRepository.save(newProject);
 
         //create project folder on the server
         DecimalFormat df = new DecimalFormat("000");
-        String folderName = "CM_P" + df.format(projectNumber);
+        if (newProject.getProjectDescription().length() == 0) {
+            folderName = "CM_P" + df.format(projectNumber);
+        } else {
+            folderName = "CM_P" + df.format(projectNumber) + "_" + newProject.getProjectDescription();
+        }
+
         File subDirectory = new File(microscopeDirectory, folderName);
         subDirectory.mkdir();
         return newProject;

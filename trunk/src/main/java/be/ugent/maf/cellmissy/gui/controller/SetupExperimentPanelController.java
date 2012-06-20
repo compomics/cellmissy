@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
 import javax.persistence.PersistenceException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -49,6 +50,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import org.apache.batik.transcoder.TranscoderException;
+import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -64,13 +66,13 @@ import org.springframework.context.ApplicationContext;
  */
 public class SetupExperimentPanelController {
 
+    private static final Logger LOG = Logger.getLogger(SetupExperimentPanelController.class);
     //model
     private Experiment experiment;
     private ObservableList<Project> projectBindingList;
     private ObservableList<Instrument> instrumentBindingList;
     private ObservableList<Magnification> magnificationBindingList;
     private BindingGroup bindingGroup;
-    private SetupReport setupReport;
     private File microscopeDirectory;
     //view
     private SetupExperimentPanel setupExperimentPanel;
@@ -351,7 +353,10 @@ public class SetupExperimentPanelController {
                 if (!experimentInfoPanel.getProjectNumberTextField().getText().isEmpty()) {
                     try {
                         int projectNumber = Integer.parseInt(experimentInfoPanel.getProjectNumberTextField().getText());
-                        Project savedProject = projectService.setupProject(projectNumber, microscopeDirectory);
+                        //project description is not mandatory
+                        String projectDescription = experimentInfoPanel.getDescriptionTextField().getText();
+                        Project savedProject = projectService.setupProject(projectNumber, projectDescription, microscopeDirectory);
+
                         projectBindingList.add(savedProject);
                         experimentInfoPanel.getProjectNumberTextField().setText("");
                     } catch (PersistenceException exception) {
@@ -389,20 +394,21 @@ public class SetupExperimentPanelController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //create a new experiment (in progress) and set its fields
-                experiment = new Experiment();
-                experiment.setExperimentStatus(ExperimentStatus.IN_PROGRESS);
-                //set the User of the experiment
-                //need to set the user like this NOW, to be changed!!!=====================================================================================
-                experiment.setUser(cellMissyController.getAUser());
-                experiment.setProject((Project) experimentInfoPanel.getProjectJList().getSelectedValue());
-                experiment.setInstrument((Instrument) experimentInfoPanel.getInstrumentComboBox().getSelectedItem());
-                experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());
-                experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());
-                experiment.setPurpose(experimentInfoPanel.getPurposeTextArea().getText());
 
+                //create a new experiment (in progress)
+                experiment = new Experiment();
                 //check if the info was filled in properly
                 if (cellMissyController.validateExperimentInfo()) {
+                    experiment.setExperimentStatus(ExperimentStatus.IN_PROGRESS);
+                    //set the User of the experiment
+                    //need to set the user like this NOW, to be changed!!!=====================================================================================
+                    experiment.setUser(cellMissyController.getAUser());
+                    experiment.setProject((Project) experimentInfoPanel.getProjectJList().getSelectedValue());
+                    experiment.setInstrument((Instrument) experimentInfoPanel.getInstrumentComboBox().getSelectedItem());
+                    experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());
+                    experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());
+                    experiment.setPurpose(experimentInfoPanel.getPurposeTextArea().getText());
+
                     //show the setupPanel and hide the experimentInfoPanel
                     GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), setupPanel, experimentInfoPanel);
                     cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Add conditions and select wells for each condition. Conditions details can be chosen in the right panel.");
@@ -458,11 +464,14 @@ public class SetupExperimentPanelController {
                     //set the condition's collection of the experiment
                     experiment.setPlateConditionCollection(conditionsPanelController.getPlateConditionBindingList());
 
-                    //create experiment' folder structure on the server (the report needs to be saved in the setup subfolder)
+                    //create experiment's folder structure on the server (the report needs to be saved in the setup subfolder)
                     experimentService.createFolderStructure(experiment, microscopeDirectory);
+                    LOG.debug("Experiment's folders created on the server");
 
                     //create PDF report, execute SwingWorker
-                    SetupReportWorker setupReportWorker = new SetupReportWorker();
+                    //create a new instance of SetupReport (with the current setupPlatePanel, conditionsList and experiment)
+                    SetupReport setupReport = new SetupReport(setupPlatePanelController.getSetupPlatePanel(), conditionsPanelController.getConditionsPanel().getConditionsJList(), experiment);
+                    SetupReportWorker setupReportWorker = new SetupReportWorker(setupReport);
                     setupReportWorker.execute();
                 }
             }
@@ -570,17 +579,19 @@ public class SetupExperimentPanelController {
     /**
      * SwingWorker to create PDF file (REPORT)
      */
-    private class SetupReportWorker extends SwingWorker<Object, Object> {
+    private class SetupReportWorker extends SwingWorker<Void, Void> {
 
-        private File file;
-        private JPanel reportPanel;
+        private SetupReport setupReport;
+
+        public SetupReportWorker(SetupReport setupReport) {
+            this.setupReport = setupReport;
+        }
 
         @Override
         protected Void doInBackground() throws Exception {
-            //create a new instance of SetupReport (with the current setupPlatePanel, conditionsList and experiment)
-            setupReport = new SetupReport(setupPlatePanelController.getSetupPlatePanel(), conditionsPanelController.getConditionsPanel().getConditionsJList(), experiment);
+
             //create JPanel for the report
-            reportPanel = setupReport.createReportPanel();
+            JPanel reportPanel = setupReport.createReportPanel();
             //create a new frame, set the size and add the report panel to it.
             frame = new JFrame();
             Dimension reportDimension = new Dimension(1200, 700);
@@ -589,13 +600,14 @@ public class SetupExperimentPanelController {
             //set the frame to visible
             frame.setVisible(true);
             //export Panel to Pdf
-            exportPanelToPdf();
+            File pdfFile = exportPanelToPdf(reportPanel);
+            LOG.debug("Pdf file successfully created");
             //hide the frame and dispose all its resources
             frame.setVisible(false);
             frame.dispose();
             //if export to PDF was successfull, open the PDF file from the desktop
             try {
-                Desktop.getDesktop().open(file);
+                Desktop.getDesktop().open(pdfFile);
             } catch (IOException ex) {
                 showMessage(ex.getMessage(), 1);
             }
@@ -619,14 +631,15 @@ public class SetupExperimentPanelController {
         }
 
         //print to PDF (Export class from COmpomics Utilities)
-        private void exportPanelToPdf() {
+        private File exportPanelToPdf(JPanel panel) {
             //file to which export the panel
-            file = new File("Experiment " + experiment.getExperimentNumber() + " - Project " + experiment.getProject().getProjectNumber() + ".pdf");
+            File file = new File(experimentService.getSetupFolder(), "Experiment " + experiment.getExperimentNumber() + " - Project " + experiment.getProject().getProjectNumber() + ".pdf");
             try {
-                Export.exportComponent(reportPanel, reportPanel.getBounds(), file, ImageType.PDF);
+                Export.exportComponent(panel, panel.getBounds(), file, ImageType.PDF);
             } catch (IOException | TranscoderException ex) {
                 showMessage(ex.getMessage(), 1);
             }
+            return file;
         }
     }
 }
