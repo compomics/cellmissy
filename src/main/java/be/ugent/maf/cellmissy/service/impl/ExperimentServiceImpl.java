@@ -33,6 +33,28 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Autowired
     private MagnificationRepository magnificationRepository;
 
+    private File miaFolder;
+    private File outputFolder;
+    private File rawFolder;
+    private File microscopeFolder;
+    private File setupFolder;
+
+    public File getMiaFolder() {
+        return miaFolder;
+    }
+
+    public File getMicroscopeFolder() {
+        return microscopeFolder;
+    }
+
+    public File getOutputFolder() {
+        return outputFolder;
+    }
+
+    public File getSetupFolder() {
+        return setupFolder;
+    }
+    
     /**
      * create experiment folders from microscope directory
      * @param newExperiment
@@ -55,12 +77,18 @@ public class ExperimentServiceImpl implements ExperimentService {
         }
 
         //create subfolders
-        File miaFolder = new File(experimentFolder, experimentFolder.getName() + "_MIA");
+        miaFolder = new File(experimentFolder, experimentFolder.getName() + "_MIA");
         miaFolder.mkdir();
-        File outputFolder = new File(experimentFolder, experimentFolder.getName() + "_output");
+        outputFolder = new File(experimentFolder, experimentFolder.getName() + "_output");
         outputFolder.mkdir();
-        File rawFolder = new File(experimentFolder, experimentFolder.getName() + "_raw");
+        rawFolder = new File(experimentFolder, experimentFolder.getName() + "_raw");
         rawFolder.mkdir();
+        
+        //create subfolders in the raw folder
+        microscopeFolder = new File(rawFolder, experimentFolder.getName() + "_microscope");
+        microscopeFolder.mkdir();
+        setupFolder = new File(rawFolder, experimentFolder.getName() + "_setup");
+        setupFolder.mkdir();
     }
 
     @Override

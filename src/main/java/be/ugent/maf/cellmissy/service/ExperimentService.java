@@ -16,6 +16,10 @@ import java.util.List;
  * @author Paola
  */
 public interface ExperimentService extends GenericService<Experiment, Long> {
+    
+    File getSetupFolder();
+    
+    File getMiaFolder();
 
     void createFolderStructure(Experiment newExperiment, File projectFolder);
     

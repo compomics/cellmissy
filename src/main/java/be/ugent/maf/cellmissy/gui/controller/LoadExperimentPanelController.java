@@ -14,7 +14,6 @@ import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

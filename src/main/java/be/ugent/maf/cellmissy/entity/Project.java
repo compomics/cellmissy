@@ -45,6 +45,9 @@ public class Project implements Serializable {
     @Basic(optional = false)
     @Column(name = "project_number", unique = true)
     private int projectNumber;
+    @Basic(optional = true)
+    @Column(name = "description")
+    private String projectDescription;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private Collection<Experiment> experimentCollection;
 
@@ -74,6 +77,14 @@ public class Project implements Serializable {
 
     public void setProjectNumber(int projectNumber) {
         this.projectNumber = projectNumber;
+    }
+
+    public String getProjectDescription() {
+        return projectDescription;
+    }
+
+    public void setProjectDescription(String projectDescription) {
+        this.projectDescription = projectDescription;
     }
 
     @XmlTransient
@@ -107,7 +118,7 @@ public class Project implements Serializable {
 
     @Override
     public String toString() {
-        DecimalFormat df = new DecimalFormat("000");        
+        DecimalFormat df = new DecimalFormat("000");
         return "P" + df.format(projectNumber);
     }
 }
