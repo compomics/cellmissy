@@ -409,6 +409,10 @@ public class SetupExperimentPanelController {
                     experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());
                     experiment.setPurpose(experimentInfoPanel.getPurposeTextArea().getText());
 
+                    //create experiment's folder structure on the server (the report needs to be saved in the setup subfolder)
+                    experimentService.createFolderStructure(experiment, microscopeDirectory);
+                    LOG.debug("Experiment folders were created");
+                    
                     //show the setupPanel and hide the experimentInfoPanel
                     GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), setupPanel, experimentInfoPanel);
                     cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Add conditions and select wells for each condition. Conditions details can be chosen in the right panel.");
@@ -463,10 +467,6 @@ public class SetupExperimentPanelController {
                     experiment.setPlateFormat((PlateFormat) setupPlatePanelController.getPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
                     //set the condition's collection of the experiment
                     experiment.setPlateConditionCollection(conditionsPanelController.getPlateConditionBindingList());
-
-                    //create experiment's folder structure on the server (the report needs to be saved in the setup subfolder)
-                    experimentService.createFolderStructure(experiment, microscopeDirectory);
-                    LOG.debug("Experiment's folders created on the server");
 
                     //create PDF report, execute SwingWorker
                     //create a new instance of SetupReport (with the current setupPlatePanel, conditionsList and experiment)
@@ -632,14 +632,17 @@ public class SetupExperimentPanelController {
 
         //print to PDF (Export class from COmpomics Utilities)
         private File exportPanelToPdf(JPanel panel) {
+           
+            //setupFolder
+            File setupFolder = experimentService.getSetupFolder();
             //file to which export the panel
-            File file = new File(experimentService.getSetupFolder(), "Experiment " + experiment.getExperimentNumber() + " - Project " + experiment.getProject().getProjectNumber() + ".pdf");
+            File pdfFile = new File(setupFolder, experimentService.getExperimentFolder().getName() + ".pdf");
             try {
-                Export.exportComponent(panel, panel.getBounds(), file, ImageType.PDF);
+                Export.exportComponent(panel, panel.getBounds(), pdfFile, ImageType.PDF);
             } catch (IOException | TranscoderException ex) {
                 showMessage(ex.getMessage(), 1);
             }
-            return file;
+            return pdfFile;
         }
     }
 }

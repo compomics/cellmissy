@@ -14,6 +14,7 @@ import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,6 +42,7 @@ public class LoadExperimentPanelController {
     private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
     private BindingGroup bindingGroup;
+    private Experiment experiment;
     //view
     private LoadExperimentPanel loadExperimentPanel;
     private LoadDataPlatePanel loadDataPlatePanel;
@@ -54,7 +56,7 @@ public class LoadExperimentPanelController {
     private GridBagConstraints gridBagConstraints;
     private ObsepFileParser obsepFileParser;
     private ApplicationContext context;
-    
+
     /**
      * constructor
      * @param cellMissyController 
@@ -71,7 +73,7 @@ public class LoadExperimentPanelController {
 
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        
+
         //init views
         loadExperimentPanel = new LoadExperimentPanel();
 
@@ -127,21 +129,22 @@ public class LoadExperimentPanelController {
         });
 
         //set selected index to 0
-        loadExperimentPanel.getProjectJList().setSelectedIndex(-1);
+        //loadExperimentPanel.getProjectJList().setSelectedIndex(-1);
 
-//        loadExperimentPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
-//
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                int locationToIndex = loadExperimentPanel.getExperimentJList().locationToIndex(e.getPoint());
-//
-//                loadDataPlatePanel = new LoadDataPlatePanel();
-//                Dimension parentDimension = loadExperimentPanel.getLoadDataPlateParentPanel().getSize();
-//                loadDataPlatePanel.initPanel(experimentBindingList.get(locationToIndex).getPlateFormat(), parentDimension);
-//                loadExperimentPanel.getLoadDataPlateParentPanel().add(loadDataPlatePanel, gridBagConstraints);
-//                loadExperimentPanel.repaint();
-//            }
-//        });
+        loadExperimentPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                int locationToIndex = loadExperimentPanel.getExperimentJList().locationToIndex(e.getPoint());
+                experiment = experimentBindingList.get(locationToIndex);
+                loadDataPlatePanel = new LoadDataPlatePanel();
+                Dimension parentDimension = loadExperimentPanel.getLoadDataPlateParentPanel().getSize();
+                loadDataPlatePanel.initPanel(experiment.getPlateFormat(), parentDimension);
+                loadExperimentPanel.getLoadDataPlateParentPanel().add(loadDataPlatePanel, gridBagConstraints);
+                loadExperimentPanel.repaint();
+            }
+        });
 
         /**
          * add action listeners
