@@ -32,12 +32,18 @@ public class ExperimentServiceImpl implements ExperimentService {
     private InstrumentRepository instrumentRepository;
     @Autowired
     private MagnificationRepository magnificationRepository;
-
+    private File experimentFolder;
     private File miaFolder;
     private File outputFolder;
     private File rawFolder;
     private File microscopeFolder;
     private File setupFolder;
+    private File algoNullMiaFolder;
+    private String projectFolderName;
+
+    public File getExperimentFolder() {
+        return experimentFolder;
+    }
 
     public File getMiaFolder() {
         return miaFolder;
@@ -54,7 +60,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     public File getSetupFolder() {
         return setupFolder;
     }
-    
+
     /**
      * create experiment folders from microscope directory
      * @param newExperiment
@@ -64,12 +70,17 @@ public class ExperimentServiceImpl implements ExperimentService {
     public void createFolderStructure(Experiment newExperiment, File microscopeDirectory) {
 
         //create main folder
-        File experimentFolder = null;
-        String projectFolderName = "CM_" + newExperiment.getProject().toString();
+        experimentFolder = null;
+        if (newExperiment.getProject().getProjectDescription().length() == 0) {
+            projectFolderName = "CM_" + newExperiment.getProject().toString();
+        } else {
+            projectFolderName = "CM_" + newExperiment.getProject().toString() + "_" + newExperiment.getProject().getProjectDescription();
+        }
         File[] listFiles = microscopeDirectory.listFiles();
         for (File file : listFiles) {
             if (file.getName().equals(projectFolderName)) {
-                String experimentFolderName = file.getName() + "_" + newExperiment.toString();
+                String substring = file.getName().substring(0, 7);
+                String experimentFolderName = substring + "_" + newExperiment.toString();
                 experimentFolder = new File(file, experimentFolderName);
                 experimentFolder.mkdir();
                 break;
@@ -83,12 +94,17 @@ public class ExperimentServiceImpl implements ExperimentService {
         outputFolder.mkdir();
         rawFolder = new File(experimentFolder, experimentFolder.getName() + "_raw");
         rawFolder.mkdir();
-        
+
         //create subfolders in the raw folder
         microscopeFolder = new File(rawFolder, experimentFolder.getName() + "_microscope");
         microscopeFolder.mkdir();
         setupFolder = new File(rawFolder, experimentFolder.getName() + "_setup");
         setupFolder.mkdir();
+        
+        //create algo-0 subfolder in the MIA folder
+        algoNullMiaFolder = new File(miaFolder, miaFolder.getName() + "_algo-0");
+        algoNullMiaFolder.mkdir();
+        
     }
 
     @Override
