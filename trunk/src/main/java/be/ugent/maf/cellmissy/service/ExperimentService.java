@@ -17,13 +17,10 @@ import java.util.List;
  */
 public interface ExperimentService extends GenericService<Experiment, Long> {
     
-    File getMicroscopeFolder();
     
     File getExperimentFolder();
     
     File getSetupFolder();
-    
-    File getMiaFolder();
 
     void createFolderStructure(Experiment newExperiment, File projectFolder);
     

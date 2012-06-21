@@ -43,6 +43,19 @@ public abstract class AbstractPlatePanel extends JPanel {
         }
     }
 
+    /**
+     * getters and setters
+     * 
+     * 
+     */
+    public List<WellGui> getWellGuiList() {
+        return wellGuiList;
+    }
+
+    public PlateFormat getPlateFormat() {
+        return plateFormat;
+    }
+
     public void initPanel(PlateFormat plateFormat, Dimension parentDimension) {
         this.plateFormat = plateFormat;
         wellGuiList = new ArrayList<>();
@@ -143,5 +156,5 @@ public abstract class AbstractPlatePanel extends JPanel {
         }
     }
 
-   protected abstract void reDrawWells(Graphics g);
+    protected abstract void reDrawWells(Graphics g);
 }

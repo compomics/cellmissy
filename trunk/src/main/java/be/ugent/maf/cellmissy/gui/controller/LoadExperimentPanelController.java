@@ -7,15 +7,12 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.Project;
-import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.LoadExperimentPanel;
-import be.ugent.maf.cellmissy.gui.plate.LoadDataPlatePanel;
 import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -23,9 +20,15 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.List;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.filechooser.FileFilter;
+import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Binding;
 import org.jdesktop.beansbinding.BindingGroup;
+import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.ELProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JListBinding;
@@ -45,7 +48,6 @@ public class LoadExperimentPanelController {
     private Experiment experiment;
     //view
     private LoadExperimentPanel loadExperimentPanel;
-    private LoadDataPlatePanel loadDataPlatePanel;
     //parent controller
     private CellMissyController cellMissyController;
     //child controllers
@@ -53,7 +55,6 @@ public class LoadExperimentPanelController {
     //services
     private ExperimentService experimentService;
     private ProjectService projectService;
-    private GridBagConstraints gridBagConstraints;
     private ObsepFileParser obsepFileParser;
     private ApplicationContext context;
 
@@ -72,7 +73,6 @@ public class LoadExperimentPanelController {
         obsepFileParser = (ObsepFileParser) context.getBean("obsepFileParser");
 
         bindingGroup = new BindingGroup();
-        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
         //init views
         loadExperimentPanel = new LoadExperimentPanel();
@@ -91,6 +91,10 @@ public class LoadExperimentPanelController {
         return loadExperimentPanel;
     }
 
+    public void updateInfoLabel(JLabel label, String message) {
+        cellMissyController.updateInfoLabel(label, message);
+    }
+
     /*
      * private methods and classes
      */
@@ -99,13 +103,32 @@ public class LoadExperimentPanelController {
      */
     private void initExperimentDataPanel() {
 
-        cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Select a project and then an experiment to load CELLMIA data. Choose a file from the microscope.");
+        loadExperimentPanel.getFinishButton().setEnabled(false);
+
+        //update info message
+        cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Select a project and then an experiment to load CELLMIA data. Choose the microscope file to retrieve experiment data.");
 
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, loadExperimentPanel.getProjectJList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
+        
+        //init experiment binding
+        //bind Duration
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, loadExperimentPanel.getDurationTextField(), ELProperty.create("${text}"), experiment, BeanProperty.create("duration"), "durationbinding");
+        bindingGroup.addBinding(binding);
+        //bind Interval
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, loadExperimentPanel.getIntervalTextField(), ELProperty.create("${text}"), experiment, BeanProperty.create("experimentInterval"), "intervalbinding");
+        bindingGroup.addBinding(binding);
+        //bind Time frames
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, loadExperimentPanel.getTimeFramesTextField(), ELProperty.create("${text}"), experiment, BeanProperty.create("timeFrames"), "timeframesbinding");
+        bindingGroup.addBinding(binding);
+ 
+
+        //bo the binding
+        bindingGroup.bind();
+
 
         /**
          * add mouse listeners
@@ -124,12 +147,12 @@ public class LoadExperimentPanelController {
                     bindingGroup.bind();
                 } else {
                     cellMissyController.showMessage("There are no experiments in progress for this project!", 1);
+                    if (!experimentBindingList.isEmpty()) {
+                        experimentBindingList.clear();
+                    }
                 }
             }
         });
-
-        //set selected index to 0
-        //loadExperimentPanel.getProjectJList().setSelectedIndex(-1);
 
         loadExperimentPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
 
@@ -138,17 +161,19 @@ public class LoadExperimentPanelController {
 
                 int locationToIndex = loadExperimentPanel.getExperimentJList().locationToIndex(e.getPoint());
                 experiment = experimentBindingList.get(locationToIndex);
-                loadDataPlatePanel = new LoadDataPlatePanel();
                 Dimension parentDimension = loadExperimentPanel.getLoadDataPlateParentPanel().getSize();
-                loadDataPlatePanel.initPanel(experiment.getPlateFormat(), parentDimension);
-                loadExperimentPanel.getLoadDataPlateParentPanel().add(loadDataPlatePanel, gridBagConstraints);
-                loadExperimentPanel.repaint();
+                //init plate panel with current experiment plate format
+                loadDataPlatePanelController.getLoadDataPlatePanel().initPanel(experiment.getPlateFormat(), parentDimension);
+                loadDataPlatePanelController.getLoadDataPlatePanel().repaint();
+
+                cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click on forward to process imaging data for the selected experiment.");
             }
         });
 
         /**
          * add action listeners
          */
+        //parse obseo file from the microscope
         loadExperimentPanel.getParseObsepFileButton().addActionListener(new ActionListener() {
 
             @Override
@@ -176,8 +201,8 @@ public class LoadExperimentPanelController {
                     obsepFileParser.parseObsepFile(obsepFile);
                     List<Double> experimentInfo = obsepFileParser.getExperimentInfo();
                     loadExperimentPanel.getTimeFramesTextField().setText(experimentInfo.get(0).toString());
-                    loadExperimentPanel.getIntervalTextField().setText(experimentInfo.get(1).toString());
-                    loadExperimentPanel.getDurationTextField().setText(experimentInfo.get(2).toString());
+                    loadExperimentPanel.getIntervalTextField().setText(experimentInfo.get(1).toString() + " " + obsepFileParser.getUnit());
+                    loadExperimentPanel.getDurationTextField().setText(experimentInfo.get(2).toString() + " HOURS");
                 } else {
                     cellMissyController.showMessage("Open command cancelled by user", 1);
                 }

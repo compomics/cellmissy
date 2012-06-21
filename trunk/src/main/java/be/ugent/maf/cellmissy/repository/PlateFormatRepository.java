@@ -11,5 +11,6 @@ import be.ugent.maf.cellmissy.entity.PlateFormat;
  * @author Paola
  */
 public interface PlateFormatRepository extends GenericRepository<PlateFormat, Long> {
-    
+
+    PlateFormat findByFormat(int format);
 }

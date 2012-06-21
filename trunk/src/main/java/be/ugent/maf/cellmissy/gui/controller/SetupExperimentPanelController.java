@@ -412,7 +412,7 @@ public class SetupExperimentPanelController {
                     //create experiment's folder structure on the server (the report needs to be saved in the setup subfolder)
                     experimentService.createFolderStructure(experiment, microscopeDirectory);
                     LOG.debug("Experiment folders were created");
-                    
+
                     //show the setupPanel and hide the experimentInfoPanel
                     GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), setupPanel, experimentInfoPanel);
                     cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Add conditions and select wells for each condition. Conditions details can be chosen in the right panel.");
@@ -632,7 +632,7 @@ public class SetupExperimentPanelController {
 
         //print to PDF (Export class from COmpomics Utilities)
         private File exportPanelToPdf(JPanel panel) {
-           
+
             //setupFolder
             File setupFolder = experimentService.getSetupFolder();
             //file to which export the panel

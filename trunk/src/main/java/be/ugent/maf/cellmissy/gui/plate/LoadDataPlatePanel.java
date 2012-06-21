@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.plate;
 
+import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,8 +15,31 @@ import java.util.List;
  * this class is used in the loading data step: imaged wells are shown with related imaging types
  * @author Paola Masuzzo
  */
-public class LoadDataPlatePanel extends AbstractPlatePanel{
-    
+public class LoadDataPlatePanel extends AbstractPlatePanel {
+
+    private List<ImagingType> imagingTypeList;
+    private ImagingType currentImagingType;
+
+    /**
+     * getters and setters
+     * @
+     */
+    public List<ImagingType> getImagingTypeList() {
+        return imagingTypeList;
+    }
+
+    public void setImagingTypeList(List<ImagingType> imagingTypeList) {
+        this.imagingTypeList = imagingTypeList;
+    }
+
+    public ImagingType getCurrentImagingType() {
+        return currentImagingType;
+    }
+
+    public void setCurrentImagingType(ImagingType currentImagingType) {
+        this.currentImagingType = currentImagingType;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
 
@@ -61,5 +85,4 @@ public class LoadDataPlatePanel extends AbstractPlatePanel{
             }
         }
     }
-    
 }
