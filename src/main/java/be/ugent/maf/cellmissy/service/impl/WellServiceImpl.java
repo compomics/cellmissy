@@ -72,7 +72,7 @@ public class WellServiceImpl implements WellService {
     @Override
     public void init() {
         cellMiaDataService.init(new File(PropertiesConfigurationHolder.getInstance().getString("cellMiaFolder")));
-        cellMiaDataService.getMicroscopeDataService().init(new File(PropertiesConfigurationHolder.getInstance().getString("microscopeFolder")), new File(PropertiesConfigurationHolder.getInstance().getString("obsepFile")));
+        cellMiaDataService.getMicroscopeDataService().init(new File(PropertiesConfigurationHolder.getInstance().getString("setupFolder")), new File(PropertiesConfigurationHolder.getInstance().getString("obsepFile")));
         imagingTypeMap = cellMiaDataService.processCellMiaData();
     }
 

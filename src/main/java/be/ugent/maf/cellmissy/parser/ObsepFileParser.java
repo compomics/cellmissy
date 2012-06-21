@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.parser;
 
 import be.ugent.maf.cellmissy.entity.ImagingType;
 
+import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl.CycleTimeUnit;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,8 @@ import java.util.Map;
  * @author Paola
  */
 public interface ObsepFileParser {
+    
+    CycleTimeUnit getUnit();
 
     /**
      * parses the file

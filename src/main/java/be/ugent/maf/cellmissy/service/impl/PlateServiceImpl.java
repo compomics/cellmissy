@@ -43,4 +43,9 @@ public class PlateServiceImpl implements PlateService {
         entity = plateFormatRepository.save(entity);
         plateFormatRepository.delete(entity);
     }
+
+    @Override
+    public PlateFormat findByFormat(int format) {
+        return plateFormatRepository.findByFormat(format);
+    }
 }

@@ -45,18 +45,6 @@ public class ExperimentServiceImpl implements ExperimentService {
         return experimentFolder;
     }
 
-    public File getMiaFolder() {
-        return miaFolder;
-    }
-
-    public File getMicroscopeFolder() {
-        return microscopeFolder;
-    }
-
-    public File getOutputFolder() {
-        return outputFolder;
-    }
-
     public File getSetupFolder() {
         return setupFolder;
     }

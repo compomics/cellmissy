@@ -40,8 +40,13 @@ public class ObsepFileParserImpl implements ObsepFileParser {
         }
     }
     private Node loopNode;
+    private CycleTimeUnit unit;
 
     public ObsepFileParserImpl() {
+    }
+
+    public CycleTimeUnit getUnit() {
+        return unit;
     }
 
     @Override
@@ -90,8 +95,7 @@ public class ObsepFileParserImpl implements ObsepFileParser {
         // create new Experiment entity and set class members
         List<Double> experimentInfo = new ArrayList<>();
         NodeList loopChildNodes = loopNode.getChildNodes();
-
-        // get time frame
+        // get time frames
         NamedNodeMap repeatTimesAttr = loopChildNodes.item(0).getFirstChild().getAttributes();
         for (int i = 0; i < repeatTimesAttr.getLength(); i++) {
             String repeatTimesVal = repeatTimesAttr.item(i).getNodeValue();
@@ -111,17 +115,30 @@ public class ObsepFileParserImpl implements ObsepFileParser {
         NamedNodeMap cycleTimeUnitAttr = loopChildNodes.item(2).getFirstChild().getAttributes();
         for (int i = 0; i < cycleTimeUnitAttr.getLength(); i++) {
             int cycleTimeUnitValue = Integer.valueOf(cycleTimeUnitAttr.item(i).getNodeValue());
-            CycleTimeUnit unit = findCycleTimeUnitByValue(cycleTimeUnitValue);
+            unit = findCycleTimeUnitByValue(cycleTimeUnitValue);
         }
 
         // get duration
-        Double duration = (experimentInfo.get(0) * experimentInfo.get(1)) / 60;
-        experimentInfo.add(duration);
+
+        switch (unit.unitValue) {
+            case 1:
+                Double duration = (experimentInfo.get(0) * experimentInfo.get(1));
+                experimentInfo.add(duration);
+                break;
+            case 2:
+                duration = (experimentInfo.get(0) * experimentInfo.get(1)) / 60;
+                experimentInfo.add(duration);
+                break;
+            case 3:
+                duration = (experimentInfo.get(0) * experimentInfo.get(1)) / 3600;
+                experimentInfo.add(duration);
+                break;
+        }
+
 
         return experimentInfo;
     }
 
-    
     /**
      * Getting Position List names used in the Experiment
      * @return a List of String (Position List names)
@@ -227,7 +244,7 @@ public class ObsepFileParserImpl implements ObsepFileParser {
         return foundNode;
     }
 
-   /**
+    /**
      * Getting a List of Child Nodes by Attribute Value
      * @param parentNode
      * @param attributeValue
