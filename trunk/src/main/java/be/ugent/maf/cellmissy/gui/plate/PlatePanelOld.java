@@ -337,7 +337,7 @@ public class PlatePanelOld extends JPanel implements MouseListener {
             plateMediator.showInitProgressBar();
             // initializes wellService: CellMiaDataService and MicroscopeDataService are also inizialized
             // Imaging Types of the current Experiment are retrieved and CellMia data are processed (txt files are read and collections are set)
-            wellService.init();
+            //wellService.init();
             // get the list of imaging types
             imagingTypeList = wellService.getImagingTypes();
             return null;

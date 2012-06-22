@@ -13,6 +13,7 @@ import be.ugent.maf.cellmissy.repository.InstrumentRepository;
 import be.ugent.maf.cellmissy.repository.MagnificationRepository;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("experimentService")
 @Transactional
 public class ExperimentServiceImpl implements ExperimentService {
-
+    
     @Autowired
     private ExperimentRepository experimentRepository;
     @Autowired
     private InstrumentRepository instrumentRepository;
     @Autowired
     private MagnificationRepository magnificationRepository;
+    private File projectFolder;
     private File experimentFolder;
     private File miaFolder;
     private File outputFolder;
@@ -39,23 +41,16 @@ public class ExperimentServiceImpl implements ExperimentService {
     private File microscopeFolder;
     private File setupFolder;
     private File algoNullMiaFolder;
+    private File mainDirectory;
     private String projectFolderName;
 
-    public File getExperimentFolder() {
-        return experimentFolder;
-    }
-
-    public File getSetupFolder() {
-        return setupFolder;
-    }
-
     /**
-     * create experiment folders from microscope directory
+     * create experiment obsepFolders from microscope directory
      * @param newExperiment
-     * @param microscopeDirectory 
+     * @param mainDirectory 
      */
     @Override
-    public void createFolderStructure(Experiment newExperiment, File microscopeDirectory) {
+    public void createFolderStructure(Experiment newExperiment) {
 
         //create main folder
         experimentFolder = null;
@@ -64,12 +59,14 @@ public class ExperimentServiceImpl implements ExperimentService {
         } else {
             projectFolderName = "CM_" + newExperiment.getProject().toString() + "_" + newExperiment.getProject().getProjectDescription();
         }
-        File[] listFiles = microscopeDirectory.listFiles();
+        File[] listFiles = mainDirectory.listFiles();
         for (File file : listFiles) {
             if (file.getName().equals(projectFolderName)) {
                 String substring = file.getName().substring(0, 7);
                 String experimentFolderName = substring + "_" + newExperiment.toString();
                 experimentFolder = new File(file, experimentFolderName);
+                //set experiment folder for the experiment
+                newExperiment.setExperimentFolder(experimentFolder);
                 experimentFolder.mkdir();
                 break;
             }
@@ -87,52 +84,133 @@ public class ExperimentServiceImpl implements ExperimentService {
         microscopeFolder = new File(rawFolder, experimentFolder.getName() + "_microscope");
         microscopeFolder.mkdir();
         setupFolder = new File(rawFolder, experimentFolder.getName() + "_setup");
+        //set the setupFolder
+        newExperiment.setSetupFolder(setupFolder);
         setupFolder.mkdir();
-        
+
         //create algo-0 subfolder in the MIA folder
         algoNullMiaFolder = new File(miaFolder, miaFolder.getName() + "_algo-0");
         algoNullMiaFolder.mkdir();
         
     }
+    
+    @Override
+    public void loadFolderStructure(Experiment experiment) {
+        for (File file : mainDirectory.listFiles()) {
+            if (file.getName().contains(experiment.getProject().toString())) {
+                //project folder
+                projectFolder = file;
+                break;
+            }
+        }
+        
+        for (File file : projectFolder.listFiles()) {
+            if (file.getName().contains(experiment.toString())) {
+                //experiment folder
+                experimentFolder = file;
+                //set experiment folde
+                experiment.setExperimentFolder(experimentFolder);
+                break;
+            }
+        }
+        
+        
+        for (File file : experimentFolder.listFiles()) {
+            if (file.getName().endsWith("raw")) {
+                //raw folder
+                rawFolder = file;
+            } else if (file.getName().endsWith("MIA")) {
+                //Mia folder
+                miaFolder = file;
+                //set experiment mia folder
+                experiment.setMiaFolder(miaFolder);
+            }
+        }
+        
+        for (File file : rawFolder.listFiles()) {
+            if (file.getName().endsWith("setup")) {
+                setupFolder = file;
+                //set setup folder of the experiment
+                experiment.setSetupFolder(setupFolder);
+            } else if (file.getName().endsWith("microscope")) {
+                microscopeFolder = file;
+            }
+        }
 
+        //from microscope folder look for obsep folder(s)
+        File docFiles = null;
+        for (File file : microscopeFolder.listFiles()) {
+            if (file.getName().endsWith("Files")) {
+                docFiles = file;
+                break;
+            }
+        }
+        
+        List<File> obsepFolders = new ArrayList<>();
+        for (int i = 0; i < docFiles.listFiles().length; i++) {
+            if (docFiles.listFiles()[i].getName().startsWith("D")) {
+                obsepFolders.add(docFiles.listFiles()[i]);
+            }
+        }
+
+        //obsep file
+        File obsepFile = null;
+        
+        if (obsepFolders.size() == 1) {
+            File aFile = obsepFolders.get(0);
+            for (File file : aFile.listFiles()) {
+                if (file.getName().endsWith(".obsep")) {
+                    obsepFile = file;
+                }
+            }
+        }
+        //set experiment obsep file
+        experiment.setObsepFile(obsepFile);
+    }
+    
     @Override
     public Experiment findById(Long id) {
         return experimentRepository.findById(id);
     }
-
+    
     @Override
     public List<Experiment> findAll() {
         return experimentRepository.findAll();
     }
-
+    
     @Override
     public Experiment save(Experiment entity) {
         return experimentRepository.save(entity);
     }
-
+    
     @Override
     public void delete(Experiment entity) {
         entity = experimentRepository.save(entity);
         experimentRepository.delete(entity);
     }
-
+    
     @Override
     public List<Instrument> findAllInstruments() {
         return instrumentRepository.findAll();
     }
-
+    
     @Override
     public List<Magnification> findAllMagnifications() {
         return magnificationRepository.findAll();
     }
-
+    
     @Override
     public List<Integer> findExperimentNumbersByProjectId(Integer projectId) {
         return experimentRepository.findExperimentNumbersByProjectId(projectId);
     }
-
+    
     @Override
     public List<Experiment> findExperimentsByProjectIdAndStatus(Integer projectId, ExperimentStatus experimentStatus) {
         return experimentRepository.findExperimentsByProjectIdAndStatus(projectId, experimentStatus);
+    }
+    
+    @Override
+    public void init(File microscopeDirectory) {
+        this.mainDirectory = microscopeDirectory;
     }
 }

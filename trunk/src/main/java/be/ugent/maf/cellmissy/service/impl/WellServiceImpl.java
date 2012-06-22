@@ -4,7 +4,8 @@
  */
 package be.ugent.maf.cellmissy.service.impl;
 
-import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
+import be.ugent.maf.cellmissy.entity.Algorithm;
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -13,7 +14,6 @@ import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.repository.WellRepository;
 import be.ugent.maf.cellmissy.service.CellMiaDataService;
 import be.ugent.maf.cellmissy.service.WellService;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +37,9 @@ public class WellServiceImpl implements WellService {
     private static final double offset = 0.5;
     // this Map maps ImagingType (keys) to list of WellHasImagingType (values)
     private Map<ImagingType, List<WellHasImagingType>> imagingTypeMap;
-
+    
+    private Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> algoMap;
+    
     @Override
     public void updateWellGuiListWithImagingType(ImagingType imagingType, PlateFormat plateFormat, WellGui firstWellGui, List<WellGui> wellGuiList) {
 
@@ -70,10 +72,11 @@ public class WellServiceImpl implements WellService {
     }
 
     @Override
-    public void init() {
-        cellMiaDataService.init(new File(PropertiesConfigurationHolder.getInstance().getString("cellMiaFolder")));
-        cellMiaDataService.getMicroscopeDataService().init(new File(PropertiesConfigurationHolder.getInstance().getString("setupFolder")), new File(PropertiesConfigurationHolder.getInstance().getString("obsepFile")));
-        imagingTypeMap = cellMiaDataService.processCellMiaData();
+    public void init(Experiment experiment) {
+        cellMiaDataService.init(experiment);
+        cellMiaDataService.getMicroscopeDataService().init(experiment);
+        imagingTypeMap = cellMiaDataService.getMicroscopeDataService().processMicroscopeData();
+        algoMap = cellMiaDataService.processCellMiaData();
     }
 
     @Override

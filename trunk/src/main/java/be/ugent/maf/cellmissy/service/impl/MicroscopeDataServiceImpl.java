@@ -1,5 +1,6 @@
 package be.ugent.maf.cellmissy.service.impl;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.parser.ObsepFileParser;
@@ -8,7 +9,6 @@ import be.ugent.maf.cellmissy.service.MicroscopeDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -22,16 +22,16 @@ import java.util.Map;
 @Service("microscopeDataService")
 public class MicroscopeDataServiceImpl implements MicroscopeDataService {
 
-    private File microscopeFolder;
+    private Experiment experiment;
     @Autowired
     private ObsepFileParser obsepFileParser;
     @Autowired
     private PositionListParser positionListParser;
 
     @Override
-    public void init(File microscopeFolder, File obsepFile) {
-        this.microscopeFolder = microscopeFolder;
-        obsepFileParser.parseObsepFile(obsepFile);
+    public void init(Experiment experiment) {
+        this.experiment = experiment;
+        obsepFileParser.parseObsepFile(experiment.getObsepFile());
     }
 
     @Override
@@ -39,7 +39,7 @@ public class MicroscopeDataServiceImpl implements MicroscopeDataService {
 
         Map<ImagingType, String> imagingTypeToPosListMap = obsepFileParser.mapImagingTypetoPositionList();
 
-        Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = positionListParser.parsePositionList(imagingTypeToPosListMap, microscopeFolder);
+        Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = positionListParser.parsePositionList(imagingTypeToPosListMap, experiment.getSetupFolder());
 
         return imagingTypeMap;
     }

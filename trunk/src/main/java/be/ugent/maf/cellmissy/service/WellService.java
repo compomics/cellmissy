@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.service;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -20,7 +21,7 @@ public interface WellService extends GenericService<Well, Long> {
      * Initializes the service
      * this method initializes also CellMiaDataService and MicroscopeDataService
      */
-    void init();
+    void init(Experiment experiment);
 
     /**
      * This method uses the plate format and the first WellGui selected by the user to update the wellGui List with the right ones

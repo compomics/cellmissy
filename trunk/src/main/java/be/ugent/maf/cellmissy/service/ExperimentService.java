@@ -16,19 +16,18 @@ import java.util.List;
  * @author Paola
  */
 public interface ExperimentService extends GenericService<Experiment, Long> {
-    
-    
-    File getExperimentFolder();
-    
-    File getSetupFolder();
 
-    void createFolderStructure(Experiment newExperiment, File projectFolder);
+    void init(File microscopeDirectory);
+
+    void createFolderStructure(Experiment newExperiment);
     
-    List<Instrument> findAllInstruments(); 
-    
+    void loadFolderStructure(Experiment experiment);
+
+    List<Instrument> findAllInstruments();
+
     List<Magnification> findAllMagnifications();
-    
+
     List<Integer> findExperimentNumbersByProjectId(Integer projectId);
-    
+
     List<Experiment> findExperimentsByProjectIdAndStatus(Integer projectId, ExperimentStatus experimentStatus);
 }

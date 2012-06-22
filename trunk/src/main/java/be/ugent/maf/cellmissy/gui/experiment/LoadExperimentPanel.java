@@ -44,7 +44,7 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         return infolabel;
     }
 
-    public JButton getParseObsepFileButton() {
+    public JButton getExpDataButton() {
         return parseObsepFileButton;
     }
 
@@ -66,6 +66,10 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
 
     public JButton getFinishButton() {
         return finishButton;
+    }
+
+    public JLabel getUnitLabel() {
+        return unitLabel;
     }
     
     /** This method is called from within the constructor to
@@ -91,7 +95,8 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         timeFramesLabel = new javax.swing.JLabel();
         intervalTextField = new javax.swing.JTextField();
         timeFramesTextField = new javax.swing.JTextField();
-        parseObsepFileButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        unitLabel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         loadDataPlateParentPanel = new javax.swing.JPanel();
         bottomPanel = new javax.swing.JPanel();
@@ -99,6 +104,7 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         forwardButton = new javax.swing.JButton();
         finishButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
+        parseObsepFileButton = new javax.swing.JButton();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -136,14 +142,14 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
 
         timeFramesTextField.setEnabled(false);
 
-        parseObsepFileButton.setText("parse obsep file");
+        jLabel1.setText("hours");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(48, 48, 48)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(32, 32, 32)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(timeFramesLabel, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(intervalLabel, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -153,35 +159,37 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
                     .addComponent(intervalTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
                     .addComponent(durationTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
                     .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(61, 61, 61))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(152, Short.MAX_VALUE)
-                .addComponent(parseObsepFileButton)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(unitLabel))
+                .addGap(30, 30, 30))
         );
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {durationTextField, intervalTextField, timeFramesTextField});
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {durationLabel, intervalLabel, timeFramesLabel});
 
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, unitLabel});
+
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(38, 38, 38)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(durationLabel)
-                    .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(intervalLabel)
-                    .addComponent(intervalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(intervalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(unitLabel))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(timeFramesLabel)
                     .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
-                .addComponent(parseObsepFileButton)
-                .addContainerGap())
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {durationTextField, intervalTextField, timeFramesTextField});
@@ -191,7 +199,7 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         experimentDataPanelLayout.setHorizontalGroup(
             experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(experimentDataPanelLayout.createSequentialGroup()
-                .addContainerGap(14, Short.MAX_VALUE)
+                .addContainerGap(16, Short.MAX_VALUE)
                 .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, experimentDataPanelLayout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -275,23 +283,27 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
 
         cancelButton.setText("Cancel");
 
+        parseObsepFileButton.setText("Exp Data");
+
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bottomPanelLayout.createSequentialGroup()
                 .addGap(35, 35, 35)
-                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE)
-                .addGap(48, 48, 48)
+                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(parseObsepFileButton)
+                .addGap(18, 18, 18)
                 .addComponent(cancelButton)
                 .addGap(18, 18, 18)
                 .addComponent(forwardButton)
                 .addGap(18, 18, 18)
                 .addComponent(finishButton)
-                .addGap(38, 38, 38))
+                .addGap(70, 70, 70))
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, finishButton, forwardButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, finishButton, forwardButton, parseObsepFileButton});
 
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -301,7 +313,8 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
                     .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(finishButton)
                         .addComponent(forwardButton)
-                        .addComponent(cancelButton))
+                        .addComponent(cancelButton)
+                        .addComponent(parseObsepFileButton))
                     .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
@@ -328,6 +341,7 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
     private javax.swing.JLabel infolabel;
     private javax.swing.JLabel intervalLabel;
     private javax.swing.JTextField intervalTextField;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -338,5 +352,6 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
     private javax.swing.JLabel timeFramesLabel;
     private javax.swing.JTextField timeFramesTextField;
     private javax.swing.JPanel topPanel;
+    private javax.swing.JLabel unitLabel;
     // End of variables declaration//GEN-END:variables
 }
