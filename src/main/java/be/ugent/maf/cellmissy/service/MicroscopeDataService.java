@@ -1,9 +1,9 @@
 package be.ugent.maf.cellmissy.service;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +22,7 @@ public interface MicroscopeDataService {
      * @param microscopeFolder
      * @param obsepFile 
      */
-    void init(File microscopeFolder, File obsepFile);
+    void init(Experiment experiment);
 
     /**
      * this method uses both ObsepFileParser and PositionListParser classes to process data from the microscope

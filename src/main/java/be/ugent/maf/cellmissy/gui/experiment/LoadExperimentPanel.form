@@ -52,7 +52,7 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace pref="14" max="32767" attributes="0"/>
+                      <EmptySpace pref="16" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="jScrollPane1" min="-2" pref="94" max="-2" attributes="0"/>
@@ -152,8 +152,8 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="48" max="-2" attributes="0"/>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="timeFramesLabel" linkSize="3" alignment="1" min="-2" max="-2" attributes="0"/>
                               <Component id="intervalLabel" linkSize="3" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -165,36 +165,36 @@
                               <Component id="durationTextField" linkSize="2" alignment="0" pref="92" max="32767" attributes="1"/>
                               <Component id="timeFramesTextField" linkSize="2" min="-2" max="-2" attributes="1"/>
                           </Group>
-                          <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="152" max="32767" attributes="0"/>
-                          <Component id="parseObsepFileButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel1" linkSize="5" min="-2" max="-2" attributes="0"/>
+                              <Component id="unitLabel" linkSize="5" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="durationLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="durationTextField" linkSize="1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="intervalLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="intervalTextField" linkSize="1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="unitLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="timeFramesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="timeFramesTextField" linkSize="1" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="22" max="32767" attributes="0"/>
-                          <Component id="parseObsepFileButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace pref="38" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -230,10 +230,12 @@
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JButton" name="parseObsepFileButton">
+                <Component class="javax.swing.JLabel" name="jLabel1">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="parse obsep file"/>
+                    <Property name="text" type="java.lang.String" value="hours"/>
                   </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="unitLabel">
                 </Component>
               </SubComponents>
             </Container>
@@ -305,14 +307,16 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
-                  <Component id="infolabel" pref="483" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" pref="48" max="-2" attributes="0"/>
+                  <Component id="infolabel" pref="400" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="parseObsepFileButton" linkSize="4" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="cancelButton" linkSize="4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="forwardButton" linkSize="4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="finishButton" linkSize="4" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="70" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -325,6 +329,7 @@
                           <Component id="finishButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="forwardButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="parseObsepFileButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="infolabel" alignment="0" min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
@@ -349,6 +354,11 @@
         <Component class="javax.swing.JButton" name="cancelButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Cancel"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="parseObsepFileButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Exp Data"/>
           </Properties>
         </Component>
       </SubComponents>

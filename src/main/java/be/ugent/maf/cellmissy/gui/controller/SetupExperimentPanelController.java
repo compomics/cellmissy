@@ -73,7 +73,7 @@ public class SetupExperimentPanelController {
     private ObservableList<Instrument> instrumentBindingList;
     private ObservableList<Magnification> magnificationBindingList;
     private BindingGroup bindingGroup;
-    private File microscopeDirectory;
+    private File mainDirectory;
     //view
     private SetupExperimentPanel setupExperimentPanel;
     private ExperimentInfoPanel experimentInfoPanel;
@@ -109,10 +109,12 @@ public class SetupExperimentPanelController {
         context = ApplicationContextProvider.getInstance().getApplicationContext();
         projectService = (ProjectService) context.getBean("projectService");
         experimentService = (ExperimentService) context.getBean("experimentService");
+
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
-        microscopeDirectory = new File(PropertiesConfigurationHolder.getInstance().getString("microscopeDirectory"));
+        mainDirectory = new File(PropertiesConfigurationHolder.getInstance().getString("mainDirectory"));
+        experimentService.init(mainDirectory);
         //init views
         initExperimentInfoPanel();
         initSetupExperimentPanel();
@@ -355,7 +357,7 @@ public class SetupExperimentPanelController {
                         int projectNumber = Integer.parseInt(experimentInfoPanel.getProjectNumberTextField().getText());
                         //project description is not mandatory
                         String projectDescription = experimentInfoPanel.getDescriptionTextField().getText();
-                        Project savedProject = projectService.setupProject(projectNumber, projectDescription, microscopeDirectory);
+                        Project savedProject = projectService.setupProject(projectNumber, projectDescription, mainDirectory);
 
                         projectBindingList.add(savedProject);
                         experimentInfoPanel.getProjectNumberTextField().setText("");
@@ -410,7 +412,7 @@ public class SetupExperimentPanelController {
                     experiment.setPurpose(experimentInfoPanel.getPurposeTextArea().getText());
 
                     //create experiment's folder structure on the server (the report needs to be saved in the setup subfolder)
-                    experimentService.createFolderStructure(experiment, microscopeDirectory);
+                    experimentService.createFolderStructure(experiment);
                     LOG.debug("Experiment folders were created");
 
                     //show the setupPanel and hide the experimentInfoPanel
@@ -634,9 +636,9 @@ public class SetupExperimentPanelController {
         private File exportPanelToPdf(JPanel panel) {
 
             //setupFolder
-            File setupFolder = experimentService.getSetupFolder();
+            File setupFolder = experiment.getSetupFolder();
             //file to which export the panel
-            File pdfFile = new File(setupFolder, experimentService.getExperimentFolder().getName() + ".pdf");
+            File pdfFile = new File(setupFolder, experiment.getExperimentFolder().getName() + ".pdf");
             try {
                 Export.exportComponent(panel, panel.getBounds(), pdfFile, ImageType.PDF);
             } catch (IOException | TranscoderException ex) {

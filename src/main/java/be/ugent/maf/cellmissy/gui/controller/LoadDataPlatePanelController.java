@@ -5,8 +5,6 @@
 package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.ImagingType;
-import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.plate.LoadDataPlatePanel;
@@ -196,7 +194,7 @@ public class LoadDataPlatePanelController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            wellService.init();
+            wellService.init(loadExperimentPanelController.getExperiment());
             // get the list of imaging types
             List<ImagingType> imagingTypes = wellService.getImagingTypes();
             loadDataPlatePanel.setImagingTypeList(imagingTypes);

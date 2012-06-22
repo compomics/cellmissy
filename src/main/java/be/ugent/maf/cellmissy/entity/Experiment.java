@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.entity;
 
+import java.io.File;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -94,6 +96,16 @@ public class Experiment implements Serializable {
     private PlateFormat plateFormat;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment")
     private Collection<PlateCondition> plateConditionCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment")
+    private Collection<Algorithm> algorithmCollection;
+    @Transient
+    private File experimentFolder;
+    @Transient
+    private File setupFolder;
+    @Transient
+    private File obsepFile;
+    @Transient
+    private File miaFolder;
 
     public Experiment() {
     }
@@ -213,6 +225,38 @@ public class Experiment implements Serializable {
         this.experimentStatus = experimentStatus;
     }
 
+    public File getExperimentFolder() {
+        return experimentFolder;
+    }
+
+    public void setExperimentFolder(File experimentFolder) {
+        this.experimentFolder = experimentFolder;
+    }
+
+    public File getSetupFolder() {
+        return setupFolder;
+    }
+
+    public void setSetupFolder(File setupFolder) {
+        this.setupFolder = setupFolder;
+    }
+
+    public File getMiaFolder() {
+        return miaFolder;
+    }
+
+    public void setMiaFolder(File miaFolder) {
+        this.miaFolder = miaFolder;
+    }
+
+    public File getObsepFile() {
+        return obsepFile;
+    }
+
+    public void setObsepFile(File obsepFile) {
+        this.obsepFile = obsepFile;
+    }
+
     @XmlTransient
     public Collection<PlateCondition> getPlateConditionCollection() {
         return plateConditionCollection;
@@ -220,6 +264,14 @@ public class Experiment implements Serializable {
 
     public void setPlateConditionCollection(Collection<PlateCondition> plateConditionCollection) {
         this.plateConditionCollection = plateConditionCollection;
+    }
+
+    public Collection<Algorithm> getAlgorithmCollection() {
+        return algorithmCollection;
+    }
+
+    public void setAlgorithmCollection(Collection<Algorithm> algorithmCollection) {
+        this.algorithmCollection = algorithmCollection;
     }
 
     @Override
@@ -244,7 +296,7 @@ public class Experiment implements Serializable {
 
     @Override
     public String toString() {
-        DecimalFormat df = new DecimalFormat("000");       
+        DecimalFormat df = new DecimalFormat("000");
         return "E" + df.format(experimentNumber);
     }
 }

@@ -1,0 +1,115 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package be.ugent.maf.cellmissy.entity;
+
+import java.io.Serializable;
+import java.util.Objects;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+
+/**
+ *
+ * @author Paola Masuzzo
+ */
+@Entity
+@Table(name = "algorithm")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Algorithm.findAll", query = "SELECT a FROM Algorithm a"),
+    @NamedQuery(name = "Algorithm.findByAlgorithmid", query = "SELECT a FROM Algorithm a WHERE a.algorithmid = :algorithmid"),
+    @NamedQuery(name = "Algorithm.findByAlgorithmName", query = "SELECT a FROM Algorithm a WHERE a.algorithmName = :algorithmName")})
+public class Algorithm implements Serializable {
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "algorithmid")
+    private Integer algorithmid;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "algorithm_name")
+    private String algorithmName;
+    @JoinColumn(name = "l_experimentid", referencedColumnName = "experimentid")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private Experiment experiment;
+
+    public Algorithm() {
+    }
+
+    public Algorithm(Integer algorithmid) {
+        this.algorithmid = algorithmid;
+    }
+
+    public Algorithm(Integer algorithmid, String algorithmName) {
+        this.algorithmid = algorithmid;
+        this.algorithmName = algorithmName;
+    }
+
+    public Integer getAlgorithmid() {
+        return algorithmid;
+    }
+
+    public void setAlgorithmid(Integer algorithmid) {
+        this.algorithmid = algorithmid;
+    }
+
+    public String getAlgorithmName() {
+        return algorithmName;
+    }
+
+    public void setAlgorithmName(String algorithmName) {
+        this.algorithmName = algorithmName;
+    }
+
+    public Experiment getExperiment() {
+        return experiment;
+    }
+
+    public void setExperiment(Experiment experiment) {
+        this.experiment = experiment;
+    }
+
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Algorithm other = (Algorithm) obj;
+        if (!Objects.equals(this.algorithmid, other.algorithmid)) {
+            return false;
+        }
+        if (!Objects.equals(this.algorithmName, other.algorithmName)) {
+            return false;
+        }
+        return true;
+    }
+
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + Objects.hashCode(this.algorithmid);
+        hash = 23 * hash + Objects.hashCode(this.algorithmName);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        return "be.ugent.maf.cellmissy.entity.Algorithm[ algorithmid=" + algorithmid + " ]";
+    }
+    
+}

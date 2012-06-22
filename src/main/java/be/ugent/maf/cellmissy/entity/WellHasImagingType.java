@@ -156,6 +156,6 @@ public class WellHasImagingType implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.cellmissy.entity.WellHasImagingType[ wellHasImagingTypeid=" + wellHasImagingTypeid + " ]";
+        return sequenceNumber + ", " + imagingType.getName();
     }
 }

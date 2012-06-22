@@ -22,13 +22,13 @@ import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.filechooser.FileFilter;
+import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Binding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.ELProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JListBinding;
@@ -41,6 +41,7 @@ import org.springframework.context.ApplicationContext;
  */
 public class LoadExperimentPanelController {
 
+    private static final Logger LOG = Logger.getLogger(LoadExperimentPanelController.class);
     //model
     private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
@@ -91,6 +92,10 @@ public class LoadExperimentPanelController {
         return loadExperimentPanel;
     }
 
+    public Experiment getExperiment() {
+        return experiment;
+    }
+
     public void updateInfoLabel(JLabel label, String message) {
         cellMissyController.updateInfoLabel(label, message);
     }
@@ -104,27 +109,28 @@ public class LoadExperimentPanelController {
     private void initExperimentDataPanel() {
 
         loadExperimentPanel.getFinishButton().setEnabled(false);
+        loadExperimentPanel.getExpDataButton().setEnabled(false);
+        loadExperimentPanel.getForwardButton().setEnabled(false);
 
         //update info message
-        cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Select a project and then an experiment to load CELLMIA data. Choose the microscope file to retrieve experiment data.");
+        cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Select a project and then an experiment in progress to load CELLMIA data.");
 
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, loadExperimentPanel.getProjectJList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
-        
+
         //init experiment binding
         //bind Duration
-        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, loadExperimentPanel.getDurationTextField(), ELProperty.create("${text}"), experiment, BeanProperty.create("duration"), "durationbinding");
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, loadExperimentPanel.getExperimentJList(), BeanProperty.create("selectedElement.duration"), loadExperimentPanel.getDurationTextField(), BeanProperty.create("text"), "durationbinding");
         bindingGroup.addBinding(binding);
         //bind Interval
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, loadExperimentPanel.getIntervalTextField(), ELProperty.create("${text}"), experiment, BeanProperty.create("experimentInterval"), "intervalbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, loadExperimentPanel.getExperimentJList(), BeanProperty.create("selectedElement.experimentInterval"), loadExperimentPanel.getIntervalTextField(), BeanProperty.create("text"), "intervalbinding");
         bindingGroup.addBinding(binding);
         //bind Time frames
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, loadExperimentPanel.getTimeFramesTextField(), ELProperty.create("${text}"), experiment, BeanProperty.create("timeFrames"), "timeframesbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, loadExperimentPanel.getExperimentJList(), BeanProperty.create("selectedElement.timeFrames"), loadExperimentPanel.getTimeFramesTextField(), BeanProperty.create("text"), "timeframesbinding");
         bindingGroup.addBinding(binding);
- 
 
         //bo the binding
         bindingGroup.bind();
@@ -166,7 +172,11 @@ public class LoadExperimentPanelController {
                 loadDataPlatePanelController.getLoadDataPlatePanel().initPanel(experiment.getPlateFormat(), parentDimension);
                 loadDataPlatePanelController.getLoadDataPlatePanel().repaint();
 
-                cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click on forward to process imaging data for the selected experiment.");
+                //load experiment folders
+                experimentService.loadFolderStructure(experiment);
+                LOG.debug("Folders loaded");
+                cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click on Exp Data to get experiment data from microscope.");
+                loadExperimentPanel.getExpDataButton().setEnabled(true);
             }
         });
 
@@ -174,39 +184,57 @@ public class LoadExperimentPanelController {
          * add action listeners
          */
         //parse obseo file from the microscope
-        loadExperimentPanel.getParseObsepFileButton().addActionListener(new ActionListener() {
+        loadExperimentPanel.getExpDataButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //choose file to parse form microscope hierarchy
-                JFileChooser chooseObsepFile = new JFileChooser();
-                chooseObsepFile.setFileFilter(new FileFilter() {
-                    // to select only (.obsep) files
 
-                    @Override
-                    public boolean accept(File f) {
-                        return f.getName().toLowerCase().endsWith(".obsep");
-                    }
-
-                    @Override
-                    public String getDescription() {
-                        return ("(.obsep)");
-                    }
-                });
-
-                // in response to the button click, show open dialog 
-                int returnVal = chooseObsepFile.showOpenDialog(cellMissyController.cellMissyFrame);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File obsepFile = chooseObsepFile.getSelectedFile();
-                    obsepFileParser.parseObsepFile(obsepFile);
-                    List<Double> experimentInfo = obsepFileParser.getExperimentInfo();
-                    loadExperimentPanel.getTimeFramesTextField().setText(experimentInfo.get(0).toString());
-                    loadExperimentPanel.getIntervalTextField().setText(experimentInfo.get(1).toString() + " " + obsepFileParser.getUnit());
-                    loadExperimentPanel.getDurationTextField().setText(experimentInfo.get(2).toString() + " HOURS");
+                if (experiment.getObsepFile() != null) {
+                    File obsepFile = experiment.getObsepFile();
+                    setExperimentData(obsepFile);
                 } else {
-                    cellMissyController.showMessage("Open command cancelled by user", 1);
+                    cellMissyController.showMessage("No valid microscope file was found. Please select a valid file.", 0);
+                    //choose file to parse form microscope folder
+                    JFileChooser chooseObsepFile = new JFileChooser();
+                    chooseObsepFile.setFileFilter(new FileFilter() {
+                        
+                        // to select only (.obsep) files
+                        @Override
+                        public boolean accept(File f) {
+                            return f.getName().toLowerCase().endsWith(".obsep");
+                        }
+
+                        @Override
+                        public String getDescription() {
+                            return ("(.obsep)");
+                        }
+                    });
+
+                    // in response to the button click, show open dialog
+                    int returnVal = chooseObsepFile.showOpenDialog(cellMissyController.cellMissyFrame);
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        File obsepFile = chooseObsepFile.getSelectedFile();
+                        setExperimentData(obsepFile);                            
+                    } else {
+                        cellMissyController.showMessage("Open command cancelled by user", 1);
+                    }
                 }
+                cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click on forward to process imaging data for the experiment.");
+                loadExperimentPanel.getForwardButton().setEnabled(true);
             }
         });
+    }
+
+    /**
+     * set experiment data parsing the obsep file from microscope
+     * @param obsepFile: this is loaded from the experiment or it is rather chosen by the user
+     */
+    private void setExperimentData(File obsepFile) {
+        obsepFileParser.parseObsepFile(obsepFile);
+        List<Double> experimentInfo = obsepFileParser.getExperimentInfo();
+        loadExperimentPanel.getTimeFramesTextField().setText(experimentInfo.get(0).toString());
+        loadExperimentPanel.getIntervalTextField().setText(experimentInfo.get(1).toString());
+        loadExperimentPanel.getUnitLabel().setText(obsepFileParser.getUnit().name().toLowerCase());
+        loadExperimentPanel.getDurationTextField().setText(experimentInfo.get(2).toString());
     }
 }
