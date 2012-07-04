@@ -19,7 +19,7 @@ public interface CellMiaDataService {
 
     /**
      * initializes the service
-     * @param cellMiaFolder 
+     * @param one experiment 
      */
     void init(Experiment experiment);
 
@@ -34,7 +34,4 @@ public interface CellMiaDataService {
      * @return a map from ImagingType to WellHasImagingType entities
      */
     Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processCellMiaData();
-    
-    
-    Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processAlgorithms();
 }

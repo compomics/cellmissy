@@ -15,6 +15,7 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("experimentService")
 @Transactional
 public class ExperimentServiceImpl implements ExperimentService {
-    
+
     @Autowired
     private ExperimentRepository experimentRepository;
     @Autowired
@@ -91,9 +92,9 @@ public class ExperimentServiceImpl implements ExperimentService {
         //create algo-0 subfolder in the MIA folder
         algoNullMiaFolder = new File(miaFolder, miaFolder.getName() + "_algo-0");
         algoNullMiaFolder.mkdir();
-        
+
     }
-    
+
     @Override
     public void loadFolderStructure(Experiment experiment) {
         for (File file : mainDirectory.listFiles()) {
@@ -103,7 +104,7 @@ public class ExperimentServiceImpl implements ExperimentService {
                 break;
             }
         }
-        
+
         for (File file : projectFolder.listFiles()) {
             if (file.getName().contains(experiment.toString())) {
                 //experiment folder
@@ -113,8 +114,8 @@ public class ExperimentServiceImpl implements ExperimentService {
                 break;
             }
         }
-        
-        
+
+
         for (File file : experimentFolder.listFiles()) {
             if (file.getName().endsWith("raw")) {
                 //raw folder
@@ -126,7 +127,7 @@ public class ExperimentServiceImpl implements ExperimentService {
                 experiment.setMiaFolder(miaFolder);
             }
         }
-        
+
         for (File file : rawFolder.listFiles()) {
             if (file.getName().endsWith("setup")) {
                 setupFolder = file;
@@ -145,7 +146,7 @@ public class ExperimentServiceImpl implements ExperimentService {
                 break;
             }
         }
-        
+
         List<File> obsepFolders = new ArrayList<>();
         for (int i = 0; i < docFiles.listFiles().length; i++) {
             if (docFiles.listFiles()[i].getName().startsWith("D")) {
@@ -155,7 +156,7 @@ public class ExperimentServiceImpl implements ExperimentService {
 
         //obsep file
         File obsepFile = null;
-        
+
         if (obsepFolders.size() == 1) {
             File aFile = obsepFolders.get(0);
             for (File file : aFile.listFiles()) {
@@ -167,48 +168,48 @@ public class ExperimentServiceImpl implements ExperimentService {
         //set experiment obsep file
         experiment.setObsepFile(obsepFile);
     }
-    
+
     @Override
     public Experiment findById(Long id) {
         return experimentRepository.findById(id);
     }
-    
+
     @Override
     public List<Experiment> findAll() {
         return experimentRepository.findAll();
     }
-    
+
     @Override
     public Experiment save(Experiment entity) {
         return experimentRepository.save(entity);
     }
-    
+
     @Override
     public void delete(Experiment entity) {
         entity = experimentRepository.save(entity);
         experimentRepository.delete(entity);
     }
-    
+
     @Override
     public List<Instrument> findAllInstruments() {
         return instrumentRepository.findAll();
     }
-    
+
     @Override
     public List<Magnification> findAllMagnifications() {
         return magnificationRepository.findAll();
     }
-    
+
     @Override
     public List<Integer> findExperimentNumbersByProjectId(Integer projectId) {
         return experimentRepository.findExperimentNumbersByProjectId(projectId);
     }
-    
+
     @Override
     public List<Experiment> findExperimentsByProjectIdAndStatus(Integer projectId, ExperimentStatus experimentStatus) {
         return experimentRepository.findExperimentsByProjectIdAndStatus(projectId, experimentStatus);
     }
-    
+
     @Override
     public void init(File microscopeDirectory) {
         this.mainDirectory = microscopeDirectory;

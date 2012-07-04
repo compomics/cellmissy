@@ -50,20 +50,30 @@ public class WellHasImagingType implements Serializable {
     private Double xCoordinate;
     @Column(name = "y_coordinate")
     private Double yCoordinate;
-    @JoinColumn(name = "l_idwell", referencedColumnName = "wellid")
+    @JoinColumn(name = "l_wellid", referencedColumnName = "wellid")
     @ManyToOne(cascade = CascadeType.ALL)
     private Well lIdwell;
-    @JoinColumn(name = "l_idimaging_type", referencedColumnName = "imaging_typeid")
+    @JoinColumn(name = "l_imaging_typeid", referencedColumnName = "imaging_typeid")
     @ManyToOne(cascade = CascadeType.ALL, optional = true)
     private ImagingType imagingType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "wellHasImagingType")
     private Collection<TimeStep> timeStepCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "wellHasImagingType")
     private Collection<Track> trackCollection;
-
+    @JoinColumn(name = "l_algorithmid", referencedColumnName = "algorithmid")
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Algorithm algorithm;
+    
     public WellHasImagingType() {
     }
 
+    public WellHasImagingType(Integer sequenceNumber, Double xCoordinate, Double yCoordinate, ImagingType imagingType) {
+        this.sequenceNumber = sequenceNumber;
+        this.xCoordinate = xCoordinate;
+        this.yCoordinate = yCoordinate;
+        this.imagingType = imagingType;
+    }
+    
     public WellHasImagingType(Integer wellHasImagingTypeid) {
         this.wellHasImagingTypeid = wellHasImagingTypeid;
     }
@@ -132,6 +142,14 @@ public class WellHasImagingType implements Serializable {
 
     public void setTrackCollection(Collection<Track> trackCollection) {
         this.trackCollection = trackCollection;
+    }
+
+    public Algorithm getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(Algorithm algorithm) {
+        this.algorithm = algorithm;
     }
 
     @Override

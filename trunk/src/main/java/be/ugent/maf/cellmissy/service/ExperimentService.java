@@ -20,7 +20,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
     void init(File microscopeDirectory);
 
     void createFolderStructure(Experiment newExperiment);
-    
+
     void loadFolderStructure(Experiment experiment);
 
     List<Instrument> findAllInstruments();

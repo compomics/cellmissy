@@ -19,6 +19,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.List;
 import javax.swing.SwingWorker;
@@ -100,6 +102,7 @@ public class LoadDataPlatePanelController {
                 // ImagingTypeList is null, create a new PlateWorker and execute it             
                 if (loadDataPlatePanel.getImagingTypeList() == null) {
                     PlateWorker plateWorker = new PlateWorker();
+                    plateWorker.addPropertyChangeListener(new ProgressListener());
                     plateWorker.execute();
                 } else {
                     // forward to next Imaging Type
@@ -139,7 +142,7 @@ public class LoadDataPlatePanelController {
                     // update info label
                     if (loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) == loadDataPlatePanel.getImagingTypeList().size() - 1) {
                         // there are no more imaging types to process, save the wells to the DB
-                        loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), "Click on Finish to save the wells");
+                        loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), "Click on Finish to save the experiment");
                         //disable Forward button
                         loadExperimentPanelController.getLoadExperimentPanel().getForwardButton().setEnabled(false);
                         // enable Finish button
@@ -194,21 +197,36 @@ public class LoadDataPlatePanelController {
 
         @Override
         protected Void doInBackground() throws Exception {
+            loadExperimentPanelController.getLoadExperimentPanel().getjProgressBar1().setVisible(true);
+            
             wellService.init(loadExperimentPanelController.getExperiment());
             // get the list of imaging types
             List<ImagingType> imagingTypes = wellService.getImagingTypes();
             loadDataPlatePanel.setImagingTypeList(imagingTypes);
+            
+            loadDataPlatePanel.setAlgoMap(wellService.getMap());
             return null;
         }
 
         @Override
         protected void done() {
+            
+            loadExperimentPanelController.getLoadExperimentPanel().getjProgressBar1().setVisible(false);
 
             // get first Imaging Type
             loadDataPlatePanel.setCurrentImagingType(loadDataPlatePanel.getImagingTypeList().get(0));
             // ask the user to select first well for the imaging type
-            String message = "Select first well for " + loadDataPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) + 1) + "/" + loadDataPlatePanel.getImagingTypeList().size() + ")";
+            String message = "Select first well imaged with " + loadDataPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) + 1) + "/" + loadDataPlatePanel.getImagingTypeList().size() + ")";
             loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), message);
         }
+    }
+    
+    private class ProgressListener implements PropertyChangeListener{
+
+        @Override
+        public void propertyChange(PropertyChangeEvent e) {
+            loadExperimentPanelController.getLoadExperimentPanel().getjProgressBar1().setValue(10);
+        }
+        
     }
 }

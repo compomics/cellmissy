@@ -4,12 +4,15 @@
  */
 package be.ugent.maf.cellmissy.gui.plate;
 
+import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.ImagingType;
+import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.util.List;
+import java.util.Map;
 
 /**
  * this class is used in the loading data step: imaged wells are shown with related imaging types
@@ -19,6 +22,7 @@ public class LoadDataPlatePanel extends AbstractPlatePanel {
 
     private List<ImagingType> imagingTypeList;
     private ImagingType currentImagingType;
+    private Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> algoMap;
 
     /**
      * getters and setters
@@ -38,6 +42,14 @@ public class LoadDataPlatePanel extends AbstractPlatePanel {
 
     public void setCurrentImagingType(ImagingType currentImagingType) {
         this.currentImagingType = currentImagingType;
+    }
+
+    public void setAlgoMap(Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> algoMap) {
+        this.algoMap = algoMap;
+    }
+
+    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getAlgoMap() {
+        return algoMap;
     }
 
     @Override

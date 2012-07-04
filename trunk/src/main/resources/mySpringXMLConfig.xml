@@ -28,6 +28,7 @@
                 <property name="showSql" value="true"/>
                 <property name="generateDdl" value="true"/>
                 <property name="database" value="${db.type}"/>
+                <property name="databasePlatform" value="${db.platform}"/>
             </bean>
         </property>
         <!--property name="loadTimeWeaver">
