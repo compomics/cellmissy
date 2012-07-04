@@ -15,6 +15,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
 /**
@@ -71,6 +72,10 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
     public JLabel getUnitLabel() {
         return unitLabel;
     }
+
+    public JProgressBar getjProgressBar1() {
+        return jProgressBar1;
+    }
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -105,6 +110,7 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         finishButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         parseObsepFileButton = new javax.swing.JButton();
+        jProgressBar1 = new javax.swing.JProgressBar();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -291,8 +297,10 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bottomPanelLayout.createSequentialGroup()
                 .addGap(35, 35, 35)
-                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(53, 53, 53)
                 .addComponent(parseObsepFileButton)
                 .addGap(18, 18, 18)
                 .addComponent(cancelButton)
@@ -315,7 +323,9 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
                         .addComponent(forwardButton)
                         .addComponent(cancelButton)
                         .addComponent(parseObsepFileButton))
-                    .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
@@ -344,6 +354,7 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel loadDataPlateParentPanel;

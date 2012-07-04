@@ -6,8 +6,13 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
+import be.ugent.maf.cellmissy.entity.ImagingType;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.experiment.LoadExperimentPanel;
+import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
@@ -18,7 +23,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.filechooser.FileFilter;
@@ -111,6 +118,7 @@ public class LoadExperimentPanelController {
         loadExperimentPanel.getFinishButton().setEnabled(false);
         loadExperimentPanel.getExpDataButton().setEnabled(false);
         loadExperimentPanel.getForwardButton().setEnabled(false);
+        loadExperimentPanel.getjProgressBar1().setVisible(false);
 
         //update info message
         cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Select a project and then an experiment in progress to load CELLMIA data.");
@@ -197,7 +205,7 @@ public class LoadExperimentPanelController {
                     //choose file to parse form microscope folder
                     JFileChooser chooseObsepFile = new JFileChooser();
                     chooseObsepFile.setFileFilter(new FileFilter() {
-                        
+
                         // to select only (.obsep) files
                         @Override
                         public boolean accept(File f) {
@@ -214,13 +222,27 @@ public class LoadExperimentPanelController {
                     int returnVal = chooseObsepFile.showOpenDialog(cellMissyController.cellMissyFrame);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File obsepFile = chooseObsepFile.getSelectedFile();
-                        setExperimentData(obsepFile);                            
+                        setExperimentData(obsepFile);
                     } else {
                         cellMissyController.showMessage("Open command cancelled by user", 1);
                     }
                 }
                 cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click on forward to process imaging data for the experiment.");
                 loadExperimentPanel.getForwardButton().setEnabled(true);
+            }
+        });
+
+        //save the experiment once all data have been loaded
+        loadExperimentPanel.getFinishButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                //set CellMia Data
+                setCellMiaData();
+                //set experiment status to "performed" and save it to DB
+                experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
+                experimentService.save(experiment);
             }
         });
     }
@@ -236,5 +258,25 @@ public class LoadExperimentPanelController {
         loadExperimentPanel.getIntervalTextField().setText(experimentInfo.get(1).toString());
         loadExperimentPanel.getUnitLabel().setText(obsepFileParser.getUnit().name().toLowerCase());
         loadExperimentPanel.getDurationTextField().setText(experimentInfo.get(2).toString());
+    }
+
+    private void setCellMiaData() {
+
+        Collection<PlateCondition> plateConditionCollection = experiment.getPlateConditionCollection();
+        Collection<Map<ImagingType, List<WellHasImagingType>>> values = loadDataPlatePanelController.getLoadDataPlatePanel().getAlgoMap().values();
+        
+        for (WellGui wellGui : loadDataPlatePanelController.getLoadDataPlatePanel().getWellGuiList()) {
+            //if the list of ellipsi is not empty, the well has been imaged
+            if (!wellGui.getEllipsi().isEmpty()) {
+                for (PlateCondition plateCondition : plateConditionCollection) {
+
+                    for (Well well : plateCondition.getWellCollection()) {
+                        
+                    }
+                }
+                wellGui.getWell().setWellHasImagingTypeCollection(null);
+            }
+        }
+
     }
 }

@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,6 +25,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 /**
  *
@@ -43,7 +46,8 @@ public class PlateCondition implements Serializable {
     @Basic(optional = false)
     @Column(name = "plate_conditionid")
     private Integer plateConditionid;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition", fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SELECT)
     private Collection<Well> wellCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition")
     private Collection<Treatment> treatmentCollection;

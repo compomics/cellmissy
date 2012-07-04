@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -15,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -32,6 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Algorithm.findByAlgorithmid", query = "SELECT a FROM Algorithm a WHERE a.algorithmid = :algorithmid"),
     @NamedQuery(name = "Algorithm.findByAlgorithmName", query = "SELECT a FROM Algorithm a WHERE a.algorithmName = :algorithmName")})
 public class Algorithm implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -43,9 +46,8 @@ public class Algorithm implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "algorithm_name")
     private String algorithmName;
-    @JoinColumn(name = "l_experimentid", referencedColumnName = "experimentid")
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
-    private Experiment experiment;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "algorithm")
+    private Collection<WellHasImagingType> wellHasImagingTypeCollection;
 
     public Algorithm() {
     }
@@ -75,12 +77,12 @@ public class Algorithm implements Serializable {
         this.algorithmName = algorithmName;
     }
 
-    public Experiment getExperiment() {
-        return experiment;
+    public Collection<WellHasImagingType> getWellHasImagingTypeCollection() {
+        return wellHasImagingTypeCollection;
     }
 
-    public void setExperiment(Experiment experiment) {
-        this.experiment = experiment;
+    public void setWellHasImagingTypeCollection(Collection<WellHasImagingType> wellHasImagingTypeCollection) {
+        this.wellHasImagingTypeCollection = wellHasImagingTypeCollection;
     }
 
     public boolean equals(Object obj) {
@@ -109,7 +111,6 @@ public class Algorithm implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.cellmissy.entity.Algorithm[ algorithmid=" + algorithmid + " ]";
+        return algorithmName;
     }
-    
 }

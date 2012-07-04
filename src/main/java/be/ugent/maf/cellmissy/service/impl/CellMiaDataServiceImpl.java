@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 @Service("cellMiaDataService")
 public class CellMiaDataServiceImpl implements CellMiaDataService {
 
-    // batch folder
     private Experiment experiment;
     @Autowired
     private MicroscopeDataService microscopeDataService;
@@ -61,7 +60,8 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
             if (!file.getName().endsWith("algo-0")) {
                 Algorithm algo = new Algorithm();
                 algo.setAlgorithmName(file.getName());
-                algo.setExperiment(experiment);
+                algo.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
+                Map<ImagingType, List<WellHasImagingType>> map = copyMap();
                 batchFiles.addAll(Arrays.asList(file.listFiles()));
                 for (File batchFile : batchFiles) {
 
@@ -73,11 +73,13 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                     Arrays.sort(sampleFiles);
 
                     int imageTypeStartFolder = 0;
-                    for (ImagingType imagingType : imagingTypeMap.keySet()) {
-                        List<WellHasImagingType> wellHasImagingTypeList = imagingTypeMap.get(imagingType);
+                    for (ImagingType imagingType : map.keySet()) {
+                        List<WellHasImagingType> wellHasImagingTypeList = map.get(imagingType);
 
                         for (int i = imageTypeStartFolder; i < wellHasImagingTypeList.size() + imageTypeStartFolder; i++) {
                             WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i - imageTypeStartFolder);
+
+                            wellHasImagingType.setAlgorithm(algo);
 
                             // iterate trough the folders and look for the text files, parse the files with cellMiaFileParser
                             // results folders
@@ -104,7 +106,6 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                                         }
                                         wellHasImagingType.setTrackCollection(trackList);
                                     }
-
                                 }
                             }
                         }
@@ -113,7 +114,11 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                     long currentTimeMillis1 = System.currentTimeMillis();
                     LOG.debug("CellMia data processed in " + ((currentTimeMillis1 - currentTimeMillis) / 1000) + " s");
                 }
-                algoMap.put(algo, imagingTypeMap);
+                for (List<WellHasImagingType> wellHasImagingTypes : map.values()) {
+                    algo.getWellHasImagingTypeCollection().addAll(wellHasImagingTypes);
+                }
+
+                algoMap.put(algo, map);
             }
         }
         return algoMap;
@@ -145,27 +150,23 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
         return microscopeDataService;
     }
 
-    @Override
-    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processAlgorithms() {
+    /**
+     * copy the map with imaging types and well has imaging types properties
+     * @return 
+     */
+    private Map<ImagingType, List<WellHasImagingType>> copyMap() {
+        Map<ImagingType, List<WellHasImagingType>> map = new HashMap<>();
 
-        List<File> batchFiles = new ArrayList<>();
-        List<Algorithm> algorithmList = new ArrayList<>();
+        for (ImagingType imagingType : imagingTypeMap.keySet()) {
+            List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
 
-        //algo folders
-        File[] algoFiles = experiment.getMiaFolder().listFiles();
-        for (File algoFile : algoFiles) {
-            if (!algoFile.getName().endsWith("algo-0")) {
-
-                Algorithm algo = new Algorithm();
-                algo.setAlgorithmName(algoFile.getName());
-                algo.setExperiment(experiment);
-                algorithmList.add(algo);
-
-                batchFiles.addAll(Arrays.asList(algoFile.listFiles()));
+            for (WellHasImagingType wellHasImagingType : imagingTypeMap.get(imagingType)) {
+                WellHasImagingType newWellHasImagingType = new WellHasImagingType(wellHasImagingType.getSequenceNumber(), wellHasImagingType.getXCoordinate(), wellHasImagingType.getYCoordinate(), wellHasImagingType.getImagingType());
+                wellHasImagingTypeList.add(newWellHasImagingType);
             }
+            map.put(imagingType, wellHasImagingTypeList);
         }
 
-        experiment.setAlgorithmCollection(algorithmList);
-        return algoMap;
+        return map;
     }
 }

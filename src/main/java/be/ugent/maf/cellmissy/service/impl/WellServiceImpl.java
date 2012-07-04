@@ -37,9 +37,8 @@ public class WellServiceImpl implements WellService {
     private static final double offset = 0.5;
     // this Map maps ImagingType (keys) to list of WellHasImagingType (values)
     private Map<ImagingType, List<WellHasImagingType>> imagingTypeMap;
-    
     private Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> algoMap;
-    
+
     @Override
     public void updateWellGuiListWithImagingType(ImagingType imagingType, PlateFormat plateFormat, WellGui firstWellGui, List<WellGui> wellGuiList) {
 
@@ -76,7 +75,6 @@ public class WellServiceImpl implements WellService {
         cellMiaDataService.init(experiment);
         cellMiaDataService.getMicroscopeDataService().init(experiment);
         imagingTypeMap = cellMiaDataService.getMicroscopeDataService().processMicroscopeData();
-        algoMap = cellMiaDataService.processCellMiaData();
     }
 
     @Override
@@ -110,5 +108,11 @@ public class WellServiceImpl implements WellService {
     public void delete(Well entity) {
         entity = wellRepository.save(entity);
         wellRepository.delete(entity);
+    }
+
+    @Override
+    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() {
+        algoMap = cellMiaDataService.processCellMiaData();
+        return algoMap;
     }
 }
