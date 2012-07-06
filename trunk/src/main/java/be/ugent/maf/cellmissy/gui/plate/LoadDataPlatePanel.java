@@ -5,12 +5,16 @@
 package be.ugent.maf.cellmissy.gui.plate;
 
 import be.ugent.maf.cellmissy.entity.Algorithm;
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +27,7 @@ public class LoadDataPlatePanel extends AbstractPlatePanel {
     private List<ImagingType> imagingTypeList;
     private ImagingType currentImagingType;
     private Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> algoMap;
+    private Experiment experiment;
 
     /**
      * getters and setters
@@ -52,18 +57,37 @@ public class LoadDataPlatePanel extends AbstractPlatePanel {
         return algoMap;
     }
 
+    public void setExperiment(Experiment experiment) {
+        this.experiment = experiment;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
 
         super.paintComponent(g);
+        if (experiment != null) {
+            showRect(g);
+        }
 
-        // width and heigth of squares around wells (wellSize)
-        int wellSize = (int) ((double) (this.getWidth()) - ((plateFormat.getNumberOfCols() - 1) * pixelsGrid) - (2 * pixelsBorders)) / plateFormat.getNumberOfCols();
+    }
 
-        if (wellGuiList.isEmpty()) {
-            drawWells(wellSize, g);
-        } else {
-            reDrawWells(g);
+    private void showRect(Graphics g) {
+
+        Graphics2D g2d = (Graphics2D) g;
+        setGraphics(g2d);
+        List<PlateCondition> plateConditions = new ArrayList<>();
+        plateConditions.addAll(experiment.getPlateConditionCollection());
+        
+        for (PlateCondition plateCondition : plateConditions) {
+            for (Well well : plateCondition.getWellCollection()) {
+                for (WellGui wellGui : wellGuiList) {
+                    if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
+                        g2d.setColor(GuiUtils.getAvailableColors()[plateConditions.indexOf(plateCondition) + 1]);
+                        g2d.draw(wellGui.getEllipsi().get(0).getBounds());
+                        wellGui.setRectangle(wellGui.getEllipsi().get(0).getBounds());
+                    }
+                }
+            }
         }
     }
 
@@ -83,12 +107,12 @@ public class LoadDataPlatePanel extends AbstractPlatePanel {
                 // if a well was not imaged, set its color to the default one
                 if (wellGui.getWell().getWellHasImagingTypeCollection().isEmpty()) {
                     g2d.setColor(GuiUtils.getAvailableColors()[0]);
+                    g2d.draw(ellipse2D);
                 } else {
                     // if it has been imaged, set its color to a different one
                     g2d.setColor(GuiUtils.getAvailableColors()[i + 1]);
+                    g2d.fill(ellipse2D);
                 }
-
-                g2d.fill(ellipse2D);
             }
 
             // draw the labels on the plate

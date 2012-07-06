@@ -78,9 +78,6 @@ public class LoadDataPlatePanelController {
      */
     private void initLoadDataPlatePanel() {
 
-        //init load data plate panel and add it to the bottom panel of the plate panel gui
-        loadDataPlatePanel = new LoadDataPlatePanel();
-
         //show as default a 96 plate format
         Dimension parentDimension = loadExperimentPanelController.getLoadExperimentPanel().getLoadDataPlateParentPanel().getSize();
 
@@ -157,9 +154,9 @@ public class LoadDataPlatePanelController {
         });
     }
 
-    private void showImagedWells(WellGui firstWellGUI) {
+    private void showImagedWells(WellGui firstWellGui) {
         // update WellGuiList and show imaged wells positions on the plate
-        wellService.updateWellGuiListWithImagingType(loadDataPlatePanel.getCurrentImagingType(), loadDataPlatePanel.getPlateFormat(), firstWellGUI, loadDataPlatePanel.getWellGuiList());
+        wellService.updateWellGuiListWithImagingType(loadDataPlatePanel.getCurrentImagingType(), loadDataPlatePanel.getPlateFormat(), firstWellGui, loadDataPlatePanel.getWellGuiList());
         int currentImagingTypeIndex = loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType());
         for (WellGui wellGui : loadDataPlatePanel.getWellGuiList()) {
             if (currentImagingTypeIndex != 0) {
@@ -198,19 +195,19 @@ public class LoadDataPlatePanelController {
         @Override
         protected Void doInBackground() throws Exception {
             loadExperimentPanelController.getLoadExperimentPanel().getjProgressBar1().setVisible(true);
-            
+
             wellService.init(loadExperimentPanelController.getExperiment());
             // get the list of imaging types
             List<ImagingType> imagingTypes = wellService.getImagingTypes();
             loadDataPlatePanel.setImagingTypeList(imagingTypes);
-            
+
             loadDataPlatePanel.setAlgoMap(wellService.getMap());
             return null;
         }
 
         @Override
         protected void done() {
-            
+
             loadExperimentPanelController.getLoadExperimentPanel().getjProgressBar1().setVisible(false);
 
             // get first Imaging Type
@@ -220,13 +217,12 @@ public class LoadDataPlatePanelController {
             loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), message);
         }
     }
-    
-    private class ProgressListener implements PropertyChangeListener{
+
+    private class ProgressListener implements PropertyChangeListener {
 
         @Override
         public void propertyChange(PropertyChangeEvent e) {
             loadExperimentPanelController.getLoadExperimentPanel().getjProgressBar1().setValue(10);
         }
-        
     }
 }

@@ -15,6 +15,7 @@ import be.ugent.maf.cellmissy.repository.WellRepository;
 import be.ugent.maf.cellmissy.service.CellMiaDataService;
 import be.ugent.maf.cellmissy.service.WellService;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,29 +36,35 @@ public class WellServiceImpl implements WellService {
     @Autowired
     private CellMiaDataService cellMiaDataService;
     private static final double offset = 0.5;
-    // this Map maps ImagingType (keys) to list of WellHasImagingType (values)
+    // this Map maps ImagingType (keys) to list of WellHasImagingType (maps)
     private Map<ImagingType, List<WellHasImagingType>> imagingTypeMap;
     private Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> algoMap;
 
     @Override
     public void updateWellGuiListWithImagingType(ImagingType imagingType, PlateFormat plateFormat, WellGui firstWellGui, List<WellGui> wellGuiList) {
 
-        List<WellHasImagingType> wellHasImagingTypeList = imagingTypeMap.get(imagingType);
-        WellHasImagingType firstWellHasImagingType = wellHasImagingTypeList.get(0);
+        Collection<Map<ImagingType, List<WellHasImagingType>>> maps = algoMap.values();
 
-        double xOffset = (Math.abs(firstWellHasImagingType.getXCoordinate()) / plateFormat.getWellSize()) - (firstWellGui.getColumnNumber() - offset);
-        double yOffset = (Math.abs(firstWellHasImagingType.getYCoordinate()) / plateFormat.getWellSize()) - (firstWellGui.getRowNumber() - offset);
+        for (Map<ImagingType, List<WellHasImagingType>> map : maps) {
+            List<WellHasImagingType> wellHasImagingTypeList = map.get(imagingType);
 
-        for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
-            double scaledX = Math.abs(wellHasImagingType.getXCoordinate()) / plateFormat.getWellSize();
-            double scaledY = Math.abs(wellHasImagingType.getYCoordinate()) / plateFormat.getWellSize();
 
-            double shiftedX = scaledX - xOffset;
-            double shiftedY = scaledY - yOffset;
+            WellHasImagingType firstWellHasImagingType = wellHasImagingTypeList.get(0);
 
-            WellGui wellGui = getWellGuiByCoords(wellGuiList, shiftedX, shiftedY);
-            wellGui.getWell().getWellHasImagingTypeCollection().add(wellHasImagingType);
-            wellHasImagingType.setLIdwell(wellGui.getWell());
+            double xOffset = (Math.abs(firstWellHasImagingType.getXCoordinate()) / plateFormat.getWellSize()) - (firstWellGui.getColumnNumber() - offset);
+            double yOffset = (Math.abs(firstWellHasImagingType.getYCoordinate()) / plateFormat.getWellSize()) - (firstWellGui.getRowNumber() - offset);
+
+            for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
+                double scaledX = Math.abs(wellHasImagingType.getXCoordinate()) / plateFormat.getWellSize();
+                double scaledY = Math.abs(wellHasImagingType.getYCoordinate()) / plateFormat.getWellSize();
+
+                double shiftedX = scaledX - xOffset;
+                double shiftedY = scaledY - yOffset;
+
+                WellGui wellGui = getWellGuiByCoords(wellGuiList, shiftedX, shiftedY);
+                wellGui.getWell().getWellHasImagingTypeCollection().add(wellHasImagingType);
+                //wellHasImagingType.setWell(wellGui.getWell());
+            }
         }
     }
 

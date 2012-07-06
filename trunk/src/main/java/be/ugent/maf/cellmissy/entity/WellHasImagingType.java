@@ -52,7 +52,7 @@ public class WellHasImagingType implements Serializable {
     private Double yCoordinate;
     @JoinColumn(name = "l_wellid", referencedColumnName = "wellid")
     @ManyToOne(cascade = CascadeType.ALL)
-    private Well lIdwell;
+    private Well well;
     @JoinColumn(name = "l_imaging_typeid", referencedColumnName = "imaging_typeid")
     @ManyToOne(cascade = CascadeType.ALL, optional = true)
     private ImagingType imagingType;
@@ -110,12 +110,12 @@ public class WellHasImagingType implements Serializable {
         this.yCoordinate = yCoordinate;
     }
 
-    public Well getLIdwell() {
-        return lIdwell;
+    public Well getWell() {
+        return well;
     }
 
-    public void setLIdwell(Well lIdwell) {
-        this.lIdwell = lIdwell;
+    public void setWell(Well well) {
+        this.well = well;
     }
 
     public ImagingType getImagingType() {

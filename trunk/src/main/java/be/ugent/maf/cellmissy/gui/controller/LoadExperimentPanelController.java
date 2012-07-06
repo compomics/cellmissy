@@ -140,13 +140,14 @@ public class LoadExperimentPanelController {
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, loadExperimentPanel.getExperimentJList(), BeanProperty.create("selectedElement.timeFrames"), loadExperimentPanel.getTimeFramesTextField(), BeanProperty.create("text"), "timeframesbinding");
         bindingGroup.addBinding(binding);
 
-        //bo the binding
+        //do the binding
         bindingGroup.bind();
 
 
         /**
          * add mouse listeners
          */
+        //when a project from the list is selected, show all experiments in progress for that project
         loadExperimentPanel.getProjectJList().addMouseListener(new MouseAdapter() {
 
             @Override
@@ -161,13 +162,14 @@ public class LoadExperimentPanelController {
                     bindingGroup.bind();
                 } else {
                     cellMissyController.showMessage("There are no experiments in progress for this project!", 1);
-                    if (!experimentBindingList.isEmpty()) {
+                    if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                         experimentBindingList.clear();
                     }
                 }
             }
         });
 
+        //when an experiment from the list is selected, show the right plate format with the wells sorrounded by rectangles if conditions were selected
         loadExperimentPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
 
             @Override
@@ -178,6 +180,8 @@ public class LoadExperimentPanelController {
                 Dimension parentDimension = loadExperimentPanel.getLoadDataPlateParentPanel().getSize();
                 //init plate panel with current experiment plate format
                 loadDataPlatePanelController.getLoadDataPlatePanel().initPanel(experiment.getPlateFormat(), parentDimension);
+                // ======================================================================== //
+                loadDataPlatePanelController.getLoadDataPlatePanel().setExperiment(experiment);
                 loadDataPlatePanelController.getLoadDataPlatePanel().repaint();
 
                 //load experiment folders
@@ -201,7 +205,7 @@ public class LoadExperimentPanelController {
                     File obsepFile = experiment.getObsepFile();
                     setExperimentData(obsepFile);
                 } else {
-                    cellMissyController.showMessage("No valid microscope file was found. Please select a valid file.", 0);
+                    cellMissyController.showMessage("No valid microscope file was found. Please select a file.", 0);
                     //choose file to parse form microscope folder
                     JFileChooser chooseObsepFile = new JFileChooser();
                     chooseObsepFile.setFileFilter(new FileFilter() {
@@ -262,21 +266,27 @@ public class LoadExperimentPanelController {
 
     private void setCellMiaData() {
 
-        Collection<PlateCondition> plateConditionCollection = experiment.getPlateConditionCollection();
-        Collection<Map<ImagingType, List<WellHasImagingType>>> values = loadDataPlatePanelController.getLoadDataPlatePanel().getAlgoMap().values();
-        
-        for (WellGui wellGui : loadDataPlatePanelController.getLoadDataPlatePanel().getWellGuiList()) {
-            //if the list of ellipsi is not empty, the well has been imaged
-            if (!wellGui.getEllipsi().isEmpty()) {
-                for (PlateCondition plateCondition : plateConditionCollection) {
+
+        for (PlateCondition plateCondition : experiment.getPlateConditionCollection()) {
+            for (WellGui wellGui : loadDataPlatePanelController.getLoadDataPlatePanel().getWellGuiList()) {
+
+                //if the list of ellipsi has more than one ellispe2D, the well has been imaged
+                //if the wellGui has a rectangle, the well belongs to a certain condition
+                //only if these two conditions are true, motility data need to be set and stored
+                if (!wellGui.getWell().getWellHasImagingTypeCollection().isEmpty() && wellGui.getRectangle() != null) {
 
                     for (Well well : plateCondition.getWellCollection()) {
-                        
+                        if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
+                            well.setWellHasImagingTypeCollection(wellGui.getWell().getWellHasImagingTypeCollection());
+
+                            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
+                                wellHasImagingType.setWell(well);
+                            }
+                        }
+
                     }
                 }
-                wellGui.getWell().setWellHasImagingTypeCollection(null);
             }
         }
-
     }
 }
