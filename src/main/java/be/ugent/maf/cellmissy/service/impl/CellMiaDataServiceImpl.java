@@ -57,10 +57,14 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
 
         for (File file : algoFiles) {
 
+            //default algo-0 folder does not contain data to store
             if (!file.getName().endsWith("algo-0")) {
+                //create a new algorithm
                 Algorithm algo = new Algorithm();
-                algo.setAlgorithmName(file.getName());
+                //give name to the algorithm (according to folder name)
+                algo.setAlgorithmName(file.getName().substring(file.getName().indexOf("MIA_"), file.getName().length()));
                 algo.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
+                //create a new Map copying all the wellhasimagingtypes fields (but new objects)
                 Map<ImagingType, List<WellHasImagingType>> map = copyMap();
                 batchFiles.addAll(Arrays.asList(file.listFiles()));
                 for (File batchFile : batchFiles) {
@@ -75,12 +79,9 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                     int imageTypeStartFolder = 0;
                     for (ImagingType imagingType : map.keySet()) {
                         List<WellHasImagingType> wellHasImagingTypeList = map.get(imagingType);
-
                         for (int i = imageTypeStartFolder; i < wellHasImagingTypeList.size() + imageTypeStartFolder; i++) {
                             WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i - imageTypeStartFolder);
-
                             wellHasImagingType.setAlgorithm(algo);
-
                             // iterate trough the folders and look for the text files, parse the files with cellMiaFileParser
                             // results folders
                             File[] resultsFiles = sampleFiles[i].listFiles(resultsFilter);
@@ -89,7 +90,6 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                                 File[] textFiles = resultsFiles[j].listFiles(textfilesFilter);
 
                                 for (File textFile : textFiles) {
-
                                     // parse bulk cell file
                                     if (textFile.getName().endsWith("bulkcell.txt")) {
                                         List<TimeStep> timeStepList = cellMiaFileParser.parseBulkCellFile(textFile);
@@ -97,7 +97,6 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                                             timeStep.setWellHasImagingType(wellHasImagingType);
                                         }
                                         wellHasImagingType.setTimeStepCollection(timeStepList);
-
                                         // parse tracking cell file
                                     } else if (textFile.getName().endsWith("tracking.txt")) {
                                         List<Track> trackList = cellMiaFileParser.parseTrackingFile(textFile);
@@ -109,15 +108,20 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                                 }
                             }
                         }
+                        //update collection of imaging type
+                        imagingType.setWellHasImagingTypeCollection(wellHasImagingTypeList);
+                        //start over through the other folders (next imaging type)
                         imageTypeStartFolder += wellHasImagingTypeList.size();
                     }
-                    long currentTimeMillis1 = System.currentTimeMillis();
-                    LOG.debug("CellMia data processed in " + ((currentTimeMillis1 - currentTimeMillis) / 1000) + " s");
                 }
+                //one algo was processed ===========================
+                long currentTimeMillis1 = System.currentTimeMillis();
+                LOG.debug(algo.getAlgorithmName() + " processed in " + ((currentTimeMillis1 - currentTimeMillis) / 1000) + " s");
+                //add all the samples to the algorithm
                 for (List<WellHasImagingType> wellHasImagingTypes : map.values()) {
                     algo.getWellHasImagingTypeCollection().addAll(wellHasImagingTypes);
                 }
-
+                //update the map
                 algoMap.put(algo, map);
             }
         }
