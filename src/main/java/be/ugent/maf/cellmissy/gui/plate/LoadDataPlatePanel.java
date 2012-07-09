@@ -13,6 +13,7 @@ import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,14 +78,23 @@ public class LoadDataPlatePanel extends AbstractPlatePanel {
         setGraphics(g2d);
         List<PlateCondition> plateConditions = new ArrayList<>();
         plateConditions.addAll(experiment.getPlateConditionCollection());
-        
+
         for (PlateCondition plateCondition : plateConditions) {
             for (Well well : plateCondition.getWellCollection()) {
                 for (WellGui wellGui : wellGuiList) {
                     if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
                         g2d.setColor(GuiUtils.getAvailableColors()[plateConditions.indexOf(plateCondition) + 1]);
-                        g2d.draw(wellGui.getEllipsi().get(0).getBounds());
-                        wellGui.setRectangle(wellGui.getEllipsi().get(0).getBounds());
+
+                        int x = (int) wellGui.getEllipsi().get(0).getX() - LoadDataPlatePanel.pixelsGrid / 2;
+                        int y = (int) wellGui.getEllipsi().get(0).getY() - LoadDataPlatePanel.pixelsGrid / 2;
+
+                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + LoadDataPlatePanel.pixelsGrid;
+                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + LoadDataPlatePanel.pixelsGrid;
+
+                        //create rectangle that sorrounds the wellGui and draw it
+                        Rectangle rect = new Rectangle(x, y, width, height);
+                        g2d.draw(rect);
+                        wellGui.setRectangle(rect);
                     }
                 }
             }
@@ -95,13 +105,12 @@ public class LoadDataPlatePanel extends AbstractPlatePanel {
     protected void reDrawWells(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
-        // a list of WellGUI objects is present, iterate through it
+        // a list of WellGui objects is present, iterate through it
         for (WellGui wellGui : wellGuiList) {
             List<Ellipse2D> ellipsi = wellGui.getEllipsi();
 
             for (int i = 0; i < ellipsi.size(); i++) {
                 Ellipse2D ellipse2D = ellipsi.get(i);
-                g2d.draw(ellipse2D);
 
                 // if a color of a wellGui has been changed, keep track of it when resizing
                 // if a well was not imaged, set its color to the default one
@@ -110,7 +119,7 @@ public class LoadDataPlatePanel extends AbstractPlatePanel {
                     g2d.draw(ellipse2D);
                 } else {
                     // if it has been imaged, set its color to a different one
-                    g2d.setColor(GuiUtils.getAvailableColors()[i + 1]);
+                    g2d.setColor(GuiUtils.getImagingTypeColors()[i]);
                     g2d.fill(ellipse2D);
                 }
             }

@@ -45,6 +45,10 @@ public class CellMissyFrame extends javax.swing.JFrame {
     public JPanel getLoadExperimentParentPanel() {
         return loadExperimentParentPanel;
     }
+
+    public JPanel getDataAnalysisParentPanel() {
+        return dataAnalysisParentPanel;
+    }
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -61,6 +65,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
         userParentPanel = new javax.swing.JPanel();
         experimentSetupParentPanel = new javax.swing.JPanel();
         loadExperimentParentPanel = new javax.swing.JPanel();
+        dataAnalysisParentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBounds(new java.awt.Rectangle(30, 5, 0, 0));
@@ -82,6 +87,9 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         loadExperimentParentPanel.setLayout(new java.awt.GridBagLayout());
         jTabbedPane1.addTab("Load CellMIA Data", loadExperimentParentPanel);
+
+        dataAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
+        jTabbedPane1.addTab("Data Analysis", dataAnalysisParentPanel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -133,6 +141,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel dataAnalysisParentPanel;
     private javax.swing.JPanel experimentSetupParentPanel;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel loadExperimentParentPanel;
