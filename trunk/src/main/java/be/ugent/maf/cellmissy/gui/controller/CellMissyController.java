@@ -23,9 +23,11 @@ public class CellMissyController {
     //main frame
     CellMissyFrame cellMissyFrame;
     //child controllers
-    UserPanelController userPanelController;
-    SetupExperimentPanelController setupExperimentPanelController;
-    LoadExperimentPanelController loadExperimentPanelController;
+    private UserPanelController userPanelController;
+    private SetupExperimentPanelController setupExperimentPanelController;
+    private LoadExperimentPanelController loadExperimentPanelController;
+    private DataAnalysisPanelController dataAnalysisPanelController;
+    
     //application context
     ApplicationContext context;
     private GridBagConstraints gridBagConstraints;
@@ -37,6 +39,7 @@ public class CellMissyController {
         userPanelController = new UserPanelController(this);
         setupExperimentPanelController = new SetupExperimentPanelController(this);
         loadExperimentPanelController = new LoadExperimentPanelController(this);
+        dataAnalysisPanelController = new DataAnalysisPanelController(this);
         
         //load application context
         context = ApplicationContextProvider.getInstance().getApplicationContext();
@@ -52,6 +55,7 @@ public class CellMissyController {
         cellMissyFrame.getUserParentPanel().add(userPanelController.getUserPanel(), gridBagConstraints);
         cellMissyFrame.getExperimentSetupParentPanel().add(setupExperimentPanelController.getSetupExperimentPanel(), gridBagConstraints);
         cellMissyFrame.getLoadExperimentParentPanel().add(loadExperimentPanelController.getLoadExperimentPanel(), gridBagConstraints);
+        cellMissyFrame.getDataAnalysisParentPanel().add(dataAnalysisPanelController.getDataAnalysisPanel(), gridBagConstraints);
     }
 
     public void showMessage(String message, Integer messageType) {

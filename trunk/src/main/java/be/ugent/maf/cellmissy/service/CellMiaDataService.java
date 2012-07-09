@@ -30,8 +30,8 @@ public interface CellMiaDataService {
     MicroscopeDataService getMicroscopeDataService();
 
     /**
-     * this method sets Tracks and TimeSteps of the WellHasImagingType entities 
-     * @return a map from ImagingType to WellHasImagingType entities
+     * this method sets Tracks and TimeSteps of the WellHasImagingType entities (for each algorithm detected)
+     * @return a map from Algorithms to map (from ImagingType to WellHasImagingType entities)
      */
     Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processCellMiaData();
 }

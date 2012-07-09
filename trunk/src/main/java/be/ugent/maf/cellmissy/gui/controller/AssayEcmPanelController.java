@@ -282,8 +282,8 @@ public class AssayEcmPanelController {
         assayEcm2DPanel.getCoatingComboBox().setSelectedIndex(0);
         assayEcm2DPanel.getConcentrationTextField().setText("0.5");
         assayEcm2DPanel.getVolumeTextField().setText("0.5");
-        assayEcm2DPanel.getCoatingTimeTextField().setText("12h");
-        assayEcm2DPanel.getCoatingTemperatureTextField().setText("37C");
+        assayEcm2DPanel.getCoatingTimeTextField().setText("12" + " h");
+        assayEcm2DPanel.getCoatingTemperatureTextField().setText("37" + " C");
 
         //add action listeners
         assayEcm2DPanel.getAddCompositionButton().addActionListener(new ActionListener() {
@@ -326,8 +326,8 @@ public class AssayEcmPanelController {
         assayEcm3DPanel.getCompositionComboBox().setSelectedIndex(0);
         assayEcm3DPanel.getDensityComboBox().setSelectedIndex(0);
         assayEcm3DPanel.getVolumeTextField().setText("0.5");
-        assayEcm3DPanel.getPolymerizationTimeTextField().setText("12h");
-        assayEcm3DPanel.getPolymerizationTemperatureTextField().setText("37C");
+        assayEcm3DPanel.getPolymerizationTimeTextField().setText("12"+ " h");
+        assayEcm3DPanel.getPolymerizationTemperatureTextField().setText("37"+ " C");
 
         //add action listeners
         assayEcm3DPanel.getAddCompositionButton().addActionListener(new ActionListener() {

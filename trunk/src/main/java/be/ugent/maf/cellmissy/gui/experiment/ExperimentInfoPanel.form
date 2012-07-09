@@ -35,7 +35,7 @@
                   <Component id="jPanel1" pref="252" max="32767" attributes="1"/>
                   <Component id="jPanel2" alignment="0" pref="252" max="32767" attributes="1"/>
               </Group>
-              <EmptySpace pref="100" max="32767" attributes="0"/>
+              <EmptySpace pref="385" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -56,7 +56,7 @@
                       <Component id="jPanel1" min="-2" pref="238" max="-2" attributes="1"/>
                   </Group>
               </Group>
-              <EmptySpace pref="46" max="32767" attributes="0"/>
+              <EmptySpace pref="53" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -187,7 +187,7 @@
         </Container>
         <Component class="javax.swing.JLabel" name="purposeLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Purpose of the Experiment"/>
+            <Property name="text" type="java.lang.String" value="Purpose of the Experiment*"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="numberLabel">

@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -23,6 +24,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import javax.swing.SwingWorker;
 import org.springframework.context.ApplicationContext;
 
@@ -98,8 +101,22 @@ public class LoadDataPlatePanelController {
                 // process first Imaging Type data:
                 // ImagingTypeList is null, create a new PlateWorker and execute it             
                 if (loadDataPlatePanel.getImagingTypeList() == null) {
+                    loadExperimentPanelController.getLoadExperimentPanel().getForwardButton().setEnabled(false);
+
+                    loadExperimentPanelController.getLoadExperimentPanel().getjProgressBar1().setStringPainted(true);
                     PlateWorker plateWorker = new PlateWorker();
-                    plateWorker.addPropertyChangeListener(new ProgressListener());
+                    //set cursor to wait
+                    loadExperimentPanelController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    plateWorker.addPropertyChangeListener(new PropertyChangeListener() {
+
+                        @Override
+                        public void propertyChange(PropertyChangeEvent e) {
+                            if ("progress".equals(e.getPropertyName())) {
+                                int progress = (Integer) e.getNewValue();
+                                loadExperimentPanelController.getLoadExperimentPanel().getjProgressBar1().setValue(progress);
+                            }
+                        }
+                    });
                     plateWorker.execute();
                 } else {
                     // forward to next Imaging Type
@@ -113,6 +130,7 @@ public class LoadDataPlatePanelController {
                         // update info Label
                         String message = "Select first well imaged with " + currentImagingType.getName() + " (imaging type " + (imagingTypeList.indexOf(currentImagingType) + 1) + "/" + imagingTypeList.size() + ")";
                         loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), message);
+                        loadExperimentPanelController.getLoadExperimentPanel().getForwardButton().setEnabled(false);
                     }
                 }
             }
@@ -138,7 +156,7 @@ public class LoadDataPlatePanelController {
                     showImagedWells(firstWellGui);
                     // update info label
                     if (loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) == loadDataPlatePanel.getImagingTypeList().size() - 1) {
-                        // there are no more imaging types to process, save the wells to the DB
+                        // there are no more imaging types to process, the experiment can be saved to DB
                         loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), "Click on Finish to save the experiment");
                         //disable Forward button
                         loadExperimentPanelController.getLoadExperimentPanel().getForwardButton().setEnabled(false);
@@ -147,6 +165,7 @@ public class LoadDataPlatePanelController {
                     } else {
                         // ask the user to click on Forward button to proceed with next imaging type
                         loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), "Click on Forward to proceed with next imaging type.");
+                        loadExperimentPanelController.getLoadExperimentPanel().getForwardButton().setEnabled(true);
                     }
                 }
                 isEnable = false;
@@ -154,12 +173,17 @@ public class LoadDataPlatePanelController {
         });
     }
 
+    /**
+     * compute the concentric ellipsi to show all imaged wells according to imaging types found
+     * @param firstWellGui 
+     */
     private void showImagedWells(WellGui firstWellGui) {
-        // update WellGuiList and show imaged wells positions on the plate
+        //update WellGuiList and show imaged wells positions on the plate
         wellService.updateWellGuiListWithImagingType(loadDataPlatePanel.getCurrentImagingType(), loadDataPlatePanel.getPlateFormat(), firstWellGui, loadDataPlatePanel.getWellGuiList());
         int currentImagingTypeIndex = loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType());
-        for (WellGui wellGui : loadDataPlatePanel.getWellGuiList()) {
-            if (currentImagingTypeIndex != 0) {
+
+        if (currentImagingTypeIndex != 0) {
+            for (WellGui wellGui : loadDataPlatePanel.getWellGuiList()) {
                 if (containsImagingType(wellGui.getWell().getWellHasImagingTypeCollection(), loadDataPlatePanel.getCurrentImagingType())) {
 
                     List<Ellipse2D> ellipsi = wellGui.getEllipsi();
@@ -180,6 +204,12 @@ public class LoadDataPlatePanelController {
         loadDataPlatePanel.repaint();
     }
 
+    /**
+     * check if a wellHasImagingType contains a certain imaging type
+     * @param wellHasImagingTypes
+     * @param imagingType
+     * @return 
+     */
     private boolean containsImagingType(Collection<WellHasImagingType> wellHasImagingTypes, ImagingType imagingType) {
         for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
             if (wellHasImagingType.getImagingType().equals(imagingType)) {
@@ -188,12 +218,18 @@ public class LoadDataPlatePanelController {
         }
         return false;
     }
-    //swing worker
 
+    /**
+     * swing worker
+     */
     private class PlateWorker extends SwingWorker<Void, Void> {
 
         @Override
         protected Void doInBackground() throws Exception {
+
+            int progress = 0;
+            setProgress(progress);
+
             loadExperimentPanelController.getLoadExperimentPanel().getjProgressBar1().setVisible(true);
 
             wellService.init(loadExperimentPanelController.getExperiment());
@@ -202,14 +238,28 @@ public class LoadDataPlatePanelController {
             loadDataPlatePanel.setImagingTypeList(imagingTypes);
 
             loadDataPlatePanel.setAlgoMap(wellService.getMap());
+
+            while (progress < getWellHasImagingTypesNumber()) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ignore) {
+                }
+                for (Map<ImagingType, List<WellHasImagingType>> map : loadDataPlatePanel.getAlgoMap().values()) {
+                    for (List<WellHasImagingType> list : map.values()) {
+                        progress += list.size() * 100 / getWellHasImagingTypesNumber();
+                        setProgress(Math.min(progress, 100));
+                    }
+                }
+            }
             return null;
         }
 
         @Override
         protected void done() {
 
+            //set cursor back to normal
+            loadExperimentPanelController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             loadExperimentPanelController.getLoadExperimentPanel().getjProgressBar1().setVisible(false);
-
             // get first Imaging Type
             loadDataPlatePanel.setCurrentImagingType(loadDataPlatePanel.getImagingTypeList().get(0));
             // ask the user to select first well for the imaging type
@@ -218,11 +268,18 @@ public class LoadDataPlatePanelController {
         }
     }
 
-    private class ProgressListener implements PropertyChangeListener {
+    /**
+     * compute (in advance) how many samples need to be processed
+     * @return 
+     */
+    private int getWellHasImagingTypesNumber() {
 
-        @Override
-        public void propertyChange(PropertyChangeEvent e) {
-            loadExperimentPanelController.getLoadExperimentPanel().getjProgressBar1().setValue(10);
+        int number = 0;
+        for (Map<ImagingType, List<WellHasImagingType>> map : loadDataPlatePanel.getAlgoMap().values()) {
+            for (List<WellHasImagingType> list : map.values()) {
+                number += list.size();
+            }
         }
+        return number;
     }
 }

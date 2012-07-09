@@ -6,7 +6,6 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
-import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -17,15 +16,14 @@ import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.filechooser.FileFilter;
@@ -180,13 +178,14 @@ public class LoadExperimentPanelController {
                 Dimension parentDimension = loadExperimentPanel.getLoadDataPlateParentPanel().getSize();
                 //init plate panel with current experiment plate format
                 loadDataPlatePanelController.getLoadDataPlatePanel().initPanel(experiment.getPlateFormat(), parentDimension);
-                // ======================================================================== //
+
+                //this call the paintComponent method and rectangles are drawn around the wells that have a condition
                 loadDataPlatePanelController.getLoadDataPlatePanel().setExperiment(experiment);
                 loadDataPlatePanelController.getLoadDataPlatePanel().repaint();
 
                 //load experiment folders
                 experimentService.loadFolderStructure(experiment);
-                LOG.debug("Folders loaded");
+                LOG.debug("Folders have been loaded");
                 cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click on Exp Data to get experiment data from microscope.");
                 loadExperimentPanel.getExpDataButton().setEnabled(true);
             }
@@ -233,6 +232,7 @@ public class LoadExperimentPanelController {
                 }
                 cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click on forward to process imaging data for the experiment.");
                 loadExperimentPanel.getForwardButton().setEnabled(true);
+                loadExperimentPanel.getExpDataButton().setEnabled(false);
             }
         });
 
@@ -264,21 +264,26 @@ public class LoadExperimentPanelController {
         loadExperimentPanel.getDurationTextField().setText(experimentInfo.get(2).toString());
     }
 
+    /**
+     * this method sets Migration data of wells, before the experiment is saved to DB
+     */
     private void setCellMiaData() {
-
 
         for (PlateCondition plateCondition : experiment.getPlateConditionCollection()) {
             for (WellGui wellGui : loadDataPlatePanelController.getLoadDataPlatePanel().getWellGuiList()) {
 
-                //if the list of ellipsi has more than one ellispe2D, the well has been imaged
+                //if the wellGui has a well with a NOT empty collection of wellHasImagingTypes, the well has been imaged
                 //if the wellGui has a rectangle, the well belongs to a certain condition
-                //only if these two conditions are true, motility data need to be set and stored
+                //only if these two conditions are true, motility data must be set and stored to DB
                 if (!wellGui.getWell().getWellHasImagingTypeCollection().isEmpty() && wellGui.getRectangle() != null) {
 
                     for (Well well : plateCondition.getWellCollection()) {
+                        //check for coordinates
                         if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
+                            //set collection of wellHasImagingType to the well of the plateCondition
                             well.setWellHasImagingTypeCollection(wellGui.getWell().getWellHasImagingTypeCollection());
 
+                            //the other way around: set the well for each wellHasImagingType
                             for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
                                 wellHasImagingType.setWell(well);
                             }
@@ -289,4 +294,13 @@ public class LoadExperimentPanelController {
             }
         }
     }
+    
+    /**
+     * control the cursor of the main frame
+     * @param cursorType 
+     */
+    public void setCursor(Cursor cursor){
+        cellMissyController.cellMissyFrame.setCursor(cursor);
+    }
+    
 }
