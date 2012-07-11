@@ -22,10 +22,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -113,9 +118,12 @@ public class LoadExperimentPanelController {
      */
     private void initExperimentDataPanel() {
 
+        //disable buttons
         loadExperimentPanel.getFinishButton().setEnabled(false);
         loadExperimentPanel.getExpDataButton().setEnabled(false);
         loadExperimentPanel.getForwardButton().setEnabled(false);
+        loadExperimentPanel.getCancelButton().setEnabled(false);
+        //hide progress bar
         loadExperimentPanel.getjProgressBar1().setVisible(false);
 
         //update info message
@@ -186,7 +194,7 @@ public class LoadExperimentPanelController {
                 //load experiment folders
                 experimentService.loadFolderStructure(experiment);
                 LOG.debug("Folders have been loaded");
-                cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click on Exp Data to get experiment data from microscope.");
+                cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click <<Exp Data>> to get experiment data from microscope.");
                 loadExperimentPanel.getExpDataButton().setEnabled(true);
             }
         });
@@ -230,9 +238,39 @@ public class LoadExperimentPanelController {
                         cellMissyController.showMessage("Open command cancelled by user", 1);
                     }
                 }
-                cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click on forward to process imaging data for the experiment.");
+                cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click <<Forward>> to process imaging data for the experiment.");
                 loadExperimentPanel.getForwardButton().setEnabled(true);
                 loadExperimentPanel.getExpDataButton().setEnabled(false);
+            }
+        });
+
+        //cancel the selection: reset Plate View
+        loadExperimentPanel.getCancelButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (WellGui wellGui : loadDataPlatePanelController.getLoadDataPlatePanel().getWellGuiList()) {
+
+                    //empty the collection of WellHasImagingType (so color is set to default)
+                    wellGui.getWell().getWellHasImagingTypeCollection().clear();
+
+                    //remove smaller ellipsi
+                    List<Ellipse2D> ellipse2DList = new ArrayList<>();
+                    for (Ellipse2D ellipse2D : wellGui.getEllipsi()) {
+                        if (wellGui.getEllipsi().indexOf(ellipse2D) > 0) {
+                            ellipse2DList.add(ellipse2D);
+                        }
+                    }
+                    wellGui.getEllipsi().removeAll(ellipse2DList);
+                    loadDataPlatePanelController.getLoadDataPlatePanel().repaint();
+                }
+
+                //update info message (the user needs to click again on forward)
+                updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click again <<Forward>> to process imaging data.");
+                loadDataPlatePanelController.setIsFirtTime(false);
+                loadExperimentPanel.getFinishButton().setEnabled(false);
+                loadExperimentPanel.getForwardButton().setEnabled(true);
+                loadExperimentPanel.getCancelButton().setEnabled(false);
             }
         });
 
@@ -246,7 +284,9 @@ public class LoadExperimentPanelController {
                 setCellMiaData();
                 //set experiment status to "performed" and save it to DB
                 experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
-                experimentService.save(experiment);
+
+                SaveExperimentWorker worker = new SaveExperimentWorker();
+                worker.execute();
             }
         });
     }
@@ -294,13 +334,43 @@ public class LoadExperimentPanelController {
             }
         }
     }
-    
+
     /**
      * control the cursor of the main frame
      * @param cursorType 
      */
-    public void setCursor(Cursor cursor){
+    public void setCursor(Cursor cursor) {
         cellMissyController.cellMissyFrame.setCursor(cursor);
     }
-    
+
+    /**
+     * Swing Worker to save the Experiment
+     */
+    private class SaveExperimentWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+
+            //disable the Finish button and show a waiting cursor
+            loadExperimentPanel.getFinishButton().setEnabled(false);
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            //show a progress bar (indeterminate)
+            loadExperimentPanel.getjProgressBar1().setVisible(true);
+            loadExperimentPanel.getjProgressBar1().setIndeterminate(true);
+
+            //INSERT experiment to DB
+            experimentService.save(experiment);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+
+            //show back default cursor and hide the progress bar
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            loadExperimentPanel.getjProgressBar1().setVisible(false);
+            //update info for the user
+            updateInfoLabel(loadExperimentPanel.getInfolabel(), "Experiment was successfully saved to DB.");
+        }
+    }
 }

@@ -16,6 +16,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -113,13 +114,14 @@ public class LoadDataPlatePanel extends AbstractPlatePanel {
                 Ellipse2D ellipse2D = ellipsi.get(i);
 
                 // if a color of a wellGui has been changed, keep track of it when resizing
-                // if a well was not imaged, set its color to the default one
+                // if a well was not imaged, set its color to the default one (just redraw the well)
                 if (wellGui.getWell().getWellHasImagingTypeCollection().isEmpty()) {
                     g2d.setColor(GuiUtils.getAvailableColors()[0]);
                     g2d.draw(ellipse2D);
                 } else {
-                    // if it has been imaged, set its color to a different one
-                    g2d.setColor(GuiUtils.getImagingTypeColors()[i]);
+                    // if it has been imaged, set its color to a different one (for each ellipse2D present)
+                    List<ImagingType> uniqueImagingTypes = getUniqueImagingTypes(wellGui.getWell().getWellHasImagingTypeCollection());
+                    g2d.setColor(GuiUtils.getImagingTypeColors()[imagingTypeList.indexOf(uniqueImagingTypes.get(i))]);
                     g2d.fill(ellipse2D);
                 }
             }
@@ -129,5 +131,20 @@ public class LoadDataPlatePanel extends AbstractPlatePanel {
                 drawPlateLabel(ellipsi.get(0), g2d, wellGui.getColumnNumber(), wellGui.getRowNumber());
             }
         }
+    }
+        /**
+     * get Unique imaging types of a wellHasImagingType
+     * @param wellHasImagingTypes
+     * @return 
+     */
+    public List<ImagingType> getUniqueImagingTypes(Collection<WellHasImagingType> wellHasImagingTypes) {
+        List<ImagingType> imagingTypes = new ArrayList<>();
+
+        for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
+            if (!imagingTypes.contains(wellHasImagingType.getImagingType())) {
+                imagingTypes.add(wellHasImagingType.getImagingType());
+            }
+        }
+        return imagingTypes;
     }
 }

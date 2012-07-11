@@ -18,7 +18,7 @@ public class GuiUtils {
 
     private static final Color[] availableColors = {Color.BLACK, Color.BLUE, Color.RED, Color.GREEN, Color.ORANGE, Color.MAGENTA, Color.CYAN, Color.YELLOW, Color.GRAY, Color.DARK_GRAY};
     
-    private static final Color[] imagingTypeColors = {new Color(130, 23, 254), new Color(170, 217, 147)};
+    private static final Color[] imagingTypeColors = {new Color(130, 70, 230), new Color(90, 200, 30)};
 
     public static GridBagConstraints getDefaultGridBagConstraints() {
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
