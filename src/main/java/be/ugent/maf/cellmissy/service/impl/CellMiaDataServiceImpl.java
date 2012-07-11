@@ -51,7 +51,6 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
 
         long currentTimeMillis = System.currentTimeMillis();
         imagingTypeMap = microscopeDataService.processMicroscopeData();
-        List<File> batchFiles = new ArrayList<>();
         algoMap = new HashMap<>();
         File[] algoFiles = experiment.getMiaFolder().listFiles();
 
@@ -66,8 +65,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                 algo.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
                 //create a new Map copying all the wellhasimagingtypes fields (but new objects)
                 Map<ImagingType, List<WellHasImagingType>> map = copyMap();
-                batchFiles.addAll(Arrays.asList(file.listFiles()));
-                for (File batchFile : batchFiles) {
+                for (File batchFile : Arrays.asList(file.listFiles())) {
 
                     // sample folders
                     // the number of sampleFiles is equal to the number of WellHasImagingType entities for one algorithm
@@ -79,6 +77,8 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                     int imageTypeStartFolder = 0;
                     for (ImagingType imagingType : map.keySet()) {
                         List<WellHasImagingType> wellHasImagingTypeList = map.get(imagingType);
+
+                        //**********************************************************************************************//
                         for (int i = imageTypeStartFolder; i < wellHasImagingTypeList.size() + imageTypeStartFolder; i++) {
                             WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i - imageTypeStartFolder);
                             wellHasImagingType.setAlgorithm(algo);
@@ -107,7 +107,11 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                                     }
                                 }
                             }
+                            LOG.debug("Sample " + (i + 1) + " (" + wellHasImagingType.getXCoordinate() + ", " + wellHasImagingType.getYCoordinate() + ")" + " processed." + " Imaging Type: " + imagingType + ", algo: " + algo.getAlgorithmName());
                         }
+                        LOG.debug("Imaging type: " + imagingType + " processed");
+                        //***********************************************************************************************//
+
                         //update collection of imaging type
                         imagingType.setWellHasImagingTypeCollection(wellHasImagingTypeList);
                         //start over through the other folders (next imaging type)

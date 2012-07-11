@@ -76,6 +76,10 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
     public JProgressBar getjProgressBar1() {
         return jProgressBar1;
     }
+
+    public JButton getCancelButton() {
+        return cancelButton;
+    }
     
     /** This method is called from within the constructor to
      * initialize the form.

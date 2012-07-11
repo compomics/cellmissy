@@ -11,7 +11,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,8 +22,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 /**
  *
@@ -49,8 +46,7 @@ public class Well implements Serializable {
     private Integer columnNumber;
     @Column(name = "row_number")
     private Integer rowNumber;
-    @OneToMany(cascade=CascadeType.ALL, mappedBy = "well", fetch= FetchType.EAGER)
-    @Fetch(value = FetchMode.SELECT)
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "well")
     private Collection<WellHasImagingType> wellHasImagingTypeCollection;
     @JoinColumn(name = "l_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = true)
