@@ -26,6 +26,7 @@ import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import com.compomics.util.Export;
 import com.compomics.util.enumeration.ImageType;
+import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -592,6 +593,9 @@ public class SetupExperimentPanelController {
         @Override
         protected Void doInBackground() throws Exception {
 
+            //disable the pdf report button and show a waiting cursor
+            setupExperimentPanel.getReportButton().setEnabled(false);
+            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             //create JPanel for the report
             JPanel reportPanel = setupReport.createReportPanel();
             //create a new frame, set the size and add the report panel to it.
@@ -619,6 +623,8 @@ public class SetupExperimentPanelController {
         @Override
         protected void done() {
 
+            //show back default button
+            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             //add back the two components to the panel
             conditionsPanelController.getConditionsPanel().getjScrollPane1().setViewportView(conditionsPanelController.getConditionsPanel().getConditionsJList());
             setupPlatePanelController.getPlatePanelGui().getBottomPanel().add(setupPlatePanelController.getSetupPlatePanel(), gridBagConstraints);
@@ -629,7 +635,7 @@ public class SetupExperimentPanelController {
             //update info label (>>next step: save the experiment)
             cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Pdf report was successfully created. Click on Finish to save the Experiment");
             setupExperimentPanel.getFinishButton().setEnabled(true);
-
+            setupExperimentPanel.getReportButton().setEnabled(true);
         }
 
         //print to PDF (Export class from COmpomics Utilities)

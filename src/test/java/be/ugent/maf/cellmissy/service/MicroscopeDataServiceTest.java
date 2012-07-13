@@ -32,7 +32,7 @@ public class MicroscopeDataServiceTest {
     public void testMicroscopeDataService() {
         File obsepFile = new File(ObsepFileParserTest.class.getClassLoader().getResource("gffp.obsep").getPath());
         File microscopeFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
-        microscopeDataService.init(microscopeFolder, obsepFile);
+       // microscopeDataService.init(microscopeFolder, obsepFile);
         Map<ImagingType, List<WellHasImagingType>> map = microscopeDataService.processMicroscopeData();
         
         assertTrue(!map.isEmpty());

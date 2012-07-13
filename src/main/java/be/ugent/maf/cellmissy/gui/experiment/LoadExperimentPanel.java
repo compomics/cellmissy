@@ -11,11 +11,11 @@
 package be.ugent.maf.cellmissy.gui.experiment;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 /**
@@ -80,6 +80,18 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
     public JButton getCancelButton() {
         return cancelButton;
     }
+
+    public JList getConditionsList() {
+        return conditionsList;
+    }
+
+    public JScrollPane getjScrollPane3() {
+        return jScrollPane3;
+    }
+
+    public JLabel getjLabel2() {
+        return jLabel2;
+    }
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -106,7 +118,10 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         timeFramesTextField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         unitLabel = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        experimentConditionsPanel = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        conditionsList = new javax.swing.JList();
+        jLabel2 = new javax.swing.JLabel();
         loadDataPlateParentPanel = new javax.swing.JPanel();
         bottomPanel = new javax.swing.JPanel();
         infolabel = new javax.swing.JLabel();
@@ -122,11 +137,11 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         topPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         topPanel.setLayout(new java.awt.GridBagLayout());
 
-        experimentDataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment"));
+        experimentDataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
         experimentDataPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         experimentDataPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Projects", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Projects", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
 
         projectJList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -135,11 +150,11 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(projectJList);
 
-        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiments in Progress", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
+        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiments in Progress", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
 
         jScrollPane2.setViewportView(experimentJList);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment Data (microscope)", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment Info (microscope)", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
 
         durationLabel.setText("Duration");
 
@@ -174,7 +189,7 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(unitLabel))
-                .addGap(30, 30, 30))
+                .addGap(96, 96, 96))
         );
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {durationTextField, intervalTextField, timeFramesTextField});
@@ -200,72 +215,94 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(timeFramesLabel)
                     .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {durationTextField, intervalTextField, timeFramesTextField});
+
+        experimentConditionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment Conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        experimentConditionsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        experimentConditionsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        jScrollPane3.setBorder(null);
+        jScrollPane3.setMinimumSize(new java.awt.Dimension(30, 30));
+
+        conditionsList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane3.setViewportView(conditionsList);
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel2.setText("Select an Experiment to see its Conditions.");
+
+        javax.swing.GroupLayout experimentConditionsPanelLayout = new javax.swing.GroupLayout(experimentConditionsPanel);
+        experimentConditionsPanel.setLayout(experimentConditionsPanelLayout);
+        experimentConditionsPanelLayout.setHorizontalGroup(
+            experimentConditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(experimentConditionsPanelLayout.createSequentialGroup()
+                .addGroup(experimentConditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(experimentConditionsPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE))
+                    .addGroup(experimentConditionsPanelLayout.createSequentialGroup()
+                        .addGap(53, 53, 53)
+                        .addComponent(jLabel2)))
+                .addContainerGap())
+        );
+        experimentConditionsPanelLayout.setVerticalGroup(
+            experimentConditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(experimentConditionsPanelLayout.createSequentialGroup()
+                .addComponent(jLabel2)
+                .addGap(8, 8, 8)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout experimentDataPanelLayout = new javax.swing.GroupLayout(experimentDataPanel);
         experimentDataPanel.setLayout(experimentDataPanelLayout);
         experimentDataPanelLayout.setHorizontalGroup(
             experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(experimentDataPanelLayout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, experimentDataPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(experimentDataPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(experimentConditionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10))
         );
+
+        experimentDataPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {experimentConditionsPanel, jPanel2});
+
         experimentDataPanelLayout.setVerticalGroup(
             experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, experimentDataPanelLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
+                .addContainerGap()
+                .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(experimentConditionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(91, 91, 91))
+                .addGap(112, 112, 112))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.4;
+        gridBagConstraints.weightx = 0.3;
         gridBagConstraints.weighty = 1.0;
         topPanel.add(experimentDataPanel, gridBagConstraints);
 
-        jPanel1.setMinimumSize(new java.awt.Dimension(20, 20));
-        jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 607, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 49, Short.MAX_VALUE)
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.7;
-        gridBagConstraints.weighty = 0.1;
-        topPanel.add(jPanel1, gridBagConstraints);
-
-        loadDataPlateParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plate view"));
+        loadDataPlateParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Plate view", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
         loadDataPlateParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        loadDataPlateParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         loadDataPlateParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -274,7 +311,6 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.7;
         gridBagConstraints.weighty = 0.9;
-        gridBagConstraints.insets = new java.awt.Insets(10, 30, 10, 30);
         topPanel.add(loadDataPlateParentPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -303,10 +339,10 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bottomPanelLayout.createSequentialGroup()
                 .addGap(35, 35, 35)
-                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                .addGap(357, 357, 357)
                 .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(53, 53, 53)
+                .addGap(63, 63, 63)
                 .addComponent(parseObsepFileButton)
                 .addGap(18, 18, 18)
                 .addComponent(cancelButton)
@@ -314,7 +350,7 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
                 .addComponent(forwardButton)
                 .addGap(18, 18, 18)
                 .addComponent(finishButton)
-                .addGap(70, 70, 70))
+                .addGap(144, 144, 144))
         );
 
         bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, finishButton, forwardButton, parseObsepFileButton});
@@ -324,15 +360,15 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
             .addGroup(bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(finishButton)
-                        .addComponent(forwardButton)
-                        .addComponent(cancelButton)
-                        .addComponent(parseObsepFileButton))
+                    .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(16, Short.MAX_VALUE))
+                        .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(finishButton)
+                            .addComponent(forwardButton)
+                            .addComponent(cancelButton)
+                            .addComponent(parseObsepFileButton))
+                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -348,8 +384,10 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JList conditionsList;
     private javax.swing.JLabel durationLabel;
     private javax.swing.JTextField durationTextField;
+    private javax.swing.JPanel experimentConditionsPanel;
     private javax.swing.JPanel experimentDataPanel;
     private javax.swing.JList experimentJList;
     private javax.swing.JButton finishButton;
@@ -358,11 +396,12 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
     private javax.swing.JLabel intervalLabel;
     private javax.swing.JTextField intervalTextField;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel loadDataPlateParentPanel;
     private javax.swing.JButton parseObsepFileButton;
     private javax.swing.JList projectJList;

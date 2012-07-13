@@ -70,7 +70,6 @@ public class LoadDataPlatePanel extends AbstractPlatePanel {
         if (experiment != null) {
             showRect(g);
         }
-
     }
 
     private void showRect(Graphics g) {
@@ -132,7 +131,8 @@ public class LoadDataPlatePanel extends AbstractPlatePanel {
             }
         }
     }
-        /**
+
+    /**
      * get Unique imaging types of a wellHasImagingType
      * @param wellHasImagingTypes
      * @return 

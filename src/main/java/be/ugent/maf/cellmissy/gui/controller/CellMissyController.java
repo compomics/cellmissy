@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -64,6 +65,10 @@ public class CellMissyController {
 
     public void updateInfoLabel(JLabel infoLabel, String message) {
         infoLabel.setText(message);
+    }
+    
+    public void setCursor(Cursor cursor){
+        cellMissyFrame.setCursor(cursor);
     }
 
     public boolean validateUser() {
