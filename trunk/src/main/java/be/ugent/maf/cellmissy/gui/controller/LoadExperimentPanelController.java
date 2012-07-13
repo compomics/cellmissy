@@ -10,26 +10,33 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.LoadExperimentPanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 import org.apache.log4j.Logger;
@@ -55,6 +62,7 @@ public class LoadExperimentPanelController {
     //model
     private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
+    private List<PlateCondition> plateConditionList;
     private BindingGroup bindingGroup;
     private Experiment experiment;
     //view
@@ -92,7 +100,7 @@ public class LoadExperimentPanelController {
         loadDataPlatePanelController = new LoadDataPlatePanelController(this);
 
         //left panel: experiment data: data need to be retrieved from obsep file (microscope file)
-        initExperimentDataPanel();
+        initExperimentPanel();
     }
 
     /*
@@ -110,13 +118,25 @@ public class LoadExperimentPanelController {
         cellMissyController.updateInfoLabel(label, message);
     }
 
+    public void setCursor(Cursor cursor) {
+        cellMissyController.setCursor(cursor);
+    }
+
+    public void showMessage(String message, Integer messageType) {
+        cellMissyController.showMessage(message, messageType);
+    }
+
+    public int showConfirmDialog(String message, String title, Integer optionType) {
+        return JOptionPane.showConfirmDialog(cellMissyController.cellMissyFrame, message, title, optionType);
+    }
+
     /*
      * private methods and classes
      */
     /**
      * initializes the loading data panel
      */
-    private void initExperimentDataPanel() {
+    private void initExperimentPanel() {
 
         //disable buttons
         loadExperimentPanel.getFinishButton().setEnabled(false);
@@ -125,6 +145,8 @@ public class LoadExperimentPanelController {
         loadExperimentPanel.getCancelButton().setEnabled(false);
         //hide progress bar
         loadExperimentPanel.getjProgressBar1().setVisible(false);
+        //hide conditions JList
+        loadExperimentPanel.getjScrollPane3().setVisible(false);
 
         //update info message
         cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Select a project and then an experiment in progress to load CELLMIA data.");
@@ -183,6 +205,8 @@ public class LoadExperimentPanelController {
 
                 int locationToIndex = loadExperimentPanel.getExperimentJList().locationToIndex(e.getPoint());
                 experiment = experimentBindingList.get(locationToIndex);
+                plateConditionList = new ArrayList<>();
+                plateConditionList.addAll(experiment.getPlateConditionCollection());
                 Dimension parentDimension = loadExperimentPanel.getLoadDataPlateParentPanel().getSize();
                 //init plate panel with current experiment plate format
                 loadDataPlatePanelController.getLoadDataPlatePanel().initPanel(experiment.getPlateFormat(), parentDimension);
@@ -190,6 +214,11 @@ public class LoadExperimentPanelController {
                 //this call the paintComponent method and rectangles are drawn around the wells that have a condition
                 loadDataPlatePanelController.getLoadDataPlatePanel().setExperiment(experiment);
                 loadDataPlatePanelController.getLoadDataPlatePanel().repaint();
+
+                //hide label
+                loadExperimentPanel.getjLabel2().setVisible(false);
+                //and show Conditions JList
+                showConditionsList();
 
                 //load experiment folders
                 experimentService.loadFolderStructure(experiment);
@@ -264,10 +293,11 @@ public class LoadExperimentPanelController {
                     wellGui.getEllipsi().removeAll(ellipse2DList);
                     loadDataPlatePanelController.getLoadDataPlatePanel().repaint();
                 }
-
                 //update info message (the user needs to click again on forward)
                 updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click again <<Forward>> to process imaging data.");
+                //set boolean isFirtTime to false
                 loadDataPlatePanelController.setIsFirtTime(false);
+                //disable and enable buttons
                 loadExperimentPanel.getFinishButton().setEnabled(false);
                 loadExperimentPanel.getForwardButton().setEnabled(true);
                 loadExperimentPanel.getCancelButton().setEnabled(false);
@@ -279,12 +309,11 @@ public class LoadExperimentPanelController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 //set CellMia Data
                 setCellMiaData();
                 //set experiment status to "performed" and save it to DB
                 experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
-
+                //launch a swing worker to save the experiment in the background thread
                 SaveExperimentWorker worker = new SaveExperimentWorker();
                 worker.execute();
             }
@@ -302,6 +331,79 @@ public class LoadExperimentPanelController {
         loadExperimentPanel.getIntervalTextField().setText(experimentInfo.get(1).toString());
         loadExperimentPanel.getUnitLabel().setText(obsepFileParser.getUnit().name().toLowerCase());
         loadExperimentPanel.getDurationTextField().setText(experimentInfo.get(2).toString());
+    }
+
+    /**
+     * this method shows a list of conditions once an experiment is selected
+     */
+    private void showConditionsList() {
+        //make the conditions List visible
+        loadExperimentPanel.getjScrollPane3().setVisible(true);
+        //set Cell Renderer for Condition List
+        loadExperimentPanel.getConditionsList().setCellRenderer(new ConditionsRenderer());
+        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(plateConditionList);
+        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, plateConditionBindingList, loadExperimentPanel.getConditionsList());
+        bindingGroup.addBinding(jListBinding);
+        bindingGroup.bind();
+    }
+
+    /**
+     * renderer for the Conditions JList
+     */
+    private class ConditionsRenderer extends DefaultListCellRenderer {
+
+        /*
+         *constructor
+         */
+        public ConditionsRenderer() {
+            setOpaque(true);
+            setIconTextGap(10);
+        }
+
+        //Overrides method from the DefaultListCellRenderer
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
+            setIcon(new rectIcon(GuiUtils.getAvailableColors()[conditionIndex + 1]));
+
+            return this;
+        }
+    }
+
+    /**
+     * rectangular icon for the Condition list
+     */
+    private class rectIcon implements Icon {
+
+        private final Integer rectHeight = 10;
+        private final Integer rectWidth = 25;
+        private Color color;
+
+        /**
+         * constructor
+         * @param color 
+         */
+        public rectIcon(Color color) {
+            this.color = color;
+        }
+
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Graphics2D g2d = (Graphics2D) g;
+            loadDataPlatePanelController.getLoadDataPlatePanel().setGraphics(g2d);
+            g2d.setColor(color);
+            g2d.fillRect(x, y, rectWidth, rectHeight);
+        }
+
+        @Override
+        public int getIconWidth() {
+            return rectWidth;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return rectHeight;
+        }
     }
 
     /**
@@ -336,14 +438,6 @@ public class LoadExperimentPanelController {
     }
 
     /**
-     * control the cursor of the main frame
-     * @param cursorType 
-     */
-    public void setCursor(Cursor cursor) {
-        cellMissyController.cellMissyFrame.setCursor(cursor);
-    }
-
-    /**
      * Swing Worker to save the Experiment
      */
     private class SaveExperimentWorker extends SwingWorker<Void, Void> {
@@ -353,7 +447,7 @@ public class LoadExperimentPanelController {
 
             //disable the Finish button and show a waiting cursor
             loadExperimentPanel.getFinishButton().setEnabled(false);
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             //show a progress bar (indeterminate)
             loadExperimentPanel.getjProgressBar1().setVisible(true);
             loadExperimentPanel.getjProgressBar1().setIndeterminate(true);
@@ -367,7 +461,7 @@ public class LoadExperimentPanelController {
         protected void done() {
 
             //show back default cursor and hide the progress bar
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             loadExperimentPanel.getjProgressBar1().setVisible(false);
             //update info for the user
             updateInfoLabel(loadExperimentPanel.getInfolabel(), "Experiment was successfully saved to DB.");

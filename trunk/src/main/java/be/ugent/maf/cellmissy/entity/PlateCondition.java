@@ -49,7 +49,8 @@ public class PlateCondition implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition", fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SELECT)
     private Collection<Well> wellCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition", fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SELECT)
     private Collection<Treatment> treatmentCollection;
     @JoinColumn(name = "l_cell_lineid", referencedColumnName = "cell_lineid")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
@@ -175,7 +176,7 @@ public class PlateCondition implements Serializable {
 
     @Override
     public String toString() {
-        return name;
+        return matrixDimension + ", " + cellLine.getCellLineType() + ", " + treatmentCollection;
     }
 
     public Integer getConditionIndex() {
