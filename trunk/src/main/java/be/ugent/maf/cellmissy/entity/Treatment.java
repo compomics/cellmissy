@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -56,6 +57,8 @@ public class Treatment implements Serializable {
     @JoinColumn(name = "l_treatment_typeid", referencedColumnName = "treatment_typeid")
     @ManyToOne(optional = true)
     private TreatmentType treatmentType;
+    @Transient
+    private String concentrationUnitOfMeasure;
 
     public Treatment() {
     }
@@ -129,6 +132,14 @@ public class Treatment implements Serializable {
         this.assayMedium = assayMedium;
     }
 
+    public String getConcentrationUnitOfMeasure() {
+        return concentrationUnitOfMeasure;
+    }
+
+    public void setConcentrationUnitOfMeasure(String concentrationUnitOfMeasure) {
+        this.concentrationUnitOfMeasure = concentrationUnitOfMeasure;
+    }
+
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -166,6 +177,6 @@ public class Treatment implements Serializable {
     }
 
     public String toString() {
-        return treatmentType.getName() + ", " + concentration;
+        return concentration + " " + concentrationUnitOfMeasure + " " + treatmentType;
     }
 }

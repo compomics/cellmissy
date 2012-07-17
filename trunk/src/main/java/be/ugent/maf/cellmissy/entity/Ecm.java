@@ -19,6 +19,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -69,6 +70,10 @@ public class Ecm implements Serializable {
     private EcmDensity ecmDensity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecm")
     private Collection<PlateCondition> plateConditionCollection;
+    @Transient
+    private String concentrationUnitOfMeasure;
+    @Transient
+    private String volumeUnitOfMeasure;
 
     public Ecm() {
     }
@@ -166,6 +171,22 @@ public class Ecm implements Serializable {
         this.plateConditionCollection = plateConditionCollection;
     }
 
+    public String getConcentrationUnitOfMeasure() {
+        return concentrationUnitOfMeasure;
+    }
+
+    public void setConcentrationUnitOfMeasure(String concentrationUnitOfMeasure) {
+        this.concentrationUnitOfMeasure = concentrationUnitOfMeasure;
+    }
+
+    public String getVolumeUnitOfMeasure() {
+        return volumeUnitOfMeasure;
+    }
+
+    public void setVolumeUnitOfMeasure(String volumeUnitOfMeasure) {
+        this.volumeUnitOfMeasure = volumeUnitOfMeasure;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -188,6 +209,10 @@ public class Ecm implements Serializable {
 
     @Override
     public String toString() {
-        return "" + ecmCoating + " ," + ecmComposition;
+        if (ecmDensity != null) {
+            return ecmComposition + " (" + ecmDensity + ")";
+        } else {
+            return "" + ecmComposition;
+        }
     }
 }

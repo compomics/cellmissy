@@ -12,7 +12,6 @@ import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
-import com.sun.org.apache.bcel.internal.generic.BREAKPOINT;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -131,7 +130,7 @@ public class LoadDataPlatePanelController {
                             // update info Label
                             String message = "Please select first well imaged with " + imagingType.getName() + " (imaging type " + (imagingTypeList.indexOf(imagingType) + 1) + "/" + imagingTypeList.size() + ")";
                             loadExperimentPanelController.showMessage(message, 1);
-                            message = "Select well";
+                            message = "Select first well imaged";
                             loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), message);
                             loadExperimentPanelController.getLoadExperimentPanel().getForwardButton().setEnabled(false);
                         }
@@ -142,7 +141,7 @@ public class LoadDataPlatePanelController {
                         // ask the user to select first well for the imaging type
                         String message = "Select first well imaged with " + loadDataPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) + 1) + "/" + loadDataPlatePanel.getImagingTypeList().size() + ")";
                         loadExperimentPanelController.showMessage(message, 1);
-                        message = "Select well";
+                        message = "Select first well imaged";
                         loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), message);
                         isFirtTime = true;
                     }

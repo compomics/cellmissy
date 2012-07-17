@@ -362,7 +362,7 @@ public class LoadExperimentPanelController {
 
         //Overrides method from the DefaultListCellRenderer
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            super.getListCellRendererComponent(list, value, index, false, false);
             int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
             setIcon(new rectIcon(GuiUtils.getAvailableColors()[conditionIndex + 1]));
 
