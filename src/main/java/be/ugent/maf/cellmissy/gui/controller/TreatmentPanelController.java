@@ -152,10 +152,21 @@ public class TreatmentPanelController {
         //treatment concentration
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.concentration"), treatmentPanel.getConcentrationTextField(), BeanProperty.create("text"), "treatmentconcentrationbinding");
         bindingGroup.addBinding(binding);
+        //treatment concentration unit of measure
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.concentrationUnitOfMeasure"), treatmentPanel.getConcentrationUnitOfMeasure(), BeanProperty.create("selectedItem"), "treatmentconcentrationunitofmeasurebinding");
+        bindingGroup.addBinding(binding);
         //treatment assay medium
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.assayMedium"), treatmentPanel.getAssayMediumComboBox(), BeanProperty.create("selectedItem"), "treatmentassaymediumbinding");
         bindingGroup.addBinding(binding);
         bindingGroup.bind();
+
+        //unit of measure combobox
+        treatmentPanel.getConcentrationUnitOfMeasure().addItem("\u00B5" + "M");
+        treatmentPanel.getConcentrationUnitOfMeasure().addItem("nM");
+        treatmentPanel.getConcentrationUnitOfMeasure().addItem("\u00B5" + "g" + "\\" + "\u00B5" + "l");
+        
+        //set default to microM
+        treatmentPanel.getConcentrationUnitOfMeasure().setSelectedIndex(0);
 
         //add action listeners
         //add a drug/treatment to the actual treatment list
@@ -312,6 +323,7 @@ public class TreatmentPanelController {
      */
     private void initTreatment(Treatment treatment) {
         treatment.setConcentration(0.5);
+        treatment.setConcentrationUnitOfMeasure(treatmentPanel.getConcentrationUnitOfMeasure().getItemAt(0).toString());
         treatment.setDescription("Please add some information here");
         treatment.setTiming("10 hours");
         treatment.setAssayMedium(conditionsPanelController.getMediumBindingList().get(0));

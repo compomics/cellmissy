@@ -36,7 +36,7 @@ public class EcmDensity implements Serializable {
     @Column(name = "ecm_densityid")
     private Integer ecmDensityid;
     @Column(name = "ecm_density")
-    private String ecmDensity;
+    private Double ecmDensity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmDensity")
     private Collection<Ecm> ecmCollection;
 
@@ -55,11 +55,11 @@ public class EcmDensity implements Serializable {
         this.ecmDensityid = ecmDensityid;
     }
 
-    public String getEcmDensity() {
+    public Double getEcmDensity() {
         return ecmDensity;
     }
 
-    public void setEcmDensity(String ecmDensity) {
+    public void setEcmDensity(Double ecmDensity) {
         this.ecmDensity = ecmDensity;
     }
 
@@ -94,7 +94,7 @@ public class EcmDensity implements Serializable {
 
     @Override
     public String toString() {
-        return ecmDensity;
+        return ecmDensity + " mg/ml";
     }
     
 }

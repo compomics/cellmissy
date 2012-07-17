@@ -473,7 +473,7 @@ public class SetupExperimentPanelController {
 
                     //create PDF report, execute SwingWorker
                     //create a new instance of SetupReport (with the current setupPlatePanel, conditionsList and experiment)
-                    SetupReport setupReport = new SetupReport(setupPlatePanelController.getSetupPlatePanel(), conditionsPanelController.getConditionsPanel().getConditionsJList(), experiment);
+                    SetupReport setupReport = new SetupReport(setupPlatePanelController.getSetupPlatePanel(), experiment);
                     SetupReportWorker setupReportWorker = new SetupReportWorker(setupReport);
                     setupReportWorker.execute();
                 }
@@ -607,7 +607,7 @@ public class SetupExperimentPanelController {
             frame.setVisible(true);
             //export Panel to Pdf
             File pdfFile = exportPanelToPdf(reportPanel);
-            LOG.debug("Pdf file successfully created");
+            LOG.debug("Pdf report successfully created");
             //hide the frame and dispose all its resources
             frame.setVisible(false);
             frame.dispose();

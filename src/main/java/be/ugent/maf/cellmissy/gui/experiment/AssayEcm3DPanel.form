@@ -116,6 +116,8 @@
                               <Component id="polymerizationTimeTextField" alignment="0" max="32767" attributes="1"/>
                               <Component id="polymerizationTemperatureTextField" alignment="0" max="32767" attributes="1"/>
                           </Group>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="volumeUnitOfMeasure" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="80" max="-2" attributes="0"/>
@@ -159,6 +161,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="volumeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="volumeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="volumeUnitOfMeasure" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -240,6 +243,13 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="compositionTextField">
+        </Component>
+        <Component class="javax.swing.JComboBox" name="volumeUnitOfMeasure">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="0"/>
+            </Property>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

@@ -111,9 +111,25 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         for (PlateCondition plateCondition : rectangles.keySet()) {
             g2d.setColor(GuiUtils.getAvailableColors()[plateCondition.getConditionIndex()]);
             for (Rectangle rectangle : rectangles.get(plateCondition)) {
-                g2d.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+
+                for (WellGui wellGui : wellGuiList) {
+                    if (rectangle.contains(wellGui.getEllipsi().get(0).getX(), wellGui.getEllipsi().get(0).getY(), wellGui.getEllipsi().get(0).getWidth(), wellGui.getEllipsi().get(0).getHeight())) {
+                        int x = (int) wellGui.getEllipsi().get(0).getX() - SetupPlatePanel.pixelsGrid / 2;
+                        int y = (int) wellGui.getEllipsi().get(0).getY() - SetupPlatePanel.pixelsGrid / 2;
+
+                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + SetupPlatePanel.pixelsGrid;
+                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + SetupPlatePanel.pixelsGrid;
+
+                        //create rectangle that sorrounds the wellGui and draw it
+                        Rectangle rect = new Rectangle(x, y, width, height);
+                        g2d.draw(rect);
+                        wellGui.setRectangle(rect);
+                    }
+                }
             }
         }
+
+
     }
 
     @Override

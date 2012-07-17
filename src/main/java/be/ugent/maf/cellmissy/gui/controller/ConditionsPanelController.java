@@ -379,10 +379,12 @@ public class ConditionsPanelController {
         Ecm ecm = new Ecm();
         ecm.setEcmComposition(assayEcmPanelController.getEcm2DCompositionBindingList().get(0));
         ecm.setEcmCoating(assayEcmPanelController.getEcmCoatingBindingList().get(0));
-        ecm.setCoatingTemperature("37C");
-        ecm.setCoatingTime("12h");
+        ecm.setCoatingTemperature("37" + " C");
+        ecm.setCoatingTime("12" + " h");
         ecm.setConcentration(0.5);
         ecm.setVolume(0.5);
+        ecm.setVolumeUnitOfMeasure("\u00B5" + "l");
+        ecm.setConcentrationUnitOfMeasure("mg/ml");
         plateCondition.setEcm(ecm);
 
         //set an empty collection of treatments

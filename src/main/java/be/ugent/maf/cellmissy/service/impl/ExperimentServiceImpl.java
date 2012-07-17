@@ -15,7 +15,6 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,30 +67,45 @@ public class ExperimentServiceImpl implements ExperimentService {
                 experimentFolder = new File(file, experimentFolderName);
                 //set experiment folder for the experiment
                 newExperiment.setExperimentFolder(experimentFolder);
-                experimentFolder.mkdir();
+                if (!experimentFolder.exists()) {
+                    experimentFolder.mkdir();
+                }
                 break;
             }
         }
 
         //create subfolders
         miaFolder = new File(experimentFolder, experimentFolder.getName() + "_MIA");
-        miaFolder.mkdir();
+        if (!miaFolder.exists()) {
+            miaFolder.mkdir();
+        }
         outputFolder = new File(experimentFolder, experimentFolder.getName() + "_output");
-        outputFolder.mkdir();
+        if (!outputFolder.exists()) {
+            outputFolder.mkdir();
+        }
         rawFolder = new File(experimentFolder, experimentFolder.getName() + "_raw");
-        rawFolder.mkdir();
+        if (!rawFolder.exists()) {
+            rawFolder.mkdir();
+        }
 
         //create subfolders in the raw folder
         microscopeFolder = new File(rawFolder, experimentFolder.getName() + "_microscope");
-        microscopeFolder.mkdir();
+        if (!microscopeFolder.exists()) {
+            microscopeFolder.mkdir();
+        }
+
         setupFolder = new File(rawFolder, experimentFolder.getName() + "_setup");
         //set the setupFolder
         newExperiment.setSetupFolder(setupFolder);
-        setupFolder.mkdir();
+        if (!setupFolder.exists()) {
+            setupFolder.mkdir();
+        }
 
         //create algo-0 subfolder in the MIA folder
         algoNullMiaFolder = new File(miaFolder, miaFolder.getName() + "_algo-0");
-        algoNullMiaFolder.mkdir();
+        if (!algoNullMiaFolder.exists()) {
+            algoNullMiaFolder.mkdir();
+        }
 
     }
 
