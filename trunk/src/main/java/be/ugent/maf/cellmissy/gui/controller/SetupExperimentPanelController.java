@@ -600,7 +600,7 @@ public class SetupExperimentPanelController {
             JPanel reportPanel = setupReport.createReportPanel();
             //create a new frame, set the size and add the report panel to it.
             frame = new JFrame();
-            Dimension reportDimension = new Dimension(1200, 700);
+            Dimension reportDimension = new Dimension(1200, 750);
             frame.setSize(reportDimension);
             frame.add(reportPanel);
             //set the frame to visible

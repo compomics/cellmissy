@@ -128,7 +128,7 @@ public class LoadDataPlatePanelController {
                             ImagingType imagingType = imagingTypeList.get(loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) + 1);
                             loadDataPlatePanel.setCurrentImagingType(imagingType);
                             // update info Label
-                            String message = "Please select first well imaged with " + imagingType.getName() + " (imaging type " + (imagingTypeList.indexOf(imagingType) + 1) + "/" + imagingTypeList.size() + ")";
+                            String message = "Please select first well imaged with " + imagingType.getName() + " (imaging type " + (imagingTypeList.indexOf(imagingType) + 1) + "/" + imagingTypeList.size() + ")" + "\nExposure time: " + imagingType.getExposureTime() + " " + imagingType.getExposureTimeUnit() + ", Light intensity: " + imagingType.getLightIntensity() + " V";
                             loadExperimentPanelController.showMessage(message, 1);
                             message = "Select first well imaged";
                             loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), message);
@@ -139,7 +139,7 @@ public class LoadDataPlatePanelController {
                         //set as current imaging type the first one of the list
                         loadDataPlatePanel.setCurrentImagingType(loadDataPlatePanel.getImagingTypeList().get(0));
                         // ask the user to select first well for the imaging type
-                        String message = "Select first well imaged with " + loadDataPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) + 1) + "/" + loadDataPlatePanel.getImagingTypeList().size() + ")";
+                        String message = "Please select first well imaged with " + loadDataPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) + 1) + "/" + loadDataPlatePanel.getImagingTypeList().size() + ")" + "\nExposure time: " + loadDataPlatePanel.getCurrentImagingType().getExposureTime() + " " + loadDataPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + loadDataPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
                         loadExperimentPanelController.showMessage(message, 1);
                         message = "Select first well imaged";
                         loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), message);
@@ -181,7 +181,7 @@ public class LoadDataPlatePanelController {
                         } else {
                             //selection was not confirmed: cancel it
                             onCancel();
-                            message = "Select again first well imaged with " + loadDataPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) + 1) + "/" + loadDataPlatePanel.getImagingTypeList().size() + ")";
+                            message = "Select again first well imaged with " + loadDataPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) + 1) + "/" + loadDataPlatePanel.getImagingTypeList().size() + ")" + "\nExposure time: " + loadDataPlatePanel.getCurrentImagingType().getExposureTime() + " " + loadDataPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + loadDataPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
                             loadExperimentPanelController.showMessage(message, 1);
                         }
                     }
@@ -341,7 +341,7 @@ public class LoadDataPlatePanelController {
             list.add(string);
             string = wellService.getImagingTypes().size() + " imaging types and " + loadDataPlatePanel.getAlgoMap().keySet().size() + " algorithms were found";
             list.add(string);
-            string = "Please select first well imaged with " + loadDataPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) + 1) + "/" + loadDataPlatePanel.getImagingTypeList().size() + ")";
+            string = "Please select first well imaged with " + loadDataPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) + 1) + "/" + loadDataPlatePanel.getImagingTypeList().size() + ")" + "\nExposure time: " + loadDataPlatePanel.getCurrentImagingType().getExposureTime() + " " + loadDataPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + loadDataPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
             list.add(string);
             for (String s : list) {
                 message += s + "\n";

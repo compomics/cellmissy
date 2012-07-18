@@ -92,9 +92,11 @@
                                       <Component id="cellLineComboBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="seedingDensityTextField" alignment="0" min="-2" pref="80" max="-2" attributes="1"/>
                                   </Group>
+                                  <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
+                                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace pref="172" max="32767" attributes="0"/>
+                          <EmptySpace pref="134" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -110,6 +112,7 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="seedingDensityLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="seedingDensityTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
@@ -170,6 +173,11 @@
                     </Property>
                   </Properties>
                 </Component>
+                <Component class="javax.swing.JLabel" name="jLabel2">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="cells/well"/>
+                  </Properties>
+                </Component>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="jPanel2">
@@ -196,7 +204,7 @@
                               </Group>
                               <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="88" max="32767" attributes="0"/>
+                          <EmptySpace pref="96" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
