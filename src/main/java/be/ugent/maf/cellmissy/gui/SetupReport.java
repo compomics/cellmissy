@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -18,14 +19,15 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
 
 /**
  *
@@ -61,21 +63,21 @@ public class SetupReport {
         gridBagConstraints.insets = new Insets(5, 10, 5, 10);
         //add info panel (exp number, project, user and date)
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weighty = 0.05;
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         reportPanel.add(createInfoPanel(), gridBagConstraints);
 
         //add view panel (with condition list and plate view)
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.8;
+        gridBagConstraints.weighty = 0.9;
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         reportPanel.add(createViewPanel(), gridBagConstraints);
 
         //add report panel (report table with conditions' details)
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weighty = 0.05;
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         reportPanel.add(createTablePanel(), gridBagConstraints);
@@ -124,7 +126,7 @@ public class SetupReport {
         JPanel reportPanel = new JPanel(new BorderLayout());
         //creta a JTable
         //column names
-        Object columnNames[] = {"Condition", "Cell Line (Type, Seeding Density, Growth Medium)", "Matrix Dimension", "Assay", "ECM (density)", "Treatments (Type, Concentration)"};
+        Object columnNames[] = {"Condition", "Cell Line (Type, Seeding Density (cells/well), Growth Medium)", "Matrix Dimension", "Assay", "ECM (density)", "Treatments (Type, Concentration)"};
 
         //do not work with collection, create a plateCondition List
         plateConditionList = new ArrayList<>();
@@ -147,6 +149,8 @@ public class SetupReport {
         //adjust table columns width (still need to set proper size) ***********
         for (int i = 0; i < reportTable.getColumnCount(); i++) {
             reportTable.getColumnModel().getColumn(i).setMinWidth(2);
+            //set Cell Renderer for each column of the table
+            reportTable.getColumnModel().getColumn(i).setCellRenderer(new TableRenderer());
         }
         reportTable.getColumnModel().getColumn(0).setMaxWidth(125);
         reportTable.getColumnModel().getColumn(1).setMaxWidth(350);
@@ -162,7 +166,7 @@ public class SetupReport {
         reportTable.getColumnModel().getColumn(4).setPreferredWidth(250);
         reportTable.getColumnModel().getColumn(5).setPreferredWidth(250);
 
-
+        reportTable.setIntercellSpacing(new Dimension(10, 1));
         //disable  JTable's tooltips
         ToolTipManager.sharedInstance().unregisterComponent(reportTable);
         ToolTipManager.sharedInstance().unregisterComponent(reportTable.getTableHeader());
@@ -170,10 +174,9 @@ public class SetupReport {
         //JTable is Not used in a Jscrollable pane, then its header needs to be explicitly shown
         reportPanel.add(reportTable.getTableHeader(), BorderLayout.NORTH);
         reportTable.getTableHeader().setResizingAllowed(false);
+        //set renderer for the header
+        reportTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
         reportPanel.add(reportTable, BorderLayout.CENTER);
-
-        //set Cell Renderer for first Column (Conditions List)
-        reportTable.getColumnModel().getColumn(0).setCellRenderer(new TableRenderer());
 
         return reportPanel;
     }
@@ -215,10 +218,13 @@ public class SetupReport {
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(table, value, false, false, row, column);
-            int length = ((String) value).length();
-            String substring = ((String) value).substring(length - 1);
-            int conditionIndex = Integer.parseInt(substring);
-            setIcon(new rectIcon(GuiUtils.getAvailableColors()[conditionIndex]));
+            if (column == 0) {
+                int length = ((String) value).length();
+                String substring = ((String) value).substring(length - 1);
+                int conditionIndex = Integer.parseInt(substring);
+                setIcon(new rectIcon(GuiUtils.getAvailableColors()[conditionIndex]));
+            }
+            setHorizontalAlignment(SwingConstants.LEFT);
             return this;
         }
     }
@@ -257,5 +263,17 @@ public class SetupReport {
         public int getIconHeight() {
             return rectHeight;
         }
+    }
+    
+    /*
+     * renderer for the JTable header
+     */
+    private class HeaderRenderer extends DefaultTableCellRenderer {
+         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+             super.getTableCellRendererComponent(table, value, false, false, row, column);
+             setHorizontalAlignment(SwingConstants.CENTER);
+             setBorder(BorderFactory.createLineBorder(Color.black));
+             return this;
+         }
     }
 }

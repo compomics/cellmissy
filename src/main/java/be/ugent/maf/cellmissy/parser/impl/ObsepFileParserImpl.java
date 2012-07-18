@@ -32,13 +32,14 @@ public class ObsepFileParserImpl implements ObsepFileParser {
 
     public enum CycleTimeUnit {
 
-        HOURS(1), MINUTES(2), SECONDS(3);
+        HOURS(1), MINUTES(2), SECONDS(3), MILLISECONDS(4);
         private int unitValue;
 
         private CycleTimeUnit(int unitValue) {
             this.unitValue = unitValue;
         }
     }
+    
     private Node loopNode;
     private CycleTimeUnit unit;
 
@@ -188,6 +189,9 @@ public class ObsepFileParserImpl implements ObsepFileParser {
             // get exposure time unit
             NamedNodeMap exposureTimeUnitAttr = imageChildNodes.item(1).getFirstChild().getAttributes();
             for (int j = 0; j < exposureTimeUnitAttr.getLength(); j++) {
+                String nodeValue = exposureTimeUnitAttr.item(j).getNodeValue();
+                String expTimeUnit = findCycleTimeUnitByValue(Integer.parseInt(nodeValue)).toString().toLowerCase();
+                imagingType.setExposureTimeUnit(expTimeUnit);
             }
 
             // set name
