@@ -247,6 +247,9 @@ public class ConditionsPanelController {
         //autobind growth medium
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine.growthMedium"), setupConditionsPanel.getGrowthMediumComboBox(), BeanProperty.create("selectedItem"), "growthmediumbinding");
         bindingGroup.addBinding(binding);
+        //autobind serum concentration
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine.serumConcentration"), setupConditionsPanel.getSerumConcentrationTextField(), BeanProperty.create("text"), "serumconcentrationbinding");
+        bindingGroup.addBinding(binding);
         //autobind cell line type
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine.cellLineType"), setupConditionsPanel.getCellLineComboBox(), BeanProperty.create("selectedItem"), "celllinetypebinding");
         bindingGroup.addBinding(binding);
@@ -366,6 +369,7 @@ public class ConditionsPanelController {
         cellLine.setSeedingDensity(50000);
         cellLine.setSeedingTime("24 hours");
         cellLine.setGrowthMedium(mediumBindingList.get(0));
+        cellLine.setSerumConcentration("10%");
         plateCondition.setCellLine(cellLine);
         cellLine.setPlateCondition(plateCondition);
 
@@ -383,8 +387,8 @@ public class ConditionsPanelController {
         ecm.setCoatingTime("12" + " h");
         ecm.setConcentration(0.5);
         ecm.setVolume(0.5);
-        ecm.setVolumeUnitOfMeasure("\u00B5" + "l");
-        ecm.setConcentrationUnitOfMeasure("mg/ml");
+        ecm.setVolumeUnit("\u00B5" + "l");
+        ecm.setConcentrationUnit("mg/ml");
         plateCondition.setEcm(ecm);
 
         //set an empty collection of treatments

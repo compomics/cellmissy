@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.service.ProjectService;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.List;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProjectServiceImpl implements ProjectService {
 
+    private static final Logger LOG = Logger.getLogger(ProjectService.class);
     @Autowired
     private ProjectRepository projectRepository;
-    
-    private String folderName;
+    private String projectFolder;
 
     @Override
     public Project setupProject(int projectNumber, String description, File microscopeDirectory) {
@@ -40,13 +41,16 @@ public class ProjectServiceImpl implements ProjectService {
         //create project folder on the server
         DecimalFormat df = new DecimalFormat("000");
         if (newProject.getProjectDescription().length() == 0) {
-            folderName = "CM_P" + df.format(projectNumber);
+            projectFolder = "CM_P" + df.format(projectNumber);
         } else {
-            folderName = "CM_P" + df.format(projectNumber) + "_" + newProject.getProjectDescription();
+            projectFolder = "CM_P" + df.format(projectNumber) + "_" + newProject.getProjectDescription();
         }
 
-        File subDirectory = new File(microscopeDirectory, folderName);
-        subDirectory.mkdir();
+        File subDirectory = new File(microscopeDirectory, projectFolder);
+        if (!subDirectory.exists()) {
+            subDirectory.mkdir();
+            LOG.debug("Project Folder was created: " + projectFolder);
+        }
         return newProject;
     }
 

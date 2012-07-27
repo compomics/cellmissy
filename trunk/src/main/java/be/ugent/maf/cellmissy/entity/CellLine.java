@@ -55,6 +55,8 @@ public class CellLine implements Serializable {
     private Integer seedingDensity;
     @Column(name = "growth_medium")
     private String growthMedium;
+    @Column (name = "serum_concentration")
+    private String serumConcentration;
     @OneToOne(mappedBy = "cellLine")
     private PlateCondition plateCondition;
     @JoinColumn(name = "l_cell_line_typeid", referencedColumnName = "cell_line_typeid")
@@ -89,6 +91,14 @@ public class CellLine implements Serializable {
 
     public void setGrowthMedium(String growthMedium) {
         this.growthMedium = growthMedium;
+    }
+
+    public String getSerumConcentration() {
+        return serumConcentration;
+    }
+
+    public void setSerumConcentration(String serumConcentration) {
+        this.serumConcentration = serumConcentration;
     }
 
     public String getSeedingTime() {

@@ -70,10 +70,10 @@ public class Ecm implements Serializable {
     private EcmDensity ecmDensity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecm")
     private Collection<PlateCondition> plateConditionCollection;
+    @Column (name = "concentration_unit")
+    private String concentrationUnit;
     @Transient
-    private String concentrationUnitOfMeasure;
-    @Transient
-    private String volumeUnitOfMeasure;
+    private String volumeUnit;
 
     public Ecm() {
     }
@@ -171,20 +171,20 @@ public class Ecm implements Serializable {
         this.plateConditionCollection = plateConditionCollection;
     }
 
-    public String getConcentrationUnitOfMeasure() {
-        return concentrationUnitOfMeasure;
+    public String getConcentrationUnit() {
+        return concentrationUnit;
     }
 
-    public void setConcentrationUnitOfMeasure(String concentrationUnitOfMeasure) {
-        this.concentrationUnitOfMeasure = concentrationUnitOfMeasure;
+    public void setConcentrationUnit(String concentrationUnit) {
+        this.concentrationUnit = concentrationUnit;
     }
 
-    public String getVolumeUnitOfMeasure() {
-        return volumeUnitOfMeasure;
+    public String getVolumeUnit() {
+        return volumeUnit;
     }
 
-    public void setVolumeUnitOfMeasure(String volumeUnitOfMeasure) {
-        this.volumeUnitOfMeasure = volumeUnitOfMeasure;
+    public void setVolumeUnit(String volumeUnit) {
+        this.volumeUnit = volumeUnit;
     }
 
     @Override

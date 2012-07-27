@@ -98,7 +98,7 @@ public class AssayEcmPanelController {
             plateCondition.getEcm().setEcmCoating(ecmCoatingBindingList.get(assayEcm2DPanel.getCoatingComboBox().getSelectedIndex()));
             //ecm concentration
             //unit Of Measure
-            plateCondition.getEcm().setConcentrationUnitOfMeasure(assayEcm2DPanel.getConcentrationUnitOfMeasure().getSelectedItem().toString());
+            plateCondition.getEcm().setConcentrationUnit(assayEcm2DPanel.getConcentrationUnitOfMeasure().getSelectedItem().toString());
             try {
                 plateCondition.getEcm().setConcentration(Double.parseDouble(assayEcm2DPanel.getConcentrationTextField().getText()));
             } catch (NumberFormatException e) {
@@ -109,7 +109,7 @@ public class AssayEcmPanelController {
             }
             //ecm volume
             //unit Of Measure
-            plateCondition.getEcm().setVolumeUnitOfMeasure(assayEcm2DPanel.getVolumeUnitOfMeasure().getSelectedItem().toString());
+            plateCondition.getEcm().setVolumeUnit(assayEcm2DPanel.getVolumeUnitLabel().getText());
             try {
                 plateCondition.getEcm().setVolume(Double.parseDouble(assayEcm2DPanel.getVolumeTextField().getText()));
             } catch (NumberFormatException e) {
@@ -132,7 +132,7 @@ public class AssayEcmPanelController {
             plateCondition.getEcm().setEcmDensity(ecmDensityBindingList.get(assayEcm3DPanel.getDensityComboBox().getSelectedIndex()));
             //ecm volume
             //unit Of Measure
-            plateCondition.getEcm().setVolumeUnitOfMeasure(assayEcm3DPanel.getVolumeUnitOfMeasure().getSelectedItem().toString());
+            plateCondition.getEcm().setVolumeUnit(assayEcm3DPanel.getVolumeUnitLabel().getText());
             try {
                 plateCondition.getEcm().setVolume(Double.parseDouble(assayEcm3DPanel.getVolumeTextField().getText()));
             } catch (NumberFormatException e) {
@@ -155,9 +155,8 @@ public class AssayEcmPanelController {
             assayEcm2DPanel.getCompositionComboBox().setSelectedIndex(ecm2DCompositionBindingList.indexOf(plateCondition.getEcm().getEcmComposition()));
             assayEcm2DPanel.getCoatingComboBox().setSelectedIndex(ecmCoatingBindingList.indexOf(plateCondition.getEcm().getEcmCoating()));
             assayEcm2DPanel.getConcentrationTextField().setText("" + plateCondition.getEcm().getConcentration());
-            assayEcm2DPanel.getConcentrationUnitOfMeasure().setSelectedItem(plateCondition.getEcm().getConcentrationUnitOfMeasure());
+            assayEcm2DPanel.getConcentrationUnitOfMeasure().setSelectedItem(plateCondition.getEcm().getConcentrationUnit());
             assayEcm2DPanel.getVolumeTextField().setText("" + plateCondition.getEcm().getVolume());
-            assayEcm2DPanel.getVolumeUnitOfMeasure().setSelectedItem(plateCondition.getEcm().getVolumeUnitOfMeasure());
             assayEcm2DPanel.getCoatingTimeTextField().setText(plateCondition.getEcm().getCoatingTime());
             assayEcm2DPanel.getCoatingTemperatureTextField().setText(plateCondition.getEcm().getCoatingTemperature());
         } else {
@@ -165,7 +164,6 @@ public class AssayEcmPanelController {
             assayEcm3DPanel.getCompositionComboBox().setSelectedIndex(ecm3DCompositionBindingList.indexOf(plateCondition.getEcm().getEcmComposition()));
             assayEcm3DPanel.getDensityComboBox().setSelectedIndex(ecmDensityBindingList.indexOf(plateCondition.getEcm().getEcmDensity()));
             assayEcm3DPanel.getVolumeTextField().setText("" + plateCondition.getEcm().getVolume());
-            assayEcm3DPanel.getVolumeUnitOfMeasure().setSelectedItem(plateCondition.getEcm().getVolumeUnitOfMeasure());
             assayEcm3DPanel.getPolymerizationTimeTextField().setText(plateCondition.getEcm().getPolymerisationTime());
             assayEcm3DPanel.getPolymerizationTemperatureTextField().setText(plateCondition.getEcm().getPolymerisationTemperature());
         }
@@ -283,26 +281,25 @@ public class AssayEcmPanelController {
         JComboBoxBinding ecmCoatingComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, ecmCoatingBindingList, assayEcm2DPanel.getCoatingComboBox());
         bindingGroup.addBinding(ecmCoatingComboBoxBinding);
 
-        //do the binding
-        bindingGroup.bind();
-
         //add strings for Concentration Unit of Measure
         assayEcm2DPanel.getConcentrationUnitOfMeasure().addItem("mg/ml");
         assayEcm2DPanel.getConcentrationUnitOfMeasure().addItem("\u00B5" + "g/well");
 
-        //add strings for Volume Unit Of Measure
-        assayEcm2DPanel.getVolumeUnitOfMeasure().addItem("\u00B5" + "l");
-        assayEcm2DPanel.getVolumeUnitOfMeasure().addItem("ml");
-        //set default fields
+        //set volume unit of measure
+        assayEcm2DPanel.getVolumeUnitLabel().setText("\u00B5" + "l");
 
+        //do the binding
+        bindingGroup.bind();
+
+
+        //set default fields
         assayEcm2DPanel.getCompositionComboBox().setSelectedIndex(0);
         assayEcm2DPanel.getCoatingComboBox().setSelectedIndex(0);
-        assayEcm2DPanel.getConcentrationTextField().setText("0.5");
+        assayEcm2DPanel.getConcentrationTextField().setText("0.04");
         assayEcm2DPanel.getConcentrationUnitOfMeasure().setSelectedIndex(0);
-        assayEcm2DPanel.getVolumeTextField().setText("0.5");
-        assayEcm2DPanel.getVolumeUnitOfMeasure().setSelectedIndex(0);
-        assayEcm2DPanel.getCoatingTimeTextField().setText("12" + " h");
-        assayEcm2DPanel.getCoatingTemperatureTextField().setText("37" + " C");
+        assayEcm2DPanel.getVolumeTextField().setText("100");
+        assayEcm2DPanel.getCoatingTimeTextField().setText("60");
+        assayEcm2DPanel.getCoatingTemperatureTextField().setText("RT");
 
         //add action listeners
         assayEcm2DPanel.getAddCompositionButton().addActionListener(new ActionListener() {
@@ -338,20 +335,18 @@ public class AssayEcmPanelController {
         JComboBoxBinding ecmDensityComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, ecmDensityBindingList, assayEcm3DPanel.getDensityComboBox());
         bindingGroup.addBinding(ecmDensityComboBoxBinding);
 
+        //set volume unit of measure
+        assayEcm3DPanel.getVolumeUnitLabel().setText("\u00B5" + "l");
+        
         //do the binding
         bindingGroup.bind();
 
-        //add strings for Volume Unit Of Measure
-        assayEcm3DPanel.getVolumeUnitOfMeasure().addItem("\u00B5" + "l");
-        assayEcm3DPanel.getVolumeUnitOfMeasure().addItem("ml");
-        
         //set default fields
         assayEcm3DPanel.getCompositionComboBox().setSelectedIndex(0);
-        assayEcm3DPanel.getDensityComboBox().setSelectedIndex(0);
-        assayEcm3DPanel.getVolumeTextField().setText("0.5");
-        assayEcm3DPanel.getVolumeUnitOfMeasure().setSelectedIndex(0);
-        assayEcm3DPanel.getPolymerizationTimeTextField().setText("12" + " h");
-        assayEcm3DPanel.getPolymerizationTemperatureTextField().setText("37" + " C");
+        assayEcm3DPanel.getDensityComboBox().setSelectedIndex(1);
+        assayEcm3DPanel.getVolumeTextField().setText("40");
+        assayEcm3DPanel.getPolymerizationTimeTextField().setText("30");
+        assayEcm3DPanel.getPolymerizationTemperatureTextField().setText("37 C");
 
         //add action listeners
         assayEcm3DPanel.getAddCompositionButton().addActionListener(new ActionListener() {

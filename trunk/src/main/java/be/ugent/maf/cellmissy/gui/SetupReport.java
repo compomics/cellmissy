@@ -198,10 +198,20 @@ public class SetupReport {
         gridBagConstraints.gridy = 0;
         viewPanel.add(setupPlatePanel, gridBagConstraints);
 
-        JTextArea jTextArea = new JTextArea();
-        String info = "This file is saved into " + experiment.getSetupFolder().getName() + " folder.";
-        jTextArea.setText(info);
+        JTextArea jTextArea = new JTextArea(5, 5);
+        jTextArea.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        //jTextArea.setLineWrap(true);
+        //jTextArea.setWrapStyleWord(true);
+
+        jTextArea.setFont(new Font("Verdana", Font.PLAIN, 14));
         jTextArea.setEditable(false);
+        //jTextArea.setPreferredSize(new Dimension(50, 50));
+        String info = "This file is saved into " + experiment.getSetupFolder().getName() + " folder.\n\nName your position list(s) in the XCELLENCE software\nunder the name: " + "P" + experiment.getProject().getProjectNumber() + "E" + experiment.getExperimentNumber() + "_posx" + " (with x = 1, 2, 3...)."
+                + "\n\nSave the position list(s) with the same name(s)\ninto the " + experiment.getSetupFolder().getName() + " folder."
+                + "\n\nSave the local experiment raw data folder into the\n" + "CM_" + experiment.getProject().toString() + "_" + experiment.toString() + "_microscope" + " folder.";
+        jTextArea.setText(info);
+
+        jTextArea.setBackground(Color.lightGray);
         gridBagConstraints.weightx = 0.1;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridx = 1;
@@ -264,16 +274,17 @@ public class SetupReport {
             return rectHeight;
         }
     }
-    
+
     /*
      * renderer for the JTable header
      */
     private class HeaderRenderer extends DefaultTableCellRenderer {
-         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-             super.getTableCellRendererComponent(table, value, false, false, row, column);
-             setHorizontalAlignment(SwingConstants.CENTER);
-             setBorder(BorderFactory.createLineBorder(Color.black));
-             return this;
-         }
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, false, false, row, column);
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setBorder(BorderFactory.createLineBorder(Color.black));
+            return this;
+        }
     }
 }

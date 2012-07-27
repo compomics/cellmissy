@@ -51,14 +51,18 @@ public class Treatment implements Serializable {
     private String timing;
     @Column(name = "assay_medium")
     private String assayMedium;
+    @Column(name = "drug_solvent")
+    private String drugSolvent;
     @JoinColumn(name = "l_plate_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = true)
     private PlateCondition plateCondition;
     @JoinColumn(name = "l_treatment_typeid", referencedColumnName = "treatment_typeid")
     @ManyToOne(optional = true)
     private TreatmentType treatmentType;
-    @Transient
-    private String concentrationUnitOfMeasure;
+    @Column(name = "concentration_unit")
+    private String concentrationUnit;
+    @Column (name = "serum_concentration")
+    private String serumConcentration;
 
     public Treatment() {
     }
@@ -115,6 +119,14 @@ public class Treatment implements Serializable {
         this.treatmentType = treatmentType;
     }
 
+    public String getDrugSolvent() {
+        return drugSolvent;
+    }
+
+    public void setDrugSolvent(String drugSolvent) {
+        this.drugSolvent = drugSolvent;
+    }
+
     @XmlTransient
     public PlateCondition getPlateCondition() {
         return plateCondition;
@@ -132,12 +144,20 @@ public class Treatment implements Serializable {
         this.assayMedium = assayMedium;
     }
 
-    public String getConcentrationUnitOfMeasure() {
-        return concentrationUnitOfMeasure;
+    public String getConcentrationUnit() {
+        return concentrationUnit;
     }
 
-    public void setConcentrationUnitOfMeasure(String concentrationUnitOfMeasure) {
-        this.concentrationUnitOfMeasure = concentrationUnitOfMeasure;
+    public void setConcentrationUnit(String concentrationUnit) {
+        this.concentrationUnit = concentrationUnit;
+    }
+
+    public String getSerumConcentration() {
+        return serumConcentration;
+    }
+
+    public void setSerumConcentration(String serumConcentration) {
+        this.serumConcentration = serumConcentration;
     }
 
     public boolean equals(Object obj) {
@@ -177,6 +197,6 @@ public class Treatment implements Serializable {
     }
 
     public String toString() {
-        return concentration + " " + concentrationUnitOfMeasure + " " + treatmentType;
+        return concentration + " " + concentrationUnit + " " + treatmentType;
     }
 }

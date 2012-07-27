@@ -28,6 +28,8 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
     List<Magnification> findAllMagnifications();
 
     List<Integer> findExperimentNumbersByProjectId(Integer projectId);
+    
+    List<Experiment> findExperimentsByProjectId(Integer projectId);
 
     List<Experiment> findExperimentsByProjectIdAndStatus(Integer projectId, ExperimentStatus experimentStatus);
 }
