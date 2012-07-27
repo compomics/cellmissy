@@ -52,7 +52,8 @@ import org.hibernate.validator.constraints.Range;
     @NamedQuery(name = "Experiment.findByExperimentInterval", query = "SELECT e FROM Experiment e WHERE e.experimentInterval = :experimentInterval"),
     @NamedQuery(name = "Experiment.findByTimeFrames", query = "SELECT e FROM Experiment e WHERE e.timeFrames = :timeFrames"),
     @NamedQuery(name = "Experiment.findExperimentNumbersByProjectId", query = "SELECT e.experimentNumber FROM Experiment e WHERE e.project.projectid = :projectid"),
-    @NamedQuery(name = "Experiment.findExperimentsByProjectIdAndStatus", query = "SELECT e FROM Experiment e WHERE e.project.projectid = :projectid AND e.experimentStatus = :experimentStatus")})
+    @NamedQuery(name = "Experiment.findExperimentsByProjectIdAndStatus", query = "SELECT e FROM Experiment e WHERE e.project.projectid = :projectid AND e.experimentStatus = :experimentStatus"),
+    @NamedQuery(name = "Experiment.findExperimentsByProjectId", query = "SELECT e FROM Experiment e WHERE e.project.projectid = :projectid")})
 public class Experiment implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -97,7 +98,7 @@ public class Experiment implements Serializable {
     @JoinColumn(name = "l_plate_formatid", referencedColumnName = "plate_formatid")
     @ManyToOne(optional = false)
     private PlateFormat plateFormat;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment", fetch= FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment", fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SELECT)
     private Collection<PlateCondition> plateConditionCollection;
     @Transient

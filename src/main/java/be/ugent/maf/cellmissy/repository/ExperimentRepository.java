@@ -15,6 +15,8 @@ import java.util.List;
 public interface ExperimentRepository extends GenericRepository<Experiment, Long> {
 
     List<Integer> findExperimentNumbersByProjectId(Integer projectId);
-    
+
     List<Experiment> findExperimentsByProjectIdAndStatus(Integer projectId, ExperimentStatus experimentStatus);
+
+    List<Experiment> findExperimentsByProjectId(Integer projectId);
 }

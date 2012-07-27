@@ -12,6 +12,7 @@ package be.ugent.maf.cellmissy.gui.experiment;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 /**
@@ -65,8 +66,8 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
         return concentrationUnitOfMeasure;
     }
 
-    public JComboBox getVolumeUnitOfMeasure() {
-        return volumeUnitOfMeasure;
+    public JLabel getVolumeUnitLabel() {
+        return volumeUnitLabel;
     }
 
     /** This method is called from within the constructor to
@@ -98,7 +99,7 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
         compositionTextField = new javax.swing.JTextField();
         addCompositionButton = new javax.swing.JButton();
         concentrationUnitOfMeasure = new javax.swing.JComboBox();
-        volumeUnitOfMeasure = new javax.swing.JComboBox();
+        volumeUnitLabel = new javax.swing.JLabel();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -138,7 +139,7 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         add(assayPanel, gridBagConstraints);
 
-        ecmPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Extra Cellular Matrix"));
+        ecmPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Extra Cellular Matrix", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12), java.awt.Color.black)); // NOI18N
         ecmPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         ecmPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
@@ -152,7 +153,7 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
 
         volumeLabel.setText("Volume");
 
-        coatingTimeLabel.setText("Coating time");
+        coatingTimeLabel.setText("Coating time (min)");
 
         coatingTemperatureLabel.setText("Coating temperature");
 
@@ -163,6 +164,8 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
         coatingComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         addCompositionButton.setText("Add new composition");
+
+        volumeUnitLabel.setMinimumSize(new java.awt.Dimension(10, 10));
 
         javax.swing.GroupLayout ecmPanelLayout = new javax.swing.GroupLayout(ecmPanel);
         ecmPanel.setLayout(ecmPanelLayout);
@@ -190,12 +193,12 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
                             .addComponent(coatingTemperatureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(volumeUnitOfMeasure, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(volumeUnitLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(concentrationUnitOfMeasure, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(coatingComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addCompositionButton)
                     .addComponent(compositionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(352, 352, 352))
+                .addGap(549, 549, 549))
         );
 
         ecmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {coatingComboBox, compositionComboBox});
@@ -224,9 +227,9 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
                     .addComponent(concentrationUnitOfMeasure, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(8, 8, 8)
                 .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(volumeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(volumeTextField)
                     .addComponent(volumeLabel)
-                    .addComponent(volumeUnitOfMeasure, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(volumeUnitLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(coatingTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -235,7 +238,7 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
                 .addGroup(ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(coatingTemperatureTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(coatingTemperatureLabel))
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addGap(29, 29, 29))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -267,6 +270,6 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
     private javax.swing.JLabel selectAssayLabel;
     private javax.swing.JLabel volumeLabel;
     private javax.swing.JTextField volumeTextField;
-    private javax.swing.JComboBox volumeUnitOfMeasure;
+    private javax.swing.JLabel volumeUnitLabel;
     // End of variables declaration//GEN-END:variables
 }

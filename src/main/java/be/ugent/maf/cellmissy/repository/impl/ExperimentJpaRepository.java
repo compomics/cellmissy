@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 package be.ugent.maf.cellmissy.repository.impl;
+
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.repository.ExperimentRepository;
@@ -19,7 +20,7 @@ public class ExperimentJpaRepository extends GenericJpaRepository<Experiment, Lo
 
     @Override
     public List<Integer> findExperimentNumbersByProjectId(Integer projectId) {
-        
+
         //annotated query
         Query byNameQuery = getEntityManager().createNamedQuery("Experiment.findExperimentNumbersByProjectId");
         byNameQuery.setParameter("projectid", projectId);
@@ -35,8 +36,21 @@ public class ExperimentJpaRepository extends GenericJpaRepository<Experiment, Lo
     public List<Experiment> findExperimentsByProjectIdAndStatus(Integer projectId, ExperimentStatus experimentStatus) {
         //annotated query
         Query byNameQuery = getEntityManager().createNamedQuery("Experiment.findExperimentsByProjectIdAndStatus");
-        byNameQuery.setParameter("projectid",projectId);
-        byNameQuery.setParameter("experimentStatus",experimentStatus);
+        byNameQuery.setParameter("projectid", projectId);
+        byNameQuery.setParameter("experimentStatus", experimentStatus);
+        List<Experiment> resultList = byNameQuery.getResultList();
+        if (!resultList.isEmpty()) {
+            return resultList;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public List<Experiment> findExperimentsByProjectId(Integer projectId) {
+        //annotated query
+        Query byNameQuery = getEntityManager().createNamedQuery("Experiment.findExperimentsByProjectId");
+        byNameQuery.setParameter("projectid", projectId);       
         List<Experiment> resultList = byNameQuery.getResultList();
         if (!resultList.isEmpty()) {
             return resultList;

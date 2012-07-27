@@ -241,7 +241,7 @@ public class LoadExperimentPanelController {
                     File obsepFile = experiment.getObsepFile();
                     setExperimentData(obsepFile);
                 } else {
-                    cellMissyController.showMessage("No valid microscope file was found. Please select a file.", 0);
+                    cellMissyController.showMessage("No valid microscope file was found or different files were found.\nPlease select a file.", 0);
                     //choose file to parse form microscope folder
                     JFileChooser chooseObsepFile = new JFileChooser();
                     chooseObsepFile.setFileFilter(new FileFilter() {
@@ -464,6 +464,7 @@ public class LoadExperimentPanelController {
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             loadExperimentPanel.getjProgressBar1().setVisible(false);
             //update info for the user
+            showMessage("Experiment was successfully saved to DB.", 1);
             updateInfoLabel(loadExperimentPanel.getInfolabel(), "Experiment was successfully saved to DB.");
         }
     }

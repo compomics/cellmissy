@@ -130,7 +130,7 @@ public class LoadDataPlatePanelController {
                             // update info Label
                             String message = "Please select first well imaged with " + imagingType.getName() + " (imaging type " + (imagingTypeList.indexOf(imagingType) + 1) + "/" + imagingTypeList.size() + ")" + "\nExposure time: " + imagingType.getExposureTime() + " " + imagingType.getExposureTimeUnit() + ", Light intensity: " + imagingType.getLightIntensity() + " V";
                             loadExperimentPanelController.showMessage(message, 1);
-                            message = "Select first well imaged";
+                            message = "Select first well imaged.";
                             loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), message);
                             loadExperimentPanelController.getLoadExperimentPanel().getForwardButton().setEnabled(false);
                         }
@@ -141,7 +141,7 @@ public class LoadDataPlatePanelController {
                         // ask the user to select first well for the imaging type
                         String message = "Please select first well imaged with " + loadDataPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) + 1) + "/" + loadDataPlatePanel.getImagingTypeList().size() + ")" + "\nExposure time: " + loadDataPlatePanel.getCurrentImagingType().getExposureTime() + " " + loadDataPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + loadDataPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
                         loadExperimentPanelController.showMessage(message, 1);
-                        message = "Select first well imaged";
+                        message = "Select first well imaged.";
                         loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), message);
                         isFirtTime = true;
                     }
@@ -347,7 +347,7 @@ public class LoadDataPlatePanelController {
                 message += s + "\n";
             }
             loadExperimentPanelController.showMessage(message, 1);
-            message = "Select well";
+            message = "Select first well imaged.";
             loadExperimentPanelController.updateInfoLabel(loadExperimentPanelController.getLoadExperimentPanel().getInfolabel(), message);
         }
     }

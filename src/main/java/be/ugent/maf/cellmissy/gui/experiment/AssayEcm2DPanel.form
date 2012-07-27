@@ -75,7 +75,10 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Extra Cellular Matrix"/>
+            <TitledBorder title="Extra Cellular Matrix">
+              <Font PropertyName="font" name="Tahoma" size="12" style="0"/>
+              <Color PropertyName="color" blue="0" green="0" id="black" palette="1" red="0" type="palette"/>
+            </TitledBorder>
           </Border>
         </Property>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -120,15 +123,15 @@
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="volumeUnitOfMeasure" min="-2" max="-2" attributes="0"/>
-                              <Component id="concentrationUnitOfMeasure" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="volumeUnitLabel" min="-2" pref="20" max="-2" attributes="1"/>
+                              <Component id="concentrationUnitOfMeasure" alignment="0" min="-2" max="-2" attributes="1"/>
                           </Group>
                       </Group>
                       <Component id="coatingComboBox" linkSize="2" min="-2" max="-2" attributes="0"/>
                       <Component id="addCompositionButton" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="compositionComboBox" linkSize="2" min="-2" max="-2" attributes="1"/>
                   </Group>
-                  <EmptySpace min="-2" pref="352" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="549" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -158,9 +161,9 @@
                   </Group>
                   <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="volumeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="volumeTextField" alignment="0" max="32767" attributes="1"/>
                       <Component id="volumeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="volumeUnitOfMeasure" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="volumeUnitLabel" alignment="3" pref="20" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -172,7 +175,7 @@
                       <Component id="coatingTemperatureTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="coatingTemperatureLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="29" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -205,7 +208,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="coatingTimeLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Coating time"/>
+            <Property name="text" type="java.lang.String" value="Coating time (min)"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="coatingTemperatureLabel">
@@ -260,10 +263,10 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JComboBox" name="volumeUnitOfMeasure">
+        <Component class="javax.swing.JLabel" name="volumeUnitLabel">
           <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="0"/>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[10, 10]"/>
             </Property>
           </Properties>
         </Component>

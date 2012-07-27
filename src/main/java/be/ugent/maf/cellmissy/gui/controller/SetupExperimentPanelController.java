@@ -26,6 +26,8 @@ import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import com.compomics.util.Export;
 import com.compomics.util.enumeration.ImageType;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -33,6 +35,8 @@ import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.io.IOException;
@@ -42,8 +46,10 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.PersistenceException;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -71,6 +77,7 @@ public class SetupExperimentPanelController {
     //model
     private Experiment experiment;
     private ObservableList<Project> projectBindingList;
+    private ObservableList<Experiment> experimentBindingList;
     private ObservableList<Instrument> instrumentBindingList;
     private ObservableList<Magnification> magnificationBindingList;
     private BindingGroup bindingGroup;
@@ -333,6 +340,9 @@ public class SetupExperimentPanelController {
         //select first project in the ProjectList
         experimentInfoPanel.getProjectJList().setSelectedIndex(0);
 
+        //set cell renderer for experimentJList
+        experimentInfoPanel.getExperimentJList().setCellRenderer(new ExperimentsRenderer());
+        
         //date cannot be modified manually
         experimentInfoPanel.getDateChooser().getDateEditor().setEnabled(false);
 
@@ -377,6 +387,31 @@ public class SetupExperimentPanelController {
                 }
             }
         });
+
+        /**
+         * add mouse listeners
+         */
+        //show experiments for the project selected
+        experimentInfoPanel.getProjectJList().addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                //init experimentJList
+                int locationToIndex = experimentInfoPanel.getProjectJList().locationToIndex(e.getPoint());
+                if (experimentService.findExperimentsByProjectIdAndStatus(projectBindingList.get(locationToIndex).getProjectid(), ExperimentStatus.IN_PROGRESS) != null) {
+                    experimentBindingList = ObservableCollections.observableList(experimentService.findExperimentsByProjectId(projectBindingList.get(locationToIndex).getProjectid()));
+                    JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, experimentInfoPanel.getExperimentJList());
+                    bindingGroup.addBinding(jListBinding);
+                    bindingGroup.bind();
+                } else {
+                    cellMissyController.showMessage("There are no experiments in progress for this project!", 1);
+                    if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                        experimentBindingList.clear();
+                    }
+                }
+            }
+        });
     }
 
     private void initSetupExperimentPanel() {
@@ -414,7 +449,6 @@ public class SetupExperimentPanelController {
 
                     //create experiment's folder structure on the server (the report needs to be saved in the setup subfolder)
                     experimentService.createFolderStructure(experiment);
-                    LOG.debug("Experiment folders were created");
 
                     //show the setupPanel and hide the experimentInfoPanel
                     GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), setupPanel, experimentInfoPanel);
@@ -487,6 +521,9 @@ public class SetupExperimentPanelController {
             public void actionPerformed(ActionEvent e) {
                 //save the new experiment to the DB
                 experimentService.save(experiment);
+                //disable button
+                setupExperimentPanel.getFinishButton().setEnabled(false);
+                showMessage("Experiment was successfully saved to DB.", 1);
             }
         });
     }
@@ -609,7 +646,6 @@ public class SetupExperimentPanelController {
             File pdfFile = exportPanelToPdf(reportPanel);
             LOG.debug("Pdf report successfully created");
             //hide the frame and dispose all its resources
-            frame.setVisible(false);
             frame.dispose();
             //if export to PDF was successfull, open the PDF file from the desktop
             try {
@@ -651,6 +687,27 @@ public class SetupExperimentPanelController {
                 showMessage(ex.getMessage(), 1);
             }
             return pdfFile;
+        }
+    }
+    
+    /**
+     * custom cell renderer for experimentsJList
+     */
+    private class ExperimentsRenderer extends DefaultListCellRenderer {
+        
+        /*
+         *constructor
+         */
+        public ExperimentsRenderer() {
+            setOpaque(true);
+        }
+
+        //Overrides method from the DefaultListCellRenderer
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, false, false);
+            Experiment experiment = (Experiment) value;
+            setText(experiment.toString() + ", " + experiment.getExperimentStatus());
+            return this;
         }
     }
 }

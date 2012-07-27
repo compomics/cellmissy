@@ -15,6 +15,7 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ExperimentServiceImpl implements ExperimentService {
 
+    private static final Logger LOG = Logger.getLogger(ExperimentService.class);
     @Autowired
     private ExperimentRepository experimentRepository;
     @Autowired
@@ -40,7 +42,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     private File rawFolder;
     private File microscopeFolder;
     private File setupFolder;
-    private File algoNullMiaFolder;
+    private File algoNullFolder;
     private File mainDirectory;
     private String projectFolderName;
 
@@ -69,6 +71,7 @@ public class ExperimentServiceImpl implements ExperimentService {
                 newExperiment.setExperimentFolder(experimentFolder);
                 if (!experimentFolder.exists()) {
                     experimentFolder.mkdir();
+                    LOG.debug("Experiment Folder is created: " + experimentFolderName);
                 }
                 break;
             }
@@ -78,33 +81,39 @@ public class ExperimentServiceImpl implements ExperimentService {
         miaFolder = new File(experimentFolder, experimentFolder.getName() + "_MIA");
         if (!miaFolder.exists()) {
             miaFolder.mkdir();
+            LOG.debug("Mia Folder is created: " + miaFolder.getName());
         }
         outputFolder = new File(experimentFolder, experimentFolder.getName() + "_output");
         if (!outputFolder.exists()) {
             outputFolder.mkdir();
+            LOG.debug("Output folder is created: " + outputFolder.getName());
         }
         rawFolder = new File(experimentFolder, experimentFolder.getName() + "_raw");
         if (!rawFolder.exists()) {
             rawFolder.mkdir();
+            LOG.debug("Raw folder is created: " + rawFolder.getName());
         }
 
         //create subfolders in the raw folder
         microscopeFolder = new File(rawFolder, experimentFolder.getName() + "_microscope");
         if (!microscopeFolder.exists()) {
             microscopeFolder.mkdir();
+            LOG.debug("Microscope folder is created: " + microscopeFolder.getName());
         }
 
-        setupFolder = new File(rawFolder, experimentFolder.getName() + "_setup");
+        setupFolder = new File(rawFolder, experimentFolder.getName() + "_set-up");
         //set the setupFolder
         newExperiment.setSetupFolder(setupFolder);
         if (!setupFolder.exists()) {
             setupFolder.mkdir();
+            LOG.debug("Setup folder is created: " + setupFolder.getName());
         }
 
         //create algo-0 subfolder in the MIA folder
-        algoNullMiaFolder = new File(miaFolder, miaFolder.getName() + "_algo-0");
-        if (!algoNullMiaFolder.exists()) {
-            algoNullMiaFolder.mkdir();
+        algoNullFolder = new File(miaFolder, miaFolder.getName() + "_algo-0");
+        if (!algoNullFolder.exists()) {
+            algoNullFolder.mkdir();
+            LOG.debug("AlgoNull folder is created: " + algoNullFolder.getName());
         }
 
     }
@@ -143,7 +152,7 @@ public class ExperimentServiceImpl implements ExperimentService {
         }
 
         for (File file : rawFolder.listFiles()) {
-            if (file.getName().endsWith("setup")) {
+            if (file.getName().endsWith("set-up")) {
                 setupFolder = file;
                 //set setup folder of the experiment
                 experiment.setSetupFolder(setupFolder);
@@ -227,5 +236,10 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Override
     public void init(File microscopeDirectory) {
         this.mainDirectory = microscopeDirectory;
+    }
+
+    @Override
+    public List<Experiment> findExperimentsByProjectId(Integer projectId) {
+        return experimentRepository.findExperimentsByProjectId(projectId);
     }
 }
