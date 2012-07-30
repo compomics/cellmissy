@@ -78,6 +78,20 @@ public class Ecm implements Serializable {
     public Ecm() {
     }
 
+    public Ecm(Double concentration, Double volume, String coatingTime, String coatingTemperature, String polymerisationTime, String polymerisationTemperature, EcmCoating ecmCoating, EcmComposition ecmComposition, EcmDensity ecmDensity, String concentrationUnit, String volumeUnit) {
+        this.concentration = concentration;
+        this.volume = volume;
+        this.coatingTime = coatingTime;
+        this.coatingTemperature = coatingTemperature;
+        this.polymerisationTime = polymerisationTime;
+        this.polymerisationTemperature = polymerisationTemperature;
+        this.ecmCoating = ecmCoating;
+        this.ecmComposition = ecmComposition;
+        this.ecmDensity = ecmDensity;
+        this.concentrationUnit = concentrationUnit;
+        this.volumeUnit = volumeUnit;
+    }
+
     public Ecm(Integer ecmid) {
         this.ecmid = ecmid;
     }

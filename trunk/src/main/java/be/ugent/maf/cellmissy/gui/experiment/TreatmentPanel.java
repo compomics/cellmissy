@@ -86,6 +86,10 @@ public class TreatmentPanel extends javax.swing.JPanel {
         return serumConcentrationTextField;
     }
 
+    public JButton getAddNewButton() {
+        return addNewButton;
+    }
+
     /** Creates new form TreatmentPanel */
     public TreatmentPanel() {
         initComponents();
@@ -125,6 +129,8 @@ public class TreatmentPanel extends javax.swing.JPanel {
         drugSolventComboBox = new javax.swing.JComboBox();
         serumConcentrationLabel = new javax.swing.JLabel();
         serumConcentrationTextField = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        addNewButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         drugTextField = new javax.swing.JTextField();
         addDrugButton = new javax.swing.JButton();
@@ -177,25 +183,25 @@ public class TreatmentPanel extends javax.swing.JPanel {
 
         treatmentDualListPanelLayout.setVerticalGroup(
             treatmentDualListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, treatmentDualListPanelLayout.createSequentialGroup()
-                .addContainerGap(170, Short.MAX_VALUE)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
             .addGroup(treatmentDualListPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(treatmentDualListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(treatmentDualListPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, treatmentDualListPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
-                    .addGroup(treatmentDualListPanelLayout.createSequentialGroup()
-                        .addGroup(treatmentDualListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, treatmentDualListPanelLayout.createSequentialGroup()
-                                .addGap(85, 85, 85)
-                                .addComponent(addButton)))
-                        .addGap(18, 18, 18)
-                        .addComponent(removeButton)
-                        .addGap(36, 36, 36))))
+                    .addGroup(treatmentDualListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(treatmentDualListPanelLayout.createSequentialGroup()
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
+                            .addContainerGap())
+                        .addGroup(treatmentDualListPanelLayout.createSequentialGroup()
+                            .addGroup(treatmentDualListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, treatmentDualListPanelLayout.createSequentialGroup()
+                                    .addGap(85, 85, 85)
+                                    .addComponent(addButton)))
+                            .addGap(18, 18, 18)
+                            .addComponent(removeButton)
+                            .addGap(36, 36, 36)))))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -226,6 +232,10 @@ public class TreatmentPanel extends javax.swing.JPanel {
 
         serumConcentrationLabel.setText("Serum Concentration");
 
+        jLabel1.setText("%");
+
+        addNewButton.setText("ADD");
+
         javax.swing.GroupLayout treatmentSetupPanelLayout = new javax.swing.GroupLayout(treatmentSetupPanel);
         treatmentSetupPanel.setLayout(treatmentSetupPanelLayout);
         treatmentSetupPanelLayout.setHorizontalGroup(
@@ -235,34 +245,41 @@ public class TreatmentPanel extends javax.swing.JPanel {
                 .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
                         .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(additionalInfoLabel)
-                            .addComponent(timingLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, treatmentSetupPanelLayout.createSequentialGroup()
-                                .addComponent(timingTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                            .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
                                 .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
-                                        .addComponent(serumConcentrationLabel)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(serumConcentrationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
-                                        .addComponent(concentrationLabel)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(concentrationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(concentrationUnitComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                    .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
-                        .addComponent(drugSolventLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(drugSolventComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(10, 10, 10)
-                        .addComponent(assayMediumComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(132, Short.MAX_VALUE))
+                                    .addComponent(additionalInfoLabel)
+                                    .addComponent(timingLabel))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, treatmentSetupPanelLayout.createSequentialGroup()
+                                        .addComponent(timingTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                                        .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
+                                                .addComponent(serumConcentrationLabel)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(serumConcentrationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jLabel1))
+                                            .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
+                                                .addComponent(concentrationLabel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(concentrationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(concentrationUnitComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                            .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
+                                .addComponent(drugSolventLabel)
+                                .addGap(18, 18, 18)
+                                .addComponent(drugSolventComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(treatmentSetupPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(10, 10, 10)
+                                .addComponent(assayMediumComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(126, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, treatmentSetupPanelLayout.createSequentialGroup()
+                        .addComponent(addNewButton)
+                        .addContainerGap())))
         );
 
         treatmentSetupPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {concentrationTextField, timingTextField});
@@ -290,8 +307,11 @@ public class TreatmentPanel extends javax.swing.JPanel {
                     .addComponent(assayMediumComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(serumConcentrationLabel)
-                    .addComponent(serumConcentrationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(70, 70, 70))
+                    .addComponent(serumConcentrationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(addNewButton)
+                .addGap(36, 36, 36))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -356,6 +376,7 @@ public class TreatmentPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
     private javax.swing.JButton addDrugButton;
+    private javax.swing.JButton addNewButton;
     private javax.swing.JButton addTreatmentButton;
     private javax.swing.JLabel additionalInfoLabel;
     private javax.swing.JTextArea additionalInfoTextArea;
@@ -367,6 +388,7 @@ public class TreatmentPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox drugSolventComboBox;
     private javax.swing.JLabel drugSolventLabel;
     private javax.swing.JTextField drugTextField;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

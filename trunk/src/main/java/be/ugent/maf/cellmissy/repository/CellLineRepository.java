@@ -14,4 +14,6 @@ import java.util.List;
 public interface CellLineRepository extends GenericRepository<CellLine, Long> {
     
     List<String> findAllGrowthMedia();
+    
+    List<String> findAllSera();
 }

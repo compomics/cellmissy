@@ -37,7 +37,8 @@ import org.hibernate.validator.constraints.Range;
     @NamedQuery(name = "CellLine.findByGrowthMedium", query = "SELECT c FROM CellLine c WHERE c.growthMedium = :growthMedium"),
     @NamedQuery(name = "CellLine.findBySeedingTime", query = "SELECT c FROM CellLine c WHERE c.seedingTime = :seedingTime"),
     @NamedQuery(name = "CellLine.findBySeedingDensity", query = "SELECT c FROM CellLine c WHERE c.seedingDensity = :seedingDensity"),
-    @NamedQuery(name = "CellLine.findAllGrowthMedia", query = "SELECT distinct c.growthMedium FROM CellLine c")})
+    @NamedQuery(name = "CellLine.findAllGrowthMedia", query = "SELECT distinct c.growthMedium FROM CellLine c"),
+    @NamedQuery(name = "CellLine.findAllSera", query = "SELECT distinct c.serum FROM CellLine c")})
 public class CellLine implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -55,7 +56,9 @@ public class CellLine implements Serializable {
     private Integer seedingDensity;
     @Column(name = "growth_medium")
     private String growthMedium;
-    @Column (name = "serum_concentration")
+    @Column(name = "serum")
+    private String serum;
+    @Column(name = "serum_concentration")
     private String serumConcentration;
     @OneToOne(mappedBy = "cellLine")
     private PlateCondition plateCondition;
@@ -77,6 +80,15 @@ public class CellLine implements Serializable {
         this.growthMedium = growthMedium;
     }
 
+    public CellLine(String seedingTime, Integer seedingDensity, String growthMedium, String serumConcentration, CellLineType cellLineType, String serum) {
+        this.seedingTime = seedingTime;
+        this.seedingDensity = seedingDensity;
+        this.growthMedium = growthMedium;
+        this.serumConcentration = serumConcentration;
+        this.cellLineType = cellLineType;
+        this.serum = serum;
+    }
+
     public Integer getCellLineid() {
         return cellLineid;
     }
@@ -91,6 +103,14 @@ public class CellLine implements Serializable {
 
     public void setGrowthMedium(String growthMedium) {
         this.growthMedium = growthMedium;
+    }
+
+    public String getSerum() {
+        return serum;
+    }
+
+    public void setSerum(String serum) {
+        this.serum = serum;
     }
 
     public String getSerumConcentration() {

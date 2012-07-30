@@ -28,4 +28,16 @@ public class CellLineJpaRepository extends GenericJpaRepository<CellLine, Long> 
             return null;
         }
     }
+
+    @Override
+    public List<String> findAllSera() {
+        //annotated query
+        Query byNameQuery = getEntityManager().createNamedQuery("CellLine.findAllSera");
+        List<String> resultList = byNameQuery.getResultList();
+        if (!resultList.isEmpty()) {
+            return resultList;
+        } else {
+            return null;
+        }
+    }
 }

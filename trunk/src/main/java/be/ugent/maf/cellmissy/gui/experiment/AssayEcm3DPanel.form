@@ -118,12 +118,12 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="densityComboBox" alignment="0" max="32767" attributes="1"/>
-                              <Component id="volumeTextField" alignment="0" max="32767" attributes="1"/>
+                              <Component id="volumeTextField" alignment="0" pref="56" max="32767" attributes="1"/>
                               <Component id="polymerizationTimeTextField" alignment="0" max="32767" attributes="1"/>
                               <Component id="polymerizationTemperatureTextField" alignment="0" max="32767" attributes="1"/>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="volumeUnitLabel" min="-2" pref="20" max="-2" attributes="1"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="volumeUnitLabel" min="-2" pref="43" max="-2" attributes="1"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="80" max="-2" attributes="0"/>
@@ -164,10 +164,10 @@
                       <Component id="densityComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="volumeTextField" alignment="1" max="32767" attributes="1"/>
-                      <Component id="volumeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="volumeUnitLabel" alignment="3" pref="20" max="32767" attributes="1"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="volumeUnitLabel" linkSize="4" pref="20" max="32767" attributes="1"/>
+                      <Component id="volumeTextField" linkSize="4" alignment="1" min="-2" max="-2" attributes="1"/>
+                      <Component id="volumeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -179,7 +179,7 @@
                       <Component id="polymerizationTemperatureTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="polymerizationTemperatureLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="29" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

@@ -19,4 +19,6 @@ public interface CellLineService extends GenericService<CellLine, Long> {
     CellLineType saveCellLineType(CellLineType entity);
     
     List<String> findAllGrowthMedia();
+    
+    List<String> findAllSera();
 }

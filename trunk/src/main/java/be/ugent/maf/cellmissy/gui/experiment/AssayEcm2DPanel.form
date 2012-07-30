@@ -122,9 +122,9 @@
                               <Component id="coatingTemperatureTextField" linkSize="3" alignment="0" min="-2" pref="56" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="volumeUnitLabel" min="-2" pref="20" max="-2" attributes="1"/>
-                              <Component id="concentrationUnitOfMeasure" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="volumeUnitLabel" max="32767" attributes="1"/>
+                              <Component id="concentrationUnitOfMeasure" alignment="0" max="32767" attributes="1"/>
                           </Group>
                       </Group>
                       <Component id="coatingComboBox" linkSize="2" min="-2" max="-2" attributes="0"/>
@@ -160,10 +160,12 @@
                       <Component id="concentrationUnitOfMeasure" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="volumeTextField" alignment="0" max="32767" attributes="1"/>
-                      <Component id="volumeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="volumeUnitLabel" alignment="3" pref="20" max="32767" attributes="1"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="volumeTextField" linkSize="4" alignment="0" max="32767" attributes="1"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="volumeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="volumeUnitLabel" linkSize="4" alignment="3" pref="20" max="32767" attributes="1"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
