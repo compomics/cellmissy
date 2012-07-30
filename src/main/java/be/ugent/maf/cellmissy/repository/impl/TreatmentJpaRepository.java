@@ -35,4 +35,16 @@ public class TreatmentJpaRepository extends GenericJpaRepository<Treatment, Long
     public void saveTreatmentType(TreatmentType treatmentType) {
         getEntityManager().persist(treatmentType);
     }
+
+    @Override
+    public List<String> findAllDrugSolvents() {
+        //annotated query
+        Query byNameQuery = getEntityManager().createNamedQuery("Treatment.findAllDrugSolvents");
+        List<String> resultList = byNameQuery.getResultList();
+        if (!resultList.isEmpty()) {
+            return resultList;
+        } else {
+            return null;
+        }
+    }
 }

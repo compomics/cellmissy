@@ -17,4 +17,6 @@ public interface TreatmentService extends GenericService<Treatment, Long> {
     List<TreatmentType> findByCategory(Integer treatmentCategory);
 
     void saveTreatmentType(TreatmentType treatmentType);
+    
+    List<String> findAllDrugSolvents();
 }

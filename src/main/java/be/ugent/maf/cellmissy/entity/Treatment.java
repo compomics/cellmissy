@@ -34,7 +34,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Treatment.findByType", query = "SELECT t FROM Treatment t WHERE t.treatmentType = :treatmentType"),
     @NamedQuery(name = "Treatment.findByDescription", query = "SELECT t FROM Treatment t WHERE t.description = :description"),
     @NamedQuery(name = "Treatment.findByConcentration", query = "SELECT t FROM Treatment t WHERE t.concentration = :concentration"),
-    @NamedQuery(name = "Treatment.findByTiming", query = "SELECT t FROM Treatment t WHERE t.timing = :timing")})
+    @NamedQuery(name = "Treatment.findByTiming", query = "SELECT t FROM Treatment t WHERE t.timing = :timing"),
+    @NamedQuery(name = "Treatment.findAllDrugSolvents", query = "SELECT distinct t.drugSolvent FROM Treatment t")})
 public class Treatment implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,7 +62,7 @@ public class Treatment implements Serializable {
     private TreatmentType treatmentType;
     @Column(name = "concentration_unit")
     private String concentrationUnit;
-    @Column (name = "serum_concentration")
+    @Column(name = "serum_concentration")
     private String serumConcentration;
 
     public Treatment() {

@@ -63,5 +63,10 @@ public class CellLineServiceImpl implements CellLineService {
     public List<String> findAllGrowthMedia() {
         return cellLineRepository.findAllGrowthMedia();
     }
+
+    @Override
+    public List<String> findAllSera() {
+        return cellLineRepository.findAllSera();
+    }
  
 }

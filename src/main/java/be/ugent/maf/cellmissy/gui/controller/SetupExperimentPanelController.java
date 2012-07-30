@@ -197,13 +197,6 @@ public class SetupExperimentPanelController {
     }
 
     /**
-     * add mouse listener to setup plate panel (Only when a condition is selected)
-     */
-    public void addMouseListener() {
-        setupPlatePanelController.addMouseListener();
-    }
-
-    /**
      * when the mouse is released and the rectangle has been drawn, this method is called:
      * set well collection of the current condition and set the condition of the selected wells
      * @param plateCondition, the current condition
@@ -342,7 +335,7 @@ public class SetupExperimentPanelController {
 
         //set cell renderer for experimentJList
         experimentInfoPanel.getExperimentJList().setCellRenderer(new ExperimentsRenderer());
-        
+
         //date cannot be modified manually
         experimentInfoPanel.getDateChooser().getDateEditor().setEnabled(false);
 
@@ -547,6 +540,13 @@ public class SetupExperimentPanelController {
     }
 
     /**
+     * add mouse listener to setup plate panel (Only when a condition is selected)
+     */
+    public void addMouseListener() {
+        setupPlatePanelController.addMouseListener();
+    }
+
+    /**
      * this class extends a document listener 
      * on "next" button
      */
@@ -689,12 +689,12 @@ public class SetupExperimentPanelController {
             return pdfFile;
         }
     }
-    
+
     /**
      * custom cell renderer for experimentsJList
      */
     private class ExperimentsRenderer extends DefaultListCellRenderer {
-        
+
         /*
          *constructor
          */

@@ -54,4 +54,9 @@ public class TreatmentServiceImpl implements TreatmentService {
     public void saveTreatmentType(TreatmentType treatmentType) {
         treatmentRepository.saveTreatmentType(treatmentType);
     }
+
+    @Override
+    public List<String> findAllDrugSolvents() {
+        return treatmentRepository.findAllDrugSolvents();
+    }
 }

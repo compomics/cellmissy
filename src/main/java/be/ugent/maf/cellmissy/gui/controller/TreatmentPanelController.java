@@ -28,6 +28,7 @@ import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
+import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.springframework.context.ApplicationContext;
@@ -45,6 +46,7 @@ public class TreatmentPanelController {
     private ObservableList<TreatmentType> generalTreatmentBindingList;
     //binding list for actual treatment
     private ObservableList<Treatment> treatmentBindingList;
+    private ObservableList<String> drugSolventList;
     private BindingGroup bindingGroup;
     //view
     private TreatmentPanel treatmentPanel;
@@ -142,6 +144,12 @@ public class TreatmentPanelController {
         bindingGroup.addBinding(actualTreatmentListBinding);
 
         treatmentPanel.getDestinationList().setCellRenderer(new TreatmentsRenderer());
+        
+        //init drug solvents JCombobox
+        drugSolventList = ObservableCollections.observableList(treatmentService.findAllDrugSolvents());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, drugSolventList, treatmentPanel.getDrugSolventComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+        
         //autobind treatment
         //treatment description
         Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.description"), treatmentPanel.getAdditionalInfoTextArea(), BeanProperty.create("text"), "treatmentdescriptionbinding");
@@ -173,15 +181,19 @@ public class TreatmentPanelController {
         //set default to microM
         treatmentPanel.getConcentrationUnitComboBox().setSelectedIndex(0);
 
-        //fill in drug solvent combo box
-        treatmentPanel.getDrugSolventComboBox().addItem("");
-        treatmentPanel.getDrugSolventComboBox().addItem("DMSO");
-        treatmentPanel.getDrugSolventComboBox().addItem("PBS");
-
         //set default to null
         treatmentPanel.getDrugSolventComboBox().setSelectedIndex(0);
 
         //add action listeners
+        treatmentPanel.getAddNewButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //show internal frame with options to add new drugs/treatments to the DB
+            }
+        });
+        
+        
         //add a drug/treatment to the actual treatment list
         treatmentPanel.getAddButton().addActionListener(new ActionListener() {
 
@@ -340,7 +352,8 @@ public class TreatmentPanelController {
         treatment.setDescription("Please add some information here");
         treatment.setTiming("10 hours");
         treatment.setAssayMedium(conditionsPanelController.getMediumBindingList().get(0));
-        treatment.setSerumConcentration("10%");
+        treatment.setDrugSolvent("");
+        treatment.setSerumConcentration("10");
     }
 
     private void initPanel() {
