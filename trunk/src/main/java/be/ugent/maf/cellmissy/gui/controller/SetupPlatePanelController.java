@@ -94,7 +94,7 @@ public class SetupPlatePanelController {
 
     /**
      * remove from the map the list of rectangles of a condition that the user wants to delete
-     * @param conditionToRemove 
+     * @param conditionToRemove from the list
      */
     public void removeRectangleEntry(PlateCondition conditionToRemove) {
         setupPlatePanel.getRectangles().remove(conditionToRemove);
@@ -111,6 +111,9 @@ public class SetupPlatePanelController {
 
     /**
      * private methods and classes
+     */
+    /**
+     * initialize view: set-up plate panel
      */
     private void initSetupPlatePanel() {
 
@@ -177,6 +180,9 @@ public class SetupPlatePanelController {
         setupExperimentPanelController.getSetupPanel().getSetupPlateParentPanel().add(platePanelGui, gridBagConstraints);
     }
 
+    /**
+     * MouseInputAdapter for the Setup Plate
+     */
     private class SetupPlateListener extends MouseInputAdapter {
 
         private int xMin;
@@ -210,19 +216,18 @@ public class SetupPlatePanelController {
         @Override
         public void mouseReleased(MouseEvent e) {
 
+            System.out.println("start point is: " + setupPlatePanel.getStartPoint());
             int x = Math.min(setupPlatePanel.getStartPoint().x, setupPlatePanel.getEndPoint().x);
             int y = Math.min(setupPlatePanel.getStartPoint().y, setupPlatePanel.getEndPoint().y);
             int width = Math.abs(setupPlatePanel.getStartPoint().x - setupPlatePanel.getEndPoint().x);
             int height = Math.abs(setupPlatePanel.getStartPoint().y - setupPlatePanel.getEndPoint().y);
             rectangle = new Rectangle(x, y, width, height);
-
             if (rectangle.width != 0 || rectangle.height != 0) {
                 //if the selection of wells is valid (wells do not already have a condition set), add the rectangle to the map
                 if (setupExperimentPanelController.updateWellCollection(setupExperimentPanelController.getCurrentCondition(), rectangle)) {
                     setupPlatePanel.getRectangles().get(setupExperimentPanelController.getCurrentCondition()).add(rectangle);
                 }
             }
-
             setupPlatePanel.setStartPoint(null);
             setupPlatePanel.repaint();
         }

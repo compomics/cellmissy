@@ -309,6 +309,7 @@ public class SetupExperimentPanelController {
     /*
      * private methods and classes
      */
+
     /**
      * initializes the experiment info panel
      */

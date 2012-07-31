@@ -54,6 +54,8 @@ public class Treatment implements Serializable {
     private String assayMedium;
     @Column(name = "drug_solvent")
     private String drugSolvent;
+    @Column (name = "drug_solvent_concentration")
+    private String drugSolventConcentration;
     @JoinColumn(name = "l_plate_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = true)
     private PlateCondition plateCondition;
@@ -62,6 +64,8 @@ public class Treatment implements Serializable {
     private TreatmentType treatmentType;
     @Column(name = "concentration_unit")
     private String concentrationUnit;
+    @Column (name = "serum")
+    private String serum;
     @Column(name = "serum_concentration")
     private String serumConcentration;
 
@@ -128,6 +132,14 @@ public class Treatment implements Serializable {
         this.drugSolvent = drugSolvent;
     }
 
+    public String getDrugSolventConcentration() {
+        return drugSolventConcentration;
+    }
+
+    public void setDrugSolventConcentration(String drugSolventConcentration) {
+        this.drugSolventConcentration = drugSolventConcentration;
+    }
+
     @XmlTransient
     public PlateCondition getPlateCondition() {
         return plateCondition;
@@ -151,6 +163,14 @@ public class Treatment implements Serializable {
 
     public void setConcentrationUnit(String concentrationUnit) {
         this.concentrationUnit = concentrationUnit;
+    }
+
+    public String getSerum() {
+        return serum;
+    }
+
+    public void setSerum(String serum) {
+        this.serum = serum;
     }
 
     public String getSerumConcentration() {

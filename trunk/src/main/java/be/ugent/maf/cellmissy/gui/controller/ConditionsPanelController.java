@@ -211,6 +211,10 @@ public class ConditionsPanelController {
         serumBindingList = ObservableCollections.observableList(cellLineService.findAllSera());
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, serumBindingList, setupConditionsPanel.getSerumComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
+        
+        //init the other serum ComboBox
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, serumBindingList, treatmentPanelController.getTreatmentPanel().getSerumComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
 
         //init assay medium JCombo (it's actually in the treatment panel, but ca not be bind before since the mediumBindingList would still be null)
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, mediumBindingList, treatmentPanelController.getTreatmentPanel().getAssayMediumComboBox());
