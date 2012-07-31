@@ -42,7 +42,7 @@ public class TreatmentType implements Serializable {
     private Integer treatmentTypeid;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
     @Basic(optional = false)
     @Column(name = "treatment_category")

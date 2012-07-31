@@ -8,17 +8,21 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
+import be.ugent.maf.cellmissy.gui.experiment.AddDrugsTreatmentsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.TreatmentPanel;
 import be.ugent.maf.cellmissy.service.TreatmentService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import javax.persistence.PersistenceException;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JFrame;
 import javax.swing.JList;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -143,16 +147,16 @@ public class TreatmentPanelController {
         JListBinding actualTreatmentListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, treatmentBindingList, treatmentPanel.getDestinationList());
         bindingGroup.addBinding(actualTreatmentListBinding);
 
-        treatmentPanel.getDestinationList().setCellRenderer(new TreatmentsRenderer());
-        
         //init drug solvents JCombobox
         drugSolventList = ObservableCollections.observableList(treatmentService.findAllDrugSolvents());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, drugSolventList, treatmentPanel.getDrugSolventComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
-        
+
+        //set cell renderer
+        treatmentPanel.getDestinationList().setCellRenderer(new TreatmentsRenderer());
         //autobind treatment
         //treatment description
-        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.description"), treatmentPanel.getAdditionalInfoTextArea(), BeanProperty.create("text"), "treatmentdescriptionbinding");
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.description"), treatmentPanel.getInfoTextField(), BeanProperty.create("text"), "treatmentdescriptionbinding");
         bindingGroup.addBinding(binding);
         //treatment timing
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.timing"), treatmentPanel.getTimingTextField(), BeanProperty.create("text"), "treatmenttimingbinding");
@@ -172,6 +176,9 @@ public class TreatmentPanelController {
         //treatment (drug) solvent
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.drugSolvent"), treatmentPanel.getDrugSolventComboBox(), BeanProperty.create("selectedItem"), "treatmentdrugsolventbinding");
         bindingGroup.addBinding(binding);
+        //treatment (drug) solvent final concentration
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.drugSolventConcentration"), treatmentPanel.getSolventConcentrationTextField(), BeanProperty.create("text"), "treatmentdrugsolventconcentrationbinding");
+        bindingGroup.addBinding(binding);
         bindingGroup.bind();
 
         //unit of measure combobox
@@ -190,10 +197,12 @@ public class TreatmentPanelController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //show internal frame with options to add new drugs/treatments to the DB
+                InternalFrame internalFrame = new InternalFrame("Add new Drugs/Treatments to the DB");
+                internalFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             }
         });
-        
-        
+
+
         //add a drug/treatment to the actual treatment list
         treatmentPanel.getAddButton().addActionListener(new ActionListener() {
 
@@ -228,38 +237,6 @@ public class TreatmentPanelController {
                             generalTreatmentBindingList.add(((Treatment) treatmentPanel.getDestinationList().getSelectedValue()).getTreatmentType());
                     }
                     treatmentBindingList.remove((Treatment) treatmentPanel.getDestinationList().getSelectedValue());
-                }
-            }
-        });
-
-        //add a new drug to the DB
-        treatmentPanel.getAddDrugButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!treatmentPanel.getDrugTextField().getText().isEmpty()) {
-                    TreatmentType newDrug = new TreatmentType();
-                    newDrug.setTreatmentCategory(1);
-                    newDrug.setName(treatmentPanel.getDrugTextField().getText());
-                    drugBindingList.add(newDrug);
-                    treatmentService.saveTreatmentType(newDrug);
-                    treatmentPanel.getDrugTextField().setText("");
-                }
-            }
-        });
-
-        //add a new treatment to the DB
-        treatmentPanel.getAddTreatmentButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!treatmentPanel.getTreatmentTextField().getText().isEmpty()) {
-                    TreatmentType newTreatment = new TreatmentType();
-                    newTreatment.setTreatmentCategory(2);
-                    newTreatment.setName(treatmentPanel.getTreatmentTextField().getText());
-                    generalTreatmentBindingList.add(newTreatment);
-                    treatmentService.saveTreatmentType(newTreatment);
-                    treatmentPanel.getTreatmentTextField().setText("");
                 }
             }
         });
@@ -334,6 +311,10 @@ public class TreatmentPanelController {
         }
     }
 
+    /**
+     * this method adds treatments/drugs from a source list to the destination list
+     * @param sourceList 
+     */
     private void addTreatmentFromASourceList(JList sourceList) {
         Treatment treatment = new Treatment();
         treatment.setTreatmentType((TreatmentType) sourceList.getSelectedValue());
@@ -356,10 +337,96 @@ public class TreatmentPanelController {
         treatment.setSerumConcentration("10");
     }
 
+    /**
+     * initialize view (treatment panel)
+     */
     private void initPanel() {
         conditionsPanelController.getSetupConditionsPanel().getTreatmentParentPanel().add(treatmentPanel, gridBagConstraints);
     }
 
+    /**
+     * show internal frame to add new treatments/drugs to DB
+     */
+    private class InternalFrame extends JFrame {
+
+        AddDrugsTreatmentsPanel addDrugsTreatmentsPanel;
+        //constructor
+
+        public InternalFrame(String title) {
+            super(title);
+            initFrame();
+        }
+
+        //create and show frame
+        private void initFrame() {
+            JFrame frame = new JFrame();
+            frame.setVisible(true);
+            frame.setBounds(100, 100, 350, 250);
+            frame.setLayout(new GridBagLayout());
+            frame.setAlwaysOnTop(true);
+            addDrugsTreatmentsPanel = new AddDrugsTreatmentsPanel();
+
+            //add action listeners
+            //add new Drug to the DB
+            addDrugsTreatmentsPanel.getAddDrugButton().addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (!addDrugsTreatmentsPanel.getDrugTextField().getText().isEmpty()) {
+                        TreatmentType newDrug = new TreatmentType();
+                        //category 1: drug
+                        newDrug.setTreatmentCategory(1);
+                        newDrug.setName(addDrugsTreatmentsPanel.getDrugTextField().getText());
+                        try {
+                            //add drug to the list
+                            drugBindingList.add(newDrug);
+                            //save drug to DB
+                            treatmentService.saveTreatmentType(newDrug);
+                            conditionsPanelController.showMessage("Drug was inserted into DB.", 1);
+                            addDrugsTreatmentsPanel.getDrugTextField().setText("");
+                        } catch (PersistenceException exception) {
+                            conditionsPanelController.showMessage("Drug already present in DB.", 1);
+                            addDrugsTreatmentsPanel.getDrugTextField().setText("");
+                            addDrugsTreatmentsPanel.getDrugTextField().requestFocusInWindow();
+                        }
+                    }
+                }
+            });
+
+            //add new Treatment to the DB
+            addDrugsTreatmentsPanel.getAddTreatmentButton().addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (!addDrugsTreatmentsPanel.getTreatmentTextField().getText().isEmpty()) {
+                        TreatmentType newTreatment = new TreatmentType();
+                        //category 2: general treatment
+                        newTreatment.setTreatmentCategory(2);
+                        newTreatment.setName(addDrugsTreatmentsPanel.getTreatmentTextField().getText());
+                        try {
+                            //add treatment to the list
+                            generalTreatmentBindingList.add(newTreatment);
+                            //save treatment to DB
+                            treatmentService.saveTreatmentType(newTreatment);
+                            conditionsPanelController.showMessage("Treatment was inserted into DB.", 1);
+                            addDrugsTreatmentsPanel.getTreatmentTextField().setText("");
+                        } catch (PersistenceException exception) {
+                            conditionsPanelController.showMessage("Treatment already present in DB.", 1);
+                            addDrugsTreatmentsPanel.getTreatmentTextField().setText("");
+                            addDrugsTreatmentsPanel.getTreatmentTextField().requestFocusInWindow();
+                        }
+                    }
+                }
+            });
+            //add the panel to the frame
+            frame.add(addDrugsTreatmentsPanel, gridBagConstraints);
+            addDrugsTreatmentsPanel.getDrugTextField().requestFocusInWindow();
+        }
+    }
+
+    /**
+     * customized cell renderer for treatment list
+     */
     private class TreatmentsRenderer extends DefaultListCellRenderer {
 
         public TreatmentsRenderer() {
