@@ -17,7 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -54,7 +53,7 @@ public class Treatment implements Serializable {
     private String assayMedium;
     @Column(name = "drug_solvent")
     private String drugSolvent;
-    @Column (name = "drug_solvent_concentration")
+    @Column(name = "drug_solvent_concentration")
     private String drugSolventConcentration;
     @JoinColumn(name = "l_plate_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = true)
@@ -64,7 +63,7 @@ public class Treatment implements Serializable {
     private TreatmentType treatmentType;
     @Column(name = "concentration_unit")
     private String concentrationUnit;
-    @Column (name = "serum")
+    @Column(name = "serum")
     private String serum;
     @Column(name = "serum_concentration")
     private String serumConcentration;
@@ -218,6 +217,10 @@ public class Treatment implements Serializable {
     }
 
     public String toString() {
-        return concentration + " " + concentrationUnit + " " + treatmentType;
+        if (serum != null) {
+            return concentration + " " + concentrationUnit + " " + treatmentType + ", " + assayMedium + " " + serumConcentration + "% " + serum;
+        } else {
+            return concentration + " " + concentrationUnit + " " + treatmentType + ", " + assayMedium;
+        }
     }
 }

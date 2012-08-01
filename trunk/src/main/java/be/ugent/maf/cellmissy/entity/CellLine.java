@@ -48,10 +48,10 @@ public class CellLine implements Serializable {
     @Column(name = "cell_lineid")
     private Integer cellLineid;
     @Column(name = "seeding_time")
-    @NotBlank(message = "Seeding Time must be not null")
+    @NotBlank(message = "Seeding time must be not null")
     private String seedingTime;
     @Column(name = "seeding_density")
-    @NotNull(message = "Seeding Density must be not null")
+    @NotNull(message = "Seeding density must be not null")
     @Range(min = 30000, max = 90000, message = "Seeding density must be between 30000 and 90000")
     private Integer seedingDensity;
     @Column(name = "growth_medium")
@@ -71,13 +71,6 @@ public class CellLine implements Serializable {
 
     public CellLine(Integer cellLineid) {
         this.cellLineid = cellLineid;
-    }
-
-    public CellLine(Integer cellLineid, String seedingTime, Integer seedingDensity, String growthMedium) {
-        this.cellLineid = cellLineid;
-        this.seedingTime = seedingTime;
-        this.seedingDensity = seedingDensity;
-        this.growthMedium = growthMedium;
     }
 
     public CellLine(String seedingTime, Integer seedingDensity, String growthMedium, String serumConcentration, CellLineType cellLineType, String serum) {
@@ -180,6 +173,6 @@ public class CellLine implements Serializable {
     }
 
     public String toString() {
-        return cellLineType + ", " + seedingDensity + ", " + growthMedium;
+        return cellLineType + ", " + seedingDensity + ", " + growthMedium + ", " + serumConcentration + "% " + serum;
     }
 }
