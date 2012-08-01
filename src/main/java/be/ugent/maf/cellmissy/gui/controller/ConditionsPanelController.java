@@ -29,6 +29,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.PersistenceException;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
@@ -211,7 +212,7 @@ public class ConditionsPanelController {
         serumBindingList = ObservableCollections.observableList(cellLineService.findAllSera());
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, serumBindingList, setupConditionsPanel.getSerumComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
-        
+
         //init the other serum ComboBox
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, serumBindingList, treatmentPanelController.getTreatmentPanel().getSerumComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
@@ -227,17 +228,25 @@ public class ConditionsPanelController {
         /**
          * insert a new cell line Type in the DB if it's not present yet
          */
-        setupConditionsPanel.getInsertCellLineButton().addActionListener(new ActionListener() {
+        setupConditionsPanel.getAddCellLineButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!setupConditionsPanel.getCellLineNameTextField().getText().isEmpty()) {
                     CellLineType newCellLineType = new CellLineType();
                     newCellLineType.setName(setupConditionsPanel.getCellLineNameTextField().getText());
-                    //insert cell line to DB
-                    cellLineService.saveCellLineType(newCellLineType);
-                    //add the new cell line to the list
-                    cellLineTypeBindingList.add(newCellLineType);
+                    try {
+                        //insert cell line to DB
+                        cellLineService.saveCellLineType(newCellLineType);
+                        //add the new cell line to the list
+                        cellLineTypeBindingList.add(newCellLineType);
+                        setupConditionsPanel.getCellLineNameTextField().setText("");
+                    } catch (PersistenceException exception) {
+                        showMessage("Cell Line already present in DB.", 1);
+                        setupConditionsPanel.getCellLineNameTextField().setText("");
+                        setupConditionsPanel.getCellLineNameTextField().requestFocusInWindow();
+                    }
+
                 }
             }
         });
@@ -391,7 +400,7 @@ public class ConditionsPanelController {
         CellLine cellLine = new CellLine();
         cellLine.setCellLineType(cellLineTypeBindingList.get(0));
         cellLine.setSeedingDensity(50000);
-        cellLine.setSeedingTime("24 hours");
+        cellLine.setSeedingTime("day -1");
         cellLine.setGrowthMedium(mediumBindingList.get(0));
         cellLine.setSerum(serumBindingList.get(0));
         cellLine.setSerumConcentration("10");
@@ -432,15 +441,16 @@ public class ConditionsPanelController {
     private void initNewCondition(PlateCondition newCondition) {
         //set the name
         newCondition.setName("Condition " + ++conditionIndex);
-        //set the cell line
+        //set the cell line (the same as the previous condition)
         CellLine cellLine = plateConditionBindingList.get(previousConditionIndex).getCellLine();
         CellLine newCellLine = new CellLine(cellLine.getSeedingTime(), cellLine.getSeedingDensity(), cellLine.getGrowthMedium(), cellLine.getSerumConcentration(), cellLine.getCellLineType(), cellLine.getSerum());
         newCondition.setCellLine(newCellLine);
         newCellLine.setPlateCondition(newCondition);
-        //set matrix dimension
+        //set matrix dimension (the same as the previous condition)
         newCondition.setMatrixDimension(plateConditionBindingList.get(previousConditionIndex).getMatrixDimension());
         //set assay and ecm (still default values)
         Ecm ecm = new Ecm();
+        //need to set different values according to matrix dimension: 2D or 3D
         if (newCondition.getMatrixDimension().getMatrixDimension().equals("2D")) {
             newCondition.setAssay(assayEcmPanelController.getAssay2DBindingList().get(0));
             //set ecm 2D fields
@@ -463,7 +473,7 @@ public class ConditionsPanelController {
         }
         newCondition.setEcm(ecm);
 
-        //set an empty collection of treatments
+        //set an empty collection of treatments (treatments are not recalled from previous condition)
         List<Treatment> treatmentList = new ArrayList<>();
         newCondition.setTreatmentCollection(treatmentList);
 
@@ -472,6 +482,11 @@ public class ConditionsPanelController {
         newCondition.setWellCollection(wellList);
     }
 
+    /**
+     * validate Cell Line
+     * @param cellLine
+     * @return 
+     */
     private List<String> validateCellLine(CellLine cellLine) {
         return ValidationUtils.validateObject(cellLine);
     }

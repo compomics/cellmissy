@@ -126,7 +126,7 @@ public class SetupReport {
         JPanel reportPanel = new JPanel(new BorderLayout());
         //creta a JTable
         //column names
-        Object columnNames[] = {"Condition", "Cell Line (Type, Seeding Density (cells/well), Growth Medium)", "Matrix Dimension", "Assay", "ECM (density)", "Treatments (Type, Concentration)"};
+        Object columnNames[] = {"Condition", "Cell Line (Type, Seeding Density, Growth Medium, %Serum)", "MD", "Assay", "ECM (density)", "Treatments (Concentration + Type, Assay Medium, %Serum)"};
 
         //do not work with collection, create a plateCondition List
         plateConditionList = new ArrayList<>();
@@ -152,21 +152,21 @@ public class SetupReport {
             //set Cell Renderer for each column of the table
             reportTable.getColumnModel().getColumn(i).setCellRenderer(new TableRenderer());
         }
-        reportTable.getColumnModel().getColumn(0).setMaxWidth(125);
-        reportTable.getColumnModel().getColumn(1).setMaxWidth(350);
-        reportTable.getColumnModel().getColumn(2).setMaxWidth(110);
-        reportTable.getColumnModel().getColumn(3).setMaxWidth(110);
-        reportTable.getColumnModel().getColumn(4).setMaxWidth(250);
-        reportTable.getColumnModel().getColumn(5).setMaxWidth(250);
+        reportTable.getColumnModel().getColumn(0).setMaxWidth(130);
+        reportTable.getColumnModel().getColumn(1).setMaxWidth(400);
+        reportTable.getColumnModel().getColumn(2).setMaxWidth(60);
+        reportTable.getColumnModel().getColumn(3).setMaxWidth(80);
+        reportTable.getColumnModel().getColumn(4).setMaxWidth(200);
+        reportTable.getColumnModel().getColumn(5).setMaxWidth(550);
 
-        reportTable.getColumnModel().getColumn(0).setPreferredWidth(125);
-        reportTable.getColumnModel().getColumn(1).setPreferredWidth(350);
-        reportTable.getColumnModel().getColumn(2).setPreferredWidth(110);
-        reportTable.getColumnModel().getColumn(3).setPreferredWidth(110);
-        reportTable.getColumnModel().getColumn(4).setPreferredWidth(250);
-        reportTable.getColumnModel().getColumn(5).setPreferredWidth(250);
+        reportTable.getColumnModel().getColumn(0).setPreferredWidth(130);
+        reportTable.getColumnModel().getColumn(1).setPreferredWidth(400);
+        reportTable.getColumnModel().getColumn(2).setPreferredWidth(60);
+        reportTable.getColumnModel().getColumn(3).setPreferredWidth(80);
+        reportTable.getColumnModel().getColumn(4).setPreferredWidth(200);
+        reportTable.getColumnModel().getColumn(5).setPreferredWidth(550);
 
-        reportTable.setIntercellSpacing(new Dimension(10, 1));
+        //reportTable.setIntercellSpacing(new Dimension(5, 1));
         //disable  JTable's tooltips
         ToolTipManager.sharedInstance().unregisterComponent(reportTable);
         ToolTipManager.sharedInstance().unregisterComponent(reportTable.getTableHeader());

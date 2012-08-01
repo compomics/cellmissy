@@ -158,26 +158,29 @@ public class TreatmentPanelController {
         //treatment description
         Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.description"), treatmentPanel.getInfoTextField(), BeanProperty.create("text"), "treatmentdescriptionbinding");
         bindingGroup.addBinding(binding);
-        //treatment timing
+        //treatment timing (Time of Addition)
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.timing"), treatmentPanel.getTimingTextField(), BeanProperty.create("text"), "treatmenttimingbinding");
         bindingGroup.addBinding(binding);
         //treatment concentration
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.concentration"), treatmentPanel.getConcentrationTextField(), BeanProperty.create("text"), "treatmentconcentrationbinding");
         bindingGroup.addBinding(binding);
         //treatment concentration unit of measure
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.concentrationUnitOfMeasure"), treatmentPanel.getConcentrationUnitComboBox(), BeanProperty.create("selectedItem"), "treatmentconcentrationunitofmeasurebinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.concentrationUnit"), treatmentPanel.getConcentrationUnitComboBox(), BeanProperty.create("selectedItem"), "treatmentconcentrationunitbinding");
         bindingGroup.addBinding(binding);
         //treatment assay medium
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.assayMedium"), treatmentPanel.getAssayMediumComboBox(), BeanProperty.create("selectedItem"), "treatmentassaymediumbinding");
+        bindingGroup.addBinding(binding);
+        //treatment serum
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.serum"), treatmentPanel.getSerumComboBox(), BeanProperty.create("selectedItem"), "treatmentserumbinding");
         bindingGroup.addBinding(binding);
         //treatment serum concentration binding
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.serumConcentration"), treatmentPanel.getSerumConcentrationTextField(), BeanProperty.create("text"), "treatmentserumconcentrationbinding");
         bindingGroup.addBinding(binding);
         //treatment (drug) solvent
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.drugSolvent"), treatmentPanel.getDrugSolventComboBox(), BeanProperty.create("selectedItem"), "treatmentdrugsolventbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.drugSolvent"), treatmentPanel.getDrugSolventComboBox(), BeanProperty.create("selectedItem"), "treatmentsolventbinding");
         bindingGroup.addBinding(binding);
         //treatment (drug) solvent final concentration
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.drugSolventConcentration"), treatmentPanel.getSolventConcentrationTextField(), BeanProperty.create("text"), "treatmentdrugsolventconcentrationbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.drugSolventConcentration"), treatmentPanel.getSolventConcentrationTextField(), BeanProperty.create("text"), "treatmentsolventconcentrationbinding");
         bindingGroup.addBinding(binding);
         bindingGroup.bind();
 
@@ -186,10 +189,10 @@ public class TreatmentPanelController {
         treatmentPanel.getConcentrationUnitComboBox().addItem("\u00B5" + "g" + "\\" + "\u00B5" + "l");
 
         //set default to microM
-        treatmentPanel.getConcentrationUnitComboBox().setSelectedIndex(0);
+        //treatmentPanel.getConcentrationUnitComboBox().setSelectedIndex(0);
 
         //set default to null
-        treatmentPanel.getDrugSolventComboBox().setSelectedIndex(0);
+        //treatmentPanel.getDrugSolventComboBox().setSelectedIndex(0);
 
         //add action listeners
         treatmentPanel.getAddNewButton().addActionListener(new ActionListener() {
@@ -330,10 +333,12 @@ public class TreatmentPanelController {
     private void initTreatment(Treatment treatment) {
         treatment.setConcentration(0.5);
         treatment.setConcentrationUnit(treatmentPanel.getConcentrationUnitComboBox().getItemAt(0).toString());
-        treatment.setDescription("Please add some information here");
-        treatment.setTiming("10 hours");
+        treatment.setDescription("add some info");
+        treatment.setTiming("0 h");
         treatment.setAssayMedium(conditionsPanelController.getMediumBindingList().get(0));
-        treatment.setDrugSolvent("");
+        treatment.setDrugSolvent(null);
+        treatment.setDrugSolventConcentration("50");
+        treatment.setSerum(conditionsPanelController.getSetupConditionsPanel().getSerumComboBox().getItemAt(0).toString());
         treatment.setSerumConcentration("10");
     }
 

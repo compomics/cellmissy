@@ -43,7 +43,7 @@ public class CellLineType implements Serializable {
     private Integer cellLineTypeid;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cellLineType")
     private Collection<CellLine> cellLineCollection;

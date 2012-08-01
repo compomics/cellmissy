@@ -16,7 +16,7 @@ import javax.swing.JPanel;
  */
 public class GuiUtils {
 
-    private static final Color[] availableColors = {Color.BLACK, Color.BLUE, Color.RED, Color.GREEN, Color.ORANGE, Color.MAGENTA, Color.CYAN, Color.YELLOW, Color.GRAY, Color.DARK_GRAY};
+    private static final Color[] availableColors = {Color.BLACK, Color.BLUE, Color.RED, Color.GREEN, Color.ORANGE, Color.MAGENTA, Color.CYAN, Color.YELLOW, new Color(0, 140, 140), new Color(125, 0, 130), Color.GRAY, Color.DARK_GRAY};
     
     private static final Color[] imagingTypeColors = {new Color(130, 70, 230), new Color(90, 200, 30)};
 
