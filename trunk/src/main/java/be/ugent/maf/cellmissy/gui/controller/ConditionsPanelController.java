@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.entity.AssayMedium;
 import be.ugent.maf.cellmissy.entity.CellLine;
 import be.ugent.maf.cellmissy.entity.CellLineType;
 import be.ugent.maf.cellmissy.entity.Ecm;
@@ -58,6 +59,8 @@ public class ConditionsPanelController {
     private ObservableList<String> mediumBindingList;
     private ObservableList<String> serumBindingList;
     private BindingGroup bindingGroup;
+    private Integer conditionIndex;
+    private Integer previousConditionIndex;
     //view
     private ConditionsPanel conditionsPanel;
     private SetupConditionsPanel setupConditionsPanel;
@@ -70,8 +73,6 @@ public class ConditionsPanelController {
     private CellLineService cellLineService;
     private ApplicationContext context;
     private GridBagConstraints gridBagConstraints;
-    private Integer conditionIndex;
-    private Integer previousConditionIndex;
 
     /**
      * constructor
@@ -146,7 +147,7 @@ public class ConditionsPanelController {
     }
 
     /**
-     * show a message through the main frame
+     * show a message through the main frame (CellMissy frame)
      */
     public void showMessage(String message, Integer messageType) {
         setupExperimentPanelController.showMessage(message, messageType);
@@ -164,7 +165,8 @@ public class ConditionsPanelController {
     /**
      * validate a Plate Condition
      * @param plateCondition
-     * @return 
+     * @return a list of strings
+     * to be concatenated in order to show message to the user
      */
     public List<String> validateCondition(PlateCondition plateCondition) {
         List<String> messages = new ArrayList<>();
@@ -278,13 +280,24 @@ public class ConditionsPanelController {
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine.growthMedium"), setupConditionsPanel.getGrowthMediumComboBox(), BeanProperty.create("selectedItem"), "growthmediumbinding");
         bindingGroup.addBinding(binding);
         //autobind serum
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine.serum"), setupConditionsPanel.getSerumComboBox(), BeanProperty.create("selectedItem"), "serumbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine.serum"), setupConditionsPanel.getSerumComboBox(), BeanProperty.create("selectedItem"), "celllineserumbinding");
         bindingGroup.addBinding(binding);
         //autobind serum concentration
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine.serumConcentration"), setupConditionsPanel.getSerumConcentrationTextField(), BeanProperty.create("text"), "serumconcentrationbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine.serumConcentration"), setupConditionsPanel.getSerumConcentrationTextField(), BeanProperty.create("text"), "celllineserumconcentrationbinding");
         bindingGroup.addBinding(binding);
         //autobind cell line type
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.cellLine.cellLineType"), setupConditionsPanel.getCellLineComboBox(), BeanProperty.create("selectedItem"), "celllinetypebinding");
+        bindingGroup.addBinding(binding);
+
+        //autobind assay medium
+        //autobind medium
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.medium"), treatmentPanelController.getTreatmentPanel().getAssayMediumComboBox(), BeanProperty.create("selectedItem"), "assaymediumbinding");
+        bindingGroup.addBinding(binding);
+        //autobind serum
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.serum"), treatmentPanelController.getTreatmentPanel().getSerumComboBox(), BeanProperty.create("selectedItem"), "assayserumbinding");
+        bindingGroup.addBinding(binding);
+        //autobind serum concentration
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.serumConcentration"), treatmentPanelController.getTreatmentPanel().getSerumConcentrationTextField(), BeanProperty.create("text"), "assayserumconcentrationbinding");
         bindingGroup.addBinding(binding);
 
         //autobind matrix dimension
@@ -403,7 +416,7 @@ public class ConditionsPanelController {
         cellLine.setSeedingTime("day -1");
         cellLine.setGrowthMedium(mediumBindingList.get(0));
         cellLine.setSerum(serumBindingList.get(0));
-        cellLine.setSerumConcentration("10");
+        cellLine.setSerumConcentration(10.0);
         firstCondition.setCellLine(cellLine);
         cellLine.setPlateCondition(firstCondition);
 
@@ -412,6 +425,14 @@ public class ConditionsPanelController {
 
         //set the migration assay: Oris platform
         firstCondition.setAssay(assayEcmPanelController.getAssay2DBindingList().get(0));
+
+        //create a new AssayMedium object and set its class members
+        AssayMedium assayMedium = new AssayMedium();
+        assayMedium.setMedium(treatmentPanelController.getTreatmentPanel().getAssayMediumComboBox().getItemAt(0).toString());
+        assayMedium.setSerum(serumBindingList.get(0));
+        assayMedium.setSerumConcentration(10.0);
+        firstCondition.setAssayMedium(assayMedium);
+        assayMedium.setPlateCondition(firstCondition);
 
         //create a new ECM object and set its class members
         Ecm ecm = new Ecm();
@@ -448,6 +469,10 @@ public class ConditionsPanelController {
         newCellLine.setPlateCondition(newCondition);
         //set matrix dimension (the same as the previous condition)
         newCondition.setMatrixDimension(plateConditionBindingList.get(previousConditionIndex).getMatrixDimension());
+        //set assay medium (the same as the previous condition)
+        AssayMedium assayMedium = new AssayMedium(plateConditionBindingList.get(previousConditionIndex).getAssayMedium().getMedium(), plateConditionBindingList.get(previousConditionIndex).getAssayMedium().getSerum(), plateConditionBindingList.get(previousConditionIndex).getAssayMedium().getSerumConcentration());
+        newCondition.setAssayMedium(assayMedium);
+        assayMedium.setPlateCondition(newCondition);
         //set assay and ecm (still default values)
         Ecm ecm = new Ecm();
         //need to set different values according to matrix dimension: 2D or 3D

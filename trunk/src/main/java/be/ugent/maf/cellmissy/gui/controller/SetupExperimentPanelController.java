@@ -26,7 +26,6 @@ import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import com.compomics.util.Export;
 import com.compomics.util.enumeration.ImageType;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -682,8 +681,11 @@ public class SetupExperimentPanelController {
             File setupFolder = experiment.getSetupFolder();
             //file to which export the panel
             File pdfFile = new File(setupFolder, experiment.getExperimentFolder().getName() + ".pdf");
+            //the same file is also exported as a jpeg file to be pasted into excel template for calculations
+            File imageFile = new File(setupFolder, experiment.getExperimentFolder().getName() + ".png");
             try {
                 Export.exportComponent(panel, panel.getBounds(), pdfFile, ImageType.PDF);
+                Export.exportComponent(panel, panel.getBounds(), imageFile, ImageType.PNG);
             } catch (IOException | TranscoderException ex) {
                 showMessage(ex.getMessage(), 1);
             }
