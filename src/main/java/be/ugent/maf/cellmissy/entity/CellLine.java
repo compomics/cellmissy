@@ -59,7 +59,7 @@ public class CellLine implements Serializable {
     @Column(name = "serum")
     private String serum;
     @Column(name = "serum_concentration")
-    private String serumConcentration;
+    private Double serumConcentration;
     @OneToOne(mappedBy = "cellLine")
     private PlateCondition plateCondition;
     @JoinColumn(name = "l_cell_line_typeid", referencedColumnName = "cell_line_typeid")
@@ -73,7 +73,7 @@ public class CellLine implements Serializable {
         this.cellLineid = cellLineid;
     }
 
-    public CellLine(String seedingTime, Integer seedingDensity, String growthMedium, String serumConcentration, CellLineType cellLineType, String serum) {
+    public CellLine(String seedingTime, Integer seedingDensity, String growthMedium, Double serumConcentration, CellLineType cellLineType, String serum) {
         this.seedingTime = seedingTime;
         this.seedingDensity = seedingDensity;
         this.growthMedium = growthMedium;
@@ -106,11 +106,11 @@ public class CellLine implements Serializable {
         this.serum = serum;
     }
 
-    public String getSerumConcentration() {
+    public Double getSerumConcentration() {
         return serumConcentration;
     }
 
-    public void setSerumConcentration(String serumConcentration) {
+    public void setSerumConcentration(Double serumConcentration) {
         this.serumConcentration = serumConcentration;
     }
 
@@ -173,6 +173,6 @@ public class CellLine implements Serializable {
     }
 
     public String toString() {
-        return cellLineType + ", " + seedingDensity + ", " + growthMedium + ", " + serumConcentration + "% " + serum;
+        return cellLineType + ", " + seedingDensity;
     }
 }

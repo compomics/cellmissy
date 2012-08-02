@@ -27,6 +27,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
@@ -126,7 +127,7 @@ public class SetupReport {
         JPanel reportPanel = new JPanel(new BorderLayout());
         //creta a JTable
         //column names
-        Object columnNames[] = {"Condition", "Cell Line (Type, Seeding Density, Growth Medium, %Serum)", "MD", "Assay", "ECM (density)", "Treatments (Concentration + Type, Assay Medium, %Serum)"};
+        Object columnNames[] = {"Condition", "Cell Line", "MD", "Assay", "ECM (density)", "Treatments (Concentration - Type)", "Assay (Medium, %Serum)"};
 
         //do not work with collection, create a plateCondition List
         plateConditionList = new ArrayList<>();
@@ -136,7 +137,7 @@ public class SetupReport {
         Object[][] data = new Object[plateConditionList.size()][];
         for (int i = 0; i < data.length; i++) {
             PlateCondition plateCondition = plateConditionList.get(i);
-            data[i] = new Object[]{plateCondition.getName(), plateCondition.getCellLine(), plateCondition.getMatrixDimension().getMatrixDimension(), plateCondition.getAssay().getAssayType(), plateCondition.getEcm(), plateCondition.getTreatmentCollection()};
+            data[i] = new Object[]{plateCondition.getName(), plateCondition.getCellLine(), plateCondition.getMatrixDimension(), plateCondition.getAssay().getAssayType(), plateCondition.getEcm(), plateCondition.getTreatmentCollection(), plateCondition.getAssayMedium()};
         }
 
         //create new table with the defined row data and column names 
@@ -152,19 +153,21 @@ public class SetupReport {
             //set Cell Renderer for each column of the table
             reportTable.getColumnModel().getColumn(i).setCellRenderer(new TableRenderer());
         }
-        reportTable.getColumnModel().getColumn(0).setMaxWidth(130);
-        reportTable.getColumnModel().getColumn(1).setMaxWidth(400);
+        reportTable.getColumnModel().getColumn(0).setMaxWidth(160);
+        reportTable.getColumnModel().getColumn(1).setMaxWidth(160);
         reportTable.getColumnModel().getColumn(2).setMaxWidth(60);
         reportTable.getColumnModel().getColumn(3).setMaxWidth(80);
-        reportTable.getColumnModel().getColumn(4).setMaxWidth(200);
-        reportTable.getColumnModel().getColumn(5).setMaxWidth(550);
+        reportTable.getColumnModel().getColumn(4).setMaxWidth(300);
+        reportTable.getColumnModel().getColumn(5).setMaxWidth(600);
+        reportTable.getColumnModel().getColumn(6).setMaxWidth(200);
 
-        reportTable.getColumnModel().getColumn(0).setPreferredWidth(130);
-        reportTable.getColumnModel().getColumn(1).setPreferredWidth(400);
+        reportTable.getColumnModel().getColumn(0).setPreferredWidth(160);
+        reportTable.getColumnModel().getColumn(1).setPreferredWidth(160);
         reportTable.getColumnModel().getColumn(2).setPreferredWidth(60);
         reportTable.getColumnModel().getColumn(3).setPreferredWidth(80);
-        reportTable.getColumnModel().getColumn(4).setPreferredWidth(200);
-        reportTable.getColumnModel().getColumn(5).setPreferredWidth(550);
+        reportTable.getColumnModel().getColumn(4).setPreferredWidth(300);
+        reportTable.getColumnModel().getColumn(5).setPreferredWidth(600);
+        reportTable.getColumnModel().getColumn(6).setPreferredWidth(200);
 
         //reportTable.setIntercellSpacing(new Dimension(5, 1));
         //disable  JTable's tooltips
@@ -233,6 +236,10 @@ public class SetupReport {
                 String substring = ((String) value).substring(length - 1);
                 int conditionIndex = Integer.parseInt(substring);
                 setIcon(new rectIcon(GuiUtils.getAvailableColors()[conditionIndex]));
+            }
+            if (column == 5) {
+                //show treatments in bold
+                setFont(new Font("Arial", Font.BOLD, 12));
             }
             setHorizontalAlignment(SwingConstants.LEFT);
             return this;

@@ -67,6 +67,9 @@ public class PlateCondition implements Serializable {
     @JoinColumn(name = "l_experimentid", referencedColumnName = "experimentid")
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private Experiment experiment;
+    @JoinColumn(name = "l_assay_mediumid", referencedColumnName = "assay_mediumid")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private AssayMedium assayMedium;
     @Transient
     private String name;
 
@@ -140,6 +143,14 @@ public class PlateCondition implements Serializable {
 
     public void setExperiment(Experiment experiment) {
         this.experiment = experiment;
+    }
+
+    public AssayMedium getAssayMedium() {
+        return assayMedium;
+    }
+
+    public void setAssayMedium(AssayMedium assayMedium) {
+        this.assayMedium = assayMedium;
     }
 
     public String getName() {
