@@ -339,7 +339,7 @@ public class LoadDataPlatePanelController {
 
             String string = "Imaging data was successfully processed";
             list.add(string);
-            string = wellService.getImagingTypes().size() + " imaging types and " + loadDataPlatePanel.getAlgoMap().keySet().size() + " algorithms were found";
+            string = wellService.getImagingTypes().size() + " imaging type(s) and " + loadDataPlatePanel.getAlgoMap().keySet().size() + " algorithm(s) were found";
             list.add(string);
             string = "Please select first well imaged with " + loadDataPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (loadDataPlatePanel.getImagingTypeList().indexOf(loadDataPlatePanel.getCurrentImagingType()) + 1) + "/" + loadDataPlatePanel.getImagingTypeList().size() + ")" + "\nExposure time: " + loadDataPlatePanel.getCurrentImagingType().getExposureTime() + " " + loadDataPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + loadDataPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
             list.add(string);

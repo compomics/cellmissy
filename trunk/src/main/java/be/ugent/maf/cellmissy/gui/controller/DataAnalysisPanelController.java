@@ -57,7 +57,6 @@ public class DataAnalysisPanelController {
 
         //init view
         dataAnalysisPanel = new DataAnalysisPanel();
-
         initExperimentDataPanel();
     }
 
