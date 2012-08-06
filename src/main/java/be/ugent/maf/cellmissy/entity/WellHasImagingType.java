@@ -34,7 +34,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "WellHasImagingType.findByWellHasImagingTypeid", query = "SELECT w FROM WellHasImagingType w WHERE w.wellHasImagingTypeid = :wellHasImagingTypeid"),
     @NamedQuery(name = "WellHasImagingType.findBySequenceNumber", query = "SELECT w FROM WellHasImagingType w WHERE w.sequenceNumber = :sequenceNumber"),
     @NamedQuery(name = "WellHasImagingType.findByXCoordinate", query = "SELECT w FROM WellHasImagingType w WHERE w.xCoordinate = :xCoordinate"),
-    @NamedQuery(name = "WellHasImagingType.findByYCoordinate", query = "SELECT w FROM WellHasImagingType w WHERE w.yCoordinate = :yCoordinate")})
+    @NamedQuery(name = "WellHasImagingType.findByYCoordinate", query = "SELECT w FROM WellHasImagingType w WHERE w.yCoordinate = :yCoordinate"),
+    @NamedQuery(name = "WellHasImagingType.findAlgosByWellId", query = "SELECT distinct w.algorithm FROM WellHasImagingType w WHERE w.well.wellid = :wellid")})
 public class WellHasImagingType implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -63,7 +64,7 @@ public class WellHasImagingType implements Serializable {
     @JoinColumn(name = "l_algorithmid", referencedColumnName = "algorithmid")
     @ManyToOne(cascade = CascadeType.ALL)
     private Algorithm algorithm;
-    
+
     public WellHasImagingType() {
     }
 
@@ -73,7 +74,7 @@ public class WellHasImagingType implements Serializable {
         this.yCoordinate = yCoordinate;
         this.imagingType = imagingType;
     }
-    
+
     public WellHasImagingType(Integer wellHasImagingTypeid) {
         this.wellHasImagingTypeid = wellHasImagingTypeid;
     }
