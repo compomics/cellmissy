@@ -11,5 +11,4 @@ import be.ugent.maf.cellmissy.entity.Well;
  * @author Paola
  */
 public interface WellRepository extends GenericRepository<Well, Long> {
-    
 }

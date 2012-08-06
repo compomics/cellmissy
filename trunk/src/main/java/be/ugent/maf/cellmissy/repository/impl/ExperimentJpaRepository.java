@@ -4,9 +4,14 @@
  */
 package be.ugent.maf.cellmissy.repository.impl;
 
+import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.repository.ExperimentRepository;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
@@ -50,7 +55,7 @@ public class ExperimentJpaRepository extends GenericJpaRepository<Experiment, Lo
     public List<Experiment> findExperimentsByProjectId(Integer projectId) {
         //annotated query
         Query byNameQuery = getEntityManager().createNamedQuery("Experiment.findExperimentsByProjectId");
-        byNameQuery.setParameter("projectid", projectId);       
+        byNameQuery.setParameter("projectid", projectId);
         List<Experiment> resultList = byNameQuery.getResultList();
         if (!resultList.isEmpty()) {
             return resultList;

@@ -11,6 +11,7 @@ import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
+import be.ugent.maf.cellmissy.repository.AlgorithmRepository;
 import be.ugent.maf.cellmissy.repository.WellRepository;
 import be.ugent.maf.cellmissy.service.CellMiaDataService;
 import be.ugent.maf.cellmissy.service.WellService;
@@ -19,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +35,8 @@ public class WellServiceImpl implements WellService {
 
     @Autowired
     private WellRepository wellRepository;
+    @Autowired
+    private AlgorithmRepository algorithmRepository;
     @Autowired
     private CellMiaDataService cellMiaDataService;
     private static final double offset = 0.5;
@@ -120,5 +124,17 @@ public class WellServiceImpl implements WellService {
     public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() {
         algoMap = cellMiaDataService.processCellMiaData();
         return algoMap;
+    }
+
+    @Override
+    public Well fetchEntity(Well well) {
+        well = wellRepository.save(well);
+        Hibernate.initialize(well.getWellHasImagingTypeCollection());
+        return well;
+    }
+
+    @Override
+    public List<Algorithm> findAlgosByWellId(Integer wellId) {
+        return algorithmRepository.findAlgosByWellId(wellId);
     }
 }

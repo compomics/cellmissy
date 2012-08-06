@@ -40,10 +40,24 @@ public interface WellService extends GenericService<Well, Long> {
      * @return a List of Imaging Types
      */
     List<ImagingType> getImagingTypes();
-    
+
     /**
      * This method gets a map between algorithms and samples (indexed by imaging types)
      * @return a map Algorithm, map imaging type--wellHasImagingType
      */
     Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap();
+
+    /**
+     * fetch a wellHasImagingType collection
+     * @param well
+     * @return a well entity with fetched wellHasImagingTypeCollection
+     */
+    Well fetchEntity(Well well);
+
+    /**
+     * find all algorithms for one wellId
+     * @param wellId
+     * @return 
+     */
+    List<Algorithm> findAlgosByWellId(Integer wellId);
 }
