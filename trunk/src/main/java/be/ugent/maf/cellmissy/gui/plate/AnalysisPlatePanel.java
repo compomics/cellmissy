@@ -1,0 +1,86 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package be.ugent.maf.cellmissy.gui.plate;
+
+import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.gui.GuiUtils;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author Paola Masuzzo
+ */
+public class AnalysisPlatePanel extends AbstractPlatePanel {
+
+    private Experiment experiment;
+
+    public void setExperiment(Experiment experiment) {
+        this.experiment = experiment;
+    }
+
+    /**
+     * setters and getters
+     *
+     */
+    @Override
+    protected void paintComponent(Graphics g) {
+
+        super.paintComponent(g);
+        if (experiment != null) {
+            showRect(g);
+        }
+    }
+
+    private void showRect(Graphics g) {
+
+        Graphics2D g2d = (Graphics2D) g;
+        setGraphics(g2d);
+        List<PlateCondition> plateConditions = new ArrayList<>();
+        plateConditions.addAll(experiment.getPlateConditionCollection());
+
+        for (PlateCondition plateCondition : plateConditions) {
+            for (Well well : plateCondition.getWellCollection()) {
+                for (WellGui wellGui : wellGuiList) {
+                    if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
+                        g2d.setColor(GuiUtils.getAvailableColors()[plateConditions.indexOf(plateCondition) + 1]);
+
+                        int x = (int) wellGui.getEllipsi().get(0).getX() - AnalysisPlatePanel.pixelsGrid / 2;
+                        int y = (int) wellGui.getEllipsi().get(0).getY() - AnalysisPlatePanel.pixelsGrid / 2;
+
+                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + AnalysisPlatePanel.pixelsGrid;
+                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + AnalysisPlatePanel.pixelsGrid;
+
+                        //create rectangle that sorrounds the wellGui and draw it
+                        Rectangle rect = new Rectangle(x, y, width, height);
+                        g2d.draw(rect);
+                        wellGui.setRectangle(rect);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void reDrawWells(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        setGraphics(g2d);
+        for (WellGui wellGui : wellGuiList) {
+            //get only the bigger default ellipse2D
+            Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
+            g2d.draw(defaultWell);
+            // draw the labels on the plate
+            if (wellGui.getRowNumber() == 1 || wellGui.getColumnNumber() == 1) {
+                drawPlateLabel(defaultWell, g2d, wellGui.getColumnNumber(), wellGui.getRowNumber());
+            }
+        }
+    }
+}

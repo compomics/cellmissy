@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "TrackPoint.findByCumulatedDistance", query = "SELECT t FROM TrackPoint t WHERE t.cumulatedDistance = :cumulatedDistance"),
     @NamedQuery(name = "TrackPoint.findByDistance", query = "SELECT t FROM TrackPoint t WHERE t.distance = :distance")})
 public class TrackPoint implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -207,5 +208,4 @@ public class TrackPoint implements Serializable {
     public String toString() {
         return "be.ugent.maf.cellmissy.entity.TrackPoint[ trackPointid=" + trackPointid + " ]";
     }
-    
 }

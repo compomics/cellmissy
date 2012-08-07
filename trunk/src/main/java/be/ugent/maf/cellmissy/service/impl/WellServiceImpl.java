@@ -8,10 +8,13 @@ import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
+import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.repository.AlgorithmRepository;
+import be.ugent.maf.cellmissy.repository.ImagingTypeRepository;
+import be.ugent.maf.cellmissy.repository.WellHasImagingTypeRepository;
 import be.ugent.maf.cellmissy.repository.WellRepository;
 import be.ugent.maf.cellmissy.service.CellMiaDataService;
 import be.ugent.maf.cellmissy.service.WellService;
@@ -37,6 +40,10 @@ public class WellServiceImpl implements WellService {
     private WellRepository wellRepository;
     @Autowired
     private AlgorithmRepository algorithmRepository;
+    @Autowired
+    private ImagingTypeRepository imagingTypeRepository;
+    @Autowired
+    private WellHasImagingTypeRepository wellHasImagingTypeRepository;
     @Autowired
     private CellMiaDataService cellMiaDataService;
     private static final double offset = 0.5;
@@ -127,14 +134,36 @@ public class WellServiceImpl implements WellService {
     }
 
     @Override
-    public Well fetchEntity(Well well) {
-        well = wellRepository.save(well);
-        Hibernate.initialize(well.getWellHasImagingTypeCollection());
-        return well;
+    public List<Algorithm> findAlgosByWellId(Integer wellId) {
+        return algorithmRepository.findAlgosByWellId(wellId);
     }
 
     @Override
-    public List<Algorithm> findAlgosByWellId(Integer wellId) {
-        return algorithmRepository.findAlgosByWellId(wellId);
+    public List<ImagingType> findImagingTypesByWellId(Integer wellId) {
+        return imagingTypeRepository.findImagingTypesByWellId(wellId);
+    }
+
+    @Override
+    public void fetchTimeSteps(Well well, Integer AlgorithmId, Integer ImagingTpeId) {
+        //well = wellRepository.save(well);
+        //for well, get the wellhasimagingtype for a certain algorithm and imaging type
+        WellHasImagingType wellHasImagingType = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
+        //fetch time step collection of that wellHasImagingType
+        Hibernate.initialize(wellHasImagingType.getTimeStepCollection());
+        //assing the fetched wellHasImagingType to the well
+        List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
+        wellHasImagingTypes.add(wellHasImagingType);
+        well.setWellHasImagingTypeCollection(wellHasImagingTypes);
+    }
+
+    /**
+     * get wellHasImagingTypes for some wells, for a certain algorithm and for a certain imagingType
+     * @param wellId
+     * @param AlgorithmId
+     * @param ImagingTpeId
+     * @return a list of WellHasImagingType
+     */
+    private WellHasImagingType findByWellIdAlgoIdAndImagingTypeId(Integer wellId, Integer AlgorithmId, Integer ImagingTpeId) {
+        return wellHasImagingTypeRepository.findByWellIdAlgoIdAndImagingTypeId(wellId, AlgorithmId, ImagingTpeId);
     }
 }

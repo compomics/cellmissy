@@ -7,39 +7,30 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
+import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.DataAnalysisPanel;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JList;
-import javax.swing.KeyStroke;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -57,8 +48,8 @@ public class DataAnalysisPanelController {
 
     //model
     private Experiment experiment;
-    private List<Algorithm> algorithmList;
     private ObservableList<Algorithm> algorithmBindingList;
+    private ObservableList<ImagingType> imagingTypeBindingList;
     private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
     private List<PlateCondition> plateConditionList;
@@ -120,11 +111,15 @@ public class DataAnalysisPanelController {
         bindingGroup.addBinding(jListBinding);
 
         //init algorithms combobox
-        algorithmList = new ArrayList<>();
-        algorithmBindingList = ObservableCollections.observableList(algorithmList);
+        algorithmBindingList = ObservableCollections.observableList(new ArrayList<Algorithm>());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, algorithmBindingList, dataAnalysisPanel.getAlgorithmComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
 
+        //init imagingtypes combo box
+        imagingTypeBindingList = ObservableCollections.observableList(new ArrayList<ImagingType>());
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, imagingTypeBindingList, dataAnalysisPanel.getImagingTypeComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+        //do the binding
         bindingGroup.bind();
 
         /**
@@ -164,18 +159,43 @@ public class DataAnalysisPanelController {
 
                 for (PlateCondition plateCondition : plateConditionList) {
                     for (Well well : plateCondition.getWellCollection()) {
+                        //show algorithms used for experiment
                         for (Algorithm algorithm : wellService.findAlgosByWellId(well.getWellid())) {
-                            if (!algorithmList.contains(algorithm)) {
-                                algorithmList.add(algorithm);
+                            if (!algorithmBindingList.contains(algorithm)) {
+                                algorithmBindingList.add(algorithm);
+                            }
+                        }
+                        //show imaging types used for experiment
+                        for (ImagingType imagingType : wellService.findImagingTypesByWellId(well.getWellid())) {
+                            if (!imagingTypeBindingList.contains(imagingType)) {
+                                imagingTypeBindingList.add(imagingType);
                             }
                         }
                     }
-
                 }
                 //set selected algorithm to the first of the list
                 dataAnalysisPanel.getAlgorithmComboBox().setSelectedIndex(0);
+                //set selected imaging types to the first of the list
+                dataAnalysisPanel.getImagingTypeComboBox().setSelectedIndex(0);
                 //show conditions for selected experiment
-                showConditionsList();
+                showConditions();
+                //show conditions in the plate panel
+                bulkCellAnalysisPanelController.getAnalysisPlatePanel().setExperiment(experiment);
+                bulkCellAnalysisPanelController.getAnalysisPlatePanel().repaint();
+            }
+        });
+
+        dataAnalysisPanel.getConditionsList().addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int locationToIndex = dataAnalysisPanel.getConditionsList().locationToIndex(e.getPoint());
+                for (Well well : plateConditionList.get(locationToIndex).getWellCollection()) {
+                    //fetch time step collection for the wellhasimagingtype of interest
+                    wellService.fetchTimeSteps(well, algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
+                }
+                updateTimeStepList(plateConditionList.get(locationToIndex));
+                bulkCellAnalysisPanelController.showTimeSteps();
             }
         });
 
@@ -184,7 +204,7 @@ public class DataAnalysisPanelController {
     /**
      * update conditions list for current experiment 
      */
-    private void showConditionsList() {
+    private void showConditions() {
 
         //set cell renderer for the List
         dataAnalysisPanel.getConditionsList().setCellRenderer(new ConditionsRenderer());
@@ -192,6 +212,24 @@ public class DataAnalysisPanelController {
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, plateConditionBindingList, dataAnalysisPanel.getConditionsList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
+    }
+
+    /**
+     * once a plateCondition is selected get all time steps for that condition 
+     * @param well (of the condition)
+     */
+    private void updateTimeStepList(PlateCondition plateCondition) {
+        if (!bulkCellAnalysisPanelController.getTimeStepBindingList().isEmpty()) {
+            bulkCellAnalysisPanelController.getTimeStepBindingList().clear();
+        }
+        for (Well well : plateCondition.getWellCollection()) {
+            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
+                Collection<TimeStep> timeStepCollection = wellHasImagingType.getTimeStepCollection();
+                for (TimeStep timeStep : timeStepCollection) {
+                    bulkCellAnalysisPanelController.getTimeStepBindingList().add(timeStep);
+                }
+            }
+        }
     }
 
     /**
@@ -210,7 +248,7 @@ public class DataAnalysisPanelController {
 
         //Overrides method from the DefaultListCellRenderer
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            super.getListCellRendererComponent(list, value, index, false, false);
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
             setIcon(new rectIcon(GuiUtils.getAvailableColors()[conditionIndex + 1]));
             return this;
