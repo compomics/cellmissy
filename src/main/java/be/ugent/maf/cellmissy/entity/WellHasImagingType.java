@@ -10,6 +10,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,7 +36,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "WellHasImagingType.findBySequenceNumber", query = "SELECT w FROM WellHasImagingType w WHERE w.sequenceNumber = :sequenceNumber"),
     @NamedQuery(name = "WellHasImagingType.findByXCoordinate", query = "SELECT w FROM WellHasImagingType w WHERE w.xCoordinate = :xCoordinate"),
     @NamedQuery(name = "WellHasImagingType.findByYCoordinate", query = "SELECT w FROM WellHasImagingType w WHERE w.yCoordinate = :yCoordinate"),
-    @NamedQuery(name = "WellHasImagingType.findAlgosByWellId", query = "SELECT distinct w.algorithm FROM WellHasImagingType w WHERE w.well.wellid = :wellid")})
+    @NamedQuery(name = "WellHasImagingType.findAlgosByWellId", query = "SELECT distinct w.algorithm FROM WellHasImagingType w WHERE w.well.wellid = :wellid"),
+    @NamedQuery(name = "WellHasImagingType.findImagingTypesByWellId", query = "SELECT distinct w.imagingType FROM WellHasImagingType w WHERE w.well.wellid = :wellid"),
+    @NamedQuery(name = "WellHasImagingType.findByWellIdAlgoIdAndImagingTypeId", query = "SELECT w FROM WellHasImagingType w WHERE w.well.wellid = :wellid AND w.algorithm.algorithmid = :algorithmid AND w.imagingType.imagingTypeid = :imagingTypeid")})
 public class WellHasImagingType implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -175,6 +178,6 @@ public class WellHasImagingType implements Serializable {
 
     @Override
     public String toString() {
-        return sequenceNumber + ", " + imagingType.getName();
+        return sequenceNumber + ", " + imagingType.getName() + ", " + timeStepCollection.size();
     }
 }
