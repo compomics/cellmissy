@@ -27,6 +27,10 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         return timeStepsTable;
     }
 
+    public JPanel getjPanel1() {
+        return jPanel1;
+    }
+
     /** Creates new form BulkCellAnalysisPanel */
     public BulkCellAnalysisPanel() {
         initComponents();
@@ -74,7 +78,7 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.6;
+        gridBagConstraints.weighty = 0.5;
         add(analysisPlateParentPanel, gridBagConstraints);
 
         timeStepsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -106,7 +110,7 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
             timeStepsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(timeStepsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -117,7 +121,7 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.4;
+        gridBagConstraints.weighty = 0.5;
         add(timeStepsPanel, gridBagConstraints);
 
         jPanel1.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -132,7 +136,7 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 334, Short.MAX_VALUE)
+            .addGap(0, 282, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();

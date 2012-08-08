@@ -152,6 +152,7 @@ public class DataAnalysisPanelController {
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                System.out.println("Experiment is SELECTED ===");
                 int locationToIndex = dataAnalysisPanel.getExperimentJList().locationToIndex(e.getPoint());
                 experiment = experimentBindingList.get(locationToIndex);
                 plateConditionList = new ArrayList<>();
@@ -189,6 +190,7 @@ public class DataAnalysisPanelController {
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                System.out.println("Condition is SELECTED===");
                 int locationToIndex = dataAnalysisPanel.getConditionsList().locationToIndex(e.getPoint());
                 for (Well well : plateConditionList.get(locationToIndex).getWellCollection()) {
                     //fetch time step collection for the wellhasimagingtype of interest
