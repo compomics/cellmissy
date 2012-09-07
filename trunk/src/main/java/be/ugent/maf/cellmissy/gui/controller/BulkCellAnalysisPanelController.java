@@ -4,21 +4,14 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeStep;
-import be.ugent.maf.cellmissy.gui.GuiUtils;
-import be.ugent.maf.cellmissy.gui.experiment.BulkCellAnalysisPanel;
-import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
-import be.ugent.maf.cellmissy.service.PlateService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
+import be.ugent.maf.cellmissy.entity.Well;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
+import javax.swing.table.AbstractTableModel;
 import org.apache.commons.math.stat.regression.SimpleRegression;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -28,7 +21,6 @@ import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.JTableBinding.ColumnBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -40,16 +32,13 @@ public class BulkCellAnalysisPanelController {
     private BindingGroup bindingGroup;
     private ObservableList<TimeStep> timeStepBindingList;
     private JTableBinding timeStepsTableBinding;
+    private JTable normalizedAreaTable;
+    private JTable deltaAreaTable;
     //view
-    private BulkCellAnalysisPanel bulkCellAnalysisPanel;
-    private AnalysisPlatePanel analysisPlatePanel;
     //parent controller
     private DataAnalysisPanelController dataAnalysisPanelController;
     //child controllers
     //services
-    private ApplicationContext context;
-    private PlateService plateService;
-    private GridBagConstraints gridBagConstraints;
 
     /**
      * constructor (parent controller)
@@ -58,59 +47,25 @@ public class BulkCellAnalysisPanelController {
     public BulkCellAnalysisPanelController(DataAnalysisPanelController dataAnalysisPanelController) {
         this.dataAnalysisPanelController = dataAnalysisPanelController;
 
-        //init views
-        analysisPlatePanel = new AnalysisPlatePanel();
-        bulkCellAnalysisPanel = new BulkCellAnalysisPanel();
-
         //init services
-        context = ApplicationContextProvider.getInstance().getApplicationContext();
-        plateService = (PlateService) context.getBean("plateService");
         bindingGroup = new BindingGroup();
-        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        
-        initPlatePanel();
         initBulkCellAnalysisPanel();
-        initPanel();
     }
 
     /**
      * getters and setters
      * @return 
      */
-    public BulkCellAnalysisPanel getBulkCellAnalysisPanel() {
-        return bulkCellAnalysisPanel;
-    }
-    
-    public AnalysisPlatePanel getAnalysisPlatePanel() {
-        return analysisPlatePanel;
-    }
-    
     public ObservableList<TimeStep> getTimeStepBindingList() {
         return timeStepBindingList;
     }
-
-    /**
-     * private methods and classes
-     */
-    private void initPlatePanel() {
-        //show as default a 96 plate format
-        Dimension parentDimension = bulkCellAnalysisPanel.getAnalysisPlateParentPanel().getSize();
-        
-        analysisPlatePanel.initPanel(plateService.findByFormat(96), parentDimension);
-        bulkCellAnalysisPanel.getAnalysisPlateParentPanel().add(analysisPlatePanel, gridBagConstraints);
-        bulkCellAnalysisPanel.getAnalysisPlateParentPanel().repaint();
-    }
     
-    private void initBulkCellAnalysisPanel() {
-
-        //init timeStepsBindingList
-        timeStepBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
+    public JTable getDeltaAreaTable() {
+        return deltaAreaTable;
     }
-    
-    private void initPanel() {
 
-        //add bulk cell analysis panel to the parent panel
-        dataAnalysisPanelController.getDataAnalysisPanel().getBulkCellAnalysisParentPanel().add(bulkCellAnalysisPanel, gridBagConstraints);
+    public JTable getNormalizedAreaTable() {
+        return normalizedAreaTable;
     }
 
     /**
@@ -120,135 +75,284 @@ public class BulkCellAnalysisPanelController {
      * show table with TimeSteps results from CellMia analysis
      */
     public void showTimeSteps() {
-
         //make the TimeStepsTable non selectable
-        bulkCellAnalysisPanel.getTimeStepsTable().setFocusable(false);
-        bulkCellAnalysisPanel.getTimeStepsTable().setRowSelectionAllowed(false);
+        dataAnalysisPanelController.getDataAnalysisPanel().getTimeStepsTable().setFocusable(false);
+        dataAnalysisPanelController.getDataAnalysisPanel().getTimeStepsTable().setRowSelectionAllowed(false);
         //table binding
-        timeStepsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, timeStepBindingList, bulkCellAnalysisPanel.getTimeStepsTable());
+        timeStepsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, timeStepBindingList, dataAnalysisPanelController.getDataAnalysisPanel().getTimeStepsTable());
         //add column bindings
         ColumnBinding columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.well.columnNumber}"));
         columnBinding.setColumnName("Column");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
-        
+
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.well.rowNumber}"));
         columnBinding.setColumnName("Row");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
-        
+
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${timeStepSequence}"));
         columnBinding.setColumnName("Sequence");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
 
-        //******************************//
-        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${timeStepSequence}"));
-        columnBinding.setColumnName("Time frame");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Integer.class);
-        columnBinding.setRenderer(new TimeFrameTableCellRenderer());
-        
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${area}"));
         columnBinding.setColumnName("Area");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
 
-        //******************************//
-        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${area}"));
-        columnBinding.setColumnName("Normalized Area");
+        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${centroidX}"));
+        columnBinding.setColumnName("Centroid_x");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new NormalizedAreaTableCellRenderer());
 
-//        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${centroidX}"));
-//        columnBinding.setColumnName("Centroid_x");
-//        columnBinding.setEditable(false);
-//        columnBinding.setColumnClass(Double.class);
-//
-//        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${centroidY}"));
-//        columnBinding.setColumnName("Centroid_y");
-//        columnBinding.setEditable(false);
-//        columnBinding.setColumnClass(Double.class);
-//
-//        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${eccentricity}"));
-//        columnBinding.setColumnName("Eccentricity");
-//        columnBinding.setEditable(false);
-//        columnBinding.setColumnClass(Double.class);
-//
-//        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${majorAxis}"));
-//        columnBinding.setColumnName("Major Axis");
-//        columnBinding.setEditable(false);
-//        columnBinding.setColumnClass(Double.class);
-//
-//        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${minorAxis}"));
-//        columnBinding.setColumnName("Minor Axis");
-//        columnBinding.setEditable(false);
-//        columnBinding.setColumnClass(Double.class);
+        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${centroidY}"));
+        columnBinding.setColumnName("Centroid_y");
+        columnBinding.setEditable(false);
+        columnBinding.setColumnClass(Double.class);
+
+        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${eccentricity}"));
+        columnBinding.setColumnName("Eccentricity");
+        columnBinding.setEditable(false);
+        columnBinding.setColumnClass(Double.class);
+
+        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${majorAxis}"));
+        columnBinding.setColumnName("Major Axis");
+        columnBinding.setEditable(false);
+        columnBinding.setColumnClass(Double.class);
+
+        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${minorAxis}"));
+        columnBinding.setColumnName("Minor Axis");
+        columnBinding.setEditable(false);
+        columnBinding.setColumnClass(Double.class);
 
         bindingGroup.addBinding(timeStepsTableBinding);
         bindingGroup.bind();
-        computeAreaRegression();
     }
 
     /**
-     * TableCellRenderer for Time Frame Column
+     * 
      */
-    private class TimeFrameTableCellRenderer extends DefaultTableCellRenderer {
-        
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            super.getTableCellRendererComponent(table, value, false, false, row, column);
-            //set Value
-            int sequence = (Integer) value;
-            setValue(sequence * dataAnalysisPanelController.getExperiment().getExperimentInterval());
-
-            //set Right Alignment
-            setHorizontalAlignment(SwingConstants.RIGHT);
-            return this;
-        }
+    public void setDeltaAreaTableData(PlateCondition plateCondition) {
+        //set model for the delta area Table
+        //NOTE that each time a new condition is selected, new data is passed to the model
+        deltaAreaTable.setModel(new DeltaAreaTableModel(plateCondition));
     }
 
     /**
-     * TableCellRenderer for Normalized Area Column
+     * for each replicate (well) of a certain condition, show normalized area values in a table, close to time frames
      */
-    private class NormalizedAreaTableCellRenderer extends DefaultTableCellRenderer {
-        
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            super.getTableCellRendererComponent(table, value, false, false, row, column);
+    public void setNormalizedAreaTableData(PlateCondition plateCondition) {
+        //set Model for the Normalized AreaTable
+        //NOTE that each time a new condition is selected, new data is passed to the model
+        normalizedAreaTable.setModel(new NormalizedAreaTableModel(plateCondition));
+    }
 
-            //set Value: area of first time frame set to 0
-            double area = (Double) value;
-            Double timeFrames = dataAnalysisPanelController.getExperiment().getTimeFrames();
-            int timeFrameInt = timeFrames.intValue();
-            if (area != 0) {
-                double normalizedArea = area - timeStepBindingList.get((row / timeFrameInt) * timeFrameInt).getArea();
-                setValue(roundTwoDecimals(normalizedArea));
+    /**
+     * private methods and classes
+     */
+    /**
+     * compute Normalized Area 
+     * @param data
+     * @return a 2D array of double values
+     */
+    private Double[][] computeNormalizedArea(Double[][] data) {
+        int timeFrames = dataAnalysisPanelController.getExperiment().getTimeFrames();
+
+        int counter = 0;
+        for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
+            if (timeStepBindingList.get(columnIndex).getArea() != 0) {
+                for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
+                    int index = (counter / timeFrames) * timeFrames;
+                    if (timeStepBindingList.get(counter).getArea() - timeStepBindingList.get(index).getArea() >= 0) {
+                        data[rowIndex][columnIndex] = roundTwoDecimals(timeStepBindingList.get(counter).getArea() - timeStepBindingList.get(index).getArea());
+                    } else {
+                        data[rowIndex][columnIndex] = null;
+                    }
+                    counter++;
+                }
             }
+        }
+        return data;
+    }
 
-            //set Right Alignment
-            setHorizontalAlignment(SwingConstants.RIGHT);
-            return this;
+    /**
+     * compute Delta Area values (increments from one time frame to the following one)
+     * @param data
+     * @return a 2D array of double values
+     */
+    private Double[][] computeDeltaArea(Double[][] data) {
+        int counter = 0;
+        for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
+            for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
+                if (timeStepBindingList.get(counter).getTimeStepSequence() != 0) {
+                    data[rowIndex][columnIndex] = roundTwoDecimals(timeStepBindingList.get(counter).getArea() - timeStepBindingList.get(counter - 1).getArea());
+                }
+                counter++;
+            }
+        }
+        return data;
+    }
+
+    /**
+     * init main panel
+     */
+    private void initBulkCellAnalysisPanel() {
+        //init Tables
+        normalizedAreaTable = new JTable();
+        deltaAreaTable = new JTable();
+        //init timeStepsBindingList
+        timeStepBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
+    }
+
+    /**
+     * TableModel for the NormalizedAreaTable
+     */
+    private class NormalizedAreaTableModel extends AbstractTableModel {
+
+        private PlateCondition plateCondition;
+        private String columnNames[];
+        private Double[][] data;
+
+        public NormalizedAreaTableModel(PlateCondition plateCondition) {
+            this.plateCondition = plateCondition;
+            populateTable();
+        }
+
+        @Override
+        public int getRowCount() {
+            return data.length;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            return data[rowIndex][columnIndex];
+        }
+
+        @Override
+        public String getColumnName(int col) {
+            return columnNames[col];
+        }
+
+        //fill in table with data
+        private void populateTable() {
+            List<Well> wellList = new ArrayList<>();
+            wellList.addAll(plateCondition.getWellCollection());
+            //the table needs one column for the time frames + one column for each replicate (each well)
+            columnNames = new String[wellList.size() + 1];
+            //first column name: Time Frames
+            columnNames[0] = "time frame";
+            //other columns names: coordinates of the well
+            for (int i = 1; i < columnNames.length; i++) {
+                columnNames[i] = "" + wellList.get(i - 1);
+            }
+            //2D array of double (dimension: time frames * wellList +1)
+            data = new Double[dataAnalysisPanelController.getExperiment().getTimeFrames()][plateCondition.getWellCollection().size() + 1];
+
+            //copy the content of computeNormalizedArea array into data array
+            for (int i = 0; i < data.length; i++) {
+                //fill in first column
+                data[i][0] = computeTimeFrames()[i];
+                //fill in all the other columns
+                //arraycopy(Object src,  int  srcPos, Object dest, int destPos, int length)
+                System.arraycopy(computeNormalizedArea(data)[i], 1, data[i], 1, data[i].length - 1);
+            }
         }
     }
-    
-    private SimpleRegression computeAreaRegression() {
-        ColumnBinding columnBinding = timeStepsTableBinding.getColumnBinding(5);
-        
-        SimpleRegression areaRegression = new SimpleRegression();
-        TableModel model = bulkCellAnalysisPanel.getTimeStepsTable().getModel();
-        
-        int nRow = model.getRowCount();
-        
-        Object[] normalizedAreaData = new Object[nRow];
-        
-        for (int i = 0; i < nRow; i++) {
-                normalizedAreaData[i] = model.getValueAt(i, 5);
+
+    /**
+     * Table Model for the DeltaArea JTable
+     */
+    private class DeltaAreaTableModel extends AbstractTableModel {
+
+        private PlateCondition plateCondition;
+        private String columnNames[];
+        private Double[][] data;
+
+        public DeltaAreaTableModel(PlateCondition plateCondition) {
+            this.plateCondition = plateCondition;
+            populateTable();
         }
-        
-        
-        //areaRegression.addData(data);
+
+        @Override
+        public int getRowCount() {
+            return data.length;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            return data[rowIndex][columnIndex];
+        }
+
+        @Override
+        public String getColumnName(int col) {
+            return columnNames[col];
+        }
+        //fill in table with data
+
+        private void populateTable() {
+            List<Well> wellList = new ArrayList<>();
+            wellList.addAll(plateCondition.getWellCollection());
+            //the table needs one column for the time frames + one column for each replicate (each well)
+            columnNames = new String[wellList.size() + 1];
+            //first column name: Time Frames
+            columnNames[0] = "time frame";
+            //other columns names: coordinates of the well
+            for (int i = 1; i < columnNames.length; i++) {
+                columnNames[i] = "" + wellList.get(i - 1);
+            }
+            //2D array of double (dimension: time frames * wellList +1)
+            data = new Double[dataAnalysisPanelController.getExperiment().getTimeFrames()][plateCondition.getWellCollection().size() + 1];
+
+            //copy the content of computeNormalizedArea array into data array
+            for (int i = 0; i < data.length; i++) {
+                //fill in first column
+                data[i][0] = computeTimeFrames()[i];
+                System.arraycopy(computeDeltaArea(data)[i], 1, data[i], 1, data[i].length - 1);
+            }
+        }
+    }
+
+    /**
+     * compute time frames from step sequence
+     * @return an array of integers
+     */
+    private double[] computeTimeFrames() {
+
+        double[] timeFrames;
+        timeFrames = new double[dataAnalysisPanelController.getExperiment().getTimeFrames()];
+        for (int i = 0; i < dataAnalysisPanelController.getExperiment().getTimeFrames(); i++) {
+            Double timeFrame = timeStepBindingList.get(i).getTimeStepSequence() * dataAnalysisPanelController.getExperiment().getExperimentInterval();
+            int intValue = timeFrame.intValue();
+            timeFrames[i] = intValue;
+        }
+        return timeFrames;
+    }
+
+    /**
+     * compute Area Regression: 
+     * @return a SimpleRegression Class : Compute summary statistics for a list of double values
+     */
+    private SimpleRegression computeAreaRegression() {
+
+        SimpleRegression areaRegression = new SimpleRegression();
+
+        double[][] data = new double[dataAnalysisPanelController.getExperiment().getTimeFrames()][];
+        for (int i = 0; i < data.length; i++) {
+            //data[columnIndex] = computeNormalizedArea();
+        }
+        areaRegression.addData(data);
         return areaRegression;
-        
     }
 
     //round double to 2 decimals

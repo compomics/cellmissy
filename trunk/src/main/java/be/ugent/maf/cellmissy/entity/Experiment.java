@@ -78,7 +78,7 @@ public class Experiment implements Serializable {
     @Column(name = "experiment_interval")
     private Double experimentInterval;
     @Column(name = "time_frames")
-    private Double timeFrames;
+    private Integer timeFrames;
     @Basic(optional = false)
     @Column(name = "experiment_status")
     @Enumerated(EnumType.STRING)
@@ -172,11 +172,11 @@ public class Experiment implements Serializable {
         this.experimentInterval = experimentInterval;
     }
 
-    public Double getTimeFrames() {
+    public Integer getTimeFrames() {
         return timeFrames;
     }
 
-    public void setTimeFrames(Double timeFrames) {
+    public void setTimeFrames(Integer timeFrames) {
         this.timeFrames = timeFrames;
     }
 

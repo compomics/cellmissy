@@ -130,7 +130,7 @@ public class Well implements Serializable {
 
     @Override
     public String toString() {
-        return "(" + rowNumber + ", " + columnNumber + ")";
+        return "(" + columnNumber + ", " + rowNumber + ")";
     }
     
 }
