@@ -10,7 +10,6 @@ import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -27,7 +26,6 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**

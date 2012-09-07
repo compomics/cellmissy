@@ -15,22 +15,31 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.DataAnalysisPanel;
+import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.service.ExperimentService;
+import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -56,6 +65,7 @@ public class DataAnalysisPanelController {
     private BindingGroup bindingGroup;
     //view
     private DataAnalysisPanel dataAnalysisPanel;
+    private AnalysisPlatePanel analysisPlatePanel;
     //parent controller
     private CellMissyController cellMissyController;
     //child controllers
@@ -64,6 +74,8 @@ public class DataAnalysisPanelController {
     private ExperimentService experimentService;
     private ProjectService projectService;
     private WellService wellService;
+    private PlateService plateService;
+    private GridBagConstraints gridBagConstraints;
     private ApplicationContext context;
 
     /**
@@ -75,16 +87,20 @@ public class DataAnalysisPanelController {
 
         //init view
         dataAnalysisPanel = new DataAnalysisPanel();
+        analysisPlatePanel = new AnalysisPlatePanel();
         //init child controllers
         bulkCellAnalysisPanelController = new BulkCellAnalysisPanelController(this);
-        //init services
+        //init servicesBulkCellAnalysisPanelController
         context = ApplicationContextProvider.getInstance().getApplicationContext();
         experimentService = (ExperimentService) context.getBean("experimentService");
         projectService = (ProjectService) context.getBean("projectService");
         wellService = (WellService) context.getBean("wellService");
+        plateService = (PlateService) context.getBean("plateService");
 
         bindingGroup = new BindingGroup();
+        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
+        initPlatePanel();
         initExperimentDataPanel();
     }
 
@@ -100,8 +116,27 @@ public class DataAnalysisPanelController {
         return experiment;
     }
 
+    public AnalysisPlatePanel getAnalysisPlatePanel() {
+        return analysisPlatePanel;
+    }
+
     /**
      * private methods and classes
+     */
+    /**
+     * init plate panel view
+     */
+    private void initPlatePanel() {
+        //show as default a 96 plate format
+        Dimension parentDimension = dataAnalysisPanel.getAnalysisPlateParentPanel().getSize();
+
+        analysisPlatePanel.initPanel(plateService.findByFormat(96), parentDimension);
+        dataAnalysisPanel.getAnalysisPlateParentPanel().add(analysisPlatePanel, gridBagConstraints);
+        dataAnalysisPanel.getAnalysisPlateParentPanel().repaint();
+    }
+
+    /**
+     * init left panel: projectList, experimentList, Algorithm and imaging type Combo box, plateConditions list
      */
     private void initExperimentDataPanel() {
 
@@ -131,6 +166,8 @@ public class DataAnalysisPanelController {
             @Override
             public void mouseClicked(MouseEvent e) {
 
+                System.out.println("PROJECT IS SELECTED ===");
+
                 //init experimentJList
                 int locationToIndex = dataAnalysisPanel.getProjectJList().locationToIndex(e.getPoint());
                 if (experimentService.findExperimentsByProjectIdAndStatus(projectBindingList.get(locationToIndex).getProjectid(), ExperimentStatus.PERFORMED) != null) {
@@ -147,7 +184,8 @@ public class DataAnalysisPanelController {
             }
         });
 
-        //when an experiment is selected, show algorithms used for that experiment
+        //when an experiment is selected, show algorithms and imaging types used for that experiment
+        //show also conditions in the Jlist behind and plate view according to the conditions
         dataAnalysisPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
 
             @Override
@@ -179,25 +217,73 @@ public class DataAnalysisPanelController {
                 //set selected imaging types to the first of the list
                 dataAnalysisPanel.getImagingTypeComboBox().setSelectedIndex(0);
                 //show conditions for selected experiment
+                //show conditions in the JList
                 showConditions();
-                //show conditions in the plate panel
-                bulkCellAnalysisPanelController.getAnalysisPlatePanel().setExperiment(experiment);
-                bulkCellAnalysisPanelController.getAnalysisPlatePanel().repaint();
+                //show conditions in the plate panel (with rectangles and colors)
+                analysisPlatePanel.setExperiment(experiment);
+                analysisPlatePanel.repaint();
             }
         });
 
+        //when a certain condition is selected, fetch time steps for each well of the condition
         dataAnalysisPanel.getConditionsList().addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("Condition is SELECTED===");
                 int locationToIndex = dataAnalysisPanel.getConditionsList().locationToIndex(e.getPoint());
-                for (Well well : plateConditionList.get(locationToIndex).getWellCollection()) {
+                //create a list of wells for each condition (from a collection)
+                List<Well> wellList = new ArrayList<>();
+                wellList.addAll(plateConditionList.get(locationToIndex).getWellCollection());
+                //fetch time steps for each well
+                for (int i = 0; i < wellList.size(); i++) {
                     //fetch time step collection for the wellhasimagingtype of interest
-                    wellService.fetchTimeSteps(well, algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
+                    wellService.fetchTimeSteps(wellList.get(i), algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
                 }
+                //update timeStep List for current selected condition
                 updateTimeStepList(plateConditionList.get(locationToIndex));
+                //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO VIEW CELLMIA RESULTS
                 bulkCellAnalysisPanelController.showTimeSteps();
+                //for current selected condition show delta area values with %increments (for JUMP detection)
+                bulkCellAnalysisPanelController.setDeltaAreaTableData(plateConditionList.get(locationToIndex));
+                //for current selected condition show normalized area values together with time frames
+                bulkCellAnalysisPanelController.setNormalizedAreaTableData(plateConditionList.get(locationToIndex));
+            }
+        });
+
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(dataAnalysisPanel.getJumpCorrectionButton());
+        buttonGroup.add(dataAnalysisPanel.getNormalizeAreaButton());
+
+        /**
+         * Correct for Jumps
+         */
+        dataAnalysisPanel.getJumpCorrectionButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //init table for delta area values              
+                JScrollPane scrollPane = new JScrollPane(bulkCellAnalysisPanelController.getDeltaAreaTable());
+                bulkCellAnalysisPanelController.getDeltaAreaTable().setFillsViewportHeight(true);
+                dataAnalysisPanel.getTablesPanel().remove(scrollPane);
+                dataAnalysisPanel.getTablesPanel().add(scrollPane);
+                dataAnalysisPanel.getTablesPanel().revalidate();
+            }
+        });
+
+        /**
+         * Calculate Normalized Area
+         */
+        dataAnalysisPanel.getNormalizeAreaButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //init table for normalized area values
+                JScrollPane scrollPane = new JScrollPane(bulkCellAnalysisPanelController.getNormalizedAreaTable());
+                bulkCellAnalysisPanelController.getNormalizedAreaTable().setFillsViewportHeight(true);
+                dataAnalysisPanel.getTablesPanel().remove(scrollPane);
+                dataAnalysisPanel.getTablesPanel().add(scrollPane);
+                dataAnalysisPanel.getTablesPanel().revalidate();
             }
         });
 
@@ -221,6 +307,7 @@ public class DataAnalysisPanelController {
      * @param well (of the condition)
      */
     private void updateTimeStepList(PlateCondition plateCondition) {
+        //clear the actual timeStepList
         if (!bulkCellAnalysisPanelController.getTimeStepBindingList().isEmpty()) {
             bulkCellAnalysisPanelController.getTimeStepBindingList().clear();
         }

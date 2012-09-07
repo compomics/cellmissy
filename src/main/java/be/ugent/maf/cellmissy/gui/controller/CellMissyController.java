@@ -10,8 +10,10 @@ import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
+import java.util.logging.Level;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import org.jdesktop.beansbinding.ELProperty;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -28,7 +30,6 @@ public class CellMissyController {
     private SetupExperimentPanelController setupExperimentPanelController;
     private LoadExperimentPanelController loadExperimentPanelController;
     private DataAnalysisPanelController dataAnalysisPanelController;
-    
     //application context
     ApplicationContext context;
     private GridBagConstraints gridBagConstraints;
@@ -36,12 +37,15 @@ public class CellMissyController {
     public CellMissyController(CellMissyFrame cellMissyFrame) {
         this.cellMissyFrame = cellMissyFrame;
 
+        //workaround for betterbeansbinding logging issue
+        org.jdesktop.beansbinding.util.logging.Logger.getLogger(ELProperty.class.getName()).setLevel(Level.SEVERE);
+
         //init child controllers
         userPanelController = new UserPanelController(this);
         setupExperimentPanelController = new SetupExperimentPanelController(this);
         loadExperimentPanelController = new LoadExperimentPanelController(this);
         dataAnalysisPanelController = new DataAnalysisPanelController(this);
-        
+
         //load application context
         context = ApplicationContextProvider.getInstance().getApplicationContext();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
@@ -66,8 +70,8 @@ public class CellMissyController {
     public void updateInfoLabel(JLabel infoLabel, String message) {
         infoLabel.setText(message);
     }
-    
-    public void setCursor(Cursor cursor){
+
+    public void setCursor(Cursor cursor) {
         cellMissyFrame.setCursor(cursor);
     }
 
@@ -92,10 +96,10 @@ public class CellMissyController {
     public boolean validateExperimentInfo() {
         String message = "";
         boolean isValid = false;
-        if(setupExperimentPanelController.validateExperimentInfo().isEmpty()){
+        if (setupExperimentPanelController.validateExperimentInfo().isEmpty()) {
             isValid = true;
         } else {
-            for(String string : setupExperimentPanelController.validateExperimentInfo()){
+            for (String string : setupExperimentPanelController.validateExperimentInfo()) {
                 message += string + "\n";
             }
             showMessage(message, 2);
