@@ -7,11 +7,15 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.gui.experiment.DataTableModel;
+import java.awt.Component;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import org.apache.commons.math.stat.regression.SimpleRegression;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -32,8 +36,7 @@ public class BulkCellAnalysisPanelController {
     private BindingGroup bindingGroup;
     private ObservableList<TimeStep> timeStepBindingList;
     private JTableBinding timeStepsTableBinding;
-    private JTable normalizedAreaTable;
-    private JTable deltaAreaTable;
+    private JTable dataTable;
     //view
     //parent controller
     private DataAnalysisPanelController dataAnalysisPanelController;
@@ -54,18 +57,14 @@ public class BulkCellAnalysisPanelController {
 
     /**
      * getters and setters
-     * @return 
+     * 
      */
     public ObservableList<TimeStep> getTimeStepBindingList() {
         return timeStepBindingList;
     }
-    
-    public JTable getDeltaAreaTable() {
-        return deltaAreaTable;
-    }
 
-    public JTable getNormalizedAreaTable() {
-        return normalizedAreaTable;
+    public JTable getDataTable() {
+        return dataTable;
     }
 
     /**
@@ -73,6 +72,7 @@ public class BulkCellAnalysisPanelController {
      */
     /**
      * show table with TimeSteps results from CellMia analysis
+     * this is populating the JTable in the ResultsImporter Panel
      */
     public void showTimeSteps() {
         //make the TimeStepsTable non selectable
@@ -131,28 +131,47 @@ public class BulkCellAnalysisPanelController {
     }
 
     /**
-     * 
+     * for each replicate (well) of a certain selected condition, show delta area values, close to time frames
+     * @param plateCondition 
      */
     public void setDeltaAreaTableData(PlateCondition plateCondition) {
         //set model for the delta area Table
         //NOTE that each time a new condition is selected, new data is passed to the model
-        deltaAreaTable.setModel(new DeltaAreaTableModel(plateCondition));
+        dataTable.setModel(new DeltaAreaTableModel(plateCondition, dataAnalysisPanelController.getExperiment().getTimeFrames()));
     }
 
     /**
-     * for each replicate (well) of a certain condition, show normalized area values in a table, close to time frames
+     * for each replicate (well) of a certain selected condition, show increase in Area (in %), close to time frames
+     * @param plateCondition 
+     */
+    public void setAreaIncreaseTableData(PlateCondition plateCondition) {
+        //set model for the delta area Table
+        //NOTE that each time a new condition is selected, new data is passed to the model
+        dataTable.setModel(new AreaIncreaseTableModel(plateCondition, dataAnalysisPanelController.getExperiment().getTimeFrames()));
+
+        //starting from second column set Renderer for cells
+        //show JUMP or OK strings
+        for (int i = 1; i < dataTable.getColumnCount(); i++) {
+            //set Cell Renderer for each column of the table
+            dataTable.getColumnModel().getColumn(i).setCellRenderer(new AreaIncreaseRenderer(Double.parseDouble(dataAnalysisPanelController.getDataAnalysisPanel().getJumpThresholdTextField().getText())));
+        }
+    }
+
+    /**
+     * for each replicate (well) of a certain selected condition, show normalized area values, close to time frames
+     * @param plateCondition 
      */
     public void setNormalizedAreaTableData(PlateCondition plateCondition) {
         //set Model for the Normalized AreaTable
         //NOTE that each time a new condition is selected, new data is passed to the model
-        normalizedAreaTable.setModel(new NormalizedAreaTableModel(plateCondition));
+        dataTable.setModel(new NormalizedAreaTableModel(plateCondition, dataAnalysisPanelController.getExperiment().getTimeFrames()));
     }
 
     /**
      * private methods and classes
      */
     /**
-     * compute Normalized Area 
+     * compute Normalized Area ==== TO BE REWRITTEN WITH NEW ARRAYS!!!
      * @param data
      * @return a 2D array of double values
      */
@@ -185,7 +204,7 @@ public class BulkCellAnalysisPanelController {
         int counter = 0;
         for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-                if (timeStepBindingList.get(counter).getTimeStepSequence() != 0) {
+                if (timeStepBindingList.get(counter).getTimeStepSequence() != 0 && timeStepBindingList.get(counter).getArea() != 0) {
                     data[rowIndex][columnIndex] = roundTwoDecimals(timeStepBindingList.get(counter).getArea() - timeStepBindingList.get(counter - 1).getArea());
                 }
                 counter++;
@@ -194,133 +213,22 @@ public class BulkCellAnalysisPanelController {
         return data;
     }
 
-    /**
-     * init main panel
-     */
-    private void initBulkCellAnalysisPanel() {
-        //init Tables
-        normalizedAreaTable = new JTable();
-        deltaAreaTable = new JTable();
-        //init timeStepsBindingList
-        timeStepBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
-    }
-
-    /**
-     * TableModel for the NormalizedAreaTable
-     */
-    private class NormalizedAreaTableModel extends AbstractTableModel {
-
-        private PlateCondition plateCondition;
-        private String columnNames[];
-        private Double[][] data;
-
-        public NormalizedAreaTableModel(PlateCondition plateCondition) {
-            this.plateCondition = plateCondition;
-            populateTable();
-        }
-
-        @Override
-        public int getRowCount() {
-            return data.length;
-        }
-
-        @Override
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            return data[rowIndex][columnIndex];
-        }
-
-        @Override
-        public String getColumnName(int col) {
-            return columnNames[col];
-        }
-
-        //fill in table with data
-        private void populateTable() {
-            List<Well> wellList = new ArrayList<>();
-            wellList.addAll(plateCondition.getWellCollection());
-            //the table needs one column for the time frames + one column for each replicate (each well)
-            columnNames = new String[wellList.size() + 1];
-            //first column name: Time Frames
-            columnNames[0] = "time frame";
-            //other columns names: coordinates of the well
-            for (int i = 1; i < columnNames.length; i++) {
-                columnNames[i] = "" + wellList.get(i - 1);
-            }
-            //2D array of double (dimension: time frames * wellList +1)
-            data = new Double[dataAnalysisPanelController.getExperiment().getTimeFrames()][plateCondition.getWellCollection().size() + 1];
-
-            //copy the content of computeNormalizedArea array into data array
-            for (int i = 0; i < data.length; i++) {
-                //fill in first column
-                data[i][0] = computeTimeFrames()[i];
-                //fill in all the other columns
-                //arraycopy(Object src,  int  srcPos, Object dest, int destPos, int length)
-                System.arraycopy(computeNormalizedArea(data)[i], 1, data[i], 1, data[i].length - 1);
+    private Double[][] computeAreaIncrease(Double[][] data) {
+        int counter = 0;
+        Double[][] newArray = new Double[dataAnalysisPanelController.getExperiment().getTimeFrames()][dataAnalysisPanelController.getSelectedCondition().getWellCollection().size() + 1];
+        Double[][] computeDeltaArea = computeDeltaArea(newArray);
+        for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
+            for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
+                if (timeStepBindingList.get(counter).getTimeStepSequence() != 0) {
+                    Double deltaArea = computeDeltaArea[rowIndex][columnIndex];
+                    if (deltaArea != null) {
+                        data[rowIndex][columnIndex] = roundTwoDecimals(deltaArea / timeStepBindingList.get(counter - 1).getArea() * 100);
+                    }
+                }
+                counter++;
             }
         }
-    }
-
-    /**
-     * Table Model for the DeltaArea JTable
-     */
-    private class DeltaAreaTableModel extends AbstractTableModel {
-
-        private PlateCondition plateCondition;
-        private String columnNames[];
-        private Double[][] data;
-
-        public DeltaAreaTableModel(PlateCondition plateCondition) {
-            this.plateCondition = plateCondition;
-            populateTable();
-        }
-
-        @Override
-        public int getRowCount() {
-            return data.length;
-        }
-
-        @Override
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            return data[rowIndex][columnIndex];
-        }
-
-        @Override
-        public String getColumnName(int col) {
-            return columnNames[col];
-        }
-        //fill in table with data
-
-        private void populateTable() {
-            List<Well> wellList = new ArrayList<>();
-            wellList.addAll(plateCondition.getWellCollection());
-            //the table needs one column for the time frames + one column for each replicate (each well)
-            columnNames = new String[wellList.size() + 1];
-            //first column name: Time Frames
-            columnNames[0] = "time frame";
-            //other columns names: coordinates of the well
-            for (int i = 1; i < columnNames.length; i++) {
-                columnNames[i] = "" + wellList.get(i - 1);
-            }
-            //2D array of double (dimension: time frames * wellList +1)
-            data = new Double[dataAnalysisPanelController.getExperiment().getTimeFrames()][plateCondition.getWellCollection().size() + 1];
-
-            //copy the content of computeNormalizedArea array into data array
-            for (int i = 0; i < data.length; i++) {
-                //fill in first column
-                data[i][0] = computeTimeFrames()[i];
-                System.arraycopy(computeDeltaArea(data)[i], 1, data[i], 1, data[i].length - 1);
-            }
-        }
+        return data;
     }
 
     /**
@@ -337,6 +245,117 @@ public class BulkCellAnalysisPanelController {
             timeFrames[i] = intValue;
         }
         return timeFrames;
+    }
+
+    /**
+     * initialize main panel
+     */
+    private void initBulkCellAnalysisPanel() {
+        //init Tables
+        dataTable = new JTable();
+        JScrollPane scrollPane = new JScrollPane(dataTable);
+        //the table will take all the viewport height available
+        dataTable.setFillsViewportHeight(true);
+
+        //row selection must be false && column selection true to be able to select through columns
+        dataTable.setColumnSelectionAllowed(true);
+        dataTable.setRowSelectionAllowed(false);
+
+        dataAnalysisPanelController.getDataAnalysisPanel().getDataTablePanel().add(scrollPane);
+        //init timeStepsBindingList
+        timeStepBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
+    }
+
+    /**
+     * Table Model for DeltaArea data
+     */
+    private class DeltaAreaTableModel extends DataTableModel {
+
+        public DeltaAreaTableModel(PlateCondition plateCondition, int numberOfRows) {
+            super(plateCondition, numberOfRows);
+            insertRawData();
+        }
+
+        @Override
+        protected final void insertRawData() {
+            //copy the content of computeNormalizedArea array into data array
+            for (int i = 0; i < data.length; i++) {
+                //fill in first column
+                data[i][0] = computeTimeFrames()[i];
+                System.arraycopy(computeDeltaArea(data)[i], 1, data[i], 1, data[i].length - 1);
+            }
+        }
+    }
+
+    /**
+     * Table Model for AreaIncrease data
+     */
+    private class AreaIncreaseTableModel extends DataTableModel {
+
+        public AreaIncreaseTableModel(PlateCondition plateCondition, int numberOfRows) {
+            super(plateCondition, numberOfRows);
+            insertRawData();
+        }
+
+        @Override
+        protected final void insertRawData() {
+            //copy the content of computeAreaIncrease array into data array
+            for (int i = 0; i < data.length; i++) {
+                //fill in first column
+                data[i][0] = computeTimeFrames()[i];
+                System.arraycopy(computeAreaIncrease(data)[i], 1, data[i], 1, data[i].length - 1);
+            }
+        }
+    }
+
+    /**
+     * Cell renderer for Area Increase Table
+     */
+    private class AreaIncreaseRenderer extends DefaultTableCellRenderer {
+
+        private double thresholdForJump;
+
+        public AreaIncreaseRenderer(double thresholdForJump) {
+            this.thresholdForJump = thresholdForJump;
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, false, false, row, column);
+
+            Double areaIncrease = (Double) value;
+
+            if (areaIncrease != null) {
+                if (areaIncrease < thresholdForJump) {
+                    setValue(areaIncrease + " (OK)");
+                } else {
+                    setValue(areaIncrease + " (JUMP)");
+                }
+            }
+            return this;
+        }
+    }
+
+    /**
+     * TableModel for the NormalizedArea data
+     */
+    private class NormalizedAreaTableModel extends DataTableModel {
+
+        public NormalizedAreaTableModel(PlateCondition plateCondition, int numberOfRows) {
+            super(plateCondition, numberOfRows);
+            insertRawData();
+        }
+
+        @Override
+        protected final void insertRawData() {
+            //copy the content of computeNormalizedArea array into data array
+            for (int i = 0; i < data.length; i++) {
+                //fill in first column
+                data[i][0] = computeTimeFrames()[i];
+                //fill in all the other columns
+                //arraycopy(Object src,  int  srcPos, Object dest, int destPos, int length)
+                System.arraycopy(computeNormalizedArea(data)[i], 1, data[i], 1, data[i].length - 1);
+            }
+        }
     }
 
     /**

@@ -38,8 +38,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -102,6 +100,7 @@ public class DataAnalysisPanelController {
 
         initPlatePanel();
         initExperimentDataPanel();
+        initAnalysisPanel();
     }
 
     /**
@@ -120,11 +119,15 @@ public class DataAnalysisPanelController {
         return analysisPlatePanel;
     }
 
+    public PlateCondition getSelectedCondition() {
+        return (PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue();
+    }
+
     /**
      * private methods and classes
      */
     /**
-     * init plate panel view
+     * initialize plate panel view
      */
     private void initPlatePanel() {
         //show as default a 96 plate format
@@ -136,7 +139,7 @@ public class DataAnalysisPanelController {
     }
 
     /**
-     * init left panel: projectList, experimentList, Algorithm and imaging type Combo box, plateConditions list
+     * initialize left panel: projectList, experimentList, Algorithm and imaging type Combo box, plateConditions list
      */
     private void initExperimentDataPanel() {
 
@@ -167,7 +170,6 @@ public class DataAnalysisPanelController {
             public void mouseClicked(MouseEvent e) {
 
                 System.out.println("PROJECT IS SELECTED ===");
-
                 //init experimentJList
                 int locationToIndex = dataAnalysisPanel.getProjectJList().locationToIndex(e.getPoint());
                 if (experimentService.findExperimentsByProjectIdAndStatus(projectBindingList.get(locationToIndex).getProjectid(), ExperimentStatus.PERFORMED) != null) {
@@ -190,7 +192,7 @@ public class DataAnalysisPanelController {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("Experiment is SELECTED ===");
+                System.out.println("EXPERIMENT is SELECTED ===");
                 int locationToIndex = dataAnalysisPanel.getExperimentJList().locationToIndex(e.getPoint());
                 experiment = experimentBindingList.get(locationToIndex);
                 plateConditionList = new ArrayList<>();
@@ -230,7 +232,7 @@ public class DataAnalysisPanelController {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("Condition is SELECTED===");
+                System.out.println("CONDITION is SELECTED===");
                 int locationToIndex = dataAnalysisPanel.getConditionsList().locationToIndex(e.getPoint());
                 //create a list of wells for each condition (from a collection)
                 List<Well> wellList = new ArrayList<>();
@@ -244,49 +246,99 @@ public class DataAnalysisPanelController {
                 updateTimeStepList(plateConditionList.get(locationToIndex));
                 //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO VIEW CELLMIA RESULTS
                 bulkCellAnalysisPanelController.showTimeSteps();
-                //for current selected condition show delta area values with %increments (for JUMP detection)
-                bulkCellAnalysisPanelController.setDeltaAreaTableData(plateConditionList.get(locationToIndex));
-                //for current selected condition show normalized area values together with time frames
-                bulkCellAnalysisPanelController.setNormalizedAreaTableData(plateConditionList.get(locationToIndex));
+                //check which button is selected for analysis:
+                if (dataAnalysisPanel.getDeltaAreaButton().isSelected()) {
+                    //for current selected condition show delta area values 
+                    bulkCellAnalysisPanelController.setDeltaAreaTableData(plateConditionList.get(locationToIndex));
+                }
+
+                if (dataAnalysisPanel.getPercentageAreaIncreaseButton().isSelected()) {
+                    //for current selected condition show %increments (for JUMP detection)
+                    bulkCellAnalysisPanelController.setAreaIncreaseTableData(plateConditionList.get(locationToIndex));
+                }
+
+                if (dataAnalysisPanel.getNormalizeAreaButton().isSelected()) {
+                    //for current selected condition show normalized area values together with time frames
+                    bulkCellAnalysisPanelController.setNormalizedAreaTableData(plateConditionList.get(locationToIndex));
+                }
             }
         });
+    }
 
+    /**
+     * initialize analysis panel
+     */
+    private void initAnalysisPanel() {
+        //create a ButtonGroup for the radioButtons used for analysis
         ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(dataAnalysisPanel.getJumpCorrectionButton());
+        //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
+        buttonGroup.add(dataAnalysisPanel.getDeltaAreaButton());
         buttonGroup.add(dataAnalysisPanel.getNormalizeAreaButton());
+        buttonGroup.add(dataAnalysisPanel.getPercentageAreaIncreaseButton());
+        buttonGroup.add(dataAnalysisPanel.getCorrectedAreaButton());
+        //select as default first button (Delta Area values Computation)
+        dataAnalysisPanel.getDeltaAreaButton().setSelected(true);
 
         /**
-         * Correct for Jumps
+         * Show Delta Area Values
          */
-        dataAnalysisPanel.getJumpCorrectionButton().addActionListener(new ActionListener() {
+        dataAnalysisPanel.getDeltaAreaButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //init table for delta area values              
-                JScrollPane scrollPane = new JScrollPane(bulkCellAnalysisPanelController.getDeltaAreaTable());
-                bulkCellAnalysisPanelController.getDeltaAreaTable().setFillsViewportHeight(true);
-                dataAnalysisPanel.getTablesPanel().remove(scrollPane);
-                dataAnalysisPanel.getTablesPanel().add(scrollPane);
-                dataAnalysisPanel.getTablesPanel().revalidate();
+                //show delta area values in the table            
+                bulkCellAnalysisPanelController.setDeltaAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
             }
         });
 
         /**
-         * Calculate Normalized Area
+         * Show %Area increase values
+         */
+        dataAnalysisPanel.getPercentageAreaIncreaseButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //show %increments of area between two consecutive time frames and determine if a JUMP is present
+                bulkCellAnalysisPanelController.setAreaIncreaseTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+            }
+        });
+        
+        /**
+         * show Corrected values for Area (corrected for JUMPS)
+         */
+        dataAnalysisPanel.getCorrectedAreaButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+            }
+        });
+
+        /**
+         * Calculate Normalized Area (with corrected values for Jumps)
          */
         dataAnalysisPanel.getNormalizeAreaButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //init table for normalized area values
-                JScrollPane scrollPane = new JScrollPane(bulkCellAnalysisPanelController.getNormalizedAreaTable());
-                bulkCellAnalysisPanelController.getNormalizedAreaTable().setFillsViewportHeight(true);
-                dataAnalysisPanel.getTablesPanel().remove(scrollPane);
-                dataAnalysisPanel.getTablesPanel().add(scrollPane);
-                dataAnalysisPanel.getTablesPanel().revalidate();
+                //show normalized values in the table
+                bulkCellAnalysisPanelController.setNormalizedAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
             }
         });
 
+        /**
+         * apply different threshold values
+         */
+        dataAnalysisPanel.getApplyTresholdButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // check if the right button is selected and apply filter with current threshold value
+                if (dataAnalysisPanel.getPercentageAreaIncreaseButton().isSelected()) {
+                    bulkCellAnalysisPanelController.setAreaIncreaseTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                }
+            }
+        });
     }
 
     /**
