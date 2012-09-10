@@ -10,11 +10,13 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 
 /**
  *
@@ -55,16 +57,32 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return timeStepsTable;
     }
 
-    public JRadioButton getJumpCorrectionButton() {
-        return jumpCorrectionButton;
+    public JRadioButton getDeltaAreaButton() {
+        return deltaAreaButton;
     }
 
     public JRadioButton getNormalizeAreaButton() {
         return normalizeAreaButton;
     }
 
-    public JPanel getTablesPanel() {
-        return tablesPanel;
+    public JPanel getDataTablePanel() {
+        return dataTablePanel;
+    }
+
+    public JRadioButton getPercentageAreaIncreaseButton() {
+        return percentageAreaIncreaseButton;
+    }
+
+    public JTextField getJumpThresholdTextField() {
+        return jumpThresholdTextField;
+    }
+
+    public JButton getApplyTresholdButton() {
+        return applyTresholdButton;
+    }
+
+    public JRadioButton getCorrectedAreaButton() {
+        return correctedAreaButton;
     }
 
     /** This method is called from within the constructor to
@@ -100,9 +118,11 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         timeStepsTable = new javax.swing.JTable();
         analysisPanel = new javax.swing.JPanel();
         radioButtonsPanel = new javax.swing.JPanel();
-        jumpCorrectionButton = new javax.swing.JRadioButton();
+        deltaAreaButton = new javax.swing.JRadioButton();
         normalizeAreaButton = new javax.swing.JRadioButton();
-        tablesPanel = new javax.swing.JPanel();
+        percentageAreaIncreaseButton = new javax.swing.JRadioButton();
+        correctedAreaButton = new javax.swing.JRadioButton();
+        dataTablePanel = new javax.swing.JPanel();
         singleCellAnalysisPanel = new javax.swing.JPanel();
         jTabbedPane3 = new javax.swing.JTabbedPane();
         jPanel5 = new javax.swing.JPanel();
@@ -111,6 +131,9 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         jPanel6 = new javax.swing.JPanel();
         analysisPlateParentPanel = new javax.swing.JPanel();
         extraPanel = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jumpThresholdTextField = new javax.swing.JTextField();
+        applyTresholdButton = new javax.swing.JButton();
         bottomPanel = new javax.swing.JPanel();
         infolabel = new javax.swing.JLabel();
 
@@ -139,7 +162,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
 
         jLabel1.setText("Select Algorithm");
 
-        jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Conditions"));
+        jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Condition"));
 
         jScrollPane3.setViewportView(conditionsList);
 
@@ -235,9 +258,9 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         );
         resultsImporterPanelLayout.setVerticalGroup(
             resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 266, Short.MAX_VALUE)
+            .addGap(0, 291, Short.MAX_VALUE)
             .addGroup(resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Results Importer", resultsImporterPanel);
@@ -249,9 +272,13 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         radioButtonsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         radioButtonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jumpCorrectionButton.setText("Jump Correction");
+        deltaAreaButton.setText("Delta Area");
 
-        normalizeAreaButton.setText("Normalize Area Values");
+        normalizeAreaButton.setText("Normalized Area");
+
+        percentageAreaIncreaseButton.setText("%Area Increase");
+
+        correctedAreaButton.setText("Corrected Area");
 
         javax.swing.GroupLayout radioButtonsPanelLayout = new javax.swing.GroupLayout(radioButtonsPanel);
         radioButtonsPanel.setLayout(radioButtonsPanelLayout);
@@ -259,19 +286,25 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(radioButtonsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jumpCorrectionButton)
+                .addComponent(deltaAreaButton)
+                .addGap(18, 18, 18)
+                .addComponent(percentageAreaIncreaseButton)
+                .addGap(18, 18, 18)
+                .addComponent(correctedAreaButton)
                 .addGap(18, 18, 18)
                 .addComponent(normalizeAreaButton)
-                .addContainerGap(479, Short.MAX_VALUE))
+                .addContainerGap(293, Short.MAX_VALUE))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(radioButtonsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(normalizeAreaButton)
-                    .addComponent(jumpCorrectionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(12, Short.MAX_VALUE))
+                    .addComponent(deltaAreaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(percentageAreaIncreaseButton)
+                    .addComponent(correctedAreaButton)
+                    .addComponent(normalizeAreaButton))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -283,17 +316,17 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.1;
         analysisPanel.add(radioButtonsPanel, gridBagConstraints);
 
-        tablesPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        tablesPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        tablesPanel.setLayout(new java.awt.BorderLayout());
+        dataTablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        dataTablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        dataTablePanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.9;
-        analysisPanel.add(tablesPanel, gridBagConstraints);
+        gridBagConstraints.weighty = 0.8;
+        analysisPanel.add(dataTablePanel, gridBagConstraints);
 
         jTabbedPane2.addTab("Analysis", analysisPanel);
 
@@ -305,7 +338,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         );
         bulkCellAnalysisPanelLayout.setVerticalGroup(
             bulkCellAnalysisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+            .addComponent(jTabbedPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Bulk Cell", bulkCellAnalysisPanel);
@@ -338,7 +371,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         jTabbedPane3.addTab("View", jPanel5);
@@ -351,7 +384,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 266, Short.MAX_VALUE)
+            .addGap(0, 291, Short.MAX_VALUE)
         );
 
         jTabbedPane3.addTab("Analyse", jPanel6);
@@ -366,9 +399,9 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         );
         singleCellAnalysisPanelLayout.setVerticalGroup(
             singleCellAnalysisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 271, Short.MAX_VALUE)
+            .addGap(0, 296, Short.MAX_VALUE)
             .addGroup(singleCellAnalysisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jTabbedPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE))
+                .addComponent(jTabbedPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Single Cell", singleCellAnalysisPanel);
@@ -381,7 +414,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         );
         resultsPanelLayout.setVerticalGroup(
             resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -391,7 +424,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.7;
-        gridBagConstraints.weighty = 0.5;
+        gridBagConstraints.weighty = 0.6;
         topPanel.add(resultsPanel, gridBagConstraints);
 
         analysisPlateParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -403,21 +436,40 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.weighty = 0.5;
+        gridBagConstraints.weighty = 0.4;
         topPanel.add(analysisPlateParentPanel, gridBagConstraints);
 
         extraPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         extraPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
+        jLabel3.setText("Jump Threshold");
+
+        jumpThresholdTextField.setText("7.0");
+
+        applyTresholdButton.setText("Apply threshold");
+
         javax.swing.GroupLayout extraPanelLayout = new javax.swing.GroupLayout(extraPanel);
         extraPanel.setLayout(extraPanelLayout);
         extraPanelLayout.setHorizontalGroup(
             extraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 479, Short.MAX_VALUE)
+            .addGroup(extraPanelLayout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jumpThresholdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(applyTresholdButton)
+                .addContainerGap(225, Short.MAX_VALUE))
         );
         extraPanelLayout.setVerticalGroup(
             extraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 299, Short.MAX_VALUE)
+            .addGroup(extraPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(extraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jumpThresholdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(applyTresholdButton))
+                .addContainerGap(239, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -472,11 +524,15 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox algorithmComboBox;
     private javax.swing.JPanel analysisPanel;
     private javax.swing.JPanel analysisPlateParentPanel;
+    private javax.swing.JButton applyTresholdButton;
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JPanel bulkCellAnalysisPanel;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JList conditionsList;
+    private javax.swing.JRadioButton correctedAreaButton;
+    private javax.swing.JPanel dataTablePanel;
+    private javax.swing.JRadioButton deltaAreaButton;
     private javax.swing.JPanel experimentDataPanel;
     private javax.swing.JList experimentJList;
     private javax.swing.JPanel extraPanel;
@@ -484,6 +540,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JLabel infolabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
@@ -494,14 +551,14 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane3;
-    private javax.swing.JRadioButton jumpCorrectionButton;
+    private javax.swing.JTextField jumpThresholdTextField;
     private javax.swing.JRadioButton normalizeAreaButton;
+    private javax.swing.JRadioButton percentageAreaIncreaseButton;
     private javax.swing.JList projectJList;
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JPanel resultsImporterPanel;
     private javax.swing.JPanel resultsPanel;
     private javax.swing.JPanel singleCellAnalysisPanel;
-    private javax.swing.JPanel tablesPanel;
     private javax.swing.JTable timeStepsTable;
     private javax.swing.JPanel topPanel;
     private javax.swing.JTable tracksTable;
