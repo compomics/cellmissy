@@ -54,6 +54,8 @@ public class AddDrugsTreatmentsPanel extends javax.swing.JPanel {
         treatmentTextField = new javax.swing.JTextField();
         addTreatmentButton = new javax.swing.JButton();
 
+        setOpaque(false);
+
         addDrugButton.setText("Add Drug");
 
         addTreatmentButton.setText("Add Treatment");

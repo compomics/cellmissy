@@ -263,6 +263,9 @@ public class DataAnalysisPanelController {
                 }
             }
         });
+
+        //select first condition by default
+        dataAnalysisPanel.getConditionsList().setSelectedIndex(0);
     }
 
     /**
@@ -272,12 +275,12 @@ public class DataAnalysisPanelController {
         //create a ButtonGroup for the radioButtons used for analysis
         ButtonGroup buttonGroup = new ButtonGroup();
         //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
-        buttonGroup.add(dataAnalysisPanel.getDeltaAreaButton());
         buttonGroup.add(dataAnalysisPanel.getNormalizeAreaButton());
+        buttonGroup.add(dataAnalysisPanel.getDeltaAreaButton());
         buttonGroup.add(dataAnalysisPanel.getPercentageAreaIncreaseButton());
         buttonGroup.add(dataAnalysisPanel.getCorrectedAreaButton());
         //select as default first button (Delta Area values Computation)
-        dataAnalysisPanel.getDeltaAreaButton().setSelected(true);
+        dataAnalysisPanel.getNormalizeAreaButton().setSelected(true);
 
         /**
          * Show Delta Area Values
@@ -286,8 +289,11 @@ public class DataAnalysisPanelController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //show delta area values in the table            
-                bulkCellAnalysisPanelController.setDeltaAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                //check that a condition is selected
+                if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
+                    //show delta area values in the table            
+                    bulkCellAnalysisPanelController.setDeltaAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                }
             }
         });
 
@@ -298,11 +304,14 @@ public class DataAnalysisPanelController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //show %increments of area between two consecutive time frames and determine if a JUMP is present
-                bulkCellAnalysisPanelController.setAreaIncreaseTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                //check that a condition is selected
+                if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
+                    //show %increments of area between two consecutive time frames and determine if a JUMP is present
+                    bulkCellAnalysisPanelController.setAreaIncreaseTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                }
             }
         });
-        
+
         /**
          * show Corrected values for Area (corrected for JUMPS)
          */
@@ -310,7 +319,6 @@ public class DataAnalysisPanelController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                
             }
         });
 
@@ -321,21 +329,10 @@ public class DataAnalysisPanelController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //show normalized values in the table
-                bulkCellAnalysisPanelController.setNormalizedAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
-            }
-        });
-
-        /**
-         * apply different threshold values
-         */
-        dataAnalysisPanel.getApplyTresholdButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // check if the right button is selected and apply filter with current threshold value
-                if (dataAnalysisPanel.getPercentageAreaIncreaseButton().isSelected()) {
-                    bulkCellAnalysisPanelController.setAreaIncreaseTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                //check that a condition is selected
+                if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
+                    //show normalized values in the table
+                    bulkCellAnalysisPanelController.setNormalizedAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
                 }
             }
         });
