@@ -52,6 +52,7 @@ public class PlatePanelGui extends javax.swing.JPanel {
         setLayout(new java.awt.GridBagLayout());
 
         topPanel.setMinimumSize(new java.awt.Dimension(20, 30));
+        topPanel.setOpaque(false);
         topPanel.setPreferredSize(new java.awt.Dimension(20, 35));
 
         plateFormatComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -87,6 +88,7 @@ public class PlatePanelGui extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         add(topPanel, gridBagConstraints);
 
+        bottomPanel.setOpaque(false);
         bottomPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

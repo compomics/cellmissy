@@ -73,20 +73,27 @@ public class CellMissyFrame extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(120, 300));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
+        jTabbedPane1.setBackground(new java.awt.Color(255, 255, 255));
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
+        jTabbedPane1.setOpaque(true);
 
+        overviewParentPanel.setOpaque(false);
         overviewParentPanel.setLayout(new java.awt.GridBagLayout());
         jTabbedPane1.addTab("Overview", overviewParentPanel);
 
+        userParentPanel.setOpaque(false);
         userParentPanel.setLayout(new java.awt.GridBagLayout());
         jTabbedPane1.addTab("User Management", userParentPanel);
 
+        experimentSetupParentPanel.setOpaque(false);
         experimentSetupParentPanel.setLayout(new java.awt.GridBagLayout());
         jTabbedPane1.addTab("Experiment Set-up", experimentSetupParentPanel);
 
+        loadExperimentParentPanel.setOpaque(false);
         loadExperimentParentPanel.setLayout(new java.awt.GridBagLayout());
         jTabbedPane1.addTab("Load CellMIA Data", loadExperimentParentPanel);
 
+        dataAnalysisParentPanel.setOpaque(false);
         dataAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
         jTabbedPane1.addTab("Data Analysis", dataAnalysisParentPanel);
 
