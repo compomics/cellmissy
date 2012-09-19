@@ -80,10 +80,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return graphicsParentPanel;
     }
 
-    public JButton getjButton1() {
-        return jButton1;
-    }
-
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -128,7 +124,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         conditionsList = new javax.swing.JList();
         bottomPanel = new javax.swing.JPanel();
         infolabel = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -172,7 +167,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         resultsImporterPanel.setLayout(resultsImporterPanelLayout);
         resultsImporterPanelLayout.setHorizontalGroup(
             resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 649, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
         );
         resultsImporterPanelLayout.setVerticalGroup(
             resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -217,7 +212,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                 .addComponent(percentageAreaIncreaseButton)
                 .addGap(18, 18, 18)
                 .addComponent(correctedAreaButton)
-                .addContainerGap(205, Short.MAX_VALUE))
+                .addContainerGap(291, Short.MAX_VALUE))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -272,7 +267,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         bulkCellAnalysisPanel.setLayout(bulkCellAnalysisPanelLayout);
         bulkCellAnalysisPanelLayout.setHorizontalGroup(
             bulkCellAnalysisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
+            .addComponent(jTabbedPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
         );
         bulkCellAnalysisPanelLayout.setVerticalGroup(
             bulkCellAnalysisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -288,7 +283,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         singleCellAnalysisPanel.setLayout(singleCellAnalysisPanelLayout);
         singleCellAnalysisPanelLayout.setHorizontalGroup(
             singleCellAnalysisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 750, Short.MAX_VALUE)
+            .addGap(0, 836, Short.MAX_VALUE)
         );
         singleCellAnalysisPanelLayout.setVerticalGroup(
             singleCellAnalysisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -303,7 +298,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rightPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE))
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 841, Short.MAX_VALUE))
         );
         rightPanelLayout.setVerticalGroup(
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -363,7 +358,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(algorithmComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(imagingTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(75, Short.MAX_VALUE))
         );
         experimentDataPanelLayout.setVerticalGroup(
             experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -419,7 +414,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         conditionsPanel.setLayout(conditionsPanelLayout);
         conditionsPanelLayout.setHorizontalGroup(
             conditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
         );
         conditionsPanelLayout.setVerticalGroup(
             conditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -449,8 +444,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         bottomPanel.setOpaque(false);
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jButton1.setText("KDE");
-
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
@@ -459,16 +452,11 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                 .addGap(41, 41, 41)
                 .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(1402, 1402, 1402))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addContainerGap(1029, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(281, 281, 281))
         );
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(29, Short.MAX_VALUE)
                 .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10))
         );
@@ -502,7 +490,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel graphicsParentPanel;
     private javax.swing.JComboBox imagingTypeComboBox;
     private javax.swing.JLabel infolabel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
