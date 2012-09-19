@@ -255,6 +255,8 @@ public class DataAnalysisPanelController {
                 if (dataAnalysisPanel.getPercentageAreaIncreaseButton().isSelected()) {
                     //for current selected condition show %increments (for JUMP detection)
                     bulkCellAnalysisPanelController.setAreaIncreaseTableData(plateConditionList.get(locationToIndex));
+                    //show density function for selected condition
+                    bulkCellAnalysisPanelController.showDensityFunction();
                 }
 
                 if (dataAnalysisPanel.getNormalizeAreaButton().isSelected()) {
@@ -308,6 +310,8 @@ public class DataAnalysisPanelController {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     //show %increments of area between two consecutive time frames and determine if a JUMP is present
                     bulkCellAnalysisPanelController.setAreaIncreaseTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                    //show density function for selected condition
+                    bulkCellAnalysisPanelController.showDensityFunction();
                 }
             }
         });

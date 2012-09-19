@@ -4,10 +4,12 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.DataTableModel;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -16,11 +18,11 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math.stat.regression.SimpleRegression;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -34,18 +36,13 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.statistics.HistogramDataset;
-import org.jfree.data.statistics.HistogramType;
-import org.jfree.data.xy.IntervalXYDataset;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import umontreal.iro.lecuyer.gof.KernelDensity;
 import umontreal.iro.lecuyer.probdist.EmpiricalDist;
 import umontreal.iro.lecuyer.probdist.NormalDist;
-import umontreal.iro.lecuyer.randvar.KernelDensityGen;
-import umontreal.iro.lecuyer.randvar.NormalGen;
-import umontreal.iro.lecuyer.rng.MRG32k3a;
-import umontreal.iro.lecuyer.rng.RandomStream;
 
 /**
  *
@@ -76,7 +73,8 @@ public class BulkCellAnalysisPanelController {
         //init services
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-
+        
+        //init views
         initBulkCellAnalysisPanel();
         chartPanel = new ChartPanel(null);
         chartPanel.setOpaque(false);
@@ -287,124 +285,104 @@ public class BulkCellAnalysisPanelController {
         dataAnalysisPanelController.getDataAnalysisPanel().getDataTablePanel().add(scrollPane);
         //init timeStepsBindingList
         timeStepBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
-
-        dataAnalysisPanelController.getDataAnalysisPanel().getjButton1().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
-                //for selected condition show Box Plot    
-                for (int i = 0; i < getDataFromTableModel().length; i++) {
-                    XYSeries xySeries = showDensityFunction(ArrayUtils.toPrimitive(getDataFromTableModel()[i]));
-                    xySeriesCollection.addSeries(xySeries);
-                }
-                JFreeChart chart = ChartFactory.createXYLineChart("Test", "data points", "density", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
-                //*******************************************************
-                chart.getXYPlot().getRangeAxis().setRange(0.0, 0.8);
-                chart.getXYPlot().setBackgroundPaint(Color.white);
-                chartPanel.setChart(chart);
-                dataAnalysisPanelController.getDataAnalysisPanel().getGraphicsParentPanel().add(chartPanel, gridBagConstraints);
-                dataAnalysisPanelController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
-            }
-        });
     }
 
     /**
-     * create Histograms for replicates of selected condition
+     * For each set of data points estimate density function and return a XY series for the plot
+     * @param data
+     * @return a XYSeries
      */
-    private XYSeries showDensityFunction(double[] data) {
+    private XYSeries generateDensityFunction(double[] data) {
         //empirical distribution uses all obs stored in data, assumed to have been sorted in increasing mumerical order
         //sort double values
         Arrays.sort(data);
         //empirical distribution based on data to compute density
         EmpiricalDist empiricalDist = new EmpiricalDist(data);
-        double datasetSize = (double) data.length;
-        //calculate optimal bandwidth with the (ROBUST) Silverman's ‘rule of thumb’
-        double bandWidth = 1.06 * Math.min(empiricalDist.getSampleStandardDeviation(), (empiricalDist.getInterQuartileRange() / 1.34)) / Math.pow(datasetSize, 0.2);
-
         //create a new KernelDensityEstimator Object with current empirical distribution
         KernelDensityEstimator kernelDensityEstimator = new KernelDensityEstimator(empiricalDist);
         //vector of values at which the density estimate needs to be computed
-        double[] estimatedDataPoints = kernelDensityEstimator.estimateDataPoints();
-        Arrays.sort(estimatedDataPoints);
+        double[] randomSamples = kernelDensityEstimator.drawRandomSample();
         //use normal default kernel
         NormalDist kern = new NormalDist();
+        double datasetSize = (double) data.length;
+        //calculate optimal bandwidth with the (ROBUST) Silverman's ‘rule of thumb’ (Scott Variation uses factor = 1.06)
+        double bandWidth = 0.99 * Math.min(empiricalDist.getSampleStandardDeviation(), (empiricalDist.getInterQuartileRange() / 1.34)) / Math.pow(datasetSize, 0.2);
         //actually estimate density and store values in a vector
-        double[] estimatedDensity = KernelDensity.computeDensity(empiricalDist, kern, bandWidth, estimatedDataPoints);
+        double[] estimatedDensityValues = KernelDensity.computeDensity(empiricalDist, kern, bandWidth, randomSamples);
 
         //create dataset for plot
         //XYSeries is by default ordered in ascending values, set second parameter of costructor to false
         XYSeries series = new XYSeries("", false);
-        for (int i = 0; i < estimatedDensity.length; i++) {
-            double x = estimatedDataPoints[i];
-            double y = estimatedDensity[i];
+        for (int i = 0; i < estimatedDensityValues.length; i++) {
+            double x = randomSamples[i];
+            double y = estimatedDensityValues[i];
             series.add(x, y);
         }
-
         return series;
     }
 
     /**
-     * KDE KernelDensityEstimator
+     * for a condition selected this method shows in one plot the estimated density functions for each replicate (=well)
      */
-    private class KernelDensityEstimator {
-
-        //number of points to be used for kernel density estimation
-        int n = 512;
-        KernelDensityGen kernelDensityGen;
-        EmpiricalDist dist;
-        RandomStream stream = new MRG32k3a();
-        NormalGen kGen = new NormalGen(stream);
-
-        public KernelDensityEstimator(EmpiricalDist dist) {
-            this.dist = dist;
-            kernelDensityGen = new KernelDensityGen(stream, dist, kGen);
+    public void showDensityFunction() {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        //generate density function for each replicate and add the series to the seriescollection    
+        for (int i = 0; i < getDataFromTableModel().length; i++) {
+            XYSeries xySeries = generateDensityFunction(getDataFromTableModel()[i]);
+            xySeries.setKey("Rep " + (i + 1));
+            xySeriesCollection.addSeries(xySeries);
         }
+        JFreeChart chart = ChartFactory.createXYLineChart("Kernel Density Estimation", "% increase (Area)", "Density", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        //XYplot
+        XYPlot xYPlot = chart.getXYPlot();
+        xYPlot.getDomainAxis().setAutoRange(false);
+        xYPlot.getRangeAxis().setAutoRange(false);
+        //set ranges for x and y axes
+        xYPlot.getDomainAxis().setRange(xySeriesCollection.getDomainLowerBound(true) - 0.05, xySeriesCollection.getDomainUpperBound(true) + 0.05);
+        xYPlot.getRangeAxis().setUpperBound(computeMaxY(xySeriesCollection) + 0.05);
+        xYPlot.setBackgroundPaint(Color.white);
+        //renderer for wide line
+        XYItemRenderer renderer = xYPlot.getRenderer();
+        BasicStroke wideLine = new BasicStroke(1.5f);
+        for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
+            renderer.setSeriesStroke(i, wideLine);
+        }
+        chartPanel.setChart(chart);
 
-        /**
-         * randomly compute points at which estimate the density function
-         * @return an array with double values
-         */
-        private double[] estimateDataPoints() {
-            double[] estimatedPoints = new double[n];
-            for (int i = 0; i < n; i++) {
-                double nextDouble = kernelDensityGen.nextDouble();
-                estimatedPoints[i] = nextDouble;
+        dataAnalysisPanelController.getDataAnalysisPanel().getGraphicsParentPanel().add(chartPanel, gridBagConstraints);
+        dataAnalysisPanelController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
+    }
+
+    /**
+     * compute Max value of Y for plot
+     * @param xYSeriesCollection
+     * @return 
+     */
+    private double computeMaxY(XYSeriesCollection xYSeriesCollection) {
+        double maxY = 0;
+        List<XYSeries> seriesList = xYSeriesCollection.getSeries();
+        for (int i = 0; i < seriesList.size(); i++) {
+            if (seriesList.get(i).getMaxY() > maxY) {
+                maxY = seriesList.get(i).getMaxY();
             }
-            Arrays.sort(estimatedPoints);
-            return estimatedPoints;
         }
+        return maxY;
     }
 
     /**
-     * create dataset for histograms
-     * @param data
+     * get primitive data from the table model 
      * @return 
      */
-    private IntervalXYDataset createHistogramDataset(double[] data) {
-        HistogramDataset histogramDataset = new HistogramDataset();
-        histogramDataset.setType(HistogramType.FREQUENCY);
-        histogramDataset.addSeries("", data, 20);
-        return histogramDataset;
-    }
-
-    /**
-     * get data from the table model
-     * @return 
-     */
-    private Double[][] getDataFromTableModel() {
-
+    private double[][] getDataFromTableModel() {
         TableModel model = dataTable.getModel();
         int rowCount = model.getRowCount();
         int columnCount = model.getColumnCount();
 
-        Double[][] tableData = new Double[columnCount - 1][rowCount - 1];
+        double[][] tableData = new double[columnCount - 1][rowCount - 1];
         for (int i = 1; i < columnCount; i++) {
             for (int j = 1; j < rowCount; j++) {
                 if (model.getValueAt(j, i) != null) {
-                    tableData[i - 1][j - 1] = (Double) model.getValueAt(j, i);
-                } else {
-                    tableData[i - 1][j - 1] = null;
+                    tableData[i - 1][j - 1] = (double) model.getValueAt(j, i);
                 }
             }
         }
