@@ -10,7 +10,6 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -80,6 +79,14 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return graphicsParentPanel;
     }
 
+    public JPanel getCorrectedDensityChartParentPanel() {
+        return correctedDensityChartParentPanel;
+    }
+
+    public JPanel getDensityChartParentPanel() {
+        return densityChartParentPanel;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -107,6 +114,8 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         correctedAreaButton = new javax.swing.JRadioButton();
         dataTablePanel = new javax.swing.JPanel();
         graphicsParentPanel = new javax.swing.JPanel();
+        densityChartParentPanel = new javax.swing.JPanel();
+        correctedDensityChartParentPanel = new javax.swing.JPanel();
         singleCellAnalysisPanel = new javax.swing.JPanel();
         leftPanel = new javax.swing.JPanel();
         experimentDataPanel = new javax.swing.JPanel();
@@ -252,6 +261,33 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         graphicsParentPanel.setOpaque(false);
         graphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         graphicsParentPanel.setLayout(new java.awt.GridBagLayout());
+
+        densityChartParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        densityChartParentPanel.setOpaque(false);
+        densityChartParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        densityChartParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 1.0;
+        graphicsParentPanel.add(densityChartParentPanel, gridBagConstraints);
+
+        correctedDensityChartParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        correctedDensityChartParentPanel.setOpaque(false);
+        correctedDensityChartParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        correctedDensityChartParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 1.0;
+        graphicsParentPanel.add(correctedDensityChartParentPanel, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -483,8 +519,10 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JList conditionsList;
     private javax.swing.JPanel conditionsPanel;
     private javax.swing.JRadioButton correctedAreaButton;
+    private javax.swing.JPanel correctedDensityChartParentPanel;
     private javax.swing.JPanel dataTablePanel;
     private javax.swing.JRadioButton deltaAreaButton;
+    private javax.swing.JPanel densityChartParentPanel;
     private javax.swing.JPanel experimentDataPanel;
     private javax.swing.JList experimentJList;
     private javax.swing.JPanel graphicsParentPanel;

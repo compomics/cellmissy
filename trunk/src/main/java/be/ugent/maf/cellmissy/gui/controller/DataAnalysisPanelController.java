@@ -257,6 +257,7 @@ public class DataAnalysisPanelController {
                     bulkCellAnalysisPanelController.setAreaIncreaseTableData(plateConditionList.get(locationToIndex));
                     //show density function for selected condition
                     bulkCellAnalysisPanelController.showDensityFunction();
+                    bulkCellAnalysisPanelController.showCorrectedDensityFunction();
                 }
 
                 if (dataAnalysisPanel.getNormalizeAreaButton().isSelected()) {
@@ -311,7 +312,10 @@ public class DataAnalysisPanelController {
                     //show %increments of area between two consecutive time frames and determine if a JUMP is present
                     bulkCellAnalysisPanelController.setAreaIncreaseTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
                     //show density function for selected condition
-                    bulkCellAnalysisPanelController.showDensityFunction();
+                    if (bulkCellAnalysisPanelController.getDensityChartPanel().getChart() == null && bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().getChart() == null) {
+                        bulkCellAnalysisPanelController.showDensityFunction();
+                        bulkCellAnalysisPanelController.showCorrectedDensityFunction();
+                    }
                 }
             }
         });
