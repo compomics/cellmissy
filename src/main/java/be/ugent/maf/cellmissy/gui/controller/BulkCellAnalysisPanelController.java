@@ -4,26 +4,25 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
-import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
-import be.ugent.maf.cellmissy.gui.experiment.DataTableModel;
+import be.ugent.maf.cellmissy.analysis.DataTableModel;
+import be.ugent.maf.cellmissy.analysis.OutliersHandler;
+import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
+import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
-import org.apache.commons.math.stat.regression.SimpleRegression;
+import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.ELProperty;
@@ -40,9 +39,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import umontreal.iro.lecuyer.gof.KernelDensity;
-import umontreal.iro.lecuyer.probdist.EmpiricalDist;
-import umontreal.iro.lecuyer.probdist.NormalDist;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -56,12 +53,16 @@ public class BulkCellAnalysisPanelController {
     private JTableBinding timeStepsTableBinding;
     private JTable dataTable;
     //view
-    private ChartPanel chartPanel;
+    private ChartPanel densityChartPanel;
+    private ChartPanel correctedDensityChartPanel;
     //parent controller
     private DataAnalysisPanelController dataAnalysisPanelController;
     //child controllers
     //services
+    private KernelDensityEstimator kernelDensityEstimator;
+    private OutliersHandler outliersHandler;
     private GridBagConstraints gridBagConstraints;
+    private ApplicationContext context;
 
     /**
      * constructor (parent controller)
@@ -71,13 +72,14 @@ public class BulkCellAnalysisPanelController {
         this.dataAnalysisPanelController = dataAnalysisPanelController;
 
         //init services
+        context = ApplicationContextProvider.getInstance().getApplicationContext();
+        kernelDensityEstimator = (KernelDensityEstimator) context.getBean("kernelDensityEstimator2");
+        outliersHandler = (OutliersHandler) context.getBean("outliersHandler");
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        
+
         //init views
         initBulkCellAnalysisPanel();
-        chartPanel = new ChartPanel(null);
-        chartPanel.setOpaque(false);
     }
 
     /**
@@ -86,6 +88,14 @@ public class BulkCellAnalysisPanelController {
      */
     public ObservableList<TimeStep> getTimeStepBindingList() {
         return timeStepBindingList;
+    }
+
+    public ChartPanel getDensityChartPanel() {
+        return densityChartPanel;
+    }
+
+    public ChartPanel getCorrectedDensityChartPanel() {
+        return correctedDensityChartPanel;
     }
 
     /**
@@ -169,13 +179,11 @@ public class BulkCellAnalysisPanelController {
         //set model for the delta area Table
         //NOTE that each time a new condition is selected, new data is passed to the model
         dataTable.setModel(new AreaIncreaseTableModel(plateCondition, dataAnalysisPanelController.getExperiment().getTimeFrames()));
-
         //starting from second column set Renderer for cells
-        //show JUMP or OK strings
-//        for (int i = 1; i < dataTable.getColumnCount(); i++) {
-//            //set Cell Renderer for each column of the table
-//            dataTable.getColumnModel().getColumn(i).setCellRenderer(new AreaIncreaseRenderer(Double.parseDouble(dataAnalysisPanelController.getDataAnalysisPanel().getJumpThresholdTextField().getText())));
-//        }
+        for (int i = 1; i < dataTable.getColumnCount(); i++) {
+            //set Cell Renderer for each column of the table
+            dataTable.getColumnModel().getColumn(i).setCellRenderer(new AreaIncreaseRenderer(outliersHandler.handleOutliers(getDataFromTableModel()[i - 1]).get(0)));
+        }
     }
 
     /**
@@ -192,13 +200,12 @@ public class BulkCellAnalysisPanelController {
      * private methods and classes
      */
     /**
-     * compute Normalized Area ==== TO BE REWRITTEN WITH NEW ARRAYS!!!
+     * compute Normalized Area
      * @param data
      * @return a 2D array of double values
      */
     private Double[][] computeNormalizedArea(Double[][] data) {
         int timeFrames = dataAnalysisPanelController.getExperiment().getTimeFrames();
-
         int counter = 0;
         for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
             if (timeStepBindingList.get(columnIndex).getArea() != 0) {
@@ -234,6 +241,11 @@ public class BulkCellAnalysisPanelController {
         return data;
     }
 
+    /**
+     * Compute %Area increase (these values are used for density plots and area correction for outliers)
+     * @param data
+     * @return a 2D array of double arrays
+     */
     private Double[][] computeAreaIncrease(Double[][] data) {
         int counter = 0;
         Double[][] newArray = new Double[dataAnalysisPanelController.getExperiment().getTimeFrames()][dataAnalysisPanelController.getSelectedCondition().getWellCollection().size() + 1];
@@ -277,45 +289,35 @@ public class BulkCellAnalysisPanelController {
         JScrollPane scrollPane = new JScrollPane(dataTable);
         //the table will take all the viewport height available
         dataTable.setFillsViewportHeight(true);
-
         //row selection must be false && column selection true to be able to select through columns
         dataTable.setColumnSelectionAllowed(true);
         dataTable.setRowSelectionAllowed(false);
-
         dataAnalysisPanelController.getDataAnalysisPanel().getDataTablePanel().add(scrollPane);
         //init timeStepsBindingList
         timeStepBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
+        //init densityChart panel
+        densityChartPanel = new ChartPanel(null);
+        densityChartPanel.setOpaque(false);
+        correctedDensityChartPanel = new ChartPanel(null);
+        correctedDensityChartPanel.setOpaque(false);
     }
 
     /**
      * For each set of data points estimate density function and return a XY series for the plot
+     * This is doing the job for one replicate!
      * @param data
      * @return a XYSeries
      */
     private XYSeries generateDensityFunction(double[] data) {
-        //empirical distribution uses all obs stored in data, assumed to have been sorted in increasing mumerical order
-        //sort double values
-        Arrays.sort(data);
-        //empirical distribution based on data to compute density
-        EmpiricalDist empiricalDist = new EmpiricalDist(data);
-        //create a new KernelDensityEstimator Object with current empirical distribution
-        KernelDensityEstimator kernelDensityEstimator = new KernelDensityEstimator(empiricalDist);
-        //vector of values at which the density estimate needs to be computed
-        double[] randomSamples = kernelDensityEstimator.drawRandomSample();
-        //use normal default kernel
-        NormalDist kern = new NormalDist();
-        double datasetSize = (double) data.length;
-        //calculate optimal bandwidth with the (ROBUST) Silverman's ‘rule of thumb’ (Scott Variation uses factor = 1.06)
-        double bandWidth = 0.99 * Math.min(empiricalDist.getSampleStandardDeviation(), (empiricalDist.getInterQuartileRange() / 1.34)) / Math.pow(datasetSize, 0.2);
-        //actually estimate density and store values in a vector
-        double[] estimatedDensityValues = KernelDensity.computeDensity(empiricalDist, kern, bandWidth, randomSamples);
-
-        //create dataset for plot
+        //use KDE to estimate density function for dataset data
+        List<double[]> estimateDensityFunction = kernelDensityEstimator.estimateDensityFunction(data);
+        double[] xValues = estimateDensityFunction.get(0);
+        double[] yValues = estimateDensityFunction.get(1);
         //XYSeries is by default ordered in ascending values, set second parameter of costructor to false
         XYSeries series = new XYSeries("", false);
-        for (int i = 0; i < estimatedDensityValues.length; i++) {
-            double x = randomSamples[i];
-            double y = estimatedDensityValues[i];
+        for (int i = 0; i < xValues.length; i++) {
+            double x = xValues[i];
+            double y = yValues[i];
             series.add(x, y);
         }
         return series;
@@ -323,6 +325,7 @@ public class BulkCellAnalysisPanelController {
 
     /**
      * for a condition selected this method shows in one plot the estimated density functions for each replicate (=well)
+     * This is doing the job for one condition (all replicates)
      */
     public void showDensityFunction() {
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
@@ -332,9 +335,11 @@ public class BulkCellAnalysisPanelController {
             xySeries.setKey("Rep " + (i + 1));
             xySeriesCollection.addSeries(xySeries);
         }
-        JFreeChart chart = ChartFactory.createXYLineChart("Kernel Density Estimation", "% increase (Area)", "Density", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        //create only one densityChart and use it to set the densityChart of the densityChart panel
+        JFreeChart densityChart = ChartFactory.createXYLineChart("Kernel Density Estimation", "% increase (Area)", "Density", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         //XYplot
-        XYPlot xYPlot = chart.getXYPlot();
+        XYPlot xYPlot = densityChart.getXYPlot();
+        //disable autorange for the axes
         xYPlot.getDomainAxis().setAutoRange(false);
         xYPlot.getRangeAxis().setAutoRange(false);
         //set ranges for x and y axes
@@ -347,14 +352,44 @@ public class BulkCellAnalysisPanelController {
         for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
             renderer.setSeriesStroke(i, wideLine);
         }
-        chartPanel.setChart(chart);
+        densityChartPanel.setChart(densityChart);
+        dataAnalysisPanelController.getDataAnalysisPanel().getDensityChartParentPanel().add(densityChartPanel, gridBagConstraints);
+        dataAnalysisPanelController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
+    }
 
-        dataAnalysisPanelController.getDataAnalysisPanel().getGraphicsParentPanel().add(chartPanel, gridBagConstraints);
+    public void showCorrectedDensityFunction() {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        for (int i = 0; i < getDataFromTableModel().length; i++) {
+            double[] correctedValues = outliersHandler.handleOutliers(getDataFromTableModel()[i]).get(1);
+            XYSeries xySeries = generateDensityFunction(correctedValues);
+            xySeries.setKey("Rep " + (i + 1));
+            xySeriesCollection.addSeries(xySeries);
+        }
+
+        //create only one densityChart and use it to set the densityChart of the densityChart panel
+        JFreeChart densityChart = ChartFactory.createXYLineChart("Outliers Correction", "% increase (Area)", "Density", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        //XYplot
+        XYPlot xYPlot = densityChart.getXYPlot();
+        //disable autorange for the axes
+        xYPlot.getDomainAxis().setAutoRange(false);
+        xYPlot.getRangeAxis().setAutoRange(false);
+        //set ranges for x and y axes
+        xYPlot.getDomainAxis().setRange(xySeriesCollection.getDomainLowerBound(true) - 0.05, xySeriesCollection.getDomainUpperBound(true) + 0.05);
+        xYPlot.getRangeAxis().setUpperBound(computeMaxY(xySeriesCollection) + 0.05);
+        xYPlot.setBackgroundPaint(Color.white);
+        //renderer for wide line
+        XYItemRenderer renderer = xYPlot.getRenderer();
+        BasicStroke wideLine = new BasicStroke(1.5f);
+        for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
+            renderer.setSeriesStroke(i, wideLine);
+        }
+        correctedDensityChartPanel.setChart(densityChart);
+        dataAnalysisPanelController.getDataAnalysisPanel().getCorrectedDensityChartParentPanel().add(correctedDensityChartPanel, gridBagConstraints);
         dataAnalysisPanelController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
     }
 
     /**
-     * compute Max value of Y for plot
+     * compute Max value of Y for density plot
      * @param xYSeriesCollection
      * @return 
      */
@@ -387,6 +422,29 @@ public class BulkCellAnalysisPanelController {
             }
         }
         return tableData;
+    }
+
+    /**
+     * TableModel for the NormalizedArea data
+     */
+    private class NormalizedAreaTableModel extends DataTableModel {
+
+        public NormalizedAreaTableModel(PlateCondition plateCondition, int numberOfRows) {
+            super(plateCondition, numberOfRows);
+            insertRawData();
+        }
+
+        @Override
+        protected final void insertRawData() {
+            //copy the content of computeNormalizedArea array into data array
+            for (int i = 0; i < data.length; i++) {
+                //fill in first column
+                data[i][0] = computeTimeFrames()[i];
+                //fill in all the other columns
+                //arraycopy(Object src,  int  srcPos, Object dest, int destPos, int length)
+                System.arraycopy(computeNormalizedArea(data)[i], 1, data[i], 1, data[i].length - 1);
+            }
+        }
     }
 
     /**
@@ -436,52 +494,29 @@ public class BulkCellAnalysisPanelController {
      */
     private class AreaIncreaseRenderer extends DefaultTableCellRenderer {
 
-        private double thresholdForJump;
+        double[] outliers;
 
-        public AreaIncreaseRenderer(double thresholdForJump) {
-            this.thresholdForJump = thresholdForJump;
+        public AreaIncreaseRenderer(double[] outliers) {
+            this.outliers = outliers;
         }
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(dataTable, value, false, false, row, column);
 
             Double areaIncrease = (Double) value;
-
             if (areaIncrease != null) {
-                if (areaIncrease < thresholdForJump) {
-                    setValue(areaIncrease + " (OK)");
-                    setBackground(null);
-                } else {
-                    setValue(areaIncrease + " (JUMP)");
-                    setBackground(Color.red);
+                for (double outlier : outliers) {
+                    if (Double.valueOf(areaIncrease) == outlier) {
+                        setForeground(Color.red);
+                        break;
+                    } else {
+                        setForeground(Color.black);
+                    }
                 }
             }
+
             setOpaque(true);
-
             return this;
-        }
-    }
-
-    /**
-     * TableModel for the NormalizedArea data
-     */
-    private class NormalizedAreaTableModel extends DataTableModel {
-
-        public NormalizedAreaTableModel(PlateCondition plateCondition, int numberOfRows) {
-            super(plateCondition, numberOfRows);
-            insertRawData();
-        }
-
-        @Override
-        protected final void insertRawData() {
-            //copy the content of computeNormalizedArea array into data array
-            for (int i = 0; i < data.length; i++) {
-                //fill in first column
-                data[i][0] = computeTimeFrames()[i];
-                //fill in all the other columns
-                //arraycopy(Object src,  int  srcPos, Object dest, int destPos, int length)
-                System.arraycopy(computeNormalizedArea(data)[i], 1, data[i], 1, data[i].length - 1);
-            }
         }
     }
 
@@ -489,18 +524,6 @@ public class BulkCellAnalysisPanelController {
      * compute Area Regression: 
      * @return a SimpleRegression Class : Compute summary statistics for a list of double values
      */
-    private SimpleRegression computeAreaRegression(double[][] data) {
-
-        SimpleRegression areaRegression = new SimpleRegression();
-
-        data = new double[dataAnalysisPanelController.getExperiment().getTimeFrames()][];
-        for (int i = 0; i < data.length; i++) {
-            // data[columnIndex] = computeNormalizedArea();
-        }
-        areaRegression.addData(data);
-        return areaRegression;
-    }
-
     //round double to 2 decimals
     private double roundTwoDecimals(double d) {
         DecimalFormat twoDForm = new DecimalFormat("#.##");

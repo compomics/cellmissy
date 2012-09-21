@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.experiment;
+package be.ugent.maf.cellmissy.analysis;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -12,7 +12,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 /**
- *
+ * This class extends AbstractTableModel
  * @author Paola Masuzzo
  */
 public abstract class DataTableModel extends AbstractTableModel {
@@ -22,6 +22,11 @@ public abstract class DataTableModel extends AbstractTableModel {
     protected String columnNames[];
     protected Double[][] data;
 
+    /**
+     * constructor
+     * @param plateCondition
+     * @param numberOfRows 
+     */
     public DataTableModel(PlateCondition plateCondition, int numberOfRows) {
         this.plateCondition = plateCondition;
         this.numberOfRows = numberOfRows;
@@ -48,6 +53,9 @@ public abstract class DataTableModel extends AbstractTableModel {
         return columnNames[col];
     }
 
+    /**
+     * define structure for table
+     */
     private void defineTableStructure() {
         //2D array of double (dimension: time frames * wellList +1)
         data = new Double[numberOfRows][plateCondition.getWellCollection().size() + 1];
