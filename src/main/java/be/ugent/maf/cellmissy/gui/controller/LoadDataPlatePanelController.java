@@ -11,7 +11,6 @@ import be.ugent.maf.cellmissy.gui.plate.LoadDataPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.WellService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -26,49 +25,44 @@ import java.util.Iterator;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 /**
  *
  * @author Paola Masuzzo
  */
+@Controller("loadDataPlatePanelController")
 public class LoadDataPlatePanelController {
 
     //model
     //view
     private LoadDataPlatePanel loadDataPlatePanel;
     //parent controller
+    @Autowired
     private LoadExperimentPanelController loadExperimentPanelController;
     //child controllers
     //services
-    private ApplicationContext context;
+    @Autowired
     private PlateService plateService;
+    @Autowired
     private WellService wellService;
     private GridBagConstraints gridBagConstraints;
     private boolean isEnable;
     private boolean isFirtTime;
 
     /**
-     * constructor (parent Controller)
-     * @param loadExperimentPanelController 
+     * initialize controller
      */
-    public LoadDataPlatePanelController(LoadExperimentPanelController loadExperimentPanelController) {
-
-        this.loadExperimentPanelController = loadExperimentPanelController;
-        //init views
-        loadDataPlatePanel = new LoadDataPlatePanel();
-
-        //init services
-        context = ApplicationContextProvider.getInstance().getApplicationContext();
-        plateService = (PlateService) context.getBean("plateService");
-        wellService = (WellService) context.getBean("wellService");
+    public void init() {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-
+        //create panels
+        loadDataPlatePanel = new LoadDataPlatePanel();
         //first time that data are processed
         isFirtTime = true;
         //disable mouse Listener
         isEnable = false;
-
+        //init views
         initLoadDataPlatePanel();
     }
 
@@ -90,7 +84,6 @@ public class LoadDataPlatePanelController {
 
         //show as default a 96 plate format
         Dimension parentDimension = loadExperimentPanelController.getLoadExperimentPanel().getLoadDataPlateParentPanel().getSize();
-
         loadDataPlatePanel.initPanel(plateService.findByFormat(96), parentDimension);
         loadExperimentPanelController.getLoadExperimentPanel().getLoadDataPlateParentPanel().add(loadDataPlatePanel, gridBagConstraints);
         loadExperimentPanelController.getLoadExperimentPanel().getLoadDataPlateParentPanel().repaint();
@@ -109,12 +102,10 @@ public class LoadDataPlatePanelController {
                 // ImagingTypeList is null, create a new PlateWorker and execute it             
                 if (loadDataPlatePanel.getImagingTypeList() == null) {
                     loadExperimentPanelController.getLoadExperimentPanel().getForwardButton().setEnabled(false);
-
                     loadExperimentPanelController.getLoadExperimentPanel().getjProgressBar1().setIndeterminate(true);
                     PlateWorker plateWorker = new PlateWorker();
                     //set cursor to wait
                     loadExperimentPanelController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
                     plateWorker.execute();
                 } else {
                     //check if data are being processed for the first time                    
@@ -217,7 +208,6 @@ public class LoadDataPlatePanelController {
     public void onCancel() {
         for (WellGui wellGui : loadDataPlatePanel.getWellGuiList()) {
             //empty the collection of WellHasImagingType (so color is set to default) but ONLY for current Imaging Type
-
             Iterator<WellHasImagingType> iterator = wellGui.getWell().getWellHasImagingTypeCollection().iterator();
             while (iterator.hasNext()) {
                 if (iterator.next().getImagingType().equals(loadDataPlatePanel.getCurrentImagingType())) {

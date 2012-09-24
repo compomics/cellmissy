@@ -20,7 +20,6 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -34,6 +33,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
@@ -45,12 +45,14 @@ import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 /**
  *
  * @author Paola Masuzzo
  */
+@Controller("dataAnalysisPanelController")
 public class DataAnalysisPanelController {
 
     //model
@@ -65,39 +67,33 @@ public class DataAnalysisPanelController {
     private DataAnalysisPanel dataAnalysisPanel;
     private AnalysisPlatePanel analysisPlatePanel;
     //parent controller
+    @Autowired
     private CellMissyController cellMissyController;
     //child controllers
+    @Autowired
     private BulkCellAnalysisPanelController bulkCellAnalysisPanelController;
     //services
+    @Autowired
     private ExperimentService experimentService;
+    @Autowired
     private ProjectService projectService;
+    @Autowired
     private WellService wellService;
+    @Autowired
     private PlateService plateService;
     private GridBagConstraints gridBagConstraints;
-    private ApplicationContext context;
 
     /**
-     * constructor
-     * @param cellMissyController 
+     * initialize controller
      */
-    public DataAnalysisPanelController(CellMissyController cellMissyController) {
-        this.cellMissyController = cellMissyController;
-
+    public void init() {
         //init view
         dataAnalysisPanel = new DataAnalysisPanel();
         analysisPlatePanel = new AnalysisPlatePanel();
-        //init child controllers
-        bulkCellAnalysisPanelController = new BulkCellAnalysisPanelController(this);
-        //init servicesBulkCellAnalysisPanelController
-        context = ApplicationContextProvider.getInstance().getApplicationContext();
-        experimentService = (ExperimentService) context.getBean("experimentService");
-        projectService = (ProjectService) context.getBean("projectService");
-        wellService = (WellService) context.getBean("wellService");
-        plateService = (PlateService) context.getBean("plateService");
-
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-
+        
+        bulkCellAnalysisPanelController.init();
         initPlatePanel();
         initExperimentDataPanel();
         initAnalysisPanel();

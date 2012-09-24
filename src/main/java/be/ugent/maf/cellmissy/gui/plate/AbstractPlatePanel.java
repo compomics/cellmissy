@@ -24,6 +24,10 @@ import javax.swing.JPanel;
  */
 public abstract class AbstractPlatePanel extends JPanel {
 
+    public AbstractPlatePanel() {
+        setOpaque(false);
+    }
+    
     protected List<WellGui> wellGuiList;
     protected PlateFormat plateFormat;
     protected static final int pixelsGrid = 7;

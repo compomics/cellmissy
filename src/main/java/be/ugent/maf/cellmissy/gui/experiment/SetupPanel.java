@@ -62,11 +62,13 @@ public class SetupPanel extends javax.swing.JPanel {
         clearAllButton = new javax.swing.JButton();
         setupPlateParentPanel = new javax.swing.JPanel();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
 
         conditionsParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Conditions List", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
         conditionsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         conditionsParentPanel.setName(""); // NOI18N
+        conditionsParentPanel.setOpaque(false);
         conditionsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         conditionsParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -80,6 +82,7 @@ public class SetupPanel extends javax.swing.JPanel {
 
         setupConditionsParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Conditions Setup", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
         setupConditionsParentPanel.setMinimumSize(new java.awt.Dimension(10, 10));
+        setupConditionsParentPanel.setOpaque(false);
         setupConditionsParentPanel.setPreferredSize(new java.awt.Dimension(10, 10));
         setupConditionsParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -95,11 +98,13 @@ public class SetupPanel extends javax.swing.JPanel {
         leftPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Plate", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12), new java.awt.Color(0, 0, 0))); // NOI18N
         leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         leftPanel.setName(""); // NOI18N
+        leftPanel.setOpaque(false);
         leftPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         leftPanel.setLayout(new java.awt.GridBagLayout());
 
         buttonsPanel.setMaximumSize(new java.awt.Dimension(20, 20));
         buttonsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        buttonsPanel.setOpaque(false);
         buttonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         clearLastButton.setText("Clear Last Selection");

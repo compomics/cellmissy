@@ -67,10 +67,12 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
         finishButton = new javax.swing.JButton();
         reportButton = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(20, 20));
         setLayout(new java.awt.GridBagLayout());
 
         topPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        topPanel.setOpaque(false);
         topPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         topPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -82,6 +84,7 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
 
         bottomPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
         bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        bottomPanel.setOpaque(false);
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         previousButton.setText("Previous");

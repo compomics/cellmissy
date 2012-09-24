@@ -147,8 +147,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         bulkCellAnalysisPanel.setName(""); // NOI18N
         bulkCellAnalysisPanel.setOpaque(false);
 
-        jTabbedPane2.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
-
         resultsImporterPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         resultsImporterPanel.setOpaque(false);
         resultsImporterPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -176,7 +174,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         resultsImporterPanel.setLayout(resultsImporterPanelLayout);
         resultsImporterPanelLayout.setHorizontalGroup(
             resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
         );
         resultsImporterPanelLayout.setVerticalGroup(
             resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -221,7 +219,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                 .addComponent(percentageAreaIncreaseButton)
                 .addGap(18, 18, 18)
                 .addComponent(correctedAreaButton)
-                .addContainerGap(291, Short.MAX_VALUE))
+                .addContainerGap(387, Short.MAX_VALUE))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -232,7 +230,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(deltaAreaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(percentageAreaIncreaseButton)
                     .addComponent(correctedAreaButton))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();

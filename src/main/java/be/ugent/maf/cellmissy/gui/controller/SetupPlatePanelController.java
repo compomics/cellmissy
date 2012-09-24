@@ -10,7 +10,6 @@ import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.PlatePanelGui;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.service.PlateService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
@@ -26,12 +25,14 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 /**
  *
  * @author Paola
  */
+@Controller("setupPlatePanelController")
 public class SetupPlatePanelController {
 
     //model
@@ -42,27 +43,22 @@ public class SetupPlatePanelController {
     private PlatePanelGui platePanelGui;
     private SetupPlatePanel setupPlatePanel;
     //parent controller
+    @Autowired
     private SetupExperimentPanelController setupExperimentPanelController;
     //services
-    private ApplicationContext context;
+    @Autowired
     private PlateService plateService;
     private GridBagConstraints gridBagConstraints;
 
     /**
-     * constructor
-     * @param setupExperimentPanelController 
+     * initialize controller
      */
-    public SetupPlatePanelController(SetupExperimentPanelController setupExperimentPanelController) {
-        this.setupExperimentPanelController = setupExperimentPanelController;
-
-        //init setup plate panel gui
-        platePanelGui = new PlatePanelGui();
-        //init services
-        context = ApplicationContextProvider.getInstance().getApplicationContext();
-        plateService = (PlateService) context.getBean("plateService");
-
+    public void init() {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
+
+        //create new panel
+        platePanelGui = new PlatePanelGui();
 
         //init views
         initSetupPlatePanel();

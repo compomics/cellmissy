@@ -11,7 +11,6 @@ import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.AddDrugsTreatmentsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.TreatmentPanel;
 import be.ugent.maf.cellmissy.service.TreatmentService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -35,12 +34,14 @@ import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 /**
  *
  * @author Paola
  */
+@Controller("treatmentPanelController")
 public class TreatmentPanelController {
 
     //model
@@ -55,30 +56,31 @@ public class TreatmentPanelController {
     //view
     private TreatmentPanel treatmentPanel;
     //parent controller
+    @Autowired
     private ConditionsPanelController conditionsPanelController;
     //services
-    private ApplicationContext context;
+    @Autowired
     private TreatmentService treatmentService;
     private GridBagConstraints gridBagConstraints;
 
-    public TreatmentPanelController(ConditionsPanelController conditionsPanelController) {
-
-        this.conditionsPanelController = conditionsPanelController;
-
-        //init services
-        context = ApplicationContextProvider.getInstance().getApplicationContext();
-        treatmentService = (TreatmentService) context.getBean("treatmentService");
+    /**
+     * initialize constructor
+     */
+    public void init() {
         bindingGroup = new BindingGroup();
-
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-
-        //init views
+        
+        //create panel
         treatmentPanel = new TreatmentPanel();
-
+        
+        //init views
         initTreatmentSetupPanel();
-        initPanel();
+        initMainPanel();
     }
 
+    /**
+     * getters and setters
+     */
     public ObservableList<TreatmentType> getDrugBindingList() {
         return drugBindingList;
     }
@@ -119,7 +121,7 @@ public class TreatmentPanelController {
         treatmentBindingList.clear();
 
         for (Treatment treatment : plateCondition.getTreatmentCollection()) {
-            Treatment newTreatment = new Treatment(treatment.getConcentration(),treatment.getTreatmentType());
+            Treatment newTreatment = new Treatment(treatment.getConcentration(), treatment.getTreatmentType());
             treatmentBindingList.add(newTreatment);
         }
     }
@@ -314,17 +316,17 @@ public class TreatmentPanelController {
      */
     private void initTreatment(Treatment treatment) {
         treatment.setConcentration(0.5);
-        treatment.setConcentrationUnit(treatmentPanel.getConcentrationUnitComboBox().getItemAt(0).toString());      
-        treatment.setTiming("0 h");       
+        treatment.setConcentrationUnit(treatmentPanel.getConcentrationUnitComboBox().getItemAt(0).toString());
+        treatment.setTiming("0 h");
         treatment.setDrugSolvent(null);
         treatment.setDrugSolventConcentration(0.50);
-        
+
     }
 
     /**
      * initialize view (treatment panel)
      */
-    private void initPanel() {
+    private void initMainPanel() {
         conditionsPanelController.getSetupConditionsPanel().getTreatmentParentPanel().add(treatmentPanel, gridBagConstraints);
     }
 
