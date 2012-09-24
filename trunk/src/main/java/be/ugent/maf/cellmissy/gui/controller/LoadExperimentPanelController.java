@@ -7,100 +7,66 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
-import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.LoadExperimentPanel;
+import be.ugent.maf.cellmissy.gui.plate.LoadDataPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
-import be.ugent.maf.cellmissy.service.ProjectService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
-import org.apache.log4j.Logger;
-import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.Binding;
-import org.jdesktop.beansbinding.BindingGroup;
-import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.observablecollections.ObservableCollections;
-import org.jdesktop.observablecollections.ObservableList;
-import org.jdesktop.swingbinding.JListBinding;
-import org.jdesktop.swingbinding.SwingBindings;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 /**
  *
  * @author Paola Masuzzo
  */
+@Controller("loadExperimentPanelController")
 public class LoadExperimentPanelController {
 
-    private static final Logger LOG = Logger.getLogger(LoadExperimentPanelController.class);
     //model
-    private ObservableList<Project> projectBindingList;
-    private ObservableList<Experiment> experimentBindingList;
-    private List<PlateCondition> plateConditionList;
-    private BindingGroup bindingGroup;
     private Experiment experiment;
     //view
     private LoadExperimentPanel loadExperimentPanel;
     //parent controller
+    @Autowired
     private CellMissyController cellMissyController;
     //child controllers
+    @Autowired
     private LoadDataPlatePanelController loadDataPlatePanelController;
+    @Autowired
+    private LoadExperimentInfoPanelController loadExperimentInfoPanelController;
     //services
+    @Autowired
     private ExperimentService experimentService;
-    private ProjectService projectService;
+    @Autowired
     private ObsepFileParser obsepFileParser;
-    private ApplicationContext context;
 
     /**
-     * constructor
-     * @param cellMissyController 
+     * initialize controller 
      */
-    public LoadExperimentPanelController(CellMissyController cellMissyController) {
-
-        this.cellMissyController = cellMissyController;
-
-        //init services
-        context = ApplicationContextProvider.getInstance().getApplicationContext();
-        experimentService = (ExperimentService) context.getBean("experimentService");
-        projectService = (ProjectService) context.getBean("projectService");
-        obsepFileParser = (ObsepFileParser) context.getBean("obsepFileParser");
-
-        bindingGroup = new BindingGroup();
-
-        //init views
+    public void init() {
+        //create main panel
         loadExperimentPanel = new LoadExperimentPanel();
-
-        //init child controllers
-        loadDataPlatePanelController = new LoadDataPlatePanelController(this);
-
-        //left panel: experiment data: data need to be retrieved from obsep file (microscope file)
-        initExperimentPanel();
+        //init main view
+        initMainPanel();
+        //init child controller
+        loadDataPlatePanelController.init();
+        loadExperimentInfoPanelController.init();
     }
 
     /*
@@ -112,6 +78,10 @@ public class LoadExperimentPanelController {
 
     public Experiment getExperiment() {
         return experiment;
+    }
+
+    public void setExperiment(Experiment experiment) {
+        this.experiment = experiment;
     }
 
     public void updateInfoLabel(JLabel label, String message) {
@@ -130,13 +100,21 @@ public class LoadExperimentPanelController {
         return JOptionPane.showConfirmDialog(cellMissyController.cellMissyFrame, message, title, optionType);
     }
 
+    public void initPlatePanel(PlateFormat plateFormat, Dimension dimension) {
+        loadDataPlatePanelController.getLoadDataPlatePanel().initPanel(plateFormat, dimension);
+    }
+
+    public LoadDataPlatePanel getLoadDataPlatePanel() {
+        return loadDataPlatePanelController.getLoadDataPlatePanel();
+    }
+
     /*
      * private methods and classes
      */
     /**
      * initializes the loading data panel
      */
-    private void initExperimentPanel() {
+    private void initMainPanel() {
 
         //disable buttons
         loadExperimentPanel.getFinishButton().setEnabled(false);
@@ -145,88 +123,9 @@ public class LoadExperimentPanelController {
         loadExperimentPanel.getCancelButton().setEnabled(false);
         //hide progress bar
         loadExperimentPanel.getjProgressBar1().setVisible(false);
-        //hide conditions JList
-        loadExperimentPanel.getjScrollPane3().setVisible(false);
 
         //update info message
         cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Select a project and then an experiment in progress to load CELLMIA data.");
-
-        //init projectJList
-        projectBindingList = ObservableCollections.observableList(projectService.findAll());
-        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, loadExperimentPanel.getProjectJList());
-        bindingGroup.addBinding(jListBinding);
-        bindingGroup.bind();
-
-        //init experiment binding
-        //bind Duration
-        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, loadExperimentPanel.getExperimentJList(), BeanProperty.create("selectedElement.duration"), loadExperimentPanel.getDurationTextField(), BeanProperty.create("text"), "durationbinding");
-        bindingGroup.addBinding(binding);
-        //bind Interval
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, loadExperimentPanel.getExperimentJList(), BeanProperty.create("selectedElement.experimentInterval"), loadExperimentPanel.getIntervalTextField(), BeanProperty.create("text"), "intervalbinding");
-        bindingGroup.addBinding(binding);
-        //bind Time frames
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, loadExperimentPanel.getExperimentJList(), BeanProperty.create("selectedElement.timeFrames"), loadExperimentPanel.getTimeFramesTextField(), BeanProperty.create("text"), "timeframesbinding");
-        bindingGroup.addBinding(binding);
-
-        //do the binding
-        bindingGroup.bind();
-
-
-        /**
-         * add mouse listeners
-         */
-        //when a project from the list is selected, show all experiments in progress for that project
-        loadExperimentPanel.getProjectJList().addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-                //init experimentJList
-                int locationToIndex = loadExperimentPanel.getProjectJList().locationToIndex(e.getPoint());
-                if (experimentService.findExperimentsByProjectIdAndStatus(projectBindingList.get(locationToIndex).getProjectid(), ExperimentStatus.IN_PROGRESS) != null) {
-                    experimentBindingList = ObservableCollections.observableList(experimentService.findExperimentsByProjectIdAndStatus(projectBindingList.get(locationToIndex).getProjectid(), ExperimentStatus.IN_PROGRESS));
-                    JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, loadExperimentPanel.getExperimentJList());
-                    bindingGroup.addBinding(jListBinding);
-                    bindingGroup.bind();
-                } else {
-                    cellMissyController.showMessage("There are no experiments in progress for this project!", 1);
-                    if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
-                        experimentBindingList.clear();
-                    }
-                }
-            }
-        });
-
-        //when an experiment from the list is selected, show the right plate format with the wells sorrounded by rectangles if conditions were selected
-        loadExperimentPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-                int locationToIndex = loadExperimentPanel.getExperimentJList().locationToIndex(e.getPoint());
-                experiment = experimentBindingList.get(locationToIndex);
-                plateConditionList = new ArrayList<>();
-                plateConditionList.addAll(experiment.getPlateConditionCollection());
-                Dimension parentDimension = loadExperimentPanel.getLoadDataPlateParentPanel().getSize();
-                //init plate panel with current experiment plate format
-                loadDataPlatePanelController.getLoadDataPlatePanel().initPanel(experiment.getPlateFormat(), parentDimension);
-
-                //this call the paintComponent method and rectangles are drawn around the wells that have a condition
-                loadDataPlatePanelController.getLoadDataPlatePanel().setExperiment(experiment);
-                loadDataPlatePanelController.getLoadDataPlatePanel().repaint();
-
-                //hide label
-                loadExperimentPanel.getjLabel2().setVisible(false);
-                //and show Conditions JList
-                showConditionsList();
-
-                //load experiment folders
-                experimentService.loadFolderStructure(experiment);
-                LOG.debug("Folders have been loaded");
-                cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click <<Exp Data>> to get experiment data from microscope.");
-                loadExperimentPanel.getExpDataButton().setEnabled(true);
-            }
-        });
 
         /**
          * add action listeners
@@ -327,83 +226,10 @@ public class LoadExperimentPanelController {
     private void setExperimentData(File obsepFile) {
         obsepFileParser.parseObsepFile(obsepFile);
         List<Double> experimentInfo = obsepFileParser.getExperimentInfo();
-        loadExperimentPanel.getTimeFramesTextField().setText(experimentInfo.get(0).toString());
-        loadExperimentPanel.getIntervalTextField().setText(experimentInfo.get(1).toString());
-        loadExperimentPanel.getUnitLabel().setText(obsepFileParser.getUnit().name().toLowerCase());
-        loadExperimentPanel.getDurationTextField().setText(experimentInfo.get(2).toString());
-    }
-
-    /**
-     * this method shows a list of conditions once an experiment is selected
-     */
-    private void showConditionsList() {
-        //make the conditions List visible
-        loadExperimentPanel.getjScrollPane3().setVisible(true);
-        //set Cell Renderer for Condition List
-        loadExperimentPanel.getConditionsList().setCellRenderer(new ConditionsRenderer());
-        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(plateConditionList);
-        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, plateConditionBindingList, loadExperimentPanel.getConditionsList());
-        bindingGroup.addBinding(jListBinding);
-        bindingGroup.bind();
-    }
-
-    /**
-     * renderer for the Conditions JList
-     */
-    private class ConditionsRenderer extends DefaultListCellRenderer {
-
-        /*
-         *constructor
-         */
-        public ConditionsRenderer() {
-            setOpaque(true);
-            setIconTextGap(10);
-        }
-
-        //Overrides method from the DefaultListCellRenderer
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            super.getListCellRendererComponent(list, value, index, false, false);
-            int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
-            setIcon(new rectIcon(GuiUtils.getAvailableColors()[conditionIndex + 1]));
-
-            return this;
-        }
-    }
-
-    /**
-     * rectangular icon for the Condition list
-     */
-    private class rectIcon implements Icon {
-
-        private final Integer rectHeight = 10;
-        private final Integer rectWidth = 25;
-        private Color color;
-
-        /**
-         * constructor
-         * @param color 
-         */
-        public rectIcon(Color color) {
-            this.color = color;
-        }
-
-        @Override
-        public void paintIcon(Component c, Graphics g, int x, int y) {
-            Graphics2D g2d = (Graphics2D) g;
-            loadDataPlatePanelController.getLoadDataPlatePanel().setGraphics(g2d);
-            g2d.setColor(color);
-            g2d.fillRect(x, y, rectWidth, rectHeight);
-        }
-
-        @Override
-        public int getIconWidth() {
-            return rectWidth;
-        }
-
-        @Override
-        public int getIconHeight() {
-            return rectHeight;
-        }
+        loadExperimentInfoPanelController.getLoadExperimentInfoPanel().getTimeFramesTextField().setText(experimentInfo.get(0).toString());
+        loadExperimentInfoPanelController.getLoadExperimentInfoPanel().getIntervalTextField().setText(experimentInfo.get(1).toString());
+        loadExperimentInfoPanelController.getLoadExperimentInfoPanel().getUnitLabel().setText(obsepFileParser.getUnit().name().toLowerCase());
+        loadExperimentInfoPanelController.getLoadExperimentInfoPanel().getDurationTextField().setText(experimentInfo.get(2).toString());
     }
 
     /**

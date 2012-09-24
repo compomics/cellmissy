@@ -15,7 +15,6 @@ import be.ugent.maf.cellmissy.gui.experiment.AssayEcm2DPanel;
 import be.ugent.maf.cellmissy.gui.experiment.AssayEcm3DPanel;
 import be.ugent.maf.cellmissy.service.AssayService;
 import be.ugent.maf.cellmissy.service.EcmService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -26,12 +25,14 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 /**
  *
  * @author Paola
  */
+@Controller("assayEcmPanelController")
 public class AssayEcmPanelController {
 
     // model
@@ -52,26 +53,19 @@ public class AssayEcmPanelController {
     private AssayEcm2DPanel assayEcm2DPanel;
     private AssayEcm3DPanel assayEcm3DPanel;
     // parent controller
+    @Autowired
     private ConditionsPanelController conditionsPanelController;
     // services
-    private ApplicationContext context;
+    @Autowired
     private AssayService assayService;
+    @Autowired
     private EcmService ecmService;
 
     /**
-     * constructor
-     * @param conditionsPanelController (parent controller)
+     * initialize controller
      */
-    public AssayEcmPanelController(ConditionsPanelController conditionsPanelController) {
-        this.conditionsPanelController = conditionsPanelController;
-
-        //init services
-        context = ApplicationContextProvider.getInstance().getApplicationContext();
-        assayService = (AssayService) context.getBean("assayService");
-        ecmService = (EcmService) context.getBean("ecmService");
-
+    public void init() {
         bindingGroup = new BindingGroup();
-
         //init views
         initEcmPanel();
     }

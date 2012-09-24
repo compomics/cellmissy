@@ -97,9 +97,6 @@
               </Layout>
               <SubComponents>
                 <Container class="javax.swing.JTabbedPane" name="jTabbedPane2">
-                  <Properties>
-                    <Property name="tabPlacement" type="int" value="4"/>
-                  </Properties>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
                   <SubComponents>
@@ -124,7 +121,7 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jScrollPane5" alignment="0" pref="735" max="32767" attributes="0"/>
+                              <Component id="jScrollPane5" alignment="0" pref="831" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
@@ -250,7 +247,7 @@
                                       <Component id="percentageAreaIncreaseButton" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="correctedAreaButton" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="291" max="32767" attributes="0"/>
+                                      <EmptySpace pref="387" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                             </DimensionLayout>
@@ -264,7 +261,7 @@
                                           <Component id="percentageAreaIncreaseButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="correctedAreaButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace pref="14" max="32767" attributes="0"/>
+                                      <EmptySpace pref="13" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                             </DimensionLayout>

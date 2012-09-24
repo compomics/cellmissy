@@ -10,7 +10,7 @@ import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.analysis.DataTableModel;
 import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+import be.ugent.maf.cellmissy.analysis.impl.NormalKernelDensityEstimator;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -22,7 +22,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
-import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.ELProperty;
@@ -39,12 +38,14 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 /**
  *
  * @author Paola Masuzzo
  */
+@Controller("bulkCellAnalysisPanelController")
 public class BulkCellAnalysisPanelController {
 
     //model
@@ -56,25 +57,20 @@ public class BulkCellAnalysisPanelController {
     private ChartPanel densityChartPanel;
     private ChartPanel correctedDensityChartPanel;
     //parent controller
+    @Autowired
     private DataAnalysisPanelController dataAnalysisPanelController;
     //child controllers
     //services
-    private KernelDensityEstimator kernelDensityEstimator;
+    @Autowired
+    private KernelDensityEstimator normalKernelDensityEstimator;
+    @Autowired
     private OutliersHandler outliersHandler;
     private GridBagConstraints gridBagConstraints;
-    private ApplicationContext context;
 
     /**
-     * constructor (parent controller)
-     * @param dataAnalysisPanelController 
+     * initialize controller
      */
-    public BulkCellAnalysisPanelController(DataAnalysisPanelController dataAnalysisPanelController) {
-        this.dataAnalysisPanelController = dataAnalysisPanelController;
-
-        //init services
-        context = ApplicationContextProvider.getInstance().getApplicationContext();
-        kernelDensityEstimator = (KernelDensityEstimator) context.getBean("kernelDensityEstimator2");
-        outliersHandler = (OutliersHandler) context.getBean("outliersHandler");
+    public void init() {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
@@ -181,7 +177,7 @@ public class BulkCellAnalysisPanelController {
         dataTable.setModel(new AreaIncreaseTableModel(plateCondition, dataAnalysisPanelController.getExperiment().getTimeFrames()));
         //starting from second column set Renderer for cells
         for (int i = 1; i < dataTable.getColumnCount(); i++) {
-            //set Cell Renderer for each column of the table
+            //show OUTLIERS in red
             dataTable.getColumnModel().getColumn(i).setCellRenderer(new AreaIncreaseRenderer(outliersHandler.handleOutliers(getDataFromTableModel()[i - 1]).get(0)));
         }
     }
@@ -295,7 +291,7 @@ public class BulkCellAnalysisPanelController {
         dataAnalysisPanelController.getDataAnalysisPanel().getDataTablePanel().add(scrollPane);
         //init timeStepsBindingList
         timeStepBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
-        //init densityChart panel
+        //init chart panels
         densityChartPanel = new ChartPanel(null);
         densityChartPanel.setOpaque(false);
         correctedDensityChartPanel = new ChartPanel(null);
@@ -310,7 +306,7 @@ public class BulkCellAnalysisPanelController {
      */
     private XYSeries generateDensityFunction(double[] data) {
         //use KDE to estimate density function for dataset data
-        List<double[]> estimateDensityFunction = kernelDensityEstimator.estimateDensityFunction(data);
+        List<double[]> estimateDensityFunction = normalKernelDensityEstimator.estimateDensityFunction(data);
         double[] xValues = estimateDensityFunction.get(0);
         double[] yValues = estimateDensityFunction.get(1);
         //XYSeries is by default ordered in ascending values, set second parameter of costructor to false

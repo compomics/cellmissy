@@ -21,10 +21,6 @@ import java.util.List;
  */
 public class AnalysisPlatePanel extends AbstractPlatePanel {
 
-    public AnalysisPlatePanel() {
-        setOpaque(false);
-    }   
-
     private Experiment experiment;
 
     public void setExperiment(Experiment experiment) {

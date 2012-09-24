@@ -29,19 +29,13 @@ import umontreal.iro.lecuyer.rng.RandomStream;
  * K is the kernel (here a Gaussian is chosen) and h is the bandwidth (smoothing factor). 
  * @author Paola Masuzzo
  */
-@Service("kernelDensityEstimator2")
+@Service("normalKernelDensityEstimator")
 public class NormalKernelDensityEstimator implements KernelDensityEstimator {
 
     //N, estimation precision, is set to a default of 512, as in most KDE algorithms default values, i.e. R "density"function, OmicSoft, Matlab algorithm
     private final int n = 4092;
     private EmpiricalDist empiricalDist;
     private KernelDensityGen kernelDensityGen;
-
-    /**
-     * constructor
-     */
-    public NormalKernelDensityEstimator() {
-    }
 
     /**
      * this method init the KDE, i.e. sort values in ascending order, compute an empirical distribution out of it,

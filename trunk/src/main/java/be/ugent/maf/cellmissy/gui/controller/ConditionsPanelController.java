@@ -17,7 +17,6 @@ import be.ugent.maf.cellmissy.gui.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.ConditionsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.SetupConditionsPanel;
 import be.ugent.maf.cellmissy.service.CellLineService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -30,6 +29,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.persistence.PersistenceException;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -45,12 +45,14 @@ import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 /**
  *
  * @author Paola
  */
+@Controller("conditionsPanelController")
 public class ConditionsPanelController {
 
     //model
@@ -65,38 +67,34 @@ public class ConditionsPanelController {
     private ConditionsPanel conditionsPanel;
     private SetupConditionsPanel setupConditionsPanel;
     //parent controller
+    @Autowired
     private SetupExperimentPanelController setupExperimentPanelController;
     //child controllers
+    @Autowired
     private AssayEcmPanelController assayEcmPanelController;
+    @Autowired
     private TreatmentPanelController treatmentPanelController;
     //services
+    @Autowired
     private CellLineService cellLineService;
-    private ApplicationContext context;
     private GridBagConstraints gridBagConstraints;
 
     /**
-     * constructor
-     * @param setupExperimentPanelController 
+     * initialize controller
      */
-    public ConditionsPanelController(SetupExperimentPanelController setupExperimentPanelController) {
-
-        this.setupExperimentPanelController = setupExperimentPanelController;
-
-        //init services
-        context = ApplicationContextProvider.getInstance().getApplicationContext();
-        cellLineService = (CellLineService) context.getBean("cellLineService");
-
+    public void init() {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
-        //init views
+        //create panels
         conditionsPanel = new ConditionsPanel();
         setupConditionsPanel = new SetupConditionsPanel();
 
         //init child controllers
-        assayEcmPanelController = new AssayEcmPanelController(this);
-        treatmentPanelController = new TreatmentPanelController(this);
-
+        assayEcmPanelController.init();
+        treatmentPanelController.init();
+        
+        //init views
         initCellLinePanel();
         initConditionsPanel();
         initPanel();

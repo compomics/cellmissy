@@ -23,7 +23,6 @@ import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import com.compomics.util.Export;
 import com.compomics.util.enumeration.ImageType;
 import java.awt.Component;
@@ -43,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.PersistenceException;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -64,12 +62,14 @@ import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 /**
  *
  * @author Paola
  */
+@Controller("setupExperimentPanelController")
 public class SetupExperimentPanelController {
 
     private static final Logger LOG = Logger.getLogger(SetupExperimentPanelController.class);
@@ -87,44 +87,41 @@ public class SetupExperimentPanelController {
     private SetupPanel setupPanel;
     private JFrame frame;
     //parent controller
+    @Autowired
     private CellMissyController cellMissyController;
-    //child controller
+    //child controllers
+    @Autowired
     private ConditionsPanelController conditionsPanelController;
+    @Autowired
     private SetupPlatePanelController setupPlatePanelController;
     //services
-    private ApplicationContext context;
+    @Autowired
     private ProjectService projectService;
+    @Autowired
     private ExperimentService experimentService;
     private GridBagConstraints gridBagConstraints;
 
     /**
-     * constructor
-     * @param cellMissyController 
+     * initialize Controller
      */
-    public SetupExperimentPanelController(CellMissyController cellMissyController) {
-        this.cellMissyController = cellMissyController;
-
-        setupExperimentPanel = new SetupExperimentPanel();
-        experimentInfoPanel = new ExperimentInfoPanel();
-        setupPanel = new SetupPanel();
-
-        //init child controllers
-        setupPlatePanelController = new SetupPlatePanelController(this);
-        conditionsPanelController = new ConditionsPanelController(this);
-
-        //init services
-        context = ApplicationContextProvider.getInstance().getApplicationContext();
-        projectService = (ProjectService) context.getBean("projectService");
-        experimentService = (ExperimentService) context.getBean("experimentService");
-
+    public void init() {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-
         mainDirectory = new File(PropertiesConfigurationHolder.getInstance().getString("mainDirectory"));
         experimentService.init(mainDirectory);
+
+        //create panels
+        experimentInfoPanel = new ExperimentInfoPanel();
+        setupExperimentPanel = new SetupExperimentPanel();
+        setupPanel = new SetupPanel();
+
         //init views
         initExperimentInfoPanel();
         initSetupExperimentPanel();
+
+        //init child controllers
+        setupPlatePanelController.init();
+        conditionsPanelController.init();
     }
 
     /**
@@ -308,7 +305,6 @@ public class SetupExperimentPanelController {
     /*
      * private methods and classes
      */
-
     /**
      * initializes the experiment info panel
      */
@@ -392,13 +388,13 @@ public class SetupExperimentPanelController {
 
                 //init experimentJList
                 int locationToIndex = experimentInfoPanel.getProjectJList().locationToIndex(e.getPoint());
-                if (experimentService.findExperimentsByProjectIdAndStatus(projectBindingList.get(locationToIndex).getProjectid(), ExperimentStatus.IN_PROGRESS) != null) {
+                if (experimentService.findExperimentNumbersByProjectId(projectBindingList.get(locationToIndex).getProjectid()) != null) {
                     experimentBindingList = ObservableCollections.observableList(experimentService.findExperimentsByProjectId(projectBindingList.get(locationToIndex).getProjectid()));
                     JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, experimentInfoPanel.getExperimentJList());
                     bindingGroup.addBinding(jListBinding);
                     bindingGroup.bind();
                 } else {
-                    cellMissyController.showMessage("There are no experiments in progress for this project!", 1);
+                    cellMissyController.showMessage("There are no experiments yet for this project!", 1);
                     if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                         experimentBindingList.clear();
                     }

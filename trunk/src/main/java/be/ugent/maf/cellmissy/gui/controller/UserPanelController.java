@@ -9,7 +9,6 @@ import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.user.UserPanel;
 import be.ugent.maf.cellmissy.service.UserService;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -25,12 +24,14 @@ import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 /**
  *
  * @author Paola
  */
+@Controller("userPanelController")
 public class UserPanelController {
 
     //model
@@ -40,25 +41,25 @@ public class UserPanelController {
     //view
     private UserPanel userPanel;
     //parent controller
+    @Autowired
     private CellMissyController cellMissyController;
     //services
-    private ApplicationContext context;
+    @Autowired
     private UserService userService;
 
-    public UserPanelController(CellMissyController cellMissyController) {
-        newUser = new User();
-        this.cellMissyController = cellMissyController;
-
-        //init services
-        context = ApplicationContextProvider.getInstance().getApplicationContext();
-        userService = (UserService) context.getBean("userService");
+    /**
+     * initialize controller
+     */
+    public void init() {
         bindingGroup = new BindingGroup();
-
-        //init views
+        //init main  view
         userPanel = new UserPanel();
-        initPanel();
+        initUserPanel();
     }
 
+    /**
+     * getters and setters 
+     */
     public UserPanel getUserPanel() {
         return userPanel;
     }
@@ -67,7 +68,18 @@ public class UserPanelController {
         return userBindingList;
     }
 
-    private void initPanel() {
+    /**
+     * validate User
+     * @return List of Messages to show to the user
+     */
+    public List<String> validateUser() {
+        return ValidationUtils.validateObject(newUser);
+    }
+
+    /**
+     * initialize User Panel
+     */
+    private void initUserPanel() {
         //init userJList
         userBindingList = ObservableCollections.observableList(userService.findAll());
         JListBinding userListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, userBindingList, userPanel.getUserJList());
@@ -193,10 +205,9 @@ public class UserPanelController {
         userPanel.getRoleComboBox().setSelectedIndex(1);
     }
 
-    public List<String> validateUser() {
-        return ValidationUtils.validateObject(newUser);
-    }
-
+    /**
+     * reset text fields of panel
+     */
     private void resetCreateUserTextFields() {
         // reset create user text fields
         userPanel.getCreateUserFirstNameTextField().setText("");

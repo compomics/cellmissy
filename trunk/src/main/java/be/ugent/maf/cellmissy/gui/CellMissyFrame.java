@@ -11,23 +11,19 @@
 package be.ugent.maf.cellmissy.gui;
 
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
+import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import javax.swing.JPanel;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
  * @author Paola
  */
 public class CellMissyFrame extends javax.swing.JFrame {
-    
-    
-    //main controller
-    CellMissyController cellMissyController;
-    
+
     /** Creates new form CellMissyFrame */
     public CellMissyFrame() {
         initComponents();
-        
-        cellMissyController = new CellMissyController(this);
     }
 
     public JPanel getExperimentSetupParentPanel() {
@@ -49,7 +45,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
     public JPanel getDataAnalysisParentPanel() {
         return dataAnalysisParentPanel;
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -109,8 +105,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
-
     /**
      * @param args the command line arguments
      */
@@ -142,7 +136,9 @@ public class CellMissyFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new CellMissyFrame().setVisible(true);
+                ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
+                CellMissyController cellMissyController = (CellMissyController) context.getBean("cellMissyController");
+                cellMissyController.init();
             }
         });
     }
