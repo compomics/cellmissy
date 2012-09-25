@@ -33,7 +33,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
@@ -49,11 +48,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
+ * Data Analysis Controller
+ * Parent Controller: CellMissy Controller (main controller)
+ * Child Controllers: Bulk Cell Analysis Controller - Single Cell Analysis Controller
  * @author Paola Masuzzo
  */
-@Controller("dataAnalysisPanelController")
-public class DataAnalysisPanelController {
+@Controller("dataAnalysisController")
+public class DataAnalysisController {
 
     //model
     private Experiment experiment;
@@ -71,7 +72,7 @@ public class DataAnalysisPanelController {
     private CellMissyController cellMissyController;
     //child controllers
     @Autowired
-    private BulkCellAnalysisPanelController bulkCellAnalysisPanelController;
+    private BulkCellAnalysisController bulkCellAnalysisPanelController;
     //services
     @Autowired
     private ExperimentService experimentService;
@@ -252,8 +253,8 @@ public class DataAnalysisPanelController {
                     //for current selected condition show %increments (for JUMP detection)
                     bulkCellAnalysisPanelController.setAreaIncreaseTableData(plateConditionList.get(locationToIndex));
                     //show density function for selected condition
-                    bulkCellAnalysisPanelController.showDensityFunction();
-                    bulkCellAnalysisPanelController.showCorrectedDensityFunction();
+                    bulkCellAnalysisPanelController.showRawDataDensityFunction();
+                    bulkCellAnalysisPanelController.showCorrectedDataDensityFunction();
                 }
 
                 if (dataAnalysisPanel.getNormalizeAreaButton().isSelected()) {
@@ -309,8 +310,8 @@ public class DataAnalysisPanelController {
                     bulkCellAnalysisPanelController.setAreaIncreaseTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
                     //show density function for selected condition
                     if (bulkCellAnalysisPanelController.getDensityChartPanel().getChart() == null && bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().getChart() == null) {
-                        bulkCellAnalysisPanelController.showDensityFunction();
-                        bulkCellAnalysisPanelController.showCorrectedDensityFunction();
+                        bulkCellAnalysisPanelController.showRawDataDensityFunction();
+                        bulkCellAnalysisPanelController.showCorrectedDataDensityFunction();
                     }
                 }
             }

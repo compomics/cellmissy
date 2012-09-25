@@ -29,11 +29,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
+ * AssayEcm Controller: according to matrix dimension (2D/3D) set up assay/ECM details during experiment  design
+ * Parent Controller: Setup Conditions Controller
  * @author Paola
  */
-@Controller("assayEcmPanelController")
-public class AssayEcmPanelController {
+@Controller("assayEcmController")
+public class AssayEcmController {
 
     // model
     //binding list for matrix dimensions
@@ -54,7 +55,7 @@ public class AssayEcmPanelController {
     private AssayEcm3DPanel assayEcm3DPanel;
     // parent controller
     @Autowired
-    private ConditionsPanelController conditionsPanelController;
+    private SetupConditionsController setupConditionsController;
     // services
     @Autowired
     private AssayService assayService;
@@ -124,8 +125,8 @@ public class AssayEcmPanelController {
                 plateCondition.getEcm().setConcentration(Double.parseDouble(assayEcm2DPanel.getConcentrationTextField().getText()));
             } catch (NumberFormatException e) {
                 String message = "Please insert a valid Concentration";
-                conditionsPanelController.showMessage(message, 2);
-                conditionsPanelController.getConditionsPanel().getConditionsJList().setSelectedIndex(conditionsPanelController.getPreviousConditionIndex());
+                setupConditionsController.showMessage(message, 2);
+                setupConditionsController.getConditionsPanel().getConditionsJList().setSelectedIndex(setupConditionsController.getPreviousConditionIndex());
                 assayEcm2DPanel.getConcentrationTextField().requestFocusInWindow();
             }
             //ecm volume
@@ -135,8 +136,8 @@ public class AssayEcmPanelController {
                 plateCondition.getEcm().setVolume(Double.parseDouble(assayEcm2DPanel.getVolumeTextField().getText()));
             } catch (NumberFormatException e) {
                 String message = "Please insert a valid Volume";
-                conditionsPanelController.showMessage(message, 2);
-                conditionsPanelController.getConditionsPanel().getConditionsJList().setSelectedIndex(conditionsPanelController.getPreviousConditionIndex());
+                setupConditionsController.showMessage(message, 2);
+                setupConditionsController.getConditionsPanel().getConditionsJList().setSelectedIndex(setupConditionsController.getPreviousConditionIndex());
                 assayEcm2DPanel.getVolumeTextField().requestFocusInWindow();
             }
 
@@ -158,8 +159,8 @@ public class AssayEcmPanelController {
                 plateCondition.getEcm().setVolume(Double.parseDouble(assayEcm3DPanel.getVolumeTextField().getText()));
             } catch (NumberFormatException e) {
                 String message = "Please insert a valid Volume";
-                conditionsPanelController.showMessage(message, 2);
-                conditionsPanelController.getConditionsPanel().getConditionsJList().setSelectedIndex(conditionsPanelController.getPreviousConditionIndex());
+                setupConditionsController.showMessage(message, 2);
+                setupConditionsController.getConditionsPanel().getConditionsJList().setSelectedIndex(setupConditionsController.getPreviousConditionIndex());
                 assayEcm3DPanel.getVolumeTextField().requestFocusInWindow();
             }
             //ecm polymerization time
@@ -260,7 +261,7 @@ public class AssayEcmPanelController {
     private void initEcmPanel() {
         //init matrixDimensionJCombo
         matrixDimensionBindingList = ObservableCollections.observableList(ecmService.findAllMatrixDimension());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, matrixDimensionBindingList, conditionsPanelController.getSetupConditionsPanel().getEcmDimensionComboBox());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, matrixDimensionBindingList, setupConditionsController.getSetupConditionsPanel().getEcmDimensionComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
 
@@ -274,20 +275,20 @@ public class AssayEcmPanelController {
          * add action listeners
          */
         //show different assay-ecm, 2D-3D panels
-        conditionsPanelController.getSetupConditionsPanel().getEcmDimensionComboBox().addActionListener(new ActionListener() {
+        setupConditionsController.getSetupConditionsPanel().getEcmDimensionComboBox().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                switch (((MatrixDimension) (conditionsPanelController.getSetupConditionsPanel().getEcmDimensionComboBox().getSelectedItem())).getMatrixDimension()) {
+                switch (((MatrixDimension) (setupConditionsController.getSetupConditionsPanel().getEcmDimensionComboBox().getSelectedItem())).getMatrixDimension()) {
                     case "2D":
-                        GuiUtils.switchChildPanels(conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel(), assayEcm2DPanel, assayEcm3DPanel);
+                        GuiUtils.switchChildPanels(setupConditionsController.getSetupConditionsPanel().getAssayEcmParentPanel(), assayEcm2DPanel, assayEcm3DPanel);
                         break;
                     case "3D":
-                        GuiUtils.switchChildPanels(conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel(), assayEcm3DPanel, assayEcm2DPanel);
+                        GuiUtils.switchChildPanels(setupConditionsController.getSetupConditionsPanel().getAssayEcmParentPanel(), assayEcm3DPanel, assayEcm2DPanel);
                         break;
                 }
-                conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel().revalidate();
-                conditionsPanelController.getSetupConditionsPanel().getAssayEcmParentPanel().repaint();
+                setupConditionsController.getSetupConditionsPanel().getAssayEcmParentPanel().revalidate();
+                setupConditionsController.getSetupConditionsPanel().getAssayEcmParentPanel().repaint();
             }
         });
 

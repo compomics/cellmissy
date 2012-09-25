@@ -28,11 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
+ * User Panel Controller: user management (create, search and delete users from DB)
+ * Parent Controller: CellMissy Controller (main controller)
  * @author Paola
  */
-@Controller("userPanelController")
-public class UserPanelController {
+@Controller("userManagementController")
+public class UserManagementController {
 
     //model
     private User newUser;
@@ -52,7 +53,7 @@ public class UserPanelController {
      */
     public void init() {
         bindingGroup = new BindingGroup();
-        //init main  view
+        //create a new user panel and init view
         userPanel = new UserPanel();
         initUserPanel();
     }

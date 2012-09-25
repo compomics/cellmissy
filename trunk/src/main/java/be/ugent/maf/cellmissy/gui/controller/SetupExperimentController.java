@@ -66,13 +66,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
+ * SetupExperiment Panel Controller: set up a new experiment. 
+ * Parent controller: CellMissy Controller (main controller)
+ * Child controllers: Conditions Controller, Setup Plate Controller
  * @author Paola
  */
-@Controller("setupExperimentPanelController")
-public class SetupExperimentPanelController {
+@Controller("setupExperimentController")
+public class SetupExperimentController {
 
-    private static final Logger LOG = Logger.getLogger(SetupExperimentPanelController.class);
+    private static final Logger LOG = Logger.getLogger(SetupExperimentController.class);
     //model
     private Experiment experiment;
     private ObservableList<Project> projectBindingList;
@@ -91,9 +93,9 @@ public class SetupExperimentPanelController {
     private CellMissyController cellMissyController;
     //child controllers
     @Autowired
-    private ConditionsPanelController conditionsPanelController;
+    private SetupConditionsController setupConditionsController;
     @Autowired
-    private SetupPlatePanelController setupPlatePanelController;
+    private SetupPlateController setupPlateController;
     //services
     @Autowired
     private ProjectService projectService;
@@ -120,8 +122,8 @@ public class SetupExperimentPanelController {
         initSetupExperimentPanel();
 
         //init child controllers
-        setupPlatePanelController.init();
-        conditionsPanelController.init();
+        setupPlateController.init();
+        setupConditionsController.init();
     }
 
     /**
@@ -136,8 +138,8 @@ public class SetupExperimentPanelController {
         return cellMissyController;
     }
 
-    public ConditionsPanelController getConditionsPanelController() {
-        return conditionsPanelController;
+    public SetupConditionsController getConditionsPanelController() {
+        return setupConditionsController;
     }
 
     public SetupPanel getSetupPanel() {
@@ -153,7 +155,7 @@ public class SetupExperimentPanelController {
      * @param newCondition added to the list
      */
     public void onNewConditionAdded(PlateCondition newCondition) {
-        setupPlatePanelController.addNewRectangleEntry(newCondition);
+        setupPlateController.addNewRectangleEntry(newCondition);
     }
 
     /**
@@ -164,9 +166,9 @@ public class SetupExperimentPanelController {
         //set back to null the condition of the wells selected 
         resetWellsCondition(conditionToRemove);
         //remove the rectangles from the map
-        setupPlatePanelController.removeRectangleEntry(conditionToRemove);
+        setupPlateController.removeRectangleEntry(conditionToRemove);
         //repaint
-        setupPlatePanelController.getSetupPlatePanel().repaint();
+        setupPlateController.getSetupPlatePanel().repaint();
     }
 
     /**
@@ -174,7 +176,7 @@ public class SetupExperimentPanelController {
      * @return the current condition
      */
     public PlateCondition getCurrentCondition() {
-        return conditionsPanelController.getCurrentCondition();
+        return setupConditionsController.getCurrentCondition();
     }
 
     /**
@@ -182,7 +184,7 @@ public class SetupExperimentPanelController {
      * @return setup plate panel
      */
     public SetupPlatePanel getSetupPlatePanel() {
-        return setupPlatePanelController.getSetupPlatePanel();
+        return setupPlateController.getSetupPlatePanel();
     }
 
     /**
@@ -203,7 +205,7 @@ public class SetupExperimentPanelController {
         boolean isSelectionValid = true;
         Collection<Well> wellCollection = plateCondition.getWellCollection();
         outerloop:
-        for (WellGui wellGui : setupPlatePanelController.getSetupPlatePanel().getWellGuiList()) {
+        for (WellGui wellGui : setupPlateController.getSetupPlatePanel().getWellGuiList()) {
             //get only the bigger default ellipse2D
             Ellipse2D ellipse = wellGui.getEllipsi().get(0);
             if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
@@ -234,10 +236,10 @@ public class SetupExperimentPanelController {
      */
     public void resetWellsCondition(PlateCondition plateCondition) {
         //set plate condition of wells again to null
-        for (WellGui wellGui : setupPlatePanelController.getSetupPlatePanel().getWellGuiList()) {
+        for (WellGui wellGui : setupPlateController.getSetupPlatePanel().getWellGuiList()) {
             //get only the bigger default ellipse2D
             Ellipse2D ellipse = wellGui.getEllipsi().get(0);
-            for (Rectangle rectangle : setupPlatePanelController.getSetupPlatePanel().getRectangles().get(plateCondition)) {
+            for (Rectangle rectangle : setupPlateController.getSetupPlatePanel().getRectangles().get(plateCondition)) {
                 if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
                     wellGui.getWell().setPlateCondition(null);
                 }
@@ -250,7 +252,7 @@ public class SetupExperimentPanelController {
      */
     public void resetAllWellsCondition() {
         //set plate condition of all wells selected again to null
-        for (PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()) {
+        for (PlateCondition plateCondition : setupConditionsController.getPlateConditionBindingList()) {
             resetWellsCondition(plateCondition);
         }
     }
@@ -289,15 +291,15 @@ public class SetupExperimentPanelController {
     public boolean validateCondition(PlateCondition plateCondition) {
         boolean isValid = false;
 
-        if (conditionsPanelController.validateCondition(plateCondition).isEmpty()) {
+        if (setupConditionsController.validateCondition(plateCondition).isEmpty()) {
             isValid = true;
         } else {
             String message = "";
-            for (String string : conditionsPanelController.validateCondition(plateCondition)) {
+            for (String string : setupConditionsController.validateCondition(plateCondition)) {
                 message += string + "\n";
             }
             cellMissyController.showMessage(message, 2);
-            conditionsPanelController.getConditionsPanel().getConditionsJList().setSelectedIndex(conditionsPanelController.getPreviousConditionIndex());
+            setupConditionsController.getConditionsPanel().getConditionsJList().setSelectedIndex(setupConditionsController.getPreviousConditionIndex());
         }
         return isValid;
     }
@@ -479,24 +481,24 @@ public class SetupExperimentPanelController {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                if (validateCondition(conditionsPanelController.getCurrentCondition())) {
+                if (validateCondition(setupConditionsController.getCurrentCondition())) {
 
                     //update last condition of the experiment
                     updateLastCondition();
 
                     //set the experiment for each plate condition in the List
-                    for (PlateCondition plateCondition : conditionsPanelController.getPlateConditionBindingList()) {
+                    for (PlateCondition plateCondition : setupConditionsController.getPlateConditionBindingList()) {
                         plateCondition.setExperiment(experiment);
                     }
 
                     //set experiment plate format
-                    experiment.setPlateFormat((PlateFormat) setupPlatePanelController.getPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
+                    experiment.setPlateFormat((PlateFormat) setupPlateController.getPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
                     //set the condition's collection of the experiment
-                    experiment.setPlateConditionCollection(conditionsPanelController.getPlateConditionBindingList());
+                    experiment.setPlateConditionCollection(setupConditionsController.getPlateConditionBindingList());
 
                     //create PDF report, execute SwingWorker
                     //create a new instance of SetupReport (with the current setupPlatePanel, conditionsList and experiment)
-                    SetupReport setupReport = new SetupReport(setupPlatePanelController.getSetupPlatePanel(), experiment);
+                    SetupReport setupReport = new SetupReport(setupPlateController.getSetupPlatePanel(), experiment);
                     SetupReportWorker setupReportWorker = new SetupReportWorker(setupReport);
                     setupReportWorker.execute();
                 }
@@ -525,7 +527,7 @@ public class SetupExperimentPanelController {
     private boolean hasCondition(WellGui wellGui) {
         boolean hasCondition = false;
         Ellipse2D ellipse = wellGui.getEllipsi().get(0);
-        for (List<Rectangle> list : setupPlatePanelController.getSetupPlatePanel().getRectangles().values()) {
+        for (List<Rectangle> list : setupPlateController.getSetupPlatePanel().getRectangles().values()) {
             for (Rectangle rectangle : list) {
                 if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight()) && wellGui.getWell().getPlateCondition() != null) {
                     hasCondition = true;
@@ -539,7 +541,7 @@ public class SetupExperimentPanelController {
      * add mouse listener to setup plate panel (Only when a condition is selected)
      */
     public void addMouseListener() {
-        setupPlatePanelController.addMouseListener();
+        setupPlateController.addMouseListener();
     }
 
     /**
@@ -609,7 +611,7 @@ public class SetupExperimentPanelController {
      * update last condition before creating the PDf report and saving the experiment
      */
     private void updateLastCondition() {
-        conditionsPanelController.updateCondition(conditionsPanelController.getPlateConditionBindingList().size() - 1);
+        setupConditionsController.updateCondition(setupConditionsController.getPlateConditionBindingList().size() - 1);
     }
 
     /**
@@ -658,8 +660,8 @@ public class SetupExperimentPanelController {
             //show back default button
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             //add back the two components to the panel
-            conditionsPanelController.getConditionsPanel().getjScrollPane1().setViewportView(conditionsPanelController.getConditionsPanel().getConditionsJList());
-            setupPlatePanelController.getPlatePanelGui().getBottomPanel().add(setupPlatePanelController.getSetupPlatePanel(), gridBagConstraints);
+            setupConditionsController.getConditionsPanel().getjScrollPane1().setViewportView(setupConditionsController.getConditionsPanel().getConditionsJList());
+            setupPlateController.getPlatePanelGui().getBottomPanel().add(setupPlateController.getSetupPlatePanel(), gridBagConstraints);
 
             cellMissyController.cellMissyFrame.getContentPane().revalidate();
             cellMissyController.cellMissyFrame.getContentPane().repaint();

@@ -17,7 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
+ * Main Controller
+ * Child Controllers: User, Setup Experiment, Load Experiment, Data Analysis - controllers
  * @author Paola
  */
 @Controller("cellMissyController")
@@ -28,13 +29,13 @@ public class CellMissyController {
     CellMissyFrame cellMissyFrame;
     //child controllers
     @Autowired
-    private UserPanelController userPanelController;
+    private UserManagementController userManagementController;
     @Autowired
-    private SetupExperimentPanelController setupExperimentPanelController;
+    private SetupExperimentController setupExperimentController;
     @Autowired
-    private LoadExperimentPanelController loadExperimentPanelController;
+    private LoadExperimentController loadExperimentController;
     @Autowired
-    private DataAnalysisPanelController dataAnalysisPanelController;
+    private DataAnalysisController dataAnalysisController;
     private GridBagConstraints gridBagConstraints;
 
     /**
@@ -46,20 +47,20 @@ public class CellMissyController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
         //init child controllers
-        userPanelController.init();
-        setupExperimentPanelController.init();
-        loadExperimentPanelController.init();
-        dataAnalysisPanelController.init();
+        userManagementController.init();
+        setupExperimentController.init();
+        loadExperimentController.init();
+        dataAnalysisController.init();
 
         //create main frame
         cellMissyFrame = new CellMissyFrame();
         cellMissyFrame.setVisible(true);
-
+        
         //init sub views
-        cellMissyFrame.getUserParentPanel().add(userPanelController.getUserPanel(), gridBagConstraints);
-        cellMissyFrame.getExperimentSetupParentPanel().add(setupExperimentPanelController.getSetupExperimentPanel(), gridBagConstraints);
-        cellMissyFrame.getLoadExperimentParentPanel().add(loadExperimentPanelController.getLoadExperimentPanel(), gridBagConstraints);
-        cellMissyFrame.getDataAnalysisParentPanel().add(dataAnalysisPanelController.getDataAnalysisPanel(), gridBagConstraints);
+        cellMissyFrame.getUserParentPanel().add(userManagementController.getUserPanel(), gridBagConstraints);
+        cellMissyFrame.getExperimentSetupParentPanel().add(setupExperimentController.getSetupExperimentPanel(), gridBagConstraints);
+        cellMissyFrame.getLoadExperimentParentPanel().add(loadExperimentController.getLoadExperimentPanel(), gridBagConstraints);
+        cellMissyFrame.getDataAnalysisParentPanel().add(dataAnalysisController.getDataAnalysisPanel(), gridBagConstraints);
     }
 
     /**
@@ -98,10 +99,10 @@ public class CellMissyController {
     public boolean validateUser() {
         String message = "";
         boolean isValid = false;
-        if (userPanelController.validateUser().isEmpty()) {
+        if (userManagementController.validateUser().isEmpty()) {
             isValid = true;
         } else {
-            for (String string : userPanelController.validateUser()) {
+            for (String string : userManagementController.validateUser()) {
                 message += string + "\n";
             }
             showMessage(message, 2);
@@ -114,7 +115,7 @@ public class CellMissyController {
      * @return 
      */
     public User getAUser() {
-        return userPanelController.getUserBindingList().get(0);
+        return userManagementController.getUserBindingList().get(0);
     }
 
     /**
@@ -124,10 +125,10 @@ public class CellMissyController {
     public boolean validateExperimentInfo() {
         String message = "";
         boolean isValid = false;
-        if (setupExperimentPanelController.validateExperimentInfo().isEmpty()) {
+        if (setupExperimentController.validateExperimentInfo().isEmpty()) {
             isValid = true;
         } else {
-            for (String string : setupExperimentPanelController.validateExperimentInfo()) {
+            for (String string : setupExperimentController.validateExperimentInfo()) {
                 message += string + "\n";
             }
             showMessage(message, 2);

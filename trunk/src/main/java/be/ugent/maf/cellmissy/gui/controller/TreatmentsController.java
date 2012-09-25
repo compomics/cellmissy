@@ -9,7 +9,7 @@ import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.AddDrugsTreatmentsPanel;
-import be.ugent.maf.cellmissy.gui.experiment.TreatmentPanel;
+import be.ugent.maf.cellmissy.gui.experiment.TreatmentsPanel;
 import be.ugent.maf.cellmissy.service.TreatmentService;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -38,11 +38,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
+ * Treatment Panel Controller: setup treatments details for each condition during experiment design
+ * Parent Controller: Conditions Panel Controller
  * @author Paola
  */
-@Controller("treatmentPanelController")
-public class TreatmentPanelController {
+@Controller("treatmentsController")
+public class TreatmentsController {
 
     //model
     //binding list for drugs
@@ -54,10 +55,10 @@ public class TreatmentPanelController {
     private ObservableList<String> drugSolventList;
     private BindingGroup bindingGroup;
     //view
-    private TreatmentPanel treatmentPanel;
+    private TreatmentsPanel treatmentsPanel;
     //parent controller
     @Autowired
-    private ConditionsPanelController conditionsPanelController;
+    private SetupConditionsController setupConditionsController;
     //services
     @Autowired
     private TreatmentService treatmentService;
@@ -71,7 +72,7 @@ public class TreatmentPanelController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         
         //create panel
-        treatmentPanel = new TreatmentPanel();
+        treatmentsPanel = new TreatmentsPanel();
         
         //init views
         initTreatmentSetupPanel();
@@ -85,8 +86,8 @@ public class TreatmentPanelController {
         return drugBindingList;
     }
 
-    public TreatmentPanel getTreatmentPanel() {
-        return treatmentPanel;
+    public TreatmentsPanel getTreatmentsPanel() {
+        return treatmentsPanel;
     }
 
     /**
@@ -138,48 +139,48 @@ public class TreatmentPanelController {
         treatmentBindingList = ObservableCollections.observableList(new ArrayList<Treatment>());
 
         //init drug JList binding
-        JListBinding drugListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, drugBindingList, treatmentPanel.getSourceList1());
+        JListBinding drugListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, drugBindingList, treatmentsPanel.getSourceList1());
         bindingGroup.addBinding(drugListBinding);
 
         //init general treatment JList binding
-        JListBinding generalTreatmentListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, generalTreatmentBindingList, treatmentPanel.getSourceList2());
+        JListBinding generalTreatmentListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, generalTreatmentBindingList, treatmentsPanel.getSourceList2());
         bindingGroup.addBinding(generalTreatmentListBinding);
 
         //init actual treatment JList binding
-        JListBinding actualTreatmentListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, treatmentBindingList, treatmentPanel.getDestinationList());
+        JListBinding actualTreatmentListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, treatmentBindingList, treatmentsPanel.getDestinationList());
         bindingGroup.addBinding(actualTreatmentListBinding);
 
         //init drug solvents JCombobox
         drugSolventList = ObservableCollections.observableList(treatmentService.findAllDrugSolvents());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, drugSolventList, treatmentPanel.getDrugSolventComboBox());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, drugSolventList, treatmentsPanel.getDrugSolventComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
 
         //set cell renderer
-        treatmentPanel.getDestinationList().setCellRenderer(new TreatmentsRenderer());
+        treatmentsPanel.getDestinationList().setCellRenderer(new TreatmentsRenderer());
         //autobind treatment
         //treatment timing (Time of Addition)
-        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.timing"), treatmentPanel.getTimingTextField(), BeanProperty.create("text"), "treatmenttimingbinding");
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentsPanel.getDestinationList(), BeanProperty.create("selectedElement.timing"), treatmentsPanel.getTimingTextField(), BeanProperty.create("text"), "treatmenttimingbinding");
         bindingGroup.addBinding(binding);
         //treatment concentration
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.concentration"), treatmentPanel.getConcentrationTextField(), BeanProperty.create("text"), "treatmentconcentrationbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentsPanel.getDestinationList(), BeanProperty.create("selectedElement.concentration"), treatmentsPanel.getConcentrationTextField(), BeanProperty.create("text"), "treatmentconcentrationbinding");
         bindingGroup.addBinding(binding);
         //treatment concentration unit of measure
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.concentrationUnit"), treatmentPanel.getConcentrationUnitComboBox(), BeanProperty.create("selectedItem"), "treatmentconcentrationunitbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentsPanel.getDestinationList(), BeanProperty.create("selectedElement.concentrationUnit"), treatmentsPanel.getConcentrationUnitComboBox(), BeanProperty.create("selectedItem"), "treatmentconcentrationunitbinding");
         bindingGroup.addBinding(binding);
         //treatment (drug) solvent
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.drugSolvent"), treatmentPanel.getDrugSolventComboBox(), BeanProperty.create("selectedItem"), "treatmentsolventbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentsPanel.getDestinationList(), BeanProperty.create("selectedElement.drugSolvent"), treatmentsPanel.getDrugSolventComboBox(), BeanProperty.create("selectedItem"), "treatmentsolventbinding");
         bindingGroup.addBinding(binding);
         //treatment (drug) solvent final concentration
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentPanel.getDestinationList(), BeanProperty.create("selectedElement.drugSolventConcentration"), treatmentPanel.getSolventConcentrationTextField(), BeanProperty.create("text"), "treatmentsolventconcentrationbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, treatmentsPanel.getDestinationList(), BeanProperty.create("selectedElement.drugSolventConcentration"), treatmentsPanel.getSolventConcentrationTextField(), BeanProperty.create("text"), "treatmentsolventconcentrationbinding");
         bindingGroup.addBinding(binding);
         bindingGroup.bind();
 
         //unit of measure combobox
-        treatmentPanel.getConcentrationUnitComboBox().addItem("\u00B5" + "M");
-        treatmentPanel.getConcentrationUnitComboBox().addItem("\u00B5" + "g" + "\\" + "\u00B5" + "l");
+        treatmentsPanel.getConcentrationUnitComboBox().addItem("\u00B5" + "M");
+        treatmentsPanel.getConcentrationUnitComboBox().addItem("\u00B5" + "g" + "\\" + "\u00B5" + "l");
 
         //add action listeners
-        treatmentPanel.getAddNewButton().addActionListener(new ActionListener() {
+        treatmentsPanel.getAddNewButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -191,58 +192,58 @@ public class TreatmentPanelController {
 
 
         //add a drug/treatment to the actual treatment list
-        treatmentPanel.getAddButton().addActionListener(new ActionListener() {
+        treatmentsPanel.getAddButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (treatmentPanel.getSourceList1().getSelectedValue() != null) {
+                if (treatmentsPanel.getSourceList1().getSelectedValue() != null) {
                     //move a treatment from a source list to the destination list
-                    addTreatmentFromASourceList(treatmentPanel.getSourceList1());
-                    drugBindingList.remove((TreatmentType) treatmentPanel.getSourceList1().getSelectedValue());
+                    addTreatmentFromASourceList(treatmentsPanel.getSourceList1());
+                    drugBindingList.remove((TreatmentType) treatmentsPanel.getSourceList1().getSelectedValue());
                 }
 
-                if (treatmentPanel.getSourceList2().getSelectedValue() != null) {
+                if (treatmentsPanel.getSourceList2().getSelectedValue() != null) {
                     //move a treatment from a source list to the destination list
-                    addTreatmentFromASourceList(treatmentPanel.getSourceList2());
-                    generalTreatmentBindingList.remove((TreatmentType) treatmentPanel.getSourceList2().getSelectedValue());
+                    addTreatmentFromASourceList(treatmentsPanel.getSourceList2());
+                    generalTreatmentBindingList.remove((TreatmentType) treatmentsPanel.getSourceList2().getSelectedValue());
                 }
             }
         });
 
         //remove a drug/treatment from the actual treatment list
-        treatmentPanel.getRemoveButton().addActionListener(new ActionListener() {
+        treatmentsPanel.getRemoveButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 //remove it from the destination List and add it to the "right" source List
-                if (treatmentPanel.getDestinationList().getSelectedValue() != null) {
-                    switch (((Treatment) treatmentPanel.getDestinationList().getSelectedValue()).getTreatmentType().getTreatmentCategory()) {
+                if (treatmentsPanel.getDestinationList().getSelectedValue() != null) {
+                    switch (((Treatment) treatmentsPanel.getDestinationList().getSelectedValue()).getTreatmentType().getTreatmentCategory()) {
                         case 1:
-                            drugBindingList.add(((Treatment) treatmentPanel.getDestinationList().getSelectedValue()).getTreatmentType());
+                            drugBindingList.add(((Treatment) treatmentsPanel.getDestinationList().getSelectedValue()).getTreatmentType());
                             break;
                         case 2:
-                            generalTreatmentBindingList.add(((Treatment) treatmentPanel.getDestinationList().getSelectedValue()).getTreatmentType());
+                            generalTreatmentBindingList.add(((Treatment) treatmentsPanel.getDestinationList().getSelectedValue()).getTreatmentType());
                     }
-                    treatmentBindingList.remove((Treatment) treatmentPanel.getDestinationList().getSelectedValue());
+                    treatmentBindingList.remove((Treatment) treatmentsPanel.getDestinationList().getSelectedValue());
                 }
             }
         });
 
         //add mouse listeners
         //select drug OR general treatment
-        treatmentPanel.getSourceList1().addMouseListener(new MouseAdapter() {
+        treatmentsPanel.getSourceList1().addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                treatmentPanel.getSourceList2().clearSelection();
+                treatmentsPanel.getSourceList2().clearSelection();
             }
         });
 
-        treatmentPanel.getSourceList2().addMouseListener(new MouseAdapter() {
+        treatmentsPanel.getSourceList2().addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                treatmentPanel.getSourceList1().clearSelection();
+                treatmentsPanel.getSourceList1().clearSelection();
             }
         });
     }
@@ -307,7 +308,7 @@ public class TreatmentPanelController {
         treatment.setTreatmentType((TreatmentType) sourceList.getSelectedValue());
         initTreatment(treatment);
         treatmentBindingList.add(treatment);
-        treatmentPanel.getDestinationList().setSelectedIndex(treatmentBindingList.indexOf(treatment));
+        treatmentsPanel.getDestinationList().setSelectedIndex(treatmentBindingList.indexOf(treatment));
     }
 
     /**
@@ -316,7 +317,7 @@ public class TreatmentPanelController {
      */
     private void initTreatment(Treatment treatment) {
         treatment.setConcentration(0.5);
-        treatment.setConcentrationUnit(treatmentPanel.getConcentrationUnitComboBox().getItemAt(0).toString());
+        treatment.setConcentrationUnit(treatmentsPanel.getConcentrationUnitComboBox().getItemAt(0).toString());
         treatment.setTiming("0 h");
         treatment.setDrugSolvent(null);
         treatment.setDrugSolventConcentration(0.50);
@@ -327,7 +328,7 @@ public class TreatmentPanelController {
      * initialize view (treatment panel)
      */
     private void initMainPanel() {
-        conditionsPanelController.getSetupConditionsPanel().getTreatmentParentPanel().add(treatmentPanel, gridBagConstraints);
+        setupConditionsController.getSetupConditionsPanel().getTreatmentParentPanel().add(treatmentsPanel, gridBagConstraints);
     }
 
     /**
@@ -368,10 +369,10 @@ public class TreatmentPanelController {
                             drugBindingList.add(newDrug);
                             //save drug to DB
                             treatmentService.saveTreatmentType(newDrug);
-                            conditionsPanelController.showMessage("Drug was inserted into DB.", 1);
+                            setupConditionsController.showMessage("Drug was inserted into DB.", 1);
                             addDrugsTreatmentsPanel.getDrugTextField().setText("");
                         } catch (PersistenceException exception) {
-                            conditionsPanelController.showMessage("Drug already present in DB.", 1);
+                            setupConditionsController.showMessage("Drug already present in DB.", 1);
                             addDrugsTreatmentsPanel.getDrugTextField().setText("");
                             addDrugsTreatmentsPanel.getDrugTextField().requestFocusInWindow();
                         }
@@ -394,10 +395,10 @@ public class TreatmentPanelController {
                             generalTreatmentBindingList.add(newTreatment);
                             //save treatment to DB
                             treatmentService.saveTreatmentType(newTreatment);
-                            conditionsPanelController.showMessage("Treatment was inserted into DB.", 1);
+                            setupConditionsController.showMessage("Treatment was inserted into DB.", 1);
                             addDrugsTreatmentsPanel.getTreatmentTextField().setText("");
                         } catch (PersistenceException exception) {
-                            conditionsPanelController.showMessage("Treatment already present in DB.", 1);
+                            setupConditionsController.showMessage("Treatment already present in DB.", 1);
                             addDrugsTreatmentsPanel.getTreatmentTextField().setText("");
                             addDrugsTreatmentsPanel.getTreatmentTextField().requestFocusInWindow();
                         }

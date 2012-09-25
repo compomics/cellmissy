@@ -55,6 +55,7 @@ public class ConditionsPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         conditionsJList = new javax.swing.JList();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(30, 30));
 
         addButton.setText("Add New Condition");

@@ -29,11 +29,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
+ * Setup Plate Panel Controller: set up plate view during experiment design
+ * Parent Controller: Setup Experiment Panel Controller
  * @author Paola
  */
-@Controller("setupPlatePanelController")
-public class SetupPlatePanelController {
+@Controller("setupPlateController")
+public class SetupPlateController {
 
     //model
     private ObservableList<PlateFormat> plateFormatBindingList;
@@ -44,7 +45,7 @@ public class SetupPlatePanelController {
     private SetupPlatePanel setupPlatePanel;
     //parent controller
     @Autowired
-    private SetupExperimentPanelController setupExperimentPanelController;
+    private SetupExperimentController setupExperimentController;
     //services
     @Autowired
     private PlateService plateService;
@@ -143,25 +144,25 @@ public class SetupPlatePanelController {
         });
 
         //clear last selection: clear rectangles of the last condition (condition is not removed)
-        setupExperimentPanelController.getSetupPanel().getClearLastButton().addActionListener(new ActionListener() {
+        setupExperimentController.getSetupPanel().getClearLastButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 //reset to null the condition of the selected wells
-                setupExperimentPanelController.resetWellsCondition(setupExperimentPanelController.getCurrentCondition());
+                setupExperimentController.resetWellsCondition(setupExperimentController.getCurrentCondition());
                 //remove the rectangles from the map and call the repaint
-                setupPlatePanel.getRectangles().get(setupExperimentPanelController.getCurrentCondition()).clear();
+                setupPlatePanel.getRectangles().get(setupExperimentController.getCurrentCondition()).clear();
                 setupPlatePanel.repaint();
             }
         });
 
         //clear all selections: clear rectangles of all conditions (conditions are not removed)
-        setupExperimentPanelController.getSetupPanel().getClearAllButton().addActionListener(new ActionListener() {
+        setupExperimentController.getSetupPanel().getClearAllButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 //reset to null the conditions of all the wells
-                setupExperimentPanelController.resetAllWellsCondition();
+                setupExperimentController.resetAllWellsCondition();
                 //remove all the rectangles from the map and call the repaint
                 for (List<Rectangle> rectangleList : setupPlatePanel.getRectangles().values()) {
                     rectangleList.clear();
@@ -173,7 +174,7 @@ public class SetupPlatePanelController {
         //show 96 plate format as default
         platePanelGui.getPlateFormatComboBox().setSelectedIndex(0);
 
-        setupExperimentPanelController.getSetupPanel().getSetupPlateParentPanel().add(platePanelGui, gridBagConstraints);
+        setupExperimentController.getSetupPanel().getSetupPlateParentPanel().add(platePanelGui, gridBagConstraints);
     }
 
     /**
@@ -205,7 +206,7 @@ public class SetupPlatePanelController {
             xMax = Math.max(xMax, setupPlatePanel.getEndPoint().x);
             yMin = Math.min(yMin, setupPlatePanel.getEndPoint().y);
             yMax = Math.max(yMax, setupPlatePanel.getEndPoint().y);
-            setupPlatePanel.setCurrentCondition(setupExperimentPanelController.getCurrentCondition());
+            setupPlatePanel.setCurrentCondition(setupExperimentController.getCurrentCondition());
             setupPlatePanel.repaint(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1);
         }
 
@@ -220,8 +221,8 @@ public class SetupPlatePanelController {
             rectangle = new Rectangle(x, y, width, height);
             if (rectangle.width != 0 || rectangle.height != 0) {
                 //if the selection of wells is valid (wells do not already have a condition set), add the rectangle to the map
-                if (setupExperimentPanelController.updateWellCollection(setupExperimentPanelController.getCurrentCondition(), rectangle)) {
-                    setupPlatePanel.getRectangles().get(setupExperimentPanelController.getCurrentCondition()).add(rectangle);
+                if (setupExperimentController.updateWellCollection(setupExperimentController.getCurrentCondition(), rectangle)) {
+                    setupPlatePanel.getRectangles().get(setupExperimentController.getCurrentCondition()).add(rectangle);
                 }
             }
             setupPlatePanel.setStartPoint(null);

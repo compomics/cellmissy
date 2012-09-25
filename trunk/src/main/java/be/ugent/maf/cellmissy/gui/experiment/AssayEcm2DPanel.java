@@ -101,8 +101,10 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
         concentrationUnitOfMeasure = new javax.swing.JComboBox();
         volumeUnitLabel = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
 
+        assayPanel.setOpaque(false);
         assayPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         assayComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2" }));
@@ -141,6 +143,7 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
 
         ecmPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Extra Cellular Matrix", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12), java.awt.Color.black)); // NOI18N
         ecmPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        ecmPanel.setOpaque(false);
         ecmPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         coatingTypeLabel.setText("Coating type");
