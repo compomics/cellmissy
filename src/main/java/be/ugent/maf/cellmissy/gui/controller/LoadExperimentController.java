@@ -11,7 +11,7 @@ import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.experiment.LoadExperimentPanel;
-import be.ugent.maf.cellmissy.gui.plate.LoadDataPlatePanel;
+import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
@@ -33,10 +33,12 @@ import org.springframework.stereotype.Controller;
 
 /**
  *
+ * Parent Controller: CellMissy Controller (main controller)
+ * Child Controllers: Imaged Plate Controller, Experiment Metadata Controller
  * @author Paola Masuzzo
  */
-@Controller("loadExperimentPanelController")
-public class LoadExperimentPanelController {
+@Controller("loadExperimentController")
+public class LoadExperimentController {
 
     //model
     private Experiment experiment;
@@ -47,9 +49,9 @@ public class LoadExperimentPanelController {
     private CellMissyController cellMissyController;
     //child controllers
     @Autowired
-    private LoadDataPlatePanelController loadDataPlatePanelController;
+    private ImagedPlateController imagedPlateController;
     @Autowired
-    private LoadExperimentInfoPanelController loadExperimentInfoPanelController;
+    private ExperimentMetadataController experimentMetadataController;
     //services
     @Autowired
     private ExperimentService experimentService;
@@ -65,8 +67,8 @@ public class LoadExperimentPanelController {
         //init main view
         initMainPanel();
         //init child controller
-        loadDataPlatePanelController.init();
-        loadExperimentInfoPanelController.init();
+        imagedPlateController.init();
+        experimentMetadataController.init();
     }
 
     /*
@@ -101,11 +103,11 @@ public class LoadExperimentPanelController {
     }
 
     public void initPlatePanel(PlateFormat plateFormat, Dimension dimension) {
-        loadDataPlatePanelController.getLoadDataPlatePanel().initPanel(plateFormat, dimension);
+        imagedPlateController.getLoadDataPlatePanel().initPanel(plateFormat, dimension);
     }
 
-    public LoadDataPlatePanel getLoadDataPlatePanel() {
-        return loadDataPlatePanelController.getLoadDataPlatePanel();
+    public ImagedPlatePanel getLoadDataPlatePanel() {
+        return imagedPlateController.getLoadDataPlatePanel();
     }
 
     /*
@@ -177,7 +179,7 @@ public class LoadExperimentPanelController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (WellGui wellGui : loadDataPlatePanelController.getLoadDataPlatePanel().getWellGuiList()) {
+                for (WellGui wellGui : imagedPlateController.getLoadDataPlatePanel().getWellGuiList()) {
 
                     //empty the collection of WellHasImagingType (so color is set to default)
                     wellGui.getWell().getWellHasImagingTypeCollection().clear();
@@ -190,12 +192,12 @@ public class LoadExperimentPanelController {
                         }
                     }
                     wellGui.getEllipsi().removeAll(ellipse2DList);
-                    loadDataPlatePanelController.getLoadDataPlatePanel().repaint();
+                    imagedPlateController.getLoadDataPlatePanel().repaint();
                 }
                 //update info message (the user needs to click again on forward)
                 updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click again <<Forward>> to process imaging data.");
                 //set boolean isFirtTime to false
-                loadDataPlatePanelController.setIsFirtTime(false);
+                imagedPlateController.setIsFirtTime(false);
                 //disable and enable buttons
                 loadExperimentPanel.getFinishButton().setEnabled(false);
                 loadExperimentPanel.getForwardButton().setEnabled(true);
@@ -226,10 +228,10 @@ public class LoadExperimentPanelController {
     private void setExperimentData(File obsepFile) {
         obsepFileParser.parseObsepFile(obsepFile);
         List<Double> experimentInfo = obsepFileParser.getExperimentInfo();
-        loadExperimentInfoPanelController.getLoadExperimentInfoPanel().getTimeFramesTextField().setText(experimentInfo.get(0).toString());
-        loadExperimentInfoPanelController.getLoadExperimentInfoPanel().getIntervalTextField().setText(experimentInfo.get(1).toString());
-        loadExperimentInfoPanelController.getLoadExperimentInfoPanel().getUnitLabel().setText(obsepFileParser.getUnit().name().toLowerCase());
-        loadExperimentInfoPanelController.getLoadExperimentInfoPanel().getDurationTextField().setText(experimentInfo.get(2).toString());
+        experimentMetadataController.getLoadExperimentInfoPanel().getTimeFramesTextField().setText(experimentInfo.get(0).toString());
+        experimentMetadataController.getLoadExperimentInfoPanel().getIntervalTextField().setText(experimentInfo.get(1).toString());
+        experimentMetadataController.getLoadExperimentInfoPanel().getUnitLabel().setText(obsepFileParser.getUnit().name().toLowerCase());
+        experimentMetadataController.getLoadExperimentInfoPanel().getDurationTextField().setText(experimentInfo.get(2).toString());
     }
 
     /**
@@ -238,7 +240,7 @@ public class LoadExperimentPanelController {
     private void setCellMiaData() {
 
         for (PlateCondition plateCondition : experiment.getPlateConditionCollection()) {
-            for (WellGui wellGui : loadDataPlatePanelController.getLoadDataPlatePanel().getWellGuiList()) {
+            for (WellGui wellGui : imagedPlateController.getLoadDataPlatePanel().getWellGuiList()) {
 
                 //if the wellGui has a well with a NOT empty collection of wellHasImagingTypes, the well has been imaged
                 //if the wellGui has a rectangle, the well belongs to a certain condition

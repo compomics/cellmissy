@@ -29,7 +29,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.persistence.PersistenceException;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -49,11 +48,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
+ * Set up Conditions Controller: set up conditions details during experiment design
+ * Parent controller: Setup Experiment Controller
+ * Child controllers: AssayEcm Controller, Treatment Controller
  * @author Paola
  */
-@Controller("conditionsPanelController")
-public class ConditionsPanelController {
+@Controller("setupConditionsController")
+public class SetupConditionsController {
 
     //model
     private ObservableList<CellLineType> cellLineTypeBindingList;
@@ -68,12 +69,12 @@ public class ConditionsPanelController {
     private SetupConditionsPanel setupConditionsPanel;
     //parent controller
     @Autowired
-    private SetupExperimentPanelController setupExperimentPanelController;
+    private SetupExperimentController setupExperimentPanelController;
     //child controllers
     @Autowired
-    private AssayEcmPanelController assayEcmPanelController;
+    private AssayEcmController assayEcmController;
     @Autowired
-    private TreatmentPanelController treatmentPanelController;
+    private TreatmentsController treatmentsController;
     //services
     @Autowired
     private CellLineService cellLineService;
@@ -91,8 +92,8 @@ public class ConditionsPanelController {
         setupConditionsPanel = new SetupConditionsPanel();
 
         //init child controllers
-        assayEcmPanelController.init();
-        treatmentPanelController.init();
+        assayEcmController.init();
+        treatmentsController.init();
         
         //init views
         initCellLinePanel();
@@ -104,10 +105,6 @@ public class ConditionsPanelController {
      * setters and getters
      * 
      */
-    public SetupExperimentPanelController getSetupExperimentPanelController() {
-        return setupExperimentPanelController;
-    }
-
     public ConditionsPanel getConditionsPanel() {
         return conditionsPanel;
     }
@@ -156,8 +153,8 @@ public class ConditionsPanelController {
      * @param conditionIndex 
      */
     public void updateCondition(Integer conditionIndex) {
-        assayEcmPanelController.updateAssayEcmConditionFields(plateConditionBindingList.get(conditionIndex));
-        treatmentPanelController.updateTreatmentCollection(plateConditionBindingList.get(conditionIndex));
+        assayEcmController.updateAssayEcmConditionFields(plateConditionBindingList.get(conditionIndex));
+        treatmentsController.updateTreatmentCollection(plateConditionBindingList.get(conditionIndex));
     }
 
     /**
@@ -173,11 +170,11 @@ public class ConditionsPanelController {
             messages.addAll(validateCellLine(plateCondition.getCellLine()));
         }
         //validate ECM (2D and 3D) input
-        if (!assayEcmPanelController.validate2DEcm().isEmpty()) {
-            messages.addAll(assayEcmPanelController.validate2DEcm());
+        if (!assayEcmController.validate2DEcm().isEmpty()) {
+            messages.addAll(assayEcmController.validate2DEcm());
         }
-        if (assayEcmPanelController.validate3DEcm().isEmpty()) {
-            messages.addAll(assayEcmPanelController.validate3DEcm());
+        if (assayEcmController.validate3DEcm().isEmpty()) {
+            messages.addAll(assayEcmController.validate3DEcm());
         }
         //validate treatments
 
@@ -214,11 +211,11 @@ public class ConditionsPanelController {
         bindingGroup.addBinding(jComboBoxBinding);
 
         //init the other serum ComboBox
-        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, serumBindingList, treatmentPanelController.getTreatmentPanel().getSerumComboBox());
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, serumBindingList, treatmentsController.getTreatmentsPanel().getSerumComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
 
         //init assay medium JCombo (it's actually in the treatment panel, but ca not be bind before since the mediumBindingList would still be null)
-        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, mediumBindingList, treatmentPanelController.getTreatmentPanel().getAssayMediumComboBox());
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, mediumBindingList, treatmentsController.getTreatmentsPanel().getAssayMediumComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
 
@@ -289,13 +286,13 @@ public class ConditionsPanelController {
 
         //autobind assay medium
         //autobind medium
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.medium"), treatmentPanelController.getTreatmentPanel().getAssayMediumComboBox(), BeanProperty.create("selectedItem"), "assaymediumbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.medium"), treatmentsController.getTreatmentsPanel().getAssayMediumComboBox(), BeanProperty.create("selectedItem"), "assaymediumbinding");
         bindingGroup.addBinding(binding);
         //autobind serum
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.serum"), treatmentPanelController.getTreatmentPanel().getSerumComboBox(), BeanProperty.create("selectedItem"), "assayserumbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.serum"), treatmentsController.getTreatmentsPanel().getSerumComboBox(), BeanProperty.create("selectedItem"), "assayserumbinding");
         bindingGroup.addBinding(binding);
         //autobind serum concentration
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.serumConcentration"), treatmentPanelController.getTreatmentPanel().getSerumConcentrationTextField(), BeanProperty.create("text"), "assayserumconcentrationbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.serumConcentration"), treatmentsController.getTreatmentsPanel().getSerumConcentrationTextField(), BeanProperty.create("text"), "assayserumconcentrationbinding");
         bindingGroup.addBinding(binding);
 
         //autobind matrix dimension
@@ -337,12 +334,12 @@ public class ConditionsPanelController {
                         //update fields of previous condition
                         updateCondition(previousConditionIndex);
                         //update and reset fields for the assay-ecm panel
-                        assayEcmPanelController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
+                        assayEcmController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
                         //assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
                         //empty the treatments list and fill it in with other objects
-                        treatmentPanelController.initTreatmentList(plateConditionBindingList.get(previousConditionIndex));
+                        treatmentsController.initTreatmentList(plateConditionBindingList.get(previousConditionIndex));
                         //keep source and destination lists sync: show actual treatment collection
-                        treatmentPanelController.updateTreatmentLists(plateConditionBindingList.get(locationToIndex));
+                        treatmentsController.updateTreatmentLists(plateConditionBindingList.get(locationToIndex));
                     }
                 }
                 previousConditionIndex = locationToIndex;
@@ -419,14 +416,14 @@ public class ConditionsPanelController {
         cellLine.setPlateCondition(firstCondition);
 
         //set matrix dimension: 2D
-        firstCondition.setMatrixDimension(assayEcmPanelController.getMatrixDimensionBindingList().get(0));
+        firstCondition.setMatrixDimension(assayEcmController.getMatrixDimensionBindingList().get(0));
 
         //set the migration assay: Oris platform
-        firstCondition.setAssay(assayEcmPanelController.getAssay2DBindingList().get(0));
+        firstCondition.setAssay(assayEcmController.getAssay2DBindingList().get(0));
 
         //create a new AssayMedium object and set its class members
         AssayMedium assayMedium = new AssayMedium();
-        assayMedium.setMedium(treatmentPanelController.getTreatmentPanel().getAssayMediumComboBox().getItemAt(0).toString());
+        assayMedium.setMedium(treatmentsController.getTreatmentsPanel().getAssayMediumComboBox().getItemAt(0).toString());
         assayMedium.setSerum(serumBindingList.get(0));
         assayMedium.setSerumConcentration(10.0);
         firstCondition.setAssayMedium(assayMedium);
@@ -434,8 +431,8 @@ public class ConditionsPanelController {
 
         //create a new ECM object and set its class members
         Ecm ecm = new Ecm();
-        ecm.setEcmComposition(assayEcmPanelController.getEcm2DCompositionBindingList().get(0));
-        ecm.setEcmCoating(assayEcmPanelController.getEcmCoatingBindingList().get(0));
+        ecm.setEcmComposition(assayEcmController.getEcm2DCompositionBindingList().get(0));
+        ecm.setEcmCoating(assayEcmController.getEcmCoatingBindingList().get(0));
         ecm.setCoatingTemperature("RT");
         ecm.setCoatingTime("60");
         ecm.setConcentration(0.04);
@@ -475,10 +472,10 @@ public class ConditionsPanelController {
         Ecm ecm = new Ecm();
         //need to set different values according to matrix dimension: 2D or 3D
         if (newCondition.getMatrixDimension().getMatrixDimension().equals("2D")) {
-            newCondition.setAssay(assayEcmPanelController.getAssay2DBindingList().get(0));
+            newCondition.setAssay(assayEcmController.getAssay2DBindingList().get(0));
             //set ecm 2D fields
-            ecm.setEcmComposition(assayEcmPanelController.getEcm2DCompositionBindingList().get(0));
-            ecm.setEcmCoating(assayEcmPanelController.getEcmCoatingBindingList().get(0));
+            ecm.setEcmComposition(assayEcmController.getEcm2DCompositionBindingList().get(0));
+            ecm.setEcmCoating(assayEcmController.getEcmCoatingBindingList().get(0));
             ecm.setConcentration(0.04);
             ecm.setVolume(100.0);
             ecm.setCoatingTime("60");
@@ -486,10 +483,10 @@ public class ConditionsPanelController {
             ecm.setVolumeUnit("\u00B5" + "l");
             ecm.setConcentrationUnit("mg/ml");
         } else {
-            newCondition.setAssay(assayEcmPanelController.getAssay3DBindingList().get(0));
+            newCondition.setAssay(assayEcmController.getAssay3DBindingList().get(0));
             //set ecm 3D fields
-            ecm.setEcmComposition(assayEcmPanelController.getEcm3DCompositionBindingList().get(0));
-            ecm.setEcmDensity((EcmDensity) assayEcmPanelController.getAssayEcm3DPanel().getDensityComboBox().getItemAt(1));
+            ecm.setEcmComposition(assayEcmController.getEcm3DCompositionBindingList().get(0));
+            ecm.setEcmDensity((EcmDensity) assayEcmController.getAssayEcm3DPanel().getDensityComboBox().getItemAt(1));
             ecm.setVolume(40.0);
             ecm.setPolymerisationTime("30");
             ecm.setPolymerisationTemperature("37 C");

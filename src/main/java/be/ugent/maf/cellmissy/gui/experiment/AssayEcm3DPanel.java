@@ -90,9 +90,11 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
         compositionTextField = new javax.swing.JTextField();
         volumeUnitLabel = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
 
         assayPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        assayPanel.setOpaque(false);
         assayPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         assayComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -131,6 +133,7 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
 
         ecmPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder(""), "Extra Cellular Matrix", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12), new java.awt.Color(0, 0, 0))); // NOI18N
         ecmPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        ecmPanel.setOpaque(false);
         ecmPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         densityLabel.setText("Density");

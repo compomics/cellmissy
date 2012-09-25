@@ -13,7 +13,7 @@ public class SingleCellAnalysisPanelController {
     //model
     //view
     //parent controller
-    private DataAnalysisPanelController dataAnalysisPanelController;
+    private DataAnalysisController dataAnalysisPanelController;
     //child controllers
     //services
 
@@ -21,7 +21,7 @@ public class SingleCellAnalysisPanelController {
      * constructor (parent controller)
      * @param dataAnalysisPanelController 
      */
-    public SingleCellAnalysisPanelController(DataAnalysisPanelController dataAnalysisPanelController) {
+    public SingleCellAnalysisPanelController(DataAnalysisController dataAnalysisPanelController) {
         this.dataAnalysisPanelController = dataAnalysisPanelController;
     }
     

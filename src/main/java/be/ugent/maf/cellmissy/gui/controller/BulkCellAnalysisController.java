@@ -10,7 +10,6 @@ import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.analysis.DataTableModel;
 import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
-import be.ugent.maf.cellmissy.analysis.impl.NormalKernelDensityEstimator;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -42,11 +41,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
+ * Bulk Cell Analysis Controller: Collective Cell Migration Data Analysis
+ * Panel Controller: Data Analysis Controller 
  * @author Paola Masuzzo
  */
-@Controller("bulkCellAnalysisPanelController")
-public class BulkCellAnalysisPanelController {
+@Controller("bulkCellAnalysisController")
+public class BulkCellAnalysisController {
 
     //model
     private BindingGroup bindingGroup;
@@ -58,7 +58,7 @@ public class BulkCellAnalysisPanelController {
     private ChartPanel correctedDensityChartPanel;
     //parent controller
     @Autowired
-    private DataAnalysisPanelController dataAnalysisPanelController;
+    private DataAnalysisController dataAnalysisController;
     //child controllers
     //services
     @Autowired
@@ -73,7 +73,6 @@ public class BulkCellAnalysisPanelController {
     public void init() {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-
         //init views
         initBulkCellAnalysisPanel();
     }
@@ -103,10 +102,10 @@ public class BulkCellAnalysisPanelController {
      */
     public void showTimeSteps() {
         //make the TimeStepsTable non selectable
-        dataAnalysisPanelController.getDataAnalysisPanel().getTimeStepsTable().setFocusable(false);
-        dataAnalysisPanelController.getDataAnalysisPanel().getTimeStepsTable().setRowSelectionAllowed(false);
+        dataAnalysisController.getDataAnalysisPanel().getTimeStepsTable().setFocusable(false);
+        dataAnalysisController.getDataAnalysisPanel().getTimeStepsTable().setRowSelectionAllowed(false);
         //table binding
-        timeStepsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, timeStepBindingList, dataAnalysisPanelController.getDataAnalysisPanel().getTimeStepsTable());
+        timeStepsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, timeStepBindingList, dataAnalysisController.getDataAnalysisPanel().getTimeStepsTable());
         //add column bindings
         ColumnBinding columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.well.columnNumber}"));
         columnBinding.setColumnName("Column");
@@ -164,7 +163,7 @@ public class BulkCellAnalysisPanelController {
     public void setDeltaAreaTableData(PlateCondition plateCondition) {
         //set model for the delta area Table
         //NOTE that each time a new condition is selected, new data is passed to the model
-        dataTable.setModel(new DeltaAreaTableModel(plateCondition, dataAnalysisPanelController.getExperiment().getTimeFrames()));
+        dataTable.setModel(new DeltaAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
     }
 
     /**
@@ -174,7 +173,7 @@ public class BulkCellAnalysisPanelController {
     public void setAreaIncreaseTableData(PlateCondition plateCondition) {
         //set model for the delta area Table
         //NOTE that each time a new condition is selected, new data is passed to the model
-        dataTable.setModel(new AreaIncreaseTableModel(plateCondition, dataAnalysisPanelController.getExperiment().getTimeFrames()));
+        dataTable.setModel(new AreaIncreaseTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
         //starting from second column set Renderer for cells
         for (int i = 1; i < dataTable.getColumnCount(); i++) {
             //show OUTLIERS in red
@@ -189,7 +188,7 @@ public class BulkCellAnalysisPanelController {
     public void setNormalizedAreaTableData(PlateCondition plateCondition) {
         //set Model for the Normalized AreaTable
         //NOTE that each time a new condition is selected, new data is passed to the model
-        dataTable.setModel(new NormalizedAreaTableModel(plateCondition, dataAnalysisPanelController.getExperiment().getTimeFrames()));
+        dataTable.setModel(new NormalizedAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
     }
 
     /**
@@ -201,7 +200,7 @@ public class BulkCellAnalysisPanelController {
      * @return a 2D array of double values
      */
     private Double[][] computeNormalizedArea(Double[][] data) {
-        int timeFrames = dataAnalysisPanelController.getExperiment().getTimeFrames();
+        int timeFrames = dataAnalysisController.getExperiment().getTimeFrames();
         int counter = 0;
         for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
             if (timeStepBindingList.get(columnIndex).getArea() != 0) {
@@ -244,7 +243,7 @@ public class BulkCellAnalysisPanelController {
      */
     private Double[][] computeAreaIncrease(Double[][] data) {
         int counter = 0;
-        Double[][] newArray = new Double[dataAnalysisPanelController.getExperiment().getTimeFrames()][dataAnalysisPanelController.getSelectedCondition().getWellCollection().size() + 1];
+        Double[][] newArray = new Double[dataAnalysisController.getExperiment().getTimeFrames()][dataAnalysisController.getSelectedCondition().getWellCollection().size() + 1];
         Double[][] computeDeltaArea = computeDeltaArea(newArray);
         for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
@@ -267,9 +266,9 @@ public class BulkCellAnalysisPanelController {
     private double[] computeTimeFrames() {
 
         double[] timeFrames;
-        timeFrames = new double[dataAnalysisPanelController.getExperiment().getTimeFrames()];
-        for (int i = 0; i < dataAnalysisPanelController.getExperiment().getTimeFrames(); i++) {
-            Double timeFrame = timeStepBindingList.get(i).getTimeStepSequence() * dataAnalysisPanelController.getExperiment().getExperimentInterval();
+        timeFrames = new double[dataAnalysisController.getExperiment().getTimeFrames()];
+        for (int i = 0; i < dataAnalysisController.getExperiment().getTimeFrames(); i++) {
+            Double timeFrame = timeStepBindingList.get(i).getTimeStepSequence() * dataAnalysisController.getExperiment().getExperimentInterval();
             int intValue = timeFrame.intValue();
             timeFrames[i] = intValue;
         }
@@ -288,7 +287,7 @@ public class BulkCellAnalysisPanelController {
         //row selection must be false && column selection true to be able to select through columns
         dataTable.setColumnSelectionAllowed(true);
         dataTable.setRowSelectionAllowed(false);
-        dataAnalysisPanelController.getDataAnalysisPanel().getDataTablePanel().add(scrollPane);
+        dataAnalysisController.getDataAnalysisPanel().getDataTablePanel().add(scrollPane);
         //init timeStepsBindingList
         timeStepBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
         //init chart panels
@@ -323,47 +322,44 @@ public class BulkCellAnalysisPanelController {
      * for a condition selected this method shows in one plot the estimated density functions for each replicate (=well)
      * This is doing the job for one condition (all replicates)
      */
-    public void showDensityFunction() {
-        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
-        //generate density function for each replicate and add the series to the seriescollection    
-        for (int i = 0; i < getDataFromTableModel().length; i++) {
-            XYSeries xySeries = generateDensityFunction(getDataFromTableModel()[i]);
-            xySeries.setKey("Rep " + (i + 1));
-            xySeriesCollection.addSeries(xySeries);
-        }
-        //create only one densityChart and use it to set the densityChart of the densityChart panel
-        JFreeChart densityChart = ChartFactory.createXYLineChart("Kernel Density Estimation", "% increase (Area)", "Density", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
-        //XYplot
-        XYPlot xYPlot = densityChart.getXYPlot();
-        //disable autorange for the axes
-        xYPlot.getDomainAxis().setAutoRange(false);
-        xYPlot.getRangeAxis().setAutoRange(false);
-        //set ranges for x and y axes
-        xYPlot.getDomainAxis().setRange(xySeriesCollection.getDomainLowerBound(true) - 0.05, xySeriesCollection.getDomainUpperBound(true) + 0.05);
-        xYPlot.getRangeAxis().setUpperBound(computeMaxY(xySeriesCollection) + 0.05);
-        xYPlot.setBackgroundPaint(Color.white);
-        //renderer for wide line
-        XYItemRenderer renderer = xYPlot.getRenderer();
-        BasicStroke wideLine = new BasicStroke(1.5f);
-        for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
-            renderer.setSeriesStroke(i, wideLine);
-        }
+    public void showRawDataDensityFunction() {
+        JFreeChart densityChart = showDensityFunction(getDataFromTableModel(), "Kernel Density Estimator");
         densityChartPanel.setChart(densityChart);
-        dataAnalysisPanelController.getDataAnalysisPanel().getDensityChartParentPanel().add(densityChartPanel, gridBagConstraints);
-        dataAnalysisPanelController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
+        dataAnalysisController.getDataAnalysisPanel().getDensityChartParentPanel().add(densityChartPanel, gridBagConstraints);
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
     }
 
-    public void showCorrectedDensityFunction() {
-        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+    /**
+     * for a condition selected this method shows density values for corrected distributions
+     */
+    public void showCorrectedDataDensityFunction() {
+        //compute first corrected data (no outliers)
+        double[][] correctedData = new double[getDataFromTableModel().length][];
         for (int i = 0; i < getDataFromTableModel().length; i++) {
             double[] correctedValues = outliersHandler.handleOutliers(getDataFromTableModel()[i]).get(1);
-            XYSeries xySeries = generateDensityFunction(correctedValues);
+            correctedData[i] = correctedValues;
+        }
+        JFreeChart correctedDensityChart = showDensityFunction(correctedData, "Outliers Correction");
+        correctedDensityChartPanel.setChart(correctedDensityChart);
+        dataAnalysisController.getDataAnalysisPanel().getCorrectedDensityChartParentPanel().add(correctedDensityChartPanel, gridBagConstraints);
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
+    }
+
+    /**
+     * show Density function for each 2D array of double
+     * @param data - 2D array of double
+     * @param chartTitle - string for chart title
+     * @return a JFreeChart
+     */
+    private JFreeChart showDensityFunction(double[][] data, String chartTitle) {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        for (int i = 0; i < data.length; i++) {
+            XYSeries xySeries = generateDensityFunction(data[i]);
             xySeries.setKey("Rep " + (i + 1));
             xySeriesCollection.addSeries(xySeries);
         }
+        JFreeChart densityChart = ChartFactory.createXYLineChart(chartTitle, "% increase (Area)", "Density", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
 
-        //create only one densityChart and use it to set the densityChart of the densityChart panel
-        JFreeChart densityChart = ChartFactory.createXYLineChart("Outliers Correction", "% increase (Area)", "Density", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         //XYplot
         XYPlot xYPlot = densityChart.getXYPlot();
         //disable autorange for the axes
@@ -379,9 +375,7 @@ public class BulkCellAnalysisPanelController {
         for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
             renderer.setSeriesStroke(i, wideLine);
         }
-        correctedDensityChartPanel.setChart(densityChart);
-        dataAnalysisPanelController.getDataAnalysisPanel().getCorrectedDensityChartParentPanel().add(correctedDensityChartPanel, gridBagConstraints);
-        dataAnalysisPanelController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
+        return densityChart;
     }
 
     /**

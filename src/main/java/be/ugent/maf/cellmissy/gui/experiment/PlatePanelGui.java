@@ -47,6 +47,7 @@ public class PlatePanelGui extends javax.swing.JPanel {
         selectFormatLabel = new javax.swing.JLabel();
         bottomPanel = new javax.swing.JPanel();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         setPreferredSize(new java.awt.Dimension(250, 80));
         setLayout(new java.awt.GridBagLayout());
