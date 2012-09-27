@@ -18,7 +18,7 @@ import org.springframework.stereotype.Controller;
 
 /**
  * Main Controller
- * Child Controllers: User, Setup Experiment, Load Experiment, Data Analysis - controllers
+ * Child Controllers: User Management, Setup Experiment, Load Experiment, Data Analysis - controllers
  * @author Paola
  */
 @Controller("cellMissyController")

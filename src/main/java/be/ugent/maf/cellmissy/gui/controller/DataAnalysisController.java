@@ -93,7 +93,7 @@ public class DataAnalysisController {
         analysisPlatePanel = new AnalysisPlatePanel();
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        
+
         bulkCellAnalysisPanelController.init();
         initPlatePanel();
         initExperimentDataPanel();
@@ -244,23 +244,30 @@ public class DataAnalysisController {
                 //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO VIEW CELLMIA RESULTS
                 bulkCellAnalysisPanelController.showTimeSteps();
                 //check which button is selected for analysis:
+
+                if (dataAnalysisPanel.getNormalizeAreaButton().isSelected()) {
+                    //for current selected condition show normalized area values together with time frames
+                    bulkCellAnalysisPanelController.setNormalizedAreaTableData(plateConditionList.get(locationToIndex));
+                }
+
                 if (dataAnalysisPanel.getDeltaAreaButton().isSelected()) {
                     //for current selected condition show delta area values 
                     bulkCellAnalysisPanelController.setDeltaAreaTableData(plateConditionList.get(locationToIndex));
                 }
 
                 if (dataAnalysisPanel.getPercentageAreaIncreaseButton().isSelected()) {
-                    //for current selected condition show %increments (for JUMP detection)
+                    //for current selected condition show %increments (for outliers detection)
                     bulkCellAnalysisPanelController.setAreaIncreaseTableData(plateConditionList.get(locationToIndex));
-                    //show density function for selected condition
+                    //show density function for selected condition (Raw Data and Corrected Data)
                     bulkCellAnalysisPanelController.showRawDataDensityFunction();
                     bulkCellAnalysisPanelController.showCorrectedDataDensityFunction();
                 }
 
-                if (dataAnalysisPanel.getNormalizeAreaButton().isSelected()) {
-                    //for current selected condition show normalized area values together with time frames
-                    bulkCellAnalysisPanelController.setNormalizedAreaTableData(plateConditionList.get(locationToIndex));
+                if (dataAnalysisPanel.getCorrectedAreaButton().isSelected()) {
+                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(plateConditionList.get(locationToIndex));
+                    bulkCellAnalysisPanelController.showArea();
                 }
+
             }
         });
 
@@ -324,6 +331,12 @@ public class DataAnalysisController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
+                    bulkCellAnalysisPanelController.setCorrectedAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                    if (bulkCellAnalysisPanelController.getAreaChartPanel().getChart() == null) {
+                        bulkCellAnalysisPanelController.showArea();
+                    }
+                }
             }
         });
 

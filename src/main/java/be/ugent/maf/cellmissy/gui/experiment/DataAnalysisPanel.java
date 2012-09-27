@@ -87,6 +87,10 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return densityChartParentPanel;
     }
 
+    public JPanel getAreaChartPanelParentPanel() {
+        return areaChartPanelParentPanel;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -116,6 +120,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         graphicsParentPanel = new javax.swing.JPanel();
         densityChartParentPanel = new javax.swing.JPanel();
         correctedDensityChartParentPanel = new javax.swing.JPanel();
+        areaChartPanelParentPanel = new javax.swing.JPanel();
         singleCellAnalysisPanel = new javax.swing.JPanel();
         leftPanel = new javax.swing.JPanel();
         experimentDataPanel = new javax.swing.JPanel();
@@ -180,7 +185,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
             resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(resultsImporterPanelLayout.createSequentialGroup()
                 .addGap(27, 27, 27)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE))
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Results Importer", resultsImporterPanel);
@@ -270,7 +275,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.weighty = 0.5;
         graphicsParentPanel.add(densityChartParentPanel, gridBagConstraints);
 
         correctedDensityChartParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -283,8 +288,22 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.weighty = 0.5;
         graphicsParentPanel.add(correctedDensityChartParentPanel, gridBagConstraints);
+
+        areaChartPanelParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        areaChartPanelParentPanel.setOpaque(false);
+        areaChartPanelParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        areaChartPanelParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.5;
+        graphicsParentPanel.add(areaChartPanelParentPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -510,6 +529,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox algorithmComboBox;
     private javax.swing.JPanel analysisPanel;
     private javax.swing.JPanel analysisPlateParentPanel;
+    private javax.swing.JPanel areaChartPanelParentPanel;
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JPanel bulkCellAnalysisPanel;
     private javax.swing.ButtonGroup buttonGroup1;
