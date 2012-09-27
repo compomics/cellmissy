@@ -16,11 +16,13 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
+import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.ELProperty;
@@ -56,6 +58,7 @@ public class BulkCellAnalysisController {
     //view
     private ChartPanel densityChartPanel;
     private ChartPanel correctedDensityChartPanel;
+    private ChartPanel areaChartPanel;
     //parent controller
     @Autowired
     private DataAnalysisController dataAnalysisController;
@@ -91,6 +94,10 @@ public class BulkCellAnalysisController {
 
     public ChartPanel getCorrectedDensityChartPanel() {
         return correctedDensityChartPanel;
+    }
+
+    public ChartPanel getAreaChartPanel() {
+        return areaChartPanel;
     }
 
     /**
@@ -192,6 +199,15 @@ public class BulkCellAnalysisController {
     }
 
     /**
+     * for each replicate (well) of a certain selected condition, show normalized corrected area values, close to time frames
+     * @param plateCondition 
+     */
+    public void setCorrectedAreaTableData(PlateCondition plateCondition) {
+        //set the model for the Correcte AreaTable
+        dataTable.setModel(new CorrectedAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
+    }
+
+    /**
      * private methods and classes
      */
     /**
@@ -260,6 +276,76 @@ public class BulkCellAnalysisController {
     }
 
     /**
+     * Correct area values after outlier detection
+     * @param data
+     * @return a 2D array to populate data table
+     */
+    private Double[][] computeCorrectedArea(Double[][] data) {
+
+        int counter = 0;
+        Double[][] newArray = new Double[dataAnalysisController.getExperiment().getTimeFrames()][dataAnalysisController.getSelectedCondition().getWellCollection().size() + 1];
+        Double[][] computeAreaIncrease = computeAreaIncrease(newArray);
+        Double[][] transposed = new Double[computeAreaIncrease[0].length][computeAreaIncrease.length];
+        for (int i = 0; i < computeAreaIncrease.length; i++) {
+            for (int j = 0; j < computeAreaIncrease[0].length; j++) {
+                transposed[j][i] = computeAreaIncrease[i][j];
+            }
+        }
+        Double[][] array = new Double[dataAnalysisController.getExperiment().getTimeFrames()][dataAnalysisController.getSelectedCondition().getWellCollection().size() + 1];
+        Double[][] computeDeltaArea = computeDeltaArea(array);
+
+        for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
+            double[] outliers = outliersHandler.handleOutliers(ArrayUtils.toPrimitive(excludeNullValues(transposed[columnIndex]))).get(0);
+
+            for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
+                if (outliers.length != 0) {
+                    //check first row (area increase is always null)
+                    if (rowIndex == 0) {
+                        data[rowIndex][columnIndex] = roundTwoDecimals(timeStepBindingList.get(counter).getArea());
+                        counter++;
+                        continue;
+                    }
+
+                    Double areaIncrease = transposed[columnIndex][rowIndex];
+                    for (double outlier : outliers) {
+                        if (areaIncrease != null && areaIncrease.doubleValue() == outlier) {
+                            //set area value back to previous one
+                            data[rowIndex][columnIndex] = data[rowIndex - 1][columnIndex];
+                            break;
+                        } else if (areaIncrease != null && areaIncrease.doubleValue() != outlier) {
+                            if (computeDeltaArea[rowIndex][columnIndex] != null) {
+                                data[rowIndex][columnIndex] = roundTwoDecimals(data[rowIndex - 1][columnIndex] + computeDeltaArea[rowIndex][columnIndex]);
+                            }
+                        }
+                    }
+                } else {
+                    data[rowIndex][columnIndex] = roundTwoDecimals(timeStepBindingList.get(counter).getArea());
+                }
+                counter++;
+            }
+        }
+        return data;
+    }
+
+    /**
+     * given corrected area values, normalize (area time frame 0 = 0)
+     * @param data
+     * @return a 2D array of corrected and normalized double values
+     */
+    private Double[][] normalizeCorrectedArea(Double[][] data) {
+        Double[][] newArray = new Double[dataAnalysisController.getExperiment().getTimeFrames()][dataAnalysisController.getSelectedCondition().getWellCollection().size() + 1];
+        Double[][] computeCorrectedArea = computeCorrectedArea(newArray);
+        for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
+            for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
+                if (computeCorrectedArea[rowIndex][columnIndex] != null) {
+                    data[rowIndex][columnIndex] = roundTwoDecimals(computeCorrectedArea[rowIndex][columnIndex] - computeCorrectedArea[0][columnIndex]);
+                }
+            }
+        }
+        return data;
+    }
+
+    /**
      * compute time frames from step sequence
      * @return an array of integers
      */
@@ -295,6 +381,8 @@ public class BulkCellAnalysisController {
         densityChartPanel.setOpaque(false);
         correctedDensityChartPanel = new ChartPanel(null);
         correctedDensityChartPanel.setOpaque(false);
+        areaChartPanel = new ChartPanel(null);
+        areaChartPanel.setOpaque(false);
     }
 
     /**
@@ -371,11 +459,52 @@ public class BulkCellAnalysisController {
         xYPlot.setBackgroundPaint(Color.white);
         //renderer for wide line
         XYItemRenderer renderer = xYPlot.getRenderer();
-        BasicStroke wideLine = new BasicStroke(1.5f);
+        BasicStroke wideLine = new BasicStroke(1.3f);
         for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
             renderer.setSeriesStroke(i, wideLine);
         }
         return densityChart;
+    }
+
+    /**
+     * 
+     * @param xValues
+     * @param yValues
+     * @return 
+     */
+    private XYSeries generateXYSeriesArea(double[] xValues, double[] yValues) {
+        XYSeries series = new XYSeries("", false);
+        for (int i = 0; i < yValues.length; i++) {
+            double x = xValues[i];
+            double y = yValues[i];
+            series.add(x, y);
+        }
+        return series;
+    }
+
+    /**
+     * 
+     */
+    public void showArea() {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        double[][] dataFromTableModel = getDataFromTableModel();
+        double[] xValues = computeTimeFrames();
+        for (int columnIndex = 0; columnIndex < dataFromTableModel.length; columnIndex++) {
+            double[] yValues = dataFromTableModel[columnIndex];
+            XYSeries xySeries = generateXYSeriesArea(xValues, yValues);
+            xySeries.setKey("Rep " + (columnIndex + 1));
+            xySeriesCollection.addSeries(xySeries);
+        }
+        JFreeChart areaChart = ChartFactory.createXYLineChart("Area", "Time Frame", "Area", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        areaChart.getXYPlot().setBackgroundPaint(Color.white);
+        XYItemRenderer renderer = areaChart.getXYPlot().getRenderer();
+        BasicStroke wideLine = new BasicStroke(1.3f);
+        for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
+            renderer.setSeriesStroke(i, wideLine);
+        }
+        areaChartPanel.setChart(areaChart);
+        dataAnalysisController.getDataAnalysisPanel().getAreaChartPanelParentPanel().add(areaChartPanel, gridBagConstraints);
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
     }
 
     /**
@@ -403,13 +532,15 @@ public class BulkCellAnalysisController {
         int rowCount = model.getRowCount();
         int columnCount = model.getColumnCount();
 
-        double[][] tableData = new double[columnCount - 1][rowCount - 1];
+        double[][] tableData = new double[columnCount - 1][];
         for (int i = 1; i < columnCount; i++) {
-            for (int j = 1; j < rowCount; j++) {
+            List<Double> tempList = new ArrayList<>();
+            for (int j = 0; j < rowCount; j++) {
                 if (model.getValueAt(j, i) != null) {
-                    tableData[i - 1][j - 1] = (double) model.getValueAt(j, i);
+                    tempList.add((double) model.getValueAt(j, i));
                 }
             }
+            tableData[i - 1] = ArrayUtils.toPrimitive(tempList.toArray(new Double[tempList.size()]));
         }
         return tableData;
     }
@@ -480,6 +611,27 @@ public class BulkCellAnalysisController {
     }
 
     /**
+     * Table Model for CorrectedArea data
+     */
+    private class CorrectedAreaTableModel extends DataTableModel {
+
+        public CorrectedAreaTableModel(PlateCondition plateCondition, int numberOfRows) {
+            super(plateCondition, numberOfRows);
+            insertRawData();
+        }
+
+        @Override
+        protected final void insertRawData() {
+            //copy the content of computeAreaIncrease array into data array
+            for (int i = 0; i < data.length; i++) {
+                //fill in first column
+                data[i][0] = computeTimeFrames()[i];
+                System.arraycopy(normalizeCorrectedArea(data)[i], 1, data[i], 1, data[i].length - 1);
+            }
+        }
+    }
+
+    /**
      * Cell renderer for Area Increase Table
      */
     private class AreaIncreaseRenderer extends DefaultTableCellRenderer {
@@ -510,13 +662,21 @@ public class BulkCellAnalysisController {
         }
     }
 
-    /**
-     * compute Area Regression: 
-     * @return a SimpleRegression Class : Compute summary statistics for a list of double values
-     */
     //round double to 2 decimals
     private double roundTwoDecimals(double d) {
         DecimalFormat twoDForm = new DecimalFormat("#.##");
         return Double.valueOf(twoDForm.format(d));
+    }
+
+    //exclude null values from an array of Double 
+    private Double[] excludeNullValues(Double[] data) {
+        List<Double> list = new ArrayList<>();
+        for (Double value : data) {
+            if (value != null) {
+                list.add(value);
+            }
+        }
+        Double[] toArray = list.toArray(new Double[list.size()]);
+        return toArray;
     }
 }
