@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.analysis.impl.AreaCalculatorImpl;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
@@ -16,7 +17,6 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -44,7 +44,7 @@ import org.springframework.stereotype.Controller;
 
 /**
  * Bulk Cell Analysis Controller: Collective Cell Migration Data Analysis
- * Panel Controller: Data Analysis Controller 
+ * Parent Controller: Data Analysis Controller 
  * @author Paola Masuzzo
  */
 @Controller("bulkCellAnalysisController")
@@ -65,9 +65,11 @@ public class BulkCellAnalysisController {
     //child controllers
     //services
     @Autowired
-    private KernelDensityEstimator normalKernelDensityEstimator;
+    private KernelDensityEstimator kernelDensityEstimator;
     @Autowired
     private OutliersHandler outliersHandler;
+    @Autowired
+    private AreaCalculatorImpl areaCalculator;
     private GridBagConstraints gridBagConstraints;
 
     /**
@@ -78,6 +80,13 @@ public class BulkCellAnalysisController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         //init views
         initBulkCellAnalysisPanel();
+    }
+
+    /**
+     * initialize Area Calculator
+     */
+    public void initAreaCalculator() {
+        areaCalculator.init(dataAnalysisController.getExperiment().getTimeFrames(), timeStepBindingList);
     }
 
     /**
@@ -211,157 +220,6 @@ public class BulkCellAnalysisController {
      * private methods and classes
      */
     /**
-     * compute Normalized Area
-     * @param data
-     * @return a 2D array of double values
-     */
-    private Double[][] computeNormalizedArea(Double[][] data) {
-        int timeFrames = dataAnalysisController.getExperiment().getTimeFrames();
-        int counter = 0;
-        for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
-            if (timeStepBindingList.get(columnIndex).getArea() != 0) {
-                for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-                    int index = (counter / timeFrames) * timeFrames;
-                    if (timeStepBindingList.get(counter).getArea() - timeStepBindingList.get(index).getArea() >= 0) {
-                        data[rowIndex][columnIndex] = roundTwoDecimals(timeStepBindingList.get(counter).getArea() - timeStepBindingList.get(index).getArea());
-                    } else {
-                        data[rowIndex][columnIndex] = null;
-                    }
-                    counter++;
-                }
-            }
-        }
-        return data;
-    }
-
-    /**
-     * compute Delta Area values (increments from one time frame to the following one)
-     * @param data
-     * @return a 2D array of double values
-     */
-    private Double[][] computeDeltaArea(Double[][] data) {
-        int counter = 0;
-        for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
-            for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-                if (timeStepBindingList.get(counter).getTimeStepSequence() != 0 && timeStepBindingList.get(counter).getArea() != 0) {
-                    data[rowIndex][columnIndex] = roundTwoDecimals(timeStepBindingList.get(counter).getArea() - timeStepBindingList.get(counter - 1).getArea());
-                }
-                counter++;
-            }
-        }
-        return data;
-    }
-
-    /**
-     * Compute %Area increase (these values are used for density plots and area correction for outliers)
-     * @param data
-     * @return a 2D array of double arrays
-     */
-    private Double[][] computeAreaIncrease(Double[][] data) {
-        int counter = 0;
-        Double[][] newArray = new Double[dataAnalysisController.getExperiment().getTimeFrames()][dataAnalysisController.getSelectedCondition().getWellCollection().size() + 1];
-        Double[][] computeDeltaArea = computeDeltaArea(newArray);
-        for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
-            for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-                if (timeStepBindingList.get(counter).getTimeStepSequence() != 0) {
-                    Double deltaArea = computeDeltaArea[rowIndex][columnIndex];
-                    if (deltaArea != null) {
-                        data[rowIndex][columnIndex] = roundTwoDecimals(deltaArea / timeStepBindingList.get(counter - 1).getArea() * 100);
-                    }
-                }
-                counter++;
-            }
-        }
-        return data;
-    }
-
-    /**
-     * Correct area values after outlier detection
-     * @param data
-     * @return a 2D array to populate data table
-     */
-    private Double[][] computeCorrectedArea(Double[][] data) {
-
-        int counter = 0;
-        Double[][] newArray = new Double[dataAnalysisController.getExperiment().getTimeFrames()][dataAnalysisController.getSelectedCondition().getWellCollection().size() + 1];
-        Double[][] computeAreaIncrease = computeAreaIncrease(newArray);
-        Double[][] transposed = new Double[computeAreaIncrease[0].length][computeAreaIncrease.length];
-        for (int i = 0; i < computeAreaIncrease.length; i++) {
-            for (int j = 0; j < computeAreaIncrease[0].length; j++) {
-                transposed[j][i] = computeAreaIncrease[i][j];
-            }
-        }
-        Double[][] array = new Double[dataAnalysisController.getExperiment().getTimeFrames()][dataAnalysisController.getSelectedCondition().getWellCollection().size() + 1];
-        Double[][] computeDeltaArea = computeDeltaArea(array);
-
-        for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
-            double[] outliers = outliersHandler.handleOutliers(ArrayUtils.toPrimitive(excludeNullValues(transposed[columnIndex]))).get(0);
-
-            for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-                if (outliers.length != 0) {
-                    //check first row (area increase is always null)
-                    if (rowIndex == 0) {
-                        data[rowIndex][columnIndex] = roundTwoDecimals(timeStepBindingList.get(counter).getArea());
-                        counter++;
-                        continue;
-                    }
-
-                    Double areaIncrease = transposed[columnIndex][rowIndex];
-                    for (double outlier : outliers) {
-                        if (areaIncrease != null && areaIncrease.doubleValue() == outlier) {
-                            //set area value back to previous one
-                            data[rowIndex][columnIndex] = data[rowIndex - 1][columnIndex];
-                            break;
-                        } else if (areaIncrease != null && areaIncrease.doubleValue() != outlier) {
-                            if (computeDeltaArea[rowIndex][columnIndex] != null) {
-                                data[rowIndex][columnIndex] = roundTwoDecimals(data[rowIndex - 1][columnIndex] + computeDeltaArea[rowIndex][columnIndex]);
-                            }
-                        }
-                    }
-                } else {
-                    data[rowIndex][columnIndex] = roundTwoDecimals(timeStepBindingList.get(counter).getArea());
-                }
-                counter++;
-            }
-        }
-        return data;
-    }
-
-    /**
-     * given corrected area values, normalize (area time frame 0 = 0)
-     * @param data
-     * @return a 2D array of corrected and normalized double values
-     */
-    private Double[][] normalizeCorrectedArea(Double[][] data) {
-        Double[][] newArray = new Double[dataAnalysisController.getExperiment().getTimeFrames()][dataAnalysisController.getSelectedCondition().getWellCollection().size() + 1];
-        Double[][] computeCorrectedArea = computeCorrectedArea(newArray);
-        for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
-            for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-                if (computeCorrectedArea[rowIndex][columnIndex] != null) {
-                    data[rowIndex][columnIndex] = roundTwoDecimals(computeCorrectedArea[rowIndex][columnIndex] - computeCorrectedArea[0][columnIndex]);
-                }
-            }
-        }
-        return data;
-    }
-
-    /**
-     * compute time frames from step sequence
-     * @return an array of integers
-     */
-    private double[] computeTimeFrames() {
-
-        double[] timeFrames;
-        timeFrames = new double[dataAnalysisController.getExperiment().getTimeFrames()];
-        for (int i = 0; i < dataAnalysisController.getExperiment().getTimeFrames(); i++) {
-            Double timeFrame = timeStepBindingList.get(i).getTimeStepSequence() * dataAnalysisController.getExperiment().getExperimentInterval();
-            int intValue = timeFrame.intValue();
-            timeFrames[i] = intValue;
-        }
-        return timeFrames;
-    }
-
-    /**
      * initialize main panel
      */
     private void initBulkCellAnalysisPanel() {
@@ -393,7 +251,7 @@ public class BulkCellAnalysisController {
      */
     private XYSeries generateDensityFunction(double[] data) {
         //use KDE to estimate density function for dataset data
-        List<double[]> estimateDensityFunction = normalKernelDensityEstimator.estimateDensityFunction(data);
+        List<double[]> estimateDensityFunction = kernelDensityEstimator.estimateDensityFunction(data);
         double[] xValues = estimateDensityFunction.get(0);
         double[] yValues = estimateDensityFunction.get(1);
         //XYSeries is by default ordered in ascending values, set second parameter of costructor to false
@@ -483,12 +341,12 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * 
+     * Show Area for a certain condition selected
      */
     public void showArea() {
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
         double[][] dataFromTableModel = getDataFromTableModel();
-        double[] xValues = computeTimeFrames();
+        double[] xValues = areaCalculator.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval());
         for (int columnIndex = 0; columnIndex < dataFromTableModel.length; columnIndex++) {
             double[] yValues = dataFromTableModel[columnIndex];
             XYSeries xySeries = generateXYSeriesArea(xValues, yValues);
@@ -560,10 +418,10 @@ public class BulkCellAnalysisController {
             //copy the content of computeNormalizedArea array into data array
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
-                data[i][0] = computeTimeFrames()[i];
+                data[i][0] = areaCalculator.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
                 //fill in all the other columns
                 //arraycopy(Object src,  int  srcPos, Object dest, int destPos, int length)
-                System.arraycopy(computeNormalizedArea(data)[i], 1, data[i], 1, data[i].length - 1);
+                System.arraycopy(areaCalculator.computeNormalizedArea(data)[i], 1, data[i], 1, data[i].length - 1);
             }
         }
     }
@@ -583,8 +441,8 @@ public class BulkCellAnalysisController {
             //copy the content of computeNormalizedArea array into data array
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
-                data[i][0] = computeTimeFrames()[i];
-                System.arraycopy(computeDeltaArea(data)[i], 1, data[i], 1, data[i].length - 1);
+                data[i][0] = areaCalculator.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
+                System.arraycopy(areaCalculator.computeDeltaArea(data)[i], 1, data[i], 1, data[i].length - 1);
             }
         }
     }
@@ -604,8 +462,9 @@ public class BulkCellAnalysisController {
             //copy the content of computeAreaIncrease array into data array
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
-                data[i][0] = computeTimeFrames()[i];
-                System.arraycopy(computeAreaIncrease(data)[i], 1, data[i], 1, data[i].length - 1);
+                data[i][0] = areaCalculator.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
+                System.arraycopy(areaCalculator.computeAreaIncrease(data, dataAnalysisController.getSelectedCondition())[i], 1, data[i], 1, data[i].length - 1);
+
             }
         }
     }
@@ -625,8 +484,8 @@ public class BulkCellAnalysisController {
             //copy the content of computeAreaIncrease array into data array
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
-                data[i][0] = computeTimeFrames()[i];
-                System.arraycopy(normalizeCorrectedArea(data)[i], 1, data[i], 1, data[i].length - 1);
+                data[i][0] = areaCalculator.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
+                System.arraycopy(areaCalculator.normalizeCorrectedArea(data, dataAnalysisController.getSelectedCondition())[i], 1, data[i], 1, data[i].length - 1);
             }
         }
     }
@@ -660,23 +519,5 @@ public class BulkCellAnalysisController {
             setOpaque(true);
             return this;
         }
-    }
-
-    //round double to 2 decimals
-    private double roundTwoDecimals(double d) {
-        DecimalFormat twoDForm = new DecimalFormat("#.##");
-        return Double.valueOf(twoDForm.format(d));
-    }
-
-    //exclude null values from an array of Double 
-    private Double[] excludeNullValues(Double[] data) {
-        List<Double> list = new ArrayList<>();
-        for (Double value : data) {
-            if (value != null) {
-                list.add(value);
-            }
-        }
-        Double[] toArray = list.toArray(new Double[list.size()]);
-        return toArray;
     }
 }

@@ -22,7 +22,7 @@ import java.util.Map;
  * @author Paola
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:mySpringTestXMLConfig.xml")
+@ContextConfiguration("classpath:mySpringXMLConfig.xml")
 public class CellMiaDataServiceTest {
     
     @Autowired

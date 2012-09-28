@@ -72,11 +72,7 @@ public class AssayEcmController {
     }
 
     /**
-     * public methods and classes
-     */
-    /**
      * getters and setters
-     * 
      */
     public ObservableList<MatrixDimension> getMatrixDimensionBindingList() {
         return matrixDimensionBindingList;
@@ -106,6 +102,9 @@ public class AssayEcmController {
         return assayEcm3DPanel;
     }
 
+    /**
+     * public methods
+     */
     /**
      * update assay/ECM fields for previous condition
      * @param plateCondition 
@@ -195,7 +194,7 @@ public class AssayEcmController {
     }
 
     /**
-     * 
+     * Reset fields for Assay and Ecm parameters ********************************
      * @param plateCondition 
      */
     public void resetAssayEcmInputFields(PlateCondition plateCondition) {

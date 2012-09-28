@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.parser;
 
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import java.io.IOException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,15 @@ import static junit.framework.Assert.*;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 /**
  *
  * @author Paola
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:mySpringTestXMLConfig.xml")
+@ContextConfiguration("classpath:mySpringXMLConfig.xml")
 public class PositionListParserTest {
 
     @Autowired
@@ -31,10 +34,10 @@ public class PositionListParserTest {
     private ObsepFileParser obsepFileParser;
 
     @Test
-    public void testPositionListParser() {
+    public void testPositionListParser() throws IOException {
 
-        File obsepFile = new File(ObsepFileParserTest.class.getClassLoader().getResource("gffp.obsep").getPath());
-        obsepFileParser.parseObsepFile(obsepFile);
+        Resource obsepResource = new ClassPathResource("gffp.obsep");
+        obsepFileParser.parseObsepFile(obsepResource.getFile());
         Map<ImagingType, String> imagingTypePositionListMap = obsepFileParser.mapImagingTypetoPositionList();
 
         File microscopeFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());

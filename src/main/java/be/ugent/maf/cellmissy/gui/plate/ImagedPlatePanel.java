@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * this class is used in the loading data step: imaged wells are shown with related imaging types
+ * This class is used in the loading data step: imaged wells are shown with related imaging types
  * @author Paola Masuzzo
  */
 public class ImagedPlatePanel extends AbstractPlatePanel {
@@ -33,7 +33,7 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
 
     /**
      * getters and setters
-     * @
+     * 
      */
     public List<ImagingType> getImagingTypeList() {
         return imagingTypeList;
@@ -72,6 +72,10 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
         }
     }
 
+    /**
+     * Render rectangles
+     * @param g 
+     */
     private void showRect(Graphics g) {
 
         Graphics2D g2d = (Graphics2D) g;
@@ -101,6 +105,10 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
         }
     }
 
+    /**
+     * render wells
+     * @param g 
+     */
     @Override
     protected void reDrawWells(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;

@@ -71,5 +71,9 @@ public abstract class DataTableModel extends AbstractTableModel {
         }
     }
 
+    /**
+     * Insert raw data in the table according to different math operations
+     * has different implementations according to table models
+     */
     protected abstract void insertRawData();
 }

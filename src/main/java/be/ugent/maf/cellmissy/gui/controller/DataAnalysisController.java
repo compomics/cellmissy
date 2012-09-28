@@ -243,8 +243,11 @@ public class DataAnalysisController {
                 updateTimeStepList(plateConditionList.get(locationToIndex));
                 //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO VIEW CELLMIA RESULTS
                 bulkCellAnalysisPanelController.showTimeSteps();
-                //check which button is selected for analysis:
 
+                //*********************************************************//
+                bulkCellAnalysisPanelController.initAreaCalculator();
+
+                //check which button is selected for analysis:
                 if (dataAnalysisPanel.getNormalizeAreaButton().isSelected()) {
                     //for current selected condition show normalized area values together with time frames
                     bulkCellAnalysisPanelController.setNormalizedAreaTableData(plateConditionList.get(locationToIndex));

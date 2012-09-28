@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Paola
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:mySpringTestXMLConfig.xml")
+@ContextConfiguration("classpath:mySpringXMLConfig.xml")
 public class MicroscopeDataServiceTest {
 
     @Autowired

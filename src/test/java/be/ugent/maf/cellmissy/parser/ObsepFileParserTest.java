@@ -20,7 +20,7 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:mySpringTestXMLConfig.xml")
+@ContextConfiguration("classpath:mySpringXMLConfig.xml")
 public class ObsepFileParserTest {
 
     @Autowired

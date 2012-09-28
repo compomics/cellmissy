@@ -13,7 +13,7 @@ import java.util.List;
 public interface OutliersHandler {
 
     /**
-     * 
+     * Handle the outliers
      * @param data
      * @return 
      */

@@ -19,15 +19,18 @@ import java.util.List;
 import javax.swing.JPanel;
 
 /**
- *
+ * Abstract Class extending JPanel
+ * Plate View Panel with a List of Well Gui and a plate format
  * @author Paola
  */
 public abstract class AbstractPlatePanel extends JPanel {
 
+    /**
+     * Constructor; setOpaque to false.
+     */
     public AbstractPlatePanel() {
         setOpaque(false);
     }
-    
     protected List<WellGui> wellGuiList;
     protected PlateFormat plateFormat;
     protected static final int pixelsGrid = 7;
@@ -40,6 +43,8 @@ public abstract class AbstractPlatePanel extends JPanel {
         // width and heigth of squares around wells (wellSize)
         int wellSize = (int) ((double) (this.getWidth()) - ((plateFormat.getNumberOfCols() - 1) * pixelsGrid) - (2 * pixelsBorders)) / plateFormat.getNumberOfCols();
 
+        //check if the list of wellGui is empty;
+        //if yes, drawWells for the first time, otherwise call the reDrawWells method of this same class
         if (wellGuiList.isEmpty()) {
             drawWells(wellSize, g);
         } else {
@@ -48,8 +53,7 @@ public abstract class AbstractPlatePanel extends JPanel {
     }
 
     /**
-     * getters and setters
-     * 
+     * getters
      * 
      */
     public List<WellGui> getWellGuiList() {
@@ -60,12 +64,22 @@ public abstract class AbstractPlatePanel extends JPanel {
         return plateFormat;
     }
 
+    /**
+     * Given a plate format and a parent dimension, this methods computes the right space to show the plate panel
+     * @param plateFormat :format, numbers of rows, number of columns
+     * @param parentDimension :Dimension of parent panel where the plate need to be added
+     */
     public void initPanel(PlateFormat plateFormat, Dimension parentDimension) {
         this.plateFormat = plateFormat;
         wellGuiList = new ArrayList<>();
         doResize(parentDimension);
     }
 
+    /**
+     * making use of Graphics 2D, render wells
+     * @param wellSize: size of wells according to format
+     * @param g: graphics 
+     */
     public void drawWells(int wellSize, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
@@ -101,7 +115,10 @@ public abstract class AbstractPlatePanel extends JPanel {
         }
     }
 
-    // set Graphics (implement Rendering process)
+    /**
+     * set graphics: implementing rendering process
+     * @param g2d 
+     */
     public void setGraphics(Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -109,7 +126,13 @@ public abstract class AbstractPlatePanel extends JPanel {
         g2d.setStroke(stroke);
     }
 
-    // draw numbers (plate labels) on upper-side and left-side of the plate
+    /**
+     * Render plate labels on upper-side and left-side of the plate view
+     * @param ellipse2D
+     * @param g2d
+     * @param columnNumber
+     * @param rowNumber 
+     */
     protected void drawPlateLabel(Ellipse2D ellipse2D, Graphics2D g2d, int columnNumber, int rowNumber) {
         Font font = new Font("Arial", Font.BOLD, 12);
         g2d.setFont(font);
@@ -128,7 +151,11 @@ public abstract class AbstractPlatePanel extends JPanel {
         }
     }
 
-    // compute plate panel sizes according to JFrame resize
+    /**
+     * This method is called in the initPanel method:
+     * Compute plate panel sizes according to JFrame resize
+     * @param parentDimension 
+     */
     public void doResize(Dimension parentDimension) {
         int minimumParentDimension = Math.min(parentDimension.height, parentDimension.width);
 
@@ -160,5 +187,10 @@ public abstract class AbstractPlatePanel extends JPanel {
         }
     }
 
+    /**
+     * abstract method to be implemented
+     * Redraw wells according to events: Show rectangles for conditions, show ellipsis for imaging types and son on. 
+     * @param g 
+     */
     protected abstract void reDrawWells(Graphics g);
 }
