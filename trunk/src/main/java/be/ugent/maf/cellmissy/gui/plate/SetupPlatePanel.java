@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *this class is used in the setup step: show wells and let the user select them, assigning conditions
+ *This class is used in the setup step: show wells and let the user select them, assigning conditions
  * @author Paola
  */
 public class SetupPlatePanel extends AbstractPlatePanel {
@@ -27,7 +27,7 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     private PlateCondition currentCondition;
 
     /**
-     * constructor
+     * Constructor
      */
     public SetupPlatePanel() {
         startPoint = null;
@@ -84,6 +84,10 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         }
     }
 
+    /**
+     * Render one Rectangle
+     * @param g 
+     */
     private void drawRect(Graphics g) {
 
         Graphics2D g2d = (Graphics2D) g;
@@ -105,6 +109,10 @@ public class SetupPlatePanel extends AbstractPlatePanel {
 
     }
 
+    /**
+     * Render all rectangles already drawn by the user
+     * @param g 
+     */
     private void drawRectangles(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         setGraphics(g2d);
@@ -132,6 +140,10 @@ public class SetupPlatePanel extends AbstractPlatePanel {
 
     }
 
+    /**
+     * Render wells
+     * @param g 
+     */
     @Override
     protected void reDrawWells(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;

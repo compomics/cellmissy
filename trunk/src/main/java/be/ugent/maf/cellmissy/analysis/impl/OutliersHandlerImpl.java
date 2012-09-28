@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author Paola Masuzzo
  */
-@Service("outliersHandler")
+@Component("outliersHandler")
 public class OutliersHandlerImpl implements OutliersHandler {
 
     @Override

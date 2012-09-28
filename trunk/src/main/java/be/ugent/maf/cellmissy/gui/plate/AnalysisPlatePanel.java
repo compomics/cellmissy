@@ -16,21 +16,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Analysis Plate View: Show wells with rectangles around: each rectangle has it own color, according to condition color.
+ * This class is used in the analysis step, to show conditions on the plate view
  * @author Paola Masuzzo
  */
 public class AnalysisPlatePanel extends AbstractPlatePanel {
 
     private Experiment experiment;
 
+    /**
+     * set Experiment
+     * @param experiment 
+     */
     public void setExperiment(Experiment experiment) {
         this.experiment = experiment;
     }
 
-    /**
-     * setters and getters
-     *
-     */
     @Override
     protected void paintComponent(Graphics g) {
 
@@ -40,6 +41,10 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
         }
     }
 
+    /**
+     * Render rectangles
+     * @param g 
+     */
     private void showRect(Graphics g) {
 
         Graphics2D g2d = (Graphics2D) g;
@@ -69,6 +74,10 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
         }
     }
 
+    /**
+     * Render wells
+     * @param g 
+     */
     @Override
     protected void reDrawWells(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
