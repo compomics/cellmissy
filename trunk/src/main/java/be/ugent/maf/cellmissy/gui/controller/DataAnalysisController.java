@@ -129,7 +129,6 @@ public class DataAnalysisController {
     private void initPlatePanel() {
         //show as default a 96 plate format
         Dimension parentDimension = dataAnalysisPanel.getAnalysisPlateParentPanel().getSize();
-
         analysisPlatePanel.initPanel(plateService.findByFormat(96), parentDimension);
         dataAnalysisPanel.getAnalysisPlateParentPanel().add(analysisPlatePanel, gridBagConstraints);
         dataAnalysisPanel.getAnalysisPlateParentPanel().repaint();
@@ -166,7 +165,7 @@ public class DataAnalysisController {
             @Override
             public void mouseClicked(MouseEvent e) {
 
-                System.out.println("PROJECT IS SELECTED ===");
+                System.out.println("project ***");
                 //init experimentJList
                 int locationToIndex = dataAnalysisPanel.getProjectJList().locationToIndex(e.getPoint());
                 if (experimentService.findExperimentsByProjectIdAndStatus(projectBindingList.get(locationToIndex).getProjectid(), ExperimentStatus.PERFORMED) != null) {
@@ -189,7 +188,7 @@ public class DataAnalysisController {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("EXPERIMENT is SELECTED ===");
+                System.out.println("experiment ***");
                 int locationToIndex = dataAnalysisPanel.getExperimentJList().locationToIndex(e.getPoint());
                 experiment = experimentBindingList.get(locationToIndex);
                 plateConditionList = new ArrayList<>();
@@ -221,6 +220,8 @@ public class DataAnalysisController {
                 //show conditions in the plate panel (with rectangles and colors)
                 analysisPlatePanel.setExperiment(experiment);
                 analysisPlatePanel.repaint();
+                //set experiment time frames number for the bulk cell analysis controller - area calculator
+                bulkCellAnalysisPanelController.setTimeFramesNumber();
             }
         });
 
@@ -229,7 +230,7 @@ public class DataAnalysisController {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("CONDITION is SELECTED===");
+                System.out.println("condition ***");
                 int locationToIndex = dataAnalysisPanel.getConditionsList().locationToIndex(e.getPoint());
                 //create a list of wells for each condition (from a collection)
                 List<Well> wellList = new ArrayList<>();
@@ -243,9 +244,8 @@ public class DataAnalysisController {
                 updateTimeStepList(plateConditionList.get(locationToIndex));
                 //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO VIEW CELLMIA RESULTS
                 bulkCellAnalysisPanelController.showTimeSteps();
-
-                //*********************************************************//
-                bulkCellAnalysisPanelController.initAreaCalculator();
+                //set time steps list for the area pre-processor
+                bulkCellAnalysisPanelController.setTimeStepsList();
 
                 //check which button is selected for analysis:
                 if (dataAnalysisPanel.getNormalizeAreaButton().isSelected()) {
@@ -261,16 +261,22 @@ public class DataAnalysisController {
                 if (dataAnalysisPanel.getPercentageAreaIncreaseButton().isSelected()) {
                     //for current selected condition show %increments (for outliers detection)
                     bulkCellAnalysisPanelController.setAreaIncreaseTableData(plateConditionList.get(locationToIndex));
-                    //show density function for selected condition (Raw Data and Corrected Data)
+                    //show density function for selected condition (Raw Data)
                     bulkCellAnalysisPanelController.showRawDataDensityFunction();
                     bulkCellAnalysisPanelController.showCorrectedDataDensityFunction();
                 }
 
                 if (dataAnalysisPanel.getCorrectedAreaButton().isSelected()) {
-                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(plateConditionList.get(locationToIndex));
+                    //for current selected condition show corrected area values (outliers have been deleted from distribution)
+                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(bulkCellAnalysisPanelController.getDataTable(), plateConditionList.get(locationToIndex));
+                    //show Area increases with time frames
+                    bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
                     bulkCellAnalysisPanelController.showArea();
+                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(dataAnalysisPanel.getAreaDataTable(), plateConditionList.get(locationToIndex));
+                    
+                    bulkCellAnalysisPanelController.computeSlopes();
+                
                 }
-
             }
         });
 
@@ -293,6 +299,26 @@ public class DataAnalysisController {
         dataAnalysisPanel.getNormalizeAreaButton().setSelected(true);
 
         /**
+         * Calculate Normalized Area (with corrected values for Jumps)
+         */
+        dataAnalysisPanel.getNormalizeAreaButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //check that a condition is selected
+                if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
+                    //show normalized values in the table
+                    bulkCellAnalysisPanelController.setNormalizedAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+
+                    //set charts panel to null
+                    bulkCellAnalysisPanelController.getDensityChartPanel().setChart(null);
+                    bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
+                    bulkCellAnalysisPanelController.getAreaChartPanel().setChart(null);
+                }
+            }
+        });
+
+        /**
          * Show Delta Area Values
          */
         dataAnalysisPanel.getDeltaAreaButton().addActionListener(new ActionListener() {
@@ -303,6 +329,11 @@ public class DataAnalysisController {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     //show delta area values in the table            
                     bulkCellAnalysisPanelController.setDeltaAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+
+                    //set charts panel to null
+                    bulkCellAnalysisPanelController.getDensityChartPanel().setChart(null);
+                    bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
+                    bulkCellAnalysisPanelController.getAreaChartPanel().setChart(null);
                 }
             }
         });
@@ -318,11 +349,12 @@ public class DataAnalysisController {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     //show %increments of area between two consecutive time frames and determine if a JUMP is present
                     bulkCellAnalysisPanelController.setAreaIncreaseTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                    dataAnalysisPanel.getGraphicsParentPanel().remove(bulkCellAnalysisPanelController.getAreaChartPanel());
+                    dataAnalysisPanel.getGraphicsParentPanel().revalidate();
+                    dataAnalysisPanel.getGraphicsParentPanel().repaint();
                     //show density function for selected condition
-                    if (bulkCellAnalysisPanelController.getDensityChartPanel().getChart() == null && bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().getChart() == null) {
-                        bulkCellAnalysisPanelController.showRawDataDensityFunction();
-                        bulkCellAnalysisPanelController.showCorrectedDataDensityFunction();
-                    }
+                    bulkCellAnalysisPanelController.showRawDataDensityFunction();
+                    bulkCellAnalysisPanelController.showCorrectedDataDensityFunction();
                 }
             }
         });
@@ -335,25 +367,9 @@ public class DataAnalysisController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
-                    bulkCellAnalysisPanelController.setCorrectedAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
-                    if (bulkCellAnalysisPanelController.getAreaChartPanel().getChart() == null) {
-                        bulkCellAnalysisPanelController.showArea();
-                    }
-                }
-            }
-        });
-
-        /**
-         * Calculate Normalized Area (with corrected values for Jumps)
-         */
-        dataAnalysisPanel.getNormalizeAreaButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //check that a condition is selected
-                if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
-                    //show normalized values in the table
-                    bulkCellAnalysisPanelController.setNormalizedAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(bulkCellAnalysisPanelController.getDataTable(), (PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                    bulkCellAnalysisPanelController.showArea();
+                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(dataAnalysisPanel.getAreaDataTable(), (PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
                 }
             }
         });

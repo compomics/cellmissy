@@ -10,6 +10,7 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -79,16 +80,12 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return graphicsParentPanel;
     }
 
-    public JPanel getCorrectedDensityChartParentPanel() {
-        return correctedDensityChartParentPanel;
+    public JTable getAreaDataTable() {
+        return areaDataTable;
     }
 
-    public JPanel getDensityChartParentPanel() {
-        return densityChartParentPanel;
-    }
-
-    public JPanel getAreaChartPanelParentPanel() {
-        return areaChartPanelParentPanel;
+    public JTable getSlopesTable() {
+        return slopesTable;
     }
 
     /** This method is called from within the constructor to
@@ -110,7 +107,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         resultsImporterPanel = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         timeStepsTable = new javax.swing.JTable();
-        analysisPanel = new javax.swing.JPanel();
+        preProcessPanel = new javax.swing.JPanel();
         radioButtonsPanel = new javax.swing.JPanel();
         normalizeAreaButton = new javax.swing.JRadioButton();
         deltaAreaButton = new javax.swing.JRadioButton();
@@ -118,9 +115,13 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         correctedAreaButton = new javax.swing.JRadioButton();
         dataTablePanel = new javax.swing.JPanel();
         graphicsParentPanel = new javax.swing.JPanel();
-        densityChartParentPanel = new javax.swing.JPanel();
-        correctedDensityChartParentPanel = new javax.swing.JPanel();
-        areaChartPanelParentPanel = new javax.swing.JPanel();
+        analysisPanel = new javax.swing.JPanel();
+        areaTablePanel = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        areaDataTable = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        slopesTable = new javax.swing.JTable();
         singleCellAnalysisPanel = new javax.swing.JPanel();
         leftPanel = new javax.swing.JPanel();
         experimentDataPanel = new javax.swing.JPanel();
@@ -190,10 +191,10 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
 
         jTabbedPane2.addTab("Results Importer", resultsImporterPanel);
 
-        analysisPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        analysisPanel.setOpaque(false);
-        analysisPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        analysisPanel.setLayout(new java.awt.GridBagLayout());
+        preProcessPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        preProcessPanel.setOpaque(false);
+        preProcessPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        preProcessPanel.setLayout(new java.awt.GridBagLayout());
 
         radioButtonsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         radioButtonsPanel.setOpaque(false);
@@ -245,7 +246,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.05;
-        analysisPanel.add(radioButtonsPanel, gridBagConstraints);
+        preProcessPanel.add(radioButtonsPanel, gridBagConstraints);
 
         dataTablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
         dataTablePanel.setOpaque(false);
@@ -258,53 +259,12 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.3;
-        analysisPanel.add(dataTablePanel, gridBagConstraints);
+        preProcessPanel.add(dataTablePanel, gridBagConstraints);
 
         graphicsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         graphicsParentPanel.setOpaque(false);
         graphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         graphicsParentPanel.setLayout(new java.awt.GridBagLayout());
-
-        densityChartParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        densityChartParentPanel.setOpaque(false);
-        densityChartParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        densityChartParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.5;
-        graphicsParentPanel.add(densityChartParentPanel, gridBagConstraints);
-
-        correctedDensityChartParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        correctedDensityChartParentPanel.setOpaque(false);
-        correctedDensityChartParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        correctedDensityChartParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.5;
-        graphicsParentPanel.add(correctedDensityChartParentPanel, gridBagConstraints);
-
-        areaChartPanelParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        areaChartPanelParentPanel.setOpaque(false);
-        areaChartPanelParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        areaChartPanelParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.5;
-        graphicsParentPanel.add(areaChartPanelParentPanel, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -312,7 +272,94 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.65;
-        analysisPanel.add(graphicsParentPanel, gridBagConstraints);
+        preProcessPanel.add(graphicsParentPanel, gridBagConstraints);
+
+        jTabbedPane2.addTab("Pre-processing", preProcessPanel);
+
+        analysisPanel.setOpaque(false);
+        analysisPanel.setLayout(new java.awt.GridBagLayout());
+
+        areaTablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        areaTablePanel.setOpaque(false);
+        areaTablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        jScrollPane4.setOpaque(false);
+
+        areaDataTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane4.setViewportView(areaDataTable);
+
+        javax.swing.GroupLayout areaTablePanelLayout = new javax.swing.GroupLayout(areaTablePanel);
+        areaTablePanel.setLayout(areaTablePanelLayout);
+        areaTablePanelLayout.setHorizontalGroup(
+            areaTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
+        );
+        areaTablePanelLayout.setVerticalGroup(
+            areaTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.5;
+        analysisPanel.add(areaTablePanel, gridBagConstraints);
+
+        jPanel1.setMinimumSize(new java.awt.Dimension(20, 20));
+        jPanel1.setOpaque(false);
+        jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        slopesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane6.setViewportView(slopesTable);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(611, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(101, Short.MAX_VALUE))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.5;
+        analysisPanel.add(jPanel1, gridBagConstraints);
 
         jTabbedPane2.addTab("Analysis", analysisPanel);
 
@@ -504,7 +551,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .addGap(41, 41, 41)
                 .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(1402, 1402, 1402))
+                .addGap(1174, 1174, 1174))
         );
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -529,7 +576,8 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox algorithmComboBox;
     private javax.swing.JPanel analysisPanel;
     private javax.swing.JPanel analysisPlateParentPanel;
-    private javax.swing.JPanel areaChartPanelParentPanel;
+    private javax.swing.JTable areaDataTable;
+    private javax.swing.JPanel areaTablePanel;
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JPanel bulkCellAnalysisPanel;
     private javax.swing.ButtonGroup buttonGroup1;
@@ -537,10 +585,8 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JList conditionsList;
     private javax.swing.JPanel conditionsPanel;
     private javax.swing.JRadioButton correctedAreaButton;
-    private javax.swing.JPanel correctedDensityChartParentPanel;
     private javax.swing.JPanel dataTablePanel;
     private javax.swing.JRadioButton deltaAreaButton;
-    private javax.swing.JPanel densityChartParentPanel;
     private javax.swing.JPanel experimentDataPanel;
     private javax.swing.JList experimentJList;
     private javax.swing.JPanel graphicsParentPanel;
@@ -548,20 +594,25 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JLabel infolabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JRadioButton normalizeAreaButton;
     private javax.swing.JRadioButton percentageAreaIncreaseButton;
+    private javax.swing.JPanel preProcessPanel;
     private javax.swing.JList projectJList;
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JPanel resultsImporterPanel;
     private javax.swing.JPanel rightPanel;
     private javax.swing.JPanel singleCellAnalysisPanel;
+    private javax.swing.JTable slopesTable;
     private javax.swing.JTable timeStepsTable;
     // End of variables declaration//GEN-END:variables
 }

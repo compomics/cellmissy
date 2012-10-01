@@ -4,18 +4,17 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
-import be.ugent.maf.cellmissy.analysis.impl.AreaCalculatorImpl;
+import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
+import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.analysis.DataTableModel;
-import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JScrollPane;
@@ -67,9 +66,9 @@ public class BulkCellAnalysisController {
     @Autowired
     private KernelDensityEstimator kernelDensityEstimator;
     @Autowired
-    private OutliersHandler outliersHandler;
+    private AreaPreProcessor areaPreProcessor;
     @Autowired
-    private AreaCalculatorImpl areaCalculator;
+    private AreaAnalyzer areaAnalyzer;
     private GridBagConstraints gridBagConstraints;
 
     /**
@@ -80,13 +79,6 @@ public class BulkCellAnalysisController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         //init views
         initBulkCellAnalysisPanel();
-    }
-
-    /**
-     * initialize Area Calculator
-     */
-    public void initAreaCalculator() {
-        areaCalculator.init(dataAnalysisController.getExperiment().getTimeFrames(), timeStepBindingList);
     }
 
     /**
@@ -109,9 +101,27 @@ public class BulkCellAnalysisController {
         return areaChartPanel;
     }
 
+    public JTable getDataTable() {
+        return dataTable;
+    }
+
     /**
      * public methods and classes
      */
+    /**
+     * set time steps list for the area calculator
+     */
+    public void setTimeStepsList() {
+        areaPreProcessor.setTimeStepsList(timeStepBindingList);
+    }
+
+    /**
+     * set time frames for the area calculator
+     */
+    public void setTimeFramesNumber() {
+        areaPreProcessor.setTimeFramesNumber(dataAnalysisController.getExperiment().getTimeFrames());
+    }
+
     /**
      * show table with TimeSteps results from CellMia analysis
      * this is populating the JTable in the ResultsImporter Panel
@@ -193,7 +203,7 @@ public class BulkCellAnalysisController {
         //starting from second column set Renderer for cells
         for (int i = 1; i < dataTable.getColumnCount(); i++) {
             //show OUTLIERS in red
-            dataTable.getColumnModel().getColumn(i).setCellRenderer(new AreaIncreaseRenderer(outliersHandler.handleOutliers(getDataFromTableModel()[i - 1]).get(0)));
+            dataTable.getColumnModel().getColumn(i).setCellRenderer(new AreaIncreaseRenderer(areaPreProcessor.computeOutliers(getDataFromTableModel(dataTable)[i - 1])));
         }
     }
 
@@ -211,9 +221,85 @@ public class BulkCellAnalysisController {
      * for each replicate (well) of a certain selected condition, show normalized corrected area values, close to time frames
      * @param plateCondition 
      */
-    public void setCorrectedAreaTableData(PlateCondition plateCondition) {
+    public void setCorrectedAreaTableData(JTable table, PlateCondition plateCondition) {
         //set the model for the Correcte AreaTable
-        dataTable.setModel(new CorrectedAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
+        table.setModel(new CorrectedAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
+    }
+
+    /**
+     * Show Area for a certain condition selected
+     */
+    public void showArea() {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        double[][] dataFromTableModel = getDataFromTableModel(dataTable);
+        double[] xValues = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval());
+        for (int columnIndex = 0; columnIndex < dataFromTableModel.length; columnIndex++) {
+            double[] yValues = dataFromTableModel[columnIndex];
+            XYSeries xySeries = generateXYSeriesArea(xValues, yValues);
+            xySeries.setKey("Rep " + (columnIndex + 1));
+            xySeriesCollection.addSeries(xySeries);
+        }
+        JFreeChart areaChart = ChartFactory.createXYLineChart("Area", "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        areaChart.getXYPlot().setBackgroundPaint(Color.white);
+        XYItemRenderer renderer = areaChart.getXYPlot().getRenderer();
+        BasicStroke wideLine = new BasicStroke(1.3f);
+        for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
+            renderer.setSeriesStroke(i, wideLine);
+        }
+        areaChartPanel.setChart(areaChart);
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(densityChartPanel);
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(correctedDensityChartPanel);
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().revalidate();
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(areaChartPanel, gridBagConstraints);
+    }
+
+    /**
+     * for a condition selected this method shows in one plot the estimated density functions for each replicate (=well)
+     * This is doing the job for one condition (all replicates)
+     */
+    public void showRawDataDensityFunction() {
+        JFreeChart densityChart = showDensityFunction(getDataFromTableModel(dataTable), "Kernel Density Estimator");
+        densityChartPanel.setChart(densityChart);
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(densityChartPanel, gridBagConstraints);
+    }
+
+    /**
+     * for a condition selected this method shows density values for corrected distributions
+     */
+    public void showCorrectedDataDensityFunction() {
+        //compute first corrected data (no outliers)
+        double[][] correctedData = new double[getDataFromTableModel(dataTable).length][];
+        for (int i = 0; i < getDataFromTableModel(dataTable).length; i++) {
+            double[] correctedValues = areaPreProcessor.computeCorrectedArea(getDataFromTableModel(dataTable)[i]);
+            correctedData[i] = correctedValues;
+        }
+        JFreeChart correctedDensityChart = showDensityFunction(correctedData, "KDE (Outliers Correction)");
+        correctedDensityChartPanel.setChart(correctedDensityChart);
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(correctedDensityChartPanel, gridBagConstraints);
+    }
+
+    //*******************************//
+    public double[] computeSlopes() {
+
+        double[] timeFrames = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval());
+        double[][] data = getDataFromTableModel(dataAnalysisController.getDataAnalysisPanel().getAreaDataTable());
+        double[] slopes = new double[data.length];
+
+        for (int columnIndex = 0; columnIndex < data.length; columnIndex++) {
+
+            double[] areaData = data[columnIndex];
+            double[][] temp = new double[areaData.length][2];
+
+            for (int i = 0; i < temp.length; i++) {
+                temp[i][0] = areaData[i];
+                temp[i][1] = timeFrames[i];
+            }
+
+            double computeSlope = areaAnalyzer.computeSlope(temp);
+            slopes[columnIndex] = computeSlope;
+        }
+        return slopes;
     }
 
     /**
@@ -262,33 +348,6 @@ public class BulkCellAnalysisController {
             series.add(x, y);
         }
         return series;
-    }
-
-    /**
-     * for a condition selected this method shows in one plot the estimated density functions for each replicate (=well)
-     * This is doing the job for one condition (all replicates)
-     */
-    public void showRawDataDensityFunction() {
-        JFreeChart densityChart = showDensityFunction(getDataFromTableModel(), "Kernel Density Estimator");
-        densityChartPanel.setChart(densityChart);
-        dataAnalysisController.getDataAnalysisPanel().getDensityChartParentPanel().add(densityChartPanel, gridBagConstraints);
-        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
-    }
-
-    /**
-     * for a condition selected this method shows density values for corrected distributions
-     */
-    public void showCorrectedDataDensityFunction() {
-        //compute first corrected data (no outliers)
-        double[][] correctedData = new double[getDataFromTableModel().length][];
-        for (int i = 0; i < getDataFromTableModel().length; i++) {
-            double[] correctedValues = outliersHandler.handleOutliers(getDataFromTableModel()[i]).get(1);
-            correctedData[i] = correctedValues;
-        }
-        JFreeChart correctedDensityChart = showDensityFunction(correctedData, "Outliers Correction");
-        correctedDensityChartPanel.setChart(correctedDensityChart);
-        dataAnalysisController.getDataAnalysisPanel().getCorrectedDensityChartParentPanel().add(correctedDensityChartPanel, gridBagConstraints);
-        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
     }
 
     /**
@@ -341,31 +400,6 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * Show Area for a certain condition selected
-     */
-    public void showArea() {
-        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
-        double[][] dataFromTableModel = getDataFromTableModel();
-        double[] xValues = areaCalculator.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval());
-        for (int columnIndex = 0; columnIndex < dataFromTableModel.length; columnIndex++) {
-            double[] yValues = dataFromTableModel[columnIndex];
-            XYSeries xySeries = generateXYSeriesArea(xValues, yValues);
-            xySeries.setKey("Rep " + (columnIndex + 1));
-            xySeriesCollection.addSeries(xySeries);
-        }
-        JFreeChart areaChart = ChartFactory.createXYLineChart("Area", "Time Frame", "Area", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
-        areaChart.getXYPlot().setBackgroundPaint(Color.white);
-        XYItemRenderer renderer = areaChart.getXYPlot().getRenderer();
-        BasicStroke wideLine = new BasicStroke(1.3f);
-        for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
-            renderer.setSeriesStroke(i, wideLine);
-        }
-        areaChartPanel.setChart(areaChart);
-        dataAnalysisController.getDataAnalysisPanel().getAreaChartPanelParentPanel().add(areaChartPanel, gridBagConstraints);
-        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
-    }
-
-    /**
      * compute Max value of Y for density plot
      * @param xYSeriesCollection
      * @return 
@@ -385,8 +419,8 @@ public class BulkCellAnalysisController {
      * get primitive data from the table model 
      * @return 
      */
-    private double[][] getDataFromTableModel() {
-        TableModel model = dataTable.getModel();
+    private double[][] getDataFromTableModel(JTable table) {
+        TableModel model = table.getModel();
         int rowCount = model.getRowCount();
         int columnCount = model.getColumnCount();
 
@@ -418,10 +452,10 @@ public class BulkCellAnalysisController {
             //copy the content of computeNormalizedArea array into data array
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
-                data[i][0] = areaCalculator.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
+                data[i][0] = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
                 //fill in all the other columns
                 //arraycopy(Object src,  int  srcPos, Object dest, int destPos, int length)
-                System.arraycopy(areaCalculator.computeNormalizedArea(data)[i], 1, data[i], 1, data[i].length - 1);
+                System.arraycopy(areaPreProcessor.computeNormalizedArea(data)[i], 1, data[i], 1, data[i].length - 1);
             }
         }
     }
@@ -441,8 +475,8 @@ public class BulkCellAnalysisController {
             //copy the content of computeNormalizedArea array into data array
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
-                data[i][0] = areaCalculator.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
-                System.arraycopy(areaCalculator.computeDeltaArea(data)[i], 1, data[i], 1, data[i].length - 1);
+                data[i][0] = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
+                System.arraycopy(areaPreProcessor.computeDeltaArea(data)[i], 1, data[i], 1, data[i].length - 1);
             }
         }
     }
@@ -462,8 +496,8 @@ public class BulkCellAnalysisController {
             //copy the content of computeAreaIncrease array into data array
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
-                data[i][0] = areaCalculator.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
-                System.arraycopy(areaCalculator.computeAreaIncrease(data, dataAnalysisController.getSelectedCondition())[i], 1, data[i], 1, data[i].length - 1);
+                data[i][0] = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
+                System.arraycopy(areaPreProcessor.computeAreaIncrease(data, dataAnalysisController.getSelectedCondition())[i], 1, data[i], 1, data[i].length - 1);
 
             }
         }
@@ -484,8 +518,8 @@ public class BulkCellAnalysisController {
             //copy the content of computeAreaIncrease array into data array
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
-                data[i][0] = areaCalculator.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
-                System.arraycopy(areaCalculator.normalizeCorrectedArea(data, dataAnalysisController.getSelectedCondition())[i], 1, data[i], 1, data[i].length - 1);
+                data[i][0] = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
+                System.arraycopy(areaPreProcessor.normalizeCorrectedArea(data, dataAnalysisController.getSelectedCondition())[i], 1, data[i], 1, data[i].length - 1);
             }
         }
     }

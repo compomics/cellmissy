@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.impl;
 
-import be.ugent.maf.cellmissy.analysis.AreaCalculator;
+import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
 import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeStep;
@@ -16,11 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- *
+ * This class implements the Area PreProcessor interface.
+ * It takes care of all the pre-processing operations required before handling area values and proceed with real analysis
  * @author Paola Masuzzo
  */
-@Component("areaCalculator")
-public class AreaCalculatorImpl implements AreaCalculator {
+@Component("areaPreProcessor")
+public class AreaPreProcessorImpl implements AreaPreProcessor {
 
     private List<TimeStep> timeStepsList;
     private int timeFramesNumber;
@@ -28,13 +29,20 @@ public class AreaCalculatorImpl implements AreaCalculator {
     private OutliersHandler outliersHandler;
 
     /**
-     * initialize class
-     * @param timeFramesNumber
+     * set time frames number
+     * @param timeFramesNumber 
+     */
+    @Override
+    public void setTimeFramesNumber(int timeFramesNumber) {
+        this.timeFramesNumber = timeFramesNumber;
+    }
+
+    /**
+     * set time steps list
      * @param timeStepsList 
      */
     @Override
-    public void init(int timeFramesNumber, List<TimeStep> timeStepsList) {
-        this.timeFramesNumber = timeFramesNumber;
+    public void setTimeStepsList(List<TimeStep> timeStepsList) {
         this.timeStepsList = timeStepsList;
     }
 
@@ -143,6 +151,24 @@ public class AreaCalculatorImpl implements AreaCalculator {
     }
 
     /**
+     * using outliers handler, compute outliers for each set of data
+     * @param data
+     * @return 
+     */
+    public double[] computeOutliers(double[] data) {
+        return outliersHandler.handleOutliers(data).get(0);
+    }
+
+    /**
+     * using outliers handler, compute corrected area (outliers are being kicked out from distribution)
+     * @param data
+     * @return 
+     */
+    public double[] computeCorrectedArea(double[] data) {
+        return outliersHandler.handleOutliers(data).get(1);
+    }
+
+    /**
      * Correct area values after outlier detection
      * @param data
      * @return a 2D array to populate data table
@@ -162,7 +188,7 @@ public class AreaCalculatorImpl implements AreaCalculator {
         Double[][] computeDeltaArea = computeDeltaArea(array);
 
         for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
-            double[] outliers = outliersHandler.handleOutliers(ArrayUtils.toPrimitive(excludeNullValues(transposed[columnIndex]))).get(0);
+            double[] outliers = computeOutliers(ArrayUtils.toPrimitive(excludeNullValues(transposed[columnIndex])));
 
             for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
                 if (outliers.length != 0) {
