@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.analysis.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
 import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
@@ -12,10 +13,13 @@ import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.analysis.DataTableModel;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -70,6 +74,8 @@ public class BulkCellAnalysisController {
     @Autowired
     private AreaAnalyzer areaAnalyzer;
     private GridBagConstraints gridBagConstraints;
+    //array with time frames
+    private double[] timeFrames;
 
     /**
      * initialize controller
@@ -101,10 +107,6 @@ public class BulkCellAnalysisController {
         return areaChartPanel;
     }
 
-    public JTable getDataTable() {
-        return dataTable;
-    }
-
     /**
      * public methods and classes
      */
@@ -113,13 +115,6 @@ public class BulkCellAnalysisController {
      */
     public void setTimeStepsList() {
         areaPreProcessor.setTimeStepsList(timeStepBindingList);
-    }
-
-    /**
-     * set time frames for the area calculator
-     */
-    public void setTimeFramesNumber() {
-        areaPreProcessor.setTimeFramesNumber(dataAnalysisController.getExperiment().getTimeFrames());
     }
 
     /**
@@ -188,7 +183,7 @@ public class BulkCellAnalysisController {
      */
     public void setDeltaAreaTableData(PlateCondition plateCondition) {
         //set model for the delta area Table
-        //NOTE that each time a new condition is selected, new data is passed to the model
+        //NOTE that each time a new condition is selected, new slopes is passed to the model
         dataTable.setModel(new DeltaAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
     }
 
@@ -198,7 +193,7 @@ public class BulkCellAnalysisController {
      */
     public void setAreaIncreaseTableData(PlateCondition plateCondition) {
         //set model for the delta area Table
-        //NOTE that each time a new condition is selected, new data is passed to the model
+        //NOTE that each time a new condition is selected, new slopes is passed to the model
         dataTable.setModel(new AreaIncreaseTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
         //starting from second column set Renderer for cells
         for (int i = 1; i < dataTable.getColumnCount(); i++) {
@@ -213,7 +208,7 @@ public class BulkCellAnalysisController {
      */
     public void setNormalizedAreaTableData(PlateCondition plateCondition) {
         //set Model for the Normalized AreaTable
-        //NOTE that each time a new condition is selected, new data is passed to the model
+        //NOTE that each time a new condition is selected, new slopes is passed to the model
         dataTable.setModel(new NormalizedAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
     }
 
@@ -221,9 +216,9 @@ public class BulkCellAnalysisController {
      * for each replicate (well) of a certain selected condition, show normalized corrected area values, close to time frames
      * @param plateCondition 
      */
-    public void setCorrectedAreaTableData(JTable table, PlateCondition plateCondition) {
+    public void setCorrectedAreaTableData(PlateCondition plateCondition) {
         //set the model for the Correcte AreaTable
-        table.setModel(new CorrectedAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
+        dataTable.setModel(new CorrectedAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
     }
 
     /**
@@ -232,7 +227,7 @@ public class BulkCellAnalysisController {
     public void showArea() {
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
         double[][] dataFromTableModel = getDataFromTableModel(dataTable);
-        double[] xValues = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval());
+        double[] xValues = timeFrames;
         for (int columnIndex = 0; columnIndex < dataFromTableModel.length; columnIndex++) {
             double[] yValues = dataFromTableModel[columnIndex];
             XYSeries xySeries = generateXYSeriesArea(xValues, yValues);
@@ -268,7 +263,7 @@ public class BulkCellAnalysisController {
      * for a condition selected this method shows density values for corrected distributions
      */
     public void showCorrectedDataDensityFunction() {
-        //compute first corrected data (no outliers)
+        //compute first corrected slopes (no outliers)
         double[][] correctedData = new double[getDataFromTableModel(dataTable).length][];
         for (int i = 0; i < getDataFromTableModel(dataTable).length; i++) {
             double[] correctedValues = areaPreProcessor.computeCorrectedArea(getDataFromTableModel(dataTable)[i]);
@@ -279,27 +274,68 @@ public class BulkCellAnalysisController {
         dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(correctedDensityChartPanel, gridBagConstraints);
     }
 
-    //*******************************//
-    public double[] computeSlopes() {
+    /**
+     * 
+     */
+    public void showSlopesInTable() {
+        String[] columnNames = new String[dataAnalysisController.getSelectedCondition().getWellCollection().size() + 2];
 
-        double[] timeFrames = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval());
-        double[][] data = getDataFromTableModel(dataAnalysisController.getDataAnalysisPanel().getAreaDataTable());
-        double[] slopes = new double[data.length];
-
-        for (int columnIndex = 0; columnIndex < data.length; columnIndex++) {
-
-            double[] areaData = data[columnIndex];
-            double[][] temp = new double[areaData.length][2];
-
-            for (int i = 0; i < temp.length; i++) {
-                temp[i][0] = areaData[i];
-                temp[i][1] = timeFrames[i];
-            }
-
-            double computeSlope = areaAnalyzer.computeSlope(temp);
-            slopes[columnIndex] = computeSlope;
+        for (int i = 0; i < columnNames.length - 1; i++) {
+            columnNames[i] = "Cond " + (dataAnalysisController.getPlateConditionList().indexOf(dataAnalysisController.getSelectedCondition()) + 1) + ", repl " + (i + 1);
         }
-        return slopes;
+
+        columnNames[columnNames.length - 2] = "mean";
+        columnNames[columnNames.length - 1] = "SD";
+
+        Object[][] data = new Object[1][dataAnalysisController.getSelectedCondition().getWellCollection().size()];
+
+        double[] computeSlopesPerCondition = computeSlopesPerCondition(dataAnalysisController.getSelectedCondition());
+        data[0] = new Object[computeSlopesPerCondition.length + 2];
+        for (int j = 0; j < data[0].length - 2; j++) {
+            data[0][j] = (Object) computeSlopesPerCondition[j];
+        }
+
+        data[0][data[0].length - 2] = AnalysisUtils.roundTwoDecimals(areaAnalyzer.computeMean(computeSlopesPerCondition));
+        data[0][data[0].length - 1] = AnalysisUtils.roundTwoDecimals(areaAnalyzer.computeStandardDeviation(computeSlopesPerCondition));
+        JTable table = new JTable(data, columnNames);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setMinWidth(2);
+            table.getColumnModel().getColumn(i).setMaxWidth(100);
+            table.getColumnModel().getColumn(i).setPreferredWidth(100);
+        }
+        dataAnalysisController.getDataAnalysisPanel().getTablePanel().add(table.getTableHeader(), BorderLayout.NORTH);
+        table.getTableHeader().setResizingAllowed(false);
+        dataAnalysisController.getDataAnalysisPanel().getTablePanel().add(table, BorderLayout.CENTER);
+    }
+
+    /**
+     * 
+     * @param plateCondition
+     * @return 
+     */
+    private double[] computeSlopesPerCondition(PlateCondition plateCondition) {
+
+        Double[][] data = new Double[timeFrames.length][plateCondition.getWellCollection().size() + 1];
+        Double[][] normalizeCorrectedArea = areaPreProcessor.normalizeCorrectedArea(data, plateCondition);
+        //transpose slopes
+        double[][] transposed = new double[normalizeCorrectedArea[0].length - 1][];
+        for (int i = 1; i < normalizeCorrectedArea[0].length; i++) {
+            List<Double> tempList = new ArrayList<>();
+            for (int j = 0; j < normalizeCorrectedArea.length; j++) {
+                if (normalizeCorrectedArea[j][i] != null) {
+                    tempList.add((double) normalizeCorrectedArea[j][i]);
+                }
+            }
+            transposed[i - 1] = ArrayUtils.toPrimitive(tempList.toArray(new Double[tempList.size()]));
+        }
+
+        return areaAnalyzer.computeSlopesPerCondition(transposed, plateCondition, timeFrames);
+    }
+
+    //compute time frames
+    public void computeTimeFrames() {
+        areaPreProcessor.setTimeFramesNumber(dataAnalysisController.getExperiment().getTimeFrames());
+        this.timeFrames = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval());
     }
 
     /**
@@ -330,13 +366,13 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * For each set of data points estimate density function and return a XY series for the plot
+     * For each set of slopes points estimate density function and return a XY series for the plot
      * This is doing the job for one replicate!
-     * @param data
+     * @param slopes
      * @return a XYSeries
      */
     private XYSeries generateDensityFunction(double[] data) {
-        //use KDE to estimate density function for dataset data
+        //use KDE to estimate density function for dataset slopes
         List<double[]> estimateDensityFunction = kernelDensityEstimator.estimateDensityFunction(data);
         double[] xValues = estimateDensityFunction.get(0);
         double[] yValues = estimateDensityFunction.get(1);
@@ -352,7 +388,7 @@ public class BulkCellAnalysisController {
 
     /**
      * show Density function for each 2D array of double
-     * @param data - 2D array of double
+     * @param slopes - 2D array of double
      * @param chartTitle - string for chart title
      * @return a JFreeChart
      */
@@ -416,7 +452,7 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * get primitive data from the table model 
+     * get primitive slopes from the table model 
      * @return 
      */
     private double[][] getDataFromTableModel(JTable table) {
@@ -438,7 +474,7 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * TableModel for the NormalizedArea data
+     * TableModel for the NormalizedArea slopes
      */
     private class NormalizedAreaTableModel extends DataTableModel {
 
@@ -449,10 +485,10 @@ public class BulkCellAnalysisController {
 
         @Override
         protected final void insertRawData() {
-            //copy the content of computeNormalizedArea array into data array
+            //copy the content of computeNormalizedArea array into slopes array
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
-                data[i][0] = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
+                data[i][0] = timeFrames[i];
                 //fill in all the other columns
                 //arraycopy(Object src,  int  srcPos, Object dest, int destPos, int length)
                 System.arraycopy(areaPreProcessor.computeNormalizedArea(data)[i], 1, data[i], 1, data[i].length - 1);
@@ -461,7 +497,7 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * Table Model for DeltaArea data
+     * Table Model for DeltaArea slopes
      */
     private class DeltaAreaTableModel extends DataTableModel {
 
@@ -472,17 +508,17 @@ public class BulkCellAnalysisController {
 
         @Override
         protected final void insertRawData() {
-            //copy the content of computeNormalizedArea array into data array
+            //copy the content of computeNormalizedArea array into slopes array
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
-                data[i][0] = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
+                data[i][0] = timeFrames[i];
                 System.arraycopy(areaPreProcessor.computeDeltaArea(data)[i], 1, data[i], 1, data[i].length - 1);
             }
         }
     }
 
     /**
-     * Table Model for AreaIncrease data
+     * Table Model for AreaIncrease slopes
      */
     private class AreaIncreaseTableModel extends DataTableModel {
 
@@ -493,10 +529,10 @@ public class BulkCellAnalysisController {
 
         @Override
         protected final void insertRawData() {
-            //copy the content of computeAreaIncrease array into data array
+            //copy the content of computeAreaIncrease array into slopes array
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
-                data[i][0] = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
+                data[i][0] = timeFrames[i];
                 System.arraycopy(areaPreProcessor.computeAreaIncrease(data, dataAnalysisController.getSelectedCondition())[i], 1, data[i], 1, data[i].length - 1);
 
             }
@@ -504,7 +540,7 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * Table Model for CorrectedArea data
+     * Table Model for CorrectedArea slopes
      */
     private class CorrectedAreaTableModel extends DataTableModel {
 
@@ -515,10 +551,10 @@ public class BulkCellAnalysisController {
 
         @Override
         protected final void insertRawData() {
-            //copy the content of computeAreaIncrease array into data array
+            //copy the content of computeAreaIncrease array into slopes array
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
-                data[i][0] = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval())[i];
+                data[i][0] = timeFrames[i];
                 System.arraycopy(areaPreProcessor.normalizeCorrectedArea(data, dataAnalysisController.getSelectedCondition())[i], 1, data[i], 1, data[i].length - 1);
             }
         }

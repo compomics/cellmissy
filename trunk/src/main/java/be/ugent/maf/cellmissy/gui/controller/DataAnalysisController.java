@@ -120,6 +120,10 @@ public class DataAnalysisController {
         return (PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue();
     }
 
+    public List<PlateCondition> getPlateConditionList() {
+        return plateConditionList;
+    }
+
     /**
      * private methods and classes
      */
@@ -191,6 +195,7 @@ public class DataAnalysisController {
                 System.out.println("experiment ***");
                 int locationToIndex = dataAnalysisPanel.getExperimentJList().locationToIndex(e.getPoint());
                 experiment = experimentBindingList.get(locationToIndex);
+
                 plateConditionList = new ArrayList<>();
                 plateConditionList.addAll(experiment.getPlateConditionCollection());
 
@@ -220,8 +225,6 @@ public class DataAnalysisController {
                 //show conditions in the plate panel (with rectangles and colors)
                 analysisPlatePanel.setExperiment(experiment);
                 analysisPlatePanel.repaint();
-                //set experiment time frames number for the bulk cell analysis controller - area calculator
-                bulkCellAnalysisPanelController.setTimeFramesNumber();
             }
         });
 
@@ -244,8 +247,11 @@ public class DataAnalysisController {
                 updateTimeStepList(plateConditionList.get(locationToIndex));
                 //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO VIEW CELLMIA RESULTS
                 bulkCellAnalysisPanelController.showTimeSteps();
+                
                 //set time steps list for the area pre-processor
-                bulkCellAnalysisPanelController.setTimeStepsList();
+                bulkCellAnalysisPanelController.setTimeStepsList();    
+                //compute time frames array for child controller (bulk cell controller)
+                bulkCellAnalysisPanelController.computeTimeFrames();
 
                 //check which button is selected for analysis:
                 if (dataAnalysisPanel.getNormalizeAreaButton().isSelected()) {
@@ -268,14 +274,11 @@ public class DataAnalysisController {
 
                 if (dataAnalysisPanel.getCorrectedAreaButton().isSelected()) {
                     //for current selected condition show corrected area values (outliers have been deleted from distribution)
-                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(bulkCellAnalysisPanelController.getDataTable(), plateConditionList.get(locationToIndex));
+                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(plateConditionList.get(locationToIndex));
                     //show Area increases with time frames
                     bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
                     bulkCellAnalysisPanelController.showArea();
-                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(dataAnalysisPanel.getAreaDataTable(), plateConditionList.get(locationToIndex));
-                    
-                    bulkCellAnalysisPanelController.computeSlopes();
-                
+                    bulkCellAnalysisPanelController.showSlopesInTable();
                 }
             }
         });
@@ -367,9 +370,9 @@ public class DataAnalysisController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
-                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(bulkCellAnalysisPanelController.getDataTable(), (PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                    bulkCellAnalysisPanelController.setCorrectedAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
                     bulkCellAnalysisPanelController.showArea();
-                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(dataAnalysisPanel.getAreaDataTable(), (PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                    bulkCellAnalysisPanelController.showSlopesInTable();
                 }
             }
         });
