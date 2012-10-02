@@ -10,7 +10,6 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -80,12 +79,8 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return graphicsParentPanel;
     }
 
-    public JTable getAreaDataTable() {
-        return areaDataTable;
-    }
-
-    public JTable getSlopesTable() {
-        return slopesTable;
+    public JPanel getTablePanel() {
+        return tablePanel;
     }
 
     /** This method is called from within the constructor to
@@ -116,12 +111,8 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         dataTablePanel = new javax.swing.JPanel();
         graphicsParentPanel = new javax.swing.JPanel();
         analysisPanel = new javax.swing.JPanel();
-        areaTablePanel = new javax.swing.JPanel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        areaDataTable = new javax.swing.JTable();
+        tablePanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        slopesTable = new javax.swing.JTable();
         singleCellAnalysisPanel = new javax.swing.JPanel();
         leftPanel = new javax.swing.JPanel();
         experimentDataPanel = new javax.swing.JPanel();
@@ -279,36 +270,10 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         analysisPanel.setOpaque(false);
         analysisPanel.setLayout(new java.awt.GridBagLayout());
 
-        areaTablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        areaTablePanel.setOpaque(false);
-        areaTablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        jScrollPane4.setOpaque(false);
-
-        areaDataTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane4.setViewportView(areaDataTable);
-
-        javax.swing.GroupLayout areaTablePanelLayout = new javax.swing.GroupLayout(areaTablePanel);
-        areaTablePanel.setLayout(areaTablePanelLayout);
-        areaTablePanelLayout.setHorizontalGroup(
-            areaTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE)
-        );
-        areaTablePanelLayout.setVerticalGroup(
-            areaTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
-        );
-
+        tablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        tablePanel.setOpaque(false);
+        tablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        tablePanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -316,40 +281,21 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.5;
-        analysisPanel.add(areaTablePanel, gridBagConstraints);
+        analysisPanel.add(tablePanel, gridBagConstraints);
 
         jPanel1.setMinimumSize(new java.awt.Dimension(20, 20));
         jPanel1.setOpaque(false);
         jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        slopesTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane6.setViewportView(slopesTable);
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(611, Short.MAX_VALUE))
+            .addGap(0, 831, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(101, Short.MAX_VALUE))
+            .addGap(0, 261, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -576,8 +522,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox algorithmComboBox;
     private javax.swing.JPanel analysisPanel;
     private javax.swing.JPanel analysisPlateParentPanel;
-    private javax.swing.JTable areaDataTable;
-    private javax.swing.JPanel areaTablePanel;
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JPanel bulkCellAnalysisPanel;
     private javax.swing.ButtonGroup buttonGroup1;
@@ -598,9 +542,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JPanel leftPanel;
@@ -612,7 +554,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel resultsImporterPanel;
     private javax.swing.JPanel rightPanel;
     private javax.swing.JPanel singleCellAnalysisPanel;
-    private javax.swing.JTable slopesTable;
+    private javax.swing.JPanel tablePanel;
     private javax.swing.JTable timeStepsTable;
     // End of variables declaration//GEN-END:variables
 }

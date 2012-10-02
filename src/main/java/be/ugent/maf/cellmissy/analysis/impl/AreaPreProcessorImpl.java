@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.impl;
 
+import be.ugent.maf.cellmissy.analysis.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
 import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
@@ -77,7 +78,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
                 for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
                     int index = (counter / timeFramesNumber) * timeFramesNumber;
                     if (timeStepsList.get(counter).getArea() - timeStepsList.get(index).getArea() >= 0) {
-                        data[rowIndex][columnIndex] = roundTwoDecimals(timeStepsList.get(counter).getArea() - timeStepsList.get(index).getArea());
+                        data[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(timeStepsList.get(counter).getArea() - timeStepsList.get(index).getArea());
                     } else {
                         data[rowIndex][columnIndex] = null;
                     }
@@ -99,7 +100,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
                 if (timeStepsList.get(counter).getTimeStepSequence() != 0 && timeStepsList.get(counter).getArea() != 0) {
-                    data[rowIndex][columnIndex] = roundTwoDecimals(timeStepsList.get(counter).getArea() - timeStepsList.get(counter - 1).getArea());
+                    data[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(timeStepsList.get(counter).getArea() - timeStepsList.get(counter - 1).getArea());
                 }
                 counter++;
             }
@@ -122,7 +123,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
                 if (timeStepsList.get(counter).getTimeStepSequence() != 0) {
                     Double deltaArea = computeDeltaArea[rowIndex][columnIndex];
                     if (deltaArea != null) {
-                        data[rowIndex][columnIndex] = roundTwoDecimals(deltaArea / timeStepsList.get(counter - 1).getArea() * 100);
+                        data[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(deltaArea / timeStepsList.get(counter - 1).getArea() * 100);
                     }
                 }
                 counter++;
@@ -143,7 +144,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
                 if (computeCorrectedArea[rowIndex][columnIndex] != null) {
-                    data[rowIndex][columnIndex] = roundTwoDecimals(computeCorrectedArea[rowIndex][columnIndex] - computeCorrectedArea[0][columnIndex]);
+                    data[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(computeCorrectedArea[rowIndex][columnIndex] - computeCorrectedArea[0][columnIndex]);
                 }
             }
         }
@@ -188,13 +189,13 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         Double[][] computeDeltaArea = computeDeltaArea(array);
 
         for (int columnIndex = 1; columnIndex < data[0].length; columnIndex++) {
-            double[] outliers = computeOutliers(ArrayUtils.toPrimitive(excludeNullValues(transposed[columnIndex])));
+            double[] outliers = computeOutliers(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposed[columnIndex])));
 
             for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
                 if (outliers.length != 0) {
                     //check first row (area increase is always null)
                     if (rowIndex == 0) {
-                        data[rowIndex][columnIndex] = roundTwoDecimals(timeStepsList.get(counter).getArea());
+                        data[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(timeStepsList.get(counter).getArea());
                         counter++;
                         continue;
                     }
@@ -207,34 +208,16 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
                             break;
                         } else if (areaIncrease != null && areaIncrease.doubleValue() != outlier) {
                             if (computeDeltaArea[rowIndex][columnIndex] != null) {
-                                data[rowIndex][columnIndex] = roundTwoDecimals(data[rowIndex - 1][columnIndex] + computeDeltaArea[rowIndex][columnIndex]);
+                                data[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(data[rowIndex - 1][columnIndex] + computeDeltaArea[rowIndex][columnIndex]);
                             }
                         }
                     }
                 } else {
-                    data[rowIndex][columnIndex] = roundTwoDecimals(timeStepsList.get(counter).getArea());
+                    data[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(timeStepsList.get(counter).getArea());
                 }
                 counter++;
             }
         }
         return data;
-    }
-
-    //round double to 2 decimals
-    private double roundTwoDecimals(double d) {
-        DecimalFormat twoDForm = new DecimalFormat("#.##");
-        return Double.valueOf(twoDForm.format(d));
-    }
-
-    //exclude null values from an array of Double 
-    private Double[] excludeNullValues(Double[] data) {
-        List<Double> list = new ArrayList<>();
-        for (Double value : data) {
-            if (value != null) {
-                list.add(value);
-            }
-        }
-        Double[] toArray = list.toArray(new Double[list.size()]);
-        return toArray;
     }
 }
