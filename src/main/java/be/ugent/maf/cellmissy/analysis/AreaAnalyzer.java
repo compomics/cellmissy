@@ -13,8 +13,4 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 public interface AreaAnalyzer {
 
     public double[] computeSlopesPerCondition(double[][] areaData, PlateCondition plateCondition, double[] timeFrames);
-
-    public double computeMean(double[] data);
-
-    public double computeStandardDeviation(double[] data);
 }

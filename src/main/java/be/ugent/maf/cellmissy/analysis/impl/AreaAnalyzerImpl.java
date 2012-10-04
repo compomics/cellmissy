@@ -43,24 +43,4 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
     private double computeSlope(double[][] data) {
         return AnalysisUtils.roundTwoDecimals(linearRegressor.computeSlope(data));
     }
-
-    @Override
-    public double computeMean(double[] data) {
-        // sum of all the elements
-        double sum = 0;
-        for (int i = 0; i < data.length; i++) {
-            sum += data[i];
-        }
-        return sum / data.length;
-    }
-
-    @Override
-    public double computeStandardDeviation(double[] data) {
-        double sum = 0;
-        for (int i = 0; i < data.length; i++) {
-            final double v = data[i] - computeMean(data);
-            sum += v * v;
-        }
-        return Math.sqrt(sum / data.length);
-    }
 }

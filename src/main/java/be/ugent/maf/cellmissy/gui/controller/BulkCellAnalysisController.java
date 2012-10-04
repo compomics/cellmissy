@@ -13,17 +13,16 @@ import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.analysis.DataTableModel;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.Paint;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -37,9 +36,13 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +65,7 @@ public class BulkCellAnalysisController {
     private ChartPanel densityChartPanel;
     private ChartPanel correctedDensityChartPanel;
     private ChartPanel areaChartPanel;
+    private ChartPanel velocityChartPanel;
     //parent controller
     @Autowired
     private DataAnalysisController dataAnalysisController;
@@ -105,6 +109,10 @@ public class BulkCellAnalysisController {
 
     public ChartPanel getAreaChartPanel() {
         return areaChartPanel;
+    }
+
+    public JTable getDataTable() {
+        return dataTable;
     }
 
     /**
@@ -216,9 +224,9 @@ public class BulkCellAnalysisController {
      * for each replicate (well) of a certain selected condition, show normalized corrected area values, close to time frames
      * @param plateCondition 
      */
-    public void setCorrectedAreaTableData(PlateCondition plateCondition) {
+    public void setCorrectedAreaTableData(JTable table, PlateCondition plateCondition) {
         //set the model for the Correcte AreaTable
-        dataTable.setModel(new CorrectedAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
+        table.setModel(new CorrectedAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
     }
 
     /**
@@ -277,35 +285,57 @@ public class BulkCellAnalysisController {
     /**
      * 
      */
-    public void showSlopesInTable() {
-        String[] columnNames = new String[dataAnalysisController.getSelectedCondition().getWellCollection().size() + 2];
-
-        for (int i = 0; i < columnNames.length - 1; i++) {
-            columnNames[i] = "Cond " + (dataAnalysisController.getPlateConditionList().indexOf(dataAnalysisController.getSelectedCondition()) + 1) + ", repl " + (i + 1);
-        }
-
+    public void showSlopesInTable(int conditionIndex) {
+        //model of table with rows number = number of plate conditions and columns number equal to well collection  + 3 (Condition Name, mean and SEM)
+        DefaultTableModel model = (DefaultTableModel) dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getModel();
+        model.setRowCount(dataAnalysisController.getPlateConditionList().size());
+        model.setColumnCount(dataAnalysisController.getSelectedCondition().getWellCollection().size() + 3);
+        String[] columnNames = new String[dataAnalysisController.getSelectedCondition().getWellCollection().size() + 3];
+        columnNames[0] = "Condition";
         columnNames[columnNames.length - 2] = "mean";
-        columnNames[columnNames.length - 1] = "SD";
+        columnNames[columnNames.length - 1] = "SEM";
+        for (int i = 1; i < columnNames.length - 2; i++) {
+            columnNames[i] = "Repl " + i;
+        }
+        model.setColumnIdentifiers(columnNames);
+        //first column needs to be bigger than others
+        dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumn("Condition").setMinWidth(250);
+        dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumn("Condition").setMaxWidth(250);
+        dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumn("Condition").setPreferredWidth(250);
 
         Object[][] data = new Object[1][dataAnalysisController.getSelectedCondition().getWellCollection().size()];
 
         double[] computeSlopesPerCondition = computeSlopesPerCondition(dataAnalysisController.getSelectedCondition());
-        data[0] = new Object[computeSlopesPerCondition.length + 2];
-        for (int j = 0; j < data[0].length - 2; j++) {
-            data[0][j] = (Object) computeSlopesPerCondition[j];
+        data[0] = new Object[computeSlopesPerCondition.length + 3];
+        for (int j = 1; j < data[0].length - 2; j++) {
+            data[0][j] = (Object) computeSlopesPerCondition[j - 1];
+        }
+        data[0][0] = dataAnalysisController.getSelectedCondition().toString();
+        data[0][data[0].length - 2] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeMean(computeSlopesPerCondition));
+        data[0][data[0].length - 1] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeSEM(computeSlopesPerCondition));
+
+        for (int columnIndex = 0; columnIndex < columnNames.length; columnIndex++) {
+            model.setValueAt(data[0][columnIndex], conditionIndex, columnIndex);
+        }
+    }
+
+    public void showVelocityBars() {
+        double[][] data = getDataFromTableModel(dataAnalysisController.getDataAnalysisPanel().getSlopesTable());
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        double[] velocities = data[6];
+        for (int i = 0; i < velocities.length; i++) {
+            dataset.addValue(velocities[i], "", "Condition " + (i + 1));
         }
 
-        data[0][data[0].length - 2] = AnalysisUtils.roundTwoDecimals(areaAnalyzer.computeMean(computeSlopesPerCondition));
-        data[0][data[0].length - 1] = AnalysisUtils.roundTwoDecimals(areaAnalyzer.computeStandardDeviation(computeSlopesPerCondition));
-        JTable table = new JTable(data, columnNames);
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setMinWidth(2);
-            table.getColumnModel().getColumn(i).setMaxWidth(100);
-            table.getColumnModel().getColumn(i).setPreferredWidth(100);
-        }
-        dataAnalysisController.getDataAnalysisPanel().getTablePanel().add(table.getTableHeader(), BorderLayout.NORTH);
-        table.getTableHeader().setResizingAllowed(false);
-        dataAnalysisController.getDataAnalysisPanel().getTablePanel().add(table, BorderLayout.CENTER);
+        JFreeChart velocityChart = ChartFactory.createBarChart("", "Conditions", "Velocity " + "(\u00B5" + "m" + "\u00B2" + "\\min)", dataset, PlotOrientation.VERTICAL, true, true, false);
+        CategoryPlot velocityPlot = velocityChart.getCategoryPlot();
+        velocityPlot.setBackgroundPaint(Color.white);
+        velocityPlot.setRenderer(new VelocityBarRenderer());
+        velocityPlot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        AnalysisUtils.setShadowVisible(velocityChart, false);
+        velocityChartPanel.setChart(velocityChart);
+        dataAnalysisController.getDataAnalysisPanel().getjPanel1().add(velocityChartPanel, gridBagConstraints);
+        dataAnalysisController.getDataAnalysisPanel().getjPanel1().repaint();
     }
 
     /**
@@ -363,6 +393,8 @@ public class BulkCellAnalysisController {
         correctedDensityChartPanel.setOpaque(false);
         areaChartPanel = new ChartPanel(null);
         areaChartPanel.setOpaque(false);
+        velocityChartPanel = new ChartPanel(null);
+        velocityChartPanel.setOpaque(false);
     }
 
     /**
@@ -588,6 +620,16 @@ public class BulkCellAnalysisController {
 
             setOpaque(true);
             return this;
+        }
+    }
+
+    private class VelocityBarRenderer extends BarRenderer {
+
+        private Paint[] colors = GuiUtils.getAvailableColors();
+
+        @Override
+        public Paint getItemPaint(final int row, final int column) {
+            return this.colors[column + 1];
         }
     }
 }
