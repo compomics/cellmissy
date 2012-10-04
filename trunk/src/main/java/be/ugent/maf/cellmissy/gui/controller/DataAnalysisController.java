@@ -247,9 +247,9 @@ public class DataAnalysisController {
                 updateTimeStepList(plateConditionList.get(locationToIndex));
                 //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO VIEW CELLMIA RESULTS
                 bulkCellAnalysisPanelController.showTimeSteps();
-                
+
                 //set time steps list for the area pre-processor
-                bulkCellAnalysisPanelController.setTimeStepsList();    
+                bulkCellAnalysisPanelController.setTimeStepsList();
                 //compute time frames array for child controller (bulk cell controller)
                 bulkCellAnalysisPanelController.computeTimeFrames();
 
@@ -274,11 +274,12 @@ public class DataAnalysisController {
 
                 if (dataAnalysisPanel.getCorrectedAreaButton().isSelected()) {
                     //for current selected condition show corrected area values (outliers have been deleted from distribution)
-                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(plateConditionList.get(locationToIndex));
+                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(bulkCellAnalysisPanelController.getDataTable(), plateConditionList.get(locationToIndex));
                     //show Area increases with time frames
                     bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
                     bulkCellAnalysisPanelController.showArea();
-                    bulkCellAnalysisPanelController.showSlopesInTable();
+                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(dataAnalysisPanel.getAreaTable(), plateConditionList.get(locationToIndex));
+                    bulkCellAnalysisPanelController.showSlopesInTable(locationToIndex);
                 }
             }
         });
@@ -370,10 +371,20 @@ public class DataAnalysisController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
-                    bulkCellAnalysisPanelController.setCorrectedAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(bulkCellAnalysisPanelController.getDataTable(), (PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
                     bulkCellAnalysisPanelController.showArea();
-                    bulkCellAnalysisPanelController.showSlopesInTable();
+                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(dataAnalysisPanel.getAreaTable(), (PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                    bulkCellAnalysisPanelController.showSlopesInTable(dataAnalysisPanel.getConditionsList().getSelectedIndex());
                 }
+            }
+        });
+        
+        //***************************************************************************//
+        dataAnalysisPanel.getShowBarsButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                bulkCellAnalysisPanelController.showVelocityBars();
             }
         });
     }
@@ -419,7 +430,6 @@ public class DataAnalysisController {
          *constructor
          */
         public ConditionsRenderer() {
-
             setOpaque(true);
             setIconTextGap(10);
         }
