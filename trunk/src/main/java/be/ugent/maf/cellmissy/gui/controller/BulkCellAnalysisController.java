@@ -17,10 +17,14 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.Paint;
+import java.text.DecimalFormat;
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -152,17 +156,17 @@ public class BulkCellAnalysisController {
         columnBinding.setColumnClass(Integer.class);
 
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${area}"));
-        columnBinding.setColumnName("Area");
+        columnBinding.setColumnName("Area " + "(\u00B5" + "m" + "\u00B2)");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
 
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${centroidX}"));
-        columnBinding.setColumnName("Centroid_x");
+        columnBinding.setColumnName("Centroid_x (pixels)");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
 
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${centroidY}"));
-        columnBinding.setColumnName("Centroid_y");
+        columnBinding.setColumnName("Centroid_y (pixels)");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
 
@@ -172,17 +176,20 @@ public class BulkCellAnalysisController {
         columnBinding.setColumnClass(Double.class);
 
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${majorAxis}"));
-        columnBinding.setColumnName("Major Axis");
+        columnBinding.setColumnName("Major Axis " + "(\u00B5" + "m)");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
 
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${minorAxis}"));
-        columnBinding.setColumnName("Minor Axis");
+        columnBinding.setColumnName("Minor Axis " + "(\u00B5" + "m)");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
 
         bindingGroup.addBinding(timeStepsTableBinding);
         bindingGroup.bind();
+
+        dataAnalysisController.getDataAnalysisPanel().getTimeStepsTable().setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat()));
+        dataAnalysisController.getDataAnalysisPanel().getTimeStepsTableScrollPane().getViewport().setOpaque(false);
     }
 
     /**
@@ -193,6 +200,9 @@ public class BulkCellAnalysisController {
         //set model for the delta area Table
         //NOTE that each time a new condition is selected, new slopes is passed to the model
         dataTable.setModel(new DeltaAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
+        dataTable.setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat("0.00")));
+        dataTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
+        dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("Area increments between time frame t(n) and t(n+1)");
     }
 
     /**
@@ -203,11 +213,14 @@ public class BulkCellAnalysisController {
         //set model for the delta area Table
         //NOTE that each time a new condition is selected, new slopes is passed to the model
         dataTable.setModel(new AreaIncreaseTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
+        dataTable.getColumnModel().getColumn(0).setCellRenderer(new FormatRenderer(new DecimalFormat("0.00")));
         //starting from second column set Renderer for cells
         for (int i = 1; i < dataTable.getColumnCount(); i++) {
             //show OUTLIERS in red
-            dataTable.getColumnModel().getColumn(i).setCellRenderer(new AreaIncreaseRenderer(areaPreProcessor.computeOutliers(getDataFromTableModel(dataTable)[i - 1])));
+            dataTable.getColumnModel().getColumn(i).setCellRenderer(new AreaIncreaseRenderer(areaPreProcessor.computeOutliers(getDataFromTableModel(dataTable)[i - 1]), new DecimalFormat("0.00")));
         }
+        dataTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
+        dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("% area increases, distributions' outliers are shown in red");
     }
 
     /**
@@ -218,6 +231,9 @@ public class BulkCellAnalysisController {
         //set Model for the Normalized AreaTable
         //NOTE that each time a new condition is selected, new slopes is passed to the model
         dataTable.setModel(new NormalizedAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
+        dataTable.setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat("0.00")));
+        dataTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
+        dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("Area @time frame zero is set to 0.00");
     }
 
     /**
@@ -227,6 +243,9 @@ public class BulkCellAnalysisController {
     public void setCorrectedAreaTableData(JTable table, PlateCondition plateCondition) {
         //set the model for the Correcte AreaTable
         table.setModel(new CorrectedAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
+        dataTable.setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat("0.00")));
+        dataTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
+        dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("Outliers are removed from distributions and new area values are shown");
     }
 
     /**
@@ -380,9 +399,11 @@ public class BulkCellAnalysisController {
         JScrollPane scrollPane = new JScrollPane(dataTable);
         //the table will take all the viewport height available
         dataTable.setFillsViewportHeight(true);
+        scrollPane.getViewport().setOpaque(false);
         //row selection must be false && column selection true to be able to select through columns
         dataTable.setColumnSelectionAllowed(true);
         dataTable.setRowSelectionAllowed(false);
+
         dataAnalysisController.getDataAnalysisPanel().getDataTablePanel().add(scrollPane);
         //init timeStepsBindingList
         timeStepBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
@@ -593,36 +614,99 @@ public class BulkCellAnalysisController {
     }
 
     /**
+     * 
+     */
+    private class FormatRenderer extends DefaultTableCellRenderer {
+
+        private Format formatter;
+
+        public FormatRenderer(Format formatter) {
+            this.formatter = formatter;
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if (value != null) {
+                value = formatter.format(value);
+            }
+            setValue(value);
+            setHorizontalAlignment(SwingConstants.RIGHT);
+            setOpaque(true);
+
+            if (isSelected) {
+                setBackground(table.getSelectionBackground());
+                setForeground(table.getSelectionForeground());
+            } else {
+                setBackground(table.getBackground());
+                setForeground(table.getForeground());
+            }
+            return this;
+        }
+    }
+
+    /**
      * Cell renderer for Area Increase Table
      */
     private class AreaIncreaseRenderer extends DefaultTableCellRenderer {
 
-        double[] outliers;
+        private double[] outliers;
+        private Format formatter;
 
-        public AreaIncreaseRenderer(double[] outliers) {
+        public AreaIncreaseRenderer(double[] outliers, Format formatter) {
             this.outliers = outliers;
+            this.formatter = formatter;
         }
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(dataTable, value, false, false, row, column);
 
             Double areaIncrease = (Double) value;
-            if (areaIncrease != null) {
-                for (double outlier : outliers) {
-                    if (Double.valueOf(areaIncrease) == outlier) {
-                        setForeground(Color.red);
-                        break;
+            if (isSelected) {
+                setBackground(table.getSelectionBackground());
+                setForeground(table.getSelectionForeground());
+            } else {
+                setBackground(table.getBackground());
+                if (areaIncrease != null) {
+                    if (outliers.length != 0) {
+                        for (double outlier : outliers) {
+                            if (Double.valueOf(areaIncrease) == outlier) {
+                                setForeground(Color.red);
+                                break;
+                            } else {
+                                setForeground(Color.black);
+                            }
+                        }
                     } else {
                         setForeground(Color.black);
                     }
                 }
             }
-
+            if (value != null) {
+                value = formatter.format(value);
+            }
+            setValue(value);
+            setHorizontalAlignment(SwingConstants.RIGHT);
             setOpaque(true);
+
             return this;
         }
     }
 
+    /*
+     * renderer for the JTable header
+     */
+    private class HeaderRenderer extends DefaultTableCellRenderer {
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, false, false, row, column);
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setBorder(BorderFactory.createLineBorder(Color.black));
+            return this;
+        }
+    }
+
+    /**
+     * Bar Renderer for Velocity Bar Charts
+     */
     private class VelocityBarRenderer extends BarRenderer {
 
         private Paint[] colors = GuiUtils.getAvailableColors();

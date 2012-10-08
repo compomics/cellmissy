@@ -5,7 +5,9 @@
 package be.ugent.maf.cellmissy.analysis;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
@@ -26,10 +28,11 @@ public class AnalysisUtils {
 
     //round double to 2 decimals
     public static double roundTwoDecimals(double d) {
-        DecimalFormat twoDForm = new DecimalFormat("#.##");
+        DecimalFormat twoDForm = new DecimalFormat("#.00");
         return Double.valueOf(twoDForm.format(d));
     }
 
+     
     //exclude null values from an array of Double 
     public static Double[] excludeNullValues(Double[] data) {
         List<Double> list = new ArrayList<>();

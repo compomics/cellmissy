@@ -168,7 +168,6 @@ public class DataAnalysisController {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-
                 System.out.println("project ***");
                 //init experimentJList
                 int locationToIndex = dataAnalysisPanel.getProjectJList().locationToIndex(e.getPoint());
@@ -233,8 +232,8 @@ public class DataAnalysisController {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("condition ***");
                 int locationToIndex = dataAnalysisPanel.getConditionsList().locationToIndex(e.getPoint());
+                System.out.println("condition ***");
                 //create a list of wells for each condition (from a collection)
                 List<Well> wellList = new ArrayList<>();
                 wellList.addAll(plateConditionList.get(locationToIndex).getWellCollection());
@@ -284,8 +283,6 @@ public class DataAnalysisController {
             }
         });
 
-        //select first condition by default
-        dataAnalysisPanel.getConditionsList().setSelectedIndex(0);
     }
 
     /**
@@ -378,7 +375,7 @@ public class DataAnalysisController {
                 }
             }
         });
-        
+
         //***************************************************************************//
         dataAnalysisPanel.getShowBarsButton().addActionListener(new ActionListener() {
 
