@@ -41,14 +41,20 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.StatisticalBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.statistics.DefaultStatisticalCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.TextAnchor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -308,12 +314,14 @@ public class BulkCellAnalysisController {
         //model of table with rows number = number of plate conditions and columns number equal to well collection  + 3 (Condition Name, mean and SEM)
         DefaultTableModel model = (DefaultTableModel) dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getModel();
         model.setRowCount(dataAnalysisController.getPlateConditionList().size());
-        model.setColumnCount(dataAnalysisController.getSelectedCondition().getWellCollection().size() + 3);
-        String[] columnNames = new String[dataAnalysisController.getSelectedCondition().getWellCollection().size() + 3];
+        model.setColumnCount(dataAnalysisController.getSelectedCondition().getWellCollection().size() + 5);
+        String[] columnNames = new String[dataAnalysisController.getSelectedCondition().getWellCollection().size() + 5];
         columnNames[0] = "Condition";
+        columnNames[columnNames.length - 4] = "median";
+        columnNames[columnNames.length - 3] = "MAD";
         columnNames[columnNames.length - 2] = "mean";
         columnNames[columnNames.length - 1] = "SEM";
-        for (int i = 1; i < columnNames.length - 2; i++) {
+        for (int i = 1; i < columnNames.length - 4; i++) {
             columnNames[i] = "Repl " + i;
         }
         model.setColumnIdentifiers(columnNames);
@@ -325,11 +333,13 @@ public class BulkCellAnalysisController {
         Object[][] data = new Object[1][dataAnalysisController.getSelectedCondition().getWellCollection().size()];
 
         double[] computeSlopesPerCondition = computeSlopesPerCondition(dataAnalysisController.getSelectedCondition());
-        data[0] = new Object[computeSlopesPerCondition.length + 3];
-        for (int j = 1; j < data[0].length - 2; j++) {
+        data[0] = new Object[computeSlopesPerCondition.length + 5];
+        for (int j = 1; j < data[0].length - 4; j++) {
             data[0][j] = (Object) computeSlopesPerCondition[j - 1];
         }
         data[0][0] = dataAnalysisController.getSelectedCondition().toString();
+        data[0][data[0].length - 4] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeMedian(computeSlopesPerCondition));
+        data[0][data[0].length - 3] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeMAD(computeSlopesPerCondition));
         data[0][data[0].length - 2] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeMean(computeSlopesPerCondition));
         data[0][data[0].length - 1] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeSEM(computeSlopesPerCondition));
 
@@ -340,16 +350,24 @@ public class BulkCellAnalysisController {
 
     public void showVelocityBars() {
         double[][] data = getDataFromTableModel(dataAnalysisController.getDataAnalysisPanel().getSlopesTable());
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        double[] velocities = data[6];
-        for (int i = 0; i < velocities.length; i++) {
-            dataset.addValue(velocities[i], "", "Condition " + (i + 1));
+        DefaultStatisticalCategoryDataset dataset = new DefaultStatisticalCategoryDataset();
+        double[] meanVelocities = data[6];
+        double[] standardDeviations = data[7];
+        for (int i = 0; i < meanVelocities.length; i++) {
+            dataset.add(meanVelocities[i], standardDeviations[i], "", "Condition " + (i + 1));
         }
 
-        JFreeChart velocityChart = ChartFactory.createBarChart("", "Conditions", "Velocity " + "(\u00B5" + "m" + "\u00B2" + "\\min)", dataset, PlotOrientation.VERTICAL, true, true, false);
+        JFreeChart velocityChart = ChartFactory.createLineChart("", "Conditions", "Velocity " + "(\u00B5" + "m" + "\u00B2" + "\\min)", dataset, PlotOrientation.VERTICAL, true, true, false);
         CategoryPlot velocityPlot = velocityChart.getCategoryPlot();
         velocityPlot.setBackgroundPaint(Color.white);
-        velocityPlot.setRenderer(new VelocityBarRenderer());
+        VelocityBarRenderer velocityBarRenderer = new VelocityBarRenderer();
+        velocityBarRenderer.setErrorIndicatorPaint(Color.black);
+        velocityBarRenderer.setIncludeBaseInRange(false);
+        velocityBarRenderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+        velocityBarRenderer.setBaseItemLabelsVisible(true);
+        velocityBarRenderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.INSIDE6, TextAnchor.BOTTOM_CENTER));
+        velocityPlot.setRenderer(velocityBarRenderer);
+
         velocityPlot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
         AnalysisUtils.setShadowVisible(velocityChart, false);
         velocityChartPanel.setChart(velocityChart);
@@ -707,7 +725,7 @@ public class BulkCellAnalysisController {
     /**
      * Bar Renderer for Velocity Bar Charts
      */
-    private class VelocityBarRenderer extends BarRenderer {
+    private class VelocityBarRenderer extends StatisticalBarRenderer {
 
         private Paint[] colors = GuiUtils.getAvailableColors();
 

@@ -14,11 +14,11 @@ import umontreal.iro.lecuyer.probdist.EmpiricalDist;
 import umontreal.iro.lecuyer.probdist.NormalDist;
 import umontreal.iro.lecuyer.randvar.KernelDensityGen;
 import umontreal.iro.lecuyer.randvar.NormalGen;
-import umontreal.iro.lecuyer.rng.MRG32k3a;
+import umontreal.iro.lecuyer.rng.MRG31k3p;
 import umontreal.iro.lecuyer.rng.RandomStream;
 
 /**
- * This class makes use of "SSJ: Stochastic Simulation in Java" library from iro.umontreal.ca to compute estimation of kernel density estimation of an array of double.
+ * This class makes use of "SSJ: Stochastic Simulation in Java" library from iro.umontreal.ca to estimate probability density function of an array of double.
  * It first generates independent and identically distributed random variables from the dataset, at which the density needs to be computed
  * and then generates the vector of density estimates at the corresponding variables.
  * 
@@ -46,7 +46,8 @@ public class NormalKernelDensityEstimator implements KernelDensityEstimator {
         Arrays.sort(data);
         empiricalDist = new EmpiricalDist(data);
         //new Stream to randomly generate numbers
-        RandomStream stream = new MRG32k3a();
+        //combined multiple recursive generator (CMRG) 
+        RandomStream stream = new MRG31k3p();
         NormalGen normalKernelDensityGen = new NormalGen(stream);
         kernelDensityGen = new KernelDensityGen(stream, empiricalDist, normalKernelDensityGen);
     }
