@@ -5,9 +5,8 @@
 package be.ugent.maf.cellmissy.analysis;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Currency;
+import java.util.Arrays;
 import java.util.List;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
@@ -32,7 +31,6 @@ public class AnalysisUtils {
         return Double.valueOf(twoDForm.format(d));
     }
 
-     
     //exclude null values from an array of Double 
     public static Double[] excludeNullValues(Double[] data) {
         List<Double> list = new ArrayList<>();
@@ -54,6 +52,20 @@ public class AnalysisUtils {
         return sum / data.length;
     }
 
+    public static double computeMedian(double[] data) {
+        // sort the input data
+        Arrays.sort(data);
+        //make a distinction between odd and even data points
+        if (data.length % 2 == 1) {
+            return data[(data.length + 1) / 2 - 1];
+        } else {
+            double lower = data[(data.length / 2 - 1)];
+            double upper = data[(data.length / 2)];
+
+            return (lower + upper) / 2;
+        }
+    }
+
     public static double computeStandardDeviation(double[] data) {
         double sum = 0;
         for (int i = 0; i < data.length; i++) {
@@ -65,6 +77,18 @@ public class AnalysisUtils {
 
     public static double computeSEM(double[] data) {
         return (computeStandardDeviation(data) / Math.sqrt(data.length));
+    }
+
+    public static double computeMAD(double[] data) {
+        //scale factor for asymptotically normal consistency
+        final double constant = 1.4826;
+        double[] deviations = new double[data.length];
+        double median = computeMedian(data);
+
+        for (int i = 0; i < data.length; i++) {
+            deviations[i] = Math.abs(data[i] - median);
+        }
+        return constant * computeMedian(deviations);
     }
 
     public static void setShadowVisible(final JFreeChart chart, final boolean state) {
