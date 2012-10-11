@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.analysis.DataTableModel;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
+import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -20,7 +21,9 @@ import java.awt.Paint;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -47,10 +50,8 @@ import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StatisticalBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.statistics.DefaultStatisticalCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -71,6 +72,7 @@ public class BulkCellAnalysisController {
     private ObservableList<TimeStep> timeStepBindingList;
     private JTableBinding timeStepsTableBinding;
     private JTable dataTable;
+    private Map<PlateCondition, AreaPreProcessingResultsHolder> map;
     //view
     private ChartPanel densityChartPanel;
     private ChartPanel correctedDensityChartPanel;
@@ -128,13 +130,6 @@ public class BulkCellAnalysisController {
     /**
      * public methods and classes
      */
-    /**
-     * set time steps list for the area calculator
-     */
-    public void setTimeStepsList() {
-        areaPreProcessor.setTimeStepsList(timeStepBindingList);
-    }
-
     /**
      * show table with TimeSteps results from CellMia analysis
      * this is populating the JTable in the ResultsImporter Panel
@@ -299,7 +294,7 @@ public class BulkCellAnalysisController {
         //compute first corrected slopes (no outliers)
         double[][] correctedData = new double[getDataFromTableModel(dataTable).length][];
         for (int i = 0; i < getDataFromTableModel(dataTable).length; i++) {
-            double[] correctedValues = areaPreProcessor.computeCorrectedArea(getDataFromTableModel(dataTable)[i]);
+            double[] correctedValues = areaPreProcessor.correctForOutliers(getDataFromTableModel(dataTable)[i]);
             correctedData[i] = correctedValues;
         }
         JFreeChart correctedDensityChart = showDensityFunction(correctedData, "KDE (Outliers Correction)");
@@ -383,14 +378,15 @@ public class BulkCellAnalysisController {
     private double[] computeSlopesPerCondition(PlateCondition plateCondition) {
 
         Double[][] data = new Double[timeFrames.length][plateCondition.getWellCollection().size() + 1];
-        Double[][] normalizeCorrectedArea = areaPreProcessor.normalizeCorrectedArea(data, plateCondition);
+        AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
+        Double[][] normalizedArea = areaPreProcessingResultsHolder.getNormalizedArea();
         //transpose slopes
-        double[][] transposed = new double[normalizeCorrectedArea[0].length - 1][];
-        for (int i = 1; i < normalizeCorrectedArea[0].length; i++) {
+        double[][] transposed = new double[normalizedArea[0].length - 1][];
+        for (int i = 1; i < normalizedArea[0].length; i++) {
             List<Double> tempList = new ArrayList<>();
-            for (int j = 0; j < normalizeCorrectedArea.length; j++) {
-                if (normalizeCorrectedArea[j][i] != null) {
-                    tempList.add((double) normalizeCorrectedArea[j][i]);
+            for (int j = 0; j < normalizedArea.length; j++) {
+                if (normalizedArea[j][i] != null) {
+                    tempList.add((double) normalizedArea[j][i]);
                 }
             }
             transposed[i - 1] = ArrayUtils.toPrimitive(tempList.toArray(new Double[tempList.size()]));
@@ -401,8 +397,48 @@ public class BulkCellAnalysisController {
 
     //compute time frames
     public void computeTimeFrames() {
-        areaPreProcessor.setTimeFramesNumber(dataAnalysisController.getExperiment().getTimeFrames());
-        this.timeFrames = areaPreProcessor.computeTimeFrames(dataAnalysisController.getExperiment().getExperimentInterval());
+        double[] timeFrames = new double[dataAnalysisController.getExperiment().getTimeFrames()];
+        for (int i = 0; i < dataAnalysisController.getExperiment().getTimeFrames(); i++) {
+            Double timeFrame = timeStepBindingList.get(i).getTimeStepSequence() * dataAnalysisController.getExperiment().getExperimentInterval();
+            int intValue = timeFrame.intValue();
+            timeFrames[i] = intValue;
+        }
+        this.timeFrames = timeFrames;
+    }
+
+    /**
+     * 
+     */
+    public void updateMap() {
+        AreaPreProcessingResultsHolder preProcessingResultsHolder = new AreaPreProcessingResultsHolder();
+        preProcessingResultsHolder.setAreaRawData(getAreaRawData(dataAnalysisController.getSelectedCondition()));
+        areaPreProcessor.computeNormalizedArea(preProcessingResultsHolder);
+        areaPreProcessor.computeDeltaArea(preProcessingResultsHolder);
+        areaPreProcessor.computeAreaIncrease(preProcessingResultsHolder);
+        areaPreProcessor.normalizeCorrectedArea(preProcessingResultsHolder);
+        if (!map.containsKey(dataAnalysisController.getSelectedCondition())) {
+            map.put(dataAnalysisController.getSelectedCondition(), preProcessingResultsHolder);
+        }
+    }
+
+    /**
+     * from time steps List to 2D array of Double
+     * @param plateCondition
+     * @return 
+     */
+    private Double[][] getAreaRawData(PlateCondition plateCondition) {
+        Double[][] areaRawData = new Double[dataAnalysisController.getExperiment().getTimeFrames()][plateCondition.getWellCollection().size()];
+
+        int counter = 0;
+        for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
+            if (timeStepBindingList.get(columnIndex).getArea() != 0) {
+                for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
+                    areaRawData[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(timeStepBindingList.get(counter).getArea());
+                    counter++;
+                }
+            }
+        }
+        return areaRawData;
     }
 
     /**
@@ -421,7 +457,6 @@ public class BulkCellAnalysisController {
         //row selection must be false && column selection true to be able to select through columns
         dataTable.setColumnSelectionAllowed(true);
         dataTable.setRowSelectionAllowed(false);
-
         dataAnalysisController.getDataAnalysisPanel().getDataTablePanel().add(scrollPane);
         //init timeStepsBindingList
         timeStepBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
@@ -434,6 +469,7 @@ public class BulkCellAnalysisController {
         areaChartPanel.setOpaque(false);
         velocityChartPanel = new ChartPanel(null);
         velocityChartPanel.setOpaque(false);
+        map = new HashMap<>();
     }
 
     /**
@@ -556,13 +592,17 @@ public class BulkCellAnalysisController {
 
         @Override
         protected final void insertRawData() {
+            AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
+            Double[][] normalizedArea = areaPreProcessingResultsHolder.getNormalizedArea();
             //copy the content of computeNormalizedArea array into slopes array
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
                 data[i][0] = timeFrames[i];
                 //fill in all the other columns
                 //arraycopy(Object src,  int  srcPos, Object dest, int destPos, int length)
-                System.arraycopy(areaPreProcessor.computeNormalizedArea(data)[i], 1, data[i], 1, data[i].length - 1);
+                //System.arraycopy(areaPreProcessor.computeNormalizedArea(data)[i], 1, data[i], 1, data[i].length - 1);
+
+                System.arraycopy(normalizedArea[i], 1, data[i], 1, data[i].length - 1);
             }
         }
     }
@@ -583,7 +623,8 @@ public class BulkCellAnalysisController {
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
                 data[i][0] = timeFrames[i];
-                System.arraycopy(areaPreProcessor.computeDeltaArea(data)[i], 1, data[i], 1, data[i].length - 1);
+                //System.arraycopy(areaPreProcessor.computeDeltaArea(data)[i], 1, data[i], 1, data[i].length - 1);
+                areaPreProcessor.computeDeltaArea(map.get(plateCondition));
             }
         }
     }
@@ -604,8 +645,8 @@ public class BulkCellAnalysisController {
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
                 data[i][0] = timeFrames[i];
-                System.arraycopy(areaPreProcessor.computeAreaIncrease(data, dataAnalysisController.getSelectedCondition())[i], 1, data[i], 1, data[i].length - 1);
-
+                //System.arraycopy(areaPreProcessor.computeAreaIncrease(data)[i], 1, data[i], 1, data[i].length - 1);
+                areaPreProcessor.computeAreaIncrease(map.get(plateCondition));
             }
         }
     }
@@ -626,7 +667,8 @@ public class BulkCellAnalysisController {
             for (int i = 0; i < data.length; i++) {
                 //fill in first column
                 data[i][0] = timeFrames[i];
-                System.arraycopy(areaPreProcessor.normalizeCorrectedArea(data, dataAnalysisController.getSelectedCondition())[i], 1, data[i], 1, data[i].length - 1);
+                //System.arraycopy(areaPreProcessor.normalizeCorrectedArea(data)[i], 1, data[i], 1, data[i].length - 1);
+                areaPreProcessor.normalizeCorrectedArea(map.get(plateCondition));
             }
         }
     }

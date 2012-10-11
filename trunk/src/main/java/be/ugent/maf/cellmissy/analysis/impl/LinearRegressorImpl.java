@@ -14,13 +14,11 @@ import org.springframework.stereotype.Component;
  */
 @Component("linearRegressor")
 public class LinearRegressorImpl implements LinearRegressor{
-
-    private SimpleRegression simpleRegression;
     
     @Override
     public double computeSlope(double[][] data) {
         
-        simpleRegression = new SimpleRegression();
+        SimpleRegression simpleRegression = new SimpleRegression();
         
         simpleRegression.addData(data);
         return simpleRegression.getSlope();        

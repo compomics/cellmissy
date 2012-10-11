@@ -247,11 +247,11 @@ public class DataAnalysisController {
                 //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO VIEW CELLMIA RESULTS
                 bulkCellAnalysisPanelController.showTimeSteps();
 
-                //set time steps list for the area pre-processor
-                bulkCellAnalysisPanelController.setTimeStepsList();
                 //compute time frames array for child controller (bulk cell controller)
                 bulkCellAnalysisPanelController.computeTimeFrames();
-
+                //*************************************************
+                bulkCellAnalysisPanelController.updateMap();
+                
                 //check which button is selected for analysis:
                 if (dataAnalysisPanel.getNormalizeAreaButton().isSelected()) {
                     //for current selected condition show normalized area values together with time frames
@@ -354,8 +354,8 @@ public class DataAnalysisController {
                     dataAnalysisPanel.getGraphicsParentPanel().revalidate();
                     dataAnalysisPanel.getGraphicsParentPanel().repaint();
                     //show density function for selected condition
-                    bulkCellAnalysisPanelController.showRawDataDensityFunction();
-                    bulkCellAnalysisPanelController.showCorrectedDataDensityFunction();
+                    //bulkCellAnalysisPanelController.showRawDataDensityFunction();
+                    //bulkCellAnalysisPanelController.showCorrectedDataDensityFunction();
                 }
             }
         });
