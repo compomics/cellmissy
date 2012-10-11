@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import java.util.List;
 
@@ -15,37 +15,18 @@ import java.util.List;
 public interface AreaPreProcessor {
 
     /**
-     * set time frames number (for one experiment this number changes, so this method needs to be called only once)
-     * @param timeFramesNumber 
-     */
-    public void setTimeFramesNumber(int timeFramesNumber);
-
-    /**
-     * set time steps list (for each condition time steps list changes)
-     * @param timeStepsList 
-     */
-    public void setTimeStepsList(List<TimeStep> timeStepsList);
-
-    /**
-     * Compute time frames, knowing the interval of the experiment
-     * @param experimentInterval
-     * @return an array of double with time frames
-     */
-    public double[] computeTimeFrames(Double experimentInterval);
-
-    /**
      * Normalize Area values (Area @ Time Frame zero is zero)
      * @param data (area values for one condition)
      * @return a 2D array of Double with normalized values
      */
-    public Double[][] computeNormalizedArea(Double[][] data);
+    public void computeNormalizedArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
 
     /**
      * Compute increments of Area from one time frame to the following one (Delta Area Values)
      * @param data (area values for one condition)
      * @return a 2D array of Double with delta values
      */
-    public Double[][] computeDeltaArea(Double[][] data);
+    public void computeDeltaArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
 
     /**
      * Compute %area increase for a certain condition
@@ -53,7 +34,7 @@ public interface AreaPreProcessor {
      * @param plateCondition
      * @return 
      */
-    public Double[][] computeAreaIncrease(Double[][] data, PlateCondition plateCondition);
+    public void computeAreaIncrease(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
 
     /**
      * Compute Normalized Corrected Area values for a certain Condition
@@ -61,7 +42,7 @@ public interface AreaPreProcessor {
      * @param plateCondition
      * @return 
      */
-    public Double[][] normalizeCorrectedArea(Double[][] data, PlateCondition plateCondition);
+    public void normalizeCorrectedArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
 
     /**
      * Using the Outlier Interface, compute OUTLIERS values for a certain dataset
@@ -75,5 +56,5 @@ public interface AreaPreProcessor {
      * @param data
      * @return 
      */
-    public double[] computeCorrectedArea(double[] data);
+    public double[] correctForOutliers(double[] data);
 }
