@@ -22,7 +22,7 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
     private LinearRegressor linearRegressor;
 
     @Override
-    public double[] computeSlopesPerCondition(double[][] areaData, PlateCondition plateCondition, double[] timeFrames) {
+    public double[] computeSlopesPerCondition(PlateCondition plateCondition, double[][] areaData, double[] timeFrames) {
         double[] slopes = new double[plateCondition.getWellCollection().size()];
 
         for (int columnIndex = 0; columnIndex < areaData.length; columnIndex++) {
@@ -34,8 +34,8 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
                 temp[i][1] = data[i];
             }
 
-            double computeSlope = computeSlope(temp);
-            slopes[columnIndex] = computeSlope;
+            double slope = computeSlope(temp);
+            slopes[columnIndex] = slope;
         }
         return slopes;
     }

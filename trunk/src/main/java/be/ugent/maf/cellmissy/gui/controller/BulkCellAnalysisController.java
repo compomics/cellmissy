@@ -13,6 +13,7 @@ import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.analysis.DataTableModel;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
+import com.lowagie.text.Row;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -21,6 +22,7 @@ import java.awt.Paint;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -200,7 +202,7 @@ public class BulkCellAnalysisController {
     public void setDeltaAreaTableData(PlateCondition plateCondition) {
         //set model for the delta area Table
         //NOTE that each time a new condition is selected, new slopes is passed to the model
-        dataTable.setModel(new DeltaAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
+        dataTable.setModel(new DataTableModel(plateCondition, map.get(plateCondition).getDeltaArea(), timeFrames));
         dataTable.setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat("0.00")));
         dataTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
         dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("Area increments between time frame t(n) and t(n+1)");
@@ -213,7 +215,7 @@ public class BulkCellAnalysisController {
     public void setAreaIncreaseTableData(PlateCondition plateCondition) {
         //set model for the delta area Table
         //NOTE that each time a new condition is selected, new slopes is passed to the model
-        dataTable.setModel(new AreaIncreaseTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
+        dataTable.setModel(new DataTableModel(plateCondition, map.get(plateCondition).getPercentageAreaIncrease(), timeFrames));
         dataTable.getColumnModel().getColumn(0).setCellRenderer(new FormatRenderer(new DecimalFormat("0.00")));
         //starting from second column set Renderer for cells
         for (int i = 1; i < dataTable.getColumnCount(); i++) {
@@ -231,7 +233,7 @@ public class BulkCellAnalysisController {
     public void setNormalizedAreaTableData(PlateCondition plateCondition) {
         //set Model for the Normalized AreaTable
         //NOTE that each time a new condition is selected, new slopes is passed to the model
-        dataTable.setModel(new NormalizedAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
+        dataTable.setModel(new DataTableModel(plateCondition, map.get(plateCondition).getNormalizedArea(), timeFrames));
         dataTable.setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat("0.00")));
         dataTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
         dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("Area @time frame zero is set to 0.00");
@@ -241,9 +243,9 @@ public class BulkCellAnalysisController {
      * for each replicate (well) of a certain selected condition, show normalized corrected area values, close to time frames
      * @param plateCondition 
      */
-    public void setCorrectedAreaTableData(JTable table, PlateCondition plateCondition) {
+    public void setCorrectedAreaTableData(PlateCondition plateCondition) {
         //set the model for the Correcte AreaTable
-        table.setModel(new CorrectedAreaTableModel(plateCondition, dataAnalysisController.getExperiment().getTimeFrames()));
+        dataTable.setModel(new DataTableModel(plateCondition, map.get(plateCondition).getNormalizedCorrectedArea(), timeFrames));
         dataTable.setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat("0.00")));
         dataTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
         dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("Outliers are removed from distributions and new area values are shown");
@@ -305,7 +307,7 @@ public class BulkCellAnalysisController {
     /**
      * 
      */
-    public void showSlopesInTable(int conditionIndex) {
+    public void showSlopesInTable() {
         //model of table with rows number = number of plate conditions and columns number equal to well collection  + 3 (Condition Name, mean and SEM)
         DefaultTableModel model = (DefaultTableModel) dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getModel();
         model.setRowCount(dataAnalysisController.getPlateConditionList().size());
@@ -325,24 +327,37 @@ public class BulkCellAnalysisController {
         dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumn("Condition").setMaxWidth(250);
         dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumn("Condition").setPreferredWidth(250);
 
-        Object[][] data = new Object[1][dataAnalysisController.getSelectedCondition().getWellCollection().size()];
+        Object[][] data = new Object[dataAnalysisController.getPlateConditionList().size()][dataAnalysisController.getSelectedCondition().getWellCollection().size()];
 
-        double[] computeSlopesPerCondition = computeSlopesPerCondition(dataAnalysisController.getSelectedCondition());
-        data[0] = new Object[computeSlopesPerCondition.length + 5];
-        for (int j = 1; j < data[0].length - 4; j++) {
-            data[0][j] = (Object) computeSlopesPerCondition[j - 1];
+        List<double[]> slopesList = new ArrayList();
+        for (PlateCondition plateCondition : map.keySet()) {
+            double[] slopesPerCondition = computeSlopesPerCondition(plateCondition);
+            slopesList.add(slopesPerCondition);
         }
-        data[0][0] = dataAnalysisController.getSelectedCondition().toString();
-        data[0][data[0].length - 4] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeMedian(computeSlopesPerCondition));
-        data[0][data[0].length - 3] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeMAD(computeSlopesPerCondition));
-        data[0][data[0].length - 2] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeMean(computeSlopesPerCondition));
-        data[0][data[0].length - 1] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeSEM(computeSlopesPerCondition));
+
+        for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
+            data[rowIndex] = new Object[slopesList.size() + 5];
+            data[0][data[0].length - 4] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeMedian(slopesList.get(rowIndex)));
+            data[0][data[0].length - 3] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeMAD(slopesList.get(rowIndex)));
+            data[0][data[0].length - 2] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeMean(slopesList.get(rowIndex)));
+            data[0][data[0].length - 1] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeSEM(slopesList.get(rowIndex)));
+            for (int columnIndex = 1; columnIndex < data[0].length - 4; columnIndex++) {
+                data[rowIndex][0] = dataAnalysisController.getSelectedCondition().toString();
+                data[rowIndex][columnIndex] = (Object) slopesList.get(columnIndex - 1);
+            }
+        }
+
 
         for (int columnIndex = 0; columnIndex < columnNames.length; columnIndex++) {
-            model.setValueAt(data[0][columnIndex], conditionIndex, columnIndex);
+            for (int rowIndex = 0; rowIndex < dataAnalysisController.getPlateConditionList().size(); rowIndex++) {
+                model.setValueAt(data[0][columnIndex], rowIndex, columnIndex);
+            }
         }
     }
 
+    /**
+     * show Bar charts for area velocity
+     */
     public void showVelocityBars() {
         double[][] data = getDataFromTableModel(dataAnalysisController.getDataAnalysisPanel().getSlopesTable());
         DefaultStatisticalCategoryDataset dataset = new DefaultStatisticalCategoryDataset();
@@ -377,22 +392,21 @@ public class BulkCellAnalysisController {
      */
     private double[] computeSlopesPerCondition(PlateCondition plateCondition) {
 
-        Double[][] data = new Double[timeFrames.length][plateCondition.getWellCollection().size() + 1];
         AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
-        Double[][] normalizedArea = areaPreProcessingResultsHolder.getNormalizedArea();
+        Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
         //transpose slopes
-        double[][] transposed = new double[normalizedArea[0].length - 1][];
-        for (int i = 1; i < normalizedArea[0].length; i++) {
+        double[][] transposed = new double[normalizedCorrectedArea[0].length][normalizedCorrectedArea.length];
+        for (int i = 0; i < normalizedCorrectedArea[0].length; i++) {
             List<Double> tempList = new ArrayList<>();
-            for (int j = 0; j < normalizedArea.length; j++) {
-                if (normalizedArea[j][i] != null) {
-                    tempList.add((double) normalizedArea[j][i]);
+            for (int j = 0; j < normalizedCorrectedArea.length; j++) {
+                if (normalizedCorrectedArea[j][i] != null) {
+                    tempList.add((double) normalizedCorrectedArea[j][i]);
                 }
             }
-            transposed[i - 1] = ArrayUtils.toPrimitive(tempList.toArray(new Double[tempList.size()]));
+            transposed[i] = ArrayUtils.toPrimitive(tempList.toArray(new Double[tempList.size()]));
         }
 
-        return areaAnalyzer.computeSlopesPerCondition(transposed, plateCondition, timeFrames);
+        return areaAnalyzer.computeSlopesPerCondition(plateCondition, transposed, timeFrames);
     }
 
     //compute time frames
@@ -428,14 +442,15 @@ public class BulkCellAnalysisController {
      */
     private Double[][] getAreaRawData(PlateCondition plateCondition) {
         Double[][] areaRawData = new Double[dataAnalysisController.getExperiment().getTimeFrames()][plateCondition.getWellCollection().size()];
-
         int counter = 0;
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
-            if (timeStepBindingList.get(columnIndex).getArea() != 0) {
-                for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
+            for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
+                if (timeStepBindingList.get(counter).getArea() != 0) {
                     areaRawData[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(timeStepBindingList.get(counter).getArea());
-                    counter++;
+                } else {
+                    areaRawData[rowIndex][columnIndex] = null;
                 }
+                counter++;
             }
         }
         return areaRawData;
@@ -581,103 +596,11 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * TableModel for the NormalizedArea slopes
-     */
-    private class NormalizedAreaTableModel extends DataTableModel {
-
-        public NormalizedAreaTableModel(PlateCondition plateCondition, int numberOfRows) {
-            super(plateCondition, numberOfRows);
-            insertRawData();
-        }
-
-        @Override
-        protected final void insertRawData() {
-            AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
-            Double[][] normalizedArea = areaPreProcessingResultsHolder.getNormalizedArea();
-            //copy the content of computeNormalizedArea array into slopes array
-            for (int i = 0; i < data.length; i++) {
-                //fill in first column
-                data[i][0] = timeFrames[i];
-                //fill in all the other columns
-                //arraycopy(Object src,  int  srcPos, Object dest, int destPos, int length)
-                //System.arraycopy(areaPreProcessor.computeNormalizedArea(data)[i], 1, data[i], 1, data[i].length - 1);
-
-                System.arraycopy(normalizedArea[i], 1, data[i], 1, data[i].length - 1);
-            }
-        }
-    }
-
-    /**
-     * Table Model for DeltaArea slopes
-     */
-    private class DeltaAreaTableModel extends DataTableModel {
-
-        public DeltaAreaTableModel(PlateCondition plateCondition, int numberOfRows) {
-            super(plateCondition, numberOfRows);
-            insertRawData();
-        }
-
-        @Override
-        protected final void insertRawData() {
-            //copy the content of computeNormalizedArea array into slopes array
-            for (int i = 0; i < data.length; i++) {
-                //fill in first column
-                data[i][0] = timeFrames[i];
-                //System.arraycopy(areaPreProcessor.computeDeltaArea(data)[i], 1, data[i], 1, data[i].length - 1);
-                areaPreProcessor.computeDeltaArea(map.get(plateCondition));
-            }
-        }
-    }
-
-    /**
-     * Table Model for AreaIncrease slopes
-     */
-    private class AreaIncreaseTableModel extends DataTableModel {
-
-        public AreaIncreaseTableModel(PlateCondition plateCondition, int numberOfRows) {
-            super(plateCondition, numberOfRows);
-            insertRawData();
-        }
-
-        @Override
-        protected final void insertRawData() {
-            //copy the content of computeAreaIncrease array into slopes array
-            for (int i = 0; i < data.length; i++) {
-                //fill in first column
-                data[i][0] = timeFrames[i];
-                //System.arraycopy(areaPreProcessor.computeAreaIncrease(data)[i], 1, data[i], 1, data[i].length - 1);
-                areaPreProcessor.computeAreaIncrease(map.get(plateCondition));
-            }
-        }
-    }
-
-    /**
-     * Table Model for CorrectedArea slopes
-     */
-    private class CorrectedAreaTableModel extends DataTableModel {
-
-        public CorrectedAreaTableModel(PlateCondition plateCondition, int numberOfRows) {
-            super(plateCondition, numberOfRows);
-            insertRawData();
-        }
-
-        @Override
-        protected final void insertRawData() {
-            //copy the content of computeAreaIncrease array into slopes array
-            for (int i = 0; i < data.length; i++) {
-                //fill in first column
-                data[i][0] = timeFrames[i];
-                //System.arraycopy(areaPreProcessor.normalizeCorrectedArea(data)[i], 1, data[i], 1, data[i].length - 1);
-                areaPreProcessor.normalizeCorrectedArea(map.get(plateCondition));
-            }
-        }
-    }
-
-    /**
-     * 
+     * Cell Renderer for 2 decimals rounding
      */
     private class FormatRenderer extends DefaultTableCellRenderer {
 
+        //Formatter
         private Format formatter;
 
         public FormatRenderer(Format formatter) {
@@ -704,7 +627,7 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * Cell renderer for Area Increase Table
+     * Cell renderer for Area Increase Table: outliers are highlighted in Table
      */
     private class AreaIncreaseRenderer extends DefaultTableCellRenderer {
 

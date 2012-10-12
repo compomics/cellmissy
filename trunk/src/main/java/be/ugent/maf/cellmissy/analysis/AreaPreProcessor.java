@@ -5,8 +5,6 @@
 package be.ugent.maf.cellmissy.analysis;
 
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
-import be.ugent.maf.cellmissy.entity.TimeStep;
-import java.util.List;
 
 /**
  * Interface for area data pre-processing: Normalize Area, Identify and Correct for Outliers
