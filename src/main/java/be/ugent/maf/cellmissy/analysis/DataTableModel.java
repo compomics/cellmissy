@@ -15,10 +15,9 @@ import javax.swing.table.AbstractTableModel;
  * This class extends AbstractTableModel
  * @author Paola Masuzzo
  */
-public abstract class DataTableModel extends AbstractTableModel {
+public class DataTableModel extends AbstractTableModel {
 
     protected PlateCondition plateCondition;
-    protected int numberOfRows;
     protected String columnNames[];
     protected Double[][] data;
 
@@ -27,10 +26,9 @@ public abstract class DataTableModel extends AbstractTableModel {
      * @param plateCondition
      * @param numberOfRows 
      */
-    public DataTableModel(PlateCondition plateCondition, int numberOfRows) {
+    public DataTableModel(PlateCondition plateCondition, Double[][] dataToShow, double[] firstColumn) {
         this.plateCondition = plateCondition;
-        this.numberOfRows = numberOfRows;
-        defineTableStructure();
+        initTable(firstColumn, dataToShow);
     }
 
     @Override
@@ -56,9 +54,9 @@ public abstract class DataTableModel extends AbstractTableModel {
     /**
      * define structure for table
      */
-    private void defineTableStructure() {
+    private void initTable(double[] firstColumn, Double[][] dataToShow) {
         //2D array of double (dimension: time frames * wellList +1)
-        data = new Double[numberOfRows][plateCondition.getWellCollection().size() + 1];
+        data = new Double[dataToShow.length][dataToShow[0].length + 1];
         List<Well> wellList = new ArrayList<>();
         wellList.addAll(plateCondition.getWellCollection());
         //the table needs one column for the time frames + one column for each replicate (each well)
@@ -69,11 +67,11 @@ public abstract class DataTableModel extends AbstractTableModel {
         for (int i = 1; i < columnNames.length; i++) {
             columnNames[i] = "" + wellList.get(i - 1);
         }
-    }
+        for (int i = 0; i < data.length; i++) {
+            //fill in first column
+            data[i][0] = firstColumn[i];
+            System.arraycopy(dataToShow[i], 0, data[i], 1, data[i].length - 1);
+        }
 
-    /**
-     * Insert raw data in the table according to different math operations
-     * has different implementations according to table models
-     */
-    protected abstract void insertRawData();
+    }
 }

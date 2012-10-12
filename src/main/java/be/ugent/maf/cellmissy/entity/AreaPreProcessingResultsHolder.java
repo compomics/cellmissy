@@ -5,7 +5,8 @@
 package be.ugent.maf.cellmissy.entity;
 
 /**
- *
+ * This class is holding the results from the area pre-processing
+ * Normalized Area, Corrected Normalized Area, Delta Area, Percentage of Area Increase
  * @author Paola Masuzzo
  */
 public class AreaPreProcessingResultsHolder {

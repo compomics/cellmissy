@@ -33,7 +33,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         Double[][] normalizedArea = new Double[areaRawData.length][areaRawData[0].length];
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
-                if (areaRawData[rowIndex][columnIndex] - areaRawData[0][columnIndex] >= 0) {
+                if (areaRawData[rowIndex][columnIndex] != null && areaRawData[rowIndex][columnIndex] - areaRawData[0][columnIndex] >= 0) {
                     normalizedArea[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(areaRawData[rowIndex][columnIndex] - areaRawData[0][columnIndex]);
                 } else {
                     normalizedArea[rowIndex][columnIndex] = null;
@@ -53,7 +53,9 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         Double[][] deltaArea = new Double[areaRawData.length][areaRawData[0].length];
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 1; rowIndex < areaRawData.length; rowIndex++) {
-                deltaArea[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(areaRawData[rowIndex][columnIndex] - areaRawData[rowIndex - 1][columnIndex]);
+                if (areaRawData[rowIndex][columnIndex] != null) {
+                    deltaArea[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(areaRawData[rowIndex][columnIndex] - areaRawData[rowIndex - 1][columnIndex]);
+                }
             }
         }
         areaPreProcessingResultsHolder.setDeltaArea(deltaArea);
@@ -70,8 +72,8 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         Double[][] percentageAreaIncrease = new Double[deltaArea.length][deltaArea[0].length];
         for (int columnIndex = 0; columnIndex < deltaArea[0].length; columnIndex++) {
             for (int rowIndex = 1; rowIndex < deltaArea.length; rowIndex++) {
-                if (areaRawData[rowIndex - 1][columnIndex] != null) {
-                    percentageAreaIncrease[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(deltaArea[rowIndex][columnIndex] / areaRawData[rowIndex - 1][columnIndex] * 100);
+                if (deltaArea[rowIndex][columnIndex] != null && areaRawData[rowIndex - 1][columnIndex] != null) {
+                    percentageAreaIncrease[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals((deltaArea[rowIndex][columnIndex] / areaRawData[rowIndex - 1][columnIndex]) * 100);
                 }
             }
         }
@@ -127,6 +129,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         Double[][] deltaArea = areaPreProcessingResultsHolder.getDeltaArea();
         Double[][] correctedArea = new Double[percentageAreaIncrease.length][percentageAreaIncrease[0].length];
 
+        //transpose percentage area increase 2D array
         Double[][] transposed = new Double[percentageAreaIncrease[0].length][percentageAreaIncrease.length];
         for (int i = 0; i < percentageAreaIncrease.length; i++) {
             for (int j = 0; j < percentageAreaIncrease[0].length; j++) {
@@ -134,14 +137,14 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
             }
         }
 
-        for (int columnIndex = 0; columnIndex < percentageAreaIncrease[0].length; columnIndex++) {
+        for (int columnIndex = 0; columnIndex < transposed.length; columnIndex++) {
             double[] outliers = computeOutliers(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposed[columnIndex])));
 
-            for (int rowIndex = 0; rowIndex < percentageAreaIncrease.length; rowIndex++) {
+            for (int rowIndex = 0; rowIndex < transposed[0].length; rowIndex++) {
                 if (outliers.length != 0) {
                     //check first row (area increase is always null)
                     if (rowIndex == 0) {
-                        correctedArea[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(areaRawData[rowIndex][columnIndex]);
+                        correctedArea[rowIndex][columnIndex] = areaRawData[rowIndex][columnIndex];
                         continue;
                     }
 
@@ -152,7 +155,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
                             break;
                         } else if (transposed[columnIndex][rowIndex] != null && transposed[columnIndex][rowIndex].doubleValue() != outlier) {
                             if (deltaArea[rowIndex][columnIndex] != null) {
-                                correctedArea[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(areaRawData[rowIndex - 1][columnIndex] + deltaArea[rowIndex][columnIndex]);
+                                correctedArea[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(correctedArea[rowIndex - 1][columnIndex] + deltaArea[rowIndex][columnIndex]);
                             }
                         }
                     }
