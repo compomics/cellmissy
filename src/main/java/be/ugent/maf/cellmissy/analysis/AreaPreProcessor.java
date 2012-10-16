@@ -14,31 +14,25 @@ public interface AreaPreProcessor {
 
     /**
      * Normalize Area values (Area @ Time Frame zero is zero)
-     * @param data (area values for one condition)
-     * @return a 2D array of Double with normalized values
+     * @param areaPreProcessingResultsHolder 
      */
     public void computeNormalizedArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
 
     /**
      * Compute increments of Area from one time frame to the following one (Delta Area Values)
-     * @param data (area values for one condition)
-     * @return a 2D array of Double with delta values
+     * @param areaPreProcessingResultsHolder 
      */
     public void computeDeltaArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
 
     /**
      * Compute %area increase for a certain condition
-     * @param data
-     * @param plateCondition
-     * @return 
+     * @param areaPreProcessingResultsHolder 
      */
     public void computeAreaIncrease(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
 
     /**
      * Compute Normalized Corrected Area values for a certain Condition
-     * @param data
-     * @param plateCondition
-     * @return 
+     * @param areaPreProcessingResultsHolder 
      */
     public void normalizeCorrectedArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
 

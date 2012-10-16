@@ -5,6 +5,8 @@
 package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.LinearRegressor;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.math.stat.regression.SimpleRegression;
 import org.springframework.stereotype.Component;
 
@@ -13,15 +15,18 @@ import org.springframework.stereotype.Component;
  * @author Paola Masuzzo
  */
 @Component("linearRegressor")
-public class LinearRegressorImpl implements LinearRegressor{
-    
+public class LinearRegressorImpl implements LinearRegressor {
+
     @Override
-    public double computeSlope(double[][] data) {
-        
+    public List<Double> estimateLinearModel(double[][] data) {
+
+        List<Double> linearModelResults = new ArrayList<>();
+
         SimpleRegression simpleRegression = new SimpleRegression();
-        
         simpleRegression.addData(data);
-        return simpleRegression.getSlope();        
+        linearModelResults.add(simpleRegression.getSlope());
+        linearModelResults.add(simpleRegression.getRSquare());
+
+        return linearModelResults;
     }
-    
 }

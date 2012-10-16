@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
+import be.ugent.maf.cellmissy.gui.view.HeaderRenderer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -51,6 +52,7 @@ public class SetupReport {
 
     /**
      * create reportPanel that must be printed to PDF. This panel contains all the other panels
+     * @return JPanel
      */
     public JPanel createReportPanel() {
 
@@ -277,19 +279,6 @@ public class SetupReport {
         @Override
         public int getIconHeight() {
             return rectHeight;
-        }
-    }
-
-    /*
-     * renderer for the JTable header
-     */
-    private class HeaderRenderer extends DefaultTableCellRenderer {
-
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            super.getTableCellRendererComponent(table, value, false, false, row, column);
-            setHorizontalAlignment(SwingConstants.CENTER);
-            setBorder(BorderFactory.createLineBorder(Color.black));
-            return this;
         }
     }
 }

@@ -7,7 +7,6 @@ package be.ugent.maf.cellmissy.analysis.impl;
 import be.ugent.maf.cellmissy.analysis.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
 import be.ugent.maf.cellmissy.analysis.LinearRegressor;
-import be.ugent.maf.cellmissy.entity.PlateCondition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +21,8 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
     private LinearRegressor linearRegressor;
 
     @Override
-    public double[] computeSlopesPerCondition(PlateCondition plateCondition, double[][] areaData, double[] timeFrames) {
-        double[] slopes = new double[plateCondition.getWellCollection().size()];
+    public double[] computeSlopes(double[][] areaData, double[] timeFrames) {
+        double[] slopes = new double[areaData.length];
 
         for (int columnIndex = 0; columnIndex < areaData.length; columnIndex++) {
             double[] data = areaData[columnIndex];
@@ -41,6 +40,6 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
     }
 
     private double computeSlope(double[][] data) {
-        return AnalysisUtils.roundTwoDecimals(linearRegressor.computeSlope(data));
+        return linearRegressor.estimateLinearModel(data).get(0);
     }
 }
