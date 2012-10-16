@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis;
+package be.ugent.maf.cellmissy.gui.view;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -24,7 +24,8 @@ public class DataTableModel extends AbstractTableModel {
     /**
      * constructor
      * @param plateCondition
-     * @param numberOfRows 
+     * @param dataToShow 
+     * @param firstColumn 
      */
     public DataTableModel(PlateCondition plateCondition, Double[][] dataToShow, double[] firstColumn) {
         this.plateCondition = plateCondition;

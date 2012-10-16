@@ -104,6 +104,7 @@ public class SetupConditionsController {
     /**
      * setters and getters
      * 
+     * @return 
      */
     public ConditionsPanel getConditionsPanel() {
         return conditionsPanel;
@@ -143,6 +144,8 @@ public class SetupConditionsController {
 
     /**
      * show a message through the main frame (CellMissy frame)
+     * @param message
+     * @param messageType  
      */
     public void showMessage(String message, Integer messageType) {
         setupExperimentPanelController.showMessage(message, messageType);

@@ -4,13 +4,17 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.entity.PlateCondition;
-
 /**
  *
  * @author Paola Masuzzo
  */
 public interface AreaAnalyzer {
 
-    public double[] computeSlopesPerCondition(PlateCondition plateCondition, double[][] areaData, double[] timeFrames);
+    /**
+     * 
+     * @param areaData
+     * @param timeFrames
+     * @return
+     */
+    public double[] computeSlopes(double[][] areaData, double[] timeFrames);
 }

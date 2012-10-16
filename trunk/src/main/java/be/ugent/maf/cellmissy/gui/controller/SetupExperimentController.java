@@ -129,6 +129,7 @@ public class SetupExperimentController {
     /**
      * setters and getters
      *  
+     * @return 
      */
     public SetupExperimentPanel getSetupExperimentPanel() {
         return setupExperimentPanel;
@@ -189,6 +190,8 @@ public class SetupExperimentController {
 
     /**
      * show a message through the main frame
+     * @param message
+     * @param messageType  
      */
     public void showMessage(String message, Integer messageType) {
         cellMissyController.showMessage(message, messageType);
@@ -197,8 +200,8 @@ public class SetupExperimentController {
     /**
      * when the mouse is released and the rectangle has been drawn, this method is called:
      * set well collection of the current condition and set the condition of the selected wells
-     * @param plateCondition, the current condition
-     * @param rectangle, the just drawn rectangle
+     * @param plateCondition 
+     * @param rectangle 
      * @return true if the selection of wells is valid, else show a message
      */
     public boolean updateWellCollection(PlateCondition plateCondition, Rectangle rectangle) {

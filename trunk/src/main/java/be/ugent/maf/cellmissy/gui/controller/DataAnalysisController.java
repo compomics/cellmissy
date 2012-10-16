@@ -22,6 +22,7 @@ import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -37,6 +38,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JList;
+import javax.swing.SwingWorker;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -214,6 +216,8 @@ public class DataAnalysisController {
                         }
                     }
                 }
+                //init map with conditions and results holders
+                bulkCellAnalysisPanelController.initMap();
                 //set selected algorithm to the first of the list
                 dataAnalysisPanel.getAlgorithmComboBox().setSelectedIndex(0);
                 //set selected imaging types to the first of the list
@@ -234,22 +238,13 @@ public class DataAnalysisController {
             public void mouseClicked(MouseEvent e) {
                 int locationToIndex = dataAnalysisPanel.getConditionsList().locationToIndex(e.getPoint());
                 System.out.println("condition ***");
-                //create a list of wells for each condition (from a collection)
-                List<Well> wellList = new ArrayList<>();
-                wellList.addAll(plateConditionList.get(locationToIndex).getWellCollection());
-                //fetch time steps for each well
-                for (int i = 0; i < wellList.size(); i++) {
-                    //fetch time step collection for the wellhasimagingtype of interest
-                    wellService.fetchTimeSteps(wellList.get(i), algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
-                }
-                //update timeStep List for current selected condition
-                updateTimeStepList(plateConditionList.get(locationToIndex));
+                fetchCondition(plateConditionList.get(locationToIndex));
                 //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO VIEW CELLMIA RESULTS
                 bulkCellAnalysisPanelController.showTimeSteps();
                 //compute time frames array for child controller (bulk cell controller)
                 bulkCellAnalysisPanelController.computeTimeFrames();
                 //put the plate condition together with a pre-processing results holder in the map
-                bulkCellAnalysisPanelController.updateMap();
+                bulkCellAnalysisPanelController.updateMapWithCondition(plateConditionList.get(locationToIndex));
                 //check which button is selected for analysis:
                 if (dataAnalysisPanel.getNormalizeAreaButton().isSelected()) {
                     //for current selected condition show normalized area values together with time frames
@@ -279,6 +274,22 @@ public class DataAnalysisController {
     }
 
     /**
+     * This method is fetching time steps objects from DB and its updating TimeStepList according to Plate Condition passed as an argument
+     * @param plateCondition 
+     */
+    public void fetchCondition(PlateCondition plateCondition) {
+        List<Well> wellList = new ArrayList<>();
+        wellList.addAll(plateCondition.getWellCollection());
+        //fetch time steps for each well
+        for (int i = 0; i < wellList.size(); i++) {
+            //fetch time step collection for the wellhasimagingtype of interest
+            wellService.fetchTimeSteps(wellList.get(i), algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
+        }
+        //update timeStep List for current selected condition
+        updateTimeStepList(plateCondition);
+    }
+
+    /**
      * initialize analysis panel
      */
     private void initAnalysisPanel() {
@@ -303,7 +314,6 @@ public class DataAnalysisController {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     //show normalized values in the table
                     bulkCellAnalysisPanelController.setNormalizedAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
-
                     //set charts panel to null
                     bulkCellAnalysisPanelController.getDensityChartPanel().setChart(null);
                     bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
@@ -323,7 +333,6 @@ public class DataAnalysisController {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     //show delta area values in the table            
                     bulkCellAnalysisPanelController.setDeltaAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
-
                     //set charts panel to null
                     bulkCellAnalysisPanelController.getDensityChartPanel().setChart(null);
                     bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
@@ -367,7 +376,9 @@ public class DataAnalysisController {
             }
         });
 
-        //***************************************************************************//
+        /**
+         * show Velocity Bar Charts
+         */
         dataAnalysisPanel.getShowBarsButton().addActionListener(new ActionListener() {
 
             @Override
@@ -376,11 +387,15 @@ public class DataAnalysisController {
             }
         });
 
+        /**
+         * Estimate Linear Regression Model
+         */
         dataAnalysisPanel.getLinearRegressionButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                bulkCellAnalysisPanelController.showSlopesInTable();
+                LinearModelSwingWorker linearModelSwingWorker = new LinearModelSwingWorker();
+                linearModelSwingWorker.execute();
             }
         });
     }
@@ -389,7 +404,6 @@ public class DataAnalysisController {
      * update conditions list for current experiment 
      */
     private void showConditions() {
-
         //set cell renderer for the List
         dataAnalysisPanel.getConditionsList().setCellRenderer(new ConditionsRenderer());
         ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(plateConditionList);
@@ -414,6 +428,22 @@ public class DataAnalysisController {
                     bulkCellAnalysisPanelController.getTimeStepBindingList().add(timeStep);
                 }
             }
+        }
+    }
+
+    private class LinearModelSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            bulkCellAnalysisPanelController.updateMap();
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            bulkCellAnalysisPanelController.showLinearModelResults();
         }
     }
 

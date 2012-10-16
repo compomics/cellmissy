@@ -4,10 +4,10 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.commons.lang.ArrayUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
@@ -24,13 +24,7 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
  * @author Paola Masuzzo
  */
 public class AnalysisUtils {
-
-    //round double to 2 decimals
-    public static double roundTwoDecimals(double d) {
-        DecimalFormat twoDForm = new DecimalFormat("#.00");
-        return Double.valueOf(twoDForm.format(d));
-    }
-
+    
     //exclude null values from an array of Double 
     public static Double[] excludeNullValues(Double[] data) {
         List<Double> list = new ArrayList<>();
@@ -43,6 +37,22 @@ public class AnalysisUtils {
         return toArray;
     }
 
+    //transpose a 2D array of double (useful for further computation)
+    public static double[][] transpose2DArray(Double[][] data) {
+        double[][] transposed = new double[data[0].length][data.length];
+        for (int i = 0; i < data[0].length; i++) {
+            List<Double> tempList = new ArrayList<>();
+            for (int j = 0; j < data.length; j++) {
+                if (data[j][i] != null) {
+                    tempList.add((double) data[j][i]);
+                }
+            }
+            transposed[i] = ArrayUtils.toPrimitive(tempList.toArray(new Double[tempList.size()]));
+        }
+        return transposed;
+    }
+    //calculate mean value
+
     public static double computeMean(double[] data) {
         // sum of all the elements
         double sum = 0;
@@ -52,6 +62,7 @@ public class AnalysisUtils {
         return sum / data.length;
     }
 
+    //calculate median value
     public static double computeMedian(double[] data) {
         // sort the input data
         Arrays.sort(data);
@@ -66,6 +77,7 @@ public class AnalysisUtils {
         }
     }
 
+    //calculate standard deviation
     public static double computeStandardDeviation(double[] data) {
         double sum = 0;
         for (int i = 0; i < data.length; i++) {
@@ -75,10 +87,12 @@ public class AnalysisUtils {
         return Math.sqrt(sum / data.length);
     }
 
+    //calculate standard error of the mean
     public static double computeSEM(double[] data) {
         return (computeStandardDeviation(data) / Math.sqrt(data.length));
     }
 
+    //calculate median absolute deviation
     public static double computeMAD(double[] data) {
         //scale factor for asymptotically normal consistency
         final double constant = 1.4826;
@@ -91,6 +105,7 @@ public class AnalysisUtils {
         return constant * computeMedian(deviations);
     }
 
+    //control shadow of a JFreeChart
     public static void setShadowVisible(final JFreeChart chart, final boolean state) {
         if (chart != null) {
             final Plot p = chart.getPlot();

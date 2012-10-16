@@ -10,27 +10,24 @@ import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
-import be.ugent.maf.cellmissy.analysis.DataTableModel;
+import be.ugent.maf.cellmissy.gui.view.DataTableModel;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
-import com.lowagie.text.Row;
+import be.ugent.maf.cellmissy.gui.view.AreaIncreaseRenderer;
+import be.ugent.maf.cellmissy.gui.view.FormatRenderer;
+import be.ugent.maf.cellmissy.gui.view.HeaderRenderer;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.Paint;
 import java.text.DecimalFormat;
-import java.text.Format;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import org.apache.commons.lang.ArrayUtils;
@@ -107,7 +104,7 @@ public class BulkCellAnalysisController {
 
     /**
      * getters and setters
-     * 
+     * @return 
      */
     public ObservableList<TimeStep> getTimeStepBindingList() {
         return timeStepBindingList;
@@ -294,9 +291,10 @@ public class BulkCellAnalysisController {
      */
     public void showCorrectedDataDensityFunction() {
         //compute first corrected slopes (no outliers)
-        double[][] correctedData = new double[getDataFromTableModel(dataTable).length][];
-        for (int i = 0; i < getDataFromTableModel(dataTable).length; i++) {
-            double[] correctedValues = areaPreProcessor.correctForOutliers(getDataFromTableModel(dataTable)[i]);
+        double[][] dataFromTableModel = getDataFromTableModel(dataTable);
+        double[][] correctedData = new double[dataFromTableModel.length][];
+        for (int i = 0; i < dataFromTableModel.length; i++) {
+            double[] correctedValues = areaPreProcessor.correctForOutliers(dataFromTableModel[i]);
             correctedData[i] = correctedValues;
         }
         JFreeChart correctedDensityChart = showDensityFunction(correctedData, "KDE (Outliers Correction)");
@@ -305,69 +303,31 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * 
-     */
-    public void showSlopesInTable() {
-        //model of table with rows number = number of plate conditions and columns number equal to well collection  + 3 (Condition Name, mean and SEM)
-        DefaultTableModel model = (DefaultTableModel) dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getModel();
-        model.setRowCount(dataAnalysisController.getPlateConditionList().size());
-        model.setColumnCount(dataAnalysisController.getSelectedCondition().getWellCollection().size() + 5);
-        String[] columnNames = new String[dataAnalysisController.getSelectedCondition().getWellCollection().size() + 5];
-        columnNames[0] = "Condition";
-        columnNames[columnNames.length - 4] = "median";
-        columnNames[columnNames.length - 3] = "MAD";
-        columnNames[columnNames.length - 2] = "mean";
-        columnNames[columnNames.length - 1] = "SEM";
-        for (int i = 1; i < columnNames.length - 4; i++) {
-            columnNames[i] = "Repl " + i;
-        }
-        model.setColumnIdentifiers(columnNames);
-        //first column needs to be bigger than others
-        dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumn("Condition").setMinWidth(250);
-        dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumn("Condition").setMaxWidth(250);
-        dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumn("Condition").setPreferredWidth(250);
-
-        Object[][] data = new Object[dataAnalysisController.getPlateConditionList().size()][dataAnalysisController.getSelectedCondition().getWellCollection().size()];
-
-        List<double[]> slopesList = new ArrayList();
-        for (PlateCondition plateCondition : map.keySet()) {
-            double[] slopesPerCondition = computeSlopesPerCondition(plateCondition);
-            slopesList.add(slopesPerCondition);
-        }
-
-        for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-            data[rowIndex] = new Object[slopesList.size() + 5];
-            data[0][data[0].length - 4] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeMedian(slopesList.get(rowIndex)));
-            data[0][data[0].length - 3] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeMAD(slopesList.get(rowIndex)));
-            data[0][data[0].length - 2] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeMean(slopesList.get(rowIndex)));
-            data[0][data[0].length - 1] = AnalysisUtils.roundTwoDecimals(AnalysisUtils.computeSEM(slopesList.get(rowIndex)));
-            for (int columnIndex = 1; columnIndex < data[0].length - 4; columnIndex++) {
-                data[rowIndex][0] = dataAnalysisController.getSelectedCondition().toString();
-                data[rowIndex][columnIndex] = (Object) slopesList.get(columnIndex - 1);
-            }
-        }
-
-
-        for (int columnIndex = 0; columnIndex < columnNames.length; columnIndex++) {
-            for (int rowIndex = 0; rowIndex < dataAnalysisController.getPlateConditionList().size(); rowIndex++) {
-                model.setValueAt(data[0][columnIndex], rowIndex, columnIndex);
-            }
-        }
-    }
-
-    /**
      * show Bar charts for area velocity
      */
     public void showVelocityBars() {
-        double[][] data = getDataFromTableModel(dataAnalysisController.getDataAnalysisPanel().getSlopesTable());
+
+        TableModel model = dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getModel();
+        int[] selectedRows = dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getSelectedRows();
+        int columnCount = model.getColumnCount();
+        double[][] tableData = new double[columnCount - 1][];
+        for (int i = 1; i < columnCount; i++) {
+            List<Double> tempList = new ArrayList<>();
+            for (int j : selectedRows) {
+                if (model.getValueAt(j, i) != null) {
+                    tempList.add((double) model.getValueAt(j, i));
+                }
+            }
+            tableData[i - 1] = ArrayUtils.toPrimitive(tempList.toArray(new Double[tempList.size()]));
+        }
         DefaultStatisticalCategoryDataset dataset = new DefaultStatisticalCategoryDataset();
-        double[] meanVelocities = data[6];
-        double[] standardDeviations = data[7];
+        double[] meanVelocities = tableData[6];
+        double[] standardDeviations = tableData[7];
         for (int i = 0; i < meanVelocities.length; i++) {
-            dataset.add(meanVelocities[i], standardDeviations[i], "", "Condition " + (i + 1));
+            dataset.add(meanVelocities[i], standardDeviations[i], "Conditions", "Condition " + (selectedRows[i] + 1));
         }
 
-        JFreeChart velocityChart = ChartFactory.createLineChart("", "Conditions", "Velocity " + "(\u00B5" + "m" + "\u00B2" + "\\min)", dataset, PlotOrientation.VERTICAL, true, true, false);
+        JFreeChart velocityChart = ChartFactory.createLineChart("", "", "Velocity " + "(\u00B5" + "m" + "\u00B2" + "\\min)", dataset, PlotOrientation.VERTICAL, true, true, false);
         CategoryPlot velocityPlot = velocityChart.getCategoryPlot();
         velocityPlot.setBackgroundPaint(Color.white);
         VelocityBarRenderer velocityBarRenderer = new VelocityBarRenderer();
@@ -387,26 +347,51 @@ public class BulkCellAnalysisController {
 
     /**
      * 
+     */
+    public void showLinearModelResults() {
+        List<double[]> slopes = new ArrayList<>();
+        for (PlateCondition plateCondition : map.keySet()) {
+            double[] slopesPerCondition = computeSlopesPerCondition(plateCondition);
+            slopes.add(slopesPerCondition);
+        }
+        Object[][] data = new Object[map.keySet().size()][slopes.get(0).length + 3];
+        for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
+            for (int columnIndex = 1; columnIndex < data[0].length - 2; columnIndex++) {
+                data[rowIndex][columnIndex] = slopes.get(rowIndex)[columnIndex - 1];
+            }
+            data[rowIndex][0] = dataAnalysisController.getPlateConditionList().get(rowIndex).toString();
+            data[rowIndex][data[0].length - 2] = AnalysisUtils.computeMedian(slopes.get(rowIndex));
+            data[rowIndex][data[0].length - 1] = AnalysisUtils.computeMAD(slopes.get(rowIndex));
+        }
+        String[] columnNames = new String[data[0].length];
+        columnNames[0] = "Condition";
+        for (int i = 1; i < columnNames.length - 2; i++) {
+            columnNames[i] = "Repl " + i;
+        }
+        columnNames[columnNames.length - 2] = "Median";
+        columnNames[columnNames.length - 1] = "MAD";
+        dataAnalysisController.getDataAnalysisPanel().getSlopesTable().setModel(new DefaultTableModel(data, columnNames));
+        //first column needs to be bigger than others
+        dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumnModel().getColumn(0).setMinWidth(250);
+        dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumnModel().getColumn(0).setMaxWidth(250);
+        dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumnModel().getColumn(0).setPreferredWidth(250);
+
+        //set format renderer only from second column on
+        for (int columnIndex = 1; columnIndex < dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumnCount(); columnIndex++) {
+            dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(new DecimalFormat("0.00")));
+        }
+        dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getTableHeader().setDefaultRenderer(new HeaderRenderer());
+    }
+
+    /**
+     * 
      * @param plateCondition
      * @return 
      */
     private double[] computeSlopesPerCondition(PlateCondition plateCondition) {
-
         AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
         Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
-        //transpose slopes
-        double[][] transposed = new double[normalizedCorrectedArea[0].length][normalizedCorrectedArea.length];
-        for (int i = 0; i < normalizedCorrectedArea[0].length; i++) {
-            List<Double> tempList = new ArrayList<>();
-            for (int j = 0; j < normalizedCorrectedArea.length; j++) {
-                if (normalizedCorrectedArea[j][i] != null) {
-                    tempList.add((double) normalizedCorrectedArea[j][i]);
-                }
-            }
-            transposed[i] = ArrayUtils.toPrimitive(tempList.toArray(new Double[tempList.size()]));
-        }
-
-        return areaAnalyzer.computeSlopesPerCondition(plateCondition, transposed, timeFrames);
+        return areaAnalyzer.computeSlopes(AnalysisUtils.transpose2DArray(normalizedCorrectedArea), timeFrames);
     }
 
     //compute time frames
@@ -421,17 +406,40 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * 
+     * Initialize map with plate conditions as keys and null objects as values
+     */
+    public void initMap() {
+        for (PlateCondition plateCondition : dataAnalysisController.getPlateConditionList()) {
+            map.put(plateCondition, null);
+        }
+    }
+
+    /**
+     * When a condition is selected pre processing results are computed and condition is put into the map together with its results holder object
+     * @param plateCondition 
+     */
+    public void updateMapWithCondition(PlateCondition plateCondition) {
+        if (map.get(plateCondition) == null) {
+            AreaPreProcessingResultsHolder preProcessingResultsHolder = new AreaPreProcessingResultsHolder();
+            preProcessingResultsHolder.setAreaRawData(getAreaRawData(plateCondition));
+            areaPreProcessor.computeNormalizedArea(preProcessingResultsHolder);
+            areaPreProcessor.computeDeltaArea(preProcessingResultsHolder);
+            areaPreProcessor.computeAreaIncrease(preProcessingResultsHolder);
+            areaPreProcessor.normalizeCorrectedArea(preProcessingResultsHolder);
+            map.put(plateCondition, preProcessingResultsHolder);
+        }
+    }
+
+    /**
+     * update map for every condition (even the ones that have not been selected by the user)
      */
     public void updateMap() {
-        AreaPreProcessingResultsHolder preProcessingResultsHolder = new AreaPreProcessingResultsHolder();
-        preProcessingResultsHolder.setAreaRawData(getAreaRawData(dataAnalysisController.getSelectedCondition()));
-        areaPreProcessor.computeNormalizedArea(preProcessingResultsHolder);
-        areaPreProcessor.computeDeltaArea(preProcessingResultsHolder);
-        areaPreProcessor.computeAreaIncrease(preProcessingResultsHolder);
-        areaPreProcessor.normalizeCorrectedArea(preProcessingResultsHolder);
-        if (!map.containsKey(dataAnalysisController.getSelectedCondition())) {
-            map.put(dataAnalysisController.getSelectedCondition(), preProcessingResultsHolder);
+        for (PlateCondition plateCondition : dataAnalysisController.getPlateConditionList()) {
+            if (map.get(plateCondition) == null) {
+                dataAnalysisController.fetchCondition(plateCondition);
+                updateMapWithCondition(plateCondition);
+            }
+
         }
     }
 
@@ -446,7 +454,7 @@ public class BulkCellAnalysisController {
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
                 if (timeStepBindingList.get(counter).getArea() != 0) {
-                    areaRawData[rowIndex][columnIndex] = AnalysisUtils.roundTwoDecimals(timeStepBindingList.get(counter).getArea());
+                    areaRawData[rowIndex][columnIndex] = timeStepBindingList.get(counter).getArea();
                 } else {
                     areaRawData[rowIndex][columnIndex] = null;
                 }
@@ -484,7 +492,7 @@ public class BulkCellAnalysisController {
         areaChartPanel.setOpaque(false);
         velocityChartPanel = new ChartPanel(null);
         velocityChartPanel.setOpaque(false);
-        map = new HashMap<>();
+        map = new LinkedHashMap<>();
     }
 
     /**
@@ -596,98 +604,6 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * Cell Renderer for 2 decimals rounding
-     */
-    private class FormatRenderer extends DefaultTableCellRenderer {
-
-        //Formatter
-        private Format formatter;
-
-        public FormatRenderer(Format formatter) {
-            this.formatter = formatter;
-        }
-
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            if (value != null) {
-                value = formatter.format(value);
-            }
-            setValue(value);
-            setHorizontalAlignment(SwingConstants.RIGHT);
-            setOpaque(true);
-
-            if (isSelected) {
-                setBackground(table.getSelectionBackground());
-                setForeground(table.getSelectionForeground());
-            } else {
-                setBackground(table.getBackground());
-                setForeground(table.getForeground());
-            }
-            return this;
-        }
-    }
-
-    /**
-     * Cell renderer for Area Increase Table: outliers are highlighted in Table
-     */
-    private class AreaIncreaseRenderer extends DefaultTableCellRenderer {
-
-        private double[] outliers;
-        private Format formatter;
-
-        public AreaIncreaseRenderer(double[] outliers, Format formatter) {
-            this.outliers = outliers;
-            this.formatter = formatter;
-        }
-
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            super.getTableCellRendererComponent(dataTable, value, false, false, row, column);
-
-            Double areaIncrease = (Double) value;
-            if (isSelected) {
-                setBackground(table.getSelectionBackground());
-                setForeground(table.getSelectionForeground());
-            } else {
-                setBackground(table.getBackground());
-                if (areaIncrease != null) {
-                    if (outliers.length != 0) {
-                        for (double outlier : outliers) {
-                            if (Double.valueOf(areaIncrease) == outlier) {
-                                setForeground(Color.red);
-                                break;
-                            } else {
-                                setForeground(Color.black);
-                            }
-                        }
-                    } else {
-                        setForeground(Color.black);
-                    }
-                }
-            }
-            if (value != null) {
-                value = formatter.format(value);
-            }
-            setValue(value);
-            setHorizontalAlignment(SwingConstants.RIGHT);
-            setOpaque(true);
-
-            return this;
-        }
-    }
-
-    /*
-     * renderer for the JTable header
-     */
-    private class HeaderRenderer extends DefaultTableCellRenderer {
-
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            super.getTableCellRendererComponent(table, value, false, false, row, column);
-            setHorizontalAlignment(SwingConstants.CENTER);
-            setBorder(BorderFactory.createLineBorder(Color.black));
-            return this;
-        }
-    }
-
-    /**
      * Bar Renderer for Velocity Bar Charts
      */
     private class VelocityBarRenderer extends StatisticalBarRenderer {
@@ -696,7 +612,11 @@ public class BulkCellAnalysisController {
 
         @Override
         public Paint getItemPaint(final int row, final int column) {
-            return this.colors[column + 1];
+            String conditionName = (String) getPlot().getDataset().getColumnKey(column);
+            int length = conditionName.length();
+            CharSequence subSequence = conditionName.subSequence(10, length);
+            int conditionIndex = Integer.parseInt(subSequence.toString());
+            return this.colors[conditionIndex];
         }
     }
 }
