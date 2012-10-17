@@ -26,6 +26,9 @@ public class CellMiaFileParserTest {
     @Autowired
     private CellMiaFileParser cellMiaFileParser;
 
+    /**
+     * Test CellMiaFileParserClass: get List of Tracks and TimeSteps parsing cellMia files
+     */
     @Test
     public void testCellMiaFileParser() {
 

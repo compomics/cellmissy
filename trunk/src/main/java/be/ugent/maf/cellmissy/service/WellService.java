@@ -23,6 +23,7 @@ public interface WellService extends GenericService<Well, Long> {
     /**
      * Initializes the service
      * this method initializes also CellMiaDataService and MicroscopeDataService
+     * @param experiment 
      */
     void init(Experiment experiment);
 
@@ -30,8 +31,8 @@ public interface WellService extends GenericService<Well, Long> {
      * This method uses the plate format and the first WellGui selected by the user to update the wellGui List with the right ones
      * @param imagingType
      * @param plateFormat
-     * @param firstWell
-     * @return a List of Well entities
+     * @param firstWellGui
+     * @param wellGUIList  
      */
     void updateWellGuiListWithImagingType(ImagingType imagingType, PlateFormat plateFormat, WellGui firstWellGui, List<WellGui> wellGUIList);
 
@@ -64,7 +65,8 @@ public interface WellService extends GenericService<Well, Long> {
     /**
      * fetch time steps collection only for some wellHasImagingTypes
      * @param well
-     * @return a well entity with fetched wellHasImagingTypeCollection
+     * @param AlgorithmId
+     * @param ImagingTpeId  
      */
     void fetchTimeSteps(Well well, Integer AlgorithmId, Integer ImagingTpeId);
 }

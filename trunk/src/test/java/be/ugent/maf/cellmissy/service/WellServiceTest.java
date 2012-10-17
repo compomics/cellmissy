@@ -21,10 +21,13 @@ public class WellServiceTest {
     @Autowired
     private WellService wellService;
 
+    /**
+     * Test WellService
+     */
     @Test
     public void testWellService() {
 
-        //wellService.init();
+        
 
     }
 }

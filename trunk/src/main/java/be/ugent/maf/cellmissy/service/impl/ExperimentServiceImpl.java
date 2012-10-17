@@ -49,7 +49,6 @@ public class ExperimentServiceImpl implements ExperimentService {
     /**
      * create experiment obsepFolders from microscope directory
      * @param newExperiment
-     * @param mainDirectory 
      */
     @Override
     public void createFolderStructure(Experiment newExperiment) {

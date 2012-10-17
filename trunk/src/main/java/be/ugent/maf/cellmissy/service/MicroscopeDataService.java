@@ -19,8 +19,7 @@ public interface MicroscopeDataService {
 
     /**
      * initializes the service
-     * @param microscopeFolder
-     * @param obsepFile 
+     * @param experiment 
      */
     void init(Experiment experiment);
 
