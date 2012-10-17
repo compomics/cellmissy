@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.service;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.parser.ObsepFileParserTest;
@@ -28,13 +29,22 @@ public class MicroscopeDataServiceTest {
     @Autowired
     private MicroscopeDataService microscopeDataService;
 
+    /**
+     * Test MicroscopeDataService: given obsepFile and setupFolder, initialize the service and process Microscope Data (get a map of ImagingType and WellhasImagingType)
+     */
     @Test
     public void testMicroscopeDataService() {
+
         File obsepFile = new File(ObsepFileParserTest.class.getClassLoader().getResource("gffp.obsep").getPath());
-        File microscopeFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
-       // microscopeDataService.init(microscopeFolder, obsepFile);
-        Map<ImagingType, List<WellHasImagingType>> map = microscopeDataService.processMicroscopeData();
+        File setupFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
+        Experiment experiment = new Experiment();
+        experiment.setObsepFile(obsepFile);
+        experiment.setSetupFolder(setupFolder);
         
-        assertTrue(!map.isEmpty());
+        microscopeDataService.init(experiment);
+        Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = microscopeDataService.processMicroscopeData();
+
+        //two position lists are parsed, map needs to contain 2 keys
+        assertTrue(imagingTypeMap.size()==2);
     }
 }

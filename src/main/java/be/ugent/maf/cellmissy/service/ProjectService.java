@@ -16,6 +16,7 @@ public interface ProjectService extends GenericService<Project, Long> {
     /**
      * this method set up a new project 
      * @param projectNumber
+     * @param description 
      * @param projectDirectory
      * @return 
      */

@@ -5,8 +5,11 @@
 package be.ugent.maf.cellmissy.service;
 
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
+import be.ugent.maf.cellmissy.entity.Algorithm;
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.parser.ObsepFileParserTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,28 +27,39 @@ import java.util.Map;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:mySpringXMLConfig.xml")
 public class CellMiaDataServiceTest {
-    
+
     @Autowired
     private CellMiaDataService cellMiaDataService;
-    
+
+    /**
+     * Test CellMiaDataService: results from CellMia are assigned to WellHasImagingType objects
+     */
     @Test
     public void testCellMiaDataService() {
-        
-        MicroscopeDataService microscopeDataService = cellMiaDataService.getMicroscopeDataService();
-        
-        File microscopeFolder = new File(PropertiesConfigurationHolder.getInstance().getString("microscopeFolder"));
-        File obsepFile = new File(PropertiesConfigurationHolder.getInstance().getString("obsepFile"));
-        
-        //microscopeDataService.init(microscopeFolder, obsepFile);
-        
-        File cellMiaFolder = new File(PropertiesConfigurationHolder.getInstance().getString("cellMiaFolder"));
-        //cellMiaDataService.init(cellMiaFolder);
-        //Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = cellMiaDataService.processCellMiaData();
-        
-//        for (ImagingType imagingType : imagingTypeMap.keySet()) {
-//            List<WellHasImagingType> list = imagingTypeMap.get(imagingType);
-//            WellHasImagingType wellHasImagingType = list.get(0);
-//            assertTrue(!wellHasImagingType.getTrackCollection().isEmpty());            
-//        }
+
+        File miaFolder = new File(PropertiesConfigurationHolder.getInstance().getString("cellMiaFolder"));
+
+        File obsepFile = new File(ObsepFileParserTest.class.getClassLoader().getResource("gffp.obsep").getPath());
+        File setupFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
+        Experiment experiment = new Experiment();
+        experiment.setObsepFile(obsepFile);
+        experiment.setSetupFolder(setupFolder);
+        experiment.setMiaFolder(miaFolder);
+
+        cellMiaDataService.init(experiment);
+        cellMiaDataService.getMicroscopeDataService().init(experiment);
+
+        Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processCellMiaData = cellMiaDataService.processCellMiaData();
+
+        for (Algorithm algorithm : processCellMiaData.keySet()) {
+            Map<ImagingType, List<WellHasImagingType>> get = processCellMiaData.get(algorithm);
+            for (ImagingType imagingType : get.keySet()) {
+                List<WellHasImagingType> list = get.get(imagingType);
+                for (WellHasImagingType wellHasImagingType : list) {
+                    assertTrue(!wellHasImagingType.getTrackCollection().isEmpty());
+                    assertTrue(!wellHasImagingType.getTimeStepCollection().isEmpty());
+                }
+            }
+        }
     }
 }

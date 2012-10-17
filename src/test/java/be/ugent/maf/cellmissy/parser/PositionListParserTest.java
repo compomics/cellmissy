@@ -1,12 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.ugent.maf.cellmissy.parser;
 
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import java.io.IOException;
+import java.util.Collection;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,16 +30,27 @@ public class PositionListParserTest {
     @Autowired
     private ObsepFileParser obsepFileParser;
 
+    /**
+     * Test PositionListParser Class: get a map between ImagingType and list of WellHasImagingType
+     * @throws IOException
+     */
     @Test
     public void testPositionListParser() throws IOException {
 
         Resource obsepResource = new ClassPathResource("gffp.obsep");
         obsepFileParser.parseObsepFile(obsepResource.getFile());
-        Map<ImagingType, String> imagingTypePositionListMap = obsepFileParser.mapImagingTypetoPositionList();
+        Map<ImagingType, String> imagingTypeToPosListMap = obsepFileParser.mapImagingTypetoPositionList();
 
-        File microscopeFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
-        Map<ImagingType, List<WellHasImagingType>> imagingTypeListOfWellHasImagingTypeMap = positionListParser.parsePositionList(imagingTypePositionListMap, microscopeFolder);
+        File setupFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
+        Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = positionListParser.parsePositionList(imagingTypeToPosListMap, setupFolder);
 
-        assertTrue(!imagingTypeListOfWellHasImagingTypeMap.isEmpty());
+        assertTrue(!imagingTypeMap.isEmpty());
+        Collection<List<WellHasImagingType>> values = imagingTypeMap.values();
+        
+        for(List<WellHasImagingType> list: values){
+            int size = list.size();
+            System.out.println("size of list: " + size);
+        }
+       
     }
 }

@@ -25,6 +25,8 @@
     <class>be.ugent.maf.cellmissy.entity.WellHasImagingType</class>
     <class>be.ugent.maf.cellmissy.entity.Algorithm</class>
     <class>be.ugent.maf.cellmissy.entity.AssayMedium</class>
+    <class>be.ugent.maf.cellmissy.entity.CellLineType</class>
+    <class>be.ugent.maf.cellmissy.entity.TreatmentType</class>
     <properties>
       <property name="hibernate.connection.username" value="paola"/>
       <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>

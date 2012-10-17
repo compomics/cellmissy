@@ -19,7 +19,7 @@ public interface CellMiaDataService {
 
     /**
      * initializes the service
-     * @param one experiment 
+     * @param experiment 
      */
     void init(Experiment experiment);
 
