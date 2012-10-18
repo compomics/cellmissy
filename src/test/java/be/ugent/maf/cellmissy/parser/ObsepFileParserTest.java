@@ -19,7 +19,7 @@ import java.util.Map;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:mySpringXMLConfig.xml")
 public class ObsepFileParserTest {
-
+    
     @Autowired
     private ObsepFileParser obsepFileParser;
 
@@ -29,12 +29,18 @@ public class ObsepFileParserTest {
     @Test
     public void testObsepFileParser() {
         File obsepFile = new File(ObsepFileParserTest.class.getClassLoader().getResource("gffp.obsep").getPath());
-
+        
         obsepFileParser.parseObsepFile(obsepFile);
         List<Double> info = obsepFileParser.getExperimentInfo();
         Map<ImagingType, String> map = obsepFileParser.mapImagingTypetoPositionList();
-
+        
         assertTrue(!map.isEmpty());
+
+        //2 imaging types in sample file
+        assertTrue(map.keySet().size() == 2);
+
+        //time frames, interval and duration
         assertTrue(!info.isEmpty());
+        assertTrue(info.size() == 3);
     }
 }

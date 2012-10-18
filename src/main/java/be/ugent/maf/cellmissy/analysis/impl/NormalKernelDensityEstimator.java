@@ -8,7 +8,7 @@ import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import umontreal.iro.lecuyer.gof.KernelDensity;
 import umontreal.iro.lecuyer.probdist.EmpiricalDist;
 import umontreal.iro.lecuyer.probdist.NormalDist;
@@ -29,11 +29,11 @@ import umontreal.iro.lecuyer.rng.RandomStream;
  * K is the kernel (here a Gaussian is chosen) and h is the bandwidth (smoothing factor). 
  * @author Paola Masuzzo
  */
-@Service("normalKernelDensityEstimator")
+@Component("normalKernelDensityEstimator")
 public class NormalKernelDensityEstimator implements KernelDensityEstimator {
 
     //N, estimation precision, is set to a default of 512, as in most KDE algorithms default values, i.e. R "density"function, OmicSoft, Matlab algorithm
-    private final int n = 1024;
+    private final int n = 512;
     private EmpiricalDist empiricalDist;
     private KernelDensityGen kernelDensityGen;
 
@@ -76,7 +76,7 @@ public class NormalKernelDensityEstimator implements KernelDensityEstimator {
         //estimate density and store values in a vector
         double[] estimatedDensityValues = KernelDensity.computeDensity(empiricalDist, kern, bandWidth, randomSamples);
         densityFunction.add(estimatedDensityValues);
-        
+
         return densityFunction;
     }
 }

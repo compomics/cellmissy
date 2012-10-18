@@ -119,8 +119,7 @@ public class ObsepFileParserImpl implements ObsepFileParser {
             unit = findCycleTimeUnitByValue(cycleTimeUnitValue);
         }
 
-        // get duration
-
+        // get duration: switch between different unit of measurements
         switch (unit.unitValue) {
             case 1:
                 Double duration = (experimentInfo.get(0) * experimentInfo.get(1));

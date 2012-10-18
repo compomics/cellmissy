@@ -39,6 +39,8 @@ public class CellMiaFileParserTest {
         List<TimeStep> timeStepList = cellMiaFileParser.parseBulkCellFile(bulkCellFile);
 
         assertTrue(!trackList.isEmpty());
+        assertTrue(trackList.size() == 91);
         assertTrue(!timeStepList.isEmpty());
+        assertTrue(timeStepList.size() == 108);
     }
 }

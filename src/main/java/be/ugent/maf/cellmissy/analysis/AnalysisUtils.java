@@ -8,24 +8,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.Plot;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.CategoryItemRenderer;
-import org.jfree.chart.renderer.category.StandardBarPainter;
-import org.jfree.chart.renderer.xy.StandardXYBarPainter;
-import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 /**
- *
+ * Utility class for Analysis -- basic math and statistics methods
  * @author Paola Masuzzo
  */
 public class AnalysisUtils {
-    
-    //exclude null values from an array of Double 
+
+    /**
+     * exclude null values from an array of Double
+     * @param data 
+     * @return another Double array with no longer null values
+     */
     public static Double[] excludeNullValues(Double[] data) {
         List<Double> list = new ArrayList<>();
         for (Double value : data) {
@@ -37,7 +32,11 @@ public class AnalysisUtils {
         return toArray;
     }
 
-    //transpose a 2D array of double (useful for further computation)
+    /**
+     * transpose a 2D array of double
+     * @param data
+     * @return the same 2D array but transposed
+     */
     public static double[][] transpose2DArray(Double[][] data) {
         double[][] transposed = new double[data[0].length][data.length];
         for (int i = 0; i < data[0].length; i++) {
@@ -51,8 +50,12 @@ public class AnalysisUtils {
         }
         return transposed;
     }
-    //calculate mean value
 
+    /**
+     * Compute mean value of an array of double
+     * @param data
+     * @return mean
+     */
     public static double computeMean(double[] data) {
         // sum of all the elements
         double sum = 0;
@@ -62,7 +65,11 @@ public class AnalysisUtils {
         return sum / data.length;
     }
 
-    //calculate median value
+    /**
+     * Compute median value of an array of double
+     * @param data
+     * @return median
+     */
     public static double computeMedian(double[] data) {
         // sort the input data
         Arrays.sort(data);
@@ -72,12 +79,16 @@ public class AnalysisUtils {
         } else {
             double lower = data[(data.length / 2 - 1)];
             double upper = data[(data.length / 2)];
-
+            
             return (lower + upper) / 2;
         }
     }
 
-    //calculate standard deviation
+    /**
+     * Compute Standard Deviation of an array of double
+     * @param data
+     * @return sd
+     */
     public static double computeStandardDeviation(double[] data) {
         double sum = 0;
         for (int i = 0; i < data.length; i++) {
@@ -87,45 +98,64 @@ public class AnalysisUtils {
         return Math.sqrt(sum / data.length);
     }
 
-    //calculate standard error of the mean
+    /**
+     * Compute Standard Error of the Mean
+     * @param data
+     * @return SEM
+     */
     public static double computeSEM(double[] data) {
         return (computeStandardDeviation(data) / Math.sqrt(data.length));
     }
 
-    //calculate median absolute deviation
+    /**
+     * Compute Median Absolute Deviation of an array of double
+     * @param data
+     * @return MAD
+     */
     public static double computeMAD(double[] data) {
         //scale factor for asymptotically normal consistency
         final double constant = 1.4826;
         double[] deviations = new double[data.length];
         double median = computeMedian(data);
-
+        
         for (int i = 0; i < data.length; i++) {
             deviations[i] = Math.abs(data[i] - median);
         }
         return constant * computeMedian(deviations);
     }
 
-    //control shadow of a JFreeChart
-    public static void setShadowVisible(final JFreeChart chart, final boolean state) {
-        if (chart != null) {
-            final Plot p = chart.getPlot();
-            if (p instanceof XYPlot) {
-                final XYPlot xyplot = (XYPlot) p;
-                final XYItemRenderer xyItemRenderer = xyplot.getRenderer();
-                if (xyItemRenderer instanceof XYBarRenderer) {
-                    final XYBarRenderer br = (XYBarRenderer) xyItemRenderer;
-                    br.setBarPainter(new StandardXYBarPainter());
-                    br.setShadowVisible(state);
-                }
-            } else if (p instanceof CategoryPlot) {
-                final CategoryPlot categoryPlot = (CategoryPlot) p;
-                final CategoryItemRenderer categoryItemRenderer = categoryPlot.getRenderer();
-                if (categoryItemRenderer instanceof BarRenderer) {
-                    final BarRenderer br = (BarRenderer) categoryItemRenderer;
-                    br.setBarPainter(new StandardBarPainter());
-                    br.setShadowVisible(state);
-                }
-            }
+    /**
+     * Compute InterQuartileRange
+     * @param data
+     * @return IQR = Q3-Q1
+     */
+    public static double computeIQR(double[] data) {
+        return computeThirdQuartile(data) - computeFirstQuartile(data);
+    }
+
+    /**
+     * Compute First Quartile
+     * @param data
+     * @return double
+     */
+    public static double computeFirstQuartile(double[] data) {
+        DescriptiveStatistics dataStatistics = new DescriptiveStatistics();
+        for (int i = 0; i < data.length; i++) {
+            dataStatistics.addValue(data[i]);
         }
+        return dataStatistics.getPercentile(25);
+    }
+
+    /**
+     * Compute Third Quartile
+     * @param data
+     * @return double
+     */
+    public static double computeThirdQuartile(double[] data) {
+        DescriptiveStatistics dataStatistics = new DescriptiveStatistics();
+        for (int i = 0; i < data.length; i++) {
+            dataStatistics.addValue(data[i]);
+        }        
+        return dataStatistics.getPercentile(75);
     }
 }

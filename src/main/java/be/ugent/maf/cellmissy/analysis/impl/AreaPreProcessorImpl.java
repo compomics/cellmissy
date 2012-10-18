@@ -24,7 +24,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
     private OutliersHandler outliersHandler;
 
     /**
-     * compute normalized area values
+     * Compute normalized area values: Area value at time frame zero is set to zero
      * @param areaPreProcessingResultsHolder 
      */
     @Override
@@ -44,7 +44,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
     }
 
     /**
-     * 
+     * Compute Delta area values from time frame n to time frame n+1
      * @param areaPreProcessingResultsHolder 
      */
     @Override
@@ -62,7 +62,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
     }
 
     /**
-     * 
+     * Compute % Area increase between two time frames
      * @param areaPreProcessingResultsHolder 
      */
     @Override
@@ -81,7 +81,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
     }
 
     /**
-     * 
+     * Normalize Corrected Area (Area value time frame zero is set to zero)
      * @param areaPreProcessingResultsHolder 
      */
     @Override
@@ -99,9 +99,9 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
     }
 
     /**
-     * using outliers handler, compute outliers for each set of data
+     * using outliers handler, compute outliers for each set of data (each replicate)
      * @param data
-     * @return 
+     * @return a double array
      */
     @Override
     public double[] computeOutliers(double[] data) {
@@ -111,7 +111,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
     /**
      * using outliers handler, compute corrected area (outliers are being kicked out from distribution)
      * @param data
-     * @return 
+     * @return corrected area
      */
     @Override
     public double[] correctForOutliers(double[] data) {
@@ -119,9 +119,9 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
     }
 
     /**
-     * 
+     * Correct Area
      * @param areaPreProcessingResultsHolder
-     * @return 
+     * @return 2D array with corrected area values (still need to be normalized)
      */
     private Double[][] computeCorrectedArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
         Double[][] percentageAreaIncrease = areaPreProcessingResultsHolder.getPercentageAreaIncrease();

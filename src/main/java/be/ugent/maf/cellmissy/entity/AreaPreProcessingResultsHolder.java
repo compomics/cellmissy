@@ -19,6 +19,7 @@ public class AreaPreProcessingResultsHolder {
 
     /**
      * setters and getters 
+     * @return 
      */
     public Double[][] getNormalizedCorrectedArea() {
         return normalizedCorrectedArea;
