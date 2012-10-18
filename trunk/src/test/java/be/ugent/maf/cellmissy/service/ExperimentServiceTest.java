@@ -29,6 +29,9 @@ public class ExperimentServiceTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+    /**
+     * Test Creation of Folder Structure for experiment Object
+     */
     @Test
     public void testFolderStructure() {
 

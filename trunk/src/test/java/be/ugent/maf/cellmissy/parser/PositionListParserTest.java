@@ -41,6 +41,7 @@ public class PositionListParserTest {
         obsepFileParser.parseObsepFile(obsepResource.getFile());
         Map<ImagingType, String> imagingTypeToPosListMap = obsepFileParser.mapImagingTypetoPositionList();
 
+        //folder in which position lists are located
         File setupFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
         Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = positionListParser.parsePositionList(imagingTypeToPosListMap, setupFolder);
 

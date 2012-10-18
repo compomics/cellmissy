@@ -39,14 +39,14 @@ public interface AreaPreProcessor {
     /**
      * Using the Outlier Interface, compute OUTLIERS values for a certain dataset
      * @param data
-     * @return 
+     * @return a double array containing Outliers
      */
     public double[] computeOutliers(double[] data);
 
     /**
-     * Using the outlier interface, compute Corrected Values (Outliers are being deleted from dataset)
+     * Using the outlier interface, compute Corrected Values
      * @param data
-     * @return 
+     * @return new data corrected for outliers
      */
     public double[] correctForOutliers(double[] data);
 }

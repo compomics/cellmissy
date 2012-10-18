@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import org.apache.commons.lang.ArrayUtils;
@@ -339,7 +338,7 @@ public class BulkCellAnalysisController {
         velocityPlot.setRenderer(velocityBarRenderer);
 
         velocityPlot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
-        AnalysisUtils.setShadowVisible(velocityChart, false);
+        GuiUtils.setShadowVisible(velocityChart, false);
         velocityChartPanel.setChart(velocityChart);
         dataAnalysisController.getDataAnalysisPanel().getjPanel1().add(velocityChartPanel, gridBagConstraints);
         dataAnalysisController.getDataAnalysisPanel().getjPanel1().repaint();

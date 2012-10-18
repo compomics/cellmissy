@@ -4,7 +4,6 @@
  */
 package be.ugent.maf.cellmissy.analysis.impl;
 
-import be.ugent.maf.cellmissy.analysis.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
 import be.ugent.maf.cellmissy.analysis.LinearRegressor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,18 +26,21 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
         for (int columnIndex = 0; columnIndex < areaData.length; columnIndex++) {
             double[] data = areaData[columnIndex];
             double[][] temp = new double[data.length][2];
-
             for (int i = 0; i < temp.length; i++) {
                 temp[i][0] = timeFrames[i];
                 temp[i][1] = data[i];
             }
-
             double slope = computeSlope(temp);
             slopes[columnIndex] = slope;
         }
         return slopes;
     }
 
+    /**
+     * Given 2D array of double compute Slope through a Linear Regression
+     * @param data
+     * @return 
+     */
     private double computeSlope(double[][] data) {
         return linearRegressor.estimateLinearModel(data).get(0);
     }

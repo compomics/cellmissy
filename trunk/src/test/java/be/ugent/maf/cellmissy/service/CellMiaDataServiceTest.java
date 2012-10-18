@@ -37,10 +37,12 @@ public class CellMiaDataServiceTest {
     @Test
     public void testCellMiaDataService() {
 
+        //cellmia folder -- lims.properties file
         File miaFolder = new File(PropertiesConfigurationHolder.getInstance().getString("cellMiaFolder"));
-
+        //obsep file and setup folder -- test resources
         File obsepFile = new File(ObsepFileParserTest.class.getClassLoader().getResource("gffp.obsep").getPath());
         File setupFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
+        //experiment object 
         Experiment experiment = new Experiment();
         experiment.setObsepFile(obsepFile);
         experiment.setSetupFolder(setupFolder);
@@ -57,7 +59,9 @@ public class CellMiaDataServiceTest {
                 List<WellHasImagingType> list = get.get(imagingType);
                 for (WellHasImagingType wellHasImagingType : list) {
                     assertTrue(!wellHasImagingType.getTrackCollection().isEmpty());
+                    System.out.println("size tracks: " + wellHasImagingType.getTrackCollection().size());
                     assertTrue(!wellHasImagingType.getTimeStepCollection().isEmpty());
+                    System.out.println("size steps: " + wellHasImagingType.getTimeStepCollection().size());
                 }
             }
         }

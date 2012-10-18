@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.analysis;
 import java.util.List;
 
 /**
- *
+ * Interface for Linear Regression Estimation
  * @author Paola Masuzzo
  */
 public interface LinearRegressor {

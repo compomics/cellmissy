@@ -21,9 +21,10 @@ public class LinearRegressorImpl implements LinearRegressor {
     public List<Double> estimateLinearModel(double[][] data) {
 
         List<Double> linearModelResults = new ArrayList<>();
-
+        //make a Simple Regression from input Data
         SimpleRegression simpleRegression = new SimpleRegression();
         simpleRegression.addData(data);
+        //get Slopes and R2 coefficients fromt the Model
         linearModelResults.add(simpleRegression.getSlope());
         linearModelResults.add(simpleRegression.getRSquare());
 
