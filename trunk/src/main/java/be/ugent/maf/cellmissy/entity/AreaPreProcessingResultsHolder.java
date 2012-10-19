@@ -11,11 +11,11 @@ package be.ugent.maf.cellmissy.entity;
  */
 public class AreaPreProcessingResultsHolder {
 
+    private Double[][] areaRawData;
     private Double[][] normalizedArea;
     private Double[][] deltaArea;
     private Double[][] percentageAreaIncrease;
     private Double[][] normalizedCorrectedArea;
-    private Double[][] areaRawData;
 
     /**
      * setters and getters 

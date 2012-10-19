@@ -34,6 +34,7 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
     /**
      * getters and setters
      * 
+     * @return 
      */
     public List<ImagingType> getImagingTypeList() {
         return imagingTypeList;

@@ -52,12 +52,10 @@ public class ObsepFileParserImpl implements ObsepFileParser {
 
     @Override
     public void parseObsepFile(File obsepFile) {
-
         // get a document from xml
         // get a document builder
         Document doc = null;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
             // get the dom object
@@ -66,12 +64,10 @@ public class ObsepFileParserImpl implements ObsepFileParser {
         } catch (ParserConfigurationException | SAXException | IOException pce) {
             pce.printStackTrace();
         }
-
         // get root element of xml
         Element element = doc.getDocumentElement();
         // get "net" node: first child node
         Node netNode = element.getFirstChild();
-
         // get "Loop" node
         loopNode = getChildNodeByAttributeValue(netNode, "Loop");
     }
@@ -82,17 +78,14 @@ public class ObsepFileParserImpl implements ObsepFileParser {
         Map<ImagingType, String> imagingTypeToPosListMap = new HashMap<>();
         List<String> posListNames = this.getPosListNames();
         List<ImagingType> imagingInfo = this.getImagingInfo();
-
         for (int i = 0; i < imagingInfo.size(); i++) {
             imagingTypeToPosListMap.put(imagingInfo.get(i), posListNames.get(i));
         }
-
         return imagingTypeToPosListMap;
     }
 
     @Override
     public List<Double> getExperimentInfo() {
-
         // create new Experiment entity and set class members
         List<Double> experimentInfo = new ArrayList<>();
         NodeList loopChildNodes = loopNode.getChildNodes();
@@ -134,8 +127,6 @@ public class ObsepFileParserImpl implements ObsepFileParser {
                 experimentInfo.add(duration);
                 break;
         }
-
-
         return experimentInfo;
     }
 
@@ -143,6 +134,7 @@ public class ObsepFileParserImpl implements ObsepFileParser {
      * Getting Position List names used in the Experiment
      * @return a List of String (Position List names)
      */
+    //@todo Position List Names by the User and names in Obsep File need to be the same
     private List<String> getPosListNames() {
         List<String> posListNames = new ArrayList<>();
         // get "Stage loop" nodes

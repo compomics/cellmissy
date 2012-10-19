@@ -5,7 +5,6 @@
 package be.ugent.maf.cellmissy.analysis;
 
 import java.util.List;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,17 +23,17 @@ public class AreaAnalyzerTest {
 
     @Autowired
     private LinearRegressor linearRegressor;
-    private static double[][] data;
+    private static Double[][] data;
 
     /**
      * SetUp data for test
      */
     @BeforeClass
     public static void setUpData() {
-        data = new double[100][100];
+        data = new Double[100][100];
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[0].length; j++) {
-                data[i][j] = i + 1;
+                data[i][j] = Double.valueOf(i + 1);
             }
         }
     }

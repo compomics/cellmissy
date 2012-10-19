@@ -69,6 +69,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
 
                     // sample folders
                     // the number of sampleFiles is equal to the number of WellHasImagingType entities for one algorithm
+                    //@todo need to check if position lists lenght and sample foldern numbers are the same
                     File[] sampleFiles = batchFile.listFiles(sampleFilter);
 
                     // listFiles does not guarantee any order; sort files in alphabetical order

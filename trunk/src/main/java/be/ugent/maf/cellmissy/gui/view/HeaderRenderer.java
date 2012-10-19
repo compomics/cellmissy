@@ -18,10 +18,16 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class HeaderRenderer extends DefaultTableCellRenderer {
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        
+
         super.getTableCellRendererComponent(table, value, false, false, row, column);
         setHorizontalAlignment(SwingConstants.CENTER);
         setBorder(BorderFactory.createLineBorder(Color.black));
+
+        if (column == 0) {
+            setToolTipText("Time frames");
+        } else {
+            setToolTipText("Well " + (String) value);
+        }
         return this;
     }
 }

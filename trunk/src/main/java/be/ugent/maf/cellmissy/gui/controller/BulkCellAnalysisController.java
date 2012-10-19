@@ -75,6 +75,7 @@ public class BulkCellAnalysisController {
     private ChartPanel densityChartPanel;
     private ChartPanel correctedDensityChartPanel;
     private ChartPanel areaChartPanel;
+    private ChartPanel globalAreaChartPanel;
     private ChartPanel velocityChartPanel;
     //parent controller
     @Autowired
@@ -188,6 +189,7 @@ public class BulkCellAnalysisController {
         bindingGroup.bind();
 
         dataAnalysisController.getDataAnalysisPanel().getTimeStepsTable().setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat()));
+        dataAnalysisController.getDataAnalysisPanel().getTimeStepsTable().setFillsViewportHeight(true);
         dataAnalysisController.getDataAnalysisPanel().getTimeStepsTableScrollPane().getViewport().setOpaque(false);
     }
 
@@ -211,12 +213,15 @@ public class BulkCellAnalysisController {
     public void setAreaIncreaseTableData(PlateCondition plateCondition) {
         //set model for the delta area Table
         //NOTE that each time a new condition is selected, new slopes is passed to the model
-        dataTable.setModel(new DataTableModel(plateCondition, map.get(plateCondition).getPercentageAreaIncrease(), timeFrames));
+        Double[][] percentageAreaIncrease = map.get(plateCondition).getPercentageAreaIncrease();
+        Double[][] percentageAreaTransposed = AnalysisUtils.transpose2DArray(percentageAreaIncrease);
+        dataTable.setModel(new DataTableModel(plateCondition, percentageAreaIncrease, timeFrames));
         dataTable.getColumnModel().getColumn(0).setCellRenderer(new FormatRenderer(new DecimalFormat("0.00")));
         //starting from second column set Renderer for cells
         for (int i = 1; i < dataTable.getColumnCount(); i++) {
+            Double[] outliers = areaPreProcessor.computeOutliers(percentageAreaTransposed[i - 1]);
             //show OUTLIERS in red
-            dataTable.getColumnModel().getColumn(i).setCellRenderer(new AreaIncreaseRenderer(areaPreProcessor.computeOutliers(getDataFromTableModel(dataTable)[i - 1]), new DecimalFormat("0.00")));
+            dataTable.getColumnModel().getColumn(i).setCellRenderer(new AreaIncreaseRenderer(outliers, new DecimalFormat("0.00")));
         }
         dataTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
         dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("% area increases, distributions' outliers are shown in red");
@@ -249,14 +254,17 @@ public class BulkCellAnalysisController {
 
     /**
      * Show Area for a certain condition selected
+     * @param plateCondition 
      */
-    public void showArea() {
+    public void showArea(PlateCondition plateCondition) {
+        AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
+        Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
+        Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
-        double[][] dataFromTableModel = getDataFromTableModel(dataTable);
         double[] xValues = timeFrames;
-        for (int columnIndex = 0; columnIndex < dataFromTableModel.length; columnIndex++) {
-            double[] yValues = dataFromTableModel[columnIndex];
-            XYSeries xySeries = generateXYSeriesArea(xValues, yValues);
+        for (int columnIndex = 0; columnIndex < transposedArea.length; columnIndex++) {
+            double[] yValues = ArrayUtils.toPrimitive(transposedArea[columnIndex]);
+            XYSeries xySeries = generateXYSeries(xValues, yValues);
             xySeries.setKey("Rep " + (columnIndex + 1));
             xySeriesCollection.addSeries(xySeries);
         }
@@ -276,24 +284,60 @@ public class BulkCellAnalysisController {
     }
 
     /**
+     * 
+     */
+    public void showGlobalArea() {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        for (PlateCondition plateCondition : map.keySet()) {
+            double[] xValues = timeFrames;
+            double[] yValues = new double[timeFrames.length];
+            Double[][] normalizedCorrectedArea = map.get(plateCondition).getNormalizedCorrectedArea();
+            for (int columnIndex = 0; columnIndex < normalizedCorrectedArea.length; columnIndex++) {
+                double median = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(normalizedCorrectedArea[columnIndex])));
+                yValues[columnIndex] = median;
+            }
+            XYSeries xySeries = generateXYSeries(xValues, yValues);
+            xySeries.setKey("Cond " + (dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1));
+            xySeriesCollection.addSeries(xySeries);
+        }
+
+        //@todo: change color of lines according to condition order and give an estimate on the median value (SEM?)
+        JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        globalAreaChart.getXYPlot().setBackgroundPaint(Color.white);
+        XYItemRenderer renderer = globalAreaChart.getXYPlot().getRenderer();
+        BasicStroke wideLine = new BasicStroke(1.3f);
+        for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
+            renderer.setSeriesStroke(i, wideLine);
+        }
+        globalAreaChartPanel.setChart(globalAreaChart);
+        dataAnalysisController.getDataAnalysisPanel().getGlobalViewPanel().add(globalAreaChartPanel, gridBagConstraints);
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(correctedDensityChartPanel);
+    }
+
+    /**
      * for a condition selected this method shows in one plot the estimated density functions for each replicate (=well)
      * This is doing the job for one condition (all replicates)
+     * @param plateCondition 
      */
-    public void showRawDataDensityFunction() {
-        JFreeChart densityChart = showDensityFunction(getDataFromTableModel(dataTable), "Kernel Density Estimator");
+    public void showRawDataDensityFunction(PlateCondition plateCondition) {
+        Double[][] percentageAreaIncrease = map.get(plateCondition).getPercentageAreaIncrease();
+        Double[][] percentageAreaTransposed = AnalysisUtils.transpose2DArray(percentageAreaIncrease);
+        JFreeChart densityChart = showDensityFunction(percentageAreaTransposed, "Kernel Density Estimator");
         densityChartPanel.setChart(densityChart);
         dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(densityChartPanel, gridBagConstraints);
     }
 
     /**
      * for a condition selected this method shows density values for corrected distributions
+     * @param plateCondition 
      */
-    public void showCorrectedDataDensityFunction() {
+    public void showCorrectedDataDensityFunction(PlateCondition plateCondition) {
+        Double[][] percentageAreaIncrease = map.get(plateCondition).getPercentageAreaIncrease();
+        Double[][] percentageAreaTransposed = AnalysisUtils.transpose2DArray(percentageAreaIncrease);
         //compute first corrected slopes (no outliers)
-        double[][] dataFromTableModel = getDataFromTableModel(dataTable);
-        double[][] correctedData = new double[dataFromTableModel.length][];
-        for (int i = 0; i < dataFromTableModel.length; i++) {
-            double[] correctedValues = areaPreProcessor.correctForOutliers(dataFromTableModel[i]);
+        Double[][] correctedData = new Double[percentageAreaTransposed.length][];
+        for (int i = 0; i < percentageAreaTransposed.length; i++) {
+            Double[] correctedValues = areaPreProcessor.correctForOutliers(percentageAreaTransposed[i]);
             correctedData[i] = correctedValues;
         }
         JFreeChart correctedDensityChart = showDensityFunction(correctedData, "KDE (Outliers Correction)");
@@ -345,7 +389,7 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * 
+     * Populate Table with Slopes from Linear Model Estimation
      */
     public void showLinearModelResults() {
         List<double[]> slopes = new ArrayList<>();
@@ -383,14 +427,26 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * 
+     * Given a certain condition estimate Linear Model and give back slopes
      * @param plateCondition
      * @return 
      */
     private double[] computeSlopesPerCondition(PlateCondition plateCondition) {
         AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
         Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
-        return areaAnalyzer.computeSlopes(AnalysisUtils.transpose2DArray(normalizedCorrectedArea), timeFrames);
+        return areaAnalyzer.computeSlopes(AnalysisUtils.transpose2DArray(normalizedCorrectedArea), timeFrames).get(0);
+    }
+
+    /**
+     * Given a certain condition estimate Linear Model and give back R2 coefficients (goodness of fitness)
+     * @param plateCondition
+     * @return 
+     */
+    //@todo R2 Coefficients to be included in view
+    private double[] computeRCoefficientsPerCondition(PlateCondition plateCondition) {
+        AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
+        Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
+        return areaAnalyzer.computeSlopes(AnalysisUtils.transpose2DArray(normalizedCorrectedArea), timeFrames).get(1);
     }
 
     //compute time frames
@@ -489,6 +545,8 @@ public class BulkCellAnalysisController {
         correctedDensityChartPanel.setOpaque(false);
         areaChartPanel = new ChartPanel(null);
         areaChartPanel.setOpaque(false);
+        globalAreaChartPanel = new ChartPanel(null);
+        globalAreaChartPanel.setOpaque(false);
         velocityChartPanel = new ChartPanel(null);
         velocityChartPanel.setOpaque(false);
         map = new LinkedHashMap<>();
@@ -500,7 +558,7 @@ public class BulkCellAnalysisController {
      * @param slopes
      * @return a XYSeries
      */
-    private XYSeries generateDensityFunction(double[] data) {
+    private XYSeries estimateDensityFunctionPerReplicate(Double[] data) {
         //use KDE to estimate density function for dataset slopes
         List<double[]> estimateDensityFunction = kernelDensityEstimator.estimateDensityFunction(data);
         double[] xValues = estimateDensityFunction.get(0);
@@ -521,13 +579,8 @@ public class BulkCellAnalysisController {
      * @param chartTitle - string for chart title
      * @return a JFreeChart
      */
-    private JFreeChart showDensityFunction(double[][] data, String chartTitle) {
-        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
-        for (int i = 0; i < data.length; i++) {
-            XYSeries xySeries = generateDensityFunction(data[i]);
-            xySeries.setKey("Rep " + (i + 1));
-            xySeriesCollection.addSeries(xySeries);
-        }
+    private JFreeChart showDensityFunction(Double[][] data, String chartTitle) {
+        XYSeriesCollection xySeriesCollection = estimateDensityFunctionPerCondition(data);
         JFreeChart densityChart = ChartFactory.createXYLineChart(chartTitle, "% increase (Area)", "Density", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
 
         //XYplot
@@ -549,12 +602,27 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * 
+     * Estimate Density Function per Condition
+     * @param data
+     * @return 
+     */
+    public XYSeriesCollection estimateDensityFunctionPerCondition(Double[][] data) {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        for (int i = 0; i < data.length; i++) {
+            XYSeries xySeries = estimateDensityFunctionPerReplicate(data[i]);
+            xySeries.setKey("Rep " + (i + 1));
+            xySeriesCollection.addSeries(xySeries);
+        }
+        return xySeriesCollection;
+    }
+
+    /**
+     * Generate Series for (x,y) Area plotting
      * @param xValues
      * @param yValues
      * @return 
      */
-    private XYSeries generateXYSeriesArea(double[] xValues, double[] yValues) {
+    private XYSeries generateXYSeries(double[] xValues, double[] yValues) {
         XYSeries series = new XYSeries("", false);
         for (int i = 0; i < yValues.length; i++) {
             double x = xValues[i];

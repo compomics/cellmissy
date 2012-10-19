@@ -17,10 +17,10 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class AreaIncreaseRenderer extends DefaultTableCellRenderer {
 
-    private double[] outliers;
+    private Double[] outliers;
     private Format formatter;
 
-    public AreaIncreaseRenderer(double[] outliers, Format formatter) {
+    public AreaIncreaseRenderer(Double[] outliers, Format formatter) {
         this.outliers = outliers;
         this.formatter = formatter;
     }
@@ -36,8 +36,8 @@ public class AreaIncreaseRenderer extends DefaultTableCellRenderer {
             setBackground(table.getBackground());
             if (areaIncrease != null) {
                 if (outliers.length != 0) {
-                    for (double outlier : outliers) {
-                        if (Double.valueOf(areaIncrease) == outlier) {
+                    for (Double outlier : outliers) {
+                        if (areaIncrease.equals(outlier)) {
                             setForeground(Color.red);
                             break;
                         } else {
@@ -49,6 +49,7 @@ public class AreaIncreaseRenderer extends DefaultTableCellRenderer {
                 }
             }
         }
+        
         if (value != null) {
             value = formatter.format(value);
         }

@@ -7,7 +7,6 @@ package be.ugent.maf.cellmissy.analysis;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 /**
@@ -37,8 +36,8 @@ public class AnalysisUtils {
      * @param data
      * @return the same 2D array but transposed
      */
-    public static double[][] transpose2DArray(Double[][] data) {
-        double[][] transposed = new double[data[0].length][data.length];
+    public static Double[][] transpose2DArray(Double[][] data) {
+        Double[][] transposed = new Double[data[0].length][data.length];
         for (int i = 0; i < data[0].length; i++) {
             List<Double> tempList = new ArrayList<>();
             for (int j = 0; j < data.length; j++) {
@@ -46,7 +45,7 @@ public class AnalysisUtils {
                     tempList.add((double) data[j][i]);
                 }
             }
-            transposed[i] = ArrayUtils.toPrimitive(tempList.toArray(new Double[tempList.size()]));
+            transposed[i] = tempList.toArray(new Double[tempList.size()]);
         }
         return transposed;
     }

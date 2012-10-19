@@ -104,7 +104,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
      * @return a double array
      */
     @Override
-    public double[] computeOutliers(double[] data) {
+    public Double[] computeOutliers(Double[] data) {
         return outliersHandler.handleOutliers(data).get(0);
     }
 
@@ -114,7 +114,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
      * @return corrected area
      */
     @Override
-    public double[] correctForOutliers(double[] data) {
+    public Double[] correctForOutliers(Double[] data) {
         return outliersHandler.handleOutliers(data).get(1);
     }
 
@@ -138,7 +138,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         }
 
         for (int columnIndex = 0; columnIndex < transposed.length; columnIndex++) {
-            double[] outliers = computeOutliers(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposed[columnIndex])));
+            Double[] outliers = computeOutliers(AnalysisUtils.excludeNullValues(transposed[columnIndex]));
 
             for (int rowIndex = 0; rowIndex < transposed[0].length; rowIndex++) {
                 if (outliers.length != 0) {

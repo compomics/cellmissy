@@ -38,6 +38,7 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     /**
      * setters and getters
      * 
+     * @return 
      */
     public Map<PlateCondition, List<Rectangle>> getRectangles() {
         return rectangles;
