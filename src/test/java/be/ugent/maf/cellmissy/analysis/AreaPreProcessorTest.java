@@ -25,16 +25,16 @@ public class AreaPreProcessorTest {
     private KernelDensityEstimator kernelDensityEstimator;
     @Autowired
     private OutliersHandler outliersHandler;
-    private static double[] data;
+    private static Double[] data;
 
     /**
      * set up data for test
      */
     @BeforeClass
     public static void setUpData() {
-        data = new double[100];
+        data = new Double[100];
         for (int i = 0; i < data.length; i++) {
-            data[i] = i + 1;
+            data[i] = Double.valueOf(i + 1);
         }
     }
 
@@ -47,8 +47,8 @@ public class AreaPreProcessorTest {
         List<double[]> estimateDensityFunction = kernelDensityEstimator.estimateDensityFunction(data);
         double[] randomSamples = estimateDensityFunction.get(0);
         double[] estimatedValues = estimateDensityFunction.get(1);
-        assertTrue(randomSamples.length == 512);
-        assertTrue(estimatedValues.length == 512);
+        assertTrue(randomSamples.length == 4096);
+        assertTrue(estimatedValues.length == 4096);
 
         for (int i = 0; i < estimatedValues.length; i++) {
             System.out.println("random sample: " + randomSamples[i]);
@@ -64,8 +64,8 @@ public class AreaPreProcessorTest {
      */
     @Test
     public void testOutlierDetection() {
-        List<double[]> handleOutliers = outliersHandler.handleOutliers(data);
-        double[] ouliers = handleOutliers.get(0);
+        List<Double[]> handleOutliers = outliersHandler.handleOutliers(data);
+        Double[] ouliers = handleOutliers.get(0);
         assertNotNull(ouliers);
         if (ouliers.length == 0) {
             assertEquals(data.length, handleOutliers.get(1).length);

@@ -6,6 +6,8 @@ package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
 import be.ugent.maf.cellmissy.analysis.LinearRegressor;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,20 +22,28 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
     private LinearRegressor linearRegressor;
 
     @Override
-    public double[] computeSlopes(double[][] areaData, double[] timeFrames) {
+    public List<double[]> computeSlopes(Double[][] areaData, double[] timeFrames) {
+        List<double[]> resultsList = new ArrayList<>();
         double[] slopes = new double[areaData.length];
+        double[] coefficients = new double[areaData.length];
 
         for (int columnIndex = 0; columnIndex < areaData.length; columnIndex++) {
-            double[] data = areaData[columnIndex];
-            double[][] temp = new double[data.length][2];
+            Double[] data = areaData[columnIndex];
+            Double[][] temp = new Double[data.length][2];
             for (int i = 0; i < temp.length; i++) {
                 temp[i][0] = timeFrames[i];
                 temp[i][1] = data[i];
             }
             double slope = computeSlope(temp);
+            double coefficient = computeRCoefficient(temp);
             slopes[columnIndex] = slope;
+            coefficients[columnIndex] = coefficient;
         }
-        return slopes;
+        
+        resultsList.add(slopes);
+        resultsList.add(coefficients);
+        
+        return resultsList;
     }
 
     /**
@@ -41,7 +51,16 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
      * @param data
      * @return 
      */
-    private double computeSlope(double[][] data) {
+    private double computeSlope(Double[][] data) {
         return linearRegressor.estimateLinearModel(data).get(0);
+    }
+
+    /**
+     * Get R2 Coefficient out of the Linear Regression Model
+     * @param data
+     * @return 
+     */
+    private double computeRCoefficient(Double[][] data) {
+        return linearRegressor.estimateLinearModel(data).get(1);
     }
 }

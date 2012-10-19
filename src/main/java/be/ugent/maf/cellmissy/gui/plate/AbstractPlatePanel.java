@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 
 /**
  * Abstract Class extending JPanel
- * Plate View Panel with a List of Well Gui and a plate format
+ * Plate View Panel with a List of Well GUI and a plate format
  * @author Paola
  */
 public abstract class AbstractPlatePanel extends JPanel {
@@ -55,6 +55,7 @@ public abstract class AbstractPlatePanel extends JPanel {
     /**
      * getters
      * 
+     * @return 
      */
     public List<WellGui> getWellGuiList() {
         return wellGuiList;
@@ -77,8 +78,8 @@ public abstract class AbstractPlatePanel extends JPanel {
 
     /**
      * making use of Graphics 2D, render wells
-     * @param wellSize: size of wells according to format
-     * @param g: graphics 
+     * @param wellSize -- size of wells according to format
+     * @param g -- graphics 
      */
     public void drawWells(int wellSize, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;

@@ -5,9 +5,11 @@
 package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
+import com.google.common.primitives.Doubles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Component;
 import umontreal.iro.lecuyer.gof.KernelDensity;
 import umontreal.iro.lecuyer.probdist.EmpiricalDist;
@@ -33,7 +35,7 @@ import umontreal.iro.lecuyer.rng.RandomStream;
 public class NormalKernelDensityEstimator implements KernelDensityEstimator {
 
     //N, estimation precision, is set to a default of 512, as in most KDE algorithms default values, i.e. R "density"function, OmicSoft, Matlab algorithm
-    private final int n = 512;
+    private final int n = 4096;
     private EmpiricalDist empiricalDist;
     private KernelDensityGen kernelDensityGen;
 
@@ -53,10 +55,10 @@ public class NormalKernelDensityEstimator implements KernelDensityEstimator {
     }
 
     @Override
-    public List estimateDensityFunction(double[] data) {
+    public List estimateDensityFunction(Double[] data) {
         List<double[]> densityFunction = new ArrayList<>();
         //init the KDE with a normal generator
-        init(data);
+        init(ArrayUtils.toPrimitive(data));
         //compute x values
         //array for random samples 
         double[] randomSamples = new double[n];

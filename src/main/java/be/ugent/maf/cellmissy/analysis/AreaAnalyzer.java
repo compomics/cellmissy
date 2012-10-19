@@ -4,6 +4,8 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
+import java.util.List;
+
 /**
  * Interface for Analysis of Area Data (after pre-processing step)
  * @author Paola Masuzzo
@@ -16,5 +18,5 @@ public interface AreaAnalyzer {
      * @param timeFrames
      * @return an array with double values of slopes
      */
-    public double[] computeSlopes(double[][] areaData, double[] timeFrames);
+    public List<double[]> computeSlopes(Double[][] areaData, double[] timeFrames);
 }

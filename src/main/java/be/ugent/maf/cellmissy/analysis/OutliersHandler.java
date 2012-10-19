@@ -17,5 +17,5 @@ public interface OutliersHandler {
      * @param data
      * @return 
      */
-    List<double[]> handleOutliers(double[] data);
+    List<Double[]> handleOutliers(Double[] data);
 }

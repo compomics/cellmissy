@@ -106,6 +106,14 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return linearRegressionButton;
     }
 
+    public JButton getGlobalViewButton() {
+        return globalViewButton;
+    }
+
+    public JPanel getGlobalViewPanel() {
+        return globalViewPanel;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -135,6 +143,10 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         tableInfoLabel = new javax.swing.JLabel();
         dataTablePanel = new javax.swing.JPanel();
         graphicsParentPanel = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        globalViewPanel = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        globalViewButton = new javax.swing.JButton();
         analysisPanel = new javax.swing.JPanel();
         tablePanel = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
@@ -180,7 +192,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
 
         timeStepsTableScrollPane.setBackground(new java.awt.Color(255, 255, 255));
         timeStepsTableScrollPane.setMinimumSize(new java.awt.Dimension(20, 20));
-        timeStepsTableScrollPane.setOpaque(false);
         timeStepsTableScrollPane.setPreferredSize(new java.awt.Dimension(20, 20));
 
         timeStepsTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -195,7 +206,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
             }
         ));
         timeStepsTable.setMinimumSize(new java.awt.Dimension(20, 20));
-        timeStepsTable.setOpaque(false);
         timeStepsTableScrollPane.setViewportView(timeStepsTable);
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 2, 12));
@@ -313,6 +323,56 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         preProcessPanel.add(graphicsParentPanel, gridBagConstraints);
 
         jTabbedPane2.addTab("Pre-processing", preProcessPanel);
+
+        jPanel2.setOpaque(false);
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        globalViewPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        globalViewPanel.setOpaque(false);
+        globalViewPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        globalViewPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.8;
+        jPanel2.add(globalViewPanel, gridBagConstraints);
+
+        jPanel5.setMinimumSize(new java.awt.Dimension(20, 20));
+        jPanel5.setOpaque(false);
+        jPanel5.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        globalViewButton.setText("Global Area View");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(700, Short.MAX_VALUE)
+                .addComponent(globalViewButton)
+                .addGap(18, 18, 18))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(globalViewButton)
+                .addContainerGap(82, Short.MAX_VALUE))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.2;
+        jPanel2.add(jPanel5, gridBagConstraints);
+
+        jTabbedPane2.addTab("Global View", jPanel2);
 
         analysisPanel.setOpaque(false);
         analysisPanel.setLayout(new java.awt.GridBagLayout());
@@ -622,6 +682,8 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton deltaAreaButton;
     private javax.swing.JPanel experimentDataPanel;
     private javax.swing.JList experimentJList;
+    private javax.swing.JButton globalViewButton;
+    private javax.swing.JPanel globalViewPanel;
     private javax.swing.JPanel graphicsParentPanel;
     private javax.swing.JComboBox imagingTypeComboBox;
     private javax.swing.JLabel infolabel;
@@ -629,7 +691,9 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;

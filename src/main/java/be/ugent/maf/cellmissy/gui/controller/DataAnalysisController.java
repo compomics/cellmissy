@@ -46,6 +46,7 @@ import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -258,15 +259,16 @@ public class DataAnalysisController {
                     //for current selected condition show %increments (for outliers detection)
                     bulkCellAnalysisPanelController.setAreaIncreaseTableData(plateConditionList.get(locationToIndex));
                     //show density function for selected condition (Raw Data)
-                    bulkCellAnalysisPanelController.showRawDataDensityFunction();
-                    bulkCellAnalysisPanelController.showCorrectedDataDensityFunction();
+                    //@todo Swing Worker for KDE 
+                    bulkCellAnalysisPanelController.showRawDataDensityFunction(plateConditionList.get(locationToIndex));
+                    bulkCellAnalysisPanelController.showCorrectedDataDensityFunction(plateConditionList.get(locationToIndex));
                 }
                 if (dataAnalysisPanel.getCorrectedAreaButton().isSelected()) {
                     //for current selected condition show corrected area values (outliers have been deleted from distribution)
                     bulkCellAnalysisPanelController.setCorrectedAreaTableData(plateConditionList.get(locationToIndex));
                     //show Area increases with time frames
                     bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
-                    bulkCellAnalysisPanelController.showArea();
+                    bulkCellAnalysisPanelController.showArea(plateConditionList.get(locationToIndex));
                 }
             }
         });
@@ -313,7 +315,7 @@ public class DataAnalysisController {
                 //check that a condition is selected
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     //show normalized values in the table
-                    bulkCellAnalysisPanelController.setNormalizedAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                    bulkCellAnalysisPanelController.setNormalizedAreaTableData(getSelectedCondition());
                     //set charts panel to null
                     bulkCellAnalysisPanelController.getDensityChartPanel().setChart(null);
                     bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
@@ -332,7 +334,7 @@ public class DataAnalysisController {
                 //check that a condition is selected
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     //show delta area values in the table            
-                    bulkCellAnalysisPanelController.setDeltaAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                    bulkCellAnalysisPanelController.setDeltaAreaTableData(getSelectedCondition());
                     //set charts panel to null
                     bulkCellAnalysisPanelController.getDensityChartPanel().setChart(null);
                     bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
@@ -351,13 +353,13 @@ public class DataAnalysisController {
                 //check that a condition is selected
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     //show %increments of area between two consecutive time frames and determine if a JUMP is present
-                    bulkCellAnalysisPanelController.setAreaIncreaseTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
+                    bulkCellAnalysisPanelController.setAreaIncreaseTableData(getSelectedCondition());
                     dataAnalysisPanel.getGraphicsParentPanel().remove(bulkCellAnalysisPanelController.getAreaChartPanel());
                     dataAnalysisPanel.getGraphicsParentPanel().revalidate();
                     dataAnalysisPanel.getGraphicsParentPanel().repaint();
                     //show density function for selected condition
-                    bulkCellAnalysisPanelController.showRawDataDensityFunction();
-                    bulkCellAnalysisPanelController.showCorrectedDataDensityFunction();
+                    bulkCellAnalysisPanelController.showRawDataDensityFunction(getSelectedCondition());
+                    bulkCellAnalysisPanelController.showCorrectedDataDensityFunction(getSelectedCondition());
                 }
             }
         });
@@ -370,8 +372,8 @@ public class DataAnalysisController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
-                    bulkCellAnalysisPanelController.setCorrectedAreaTableData((PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue());
-                    bulkCellAnalysisPanelController.showArea();
+                    bulkCellAnalysisPanelController.setCorrectedAreaTableData(getSelectedCondition());
+                    bulkCellAnalysisPanelController.showArea(getSelectedCondition());
                 }
             }
         });
@@ -396,6 +398,15 @@ public class DataAnalysisController {
             public void actionPerformed(ActionEvent e) {
                 LinearModelSwingWorker linearModelSwingWorker = new LinearModelSwingWorker();
                 linearModelSwingWorker.execute();
+            }
+        });
+        
+        dataAnalysisPanel.getGlobalViewButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                bulkCellAnalysisPanelController.updateMap();
+                bulkCellAnalysisPanelController.showGlobalArea();
             }
         });
     }
@@ -431,11 +442,16 @@ public class DataAnalysisController {
         }
     }
 
+    /**
+     * Swing Worker for Linear Model
+     */
     private class LinearModelSwingWorker extends SwingWorker<Void, Void> {
 
         @Override
         protected Void doInBackground() throws Exception {
+            dataAnalysisPanel.getLinearRegressionButton().setEnabled(false);
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            //update Map in child controller
             bulkCellAnalysisPanelController.updateMap();
             return null;
         }
@@ -443,6 +459,7 @@ public class DataAnalysisController {
         @Override
         protected void done() {
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            //show computation Results in Table
             bulkCellAnalysisPanelController.showLinearModelResults();
         }
     }

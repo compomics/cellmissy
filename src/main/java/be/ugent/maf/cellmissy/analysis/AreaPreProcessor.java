@@ -41,12 +41,12 @@ public interface AreaPreProcessor {
      * @param data
      * @return a double array containing Outliers
      */
-    public double[] computeOutliers(double[] data);
+    public Double[] computeOutliers(Double[] data);
 
     /**
      * Using the outlier interface, compute Corrected Values
      * @param data
      * @return new data corrected for outliers
      */
-    public double[] correctForOutliers(double[] data);
+    public Double[] correctForOutliers(Double[] data);
 }

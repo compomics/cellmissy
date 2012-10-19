@@ -17,5 +17,5 @@ public interface KernelDensityEstimator {
      * @param data
      * @return a List of double arrays (x and y values of density Function)
      */
-    List<double[]> estimateDensityFunction(double[] data);
+    List<double[]> estimateDensityFunction(Double[] data);
 }
