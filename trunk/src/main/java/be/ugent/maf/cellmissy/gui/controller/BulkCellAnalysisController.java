@@ -20,6 +20,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Paint;
+import java.awt.Stroke;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -50,6 +51,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.StatisticalBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.statistics.DefaultStatisticalCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -270,6 +272,7 @@ public class BulkCellAnalysisController {
         }
         JFreeChart areaChart = ChartFactory.createXYLineChart("Area", "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         areaChart.getXYPlot().setBackgroundPaint(Color.white);
+        areaChart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
         XYItemRenderer renderer = areaChart.getXYPlot().getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);
         for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
@@ -285,33 +288,61 @@ public class BulkCellAnalysisController {
 
     /**
      * 
+     * @param plateCondition 
+     */
+    public void showEuclideanDistances(PlateCondition plateCondition) {
+        Double[][] euclideanDistances = map.get(plateCondition).getEuclideanDistances();
+        Object[][] data = new Object[euclideanDistances.length][euclideanDistances.length + 1];
+        for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
+            data[rowIndex][0] = "" + (rowIndex + 1);
+            for (int columnIndex = 1; columnIndex < data.length + 1; columnIndex++) {
+                data[rowIndex][columnIndex] = euclideanDistances[rowIndex][columnIndex - 1];
+            }
+        }
+        String[] columnNames = new String[euclideanDistances.length + 1];
+        for (int i = 1; i < columnNames.length; i++) {
+            columnNames[i] = "" + i;
+        }
+        dataAnalysisController.getDataAnalysisPanel().getDistancesTable().setModel(new DefaultTableModel(data, columnNames));
+        //set format renderer only from second column on
+        for (int i = 1; i < dataAnalysisController.getDataAnalysisPanel().getDistancesTable().getColumnCount(); i++) {
+            Double[] outliers = areaPreProcessor.computeOutliers(euclideanDistances[i - 1]);
+            dataAnalysisController.getDataAnalysisPanel().getDistancesTable().getColumnModel().getColumn(i).setCellRenderer(new AreaIncreaseRenderer(outliers, new DecimalFormat("0.00")));
+        }
+    }
+
+    /**
+     * Show all conditions in one plot (median is computed per time point across all replicates)
      */
     public void showGlobalArea() {
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
         for (PlateCondition plateCondition : map.keySet()) {
             double[] xValues = timeFrames;
             double[] yValues = new double[timeFrames.length];
+            double[] mads = new double[timeFrames.length];
             Double[][] normalizedCorrectedArea = map.get(plateCondition).getNormalizedCorrectedArea();
             for (int columnIndex = 0; columnIndex < normalizedCorrectedArea.length; columnIndex++) {
-                double median = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(normalizedCorrectedArea[columnIndex])));
+                double[] replicateValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(normalizedCorrectedArea[columnIndex]));
+                double median = AnalysisUtils.computeMedian(replicateValues);
+                mads[columnIndex] = AnalysisUtils.scaleMAD(replicateValues);
                 yValues[columnIndex] = median;
             }
+            double medianMadPerCondition = AnalysisUtils.computeMedian(mads);
+            System.out.println("" + medianMadPerCondition);
             XYSeries xySeries = generateXYSeries(xValues, yValues);
             xySeries.setKey("Cond " + (dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1));
             xySeriesCollection.addSeries(xySeries);
         }
 
-        //@todo: change color of lines according to condition order and give an estimate on the median value (SEM?)
+        //@todo give an estimate on the median value (SEM?)
         JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         globalAreaChart.getXYPlot().setBackgroundPaint(Color.white);
-        XYItemRenderer renderer = globalAreaChart.getXYPlot().getRenderer();
-        BasicStroke wideLine = new BasicStroke(1.3f);
-        for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
-            renderer.setSeriesStroke(i, wideLine);
-        }
+        globalAreaChart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        AreaRenderer areaRenderer = new AreaRenderer();
+        globalAreaChart.getXYPlot().setRenderer(areaRenderer);
         globalAreaChartPanel.setChart(globalAreaChart);
         dataAnalysisController.getDataAnalysisPanel().getGlobalViewPanel().add(globalAreaChartPanel, gridBagConstraints);
-        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(correctedDensityChartPanel);
+        dataAnalysisController.getDataAnalysisPanel().getGlobalViewPanel().repaint();
     }
 
     /**
@@ -349,7 +380,6 @@ public class BulkCellAnalysisController {
      * show Bar charts for area velocity
      */
     public void showVelocityBars() {
-
         TableModel model = dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getModel();
         int[] selectedRows = dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getSelectedRows();
         int columnCount = model.getColumnCount();
@@ -375,7 +405,6 @@ public class BulkCellAnalysisController {
         velocityPlot.setBackgroundPaint(Color.white);
         VelocityBarRenderer velocityBarRenderer = new VelocityBarRenderer();
         velocityBarRenderer.setErrorIndicatorPaint(Color.black);
-        velocityBarRenderer.setIncludeBaseInRange(false);
         velocityBarRenderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
         velocityBarRenderer.setBaseItemLabelsVisible(true);
         velocityBarRenderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.INSIDE6, TextAnchor.BOTTOM_CENTER));
@@ -404,7 +433,7 @@ public class BulkCellAnalysisController {
             }
             data[rowIndex][0] = dataAnalysisController.getPlateConditionList().get(rowIndex).toString();
             data[rowIndex][data[0].length - 2] = AnalysisUtils.computeMedian(slopes.get(rowIndex));
-            data[rowIndex][data[0].length - 1] = AnalysisUtils.computeMAD(slopes.get(rowIndex));
+            data[rowIndex][data[0].length - 1] = AnalysisUtils.scaleMAD(slopes.get(rowIndex));
         }
         String[] columnNames = new String[data[0].length];
         columnNames[0] = "Condition";
@@ -481,6 +510,7 @@ public class BulkCellAnalysisController {
             areaPreProcessor.computeDeltaArea(preProcessingResultsHolder);
             areaPreProcessor.computeAreaIncrease(preProcessingResultsHolder);
             areaPreProcessor.normalizeCorrectedArea(preProcessingResultsHolder);
+            areaPreProcessor.computeEuclideanDistances(preProcessingResultsHolder);
             map.put(plateCondition, preProcessingResultsHolder);
         }
     }
@@ -671,11 +701,9 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * Bar Renderer for Velocity Bar Charts
+     * Statistical Bar Renderer for Velocity Bar Charts
      */
     private class VelocityBarRenderer extends StatisticalBarRenderer {
-
-        private Paint[] colors = GuiUtils.getAvailableColors();
 
         @Override
         public Paint getItemPaint(final int row, final int column) {
@@ -683,7 +711,29 @@ public class BulkCellAnalysisController {
             int length = conditionName.length();
             CharSequence subSequence = conditionName.subSequence(10, length);
             int conditionIndex = Integer.parseInt(subSequence.toString());
-            return this.colors[conditionIndex];
+            return GuiUtils.getAvailableColors()[conditionIndex];
+        }
+    }
+
+    /**
+     * XY Line and Shape Renderer for Area Plot
+     */
+    private class AreaRenderer extends XYLineAndShapeRenderer {
+
+        @Override
+        public Paint getItemPaint(int series, int item) {
+            return GuiUtils.getAvailableColors()[series + 1];
+        }
+
+        @Override
+        public Stroke getSeriesStroke(int series) {
+            BasicStroke wideLine = new BasicStroke(1.3f);
+            return wideLine;
+        }
+
+        @Override
+        public boolean getItemShapeVisible(int series, int item) {
+            return false;
         }
     }
 }

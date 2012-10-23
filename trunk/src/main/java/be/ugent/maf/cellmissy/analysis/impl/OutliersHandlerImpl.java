@@ -20,6 +20,7 @@ public class OutliersHandlerImpl implements OutliersHandler {
 
     @Override
     public List<Double[]> handleOutliers(Double[] data) {
+        Double[] excludeNullValues = AnalysisUtils.excludeNullValues(data);
         List<Double[]> list = new ArrayList<>();
 
         //List for outliers
@@ -27,15 +28,16 @@ public class OutliersHandlerImpl implements OutliersHandler {
         //List for new corrected data
         List<Double> correctedData = new ArrayList<>();
         final double k = 1.5;
-        double IQR = AnalysisUtils.computeIQR(ArrayUtils.toPrimitive(data));
-        double firstQuartile = AnalysisUtils.computeFirstQuartile(ArrayUtils.toPrimitive(data));
-        double thirdQuartile = AnalysisUtils.computeThirdQuartile(ArrayUtils.toPrimitive(data));
-        for (int i = 0; i < data.length; i++) {
-            //check if value is outside the range: [Q1-k*IQR], [Q3+k*IQR]
-            if (data[i] < (firstQuartile - k * IQR) || data[i] > (thirdQuartile + k * IQR)) {
-                outliers.add(data[i]);
+        
+        double firstQuartile = AnalysisUtils.computeFirstQuartile(ArrayUtils.toPrimitive(excludeNullValues));
+        double thirdQuartile = AnalysisUtils.computeThirdQuartile(ArrayUtils.toPrimitive(excludeNullValues));
+        double IQR = thirdQuartile - firstQuartile;
+        for (int i = 0; i < excludeNullValues.length; i++) {
+            //check if value is greater than [Q3+k*IQR]
+            if (excludeNullValues[i] > (thirdQuartile + k * IQR)) {
+                outliers.add(excludeNullValues[i]);
             } else {
-                correctedData.add(data[i]);
+                correctedData.add(excludeNullValues[i]);
             }
         }
         //caste list to arrays and add arrays to the List

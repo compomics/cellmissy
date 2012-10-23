@@ -114,6 +114,10 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return globalViewPanel;
     }
 
+    public JTable getDistancesTable() {
+        return distancesTable;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -143,6 +147,9 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         tableInfoLabel = new javax.swing.JLabel();
         dataTablePanel = new javax.swing.JPanel();
         graphicsParentPanel = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        distancesTable = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         globalViewPanel = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
@@ -270,7 +277,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                         .addComponent(percentageAreaIncreaseButton)
                         .addGap(18, 18, 18)
                         .addComponent(correctedAreaButton)))
-                .addContainerGap(383, Short.MAX_VALUE))
+                .addContainerGap(99, Short.MAX_VALUE))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -318,9 +325,52 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 0.6;
         preProcessPanel.add(graphicsParentPanel, gridBagConstraints);
+
+        jPanel3.setMinimumSize(new java.awt.Dimension(20, 20));
+        jPanel3.setOpaque(false);
+        jPanel3.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        distancesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane4.setViewportView(distancesTable);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(17, Short.MAX_VALUE))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.6;
+        preProcessPanel.add(jPanel3, gridBagConstraints);
 
         jTabbedPane2.addTab("Pre-processing", preProcessPanel);
 
@@ -680,6 +730,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton correctedAreaButton;
     private javax.swing.JPanel dataTablePanel;
     private javax.swing.JRadioButton deltaAreaButton;
+    private javax.swing.JTable distancesTable;
     private javax.swing.JPanel experimentDataPanel;
     private javax.swing.JList experimentJList;
     private javax.swing.JButton globalViewButton;
@@ -692,11 +743,13 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
