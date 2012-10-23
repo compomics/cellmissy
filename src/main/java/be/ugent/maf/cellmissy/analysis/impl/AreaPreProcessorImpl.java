@@ -166,4 +166,24 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         }
         return correctedArea;
     }
+
+    @Override
+    public void computeEuclideanDistances(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
+        Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
+        Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
+
+        Double[][] distances = new Double[transposedArea.length][transposedArea.length];
+
+        for (int columnIndex = 0; columnIndex < transposedArea.length; columnIndex++) {
+            Double[] firstVector = transposedArea[columnIndex];
+            for (int seq = 0; seq < transposedArea.length; seq++) {
+                if (seq != columnIndex) {
+                    Double[] secondVector = transposedArea[seq];
+                    double computeEuclideanDistance = AnalysisUtils.computeEuclideanDistance(ArrayUtils.toPrimitive(firstVector), ArrayUtils.toPrimitive(secondVector));
+                    distances[columnIndex][seq] = computeEuclideanDistance / 10000; //rescale all distances
+                }
+            }
+        }
+        areaPreProcessingResultsHolder.setEuclideanDistances(distances);
+    }
 }

@@ -16,6 +16,7 @@ public class AreaPreProcessingResultsHolder {
     private Double[][] deltaArea;
     private Double[][] percentageAreaIncrease;
     private Double[][] normalizedCorrectedArea;
+    private Double[][] euclideanDistances;
 
     /**
      * setters and getters 
@@ -59,5 +60,13 @@ public class AreaPreProcessingResultsHolder {
 
     public void setPercentageAreaIncrease(Double[][] percentageAreaIncrease) {
         this.percentageAreaIncrease = percentageAreaIncrease;
+    }
+
+    public Double[][] getEuclideanDistances() {
+        return euclideanDistances;
+    }
+
+    public void setEuclideanDistances(Double[][] euclideanDistances) {
+        this.euclideanDistances = euclideanDistances;
     }
 }

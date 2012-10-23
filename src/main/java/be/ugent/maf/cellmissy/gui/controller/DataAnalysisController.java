@@ -46,7 +46,6 @@ import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -269,6 +268,7 @@ public class DataAnalysisController {
                     //show Area increases with time frames
                     bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
                     bulkCellAnalysisPanelController.showArea(plateConditionList.get(locationToIndex));
+                    bulkCellAnalysisPanelController.showEuclideanDistances(plateConditionList.get(locationToIndex));
                 }
             }
         });
@@ -374,6 +374,7 @@ public class DataAnalysisController {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     bulkCellAnalysisPanelController.setCorrectedAreaTableData(getSelectedCondition());
                     bulkCellAnalysisPanelController.showArea(getSelectedCondition());
+                    bulkCellAnalysisPanelController.showEuclideanDistances(getSelectedCondition());
                 }
             }
         });
@@ -400,13 +401,13 @@ public class DataAnalysisController {
                 linearModelSwingWorker.execute();
             }
         });
-        
+
         dataAnalysisPanel.getGlobalViewButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                bulkCellAnalysisPanelController.updateMap();
-                bulkCellAnalysisPanelController.showGlobalArea();
+                GlobalAreaSwingWorker globalAreaSwingWorker = new GlobalAreaSwingWorker();
+                globalAreaSwingWorker.execute();
             }
         });
     }
@@ -461,6 +462,24 @@ public class DataAnalysisController {
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             //show computation Results in Table
             bulkCellAnalysisPanelController.showLinearModelResults();
+        }
+    }
+
+    private class GlobalAreaSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            dataAnalysisPanel.getGlobalViewButton().setEnabled(false);
+            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            bulkCellAnalysisPanelController.updateMap();
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            //show computation Results in Table
+            bulkCellAnalysisPanelController.showGlobalArea();
         }
     }
 
