@@ -354,9 +354,6 @@ public class DataAnalysisController {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     //show %increments of area between two consecutive time frames and determine if a JUMP is present
                     bulkCellAnalysisPanelController.setAreaIncreaseTableData(getSelectedCondition());
-                    dataAnalysisPanel.getGraphicsParentPanel().remove(bulkCellAnalysisPanelController.getAreaChartPanel());
-                    dataAnalysisPanel.getGraphicsParentPanel().revalidate();
-                    dataAnalysisPanel.getGraphicsParentPanel().repaint();
                     //show density function for selected condition
                     bulkCellAnalysisPanelController.showRawDataDensityFunction(getSelectedCondition());
                     bulkCellAnalysisPanelController.showCorrectedDataDensityFunction(getSelectedCondition());

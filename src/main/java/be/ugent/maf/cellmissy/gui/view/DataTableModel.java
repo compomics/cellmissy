@@ -17,9 +17,9 @@ import javax.swing.table.AbstractTableModel;
  */
 public class DataTableModel extends AbstractTableModel {
 
-    protected PlateCondition plateCondition;
-    protected String columnNames[];
-    protected Double[][] data;
+    private PlateCondition plateCondition;
+    private String columnNames[];
+    private Double[][] data;
 
     /**
      * constructor

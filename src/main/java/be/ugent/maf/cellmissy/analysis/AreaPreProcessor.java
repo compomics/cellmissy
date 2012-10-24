@@ -50,5 +50,9 @@ public interface AreaPreProcessor {
      */
     public Double[] correctForOutliers(Double[] data);
     
+    /**
+     * 
+     * @param areaPreProcessingResultsHolder
+     */
     public void computeEuclideanDistances(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
 }
