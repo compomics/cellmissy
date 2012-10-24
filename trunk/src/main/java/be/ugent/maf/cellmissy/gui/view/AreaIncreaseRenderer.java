@@ -38,7 +38,7 @@ public class AreaIncreaseRenderer extends DefaultTableCellRenderer {
                 if (outliers.length != 0) {
                     for (Double outlier : outliers) {
                         if (areaIncrease.equals(outlier)) {
-                            setForeground(Color.red);
+                            setForeground(Color.red);                            
                             break;
                         } else {
                             setForeground(Color.black);

@@ -137,6 +137,7 @@ public class AnalysisUtils {
      * @return double
      */
     public static double computeFirstQuartile(double[] data) {
+
         DescriptiveStatistics dataStatistics = new DescriptiveStatistics();
         for (int i = 0; i < data.length; i++) {
             dataStatistics.addValue(data[i]);
@@ -155,6 +156,34 @@ public class AnalysisUtils {
             dataStatistics.addValue(data[i]);
         }
         return dataStatistics.getPercentile(75);
+    }
+
+    /**
+     * Estimate Quantiles
+     * @param data -- array of double (distribution)
+     * @param p -- percentile 
+     * @return a double
+     */
+    public static double estimateQuantile(double[] data, double p) {
+        double estimation = 0;
+        //get order statistics
+        Arrays.sort(data);
+        int dataSize = data.length;
+
+        double criterium = 1 + (p / 100) * (dataSize - 1);
+        int k = (int) criterium;
+        double d = criterium - k;
+
+        if (k > 0 && k < dataSize) {
+            estimation = data[k - 1] + d * (data[k] - data[k - 1]);
+        } else if (k == 0) {
+            estimation = data[0];
+        } else if (k == dataSize) {
+            estimation = data[dataSize - 1];
+        }
+
+        return estimation;
+
     }
 
     /**

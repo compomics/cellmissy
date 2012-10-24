@@ -20,24 +20,23 @@ public class OutliersHandlerImpl implements OutliersHandler {
 
     @Override
     public List<Double[]> handleOutliers(Double[] data) {
-        Double[] excludeNullValues = AnalysisUtils.excludeNullValues(data);
         List<Double[]> list = new ArrayList<>();
-
         //List for outliers
         List<Double> outliers = new ArrayList<>();
         //List for new corrected data
         List<Double> correctedData = new ArrayList<>();
         final double k = 1.5;
-        
-        double firstQuartile = AnalysisUtils.computeFirstQuartile(ArrayUtils.toPrimitive(excludeNullValues));
-        double thirdQuartile = AnalysisUtils.computeThirdQuartile(ArrayUtils.toPrimitive(excludeNullValues));
+
+        double firstQuartile = AnalysisUtils.estimateQuantile(ArrayUtils.toPrimitive(data), 25);
+        double thirdQuartile = AnalysisUtils.estimateQuantile(ArrayUtils.toPrimitive(data), 75);
         double IQR = thirdQuartile - firstQuartile;
-        for (int i = 0; i < excludeNullValues.length; i++) {
+
+        for (int i = 0; i < data.length; i++) {
             //check if value is greater than [Q3+k*IQR]
-            if (excludeNullValues[i] > (thirdQuartile + k * IQR)) {
-                outliers.add(excludeNullValues[i]);
+            if (data[i] > (thirdQuartile + k * IQR)) {
+                outliers.add(data[i]);
             } else {
-                correctedData.add(excludeNullValues[i]);
+                correctedData.add(data[i]);
             }
         }
         //caste list to arrays and add arrays to the List

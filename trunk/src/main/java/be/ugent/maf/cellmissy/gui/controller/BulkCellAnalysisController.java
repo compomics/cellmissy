@@ -14,6 +14,7 @@ import be.ugent.maf.cellmissy.gui.view.DataTableModel;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
 import be.ugent.maf.cellmissy.gui.view.AreaIncreaseRenderer;
+import be.ugent.maf.cellmissy.gui.view.EuclideanDistancesTableModel;
 import be.ugent.maf.cellmissy.gui.view.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.HeaderRenderer;
 import java.awt.BasicStroke;
@@ -26,9 +27,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -79,6 +83,7 @@ public class BulkCellAnalysisController {
     private ChartPanel areaChartPanel;
     private ChartPanel globalAreaChartPanel;
     private ChartPanel velocityChartPanel;
+    private JScrollPane tablePane;
     //parent controller
     @Autowired
     private DataAnalysisController dataAnalysisController;
@@ -287,28 +292,19 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * 
+     * Show Table with Euclidean Distances between all replicates
      * @param plateCondition 
      */
     public void showEuclideanDistances(PlateCondition plateCondition) {
         Double[][] euclideanDistances = map.get(plateCondition).getEuclideanDistances();
-        Object[][] data = new Object[euclideanDistances.length][euclideanDistances.length + 1];
-        for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-            data[rowIndex][0] = "" + (rowIndex + 1);
-            for (int columnIndex = 1; columnIndex < data.length + 1; columnIndex++) {
-                data[rowIndex][columnIndex] = euclideanDistances[rowIndex][columnIndex - 1];
-            }
-        }
-        String[] columnNames = new String[euclideanDistances.length + 1];
-        for (int i = 1; i < columnNames.length; i++) {
-            columnNames[i] = "" + i;
-        }
-        dataAnalysisController.getDataAnalysisPanel().getDistancesTable().setModel(new DefaultTableModel(data, columnNames));
+        JTable table = new JTable(new EuclideanDistancesTableModel(euclideanDistances));
+        tablePane.setViewportView(table);
         //set format renderer only from second column on
-        for (int i = 1; i < dataAnalysisController.getDataAnalysisPanel().getDistancesTable().getColumnCount(); i++) {
-            Double[] outliers = areaPreProcessor.computeOutliers(euclideanDistances[i - 1]);
-            dataAnalysisController.getDataAnalysisPanel().getDistancesTable().getColumnModel().getColumn(i).setCellRenderer(new AreaIncreaseRenderer(outliers, new DecimalFormat("0.00")));
+        for (int i = 1; i < table.getColumnCount() - 1; i++) {
+            Double[] outliers = areaPreProcessor.computeOutliers(AnalysisUtils.excludeNullValues(euclideanDistances[i - 1]));
+            table.getColumnModel().getColumn(i).setCellRenderer(new AreaIncreaseRenderer(outliers, new DecimalFormat("0.00")));
         }
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(tablePane, gridBagConstraints);
     }
 
     /**
@@ -354,7 +350,11 @@ public class BulkCellAnalysisController {
         Double[][] percentageAreaIncrease = map.get(plateCondition).getPercentageAreaIncrease();
         Double[][] percentageAreaTransposed = AnalysisUtils.transpose2DArray(percentageAreaIncrease);
         JFreeChart densityChart = showDensityFunction(percentageAreaTransposed, "Kernel Density Estimator");
-        densityChartPanel.setChart(densityChart);
+        densityChartPanel.setChart(densityChart);        
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(tablePane);
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(areaChartPanel);        
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().revalidate();
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
         dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(densityChartPanel, gridBagConstraints);
     }
 
@@ -380,6 +380,7 @@ public class BulkCellAnalysisController {
      * show Bar charts for area velocity
      */
     public void showVelocityBars() {
+        //@todo: add a row selection listener to the slopes table in order to update automatically the bar chart with velocities
         TableModel model = dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getModel();
         int[] selectedRows = dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getSelectedRows();
         int columnCount = model.getColumnCount();
@@ -579,6 +580,7 @@ public class BulkCellAnalysisController {
         globalAreaChartPanel.setOpaque(false);
         velocityChartPanel = new ChartPanel(null);
         velocityChartPanel.setOpaque(false);
+        tablePane = new JScrollPane();
         map = new LinkedHashMap<>();
     }
 
