@@ -17,10 +17,15 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class AreaIncreaseRenderer extends DefaultTableCellRenderer {
 
-    private Double[] outliers;
+    private boolean[][] outliers;
     private Format formatter;
 
-    public AreaIncreaseRenderer(Double[] outliers, Format formatter) {
+    /**
+     * Constructor
+     * @param outliers
+     * @param formatter 
+     */
+    public AreaIncreaseRenderer(boolean[][] outliers, Format formatter) {
         this.outliers = outliers;
         this.formatter = formatter;
     }
@@ -28,28 +33,19 @@ public class AreaIncreaseRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         super.getTableCellRendererComponent(table, value, false, false, row, column);
 
-        Double areaIncrease = (Double) value;
         if (isSelected) {
             setBackground(table.getSelectionBackground());
             setForeground(table.getSelectionForeground());
         } else {
             setBackground(table.getBackground());
-            if (areaIncrease != null) {
-                if (outliers.length != 0) {
-                    for (Double outlier : outliers) {
-                        if (areaIncrease.equals(outlier)) {
-                            setForeground(Color.red);                            
-                            break;
-                        } else {
-                            setForeground(Color.black);
-                        }
-                    }
-                } else {
-                    setForeground(Color.black);
-                }
+            if (outliers[row][column - 1]) {
+                setForeground(Color.red);
+            } else {
+                setForeground(Color.black);
             }
         }
-        
+
+
         if (value != null) {
             value = formatter.format(value);
         }

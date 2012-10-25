@@ -18,4 +18,19 @@ public interface OutliersHandler {
      * @return 
      */
     List<Double[]> handleOutliers(Double[] data);
+
+    /**
+     * 
+     * @param data
+     * @return 
+     */
+    boolean[][] detectOutliers(Double[][] data);
+    
+    /**
+     * 
+     * @param data
+     * @return 
+     */
+    Double[][] correctForOutliers(Double[][] data);
+    
 }

@@ -47,4 +47,55 @@ public class OutliersHandlerImpl implements OutliersHandler {
 
         return list;
     }
+
+    /**
+     * 
+     * @param data
+     * @return 
+     */
+    @Override
+    public boolean[][] detectOutliers(Double[][] data) {
+        Double[][] transposedData = AnalysisUtils.transpose2DArray(data);
+        boolean[][] booleanMatrix = new boolean[data.length][data[0].length];
+
+        for (int rowIndex = 0; rowIndex < transposedData.length; rowIndex++) {
+            Double[] row = transposedData[rowIndex];
+            Double[] excludeNullValues = AnalysisUtils.excludeNullValues(row);
+            final double k = 1.5;
+
+            double firstQuartile = AnalysisUtils.estimateQuantile(ArrayUtils.toPrimitive(excludeNullValues), 25);
+            double thirdQuartile = AnalysisUtils.estimateQuantile(ArrayUtils.toPrimitive(excludeNullValues), 75);
+            double IQR = thirdQuartile - firstQuartile;
+
+            for (int columnIndex = 0; columnIndex < row.length; columnIndex++) {
+                //check if value is greater than [Q3+k*IQR]
+                if (row[columnIndex] != null && row[columnIndex] > (thirdQuartile + k * IQR)) {
+                    booleanMatrix[columnIndex][rowIndex] = true;
+                }
+            }
+        }
+        return booleanMatrix;
+
+    }
+
+    /**
+     * 
+     * @param data
+     * @return 
+     */
+    @Override
+    public Double[][] correctForOutliers(Double[][] data) {
+        Double[][] correctedData = new Double[data.length][data[0].length];
+        boolean[][] outliers = detectOutliers(data);
+
+        for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < data[0].length; columnIndex++) {
+                if (!outliers[rowIndex][columnIndex]) {
+                    correctedData[rowIndex][columnIndex] = data[rowIndex][columnIndex];
+                }
+            }
+        }
+
+        return correctedData;
+    }
 }

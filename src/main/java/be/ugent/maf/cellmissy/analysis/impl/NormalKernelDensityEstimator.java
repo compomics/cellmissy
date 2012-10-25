@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.impl;
 
+import be.ugent.maf.cellmissy.analysis.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import com.google.common.primitives.Doubles;
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class NormalKernelDensityEstimator implements KernelDensityEstimator {
     public List estimateDensityFunction(Double[] data) {
         List<double[]> densityFunction = new ArrayList<>();
         //init the KDE with a normal generator
-        init(ArrayUtils.toPrimitive(data));
+        init(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(data)));
         //compute x values
         //array for random samples 
         double[] randomSamples = new double[n];

@@ -4,7 +4,6 @@
  */
 package be.ugent.maf.cellmissy.gui.view;
 
-import javax.swing.JCheckBox;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -13,11 +12,15 @@ import javax.swing.table.AbstractTableModel;
  */
 public class EuclideanDistancesTableModel extends AbstractTableModel {
 
-    public EuclideanDistancesTableModel(Double[][] dataToShow) {
-        initTable(dataToShow);
-    }
     private Object[][] data;
     private String columnNames[];
+    private boolean[][] outliers;
+    private static final double RATIO = 0.5;
+
+    public EuclideanDistancesTableModel(Double[][] dataToShow, boolean[][] outliers) {
+        this.outliers = outliers;
+        initTable(dataToShow);
+    }
 
     @Override
     public int getRowCount() {
@@ -51,11 +54,14 @@ public class EuclideanDistancesTableModel extends AbstractTableModel {
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         if (columnIndex == columnNames.length - 1) {
             return true;
-        }
-        return false;
+        } 
+        return super.isCellEditable(rowIndex, columnIndex);
     }
 
-    //initialize the table with data
+    /**
+     * 
+     * @param dataToShow 
+     */
     private void initTable(Double[][] dataToShow) {
         columnNames = new String[dataToShow.length + 2];
         columnNames[0] = "";
@@ -67,11 +73,30 @@ public class EuclideanDistancesTableModel extends AbstractTableModel {
         data = new Object[dataToShow.length][columnNames.length];
         for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
             data[rowIndex][0] = "" + (rowIndex + 1);
-            //////////////////////////////////////////////////////
-            data[rowIndex][columnNames.length - 1] = Boolean.TRUE;
+
             for (int columnIndex = 1; columnIndex < data.length + 1; columnIndex++) {
                 data[rowIndex][columnIndex] = dataToShow[rowIndex][columnIndex - 1];
             }
+
+            if (getOutlierRatio(rowIndex) >= RATIO) {
+                data[rowIndex][columnNames.length - 1] = true;
+            }
         }
+    }
+
+    /**
+     * 
+     * @param rowIndex
+     * @return 
+     */
+    private double getOutlierRatio(int rowIndex) {
+        boolean[] outliersPerRow = outliers[rowIndex];
+        int count = 0;
+        for (int i = 0; i < outliersPerRow.length; i++) {
+            if (outliersPerRow[i]) {
+                count++;
+            }
+        }
+        return (double) count / outliersPerRow.length;
     }
 }
