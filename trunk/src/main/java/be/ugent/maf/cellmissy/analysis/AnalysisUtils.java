@@ -38,14 +38,12 @@ public class AnalysisUtils {
      */
     public static Double[][] transpose2DArray(Double[][] data) {
         Double[][] transposed = new Double[data[0].length][data.length];
-        for (int i = 0; i < data[0].length; i++) {
-            List<Double> tempList = new ArrayList<>();
-            for (int j = 0; j < data.length; j++) {
-                if (data[j][i] != null) {
-                    tempList.add((double) data[j][i]);
+        for (int i = 0; i < data.length; i++) {
+            for (int j = 0; j < data[0].length; j++) {
+                if (data[i][j] != null) {
+                    transposed[j][i] = data[i][j];
                 }
             }
-            transposed[i] = tempList.toArray(new Double[tempList.size()]);
         }
         return transposed;
     }
@@ -183,7 +181,6 @@ public class AnalysisUtils {
         }
 
         return estimation;
-
     }
 
     /**
@@ -192,12 +189,13 @@ public class AnalysisUtils {
      * @param secondVector
      * @return 
      */
-    public static double computeEuclideanDistance(double[] firstVector, double[] secondVector) {
+    public static double computeEuclideanDistance(Double[] firstVector, Double[] secondVector) {
         double distance = 0;
-        int minLength = Math.min(firstVector.length, secondVector.length);
-        for (int i = 0; i < minLength; i++) {
-            double temp = Math.pow((firstVector[i] - secondVector[i]), 2);
-            distance += temp;
+        for (int i = 0; i < firstVector.length; i++) {
+            if (firstVector[i] != null && secondVector[i] != null) {
+                double temp = Math.pow((firstVector[i] - secondVector[i]), 2);
+                distance += temp;
+            }
         }
         return Math.sqrt(distance);
     }

@@ -29,20 +29,25 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
 
         for (int columnIndex = 0; columnIndex < areaData.length; columnIndex++) {
             Double[] data = areaData[columnIndex];
-            Double[][] temp = new Double[data.length][2];
-            for (int i = 0; i < temp.length; i++) {
-                temp[i][0] = timeFrames[i];
-                temp[i][1] = data[i];
+            List<double[]> tempList = new ArrayList<>(); 
+            for (int i = 0; i < data.length; i++) {
+                if (data[i] != null) {
+                    double[] temp = new double[2];
+                    temp[0] = timeFrames[i];
+                    temp[1] = data[i];
+                    tempList.add(temp);
+                }
             }
-            double slope = computeSlope(temp);
-            double coefficient = computeRCoefficient(temp);
+            double[][] tempArray = tempList.toArray(new double[tempList.size()][]);
+            double slope = computeSlope(tempArray);
+            double coefficient = computeRCoefficient(tempArray);
             slopes[columnIndex] = slope;
             coefficients[columnIndex] = coefficient;
         }
-        
+
         resultsList.add(slopes);
         resultsList.add(coefficients);
-        
+
         return resultsList;
     }
 
@@ -51,7 +56,7 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
      * @param data
      * @return 
      */
-    private double computeSlope(Double[][] data) {
+    private double computeSlope(double[][] data) {
         return linearRegressor.estimateLinearModel(data).get(0);
     }
 
@@ -60,7 +65,7 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
      * @param data
      * @return 
      */
-    private double computeRCoefficient(Double[][] data) {
+    private double computeRCoefficient(double[][] data) {
         return linearRegressor.estimateLinearModel(data).get(1);
     }
 }

@@ -18,19 +18,12 @@ import org.springframework.stereotype.Component;
 public class LinearRegressorImpl implements LinearRegressor {
 
     @Override
-    public List<Double> estimateLinearModel(Double[][] data) {
+    public List<Double> estimateLinearModel(double[][] data) {
 
-        //make primitive data from Double
-        double[][] doubleValues = new double[data.length][data[0].length];
-        for(int columnIndex = 0; columnIndex < data.length; columnIndex ++){
-            for(int rowIndex = 0; rowIndex < data[0].length; rowIndex ++){
-                doubleValues[columnIndex][rowIndex] = data[columnIndex][rowIndex].doubleValue();
-            }
-        }
         List<Double> linearModelResults = new ArrayList<>();
         //make a Simple Regression from input Data
         SimpleRegression simpleRegression = new SimpleRegression();
-        simpleRegression.addData(doubleValues);
+        simpleRegression.addData(data);
         //get Slopes and R2 coefficients fromt the Model
         linearModelResults.add(simpleRegression.getSlope());
         linearModelResults.add(simpleRegression.getRSquare());

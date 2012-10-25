@@ -35,8 +35,6 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
             for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
                 if (areaRawData[rowIndex][columnIndex] != null && areaRawData[rowIndex][columnIndex] - areaRawData[0][columnIndex] >= 0) {
                     normalizedArea[rowIndex][columnIndex] = areaRawData[rowIndex][columnIndex] - areaRawData[0][columnIndex];
-                } else {
-                    normalizedArea[rowIndex][columnIndex] = null;
                 }
             }
         }
@@ -174,16 +172,26 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
 
         Double[][] distances = new Double[transposedArea.length][transposedArea.length];
 
-        for (int columnIndex = 0; columnIndex < transposedArea.length; columnIndex++) {
-            Double[] firstVector = transposedArea[columnIndex];
+        for (int rowIndex = 0; rowIndex < transposedArea.length; rowIndex++) {
+            Double[] firstVector = transposedArea[rowIndex];
             for (int seq = 0; seq < transposedArea.length; seq++) {
-                if (seq != columnIndex) {
+                if (seq != rowIndex) {
                     Double[] secondVector = transposedArea[seq];
-                    double computeEuclideanDistance = AnalysisUtils.computeEuclideanDistance(ArrayUtils.toPrimitive(firstVector), ArrayUtils.toPrimitive(secondVector));
-                    distances[columnIndex][seq] = computeEuclideanDistance / 10000; //rescale all distances
+                    double computeEuclideanDistance = AnalysisUtils.computeEuclideanDistance(firstVector, secondVector);
+                    distances[rowIndex][seq] = computeEuclideanDistance / 10000; //rescale all distances
                 }
             }
         }
         areaPreProcessingResultsHolder.setEuclideanDistances(distances);
+    }
+
+    @Override
+    public boolean[][] detectOutliers(Double[][] data) {
+        return outliersHandler.detectOutliers(data);
+    }
+
+    @Override
+    public Double[][] correctForOutliers(Double[][] data) {
+        return outliersHandler.correctForOutliers(data);
     }
 }
