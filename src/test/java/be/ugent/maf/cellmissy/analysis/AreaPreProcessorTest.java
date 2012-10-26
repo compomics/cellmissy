@@ -51,24 +51,11 @@ public class AreaPreProcessorTest {
         assertTrue(estimatedValues.length == 4096);
 
         for (int i = 0; i < estimatedValues.length; i++) {
-            System.out.println("random sample: " + randomSamples[i]);
-            System.out.println("density value: " + estimatedValues[i]);
+            System.out.println("Random sample: " + randomSamples[i]);
+            System.out.println("Density value: " + estimatedValues[i]);
         }
 
-        System.out.println("mean random sample: " + AnalysisUtils.computeMean(randomSamples));
-        System.out.println("mean density function: " + AnalysisUtils.computeMean(estimatedValues));
-    }
-
-    /**
-     * Test Outliers Detection
-     */
-    @Test
-    public void testOutlierDetection() {
-        List<Double[]> handleOutliers = outliersHandler.handleOutliers(data);
-        Double[] ouliers = handleOutliers.get(0);
-        assertNotNull(ouliers);
-        if (ouliers.length == 0) {
-            assertEquals(data.length, handleOutliers.get(1).length);
-        }
+        System.out.println("Mean random sample: " + AnalysisUtils.computeMean(randomSamples));
+        System.out.println("Mean density function: " + AnalysisUtils.computeMean(estimatedValues));
     }
 }

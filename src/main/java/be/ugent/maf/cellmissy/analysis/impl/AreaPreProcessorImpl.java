@@ -8,7 +8,6 @@ import be.ugent.maf.cellmissy.analysis.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
 import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +22,6 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
     @Autowired
     private OutliersHandler outliersHandler;
 
-    /**
-     * Compute normalized area values: Area value at time frame zero is set to zero
-     * @param areaPreProcessingResultsHolder 
-     */
     @Override
     public void computeNormalizedArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
         Double[][] areaRawData = areaPreProcessingResultsHolder.getAreaRawData();
@@ -41,10 +36,6 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         areaPreProcessingResultsHolder.setNormalizedArea(normalizedArea);
     }
 
-    /**
-     * Compute Delta area values from time frame n to time frame n+1
-     * @param areaPreProcessingResultsHolder 
-     */
     @Override
     public void computeDeltaArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
         Double[][] areaRawData = areaPreProcessingResultsHolder.getAreaRawData();
@@ -59,10 +50,6 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         areaPreProcessingResultsHolder.setDeltaArea(deltaArea);
     }
 
-    /**
-     * Compute % Area increase between two time frames
-     * @param areaPreProcessingResultsHolder 
-     */
     @Override
     public void computeAreaIncrease(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
         Double[][] areaRawData = areaPreProcessingResultsHolder.getAreaRawData();
@@ -78,10 +65,6 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         areaPreProcessingResultsHolder.setPercentageAreaIncrease(percentageAreaIncrease);
     }
 
-    /**
-     * Normalize Corrected Area (Area value time frame zero is set to zero)
-     * @param areaPreProcessingResultsHolder 
-     */
     @Override
     public void normalizeCorrectedArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
         Double[][] correctedArea = computeCorrectedArea(areaPreProcessingResultsHolder);
@@ -96,24 +79,32 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         areaPreProcessingResultsHolder.setNormalizedCorrectedArea(normalizedCorrectedArea);
     }
 
-    /**
-     * using outliers handler, compute outliers for each set of data (each replicate)
-     * @param data
-     * @return a double array
-     */
     @Override
-    public Double[] computeOutliers(Double[] data) {
-        return outliersHandler.handleOutliers(data).get(0);
+    public void computeDistanceMatrix(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
+        Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
+        Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
+        Double[][] distanceMatrix = new Double[transposedArea.length][transposedArea.length];
+        for (int rowIndex = 0; rowIndex < transposedArea.length; rowIndex++) {
+            Double[] firstVector = transposedArea[rowIndex];
+            for (int seq = 0; seq < transposedArea.length; seq++) {
+                if (seq != rowIndex) {
+                    Double[] secondVector = transposedArea[seq];
+                    double computeEuclideanDistance = AnalysisUtils.computeEuclideanDistance(firstVector, secondVector);
+                    distanceMatrix[rowIndex][seq] = computeEuclideanDistance / 10000; //rescale all distances
+                }
+            }
+        }
+        areaPreProcessingResultsHolder.setDistanceMatrix(distanceMatrix);
     }
 
-    /**
-     * using outliers handler, compute corrected area (outliers are being kicked out from distribution)
-     * @param data
-     * @return corrected area
-     */
     @Override
-    public Double[] correctForOutliers(Double[] data) {
-        return outliersHandler.handleOutliers(data).get(1);
+    public boolean[][] detectOutliers(Double[][] data) {
+        return outliersHandler.detectOutliers(data);
+    }
+
+    @Override
+    public Double[][] correctForOutliers(Double[][] data) {
+        return outliersHandler.correctForOutliers(data);
     }
 
     /**
@@ -126,72 +117,22 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         Double[][] areaRawData = areaPreProcessingResultsHolder.getAreaRawData();
         Double[][] deltaArea = areaPreProcessingResultsHolder.getDeltaArea();
         Double[][] correctedArea = new Double[percentageAreaIncrease.length][percentageAreaIncrease[0].length];
-
-        //transpose percentage area increase 2D array
-        Double[][] transposed = new Double[percentageAreaIncrease[0].length][percentageAreaIncrease.length];
-        for (int i = 0; i < percentageAreaIncrease.length; i++) {
-            for (int j = 0; j < percentageAreaIncrease[0].length; j++) {
-                transposed[j][i] = percentageAreaIncrease[i][j];
-            }
-        }
-
-        for (int columnIndex = 0; columnIndex < transposed.length; columnIndex++) {
-            Double[] outliers = computeOutliers(AnalysisUtils.excludeNullValues(transposed[columnIndex]));
-
-            for (int rowIndex = 0; rowIndex < transposed[0].length; rowIndex++) {
-                if (outliers.length != 0) {
-                    //check first row (area increase is always null)
-                    if (rowIndex == 0) {
-                        correctedArea[rowIndex][columnIndex] = areaRawData[rowIndex][columnIndex];
-                        continue;
-                    }
-
-                    for (double outlier : outliers) {
-                        if (transposed[columnIndex][rowIndex] != null && transposed[columnIndex][rowIndex].doubleValue() == outlier) {
-                            //set area value back to previous one
-                            correctedArea[rowIndex][columnIndex] = correctedArea[rowIndex - 1][columnIndex];
-                            break;
-                        } else if (transposed[columnIndex][rowIndex] != null && transposed[columnIndex][rowIndex].doubleValue() != outlier) {
-                            if (deltaArea[rowIndex][columnIndex] != null) {
-                                correctedArea[rowIndex][columnIndex] = correctedArea[rowIndex - 1][columnIndex] + deltaArea[rowIndex][columnIndex];
-                            }
-                        }
-                    }
-                } else {
+        boolean[][] outliers = detectOutliers(percentageAreaIncrease);
+        for (int rowIndex = 0; rowIndex < outliers.length; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < outliers[0].length; columnIndex++) {
+                if (rowIndex == 0) {
                     correctedArea[rowIndex][columnIndex] = areaRawData[rowIndex][columnIndex];
+                    continue;
+                }
+                if (outliers[rowIndex][columnIndex]) {
+                    correctedArea[rowIndex][columnIndex] = correctedArea[rowIndex - 1][columnIndex];
+                } else {
+                    if (deltaArea[rowIndex][columnIndex] != null) {
+                        correctedArea[rowIndex][columnIndex] = correctedArea[rowIndex - 1][columnIndex] + deltaArea[rowIndex][columnIndex];
+                    }
                 }
             }
         }
         return correctedArea;
-    }
-
-    @Override
-    public void computeEuclideanDistances(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
-        Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
-        Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
-
-        Double[][] distances = new Double[transposedArea.length][transposedArea.length];
-
-        for (int rowIndex = 0; rowIndex < transposedArea.length; rowIndex++) {
-            Double[] firstVector = transposedArea[rowIndex];
-            for (int seq = 0; seq < transposedArea.length; seq++) {
-                if (seq != rowIndex) {
-                    Double[] secondVector = transposedArea[seq];
-                    double computeEuclideanDistance = AnalysisUtils.computeEuclideanDistance(firstVector, secondVector);
-                    distances[rowIndex][seq] = computeEuclideanDistance / 10000; //rescale all distances
-                }
-            }
-        }
-        areaPreProcessingResultsHolder.setEuclideanDistances(distances);
-    }
-
-    @Override
-    public boolean[][] detectOutliers(Double[][] data) {
-        return outliersHandler.detectOutliers(data);
-    }
-
-    @Override
-    public Double[][] correctForOutliers(Double[][] data) {
-        return outliersHandler.correctForOutliers(data);
     }
 }

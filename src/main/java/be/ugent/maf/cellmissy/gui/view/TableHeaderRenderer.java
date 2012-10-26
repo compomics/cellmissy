@@ -15,7 +15,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * Renderer for the JTable header
  * @author Paola Masuzzo
  */
-public class HeaderRenderer extends DefaultTableCellRenderer {
+public class TableHeaderRenderer extends DefaultTableCellRenderer {
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
@@ -23,11 +23,6 @@ public class HeaderRenderer extends DefaultTableCellRenderer {
         setHorizontalAlignment(SwingConstants.CENTER);
         setBorder(BorderFactory.createLineBorder(Color.black));
 
-        if (column == 0) {
-            setToolTipText("Time frames");
-        } else {
-            setToolTipText("Well " + (String) value);
-        }
         return this;
     }
 }
