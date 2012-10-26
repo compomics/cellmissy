@@ -4,30 +4,21 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import java.util.List;
-
 /**
- *
+ * This interface is taking care of outliers
  * @author Paola Masuzzo
  */
 public interface OutliersHandler {
 
     /**
-     * Handle the outliers
+     * Detect outliers
      * @param data
-     * @return 
-     */
-    List<Double[]> handleOutliers(Double[] data);
-
-    /**
-     * 
-     * @param data
-     * @return 
+     * @return a boolean matrix (true if data point is outlier, false if not)
      */
     boolean[][] detectOutliers(Double[][] data);
     
     /**
-     * 
+     * Making use of the boolean matrix, correct data set for outliers
      * @param data
      * @return 
      */

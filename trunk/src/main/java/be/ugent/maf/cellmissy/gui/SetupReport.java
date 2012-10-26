@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.gui;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
-import be.ugent.maf.cellmissy.gui.view.HeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.TableHeaderRenderer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -178,7 +178,7 @@ public class SetupReport {
         reportPanel.add(reportTable.getTableHeader(), BorderLayout.NORTH);
         reportTable.getTableHeader().setResizingAllowed(false);
         //set renderer for the header
-        reportTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
+        reportTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         reportPanel.add(reportTable, BorderLayout.CENTER);
 
         return reportPanel;

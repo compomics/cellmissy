@@ -27,8 +27,8 @@ public class AnalysisUtils {
                 list.add(value);
             }
         }
-        Double[] toArray = list.toArray(new Double[list.size()]);
-        return toArray;
+        Double[] newArray = list.toArray(new Double[list.size()]);
+        return newArray;
     }
 
     /**
@@ -38,10 +38,27 @@ public class AnalysisUtils {
      */
     public static Double[][] transpose2DArray(Double[][] data) {
         Double[][] transposed = new Double[data[0].length][data.length];
-        for (int i = 0; i < data.length; i++) {
-            for (int j = 0; j < data[0].length; j++) {
-                if (data[i][j] != null) {
-                    transposed[j][i] = data[i][j];
+        for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < data[0].length; columnIndex++) {
+                if (data[rowIndex][columnIndex] != null) {
+                    transposed[columnIndex][rowIndex] = data[rowIndex][columnIndex];
+                }
+            }
+        }
+        return transposed;
+    }
+
+    /**
+     * transpose a 2D array of boolean
+     * @param matrix
+     * @return 
+     */
+    public static boolean[][] transposeBooleanMatrix(boolean[][] matrix) {
+        boolean[][] transposed = new boolean[matrix.length][matrix[0].length];
+        for (int rowIndex = 0; rowIndex < matrix.length; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < matrix[0].length; columnIndex++) {
+                if(matrix[rowIndex][columnIndex]){
+                    transposed[columnIndex][rowIndex] = true;
                 }
             }
         }
@@ -130,34 +147,23 @@ public class AnalysisUtils {
     }
 
     /**
-     * Compute First Quartile
+     * This method is using the Descriptive Statistics Class from org.apache.commons.math to estimate sample quantiles
+     * Cfr algorithm type 6 in R, EXCEL, Minitab and SPSS.
      * @param data
-     * @return double
+     * @param p
+     * @return
      */
-    public static double computeFirstQuartile(double[] data) {
-
+    public static double computeQuantile(double[] data, double p) {
         DescriptiveStatistics dataStatistics = new DescriptiveStatistics();
         for (int i = 0; i < data.length; i++) {
             dataStatistics.addValue(data[i]);
         }
-        return dataStatistics.getPercentile(25);
+        return dataStatistics.getPercentile(p);
     }
 
     /**
-     * Compute Third Quartile
-     * @param data
-     * @return double
-     */
-    public static double computeThirdQuartile(double[] data) {
-        DescriptiveStatistics dataStatistics = new DescriptiveStatistics();
-        for (int i = 0; i < data.length; i++) {
-            dataStatistics.addValue(data[i]);
-        }
-        return dataStatistics.getPercentile(75);
-    }
-
-    /**
-     * Estimate Quantiles
+     * This method is estimating quantiles making use of algorithm type 7 in R
+     * This implementation is more sensitive, especially with small datasets (less than 15 data points)
      * @param data -- array of double (distribution)
      * @param p -- percentile 
      * @return a double
@@ -184,7 +190,7 @@ public class AnalysisUtils {
     }
 
     /**
-     * 
+     * Given two vectors A and B, this method is computing the Euclidean Distance between them
      * @param firstVector
      * @param secondVector
      * @return 

@@ -23,17 +23,17 @@ public class AreaAnalyzerTest {
 
     @Autowired
     private LinearRegressor linearRegressor;
-    private static Double[][] data;
+    private static double[][] data;
 
     /**
      * SetUp data for test
      */
     @BeforeClass
     public static void setUpData() {
-        data = new Double[100][100];
+        data = new double[100][100];
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[0].length; j++) {
-                data[i][j] = Double.valueOf(i + 1);
+                data[i][j] = (i + 1);
             }
         }
     }

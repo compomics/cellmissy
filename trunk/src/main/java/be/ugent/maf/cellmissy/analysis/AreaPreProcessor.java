@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.analysis;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
 
 /**
- * Interface for area data pre-processing: Normalize Area, Identify and Correct for Outliers
+ * Interface for area data pre-processing: Normalize Area, Identify and Correct for Outliers, compute Distances between replicates
  * @author Paola Masuzzo
  */
 public interface AreaPreProcessor {
@@ -35,28 +35,24 @@ public interface AreaPreProcessor {
      * @param areaPreProcessingResultsHolder 
      */
     public void normalizeCorrectedArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
-
-    /**
-     * Using the Outlier Interface, compute OUTLIERS values for a certain dataset
-     * @param data
-     * @return a double array containing Outliers
-     */
-    public Double[] computeOutliers(Double[] data);
-
-    /**
-     * Using the outlier interface, compute Corrected Values
-     * @param data
-     * @return new data corrected for outliers
-     */
-    public Double[] correctForOutliers(Double[] data);
     
     /**
-     * 
+     * For Normalized and Corrected Area, compute Euclidean Distances between one replicate and all the others
      * @param areaPreProcessingResultsHolder
      */
-    public void computeEuclideanDistances(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
+    public void computeDistanceMatrix(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
     
+    /**
+     * Detect outliers for a 2D array of double (one condition)
+     * @param data
+     * @return a matrix of Boolean (true if the data point is detected as an outlier, false if not)
+     */
     public boolean[][] detectOutliers(Double[][] data);
     
+    /**
+     * Making use of the detect outliers method, correct data set for outliers 
+     * @param data
+     * @return a matrix with corrected value
+     */
     public Double[][] correctForOutliers(Double[][] data);
 }

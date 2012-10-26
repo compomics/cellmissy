@@ -10,13 +10,14 @@ import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
-import be.ugent.maf.cellmissy.gui.view.DataTableModel;
+import be.ugent.maf.cellmissy.gui.view.ComputedDataTableModel;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
-import be.ugent.maf.cellmissy.gui.view.AreaIncreaseRenderer;
-import be.ugent.maf.cellmissy.gui.view.EuclideanDistancesTableModel;
+import be.ugent.maf.cellmissy.gui.view.CheckBoxOutliersRenderer;
+import be.ugent.maf.cellmissy.gui.view.OutliersRenderer;
+import be.ugent.maf.cellmissy.gui.view.DistanceMatrixTableModel;
 import be.ugent.maf.cellmissy.gui.view.FormatRenderer;
-import be.ugent.maf.cellmissy.gui.view.HeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.TableHeaderRenderer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -135,7 +136,7 @@ public class BulkCellAnalysisController {
      * public methods and classes
      */
     /**
-     * show table with TimeSteps results from CellMia analysis
+     * show table with TimeSteps results from CellMIA analysis (timeSteps fetched from DB)
      * this is populating the JTable in the ResultsImporter Panel
      */
     public void showTimeSteps() {
@@ -203,11 +204,12 @@ public class BulkCellAnalysisController {
      * @param plateCondition 
      */
     public void setDeltaAreaTableData(PlateCondition plateCondition) {
-        //NOTE that each time a new condition is selected, new slopes is passed to the model
-        dataTable.setModel(new DataTableModel(plateCondition, map.get(plateCondition).getDeltaArea(), timeFrames));
+        Double[][] deltaArea = map.get(plateCondition).getDeltaArea();
+        dataTable.setModel(new ComputedDataTableModel(plateCondition, deltaArea, timeFrames));
         dataTable.setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat("0.00")));
-        dataTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
+        dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("Area increments between time frame t(n) and t(n+1)");
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(tablePane);
     }
 
     /**
@@ -215,17 +217,17 @@ public class BulkCellAnalysisController {
      * @param plateCondition 
      */
     public void setAreaIncreaseTableData(PlateCondition plateCondition) {
-        //NOTE that each time a new condition is selected, new slopes is passed to the model
         Double[][] percentageAreaIncrease = map.get(plateCondition).getPercentageAreaIncrease();
-        dataTable.setModel(new DataTableModel(plateCondition, percentageAreaIncrease, timeFrames));
+        dataTable.setModel(new ComputedDataTableModel(plateCondition, percentageAreaIncrease, timeFrames));
+        //format first column
         dataTable.getColumnModel().getColumn(0).setCellRenderer(new FormatRenderer(new DecimalFormat("0.00")));
         boolean[][] outliers = areaPreProcessor.detectOutliers(percentageAreaIncrease);
-        //show outliers in RED
-        AreaIncreaseRenderer areaIncreaseRenderer = new AreaIncreaseRenderer(outliers, new DecimalFormat("0.00"));
+        //show outliers in red from second column on
+        OutliersRenderer outliersInATableRenderer = new OutliersRenderer(outliers, new DecimalFormat("0.00"));
         for (int i = 1; i < dataTable.getColumnCount(); i++) {
-            dataTable.getColumnModel().getColumn(i).setCellRenderer(areaIncreaseRenderer);
+            dataTable.getColumnModel().getColumn(i).setCellRenderer(outliersInATableRenderer);
         }
-        dataTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
+        dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("% area increases, distributions' outliers are shown in red");
     }
 
@@ -233,31 +235,32 @@ public class BulkCellAnalysisController {
      * for each replicate (well) of a certain selected condition, show normalized area values, close to time frames
      * @param plateCondition 
      */
-    public void setNormalizedAreaTableData(PlateCondition plateCondition) {        
-        //NOTE that each time a new condition is selected, new slopes is passed to the model
-        dataTable.setModel(new DataTableModel(plateCondition, map.get(plateCondition).getNormalizedArea(), timeFrames));
+    public void setNormalizedAreaTableData(PlateCondition plateCondition) {
+        Double[][] normalizedArea = map.get(plateCondition).getNormalizedArea();
+        dataTable.setModel(new ComputedDataTableModel(plateCondition, normalizedArea, timeFrames));
         dataTable.setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat("0.00")));
-        dataTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
+        dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("Area @time frame zero is set to 0.00");
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(tablePane);
     }
 
     /**
-     * for each replicate (well) of a certain selected condition, show normalized corrected area values, close to time frames
+     * for each replicate (well) of a certain selected condition, show normalized corrected (for outliers) area values, close to time frames
      * @param plateCondition 
      */
     public void setCorrectedAreaTableData(PlateCondition plateCondition) {
-        //set the model for the Correcte AreaTable
-        dataTable.setModel(new DataTableModel(plateCondition, map.get(plateCondition).getNormalizedCorrectedArea(), timeFrames));
+        Double[][] normalizedCorrectedArea = map.get(plateCondition).getNormalizedCorrectedArea();
+        dataTable.setModel(new ComputedDataTableModel(plateCondition, normalizedCorrectedArea, timeFrames));
         dataTable.setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat("0.00")));
-        dataTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
+        dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("Outliers are removed from distributions and new area values are shown");
     }
 
     /**
-     * Show Area for a certain condition selected
+     * Show Area Replicates for a certain condition selected
      * @param plateCondition 
      */
-    public void showArea(PlateCondition plateCondition) {
+    public void showAreaReplicates(PlateCondition plateCondition) {
         AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
         Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
         Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
@@ -289,15 +292,18 @@ public class BulkCellAnalysisController {
      * Show Table with Euclidean Distances between all replicates
      * @param plateCondition 
      */
-    public void showEuclideanDistances(PlateCondition plateCondition) {
-        Double[][] euclideanDistances = map.get(plateCondition).getEuclideanDistances();
-        boolean[][] outliers = areaPreProcessor.detectOutliers(euclideanDistances);
-        JTable table = new JTable(new EuclideanDistancesTableModel(euclideanDistances, outliers));
+    public void showDistanceMatrix(PlateCondition plateCondition) {
+        Double[][] distanceMatrix = map.get(plateCondition).getDistanceMatrix();
+        boolean[][] outliersMatrix = areaPreProcessor.detectOutliers(distanceMatrix);
+        boolean[][] transposedOutliersMatrix = AnalysisUtils.transposeBooleanMatrix(outliersMatrix);
+        JTable table = new JTable(new DistanceMatrixTableModel(distanceMatrix, outliersMatrix));
         tablePane.setViewportView(table);
-        AreaIncreaseRenderer areaIncreaseRenderer = new AreaIncreaseRenderer(outliers, new DecimalFormat("0.00"));
-        for (int i = 1; i < table.getColumnCount() - 1; i++) {
-            table.getColumnModel().getColumn(i).setCellRenderer(areaIncreaseRenderer);
+        tablePane.getViewport().setBackground(Color.white);
+        CheckBoxOutliersRenderer checkboxOutliersRenderer = new CheckBoxOutliersRenderer(transposedOutliersMatrix, new DecimalFormat("0.00"));
+        for (int i = 1; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(checkboxOutliersRenderer);
         }
+        table.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(tablePane, gridBagConstraints);
     }
 
@@ -317,8 +323,6 @@ public class BulkCellAnalysisController {
                 mads[columnIndex] = AnalysisUtils.scaleMAD(replicateValues);
                 yValues[columnIndex] = median;
             }
-            double medianMadPerCondition = AnalysisUtils.computeMedian(mads);
-            System.out.println("" + medianMadPerCondition);
             XYSeries xySeries = generateXYSeries(xValues, yValues);
             xySeries.setKey("Cond " + (dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1));
             xySeriesCollection.addSeries(xySeries);
@@ -442,7 +446,7 @@ public class BulkCellAnalysisController {
         for (int columnIndex = 1; columnIndex < dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumnCount(); columnIndex++) {
             dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(new DecimalFormat("0.00")));
         }
-        dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getTableHeader().setDefaultRenderer(new HeaderRenderer());
+        dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
     }
 
     /**
@@ -494,14 +498,14 @@ public class BulkCellAnalysisController {
      */
     public void updateMapWithCondition(PlateCondition plateCondition) {
         if (map.get(plateCondition) == null) {
-            AreaPreProcessingResultsHolder preProcessingResultsHolder = new AreaPreProcessingResultsHolder();
-            preProcessingResultsHolder.setAreaRawData(getAreaRawData(plateCondition));
-            areaPreProcessor.computeNormalizedArea(preProcessingResultsHolder);
-            areaPreProcessor.computeDeltaArea(preProcessingResultsHolder);
-            areaPreProcessor.computeAreaIncrease(preProcessingResultsHolder);
-            areaPreProcessor.normalizeCorrectedArea(preProcessingResultsHolder);
-            areaPreProcessor.computeEuclideanDistances(preProcessingResultsHolder);
-            map.put(plateCondition, preProcessingResultsHolder);
+            AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = new AreaPreProcessingResultsHolder();
+            areaPreProcessingResultsHolder.setAreaRawData(getAreaRawData(plateCondition));
+            areaPreProcessor.computeNormalizedArea(areaPreProcessingResultsHolder);
+            areaPreProcessor.computeDeltaArea(areaPreProcessingResultsHolder);
+            areaPreProcessor.computeAreaIncrease(areaPreProcessingResultsHolder);
+            areaPreProcessor.normalizeCorrectedArea(areaPreProcessingResultsHolder);
+            areaPreProcessor.computeDistanceMatrix(areaPreProcessingResultsHolder);
+            map.put(plateCondition, areaPreProcessingResultsHolder);
         }
     }
 

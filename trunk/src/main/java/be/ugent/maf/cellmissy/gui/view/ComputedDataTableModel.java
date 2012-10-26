@@ -15,7 +15,7 @@ import javax.swing.table.AbstractTableModel;
  * This class extends AbstractTableModel
  * @author Paola Masuzzo
  */
-public class DataTableModel extends AbstractTableModel {
+public class ComputedDataTableModel extends AbstractTableModel {
 
     private PlateCondition plateCondition;
     private String columnNames[];
@@ -27,7 +27,7 @@ public class DataTableModel extends AbstractTableModel {
      * @param dataToShow 
      * @param firstColumn 
      */
-    public DataTableModel(PlateCondition plateCondition, Double[][] dataToShow, double[] firstColumn) {
+    public ComputedDataTableModel(PlateCondition plateCondition, Double[][] dataToShow, double[] firstColumn) {
         this.plateCondition = plateCondition;
         initTable(firstColumn, dataToShow);
     }

@@ -267,8 +267,8 @@ public class DataAnalysisController {
                     bulkCellAnalysisPanelController.setCorrectedAreaTableData(plateConditionList.get(locationToIndex));
                     //show Area increases with time frames
                     bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
-                    bulkCellAnalysisPanelController.showArea(plateConditionList.get(locationToIndex));
-                    bulkCellAnalysisPanelController.showEuclideanDistances(plateConditionList.get(locationToIndex));
+                    bulkCellAnalysisPanelController.showAreaReplicates(plateConditionList.get(locationToIndex));
+                    bulkCellAnalysisPanelController.showDistanceMatrix(plateConditionList.get(locationToIndex));
                 }
             }
         });
@@ -370,8 +370,8 @@ public class DataAnalysisController {
             public void actionPerformed(ActionEvent e) {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     bulkCellAnalysisPanelController.setCorrectedAreaTableData(getSelectedCondition());
-                    bulkCellAnalysisPanelController.showArea(getSelectedCondition());
-                    bulkCellAnalysisPanelController.showEuclideanDistances(getSelectedCondition());
+                    bulkCellAnalysisPanelController.showAreaReplicates(getSelectedCondition());
+                    bulkCellAnalysisPanelController.showDistanceMatrix(getSelectedCondition());
                 }
             }
         });
@@ -462,6 +462,9 @@ public class DataAnalysisController {
         }
     }
 
+    /**
+     * 
+     */
     private class GlobalAreaSwingWorker extends SwingWorker<Void, Void> {
 
         @Override

@@ -15,7 +15,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * Cell renderer for Area Increase Table: outliers are highlighted in Table
  * @author Paola Masuzzo
  */
-public class AreaIncreaseRenderer extends DefaultTableCellRenderer {
+public class OutliersRenderer extends DefaultTableCellRenderer {
 
     private boolean[][] outliers;
     private Format formatter;
@@ -25,11 +25,15 @@ public class AreaIncreaseRenderer extends DefaultTableCellRenderer {
      * @param outliers
      * @param formatter 
      */
-    public AreaIncreaseRenderer(boolean[][] outliers, Format formatter) {
+    public OutliersRenderer(boolean[][] outliers, Format formatter) {
         this.outliers = outliers;
         this.formatter = formatter;
     }
 
+    /**
+     * Overriding this method, background of table is set to RED if data point has been detected as an outlier
+     */
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         super.getTableCellRendererComponent(table, value, false, false, row, column);
 
@@ -45,13 +49,12 @@ public class AreaIncreaseRenderer extends DefaultTableCellRenderer {
             }
         }
 
-
         if (value != null) {
             value = formatter.format(value);
         }
         setValue(value);
         setHorizontalAlignment(SwingConstants.RIGHT);
-        setOpaque(true);
+        
         return this;
     }
 }

@@ -16,20 +16,13 @@ public class AreaPreProcessingResultsHolder {
     private Double[][] deltaArea;
     private Double[][] percentageAreaIncrease;
     private Double[][] normalizedCorrectedArea;
-    private Double[][] euclideanDistances;
+    private Double[][] distanceMatrix;
+    private Double[][] cleanedDataset;
 
     /**
-     * setters and getters 
-     * @return 
+     * Getters and setters
+     * @return
      */
-    public Double[][] getNormalizedCorrectedArea() {
-        return normalizedCorrectedArea;
-    }
-
-    public void setNormalizedCorrectedArea(Double[][] normalizedCorrectedArea) {
-        this.normalizedCorrectedArea = normalizedCorrectedArea;
-    }
-
     public Double[][] getAreaRawData() {
         return areaRawData;
     }
@@ -46,12 +39,28 @@ public class AreaPreProcessingResultsHolder {
         this.deltaArea = deltaArea;
     }
 
+    public Double[][] getDistanceMatrix() {
+        return distanceMatrix;
+    }
+
+    public void setDistanceMatrix(Double[][] distanceMatrix) {
+        this.distanceMatrix = distanceMatrix;
+    }
+
     public Double[][] getNormalizedArea() {
         return normalizedArea;
     }
 
     public void setNormalizedArea(Double[][] normalizedArea) {
         this.normalizedArea = normalizedArea;
+    }
+
+    public Double[][] getNormalizedCorrectedArea() {
+        return normalizedCorrectedArea;
+    }
+
+    public void setNormalizedCorrectedArea(Double[][] normalizedCorrectedArea) {
+        this.normalizedCorrectedArea = normalizedCorrectedArea;
     }
 
     public Double[][] getPercentageAreaIncrease() {
@@ -62,11 +71,11 @@ public class AreaPreProcessingResultsHolder {
         this.percentageAreaIncrease = percentageAreaIncrease;
     }
 
-    public Double[][] getEuclideanDistances() {
-        return euclideanDistances;
+    public Double[][] getCleanedDataset() {
+        return cleanedDataset;
     }
 
-    public void setEuclideanDistances(Double[][] euclideanDistances) {
-        this.euclideanDistances = euclideanDistances;
+    public void setCleanedDataset(Double[][] cleanedDataset) {
+        this.cleanedDataset = cleanedDataset;
     }
 }
