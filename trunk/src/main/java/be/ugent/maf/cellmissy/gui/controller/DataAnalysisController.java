@@ -96,6 +96,7 @@ public class DataAnalysisController {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
+        //init child controller
         bulkCellAnalysisPanelController.init();
         initPlatePanel();
         initExperimentDataPanel();

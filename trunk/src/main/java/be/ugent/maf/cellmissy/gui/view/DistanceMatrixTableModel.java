@@ -19,6 +19,11 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
     //@todo: put this value in the properties file
     private static final double RATIO = 0.5;
 
+    /**
+     * Constructor (data to show in the table and boolean matrix for outliers detection)
+     * @param dataToShow
+     * @param outliers 
+     */
     public DistanceMatrixTableModel(Double[][] dataToShow, boolean[][] outliers) {
         this.outliers = outliers;
         initTable(dataToShow);
@@ -53,19 +58,20 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
         return columnNames[col];
     }
 
+    // isCellEditable and setValuesAt need BOTH to be overriden in order to keep track of changes that occour in the table model
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         if (rowIndex == data.length - 1 && columnIndex != 0) {
             return true;
+        } else {
+            return false;
         }
-        return super.isCellEditable(rowIndex, columnIndex);
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (rowIndex == data.length - 1) {
-            getStatus(columnIndex)[rowIndex] = aValue;
-        }
+        checkboxOutliers[columnIndex - 1] = (boolean) aValue;
+        fireTableCellUpdated(rowIndex, columnIndex);
     }
 
     /**
@@ -87,6 +93,7 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
                 data[rowIndex][0] = "" + (rowIndex + 1);
                 data[rowIndex][columnIndex] = dataToShow[rowIndex][columnIndex - 1];
             }
+            // if the outliers ratio is bigger than RATIO, chechBox is selected (true)
             if (getOutlierRatio(columnIndex - 1) >= RATIO) {
                 checkboxOutliers[columnIndex - 1] = true;
             }
@@ -94,16 +101,7 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
     }
 
     /**
-     * get Status of a check box
-     * @param columnIndex
-     * @return 
-     */
-    private Object[] getStatus(int columnIndex) {
-        return (Object[]) data[columnIndex];
-    }
-
-    /**
-     * Get the outlier Ratio per row: number of outliers divided by number of replicates
+     * Get the outlier Ratio per column: number of outliers divided by number of replicates
      * @param columnIndex
      * @return a double value for the ratio
      */
