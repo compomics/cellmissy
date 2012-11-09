@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 /**
- * This class is holding the results from the area pre-processing
+ * This class is holding the results from the area pre-processing step.
  * Normalized Area, Corrected Normalized Area, Delta Area, Percentage of Area Increase
  * @author Paola Masuzzo
  */
@@ -17,7 +17,7 @@ public class AreaPreProcessingResultsHolder {
     private Double[][] percentageAreaIncrease;
     private Double[][] normalizedCorrectedArea;
     private Double[][] distanceMatrix;
-    private Double[][] cleanedDataset;
+    //TODO create array of booleans initialise on null ////this is meant to know if the user changed normal distance matrix behavior and what columns are relevant
 
     /**
      * Getters and setters
@@ -69,13 +69,5 @@ public class AreaPreProcessingResultsHolder {
 
     public void setPercentageAreaIncrease(Double[][] percentageAreaIncrease) {
         this.percentageAreaIncrease = percentageAreaIncrease;
-    }
-
-    public Double[][] getCleanedDataset() {
-        return cleanedDataset;
-    }
-
-    public void setCleanedDataset(Double[][] cleanedDataset) {
-        this.cleanedDataset = cleanedDataset;
     }
 }

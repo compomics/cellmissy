@@ -13,25 +13,28 @@ import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.view.ComputedDataTableModel;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
+import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.gui.view.AreaPlotRenderer;
+import be.ugent.maf.cellmissy.gui.view.CheckBoxCellEditor;
 import be.ugent.maf.cellmissy.gui.view.CheckBoxOutliersRenderer;
 import be.ugent.maf.cellmissy.gui.view.OutliersRenderer;
 import be.ugent.maf.cellmissy.gui.view.DistanceMatrixTableModel;
 import be.ugent.maf.cellmissy.gui.view.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.VelocityBarRenderer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
-import java.awt.Paint;
-import java.awt.Stroke;
 import java.text.DecimalFormat;
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -52,9 +55,7 @@ import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.category.StatisticalBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.statistics.DefaultStatisticalCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -82,7 +83,7 @@ public class BulkCellAnalysisController {
     private ChartPanel areaChartPanel;
     private ChartPanel globalAreaChartPanel;
     private ChartPanel velocityChartPanel;
-    private JScrollPane tablePane;
+    private JScrollPane distanceMatrixScrollPane;
     //parent controller
     @Autowired
     private DataAnalysisController dataAnalysisController;
@@ -97,6 +98,7 @@ public class BulkCellAnalysisController {
     private GridBagConstraints gridBagConstraints;
     //array with time frames
     private double[] timeFrames;
+    private Format format;
 
     /**
      * initialize controller
@@ -195,7 +197,6 @@ public class BulkCellAnalysisController {
         bindingGroup.bind();
 
         dataAnalysisController.getDataAnalysisPanel().getTimeStepsTable().setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat()));
-        dataAnalysisController.getDataAnalysisPanel().getTimeStepsTable().setFillsViewportHeight(true);
         dataAnalysisController.getDataAnalysisPanel().getTimeStepsTableScrollPane().getViewport().setBackground(Color.white);
     }
 
@@ -206,10 +207,10 @@ public class BulkCellAnalysisController {
     public void setDeltaAreaTableData(PlateCondition plateCondition) {
         Double[][] deltaArea = map.get(plateCondition).getDeltaArea();
         dataTable.setModel(new ComputedDataTableModel(plateCondition, deltaArea, timeFrames));
-        dataTable.setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat("0.00")));
+        dataTable.setDefaultRenderer(Object.class, new FormatRenderer(format));
         dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("Area increments between time frame t(n) and t(n+1)");
-        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(tablePane);
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(distanceMatrixScrollPane);
     }
 
     /**
@@ -220,12 +221,12 @@ public class BulkCellAnalysisController {
         Double[][] percentageAreaIncrease = map.get(plateCondition).getPercentageAreaIncrease();
         dataTable.setModel(new ComputedDataTableModel(plateCondition, percentageAreaIncrease, timeFrames));
         //format first column
-        dataTable.getColumnModel().getColumn(0).setCellRenderer(new FormatRenderer(new DecimalFormat("0.00")));
+        dataTable.getColumnModel().getColumn(0).setCellRenderer(new FormatRenderer(format));
         boolean[][] outliers = areaPreProcessor.detectOutliers(percentageAreaIncrease);
         //show outliers in red from second column on
-        OutliersRenderer outliersInATableRenderer = new OutliersRenderer(outliers, new DecimalFormat("0.00"));
+        OutliersRenderer outliersRenderer = new OutliersRenderer(outliers, format);
         for (int i = 1; i < dataTable.getColumnCount(); i++) {
-            dataTable.getColumnModel().getColumn(i).setCellRenderer(outliersInATableRenderer);
+            dataTable.getColumnModel().getColumn(i).setCellRenderer(outliersRenderer);
         }
         dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("% area increases, distributions' outliers are shown in red");
@@ -238,10 +239,10 @@ public class BulkCellAnalysisController {
     public void setNormalizedAreaTableData(PlateCondition plateCondition) {
         Double[][] normalizedArea = map.get(plateCondition).getNormalizedArea();
         dataTable.setModel(new ComputedDataTableModel(plateCondition, normalizedArea, timeFrames));
-        dataTable.setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat("0.00")));
+        dataTable.setDefaultRenderer(Object.class, new FormatRenderer(format));
         dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("Area @time frame zero is set to 0.00");
-        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(tablePane);
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(distanceMatrixScrollPane);
     }
 
     /**
@@ -251,13 +252,13 @@ public class BulkCellAnalysisController {
     public void setCorrectedAreaTableData(PlateCondition plateCondition) {
         Double[][] normalizedCorrectedArea = map.get(plateCondition).getNormalizedCorrectedArea();
         dataTable.setModel(new ComputedDataTableModel(plateCondition, normalizedCorrectedArea, timeFrames));
-        dataTable.setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat("0.00")));
+        dataTable.setDefaultRenderer(Object.class, new FormatRenderer(format));
         dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         dataAnalysisController.getDataAnalysisPanel().getTableInfoLabel().setText("Outliers are removed from distributions and new area values are shown");
     }
 
     /**
-     * Show Area Replicates for a certain condition selected
+     * Show Area Replicates for a certain selected condition
      * @param plateCondition 
      */
     public void showAreaReplicates(PlateCondition plateCondition) {
@@ -266,12 +267,15 @@ public class BulkCellAnalysisController {
         Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
         double[] xValues = timeFrames;
-        for (int columnIndex = 0; columnIndex < transposedArea.length; columnIndex++) {
-            double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[columnIndex]));
+
+        List wellList = new ArrayList(plateCondition.getWellCollection());
+        for (int wellIndex = 0; wellIndex < wellList.size(); wellIndex++) {
+            double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[wellIndex]));
             XYSeries xySeries = generateXYSeries(xValues, yValues);
-            xySeries.setKey("Rep " + (columnIndex + 1));
+            xySeries.setKey("Rep " + (wellList.get(wellIndex)));
             xySeriesCollection.addSeries(xySeries);
         }
+
         JFreeChart areaChart = ChartFactory.createXYLineChart("Area", "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         areaChart.getXYPlot().setBackgroundPaint(Color.white);
         areaChart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
@@ -289,22 +293,30 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * Show Table with Euclidean Distances between all replicates
+     * Show Table with Euclidean Distances between all replicates for a certain selected condition
      * @param plateCondition 
      */
     public void showDistanceMatrix(PlateCondition plateCondition) {
+        distanceMatrixScrollPane.setBorder(BorderFactory.createTitledBorder("Distance Matrix"));
         Double[][] distanceMatrix = map.get(plateCondition).getDistanceMatrix();
         boolean[][] outliersMatrix = areaPreProcessor.detectOutliers(distanceMatrix);
         boolean[][] transposedOutliersMatrix = AnalysisUtils.transposeBooleanMatrix(outliersMatrix);
         JTable table = new JTable(new DistanceMatrixTableModel(distanceMatrix, outliersMatrix));
-        tablePane.setViewportView(table);
-        tablePane.getViewport().setBackground(Color.white);
-        CheckBoxOutliersRenderer checkboxOutliersRenderer = new CheckBoxOutliersRenderer(transposedOutliersMatrix, new DecimalFormat("0.00"));
+        // Renderer
+        CheckBoxOutliersRenderer checkBoxOutliersRenderer = new CheckBoxOutliersRenderer(transposedOutliersMatrix, format);
+        // Cell Editor
+        CheckBoxCellEditor checkBoxCellEditor = new CheckBoxCellEditor();
         for (int i = 1; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setCellRenderer(checkboxOutliersRenderer);
+            //@todo: cell editor is set for each column and row, but needs to be set only for last row
+            table.getColumnModel().getColumn(i).setCellEditor(checkBoxCellEditor);
+            table.getColumnModel().getColumn(i).setCellRenderer(checkBoxOutliersRenderer);
         }
         table.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
-        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(tablePane, gridBagConstraints);
+
+        distanceMatrixScrollPane.setViewportView(table);
+        distanceMatrixScrollPane.getViewport().setBackground(Color.white);
+        // Add Table to main panel
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(distanceMatrixScrollPane, gridBagConstraints);
     }
 
     /**
@@ -332,8 +344,8 @@ public class BulkCellAnalysisController {
         JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         globalAreaChart.getXYPlot().setBackgroundPaint(Color.white);
         globalAreaChart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
-        AreaRenderer areaRenderer = new AreaRenderer();
-        globalAreaChart.getXYPlot().setRenderer(areaRenderer);
+        AreaPlotRenderer areaPlotRenderer = new AreaPlotRenderer();
+        globalAreaChart.getXYPlot().setRenderer(areaPlotRenderer);
         globalAreaChartPanel.setChart(globalAreaChart);
         dataAnalysisController.getDataAnalysisPanel().getGlobalViewPanel().add(globalAreaChartPanel, gridBagConstraints);
         dataAnalysisController.getDataAnalysisPanel().getGlobalViewPanel().repaint();
@@ -349,7 +361,7 @@ public class BulkCellAnalysisController {
         Double[][] percentageAreaTransposed = AnalysisUtils.transpose2DArray(percentageAreaIncrease);
         JFreeChart densityChart = showDensityFunction(percentageAreaTransposed, "Kernel Density Estimator");
         densityChartPanel.setChart(densityChart);
-        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(tablePane);
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(distanceMatrixScrollPane);
         dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(areaChartPanel);
         dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().revalidate();
         dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
@@ -407,8 +419,8 @@ public class BulkCellAnalysisController {
         velocityPlot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
         GuiUtils.setShadowVisible(velocityChart, false);
         velocityChartPanel.setChart(velocityChart);
-        dataAnalysisController.getDataAnalysisPanel().getjPanel1().add(velocityChartPanel, gridBagConstraints);
-        dataAnalysisController.getDataAnalysisPanel().getjPanel1().repaint();
+        dataAnalysisController.getDataAnalysisPanel().getVelocityChartPanel().add(velocityChartPanel, gridBagConstraints);
+        dataAnalysisController.getDataAnalysisPanel().getVelocityChartPanel().repaint();
     }
 
     /**
@@ -444,7 +456,7 @@ public class BulkCellAnalysisController {
 
         //set format renderer only from second column on
         for (int columnIndex = 1; columnIndex < dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumnCount(); columnIndex++) {
-            dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(new DecimalFormat("0.00")));
+            dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(format));
         }
         dataAnalysisController.getDataAnalysisPanel().getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
     }
@@ -475,7 +487,7 @@ public class BulkCellAnalysisController {
     //compute time frames
     public void computeTimeFrames() {
         double[] timeFrames = new double[dataAnalysisController.getExperiment().getTimeFrames()];
-        for (int i = 0; i < dataAnalysisController.getExperiment().getTimeFrames(); i++) {
+        for (int i = 0; i < timeFrames.length; i++) {
             Double timeFrame = timeStepBindingList.get(i).getTimeStepSequence() * dataAnalysisController.getExperiment().getExperimentInterval();
             int intValue = timeFrame.intValue();
             timeFrames[i] = intValue;
@@ -525,10 +537,10 @@ public class BulkCellAnalysisController {
     /**
      * from time steps List to 2D array of Double
      * @param plateCondition
-     * @return 
+     * @return 2D array with area raw data
      */
     private Double[][] getAreaRawData(PlateCondition plateCondition) {
-        Double[][] areaRawData = new Double[dataAnalysisController.getExperiment().getTimeFrames()][plateCondition.getWellCollection().size()];
+        Double[][] areaRawData = new Double[timeFrames.length][plateCondition.getWellCollection().size()];
         int counter = 0;
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
@@ -544,9 +556,6 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * private methods and classes
-     */
-    /**
      * initialize main panel
      */
     private void initBulkCellAnalysisPanel() {
@@ -555,7 +564,7 @@ public class BulkCellAnalysisController {
         JScrollPane scrollPane = new JScrollPane(dataTable);
         //the table will take all the viewport height available
         dataTable.setFillsViewportHeight(true);
-        scrollPane.getViewport().setOpaque(false);
+        scrollPane.getViewport().setBackground(Color.white);
         //row selection must be false && column selection true to be able to select through columns
         dataTable.setColumnSelectionAllowed(true);
         dataTable.setRowSelectionAllowed(false);
@@ -573,8 +582,9 @@ public class BulkCellAnalysisController {
         globalAreaChartPanel.setOpaque(false);
         velocityChartPanel = new ChartPanel(null);
         velocityChartPanel.setOpaque(false);
-        tablePane = new JScrollPane();
+        distanceMatrixScrollPane = new JScrollPane();
         map = new LinkedHashMap<>();
+        format = new DecimalFormat("0.00");
     }
 
     /**
@@ -670,64 +680,5 @@ public class BulkCellAnalysisController {
             }
         }
         return maxY;
-    }
-
-    /**
-     * get primitive slopes from the table model 
-     * @return 
-     */
-    private double[][] getDataFromTableModel(JTable table) {
-        TableModel model = table.getModel();
-        int rowCount = model.getRowCount();
-        int columnCount = model.getColumnCount();
-
-        double[][] tableData = new double[columnCount - 1][];
-        for (int i = 1; i < columnCount; i++) {
-            List<Double> tempList = new ArrayList<>();
-            for (int j = 0; j < rowCount; j++) {
-                if (model.getValueAt(j, i) != null) {
-                    tempList.add((double) model.getValueAt(j, i));
-                }
-            }
-            tableData[i - 1] = ArrayUtils.toPrimitive(tempList.toArray(new Double[tempList.size()]));
-        }
-        return tableData;
-    }
-
-    /**
-     * Statistical Bar Renderer for Velocity Bar Charts
-     */
-    private class VelocityBarRenderer extends StatisticalBarRenderer {
-
-        @Override
-        public Paint getItemPaint(final int row, final int column) {
-            String conditionName = (String) getPlot().getDataset().getColumnKey(column);
-            int length = conditionName.length();
-            CharSequence subSequence = conditionName.subSequence(10, length);
-            int conditionIndex = Integer.parseInt(subSequence.toString());
-            return GuiUtils.getAvailableColors()[conditionIndex];
-        }
-    }
-
-    /**
-     * XY Line and Shape Renderer for Area Plot
-     */
-    private class AreaRenderer extends XYLineAndShapeRenderer {
-
-        @Override
-        public Paint getItemPaint(int series, int item) {
-            return GuiUtils.getAvailableColors()[series + 1];
-        }
-
-        @Override
-        public Stroke getSeriesStroke(int series) {
-            BasicStroke wideLine = new BasicStroke(1.3f);
-            return wideLine;
-        }
-
-        @Override
-        public boolean getItemShapeVisible(int series, int item) {
-            return false;
-        }
     }
 }

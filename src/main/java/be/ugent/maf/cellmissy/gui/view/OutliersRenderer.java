@@ -12,7 +12,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
- * Cell renderer for Area Increase Table: outliers are highlighted in Table
+ * Table Cell Renderer to highlight outliers data in a Table
  * @author Paola Masuzzo
  */
 public class OutliersRenderer extends DefaultTableCellRenderer {
