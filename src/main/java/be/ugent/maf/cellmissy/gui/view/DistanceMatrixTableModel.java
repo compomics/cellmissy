@@ -4,6 +4,9 @@
  */
 package be.ugent.maf.cellmissy.gui.view;
 
+import be.ugent.maf.cellmissy.entity.PlateCondition;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -16,17 +19,24 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
     private boolean[] checkboxOutliers;
     private String columnNames[];
     private boolean[][] outliers;
+    private PlateCondition plateCondition;
     //@todo: put this value in the properties file
     private static final double RATIO = 0.5;
 
     /**
      * Constructor (data to show in the table and boolean matrix for outliers detection)
      * @param dataToShow
-     * @param outliers 
+     * @param outliers
+     * @param plateCondition  
      */
-    public DistanceMatrixTableModel(Double[][] dataToShow, boolean[][] outliers) {
+    public DistanceMatrixTableModel(Double[][] dataToShow, boolean[][] outliers, PlateCondition plateCondition) {
+        this.plateCondition = plateCondition;
         this.outliers = outliers;
         initTable(dataToShow);
+    }
+
+    public boolean[] getCheckboxOutliers() {
+        return checkboxOutliers;
     }
 
     @Override
@@ -79,10 +89,12 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
      * @param dataToShow 
      */
     private void initTable(Double[][] dataToShow) {
+        // List of wells
+        List wellList = new ArrayList(plateCondition.getWellCollection());
         columnNames = new String[dataToShow.length + 1];
         columnNames[0] = "";
         for (int i = 1; i < columnNames.length; i++) {
-            columnNames[i] = "" + i;
+            columnNames[i] = "" + wellList.get(i - 1);
         }
 
         checkboxOutliers = new boolean[dataToShow.length];
@@ -90,7 +102,7 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
 
         for (int columnIndex = 1; columnIndex < data.length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < data.length - 1; rowIndex++) {
-                data[rowIndex][0] = "" + (rowIndex + 1);
+                data[rowIndex][0] = "" + wellList.get(rowIndex);
                 data[rowIndex][columnIndex] = dataToShow[rowIndex][columnIndex - 1];
             }
             // if the outliers ratio is bigger than RATIO, chechBox is selected (true)

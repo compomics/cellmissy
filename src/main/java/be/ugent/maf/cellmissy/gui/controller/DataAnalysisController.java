@@ -39,6 +39,8 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JList;
 import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -268,8 +270,8 @@ public class DataAnalysisController {
                     bulkCellAnalysisPanelController.setCorrectedAreaTableData(plateConditionList.get(locationToIndex));
                     //show Area increases with time frames
                     bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
-                    bulkCellAnalysisPanelController.showAreaReplicates(plateConditionList.get(locationToIndex));
                     bulkCellAnalysisPanelController.showDistanceMatrix(plateConditionList.get(locationToIndex));
+                    bulkCellAnalysisPanelController.showAreaReplicates(plateConditionList.get(locationToIndex));
                 }
             }
         });
@@ -363,7 +365,7 @@ public class DataAnalysisController {
         });
 
         /**
-         * show Corrected values for Area (corrected for JUMPS)
+         * show Corrected values for Area (corrected for outliers intra replicate)
          */
         dataAnalysisPanel.getCorrectedAreaButton().addActionListener(new ActionListener() {
 
@@ -371,8 +373,8 @@ public class DataAnalysisController {
             public void actionPerformed(ActionEvent e) {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     bulkCellAnalysisPanelController.setCorrectedAreaTableData(getSelectedCondition());
-                    bulkCellAnalysisPanelController.showAreaReplicates(getSelectedCondition());
                     bulkCellAnalysisPanelController.showDistanceMatrix(getSelectedCondition());
+                    bulkCellAnalysisPanelController.showAreaReplicates(getSelectedCondition());
                 }
             }
         });
@@ -400,12 +402,17 @@ public class DataAnalysisController {
             }
         });
 
-        dataAnalysisPanel.getGlobalViewButton().addActionListener(new ActionListener() {
+        /**
+         * click on Global View Panel and show Global Area increase among ALL conditions.
+         */
+        dataAnalysisPanel.getBulkTabbedPane().addChangeListener(new ChangeListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                GlobalAreaSwingWorker globalAreaSwingWorker = new GlobalAreaSwingWorker();
-                globalAreaSwingWorker.execute();
+            public void stateChanged(ChangeEvent e) {
+                if (dataAnalysisPanel.getBulkTabbedPane().getSelectedIndex() == 2) {
+                    GlobalAreaSwingWorker globalAreaSwingWorker = new GlobalAreaSwingWorker();
+                    globalAreaSwingWorker.execute();
+                }
             }
         });
     }
@@ -470,7 +477,6 @@ public class DataAnalysisController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            dataAnalysisPanel.getGlobalViewButton().setEnabled(false);
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             bulkCellAnalysisPanelController.updateMap();
             return null;
