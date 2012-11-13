@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
+import java.awt.Toolkit;
 import java.util.logging.Level;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -54,8 +55,10 @@ public class CellMissyController {
 
         //create main frame
         cellMissyFrame = new CellMissyFrame();
+        cellMissyFrame.setTitle("CellMissy");
+        cellMissyFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
         cellMissyFrame.setVisible(true);
-        
+
         //init sub views
         cellMissyFrame.getUserParentPanel().add(userManagementController.getUserPanel(), gridBagConstraints);
         cellMissyFrame.getExperimentSetupParentPanel().add(setupExperimentController.getSetupExperimentPanel(), gridBagConstraints);

@@ -8,6 +8,8 @@ import be.ugent.maf.cellmissy.analysis.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
 import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.gui.view.DistanceMatrixTableModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -134,5 +136,20 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
             }
         }
         return correctedArea;
+    }
+
+    /**
+     * Exclude Technical replicates (wells) from analysis
+     * @param areaPreProcessingResultsHolder
+     * @param plateCondition
+     */
+    @Override
+    public void excludeReplicates(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder, PlateCondition plateCondition) {
+        // detect outliers for distance matrix
+        Double[][] distanceMatrix = areaPreProcessingResultsHolder.getDistanceMatrix();
+        boolean[][] outliersMatrix = detectOutliers(distanceMatrix);
+        // create a new distance matrix table model and set boolean for results holder from the model
+        DistanceMatrixTableModel distanceMatrixTableModel = new DistanceMatrixTableModel(areaPreProcessingResultsHolder.getDistanceMatrix(), outliersMatrix, plateCondition);
+        areaPreProcessingResultsHolder.setExcludeReplicates(distanceMatrixTableModel.getCheckboxOutliers());
     }
 }

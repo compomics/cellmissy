@@ -31,6 +31,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -307,6 +309,13 @@ public class DataAnalysisController {
         buttonGroup.add(dataAnalysisPanel.getCorrectedAreaButton());
         //select as default first button (Delta Area values Computation)
         dataAnalysisPanel.getNormalizeAreaButton().setSelected(true);
+        //hide progress bar
+        dataAnalysisPanel.getjProgressBar1().setVisible(false);
+        dataAnalysisPanel.getjProgressBar1().setStringPainted(true);
+        // linear model results can not been shown before going to step: global view  plot
+        //@todo: maybe disable the entire tab and not two distinct buttons
+        dataAnalysisPanel.getLinearRegressionButton().setEnabled(false);
+        dataAnalysisPanel.getShowBarsButton().setEnabled(false);
 
         /**
          * Calculate Normalized Area (with corrected values for Jumps)
@@ -397,8 +406,8 @@ public class DataAnalysisController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                LinearModelSwingWorker linearModelSwingWorker = new LinearModelSwingWorker();
-                linearModelSwingWorker.execute();
+                dataAnalysisPanel.getLinearRegressionButton().setEnabled(false);
+                bulkCellAnalysisPanelController.showLinearModelResults();
             }
         });
 
@@ -410,8 +419,20 @@ public class DataAnalysisController {
             @Override
             public void stateChanged(ChangeEvent e) {
                 if (dataAnalysisPanel.getBulkTabbedPane().getSelectedIndex() == 2) {
-                    GlobalAreaSwingWorker globalAreaSwingWorker = new GlobalAreaSwingWorker();
-                    globalAreaSwingWorker.execute();
+                    // now linear model results can be computed and shown
+                    dataAnalysisPanel.getLinearRegressionButton().setEnabled(true);
+                    dataAnalysisPanel.getShowBarsButton().setEnabled(true);
+                    // check if progress bar is actually needed
+                    if (getNumberOfFetchedCondition() != plateConditionList.size()) {
+                        // set max value of progress bar to size of conditions' list
+                        dataAnalysisPanel.getjProgressBar1().setMaximum(plateConditionList.size());
+                        dataAnalysisPanel.getjProgressBar1().addPropertyChangeListener(new ProgressChangeListener());
+                        GlobalAreaSwingWorker globalAreaSwingWorker = new GlobalAreaSwingWorker();
+                        globalAreaSwingWorker.execute();
+                    } else {
+                        bulkCellAnalysisPanelController.showGlobalArea();
+                    }
+
                 }
             }
         });
@@ -449,44 +470,57 @@ public class DataAnalysisController {
     }
 
     /**
-     * Swing Worker for Linear Model
-     */
-    private class LinearModelSwingWorker extends SwingWorker<Void, Void> {
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            dataAnalysisPanel.getLinearRegressionButton().setEnabled(false);
-            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            //update Map in child controller
-            bulkCellAnalysisPanelController.updateMap();
-            return null;
-        }
-
-        @Override
-        protected void done() {
-            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            //show computation Results in Table
-            bulkCellAnalysisPanelController.showLinearModelResults();
-        }
-    }
-
-    /**
-     * 
+     * Swing Worker for Global Area Plot
      */
     private class GlobalAreaSwingWorker extends SwingWorker<Void, Void> {
 
         @Override
         protected Void doInBackground() throws Exception {
+            // show progress bar
+            dataAnalysisPanel.getjProgressBar1().setVisible(true);
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            bulkCellAnalysisPanelController.updateMap();
+            for (PlateCondition plateCondition : plateConditionList) {
+                if (bulkCellAnalysisPanelController.getMap().get(plateCondition) == null) {
+                    dataAnalysisPanel.getjProgressBar1().setValue(getNumberOfFetchedCondition());
+                    fetchCondition(plateCondition);
+                    bulkCellAnalysisPanelController.updateMapWithCondition(plateCondition);
+                }
+            }
+
             return null;
         }
 
         @Override
         protected void done() {
+            dataAnalysisPanel.getjProgressBar1().setVisible(false);
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            //show computation Results in Table
             bulkCellAnalysisPanelController.showGlobalArea();
+        }
+    }
+
+    /**
+     * Get the number of Conditions the user has already examined and looked at (all results were computed already)
+     * @return 
+     */
+    private int getNumberOfFetchedCondition() {
+        int progress = 0;
+        for (PlateCondition plateCondition : plateConditionList) {
+            if (bulkCellAnalysisPanelController.getMap().get(plateCondition) != null) {
+                progress++;
+            }
+        }
+        return progress;
+    }
+
+    private class ProgressChangeListener implements PropertyChangeListener {
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if ("progress".equals(evt.getPropertyName())) {
+                int progress = (Integer) evt.getNewValue();
+                dataAnalysisPanel.getjProgressBar1().setValue(progress);
+            }
+
         }
     }
 

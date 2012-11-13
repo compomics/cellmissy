@@ -4,6 +4,8 @@
  */
 package be.ugent.maf.cellmissy.entity;
 
+import be.ugent.maf.cellmissy.gui.view.DistanceMatrixTableModel;
+
 /**
  * This class is holding the results from the area pre-processing step.
  * Normalized Area, Corrected Normalized Area, Delta Area, Percentage of Area Increase

@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.analysis;
 
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 
 /**
  * Interface for area data pre-processing: Normalize Area, Identify and Correct for Outliers, compute Distances between replicates
@@ -42,6 +43,12 @@ public interface AreaPreProcessor {
      */
     public void computeDistanceMatrix(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
     
+    /**
+     * 
+     * @param areaPreProcessingResultsHolder
+     * @param plateCondition
+     */
+    public void excludeReplicates(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder, PlateCondition plateCondition);
     /**
      * Detect outliers for a 2D array of double (one condition)
      * @param data
