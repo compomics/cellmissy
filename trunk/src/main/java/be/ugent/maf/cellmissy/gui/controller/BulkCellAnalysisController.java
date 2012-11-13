@@ -24,10 +24,7 @@ import be.ugent.maf.cellmissy.gui.view.VelocityBarRenderer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
@@ -37,7 +34,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.AbstractCellEditor;
-import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -127,21 +123,25 @@ public class BulkCellAnalysisController {
     public ObservableList<TimeStep> getTimeStepBindingList() {
         return timeStepBindingList;
     }
-    
+
     public ChartPanel getDensityChartPanel() {
         return densityChartPanel;
     }
-    
+
     public ChartPanel getCorrectedDensityChartPanel() {
         return correctedDensityChartPanel;
     }
-    
+
     public ChartPanel getAreaChartPanel() {
         return areaChartPanel;
     }
-    
+
     public JTable getDataTable() {
         return dataTable;
+    }
+
+    public Map<PlateCondition, AreaPreProcessingResultsHolder> getMap() {
+        return map;
     }
 
     /**
@@ -162,50 +162,50 @@ public class BulkCellAnalysisController {
         columnBinding.setColumnName("Column");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
-        
+
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.well.rowNumber}"));
         columnBinding.setColumnName("Row");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
-        
+
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${timeStepSequence}"));
         columnBinding.setColumnName("Sequence");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
-        
+
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${area}"));
         columnBinding.setColumnName("Area " + "(\u00B5" + "m" + "\u00B2)");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        
+
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${centroidX}"));
         columnBinding.setColumnName("Centroid_x (pixels)");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        
+
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${centroidY}"));
         columnBinding.setColumnName("Centroid_y (pixels)");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        
+
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${eccentricity}"));
         columnBinding.setColumnName("Eccentricity");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        
+
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${majorAxis}"));
         columnBinding.setColumnName("Major Axis " + "(\u00B5" + "m)");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        
+
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${minorAxis}"));
         columnBinding.setColumnName("Minor Axis " + "(\u00B5" + "m)");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        
+
         bindingGroup.addBinding(timeStepsTableBinding);
         bindingGroup.bind();
-        
+
         dataAnalysisController.getDataAnalysisPanel().getTimeStepsTable().setDefaultRenderer(Object.class, new FormatRenderer(new DecimalFormat()));
         dataAnalysisController.getDataAnalysisPanel().getTimeStepsTableScrollPane().getViewport().setBackground(Color.white);
     }
@@ -312,12 +312,13 @@ public class BulkCellAnalysisController {
         dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().remove(correctedDensityChartPanel);
         dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().revalidate();
         dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().repaint();
-        GridBagConstraints specialGridBagConstraints = new GridBagConstraints();
-        specialGridBagConstraints.fill = GridBagConstraints.BOTH;
-        specialGridBagConstraints.weightx = 0.6;
-        specialGridBagConstraints.weighty = 1.0;
-        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(areaChartPanel, specialGridBagConstraints);
-        
+        // 2 rows height 
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.weightx = 0.6;
+//        gridBagConstraints.gridx = 1;
+//        gridBagConstraints.gridy = 0;
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(areaChartPanel, gridBagConstraints);
+
     }
 
     /**
@@ -325,7 +326,6 @@ public class BulkCellAnalysisController {
      * @param plateCondition 
      */
     public void showDistanceMatrix(PlateCondition plateCondition) {
-        distanceMatrixScrollPane.setBorder(BorderFactory.createTitledBorder("Distance Matrix"));
         AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
         Double[][] distanceMatrix = areaPreProcessingResultsHolder.getDistanceMatrix();
         boolean[][] outliersMatrix = areaPreProcessor.detectOutliers(distanceMatrix);
@@ -341,19 +341,20 @@ public class BulkCellAnalysisController {
             distanceMatrixTable.getColumnModel().getColumn(i).setCellEditor(checkBoxCellEditor);
             distanceMatrixTable.getColumnModel().getColumn(i).setCellRenderer(checkBoxOutliersRenderer);
         }
-        // Update boolean for results holder
-        areaPreProcessingResultsHolder.setExcludeReplicates(distanceMatrixTableModel.getCheckboxOutliers());
         distanceMatrixTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         // disable row selection
         distanceMatrixTable.setRowSelectionAllowed(false);
         distanceMatrixScrollPane.setViewportView(distanceMatrixTable);
         distanceMatrixScrollPane.getViewport().setBackground(Color.white);
-        // Add Table to main panel
-        GridBagConstraints specialGridBagConstraints = new GridBagConstraints();
-        specialGridBagConstraints.fill = GridBagConstraints.BOTH;
-        specialGridBagConstraints.weightx = 0.4;
-        specialGridBagConstraints.weighty = 1.0;
-        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(distanceMatrixScrollPane, specialGridBagConstraints);
+        // Add Table to main panel (left side)
+        gridBagConstraints.weightx = 0.4;
+//        // show table on top
+//        gridBagConstraints.gridy = 0;
+        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(distanceMatrixScrollPane, gridBagConstraints);
+//        // show info under the table
+//        gridBagConstraints.gridy = 1;
+//        JTextField infoTextField = new JTextField("Euclidean Distances between replicates shown on right panel.");
+//        dataAnalysisController.getDataAnalysisPanel().getGraphicsParentPanel().add(infoTextField, gridBagConstraints);
     }
 
     /**
@@ -367,15 +368,22 @@ public class BulkCellAnalysisController {
             //double[] mads = new double[timeFrames.length];
             AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
             Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
-//            boolean[] excludeReplicates = areaPreProcessingResultsHolder.getExcludeReplicates();
-//            for(int i = 0; i < excludeReplicates.length; i ++){
-//                if(!excludeReplicates[i]){
-//                    
-//                }
-//            }
+            // Boolean (?Exclude Replicates from dataset)
+            boolean[] excludeReplicates = areaPreProcessingResultsHolder.getExcludeReplicates();
+
+            //time frames direction
             for (int columnIndex = 0; columnIndex < normalizedCorrectedArea.length; columnIndex++) {
-                double[] replicateValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(normalizedCorrectedArea[columnIndex]));
-                double median = AnalysisUtils.computeMedian(replicateValues);
+                double[] allReplicateValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(normalizedCorrectedArea[columnIndex]));
+                List<Double> replicatesToIncludeList = new ArrayList();
+
+                for (int i = 0; i < allReplicateValues.length; i++) {
+                    // check if replicate has to be excluded from dataset
+                    if (!excludeReplicates[i]) {
+                        replicatesToIncludeList.add(allReplicateValues[i]);
+                    }
+                }
+                Double[] replicatesArray = replicatesToIncludeList.toArray(new Double[replicatesToIncludeList.size()]);
+                double median = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(replicatesArray));
                 //mads[columnIndex] = AnalysisUtils.scaleMAD(replicateValues);
                 yValues[columnIndex] = median;
             }
@@ -449,7 +457,7 @@ public class BulkCellAnalysisController {
         for (int i = 0; i < meanVelocities.length; i++) {
             dataset.add(meanVelocities[i], standardDeviations[i], "Conditions", "Condition " + (selectedRows[i] + 1));
         }
-        
+
         JFreeChart velocityChart = ChartFactory.createLineChart("", "", "Velocity " + "(\u00B5" + "m" + "\u00B2" + "\\min)", dataset, PlotOrientation.VERTICAL, true, true, false);
         CategoryPlot velocityPlot = velocityChart.getCategoryPlot();
         velocityPlot.setBackgroundPaint(Color.white);
@@ -459,7 +467,7 @@ public class BulkCellAnalysisController {
         velocityBarRenderer.setBaseItemLabelsVisible(true);
         velocityBarRenderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.INSIDE6, TextAnchor.BOTTOM_CENTER));
         velocityPlot.setRenderer(velocityBarRenderer);
-        
+
         velocityPlot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
         GuiUtils.setShadowVisible(velocityChart, false);
         velocityChartPanel.setChart(velocityChart);
@@ -560,23 +568,12 @@ public class BulkCellAnalysisController {
             areaPreProcessor.computeDeltaArea(areaPreProcessingResultsHolder);
             areaPreProcessor.computeAreaIncrease(areaPreProcessingResultsHolder);
             areaPreProcessor.normalizeCorrectedArea(areaPreProcessingResultsHolder);
+            // compute distance matrix
             areaPreProcessor.computeDistanceMatrix(areaPreProcessingResultsHolder);
-            // set boolean for technical replicates exclusion to null
-            //areaPreProcessingResultsHolder.setExcludeReplicates(null);
+            // exclude replicates
+            areaPreProcessor.excludeReplicates(areaPreProcessingResultsHolder, plateCondition);
+            // fill in map
             map.put(plateCondition, areaPreProcessingResultsHolder);
-        }
-    }
-
-    /**
-     * update map for every condition (even the ones that have not been selected by the user)
-     */
-    public void updateMap() {
-        for (PlateCondition plateCondition : dataAnalysisController.getPlateConditionList()) {
-            if (map.get(plateCondition) == null) {
-                dataAnalysisController.fetchCondition(plateCondition);
-                updateMapWithCondition(plateCondition);
-            }
-            
         }
     }
 
@@ -732,11 +729,11 @@ public class BulkCellAnalysisController {
      * I am keeping this Editor in this controller since it has to update area image
      */
     private final class CheckBoxCellEditor extends AbstractCellEditor implements TableCellEditor, ItemListener {
-        
+
         private JCheckBox checkBox;
         private final PlateCondition plateCondition;
         private DistanceMatrixTableModel distanceMatrixTableModel;
-        
+
         // Contructor
         public CheckBoxCellEditor(DistanceMatrixTableModel distanceMatrixTableModel, PlateCondition plateCondition) {
             this.plateCondition = plateCondition;
@@ -745,19 +742,19 @@ public class BulkCellAnalysisController {
             checkBox.setHorizontalAlignment(SwingConstants.RIGHT);
             checkBox.addItemListener(this);
         }
-        
+
         @Override
         public Object getCellEditorValue() {
             return Boolean.valueOf(checkBox.isSelected());
         }
-        
+
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             // if value is true, select checkbox, else do nothing
             checkBox.setSelected((boolean) value);
             return checkBox;
         }
-        
+
         @Override
         public void itemStateChanged(ItemEvent e) {
             fireEditingStopped();
@@ -788,7 +785,7 @@ public class BulkCellAnalysisController {
             }
         }
         return wellIndex;
-        
-        
+
+
     }
 }

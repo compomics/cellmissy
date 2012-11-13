@@ -17,7 +17,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 public class AreaPlotRenderer extends XYLineAndShapeRenderer {
 
     @Override
-    public Paint getItemPaint(int series, int item) {
+    public Paint getSeriesPaint(int series) {
         return GuiUtils.getAvailableColors()[series + 1];
     }
 

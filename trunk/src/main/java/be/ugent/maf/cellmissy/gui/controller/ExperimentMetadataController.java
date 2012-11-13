@@ -81,6 +81,7 @@ public class ExperimentMetadataController {
 
     /**
      * getters and setters
+     * @return 
      */
     public ExperimentMetadataPanel getLoadExperimentInfoPanel() {
         return experimentMetadataPanel;

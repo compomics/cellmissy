@@ -12,7 +12,6 @@ package be.ugent.maf.cellmissy.gui;
 
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import org.springframework.context.ApplicationContext;
 
