@@ -12,6 +12,7 @@ package be.ugent.maf.cellmissy.gui;
 
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+import java.awt.Color;
 import javax.swing.JPanel;
 import org.springframework.context.ApplicationContext;
 

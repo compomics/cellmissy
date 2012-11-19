@@ -4,8 +4,6 @@
  */
 package be.ugent.maf.cellmissy.entity;
 
-import be.ugent.maf.cellmissy.gui.view.DistanceMatrixTableModel;
-
 /**
  * This class is holding the results from the area pre-processing step.
  * Normalized Area, Corrected Normalized Area, Delta Area, Percentage of Area Increase
@@ -27,6 +25,10 @@ public class AreaPreProcessingResultsHolder {
     private Double[][] distanceMatrix;
     // Array of boolean: exclude (or not) a technical replicate (i.e. a well) from analysis
     private boolean[] excludeReplicates;
+    // user has changed standard behaviour of outliers detection?
+    private boolean userHadInteraction;
+    // data filtered from background noise
+    private Double[][] filteredAreaData;
 
     /**
      * Getters and setters
@@ -86,5 +88,21 @@ public class AreaPreProcessingResultsHolder {
 
     public void setExcludeReplicates(boolean[] excludeReplicates) {
         this.excludeReplicates = excludeReplicates;
+    }
+
+    public boolean isUserHadInteraction() {
+        return userHadInteraction;
+    }
+
+    public void setUserHadInteraction(boolean userHadInteraction) {
+        this.userHadInteraction = userHadInteraction;
+    }
+
+    public Double[][] getFilteredAreaData() {
+        return filteredAreaData;
+    }
+
+    public void setFilteredAreaData(Double[][] filteredAreaData) {
+        this.filteredAreaData = filteredAreaData;
     }
 }

@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.view;
 
+import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +21,9 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
     private String columnNames[];
     private boolean[][] outliers;
     private PlateCondition plateCondition;
-    //@todo: put this value in the properties file
-    private static final double RATIO = 0.5;
+    // set ratio for outliers detection
+    // if number of outliers is equal or greater than this ratio, technical replicate is marked as OUTLIER
+    private static final double OUTLIERS_DETECTION_RATIO = PropertiesConfigurationHolder.getInstance().getDouble("outliersDetectionRatio");
 
     /**
      * Constructor (data to show in the table and boolean matrix for outliers detection)
@@ -37,6 +39,10 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
 
     public boolean[] getCheckboxOutliers() {
         return checkboxOutliers;
+    }
+
+    public void setCheckboxOutliers(boolean[] checkboxOutliers) {
+        this.checkboxOutliers = checkboxOutliers;
     }
 
     @Override
@@ -106,7 +112,7 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
                 data[rowIndex][columnIndex] = dataToShow[rowIndex][columnIndex - 1];
             }
             // if the outliers ratio is bigger than RATIO, chechBox is selected (true)
-            if (getOutlierRatio(columnIndex - 1) >= RATIO) {
+            if (getOutlierRatio(columnIndex - 1) >= OUTLIERS_DETECTION_RATIO) {
                 checkboxOutliers[columnIndex - 1] = true;
             }
         }

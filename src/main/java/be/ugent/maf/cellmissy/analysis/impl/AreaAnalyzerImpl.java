@@ -22,29 +22,35 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
     private LinearRegressor linearRegressor;
 
     @Override
-    public List<double[]> computeSlopes(Double[][] areaData, double[] timeFrames) {
-        List<double[]> resultsList = new ArrayList<>();
-        double[] slopes = new double[areaData.length];
-        double[] coefficients = new double[areaData.length];
+    public List<Double[]> computeSlopes(Double[][] areaData, double[] timeFrames, boolean[] excludeReplicate) {
+        List<Double[]> resultsList = new ArrayList<>();
+        Double[] slopes = new Double[areaData.length];
+        Double[] coefficients = new Double[areaData.length];
 
         for (int columnIndex = 0; columnIndex < areaData.length; columnIndex++) {
-            Double[] data = areaData[columnIndex];
-            List<double[]> tempList = new ArrayList<>(); 
-            for (int i = 0; i < data.length; i++) {
-                if (data[i] != null) {
-                    double[] temp = new double[2];
-                    temp[0] = timeFrames[i];
-                    temp[1] = data[i];
-                    tempList.add(temp);
+            //check if replicate needs to be excluded from computation
+            if (!excludeReplicate[columnIndex]) {
+                Double[] data = areaData[columnIndex];
+                List<double[]> tempList = new ArrayList<>();
+                for (int i = 0; i < data.length; i++) {
+                    if (data[i] != null) {
+                        double[] temp = new double[2];
+                        temp[0] = timeFrames[i];
+                        temp[1] = data[i];
+                        tempList.add(temp);
+                    }
                 }
+                double[][] tempArray = tempList.toArray(new double[tempList.size()][]);
+                double slope = computeSlope(tempArray);
+                double coefficient = computeRCoefficient(tempArray);
+                slopes[columnIndex] = slope;
+                coefficients[columnIndex] = coefficient;
+            } else {
+                // set results to null if replicate is not taken into account 
+                slopes[columnIndex] = null;
+                coefficients[columnIndex] = null;
             }
-            double[][] tempArray = tempList.toArray(new double[tempList.size()][]);
-            double slope = computeSlope(tempArray);
-            double coefficient = computeRCoefficient(tempArray);
-            slopes[columnIndex] = slope;
-            coefficients[columnIndex] = coefficient;
         }
-
         resultsList.add(slopes);
         resultsList.add(coefficients);
 

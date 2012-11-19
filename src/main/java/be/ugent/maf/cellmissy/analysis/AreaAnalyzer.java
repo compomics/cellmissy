@@ -16,7 +16,8 @@ public interface AreaAnalyzer {
      * Compute the slopes from Linear Regression Model
      * @param areaData
      * @param timeFrames
+     * @param excludeReplicate 
      * @return an array with double values of slopes
      */
-    public List<double[]> computeSlopes(Double[][] areaData, double[] timeFrames);
+    public List<Double[]> computeSlopes(Double[][] areaData, double[] timeFrames, boolean[] excludeReplicate);
 }
