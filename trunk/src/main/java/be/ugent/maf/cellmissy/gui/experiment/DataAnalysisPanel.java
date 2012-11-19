@@ -88,8 +88,8 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return slopesTable;
     }
 
-    public JButton getShowBarsButton() {
-        return showBarsButton;
+    public JScrollPane getSlopesTableScrollPane() {
+        return slopesTableScrollPane;
     }
 
     public JPanel getVelocityChartPanel() {
@@ -104,10 +104,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return timeStepsTableScrollPane;
     }
 
-    public JButton getLinearRegressionButton() {
-        return linearRegressionButton;
-    }
-
     public JPanel getGlobalViewPanel() {
         return globalViewPanel;
     }
@@ -116,8 +112,8 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return bulkTabbedPane;
     }
 
-    public JProgressBar getjProgressBar1() {
-        return jProgressBar1;
+    public JProgressBar getFetchAllConditionsProgressBar() {
+        return fetchAllConditionsProgressBar;
     }
 
     /** This method is called from within the constructor to
@@ -153,11 +149,8 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         globalViewPanel = new javax.swing.JPanel();
         analysisPanel = new javax.swing.JPanel();
         tablePanel = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
-        jScrollPane6 = new javax.swing.JScrollPane();
+        slopesTableScrollPane = new javax.swing.JScrollPane();
         slopesTable = new javax.swing.JTable();
-        showBarsButton = new javax.swing.JButton();
-        linearRegressionButton = new javax.swing.JButton();
         velocityChartPanel = new javax.swing.JPanel();
         singleCellAnalysisPanel = new javax.swing.JPanel();
         leftPanel = new javax.swing.JPanel();
@@ -176,7 +169,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         conditionsList = new javax.swing.JList();
         bottomPanel = new javax.swing.JPanel();
         infolabel = new javax.swing.JLabel();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        fetchAllConditionsProgressBar = new javax.swing.JProgressBar();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -286,7 +279,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(deltaAreaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(percentageAreaIncreaseButton)
                     .addComponent(correctedAreaButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
                 .addComponent(tableInfoLabel)
                 .addContainerGap())
         );
@@ -325,6 +318,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.3;
         gridBagConstraints.weighty = 0.6;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
         preProcessPanel.add(graphicsParentPanel, gridBagConstraints);
 
         bulkTabbedPane.addTab("Pre-processing", preProcessPanel);
@@ -350,15 +344,10 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         analysisPanel.setOpaque(false);
         analysisPanel.setLayout(new java.awt.GridBagLayout());
 
+        tablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Linear Regression Model"));
         tablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
         tablePanel.setOpaque(false);
         tablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        tablePanel.setLayout(new java.awt.GridBagLayout());
-
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Linear Regression"));
-        jPanel4.setMinimumSize(new java.awt.Dimension(20, 20));
-        jPanel4.setOpaque(false);
-        jPanel4.setPreferredSize(new java.awt.Dimension(20, 20));
 
         slopesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -371,41 +360,25 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane6.setViewportView(slopesTable);
+        slopesTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        slopesTableScrollPane.setViewportView(slopesTable);
 
-        showBarsButton.setText("Show Bar Chart of Selection");
-
-        linearRegressionButton.setText("Compute Linear Regression");
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(483, Short.MAX_VALUE)
-                .addComponent(linearRegressionButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(showBarsButton))
-            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 819, Short.MAX_VALUE)
+        javax.swing.GroupLayout tablePanelLayout = new javax.swing.GroupLayout(tablePanel);
+        tablePanel.setLayout(tablePanelLayout);
+        tablePanelLayout.setHorizontalGroup(
+            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tablePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(slopesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 799, Short.MAX_VALUE)
+                .addContainerGap())
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(showBarsButton)
-                    .addComponent(linearRegressionButton)))
+        tablePanelLayout.setVerticalGroup(
+            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tablePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(slopesTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.5;
-        tablePanel.add(jPanel4, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -621,16 +594,16 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                 .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(1174, 1174, 1174))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addContainerGap(916, Short.MAX_VALUE)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31))
+                .addContainerGap(937, Short.MAX_VALUE)
+                .addComponent(fetchAllConditionsProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(fetchAllConditionsProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10))
         );
@@ -662,6 +635,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton deltaAreaButton;
     private javax.swing.JPanel experimentDataPanel;
     private javax.swing.JList experimentJList;
+    private javax.swing.JProgressBar fetchAllConditionsProgressBar;
     private javax.swing.JPanel globalAreaPanel;
     private javax.swing.JPanel globalViewPanel;
     private javax.swing.JPanel graphicsParentPanel;
@@ -670,15 +644,11 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel leftPanel;
-    private javax.swing.JButton linearRegressionButton;
     private javax.swing.JRadioButton normalizeAreaButton;
     private javax.swing.JRadioButton percentageAreaIncreaseButton;
     private javax.swing.JPanel preProcessPanel;
@@ -686,9 +656,9 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JPanel resultsImporterPanel;
     private javax.swing.JPanel rightPanel;
-    private javax.swing.JButton showBarsButton;
     private javax.swing.JPanel singleCellAnalysisPanel;
     private javax.swing.JTable slopesTable;
+    private javax.swing.JScrollPane slopesTableScrollPane;
     private javax.swing.JLabel tableInfoLabel;
     private javax.swing.JPanel tablePanel;
     private javax.swing.JTable timeStepsTable;

@@ -73,6 +73,7 @@ public class AssayEcmController {
 
     /**
      * getters and setters
+     * @return 
      */
     public ObservableList<MatrixDimension> getMatrixDimensionBindingList() {
         return matrixDimensionBindingList;

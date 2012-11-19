@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
+import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import com.google.common.primitives.Doubles;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,8 +36,10 @@ import umontreal.iro.lecuyer.rng.RandomStream;
 @Component("normalKernelDensityEstimator")
 public class NormalKernelDensityEstimator implements KernelDensityEstimator {
 
-    //N, estimation precision, is set to a default of 512, as in most KDE algorithms default values, i.e. R "density"function, OmicSoft, Matlab algorithm
-    private final int n = 4096;
+    //Number Of Density Points to be used
+    // This is a measurements of the estimation precision
+    // usually, this is set to a default of 512, as in most KDE algorithms default values, i.e. R "density"function, OmicSoft, Matlab algorithms.
+    private final int NUMBER_OF_DENSITY_POINTS = PropertiesConfigurationHolder.getInstance().getInt("numberOFDensityPoints");
     private EmpiricalDist empiricalDist;
     private KernelDensityGen kernelDensityGen;
 
@@ -62,8 +65,8 @@ public class NormalKernelDensityEstimator implements KernelDensityEstimator {
         init(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(data)));
         //compute x values
         //array for random samples 
-        double[] randomSamples = new double[n];
-        for (int i = 0; i < n; i++) {
+        double[] randomSamples = new double[NUMBER_OF_DENSITY_POINTS];
+        for (int i = 0; i < NUMBER_OF_DENSITY_POINTS; i++) {
             double nextDouble = kernelDensityGen.nextDouble();
             randomSamples[i] = nextDouble;
         }

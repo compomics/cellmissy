@@ -44,11 +44,12 @@ public interface AreaPreProcessor {
     public void computeDistanceMatrix(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
     
     /**
-     * 
+     * Check if a replicate can be considered as an Outlier
      * @param areaPreProcessingResultsHolder
      * @param plateCondition
      */
     public void excludeReplicates(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder, PlateCondition plateCondition);
+    
     /**
      * Detect outliers for a 2D array of double (one condition)
      * @param data
@@ -62,4 +63,11 @@ public interface AreaPreProcessor {
      * @return a matrix with corrected value
      */
     public Double[][] correctForOutliers(Double[][] data);
+    
+    /**
+     * 
+     * @param areaPreProcessingResultsHolder
+     * @param noiseThreshold
+     */
+    public void filterBackgroundNoise(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder, double noiseThreshold);
 }
