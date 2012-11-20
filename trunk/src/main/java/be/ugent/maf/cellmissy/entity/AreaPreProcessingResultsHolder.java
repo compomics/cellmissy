@@ -97,12 +97,4 @@ public class AreaPreProcessingResultsHolder {
     public void setUserHadInteraction(boolean userHadInteraction) {
         this.userHadInteraction = userHadInteraction;
     }
-
-    public Double[][] getFilteredAreaData() {
-        return filteredAreaData;
-    }
-
-    public void setFilteredAreaData(Double[][] filteredAreaData) {
-        this.filteredAreaData = filteredAreaData;
-    }
 }

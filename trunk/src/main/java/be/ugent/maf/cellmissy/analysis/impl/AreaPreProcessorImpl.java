@@ -152,24 +152,4 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         DistanceMatrixTableModel distanceMatrixTableModel = new DistanceMatrixTableModel(areaPreProcessingResultsHolder.getDistanceMatrix(), outliersMatrix, plateCondition);
         areaPreProcessingResultsHolder.setExcludeReplicates(distanceMatrixTableModel.getCheckboxOutliers());
     }
-
-    @Override
-    public void filterBackgroundNoise(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder, double noiseThreshold) {
-        Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
-        Double[][] filteredAreaData = new Double[normalizedCorrectedArea.length][normalizedCorrectedArea[0].length];
-
-        for (int columnIndex = 0; columnIndex < normalizedCorrectedArea[0].length; columnIndex++) {
-            for (int rowIndex = 1; rowIndex < normalizedCorrectedArea.length; rowIndex++) {
-                if (normalizedCorrectedArea[rowIndex][columnIndex] != null) {
-                    if ((normalizedCorrectedArea[rowIndex][columnIndex] - normalizedCorrectedArea[rowIndex - 1][columnIndex]) / 10000 > noiseThreshold) {
-                        filteredAreaData[rowIndex][columnIndex] = normalizedCorrectedArea[rowIndex][columnIndex];
-                    } else {
-                        filteredAreaData[rowIndex][columnIndex] = null;
-                    }
-                }
-            }
-        }
-
-        areaPreProcessingResultsHolder.setFilteredAreaData(filteredAreaData);
-    }
 }

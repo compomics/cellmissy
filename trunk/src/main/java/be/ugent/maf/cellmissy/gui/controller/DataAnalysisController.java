@@ -266,20 +266,24 @@ public class DataAnalysisController {
         });
 
         // when an algorithm is selected, map needs to be init again and then filled in with new results
+        // cache needs to be cleaned
         dataAnalysisPanel.getAlgorithmComboBox().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 bulkCellAnalysisPanelController.initMap();
+                bulkCellAnalysisPanelController.emptyDensityFunctionCache();
             }
         });
 
         // same for imaging type: map needs to be initialized again and fill in with new results
+        // cache needs to be cleaned
         dataAnalysisPanel.getImagingTypeComboBox().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 bulkCellAnalysisPanelController.initMap();
+                bulkCellAnalysisPanelController.emptyDensityFunctionCache();
             }
         });
 
@@ -325,9 +329,11 @@ public class DataAnalysisController {
                     //set charts panel to null
                     bulkCellAnalysisPanelController.getDensityChartPanel().setChart(null);
                     bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
-//                    bulkCellAnalysisPanelController.getAreaChartPanel().setChart(null);
+                    bulkCellAnalysisPanelController.getRawDataChartPanel().setChart(null);
                     dataAnalysisPanel.getGraphicsParentPanel().remove(bulkCellAnalysisPanelController.getDistanceMatrixPanel());
                     dataAnalysisPanel.repaint();
+                    // show raw data plot (replicates)
+                    bulkCellAnalysisPanelController.plotRawDataReplicates(getSelectedCondition());
                 }
             }
         });
@@ -343,7 +349,8 @@ public class DataAnalysisController {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     //show delta area values in the table            
                     bulkCellAnalysisPanelController.showDeltaAreaInTable(getSelectedCondition());
-                    //set charts panel to null
+                    // remove other panels
+                    bulkCellAnalysisPanelController.getRawDataChartPanel().setChart(null);
                     bulkCellAnalysisPanelController.getDensityChartPanel().setChart(null);
                     bulkCellAnalysisPanelController.getCorrectedDensityChartPanel().setChart(null);
                     dataAnalysisPanel.getGraphicsParentPanel().remove(bulkCellAnalysisPanelController.getDistanceMatrixPanel());
@@ -363,7 +370,10 @@ public class DataAnalysisController {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
                     //show %increments of area between two consecutive time frames and determine if a JUMP is present
                     bulkCellAnalysisPanelController.showAreaIncreaseInTable(getSelectedCondition());
+                    // remove other panels
+                    bulkCellAnalysisPanelController.getRawDataChartPanel().setChart(null);
                     dataAnalysisPanel.getGraphicsParentPanel().remove(bulkCellAnalysisPanelController.getDistanceMatrixPanel());
+                    dataAnalysisPanel.getGraphicsParentPanel().revalidate();
                     dataAnalysisPanel.getGraphicsParentPanel().repaint();
                     //show density function for selected condition
                     bulkCellAnalysisPanelController.plotDensityFunctions(getSelectedCondition());
@@ -381,10 +391,18 @@ public class DataAnalysisController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (dataAnalysisPanel.getConditionsList().getSelectedIndex() != -1) {
+                    // show values in table
                     bulkCellAnalysisPanelController.showCorrectedAreaInTable(getSelectedCondition());
+                    // remove other panels
+                    dataAnalysisPanel.getGraphicsParentPanel().remove(bulkCellAnalysisPanelController.getRawDataChartPanel());
+                    dataAnalysisPanel.getGraphicsParentPanel().remove(bulkCellAnalysisPanelController.getDensityChartPanel());
+                    dataAnalysisPanel.getGraphicsParentPanel().remove(bulkCellAnalysisPanelController.getCorrectedDensityChartPanel());
+                    dataAnalysisPanel.getGraphicsParentPanel().revalidate();
+                    dataAnalysisPanel.getGraphicsParentPanel().repaint();
+                    // show distance matrix
                     bulkCellAnalysisPanelController.showDistanceMatrix(getSelectedCondition());
-                    Double[][] normalizedCorrectedArea = bulkCellAnalysisPanelController.getMap().get(getSelectedCondition()).getNormalizedCorrectedArea();
-                    bulkCellAnalysisPanelController.plotAreaReplicates(normalizedCorrectedArea, getSelectedCondition());
+                    // plot corrected area (all replicates for selected condition)
+                    bulkCellAnalysisPanelController.plotCorrectedAreaReplicates(getSelectedCondition());
                 }
             }
         });
@@ -563,6 +581,8 @@ public class DataAnalysisController {
             if (dataAnalysisPanel.getNormalizeAreaButton().isSelected()) {
                 //for current selected condition show normalized area values together with time frames
                 bulkCellAnalysisPanelController.showNormalizedAreaInTable(getSelectedCondition());
+                // show raw data plot (all replicates)
+                bulkCellAnalysisPanelController.plotRawDataReplicates(getSelectedCondition());
             }
             if (dataAnalysisPanel.getDeltaAreaButton().isSelected()) {
                 //for current selected condition show delta area values 
@@ -579,8 +599,7 @@ public class DataAnalysisController {
                 bulkCellAnalysisPanelController.showCorrectedAreaInTable(getSelectedCondition());
                 //show Area increases with time frames
                 bulkCellAnalysisPanelController.showDistanceMatrix(getSelectedCondition());
-                Double[][] normalizedCorrectedArea = bulkCellAnalysisPanelController.getMap().get(getSelectedCondition()).getNormalizedCorrectedArea();
-                bulkCellAnalysisPanelController.plotAreaReplicates(normalizedCorrectedArea, getSelectedCondition());
+                bulkCellAnalysisPanelController.plotCorrectedAreaReplicates(getSelectedCondition());
             }
             // set cursor back to default and show all computed results for selected condition
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
