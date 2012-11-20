@@ -32,7 +32,7 @@
       <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
       <property name="hibernate.connection.password" value="11050alex"/>
       <property name="hibernate.connection.url" value="jdbc:mysql://muppet03.ugent.be:3306/lims"/>
-      <property name="hibernate.hbm2dll.auto" value="create"/>
+      <property name="hibernate.hbm2dll.auto" value="update"/>
     </properties>
   </persistence-unit>
 </persistence>

@@ -10,9 +10,9 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment;
 
-import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JRadioButton;
 
 /**
  *
@@ -28,12 +28,16 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
         return replicatesAreaChartParentPanel;
     }
 
-    public JTextField getBackgroundNoiseThreshold() {
-        return backgroundNoiseThreshold;
+    public JRadioButton getFullTimeFramesRadioButton() {
+        return fullTimeFramesRadioButton;
     }
 
-    public JButton getBackgroundNoiseButton() {
-        return backgroundNoiseButton;
+    public JRadioButton getSubsetTimeFramesRadioButton() {
+        return subsetTimeFramesRadioButton;
+    }
+
+    public JComboBox getTimeFramesComboBox() {
+        return timeFramesComboBox;
     }
 
     /** Creates new form DistanceMatrixPanel */
@@ -53,8 +57,10 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
 
         distanceMatrixTableParentPanel = new javax.swing.JPanel();
         backgroundNoiseFilterPanel = new javax.swing.JPanel();
-        backgroundNoiseButton = new javax.swing.JButton();
-        backgroundNoiseThreshold = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        fullTimeFramesRadioButton = new javax.swing.JRadioButton();
+        subsetTimeFramesRadioButton = new javax.swing.JRadioButton();
+        timeFramesComboBox = new javax.swing.JComboBox();
         replicatesAreaChartParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -77,27 +83,44 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
         backgroundNoiseFilterPanel.setOpaque(false);
         backgroundNoiseFilterPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        backgroundNoiseButton.setText("Filter Background");
+        jLabel1.setText("Select Time Frames");
+
+        fullTimeFramesRadioButton.setText("full ");
+        fullTimeFramesRadioButton.setOpaque(false);
+
+        subsetTimeFramesRadioButton.setText("subset");
+        subsetTimeFramesRadioButton.setOpaque(false);
+
+        timeFramesComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        timeFramesComboBox.setOpaque(false);
 
         javax.swing.GroupLayout backgroundNoiseFilterPanelLayout = new javax.swing.GroupLayout(backgroundNoiseFilterPanel);
         backgroundNoiseFilterPanel.setLayout(backgroundNoiseFilterPanelLayout);
         backgroundNoiseFilterPanelLayout.setHorizontalGroup(
             backgroundNoiseFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundNoiseFilterPanelLayout.createSequentialGroup()
-                .addContainerGap(31, Short.MAX_VALUE)
-                .addComponent(backgroundNoiseThreshold, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(backgroundNoiseButton)
-                .addContainerGap())
+            .addGroup(backgroundNoiseFilterPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(backgroundNoiseFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(backgroundNoiseFilterPanelLayout.createSequentialGroup()
+                        .addComponent(fullTimeFramesRadioButton)
+                        .addGap(37, 37, 37)
+                        .addComponent(subsetTimeFramesRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(timeFramesComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1))
+                .addContainerGap(126, Short.MAX_VALUE))
         );
         backgroundNoiseFilterPanelLayout.setVerticalGroup(
             backgroundNoiseFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundNoiseFilterPanelLayout.createSequentialGroup()
-                .addGap(58, 58, 58)
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
                 .addGroup(backgroundNoiseFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(backgroundNoiseButton)
-                    .addComponent(backgroundNoiseThreshold, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(70, Short.MAX_VALUE))
+                    .addComponent(fullTimeFramesRadioButton)
+                    .addComponent(subsetTimeFramesRadioButton)
+                    .addComponent(timeFramesComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(82, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -124,10 +147,12 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
         add(replicatesAreaChartParentPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton backgroundNoiseButton;
     private javax.swing.JPanel backgroundNoiseFilterPanel;
-    private javax.swing.JTextField backgroundNoiseThreshold;
     private javax.swing.JPanel distanceMatrixTableParentPanel;
+    private javax.swing.JRadioButton fullTimeFramesRadioButton;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel replicatesAreaChartParentPanel;
+    private javax.swing.JRadioButton subsetTimeFramesRadioButton;
+    private javax.swing.JComboBox timeFramesComboBox;
     // End of variables declaration//GEN-END:variables
 }
