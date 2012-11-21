@@ -64,9 +64,27 @@ public interface WellService extends GenericService<Well, Long> {
 
     /**
      * fetch time steps collection only for some wellHasImagingTypes
+     * according to selected algorithm and imaging type 
      * @param well
      * @param AlgorithmId
      * @param ImagingTpeId  
      */
     void fetchTimeSteps(Well well, Integer AlgorithmId, Integer ImagingTpeId);
+
+    /**
+     * fetch tracks collection only for some wellHasImagingTypes
+     * according to selected algorithm and imaging type 
+     * @param well
+     * @param AlgorithmId
+     * @param ImagingTpeId
+     */
+    void fetchTracks(Well well, Integer AlgorithmId, Integer ImagingTpeId);
+
+    /**
+     * 
+     * @param well
+     * @param AlgorithmId
+     * @param ImagingTpeId
+     */
+    void fetchTrackPoints(Well well, Integer AlgorithmId, Integer ImagingTpeId);
 }

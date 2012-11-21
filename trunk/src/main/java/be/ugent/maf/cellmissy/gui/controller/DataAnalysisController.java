@@ -134,10 +134,10 @@ public class DataAnalysisController {
     }
 
     /**
-     * This method is fetching time steps objects from DB and its updating TimeStepList according to Plate Condition passed as an argument
+     * Fetch time steps objects from DB, update TimeStepList according to Plate Condition
      * @param plateCondition 
      */
-    public void fetchConditionTimeSteps(PlateCondition plateCondition) {
+    private void fetchConditionTimeSteps(PlateCondition plateCondition) {
         List<Well> wellList = new ArrayList<>();
         wellList.addAll(plateCondition.getWellCollection());
         //fetch time steps for each well
@@ -147,6 +147,21 @@ public class DataAnalysisController {
         }
         //update timeStep List for current selected condition
         updateTimeStepsList(plateCondition);
+    }
+
+    /**
+     * Fetch Tracks Objects from DB 
+     * @param plateCondition 
+     */
+    private void fetchConditionTracks(PlateCondition plateCondition) {
+        List<Well> wellList = new ArrayList<>();
+        wellList.addAll(plateCondition.getWellCollection());
+       
+        for (int i = 0; i < wellList.size(); i++) {
+            //fetch time step collection for the wellhasimagingtype of interest
+            wellService.fetchTracks(wellList.get(i), algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
+            wellService.fetchTrackPoints(wellList.get(i), algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
+        }
     }
 
     /**
@@ -399,6 +414,7 @@ public class DataAnalysisController {
                     dataAnalysisPanel.getGraphicsParentPanel().remove(bulkCellAnalysisPanelController.getCorrectedDensityChartPanel());
                     dataAnalysisPanel.getGraphicsParentPanel().revalidate();
                     dataAnalysisPanel.getGraphicsParentPanel().repaint();
+                    bulkCellAnalysisPanelController.initDistanceMatrixPanel();
                     // show distance matrix
                     bulkCellAnalysisPanelController.showDistanceMatrix(getSelectedCondition());
                     // plot corrected area (all replicates for selected condition)
