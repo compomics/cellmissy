@@ -60,6 +60,7 @@ public class UserManagementController {
 
     /**
      * getters and setters 
+     * @return 
      */
     public UserPanel getUserPanel() {
         return userPanel;

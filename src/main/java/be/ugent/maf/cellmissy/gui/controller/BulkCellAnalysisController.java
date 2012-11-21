@@ -539,6 +539,7 @@ public class BulkCellAnalysisController {
 
     /**
      * Compute time frames from time steps list
+     * This method only needs to be called one, since time frames is set for the entire experiment
      */
     public void computeTimeFrames() {
         double[] timeFrames = new double[dataAnalysisController.getExperiment().getTimeFrames()];
@@ -775,7 +776,8 @@ public class BulkCellAnalysisController {
         timeStepsBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
 
         //init subview
-        initDistanceMatrixPanel();
+        distanceMatrixPanel = new DistanceMatrixPanel();
+
         //init chart panels
         rawDataChartPanel = new ChartPanel(null);
         rawDataChartPanel.setOpaque(false);
@@ -936,43 +938,50 @@ public class BulkCellAnalysisController {
     /**
      * initialize Matrix Panel with action listeners and everything
      */
-    private void initDistanceMatrixPanel() {
-        distanceMatrixPanel = new DistanceMatrixPanel();
+    public void initDistanceMatrixPanel() {
+
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(distanceMatrixPanel.getFullTimeFramesRadioButton());
         buttonGroup.add(distanceMatrixPanel.getSubsetTimeFramesRadioButton());
         // select by default option for entire time frame set
         distanceMatrixPanel.getFullTimeFramesRadioButton().setSelected(true);
-        
-        // this has to be init after the time frames are computed or a null pointer exception will be thrown
-        timeFramesBindingList = ObservableCollections.observableList(Arrays.asList(ArrayUtils.toObject(timeFrames))); 
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, distanceMatrixPanel.getTimeFramesComboBox());
+
+        timeFramesBindingList = ObservableCollections.observableList(Arrays.asList(ArrayUtils.toObject(timeFrames)));
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, distanceMatrixPanel.getFirstTimeFrameComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, distanceMatrixPanel.getLastTimeFrameComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
-        
+
         // ?user chooses full time
         distanceMatrixPanel.getFullTimeFramesRadioButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                
             }
         });
-        
-        // ?or user chooses only a subset of time frames
+
+        // ?or user chooses only a subset of time frames : this might not be needed  in the end
         distanceMatrixPanel.getSubsetTimeFramesRadioButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                
             }
         });
-        
-        distanceMatrixPanel.getTimeFramesComboBox().addActionListener(new ActionListener() {
+
+        // first time frame is selected
+        distanceMatrixPanel.getFirstTimeFrameComboBox().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+            }
+        });
+
+        // last time frame is selected
+        distanceMatrixPanel.getLastTimeFrameComboBox().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
             }
         });
     }

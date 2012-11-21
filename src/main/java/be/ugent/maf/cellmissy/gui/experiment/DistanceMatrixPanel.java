@@ -36,8 +36,12 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
         return subsetTimeFramesRadioButton;
     }
 
-    public JComboBox getTimeFramesComboBox() {
-        return timeFramesComboBox;
+    public JComboBox getFirstTimeFrameComboBox() {
+        return firstTimeFrameComboBox;
+    }
+
+    public JComboBox getLastTimeFrameComboBox() {
+        return lastTimeFrameComboBox;
     }
 
     /** Creates new form DistanceMatrixPanel */
@@ -60,7 +64,8 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         fullTimeFramesRadioButton = new javax.swing.JRadioButton();
         subsetTimeFramesRadioButton = new javax.swing.JRadioButton();
-        timeFramesComboBox = new javax.swing.JComboBox();
+        firstTimeFrameComboBox = new javax.swing.JComboBox();
+        lastTimeFrameComboBox = new javax.swing.JComboBox();
         replicatesAreaChartParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -76,13 +81,14 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.4;
-        gridBagConstraints.weighty = 0.5;
+        gridBagConstraints.weighty = 0.45;
         add(distanceMatrixTableParentPanel, gridBagConstraints);
 
         backgroundNoiseFilterPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         backgroundNoiseFilterPanel.setOpaque(false);
         backgroundNoiseFilterPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11));
         jLabel1.setText("Select Time Frames");
 
         fullTimeFramesRadioButton.setText("full ");
@@ -91,8 +97,11 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
         subsetTimeFramesRadioButton.setText("subset");
         subsetTimeFramesRadioButton.setOpaque(false);
 
-        timeFramesComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        timeFramesComboBox.setOpaque(false);
+        firstTimeFrameComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        firstTimeFrameComboBox.setOpaque(false);
+
+        lastTimeFrameComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        lastTimeFrameComboBox.setOpaque(false);
 
         javax.swing.GroupLayout backgroundNoiseFilterPanelLayout = new javax.swing.GroupLayout(backgroundNoiseFilterPanel);
         backgroundNoiseFilterPanel.setLayout(backgroundNoiseFilterPanelLayout);
@@ -106,9 +115,11 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
                         .addGap(37, 37, 37)
                         .addComponent(subsetTimeFramesRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(timeFramesComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(firstTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lastTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel1))
-                .addContainerGap(126, Short.MAX_VALUE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         backgroundNoiseFilterPanelLayout.setVerticalGroup(
             backgroundNoiseFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -119,8 +130,9 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
                 .addGroup(backgroundNoiseFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(fullTimeFramesRadioButton)
                     .addComponent(subsetTimeFramesRadioButton)
-                    .addComponent(timeFramesComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(82, Short.MAX_VALUE))
+                    .addComponent(firstTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lastTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(94, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -129,7 +141,7 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.4;
-        gridBagConstraints.weighty = 0.5;
+        gridBagConstraints.weighty = 0.55;
         add(backgroundNoiseFilterPanel, gridBagConstraints);
 
         replicatesAreaChartParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -149,10 +161,11 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundNoiseFilterPanel;
     private javax.swing.JPanel distanceMatrixTableParentPanel;
+    private javax.swing.JComboBox firstTimeFrameComboBox;
     private javax.swing.JRadioButton fullTimeFramesRadioButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JComboBox lastTimeFrameComboBox;
     private javax.swing.JPanel replicatesAreaChartParentPanel;
     private javax.swing.JRadioButton subsetTimeFramesRadioButton;
-    private javax.swing.JComboBox timeFramesComboBox;
     // End of variables declaration//GEN-END:variables
 }
