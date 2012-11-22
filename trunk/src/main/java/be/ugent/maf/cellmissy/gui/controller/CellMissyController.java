@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.Toolkit;

@@ -8,7 +8,7 @@
  *
  * Created on Sep 24, 2012, 4:08:06 PM
  */
-package be.ugent.maf.cellmissy.gui.experiment;
+package be.ugent.maf.cellmissy.gui.experiment.load;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -182,7 +182,7 @@ public class ExperimentMetadataPanel extends javax.swing.JPanel {
                     .addComponent(experimentConditionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(unitLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(599, 599, 599))
+                .addGap(398, 398, 398))
             .addGroup(layout.createSequentialGroup()
                 .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -204,7 +204,7 @@ public class ExperimentMetadataPanel extends javax.swing.JPanel {
                             .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
-                .addContainerGap(641, Short.MAX_VALUE))
+                .addContainerGap(440, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -230,7 +230,7 @@ public class ExperimentMetadataPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(timeFramesLabel)
                     .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(590, 590, 590))
+                .addGap(596, 596, 596))
         );
     }// </editor-fold>//GEN-END:initComponents
 

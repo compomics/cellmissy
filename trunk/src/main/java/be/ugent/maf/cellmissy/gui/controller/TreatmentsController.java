@@ -8,8 +8,8 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
-import be.ugent.maf.cellmissy.gui.experiment.AddDrugsTreatmentsPanel;
-import be.ugent.maf.cellmissy.gui.experiment.TreatmentsPanel;
+import be.ugent.maf.cellmissy.gui.experiment.setup.AddDrugsTreatmentsPanel;
+import be.ugent.maf.cellmissy.gui.experiment.setup.TreatmentsPanel;
 import be.ugent.maf.cellmissy.service.TreatmentService;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -81,6 +81,7 @@ public class TreatmentsController {
 
     /**
      * getters and setters
+     * @return 
      */
     public ObservableList<TreatmentType> getDrugBindingList() {
         return drugBindingList;
@@ -92,6 +93,7 @@ public class TreatmentsController {
 
     /**
      * update treatment collection for previously selected condition
+     * @param plateCondition 
      */
     public void updateTreatmentCollection(PlateCondition plateCondition) {
         for (Treatment treatment : treatmentBindingList) {

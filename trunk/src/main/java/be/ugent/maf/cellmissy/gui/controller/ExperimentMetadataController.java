@@ -10,7 +10,7 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
-import be.ugent.maf.cellmissy.gui.experiment.ExperimentMetadataPanel;
+import be.ugent.maf.cellmissy.gui.experiment.load.ExperimentMetadataPanel;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.awt.Color;

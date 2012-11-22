@@ -14,6 +14,7 @@ import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.awt.Color;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -139,6 +140,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
             public void run() {
                 ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
                 CellMissyController cellMissyController = (CellMissyController) context.getBean("cellMissyController");
+                
                 cellMissyController.init();
             }
         });
