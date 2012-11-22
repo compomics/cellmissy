@@ -42,7 +42,7 @@
                   <Component id="jPanel1" pref="316" max="32767" attributes="1"/>
                   <Component id="jPanel2" alignment="0" pref="316" max="32767" attributes="1"/>
               </Group>
-              <EmptySpace pref="41" max="32767" attributes="0"/>
+              <EmptySpace pref="189" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -66,7 +66,7 @@
                       <Component id="jPanel1" min="-2" pref="238" max="-2" attributes="1"/>
                   </Group>
               </Group>
-              <EmptySpace pref="119" max="32767" attributes="0"/>
+              <EmptySpace pref="46" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

@@ -69,6 +69,7 @@ public class ImagedPlateController {
 
     /**
      * getters and setters
+     * @return 
      */
     public ImagedPlatePanel getLoadDataPlatePanel() {
         return imagedPlatePanel;

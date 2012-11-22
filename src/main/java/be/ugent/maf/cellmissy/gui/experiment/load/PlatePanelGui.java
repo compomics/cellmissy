@@ -8,7 +8,7 @@
  *
  * Created on Mar 29, 2012, 9:26:13 AM
  */
-package be.ugent.maf.cellmissy.gui.experiment;
+package be.ugent.maf.cellmissy.gui.experiment.load;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
