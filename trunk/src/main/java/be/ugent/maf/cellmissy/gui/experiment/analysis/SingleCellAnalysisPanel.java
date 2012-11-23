@@ -57,6 +57,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         tracksTableScrollPane = new javax.swing.JScrollPane();
         tracksTable = new javax.swing.JTable();
         trackPointsResultsPanel = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
         trackPointsTableScrollPane = new javax.swing.JScrollPane();
         trackPointsTable = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
@@ -70,7 +71,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         tracksResultsPanel.setOpaque(false);
         tracksResultsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 2, 12));
         jLabel1.setText("Tracks from DB");
 
         tracksTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -95,7 +96,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addGap(10, 10, 10)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
-            .addComponent(tracksTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
+            .addComponent(tracksTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 640, Short.MAX_VALUE)
         );
         tracksResultsPanelLayout.setVerticalGroup(
             tracksResultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -118,6 +119,9 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         trackPointsResultsPanel.setOpaque(false);
         trackPointsResultsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 12));
+        jLabel2.setText("Points of selected track");
+
         trackPointsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -135,13 +139,19 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         trackPointsResultsPanel.setLayout(trackPointsResultsPanelLayout);
         trackPointsResultsPanelLayout.setHorizontalGroup(
             trackPointsResultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(trackPointsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 950, Short.MAX_VALUE)
+            .addComponent(trackPointsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 970, Short.MAX_VALUE)
+            .addGroup(trackPointsResultsPanelLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         trackPointsResultsPanelLayout.setVerticalGroup(
             trackPointsResultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(trackPointsResultsPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, trackPointsResultsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(trackPointsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE))
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(trackPointsTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -162,7 +172,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 323, Short.MAX_VALUE)
+            .addGap(0, 330, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,7 +194,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(singleTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 956, Short.MAX_VALUE)
+            .addComponent(singleTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -193,6 +203,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel singleImporterPanel;
     private javax.swing.JTabbedPane singleTabbedPane;

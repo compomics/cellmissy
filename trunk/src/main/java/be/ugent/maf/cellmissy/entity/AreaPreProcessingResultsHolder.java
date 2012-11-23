@@ -6,7 +6,11 @@ package be.ugent.maf.cellmissy.entity;
 
 /**
  * This class is holding the results from the area pre-processing step.
- * Normalized Area, Corrected Normalized Area, Delta Area, Percentage of Area Increase
+ * Normalized Area, Corrected Normalized Area, Delta Area, Percentage of Area Increase,
+ * Area corrected for outliers, Euclidean distances between all replicates,
+ * Boolean to exclude replicates, information about the eventual interaction of the user if the standard behavior
+ * and time time frames interval used for analysis.
+ * 
  * @author Paola Masuzzo
  */
 public class AreaPreProcessingResultsHolder {
@@ -27,8 +31,8 @@ public class AreaPreProcessingResultsHolder {
     private boolean[] excludeReplicates;
     // user has changed standard behaviour of outliers detection?
     private boolean userHadInteraction;
-    // data filtered from background noise
-    private Double[][] filteredAreaData;
+    // time interval
+    private TimeInterval timeInterval;
 
     /**
      * Getters and setters
@@ -96,5 +100,13 @@ public class AreaPreProcessingResultsHolder {
 
     public void setUserHadInteraction(boolean userHadInteraction) {
         this.userHadInteraction = userHadInteraction;
+    }
+
+    public TimeInterval getTimeInterval() {
+        return timeInterval;
+    }
+
+    public void setTimeInterval(TimeInterval timeInterval) {
+        this.timeInterval = timeInterval;
     }
 }
