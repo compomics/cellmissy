@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
 import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.TimeInterval;
 import be.ugent.maf.cellmissy.gui.view.DistanceMatrixTableModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -151,5 +152,32 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         // create a new distance matrix table model and set boolean for results holder from the model
         DistanceMatrixTableModel distanceMatrixTableModel = new DistanceMatrixTableModel(areaPreProcessingResultsHolder.getDistanceMatrix(), outliersMatrix, plateCondition);
         areaPreProcessingResultsHolder.setExcludeReplicates(distanceMatrixTableModel.getCheckboxOutliers());
+    }
+
+    @Override
+    public void setTimeInterval(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
+        Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
+        Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
+        // first time point for interval is set to zero by default
+        // this is changed if user decides to analyse only a subset of entire time frames
+        int firstTimePoint = 0;
+        // last time point for interval is set to cutoff time point
+        // cutoff time point is intended to be the time point from which starting every replicates in the condition has only no null values. 
+        int lastTimePoint = normalizedCorrectedArea.length;
+        // for each replicate
+        for (int columnIndex = 0; columnIndex < transposedArea.length; columnIndex++) {
+            // temporary last time point
+            int tempLastTimePoint = lastTimePoint;
+            for (int rowIndex = 0; rowIndex < transposedArea[0].length; rowIndex++) {
+                if (transposedArea[columnIndex][rowIndex] == null) {
+                    tempLastTimePoint = rowIndex ;
+                }
+            }
+            if (tempLastTimePoint < lastTimePoint) {
+                lastTimePoint = tempLastTimePoint;
+            }
+        }
+        TimeInterval timeInterval = new TimeInterval(firstTimePoint, lastTimePoint);
+        areaPreProcessingResultsHolder.setTimeInterval(timeInterval);
     }
 }

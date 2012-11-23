@@ -63,4 +63,10 @@ public interface AreaPreProcessor {
      * @return a matrix with corrected value
      */
     public Double[][] correctForOutliers(Double[][] data);
+    
+    /**
+     * Set time frame interval used for analysis
+     * @param areaPreProcessingResultsHolder
+     */
+    public void setTimeInterval(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
 }

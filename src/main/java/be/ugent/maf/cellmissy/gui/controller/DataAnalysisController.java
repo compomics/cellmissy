@@ -473,7 +473,7 @@ public class DataAnalysisController {
                 bulkCellAnalysisController.showCorrectedAreaInTable(getSelectedCondition());
                 //show Area increases with time frames
                 bulkCellAnalysisController.showDistanceMatrix(getSelectedCondition());
-                bulkCellAnalysisController.plotCorrectedAreaReplicates(getSelectedCondition());
+                bulkCellAnalysisController.plotCorrectedDataReplicates(getSelectedCondition());
             }
             // set cursor back to default and show all computed results for selected condition
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
