@@ -234,7 +234,7 @@ public class DataAnalysisController {
         });
 
         //when an experiment is selected, show algorithms and imaging types used for that experiment
-        //show also conditions in the Jlist behind and plate view according to the conditions
+        //show also conditions in the Jlist behind and plate view according to the conditions setup
         dataAnalysisPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
 
             @Override
@@ -265,6 +265,8 @@ public class DataAnalysisController {
                 }
                 //init map with conditions and results holders
                 bulkCellAnalysisController.initMap();
+                // init timeframes binding list with an empty one
+                bulkCellAnalysisController.initTimeFramesList();
                 //set selected algorithm to the first of the list
                 dataAnalysisPanel.getAlgorithmComboBox().setSelectedIndex(0);
                 //set selected imaging types to the first of the list
@@ -330,9 +332,8 @@ public class DataAnalysisController {
     private void computeTimeFrames() {
         double[] timeFrames = new double[experiment.getTimeFrames()];
         for (int i = 0; i < timeFrames.length; i++) {
-            Double timeFrame = i * experiment.getExperimentInterval();
-            int intValue = timeFrame.intValue();
-            timeFrames[i] = intValue;
+            double timeFrame = i * experiment.getExperimentInterval();
+            timeFrames[i] = timeFrame;
         }
         this.timeFrames = timeFrames;
     }
@@ -472,7 +473,7 @@ public class DataAnalysisController {
                 //for current selected condition show corrected area values (outliers have been deleted from distribution)
                 bulkCellAnalysisController.showCorrectedAreaInTable(getSelectedCondition());
                 //show Area increases with time frames
-                bulkCellAnalysisController.showDistanceMatrix(getSelectedCondition());
+                //bulkCellAnalysisController.showDistanceMatrix(getSelectedCondition());
                 bulkCellAnalysisController.plotCorrectedDataReplicates(getSelectedCondition());
             }
             // set cursor back to default and show all computed results for selected condition

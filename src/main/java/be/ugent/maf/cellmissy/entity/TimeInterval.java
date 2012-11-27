@@ -6,38 +6,39 @@ package be.ugent.maf.cellmissy.entity;
 
 /**
  * Time Frames interval used for Analysis
+ * int values form first and last time frame selected (or computed by default)
  * @author Paola Masuzzo
  */
 public class TimeInterval {
 
     // first value of interval
-    private int firstTimePoint;
-    // second values of interval
-    private int lastTimePoint;
+    private int firstTimeFrame;
+    // second value of interval
+    private int lastTimeFrame;
 
     /**
      * Constructor
-     * @param firstTimePoint
-     * @param lastTimePoint
+     * @param firstTimeFrame
+     * @param lastTimeFrame
      */
-    public TimeInterval(int firstTimePoint, int lastTimePoint) {
-        this.firstTimePoint = firstTimePoint;
-        this.lastTimePoint = lastTimePoint;
+    public TimeInterval(int firstTimeFrame, int lastTimeFrame) {
+        this.firstTimeFrame = firstTimeFrame;
+        this.lastTimeFrame = lastTimeFrame;
     }
 
-    public double getFirstTimePoint() {
-        return firstTimePoint;
+    public int getFirstTimeFrame() {
+        return firstTimeFrame;
     }
 
-    public void setFirstTimePoint(int firstTimePoint) {
-        this.firstTimePoint = firstTimePoint;
+    public void setFirstTimeFrame(int firstTimeFrame) {
+        this.firstTimeFrame = firstTimeFrame;
     }
 
-    public double getLastTimePoint() {
-        return lastTimePoint;
+    public int getLastTimeFrame() {
+        return lastTimeFrame;
     }
 
-    public void setLastTimePoint(int lastTimePoint) {
-        this.lastTimePoint = lastTimePoint;
+    public void setLastTimeFrame(int lastTimeFrame) {
+        this.lastTimeFrame = lastTimeFrame;
     }
 }
