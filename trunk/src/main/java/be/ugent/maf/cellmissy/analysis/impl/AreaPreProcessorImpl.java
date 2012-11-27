@@ -154,27 +154,36 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         areaPreProcessingResultsHolder.setExcludeReplicates(distanceMatrixTableModel.getCheckboxOutliers());
     }
 
+    /**
+     * 
+     * @param areaPreProcessingResultsHolder 
+     */
     @Override
     public void setTimeInterval(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
         Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
         Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
+        // check if some replicates need to be excluded from computation (this means these replicates are outliers)
+        boolean[] excludeReplicates = areaPreProcessingResultsHolder.getExcludeReplicates();
         // first time point for interval is set to zero by default
         // this is changed if user decides to analyse only a subset of entire time frames
         int firstTimePoint = 0;
-        // last time point for interval is set to cutoff time point
+        // last time point for interval is set to cutoff time point: by default this is the entire time frame of experiment
         // cutoff time point is intended to be the time point from which starting every replicates in the condition has only no null values. 
-        int lastTimePoint = normalizedCorrectedArea.length;
+        int lastTimePoint = normalizedCorrectedArea.length - 1;
         // for each replicate
         for (int columnIndex = 0; columnIndex < transposedArea.length; columnIndex++) {
-            // temporary last time point
-            int tempLastTimePoint = lastTimePoint;
-            for (int rowIndex = 0; rowIndex < transposedArea[0].length; rowIndex++) {
-                if (transposedArea[columnIndex][rowIndex] == null) {
-                    tempLastTimePoint = rowIndex ;
+            if (!excludeReplicates[columnIndex]) {
+                // temporary last time point
+                int tempLastTimePoint = lastTimePoint;
+                for (int rowIndex = 0; rowIndex < transposedArea[0].length; rowIndex++) {
+                    if (transposedArea[columnIndex][rowIndex] == null) {
+                        tempLastTimePoint = rowIndex - 1;
+                        break;
+                    }
                 }
-            }
-            if (tempLastTimePoint < lastTimePoint) {
-                lastTimePoint = tempLastTimePoint;
+                if (tempLastTimePoint < lastTimePoint) {
+                    lastTimePoint = tempLastTimePoint;
+                }
             }
         }
         TimeInterval timeInterval = new TimeInterval(firstTimePoint, lastTimePoint);

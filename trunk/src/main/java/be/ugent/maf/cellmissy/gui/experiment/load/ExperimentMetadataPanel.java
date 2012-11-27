@@ -182,7 +182,7 @@ public class ExperimentMetadataPanel extends javax.swing.JPanel {
                     .addComponent(experimentConditionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(unitLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(398, 398, 398))
+                .addGap(565, 565, 565))
             .addGroup(layout.createSequentialGroup()
                 .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -204,7 +204,7 @@ public class ExperimentMetadataPanel extends javax.swing.JPanel {
                             .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
-                .addContainerGap(440, Short.MAX_VALUE))
+                .addContainerGap(607, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -230,7 +230,7 @@ public class ExperimentMetadataPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(timeFramesLabel)
                     .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(596, 596, 596))
+                .addGap(646, 646, 646))
         );
     }// </editor-fold>//GEN-END:initComponents
 

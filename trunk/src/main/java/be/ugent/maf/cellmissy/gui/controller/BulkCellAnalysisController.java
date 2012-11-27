@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
 import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
 import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache.DataCategory;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.TimeInterval;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.gui.GuiUtils;
 import be.ugent.maf.cellmissy.gui.view.ComputedDataTableModel;
@@ -17,7 +18,9 @@ import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.BulkCellAnalysisPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.CorrectedAreaPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DistanceMatrixPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.ModifyCutOffPanel;
 import be.ugent.maf.cellmissy.gui.view.AreaPlotRenderer;
 import be.ugent.maf.cellmissy.gui.view.CheckBoxOutliersRenderer;
 import be.ugent.maf.cellmissy.gui.view.OutliersRenderer;
@@ -29,8 +32,10 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -46,6 +51,7 @@ import java.util.Map;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -103,6 +109,9 @@ public class BulkCellAnalysisController {
     private Map<PlateCondition, AreaPreProcessingResultsHolder> map;
     //view
     private BulkCellAnalysisPanel bulkCellAnalysisPanel;
+    private CorrectedAreaPanel correctedAreaPanel;
+    private JDialog dialog;
+    private ModifyCutOffPanel modifyCutOffPanel;
     private DistanceMatrixPanel distanceMatrixPanel;
     private ChartPanel rawDataChartPanel;
     private ChartPanel densityChartPanel;
@@ -402,6 +411,7 @@ public class BulkCellAnalysisController {
         List wellList = new ArrayList(plateCondition.getWellCollection());
         // check if some replicates need to be hidden from plot (this means these replicates are outliers)
         boolean[] excludeReplicates = areaPreProcessingResultsHolder.getExcludeReplicates();
+        List excludedWells = new ArrayList();
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
         // array for x axis
         double[] xValues = dataAnalysisController.getTimeFrames();
@@ -410,6 +420,80 @@ public class BulkCellAnalysisController {
             if (!excludeReplicates[i]) {
                 // array for y axis
                 double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
+                XYSeries xySeries = generateXYSeries(xValues, yValues);
+                xySeries.setKey("" + (wellList.get(i)));
+                xySeriesCollection.addSeries(xySeries);
+            } else {
+                // replicates excluded
+                excludedWells.add(wellList.get(i));
+            }
+        }
+        // Plot Logic
+        String chartTitle = "Corrected Data Condition " + conditionIndex + " (replicates)";
+        JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        correctedAreaChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
+        correctedAreaChart.getLegend().setPosition(RectangleEdge.RIGHT);
+        correctedAreaChart.getXYPlot().setBackgroundPaint(Color.white);
+        correctedAreaChart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        XYItemRenderer renderer = correctedAreaChart.getXYPlot().getRenderer();
+        BasicStroke wideLine = new BasicStroke(1.3f);
+        for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
+            // plot lines with colors according to well (replicate) index
+            String wellCoordinates = xySeriesCollection.getSeriesKey(i).toString();
+            int wellIndex = getWellIndex(wellCoordinates, wellList);
+            renderer.setSeriesStroke(i, wideLine);
+            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[wellIndex + 1]);
+        }
+        correctedAreaChartPanel.setChart(correctedAreaChart);
+        correctedAreaPanel.getReplicatesAreaChartParentPanel().add(correctedAreaChartPanel, gridBagConstraints);
+        correctedAreaPanel.getCutOffCheckBox().setSelected(false);
+        // time frame info
+        int lastTimeFrame = areaPreProcessingResultsHolder.getTimeInterval().getLastTimeFrame();
+        correctedAreaPanel.getCutOffTextField().setText(timeFramesBindingList.get(lastTimeFrame).toString());
+        correctedAreaPanel.getExcludedReplicatesTextField().setText(excludedWells.toString());
+        bulkCellAnalysisPanel.getGraphicsParentPanel().add(correctedAreaPanel, gridBagConstraints);
+    }
+
+    /**
+     * for the first and the last time this is initializing the time frames binding list with an empty list of double 
+     */
+    public void initTimeFramesList() {
+        timeFramesBindingList = ObservableCollections.observableList(new ArrayList<Double>());
+    }
+
+    /**
+     * Plot Corrected data Area for selected condition, taking into account both time selection and eventual replicate exclusion
+     * @param plateCondition 
+     */
+    private void plotCorrectedDataInTimeInterval(PlateCondition plateCondition) {
+        int conditionIndex = dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1;
+        AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
+        Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
+        // Transpose Normalized Corrected Area
+        Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
+        List wellList = new ArrayList(plateCondition.getWellCollection());
+        // check if some replicates need to be hidden from plot (this means these replicates are outliers)
+        boolean[] excludeReplicates = areaPreProcessingResultsHolder.getExcludeReplicates();
+        // check for time frames interval
+        TimeInterval timeInterval = areaPreProcessingResultsHolder.getTimeInterval();
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        // array for x axis: sub selection of time frames
+        double[] xValues = new double[timeInterval.getLastTimeFrame() - timeInterval.getFirstTimeFrame() + 1];
+        int index = timeInterval.getFirstTimeFrame();
+        for (int i = 0; i < xValues.length; i++) {
+            xValues[i] = timeFramesBindingList.get(index);
+            index++;
+        }
+        for (int i = 0; i < excludeReplicates.length; i++) {
+            index = timeInterval.getFirstTimeFrame();
+            // if boolean is false, replicate has to be considered in the plot
+            if (!excludeReplicates[i]) {
+                // array for y axis (no need to exclude null values)
+                double[] yValues = new double[xValues.length];
+                for (int j = 0; j < yValues.length; j++) {
+                    yValues[j] = transposedArea[i][index];
+                    index++;
+                }
                 XYSeries xySeries = generateXYSeries(xValues, yValues);
                 xySeries.setKey("" + (wellList.get(i)));
                 xySeriesCollection.addSeries(xySeries);
@@ -432,8 +516,11 @@ public class BulkCellAnalysisController {
             renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[wellIndex + 1]);
         }
         correctedAreaChartPanel.setChart(correctedAreaChart);
-        distanceMatrixPanel.getReplicatesAreaChartParentPanel().add(correctedAreaChartPanel, gridBagConstraints);
-        bulkCellAnalysisPanel.getGraphicsParentPanel().add(distanceMatrixPanel, gridBagConstraints);
+        correctedAreaPanel.getReplicatesAreaChartParentPanel().add(correctedAreaChartPanel, gridBagConstraints);
+        // time frame info
+        int lastTimeFrame = areaPreProcessingResultsHolder.getTimeInterval().getLastTimeFrame();
+        correctedAreaPanel.getCutOffTextField().setText(timeFramesBindingList.get(lastTimeFrame).toString());
+        bulkCellAnalysisPanel.getGraphicsParentPanel().add(correctedAreaPanel, gridBagConstraints);
     }
 
     /**
@@ -772,7 +859,7 @@ public class BulkCellAnalysisController {
         timeStepsBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
 
         //init subview
-        distanceMatrixPanel = new DistanceMatrixPanel();
+        correctedAreaPanel = new CorrectedAreaPanel();
         //init chart panels
         rawDataChartPanel = new ChartPanel(null);
         rawDataChartPanel.setOpaque(false);
@@ -787,6 +874,17 @@ public class BulkCellAnalysisController {
         velocityChartPanel = new ChartPanel(null);
         velocityChartPanel.setOpaque(false);
         distanceMatrixScrollPane = new JScrollPane();
+        dialog = new JDialog();
+        dialog.setAlwaysOnTop(true);
+        dialog.setModal(true);
+        dialog.getContentPane().setBackground(Color.white);
+        dialog.getContentPane().setLayout(new GridBagLayout());
+        //center the dialog on the main screen
+        dialog.setLocationRelativeTo(null);
+        dialog.setSize(new Dimension(350, 250));
+        modifyCutOffPanel = new ModifyCutOffPanel();
+        distanceMatrixPanel = new DistanceMatrixPanel();
+
         map = new LinkedHashMap<>();
 
         // add action listeners
@@ -820,7 +918,7 @@ public class BulkCellAnalysisController {
                     densityChartPanel.setChart(null);
                     correctedAreaChartPanel.setChart(null);
                     rawDataChartPanel.setChart(null);
-                    bulkCellAnalysisPanel.getGraphicsParentPanel().remove(distanceMatrixPanel);
+                    bulkCellAnalysisPanel.getGraphicsParentPanel().remove(correctedAreaPanel);
                     bulkCellAnalysisPanel.getGraphicsParentPanel().repaint();
                     // show raw data plot (replicates)
                     plotRawDataReplicates(dataAnalysisController.getSelectedCondition());
@@ -844,7 +942,7 @@ public class BulkCellAnalysisController {
                     densityChartPanel.setChart(null);
                     correctedDensityChartPanel.setChart(null);
                     correctedAreaChartPanel.setChart(null);
-                    bulkCellAnalysisPanel.getGraphicsParentPanel().remove(distanceMatrixPanel);
+                    bulkCellAnalysisPanel.getGraphicsParentPanel().remove(correctedAreaPanel);
                     bulkCellAnalysisPanel.getGraphicsParentPanel().repaint();
                 }
             }
@@ -863,7 +961,7 @@ public class BulkCellAnalysisController {
                     showAreaIncreaseInTable(dataAnalysisController.getSelectedCondition());
                     // remove other panels
                     rawDataChartPanel.setChart(null);
-                    bulkCellAnalysisPanel.getGraphicsParentPanel().remove(distanceMatrixPanel);
+                    bulkCellAnalysisPanel.getGraphicsParentPanel().remove(correctedAreaPanel);
                     bulkCellAnalysisPanel.getGraphicsParentPanel().repaint();
                     //show density function for selected condition
                     plotDensityFunctions(dataAnalysisController.getSelectedCondition());
@@ -890,8 +988,10 @@ public class BulkCellAnalysisController {
                     bulkCellAnalysisPanel.getGraphicsParentPanel().remove(correctedAreaChartPanel);
                     bulkCellAnalysisPanel.getGraphicsParentPanel().revalidate();
                     bulkCellAnalysisPanel.getGraphicsParentPanel().repaint();
-                    //@todo: this method can be called only one time
-                    initDistanceMatrixPanel();
+                    // this method can be called only one time, when timeframes binding list is still empty
+                    if (timeFramesBindingList.isEmpty()) {
+                        initCorrectedAreaPanel();
+                    }
                     // show distance matrix
                     showDistanceMatrix(dataAnalysisController.getSelectedCondition());
                     // plot corrected area (all replicates for selected condition)
@@ -978,10 +1078,10 @@ public class BulkCellAnalysisController {
 
         @Override
         protected void done() {
-            dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
             // once xySeriesCollections are generated, generate also Charts and show results
             plotRawDataDensityFunctions(generateDensityChart(plateCondition, rawDataXYSeriesCollection, "KDE raw data"));
             plotCorrectedDataDensityFunctions(generateDensityChart(plateCondition, correctedDataXYSeriesCollection, "KDE corrected data"));
+            dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
         }
     }
 
@@ -1094,6 +1194,10 @@ public class BulkCellAnalysisController {
             plotCorrectedDataReplicates(plateCondition);
             // keep note of the fact that the user had interaction with check boxes
             map.get(plateCondition).setUserHadInteraction(true);
+            // recompute time interval for selected condition
+            areaPreProcessor.setTimeInterval(areaPreProcessingResultsHolder);
+            int lastTimeFrame = areaPreProcessingResultsHolder.getTimeInterval().getLastTimeFrame();
+            correctedAreaPanel.getCutOffTextField().setText(timeFramesBindingList.get(lastTimeFrame).toString());
         }
     }
 
@@ -1153,50 +1257,109 @@ public class BulkCellAnalysisController {
     /**
      * initialize Matrix Panel with action listeners and everything
      */
-    private void initDistanceMatrixPanel() {
-
-        ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(distanceMatrixPanel.getFullTimeFramesRadioButton());
-        buttonGroup.add(distanceMatrixPanel.getSubsetTimeFramesRadioButton());
-        // select by default option for entire time frame set
-        distanceMatrixPanel.getFullTimeFramesRadioButton().setSelected(true);
-
+    private void initCorrectedAreaPanel() {
+        // set Border to empty one for text fields
+        correctedAreaPanel.getCutOffTextField().setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        correctedAreaPanel.getExcludedReplicatesTextField().setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        // initialize Binding List for time frames (2 combo boxes binded)
         timeFramesBindingList = ObservableCollections.observableList(Arrays.asList(ArrayUtils.toObject(dataAnalysisController.getTimeFrames())));
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, distanceMatrixPanel.getFirstTimeFrameComboBox());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, modifyCutOffPanel.getTimeFrameComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
-        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, distanceMatrixPanel.getLastTimeFrameComboBox());
-        bindingGroup.addBinding(jComboBoxBinding);
+//        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, distanceMatrixPanel.getLastTimeFrameComboBox());
+//        bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
 
-        // ?user chooses full time
-        distanceMatrixPanel.getFullTimeFramesRadioButton().addActionListener(new ActionListener() {
+        /**
+         * Show the effect that the cut off time frame has on the plot
+         */
+        correctedAreaPanel.getCutOffCheckBox().addItemListener(new ItemListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    // update plot when cut off has to be shown
+                    plotCorrectedDataInTimeInterval(dataAnalysisController.getSelectedCondition());
+                } else {
+                    // if check box is delesected show entire dataset
+                    plotCorrectedDataReplicates(dataAnalysisController.getSelectedCondition());
+                }
             }
         });
 
-        // ?or user chooses only a subset of time frames : this might not be needed  in the end
-        distanceMatrixPanel.getSubsetTimeFramesRadioButton().addActionListener(new ActionListener() {
+        /**
+         * If the user decides to modify the current cut off value
+         * I need to check if the chosen value is greater or lesser than the computed cut off. 
+         */
+        modifyCutOffPanel.getTimeFrameComboBox().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                // results holder for currently selected condition
+                AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(dataAnalysisController.getSelectedCondition());
+                // get last time frame selected
+                int selectedCutOff = timeFramesBindingList.indexOf(modifyCutOffPanel.getTimeFrameComboBox().getSelectedItem());
+
+                // if last time frame provided by the user is equal or smaller than cut off time frame: No problem
+                if (selectedCutOff == areaPreProcessingResultsHolder.getTimeInterval().getLastTimeFrame() || selectedCutOff < areaPreProcessingResultsHolder.getTimeInterval().getLastTimeFrame()) {
+                    areaPreProcessingResultsHolder.getTimeInterval().setLastTimeFrame(selectedCutOff);
+                    // refresh plot
+                    plotCorrectedDataInTimeInterval(dataAnalysisController.getSelectedCondition());
+                } else {
+                    // if last time frame provided by the user is greater than cut off time frame: Warn the user!
+                }
             }
         });
 
-        // first time frame is selected
-        distanceMatrixPanel.getFirstTimeFrameComboBox().addActionListener(new ActionListener() {
+        /**
+         * If the user is not happy with new selection, reset cut off value back to preciously computed one.
+         */
+        modifyCutOffPanel.getResetCutOffButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                PlateCondition selectedCondition = dataAnalysisController.getSelectedCondition();
+                // replot everything
+                plotCorrectedDataReplicates(selectedCondition);
+                // recompute time interval
+                areaPreProcessor.setTimeInterval(map.get(selectedCondition));
+                // refresh info label
+                correctedAreaPanel.getCutOffTextField().setText(timeFramesBindingList.get(map.get(selectedCondition).getTimeInterval().getLastTimeFrame()).toString());
             }
         });
 
-        // last time frame is selected
-        distanceMatrixPanel.getLastTimeFrameComboBox().addActionListener(new ActionListener() {
+        /**
+         * If the user decides to overwrite cut off value- pop up a JDialog with some options
+         * Select a different cut off time frame from a combo box
+         */
+        correctedAreaPanel.getModifyCutOffButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                // remove previous panel
+                dialog.getContentPane().remove(distanceMatrixPanel);
+                // add new panel
+                dialog.getContentPane().add(modifyCutOffPanel, gridBagConstraints);
+                // show the dialog
+                dialog.setVisible(true);
+            }
+        });
+
+        /**
+         * If the user decides to overwrite decision about replicates selection, pop up a JDialog with Distance matrix table
+         * In this table the user is able to select or deselect conditions replicates
+         */
+        correctedAreaPanel.getSelectReplicatesButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // remove previous panel
+                dialog.getContentPane().remove(modifyCutOffPanel);
+                // add distance matrix on top of panel
+                showDistanceMatrix(dataAnalysisController.getSelectedCondition());
+                // add new panel 
+                dialog.getContentPane().add(distanceMatrixPanel, gridBagConstraints);
+                // show the dialog
+                dialog.setVisible(true);
             }
         });
     }
