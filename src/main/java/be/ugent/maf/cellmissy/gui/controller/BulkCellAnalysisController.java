@@ -20,7 +20,7 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.BulkCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.CorrectedAreaPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DistanceMatrixPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.ModifyCutOffPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.TimeFramesSelectionPanel;
 import be.ugent.maf.cellmissy.gui.view.AreaPlotRenderer;
 import be.ugent.maf.cellmissy.gui.view.CheckBoxOutliersRenderer;
 import be.ugent.maf.cellmissy.gui.view.OutliersRenderer;
@@ -58,6 +58,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
+import javax.swing.text.StyledDocument;
 import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -90,7 +91,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import org.jdesktop.swingbinding.JComboBoxBinding;
+import org.jfree.data.Range;
 
 /**
  * Bulk Cell Analysis Controller: Collective Cell Migration Data Analysis
@@ -111,7 +115,7 @@ public class BulkCellAnalysisController {
     private BulkCellAnalysisPanel bulkCellAnalysisPanel;
     private CorrectedAreaPanel correctedAreaPanel;
     private JDialog dialog;
-    private ModifyCutOffPanel modifyCutOffPanel;
+    private TimeFramesSelectionPanel timeFramesSelectionPanel;
     private DistanceMatrixPanel distanceMatrixPanel;
     private ChartPanel rawDataChartPanel;
     private ChartPanel densityChartPanel;
@@ -322,38 +326,6 @@ public class BulkCellAnalysisController {
     }
 
     /**
-     * Show Table with Euclidean Distances between all replicates for a certain selected condition
-     * @param plateCondition 
-     */
-    public void showDistanceMatrix(PlateCondition plateCondition) {
-        AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
-        Double[][] distanceMatrix = areaPreProcessingResultsHolder.getDistanceMatrix();
-        boolean[][] outliersMatrix = areaPreProcessor.detectOutliers(distanceMatrix);
-        boolean[][] transposedOutliersMatrix = AnalysisUtils.transposeBooleanMatrix(outliersMatrix);
-        DistanceMatrixTableModel distanceMatrixTableModel = new DistanceMatrixTableModel(distanceMatrix, outliersMatrix, plateCondition);
-        // if user already had interaction through check boxes overwrite distance matrix table behavior 
-        if (areaPreProcessingResultsHolder.isUserHadInteraction()) {
-            distanceMatrixTableModel.setCheckboxOutliers(areaPreProcessingResultsHolder.getExcludeReplicates());
-        }
-        JTable distanceMatrixTable = new JTable(distanceMatrixTableModel);
-        // Renderer
-        CheckBoxOutliersRenderer checkBoxOutliersRenderer = new CheckBoxOutliersRenderer(transposedOutliersMatrix, dataAnalysisController.getFormat());
-        // Cell Editor
-        CheckBoxCellEditor checkBoxCellEditor = new CheckBoxCellEditor(distanceMatrixTableModel, plateCondition);
-        for (int i = 1; i < distanceMatrixTable.getColumnCount(); i++) {
-            //@todo: cell editor is set for each column and row, but needs to be set only for last row
-            distanceMatrixTable.getColumnModel().getColumn(i).setCellEditor(checkBoxCellEditor);
-            distanceMatrixTable.getColumnModel().getColumn(i).setCellRenderer(checkBoxOutliersRenderer);
-        }
-        distanceMatrixTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
-        // disable row selection
-        distanceMatrixTable.setRowSelectionAllowed(false);
-        distanceMatrixScrollPane.setViewportView(distanceMatrixTable);
-        distanceMatrixScrollPane.getViewport().setBackground(Color.white);
-        distanceMatrixPanel.getDistanceMatrixTableParentPanel().add(distanceMatrixScrollPane, gridBagConstraints);
-    }
-
-    /**
      * Plot area raw data (before preprocessing data) for a certain condition
      * @param plateCondition 
      */
@@ -435,6 +407,8 @@ public class BulkCellAnalysisController {
         correctedAreaChart.getLegend().setPosition(RectangleEdge.RIGHT);
         correctedAreaChart.getXYPlot().setBackgroundPaint(Color.white);
         correctedAreaChart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        // 
+        correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
         XYItemRenderer renderer = correctedAreaChart.getXYPlot().getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);
         for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
@@ -459,6 +433,38 @@ public class BulkCellAnalysisController {
      */
     public void initTimeFramesList() {
         timeFramesBindingList = ObservableCollections.observableList(new ArrayList<Double>());
+    }
+
+    /**
+     * Show Table with Euclidean Distances between all replicates for a certain selected condition
+     * @param plateCondition 
+     */
+    private void showDistanceMatrix(PlateCondition plateCondition) {
+        AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
+        Double[][] distanceMatrix = areaPreProcessingResultsHolder.getDistanceMatrix();
+        boolean[][] outliersMatrix = areaPreProcessor.detectOutliers(distanceMatrix);
+        boolean[][] transposedOutliersMatrix = AnalysisUtils.transposeBooleanMatrix(outliersMatrix);
+        DistanceMatrixTableModel distanceMatrixTableModel = new DistanceMatrixTableModel(distanceMatrix, outliersMatrix, plateCondition);
+        // if user already had interaction through check boxes overwrite distance matrix table behavior 
+        if (areaPreProcessingResultsHolder.isUserHadInteraction()) {
+            distanceMatrixTableModel.setCheckboxOutliers(areaPreProcessingResultsHolder.getExcludeReplicates());
+        }
+        JTable distanceMatrixTable = new JTable(distanceMatrixTableModel);
+        // Renderer
+        CheckBoxOutliersRenderer checkBoxOutliersRenderer = new CheckBoxOutliersRenderer(transposedOutliersMatrix, dataAnalysisController.getFormat());
+        // Cell Editor
+        CheckBoxCellEditor checkBoxCellEditor = new CheckBoxCellEditor(distanceMatrixTableModel, plateCondition);
+        for (int i = 1; i < distanceMatrixTable.getColumnCount(); i++) {
+            //@todo: cell editor is set for each column and row, but needs to be set only for last row
+            distanceMatrixTable.getColumnModel().getColumn(i).setCellEditor(checkBoxCellEditor);
+            distanceMatrixTable.getColumnModel().getColumn(i).setCellRenderer(checkBoxOutliersRenderer);
+        }
+        distanceMatrixTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
+        // disable row selection
+        distanceMatrixTable.setRowSelectionAllowed(false);
+        distanceMatrixScrollPane.setViewportView(distanceMatrixTable);
+        distanceMatrixScrollPane.getViewport().setBackground(Color.white);
+        distanceMatrixPanel.getDistanceMatrixTableParentPanel().add(distanceMatrixScrollPane, gridBagConstraints);
     }
 
     /**
@@ -506,6 +512,8 @@ public class BulkCellAnalysisController {
         correctedAreaChart.getLegend().setPosition(RectangleEdge.RIGHT);
         correctedAreaChart.getXYPlot().setBackgroundPaint(Color.white);
         correctedAreaChart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        // show entire time frame dataset even if a subset was selected
+        correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
         XYItemRenderer renderer = correctedAreaChart.getXYPlot().getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);
         for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
@@ -542,29 +550,39 @@ public class BulkCellAnalysisController {
     private void plotGlobalArea() {
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
         for (PlateCondition plateCondition : map.keySet()) {
-            double[] xValues = dataAnalysisController.getTimeFrames();
-            double[] yValues = new double[dataAnalysisController.getTimeFrames().length];
-            //double[] mads = new double[timeFrames.length];
             AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
             Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
-            // Boolean (?Exclude Replicates from dataset)
+            // Boolean (Exclude Replicates from dataset)
             boolean[] excludeReplicates = areaPreProcessingResultsHolder.getExcludeReplicates();
+            // time interval to use
+            TimeInterval timeInterval = areaPreProcessingResultsHolder.getTimeInterval();
+            // array for x axis: sub selection of time frames
+            double[] xValues = new double[timeInterval.getLastTimeFrame() - timeInterval.getFirstTimeFrame() + 1];
+            int index = timeInterval.getFirstTimeFrame();
+            for (int i = 0; i < xValues.length; i++) {
+                xValues[i] = timeFramesBindingList.get(index);
+                index++;
+            }
+            // double[] xValues = dataAnalysisController.getTimeFrames();
+            double[] yValues = new double[xValues.length];
+            //double[] mads = new double[timeFrames.length];
 
             //time frames direction
-            for (int columnIndex = 0; columnIndex < normalizedCorrectedArea.length; columnIndex++) {
-                double[] allReplicateValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(normalizedCorrectedArea[columnIndex]));
+            index = timeInterval.getFirstTimeFrame();
+            for (int i = 0; i < yValues.length; i++) {
+                double[] allReplicateValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(normalizedCorrectedArea[index]));
                 List<Double> replicatesToIncludeList = new ArrayList();
-
-                for (int i = 0; i < allReplicateValues.length; i++) {
+                for (int j = 0; j < allReplicateValues.length; j++) {
                     // check if replicate has to be excluded from dataset
-                    if (!excludeReplicates[i]) {
-                        replicatesToIncludeList.add(allReplicateValues[i]);
+                    if (!excludeReplicates[j]) {
+                        replicatesToIncludeList.add(allReplicateValues[j]);
                     }
                 }
-                Double[] replicatesArray = replicatesToIncludeList.toArray(new Double[replicatesToIncludeList.size()]);
-                double median = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(replicatesArray));
+                Double[] replicatesToIncludeArray = replicatesToIncludeList.toArray(new Double[replicatesToIncludeList.size()]);
+                double median = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(replicatesToIncludeArray));
                 //mads[columnIndex] = AnalysisUtils.scaleMAD(replicateValues);
-                yValues[columnIndex] = median;
+                yValues[i] = median;
+                index++;
             }
             XYSeries xySeries = generateXYSeries(xValues, yValues);
             xySeries.setKey("Cond " + (dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1));
@@ -881,10 +899,18 @@ public class BulkCellAnalysisController {
         dialog.getContentPane().setLayout(new GridBagLayout());
         //center the dialog on the main screen
         dialog.setLocationRelativeTo(null);
-        dialog.setSize(new Dimension(350, 250));
-        modifyCutOffPanel = new ModifyCutOffPanel();
         distanceMatrixPanel = new DistanceMatrixPanel();
-
+        timeFramesSelectionPanel = new TimeFramesSelectionPanel();
+        timeFramesSelectionPanel.getDefaultCutOffTextField().setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        // justify text info 
+        SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
+        StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
+        StyledDocument styledDocument = distanceMatrixPanel.getInfoTextPane().getStyledDocument();
+        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
+        styledDocument = timeFramesSelectionPanel.getInfoTextPane().getStyledDocument();
+        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
+        // hide warning message
+        timeFramesSelectionPanel.getWarningLabel().setVisible(false);
         map = new LinkedHashMap<>();
 
         // add action listeners
@@ -992,8 +1018,6 @@ public class BulkCellAnalysisController {
                     if (timeFramesBindingList.isEmpty()) {
                         initCorrectedAreaPanel();
                     }
-                    // show distance matrix
-                    showDistanceMatrix(dataAnalysisController.getSelectedCondition());
                     // plot corrected area (all replicates for selected condition)
                     plotCorrectedDataReplicates(dataAnalysisController.getSelectedCondition());
                 }
@@ -1263,10 +1287,10 @@ public class BulkCellAnalysisController {
         correctedAreaPanel.getExcludedReplicatesTextField().setBorder(javax.swing.BorderFactory.createEmptyBorder());
         // initialize Binding List for time frames (2 combo boxes binded)
         timeFramesBindingList = ObservableCollections.observableList(Arrays.asList(ArrayUtils.toObject(dataAnalysisController.getTimeFrames())));
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, modifyCutOffPanel.getTimeFrameComboBox());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, timeFramesSelectionPanel.getCutOffTimeFrameComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
-//        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, distanceMatrixPanel.getLastTimeFrameComboBox());
-//        bindingGroup.addBinding(jComboBoxBinding);
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, timeFramesSelectionPanel.getFirstTimeFrameComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
 
         /**
@@ -1290,30 +1314,51 @@ public class BulkCellAnalysisController {
          * If the user decides to modify the current cut off value
          * I need to check if the chosen value is greater or lesser than the computed cut off. 
          */
-        modifyCutOffPanel.getTimeFrameComboBox().addActionListener(new ActionListener() {
+        timeFramesSelectionPanel.getCutOffTimeFrameComboBox().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // (re)set to invisible the warning message
+                timeFramesSelectionPanel.getWarningLabel().setVisible(false);
+                // results holder for currently selected condition
+                AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(dataAnalysisController.getSelectedCondition());
+                // get last time frame selected
+                int selectedLastTimeFrame = timeFramesBindingList.indexOf(timeFramesSelectionPanel.getCutOffTimeFrameComboBox().getSelectedItem());
+
+                // if last time frame provided by the user is equal or smaller than cut off time frame: No problem
+                if (selectedLastTimeFrame == areaPreProcessingResultsHolder.getTimeInterval().getProposedCutOff() || selectedLastTimeFrame < areaPreProcessingResultsHolder.getTimeInterval().getProposedCutOff()) {
+                    areaPreProcessingResultsHolder.getTimeInterval().setLastTimeFrame(selectedLastTimeFrame);
+                    // update plot
+                    plotCorrectedDataInTimeInterval(dataAnalysisController.getSelectedCondition());
+                } else {
+                    // if last time frame provided by the user is greater than cut off time frame: Warn the user!
+                    timeFramesSelectionPanel.getWarningLabel().setVisible(true);
+                }
+            }
+        });
+
+        /**
+         * If the user decides to start analysis from a value different from zero
+         * This is updating the plot and at the same time setting the first double for the time interval of the condition
+         */
+        timeFramesSelectionPanel.getFirstTimeFrameComboBox().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 // results holder for currently selected condition
                 AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(dataAnalysisController.getSelectedCondition());
                 // get last time frame selected
-                int selectedCutOff = timeFramesBindingList.indexOf(modifyCutOffPanel.getTimeFrameComboBox().getSelectedItem());
-
-                // if last time frame provided by the user is equal or smaller than cut off time frame: No problem
-                if (selectedCutOff == areaPreProcessingResultsHolder.getTimeInterval().getLastTimeFrame() || selectedCutOff < areaPreProcessingResultsHolder.getTimeInterval().getLastTimeFrame()) {
-                    areaPreProcessingResultsHolder.getTimeInterval().setLastTimeFrame(selectedCutOff);
-                    // refresh plot
-                    plotCorrectedDataInTimeInterval(dataAnalysisController.getSelectedCondition());
-                } else {
-                    // if last time frame provided by the user is greater than cut off time frame: Warn the user!
-                }
+                int selectedFirstTimeFrame = timeFramesBindingList.indexOf(timeFramesSelectionPanel.getFirstTimeFrameComboBox().getSelectedItem());
+                areaPreProcessingResultsHolder.getTimeInterval().setFirstTimeFrame(selectedFirstTimeFrame);
+                // update plot
+                plotCorrectedDataInTimeInterval(dataAnalysisController.getSelectedCondition());
             }
         });
 
         /**
          * If the user is not happy with new selection, reset cut off value back to preciously computed one.
          */
-        modifyCutOffPanel.getResetCutOffButton().addActionListener(new ActionListener() {
+        timeFramesSelectionPanel.getResetCutOffButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1328,23 +1373,6 @@ public class BulkCellAnalysisController {
         });
 
         /**
-         * If the user decides to overwrite cut off value- pop up a JDialog with some options
-         * Select a different cut off time frame from a combo box
-         */
-        correctedAreaPanel.getModifyCutOffButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // remove previous panel
-                dialog.getContentPane().remove(distanceMatrixPanel);
-                // add new panel
-                dialog.getContentPane().add(modifyCutOffPanel, gridBagConstraints);
-                // show the dialog
-                dialog.setVisible(true);
-            }
-        });
-
-        /**
          * If the user decides to overwrite decision about replicates selection, pop up a JDialog with Distance matrix table
          * In this table the user is able to select or deselect conditions replicates
          */
@@ -1353,12 +1381,40 @@ public class BulkCellAnalysisController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // remove previous panel
-                dialog.getContentPane().remove(modifyCutOffPanel);
+                dialog.getContentPane().remove(timeFramesSelectionPanel);
+                // set title
+                dialog.setTitle("Exclude Replicates");
                 // add distance matrix on top of panel
                 showDistanceMatrix(dataAnalysisController.getSelectedCondition());
                 // add new panel 
                 dialog.getContentPane().add(distanceMatrixPanel, gridBagConstraints);
                 // show the dialog
+                dialog.pack();
+                dialog.setVisible(true);
+            }
+        });
+
+        /**
+         * If the user decides to overwrite cut off value- pop up a JDialog with some options
+         * Select a different cut off time frame from a combo box and update plot according to value
+         */
+        correctedAreaPanel.getChooseTimeFramesButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PlateCondition selectedCondition = dataAnalysisController.getSelectedCondition();
+                // (re)set to invisible the warning message
+                timeFramesSelectionPanel.getWarningLabel().setVisible(false);
+
+                timeFramesSelectionPanel.getDefaultCutOffTextField().setText(timeFramesBindingList.get(map.get(selectedCondition).getTimeInterval().getProposedCutOff()).toString());
+                // remove previous panel
+                dialog.getContentPane().remove(distanceMatrixPanel);
+                // set title
+                dialog.setTitle("Select time frames");
+                // add new panel
+                dialog.getContentPane().add(timeFramesSelectionPanel, gridBagConstraints);
+                // show the dialog
+                dialog.pack();
                 dialog.setVisible(true);
             }
         });
