@@ -473,7 +473,6 @@ public class DataAnalysisController {
                 //for current selected condition show corrected area values (outliers have been deleted from distribution)
                 bulkCellAnalysisController.showCorrectedAreaInTable(getSelectedCondition());
                 //show Area increases with time frames
-                //bulkCellAnalysisController.showDistanceMatrix(getSelectedCondition());
                 bulkCellAnalysisController.plotCorrectedDataReplicates(getSelectedCondition());
             }
             // set cursor back to default and show all computed results for selected condition

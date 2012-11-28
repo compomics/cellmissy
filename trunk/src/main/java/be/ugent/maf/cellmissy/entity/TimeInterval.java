@@ -15,6 +15,8 @@ public class TimeInterval {
     private int firstTimeFrame;
     // second value of interval
     private int lastTimeFrame;
+    // default cutoff
+    private int proposedCutOff;
 
     /**
      * Constructor
@@ -40,5 +42,13 @@ public class TimeInterval {
 
     public void setLastTimeFrame(int lastTimeFrame) {
         this.lastTimeFrame = lastTimeFrame;
+    }
+
+    public int getProposedCutOff() {
+        return proposedCutOff;
+    }
+
+    public void setProposedCutOff(int proposedCutOff) {
+        this.proposedCutOff = proposedCutOff;
     }
 }

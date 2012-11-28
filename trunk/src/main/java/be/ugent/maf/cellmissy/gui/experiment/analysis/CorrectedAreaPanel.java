@@ -33,8 +33,8 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         return cutOffCheckBox;
     }
 
-    public JButton getModifyCutOffButton() {
-        return modifyCutOffButton;
+    public JButton getChooseTimeFramesButton() {
+        return chooseTimeFramesButton;
     }
 
     public JTextField getExcludedReplicatesTextField() {
@@ -68,7 +68,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         cutOffInfoLabel = new javax.swing.JLabel();
         cutOffTextField = new javax.swing.JTextField();
         cutOffCheckBox = new javax.swing.JCheckBox();
-        modifyCutOffButton = new javax.swing.JButton();
+        chooseTimeFramesButton = new javax.swing.JButton();
         replicatesAreaChartParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -78,7 +78,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         excludeReplicatesPanel.setOpaque(false);
         excludeReplicatesPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        excludedReplicatesLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        excludedReplicatesLabel.setFont(new java.awt.Font("Tahoma", 2, 11));
         excludedReplicatesLabel.setText("Excluded Replicates:");
         excludedReplicatesLabel.setMinimumSize(new java.awt.Dimension(20, 20));
         excludedReplicatesLabel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -127,8 +127,8 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         cutOffPanel.setOpaque(false);
         cutOffPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        cutOffInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        cutOffInfoLabel.setText("Cut off:");
+        cutOffInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 11));
+        cutOffInfoLabel.setText("Cut off that will be used:");
         cutOffInfoLabel.setMinimumSize(new java.awt.Dimension(20, 20));
         cutOffInfoLabel.setPreferredSize(new java.awt.Dimension(20, 20));
 
@@ -140,7 +140,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         cutOffCheckBox.setText("Show cut off");
         cutOffCheckBox.setOpaque(false);
 
-        modifyCutOffButton.setText("Modify cut off");
+        chooseTimeFramesButton.setText("Choose Time Frames");
 
         javax.swing.GroupLayout cutOffPanelLayout = new javax.swing.GroupLayout(cutOffPanel);
         cutOffPanel.setLayout(cutOffPanelLayout);
@@ -149,15 +149,14 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
             .addGroup(cutOffPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(cutOffPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cutOffCheckBox)
                     .addGroup(cutOffPanelLayout.createSequentialGroup()
-                        .addComponent(cutOffCheckBox)
-                        .addGap(4, 4, 4)
-                        .addComponent(modifyCutOffButton))
-                    .addGroup(cutOffPanelLayout.createSequentialGroup()
-                        .addComponent(cutOffInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(cutOffPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(cutOffInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(chooseTimeFramesButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cutOffTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(63, 63, 63))
+                .addGap(29, 29, 29))
         );
         cutOffPanelLayout.setVerticalGroup(
             cutOffPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -167,10 +166,10 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
                     .addComponent(cutOffInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cutOffTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(cutOffPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cutOffCheckBox)
-                    .addComponent(modifyCutOffButton))
-                .addGap(90, 90, 90))
+                .addComponent(cutOffCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(chooseTimeFramesButton)
+                .addGap(60, 60, 60))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -197,6 +196,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         add(replicatesAreaChartParentPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton chooseTimeFramesButton;
     private javax.swing.JCheckBox cutOffCheckBox;
     private javax.swing.JLabel cutOffInfoLabel;
     private javax.swing.JPanel cutOffPanel;
@@ -204,7 +204,6 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
     private javax.swing.JPanel excludeReplicatesPanel;
     private javax.swing.JLabel excludedReplicatesLabel;
     private javax.swing.JTextField excludedReplicatesTextField;
-    private javax.swing.JButton modifyCutOffButton;
     private javax.swing.JPanel replicatesAreaChartParentPanel;
     private javax.swing.JButton selectReplicatesButton;
     // End of variables declaration//GEN-END:variables

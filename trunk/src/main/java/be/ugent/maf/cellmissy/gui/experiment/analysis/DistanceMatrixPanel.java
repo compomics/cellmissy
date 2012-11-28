@@ -11,6 +11,7 @@
 package be.ugent.maf.cellmissy.gui.experiment.analysis;
 
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
 
 /**
  *
@@ -20,6 +21,10 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
 
     public JPanel getDistanceMatrixTableParentPanel() {
         return distanceMatrixTableParentPanel;
+    }
+
+    public JTextPane getInfoTextPane() {
+        return infoTextPane;
     }
 
     /** Creates new form DistanceMatrixPanel */
@@ -38,33 +43,44 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         infoPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        infoTextPane = new javax.swing.JTextPane();
         distanceMatrixTableParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setMinimumSize(new java.awt.Dimension(600, 300));
+        setPreferredSize(new java.awt.Dimension(600, 300));
         setLayout(new java.awt.GridBagLayout());
 
-        infoPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        infoPanel.setMinimumSize(new java.awt.Dimension(600, 100));
         infoPanel.setOpaque(false);
-        infoPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        infoPanel.setPreferredSize(new java.awt.Dimension(600, 100));
 
-        jLabel1.setText("This distance matrix contains the euclidean distances between all replicates.");
+        jScrollPane1.setBorder(null);
+        jScrollPane1.setFocusable(false);
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(600, 100));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(600, 100));
+
+        infoTextPane.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Distance Matrix", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
+        infoTextPane.setText("This matrix contains the distances, taken pairwise, of the replicates' set. If a replicate is detected to be an outlier in the overall distribution, its distances values are by default highlighted in red and the correspondent checkbox is selected, meaning that the replicate will not be considered as part of the dataset in further analysis. You can still decide to eliminate/keep a replicate by selecting/deselecting the correspondent checkbox. \n");
+        infoTextPane.setFocusable(false);
+        infoTextPane.setMinimumSize(new java.awt.Dimension(600, 150));
+        infoTextPane.setPreferredSize(new java.awt.Dimension(600, 150));
+        jScrollPane1.setViewportView(infoTextPane);
 
         javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
         infoPanel.setLayout(infoPanelLayout);
         infoPanelLayout.setHorizontalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(infoPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(210, Short.MAX_VALUE))
+            .addGap(0, 643, Short.MAX_VALUE)
+            .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE))
         );
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(infoPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(27, Short.MAX_VALUE))
+            .addGap(0, 166, Short.MAX_VALUE)
+            .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -73,12 +89,12 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weighty = 0.5;
         add(infoPanel, gridBagConstraints);
 
-        distanceMatrixTableParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        distanceMatrixTableParentPanel.setMinimumSize(new java.awt.Dimension(600, 150));
         distanceMatrixTableParentPanel.setOpaque(false);
-        distanceMatrixTableParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        distanceMatrixTableParentPanel.setPreferredSize(new java.awt.Dimension(600, 150));
         distanceMatrixTableParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -86,12 +102,13 @@ public class DistanceMatrixPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.9;
+        gridBagConstraints.weighty = 0.5;
         add(distanceMatrixTableParentPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel distanceMatrixTableParentPanel;
     private javax.swing.JPanel infoPanel;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JTextPane infoTextPane;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
