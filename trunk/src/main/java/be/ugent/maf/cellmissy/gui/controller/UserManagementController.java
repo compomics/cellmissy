@@ -6,7 +6,7 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.User;
-import be.ugent.maf.cellmissy.gui.ValidationUtils;
+import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.user.UserPanel;
 import be.ugent.maf.cellmissy.service.UserService;
 import java.awt.event.ActionEvent;

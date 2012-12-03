@@ -10,7 +10,7 @@ import be.ugent.maf.cellmissy.entity.EcmComposition;
 import be.ugent.maf.cellmissy.entity.EcmDensity;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.gui.GuiUtils;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.setup.AssayEcm2DPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.AssayEcm3DPanel;
 import be.ugent.maf.cellmissy.service.AssayService;

@@ -14,9 +14,7 @@ import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 
 /**
  *
@@ -57,14 +55,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return bulkCellAnalysisParentPanel;
     }
 
-    public JPanel getSingleCellAnalysisParentPanel() {
-        return singleCellAnalysisParentPanel;
-    }
-
-    public JTabbedPane getDataAnalysisTabbedPane() {
-        return dataAnalysisTabbedPane;
-    }
-
     public JProgressBar getFetchAllConditionsProgressBar() {
         return fetchAllConditionsProgressBar;
     }
@@ -81,10 +71,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
-        rightPanel = new javax.swing.JPanel();
-        dataAnalysisTabbedPane = new javax.swing.JTabbedPane();
         bulkCellAnalysisParentPanel = new javax.swing.JPanel();
-        singleCellAnalysisParentPanel = new javax.swing.JPanel();
         leftPanel = new javax.swing.JPanel();
         experimentDataPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -106,36 +93,11 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
 
-        rightPanel.setEnabled(false);
-        rightPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        rightPanel.setOpaque(false);
-        rightPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        bulkCellAnalysisParentPanel.setBackground(new java.awt.Color(255, 255, 255));
+        bulkCellAnalysisParentPanel.setEnabled(false);
         bulkCellAnalysisParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        bulkCellAnalysisParentPanel.setName(""); // NOI18N
         bulkCellAnalysisParentPanel.setOpaque(false);
+        bulkCellAnalysisParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         bulkCellAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
-        dataAnalysisTabbedPane.addTab("Bulk Cell", bulkCellAnalysisParentPanel);
-
-        singleCellAnalysisParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        singleCellAnalysisParentPanel.setOpaque(false);
-        singleCellAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
-        dataAnalysisTabbedPane.addTab("Single Cell", singleCellAnalysisParentPanel);
-
-        javax.swing.GroupLayout rightPanelLayout = new javax.swing.GroupLayout(rightPanel);
-        rightPanel.setLayout(rightPanelLayout);
-        rightPanelLayout.setHorizontalGroup(
-            rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(rightPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(dataAnalysisTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 841, Short.MAX_VALUE))
-        );
-        rightPanelLayout.setVerticalGroup(
-            rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(dataAnalysisTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
-        );
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -143,7 +105,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.7;
         gridBagConstraints.weighty = 0.9;
-        add(rightPanel, gridBagConstraints);
+        add(bulkCellAnalysisParentPanel, gridBagConstraints);
 
         leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         leftPanel.setOpaque(false);
@@ -318,7 +280,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JList conditionsList;
     private javax.swing.JPanel conditionsPanel;
-    private javax.swing.JTabbedPane dataAnalysisTabbedPane;
     private javax.swing.JPanel experimentDataPanel;
     private javax.swing.JList experimentJList;
     private javax.swing.JProgressBar fetchAllConditionsProgressBar;
@@ -331,7 +292,5 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JList projectJList;
-    private javax.swing.JPanel rightPanel;
-    private javax.swing.JPanel singleCellAnalysisParentPanel;
     // End of variables declaration//GEN-END:variables
 }

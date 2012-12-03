@@ -16,9 +16,10 @@ import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
-import be.ugent.maf.cellmissy.gui.GuiUtils;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
@@ -84,8 +85,6 @@ public class DataAnalysisController {
     //child controllers
     @Autowired
     private BulkCellAnalysisController bulkCellAnalysisController;
-    @Autowired
-    private SingleCellAnalysisController singleCellAnalysisController;
     //services
     @Autowired
     private ExperimentService experimentService;
@@ -109,7 +108,6 @@ public class DataAnalysisController {
         format = new DecimalFormat(DATA_FORMAT);
         //init child controllers
         bulkCellAnalysisController.init();
-        singleCellAnalysisController.init();
         initPlatePanel();
         initExperimentDataPanel();
     }
@@ -285,17 +283,12 @@ public class DataAnalysisController {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("condition ***");
-                // check which tab is selected: bulk cell analysis or single cell analysis?
-                if (dataAnalysisPanel.getDataAnalysisTabbedPane().getSelectedIndex() == 0) {
-                    // Execute Swing Worker to fetch Selected Condition: 
-                    FetchConditionTimeStepsSwingWorker fetchSelectedConditionSW = new FetchConditionTimeStepsSwingWorker();
-                    fetchSelectedConditionSW.execute();
-                } else if (dataAnalysisPanel.getDataAnalysisTabbedPane().getSelectedIndex() == 1) {
-                    FetchConditionTracksSwingWorker fectConditionTracksSwingWorker = new FetchConditionTracksSwingWorker();
-                    fectConditionTracksSwingWorker.execute();
-                }
+                // Execute Swing Worker to fetch Selected Condition: 
+                FetchConditionTimeStepsSwingWorker fetchSelectedConditionSW = new FetchConditionTimeStepsSwingWorker();
+                fetchSelectedConditionSW.execute();
             }
         });
+
 
         // when an algorithm is selected, map needs to be init again and then filled in with new results
         // cache needs to be cleaned
@@ -343,7 +336,7 @@ public class DataAnalysisController {
      */
     private void showConditions() {
         //set cell renderer for the List
-        dataAnalysisPanel.getConditionsList().setCellRenderer(new ConditionsRenderer());
+        dataAnalysisPanel.getConditionsList().setCellRenderer(new ConditionsListRenderer(plateConditionList));
         ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(plateConditionList);
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, plateConditionBindingList, dataAnalysisPanel.getConditionsList());
         bindingGroup.addBinding(jListBinding);
@@ -366,59 +359,6 @@ public class DataAnalysisController {
                     bulkCellAnalysisController.getTimeStepsBindingList().add(timeStep);
                 }
             }
-        }
-    }
-
-    /**
-     * Update track list with objects from actual selected condition
-     * @param plateCondition 
-     */
-    private void updateTracksList(PlateCondition plateCondition) {
-        // clear the actual tracksList
-        if (!singleCellAnalysisController.getTracksBindingList().isEmpty()) {
-            singleCellAnalysisController.getTracksBindingList().clear();
-        }
-        for (Well well : plateCondition.getWellCollection()) {
-            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
-                Collection<Track> trackCollection = wellHasImagingType.getTrackCollection();
-                for (Track track : trackCollection) {
-                    singleCellAnalysisController.getTracksBindingList().add(track);
-                }
-            }
-        }
-    }
-
-    /**
-     * Update track points list with objects from a selected track in upper table
-     * @param plateCondition
-     * @param selectedTrack  
-     */
-    public void updateTrackPointsList(PlateCondition plateCondition, Track selectedTrack) {
-        // clear the actual tracksList
-        if (!singleCellAnalysisController.getTrackPointsBindingList().isEmpty()) {
-            singleCellAnalysisController.getTrackPointsBindingList().clear();
-        }
-        for (Well well : plateCondition.getWellCollection()) {
-            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
-                for (Track track : wellHasImagingType.getTrackCollection()) {
-                    if (track.equals(selectedTrack)) {
-                        for (TrackPoint trackPoint : track.getTrackPointCollection()) {
-                            singleCellAnalysisController.getTrackPointsBindingList().add(trackPoint);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Using the wellService, fetch track points from DB for selected condition
-     */
-    public void fetchTrackPoints() {
-        List<Well> wellList = new ArrayList<>();
-        wellList.addAll(getSelectedCondition().getWellCollection());
-        for (int i = 0; i < wellList.size(); i++) {
-            wellService.fetchTrackPoints(wellList.get(i), algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
         }
     }
 
@@ -481,87 +421,9 @@ public class DataAnalysisController {
     }
 
     /**
-     * Swing Worker to fetch one condition tracks at once
+     * 
+     * @param type 
      */
-    private class FetchConditionTracksSwingWorker extends SwingWorker<Void, Void> {
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            List<Well> wellList = new ArrayList<>();
-            wellList.addAll(getSelectedCondition().getWellCollection());
-            //fetch tracks for each well of condition 
-            for (int i = 0; i < wellList.size(); i++) {
-                //fetch tracks collection for the wellhasimagingtype of interest
-                wellService.fetchTracks(wellList.get(i), algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
-            }
-            updateTracksList(getSelectedCondition());
-            return null;
-        }
-
-        @Override
-        protected void done() {
-            singleCellAnalysisController.showTracksInTable();
-            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
-    }
-
-    /**
-     * renderer for the Conditions JList
-     */
-    private class ConditionsRenderer extends DefaultListCellRenderer {
-
-        // constructor
-        public ConditionsRenderer() {
-            setOpaque(true);
-            setIconTextGap(10);
-        }
-
-        //Overrides method from the DefaultListCellRenderer
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
-            setIcon(new rectIcon(GuiUtils.getAvailableColors()[conditionIndex + 1]));
-            return this;
-        }
-    }
-
-    /**
-     * rectangular icon for the Condition list
-     */
-    private class rectIcon implements Icon {
-
-        private final Integer rectHeight = 10;
-        private final Integer rectWidth = 25;
-        private Color color;
-
-        /**
-         * constructor
-         * @param color 
-         */
-        public rectIcon(Color color) {
-            this.color = color;
-        }
-
-        @Override
-        public void paintIcon(Component c, Graphics g, int x, int y) {
-            Graphics2D g2d = (Graphics2D) g;
-            //loadDataPlatePanelController.getLoadDataPlatePanel().setGraphics(g2d);
-            g2d.setColor(color);
-            g2d.fillRect(x, y, rectWidth, rectHeight);
-        }
-
-        @Override
-        public int getIconWidth() {
-            return rectWidth;
-        }
-
-        @Override
-        public int getIconHeight() {
-            return rectHeight;
-        }
-    }
-
     public void setCursor(int type) {
         cellMissyController.setCursor(Cursor.getPredefinedCursor(type));
     }

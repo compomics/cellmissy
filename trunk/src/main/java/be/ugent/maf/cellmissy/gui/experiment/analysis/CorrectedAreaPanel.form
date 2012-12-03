@@ -96,7 +96,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="selectReplicatesButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Select replicates"/>
+            <Property name="text" type="java.lang.String" value="Select replicates..."/>
           </Properties>
         </Component>
       </SubComponents>
@@ -191,7 +191,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="chooseTimeFramesButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Choose Time Frames"/>
+            <Property name="text" type="java.lang.String" value="Choose Time Frames..."/>
           </Properties>
         </Component>
       </SubComponents>

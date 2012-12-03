@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.impl;
 
-import be.ugent.maf.cellmissy.analysis.AnalysisUtils;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import java.util.ArrayList;

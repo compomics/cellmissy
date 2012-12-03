@@ -2,23 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui;
+package be.ugent.maf.cellmissy.utils;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import javax.swing.JPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.Plot;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.CategoryItemRenderer;
-import org.jfree.chart.renderer.category.StandardBarPainter;
-import org.jfree.chart.renderer.xy.StandardXYBarPainter;
-import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
 
 /**
  * Utility class for GUI
@@ -79,34 +69,6 @@ public class GuiUtils {
         }
         if (GuiUtils.containsComponent(parentPanel, panelToRemove)) {
             parentPanel.remove(panelToRemove);
-        }
-    }
-
-    /**
-     * Control shadow of JFreeChart
-     * @param chart
-     * @param state
-     */
-    public static void setShadowVisible(final JFreeChart chart, final boolean state) {
-        if (chart != null) {
-            final Plot p = chart.getPlot();
-            if (p instanceof XYPlot) {
-                final XYPlot xyplot = (XYPlot) p;
-                final XYItemRenderer xyItemRenderer = xyplot.getRenderer();
-                if (xyItemRenderer instanceof XYBarRenderer) {
-                    final XYBarRenderer br = (XYBarRenderer) xyItemRenderer;
-                    br.setBarPainter(new StandardXYBarPainter());
-                    br.setShadowVisible(state);
-                }
-            } else if (p instanceof CategoryPlot) {
-                final CategoryPlot categoryPlot = (CategoryPlot) p;
-                final CategoryItemRenderer categoryItemRenderer = categoryPlot.getRenderer();
-                if (categoryItemRenderer instanceof BarRenderer) {
-                    final BarRenderer br = (BarRenderer) categoryItemRenderer;
-                    br.setBarPainter(new StandardBarPainter());
-                    br.setShadowVisible(state);
-                }
-            }
         }
     }
 }

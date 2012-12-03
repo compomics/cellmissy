@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis;
+package be.ugent.maf.cellmissy.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +57,7 @@ public class AnalysisUtils {
         boolean[][] transposed = new boolean[matrix.length][matrix[0].length];
         for (int rowIndex = 0; rowIndex < matrix.length; rowIndex++) {
             for (int columnIndex = 0; columnIndex < matrix[0].length; columnIndex++) {
-                if(matrix[rowIndex][columnIndex]){
+                if (matrix[rowIndex][columnIndex]) {
                     transposed[columnIndex][rowIndex] = true;
                 }
             }
@@ -204,5 +204,22 @@ public class AnalysisUtils {
             }
         }
         return Math.sqrt(distance);
+    }
+
+    /**
+     * Get the maximum double of a list of array of doubles
+     * @param list
+     * @return maximum double 
+     */
+    public static double getMaxOfAList(List<Double[]> list) {
+        double max = 0;
+        for (Double[] doubles : list) {
+            Arrays.sort(doubles);
+            double tempMax = doubles[doubles.length - 1];
+            if (tempMax > max) {
+                max = tempMax;
+            }
+        }
+        return max;
     }
 }
