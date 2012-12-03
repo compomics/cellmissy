@@ -2,12 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui;
+package be.ugent.maf.cellmissy.gui.experiment.setup;
 
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
-import be.ugent.maf.cellmissy.gui.view.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;

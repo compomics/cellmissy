@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.impl;
 
-import be.ugent.maf.cellmissy.analysis.AnalysisUtils;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Component;

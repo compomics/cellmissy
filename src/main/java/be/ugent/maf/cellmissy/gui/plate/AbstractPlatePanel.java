@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.gui.plate;
 
 import be.ugent.maf.cellmissy.entity.PlateFormat;
-import be.ugent.maf.cellmissy.gui.GuiUtils;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;

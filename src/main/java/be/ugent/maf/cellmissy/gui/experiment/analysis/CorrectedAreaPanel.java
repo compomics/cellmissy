@@ -88,7 +88,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         excludedReplicatesTextField.setMinimumSize(new java.awt.Dimension(20, 20));
         excludedReplicatesTextField.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        selectReplicatesButton.setText("Select replicates");
+        selectReplicatesButton.setText("Select replicates...");
 
         javax.swing.GroupLayout excludeReplicatesPanelLayout = new javax.swing.GroupLayout(excludeReplicatesPanel);
         excludeReplicatesPanel.setLayout(excludeReplicatesPanelLayout);
@@ -140,7 +140,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         cutOffCheckBox.setText("Show cut off");
         cutOffCheckBox.setOpaque(false);
 
-        chooseTimeFramesButton.setText("Choose Time Frames");
+        chooseTimeFramesButton.setText("Choose Time Frames...");
 
         javax.swing.GroupLayout cutOffPanelLayout = new javax.swing.GroupLayout(cutOffPanel);
         cutOffPanel.setLayout(cutOffPanelLayout);

@@ -10,7 +10,9 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis;
 
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -84,6 +86,14 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         return bulkTabbedPane;
     }
 
+    public JCheckBox getPlotErrorBarsCheckBox() {
+        return plotErrorBarsCheckBox;
+    }
+
+    public JList getConditionsList() {
+        return conditionsList;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -109,6 +119,13 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         dataTablePanel = new javax.swing.JPanel();
         graphicsParentPanel = new javax.swing.JPanel();
         bulkGlobalAreaPanel = new javax.swing.JPanel();
+        leftPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        plotErrorBarsCheckBox = new javax.swing.JCheckBox();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        conditionsList = new javax.swing.JList();
+        jButton1 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
         globalViewPanel = new javax.swing.JPanel();
         bulkAnalysisPanel = new javax.swing.JPanel();
         tablePanel = new javax.swing.JPanel();
@@ -146,7 +163,7 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         bulkImporterPanel.setLayout(bulkImporterPanelLayout);
         bulkImporterPanelLayout.setHorizontalGroup(
             bulkImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 899, Short.MAX_VALUE)
+            .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1035, Short.MAX_VALUE)
             .addGroup(bulkImporterPanelLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -200,7 +217,7 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
                         .addComponent(percentageAreaIncreaseButton)
                         .addGap(18, 18, 18)
                         .addComponent(correctedAreaButton)))
-                .addContainerGap(451, Short.MAX_VALUE))
+                .addContainerGap(587, Short.MAX_VALUE))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -211,7 +228,7 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(deltaAreaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(percentageAreaIncreaseButton)
                     .addComponent(correctedAreaButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 470, Short.MAX_VALUE)
                 .addComponent(tableInfoLabel)
                 .addContainerGap())
         );
@@ -258,17 +275,78 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         bulkGlobalAreaPanel.setOpaque(false);
         bulkGlobalAreaPanel.setLayout(new java.awt.GridBagLayout());
 
-        globalViewPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        globalViewPanel.setOpaque(false);
-        globalViewPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        globalViewPanel.setLayout(new java.awt.GridBagLayout());
+        leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        leftPanel.setOpaque(false);
+        leftPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 2, 12));
+        jLabel1.setText("Show Error Bars on top of the plot");
+
+        plotErrorBarsCheckBox.setText("Plot SEM");
+        plotErrorBarsCheckBox.setOpaque(false);
+
+        jScrollPane3.setBorder(null);
+        jScrollPane3.setOpaque(false);
+
+        conditionsList.setSelectedIndex(0);
+        jScrollPane3.setViewportView(conditionsList);
+
+        jButton1.setText("Save plot as...");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 12));
+        jLabel2.setText("Select Conditions to plot");
+
+        javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
+        leftPanel.setLayout(leftPanelLayout);
+        leftPanelLayout.setHorizontalGroup(
+            leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leftPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(plotErrorBarsCheckBox)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButton1))
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
+        leftPanelLayout.setVerticalGroup(
+            leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leftPanelLayout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(plotErrorBarsCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addGap(4, 4, 4)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addContainerGap(254, Short.MAX_VALUE))
+        );
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.8;
+        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.weighty = 1.0;
+        bulkGlobalAreaPanel.add(leftPanel, gridBagConstraints);
+
+        globalViewPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        globalViewPanel.setOpaque(false);
+        globalViewPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        globalViewPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.8;
+        gridBagConstraints.weighty = 1.0;
         bulkGlobalAreaPanel.add(globalViewPanel, gridBagConstraints);
 
         bulkTabbedPane.addTab("Global View", bulkGlobalAreaPanel);
@@ -300,7 +378,7 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(slopesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 867, Short.MAX_VALUE)
+                .addComponent(slopesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1003, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tablePanelLayout.setVerticalGroup(
@@ -308,7 +386,7 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(slopesTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(151, Short.MAX_VALUE))
+                .addContainerGap(291, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -339,12 +417,10 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 904, Short.MAX_VALUE)
-            .addComponent(bulkTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 904, Short.MAX_VALUE)
+            .addComponent(bulkTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1040, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 598, Short.MAX_VALUE)
             .addComponent(bulkTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -354,14 +430,21 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel bulkImporterPanel;
     private javax.swing.JPanel bulkPreProcessPanel;
     private javax.swing.JTabbedPane bulkTabbedPane;
+    private javax.swing.JList conditionsList;
     private javax.swing.JRadioButton correctedAreaButton;
     private javax.swing.JPanel dataTablePanel;
     private javax.swing.JRadioButton deltaAreaButton;
     private javax.swing.JPanel globalViewPanel;
     private javax.swing.JPanel graphicsParentPanel;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JPanel leftPanel;
     private javax.swing.JRadioButton normalizeAreaButton;
     private javax.swing.JRadioButton percentageAreaIncreaseButton;
+    private javax.swing.JCheckBox plotErrorBarsCheckBox;
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JTable slopesTable;
     private javax.swing.JScrollPane slopesTableScrollPane;

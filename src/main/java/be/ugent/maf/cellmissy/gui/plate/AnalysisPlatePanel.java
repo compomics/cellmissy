@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.gui.plate;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
-import be.ugent.maf.cellmissy.gui.GuiUtils;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;

@@ -4,14 +4,14 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
-import be.ugent.maf.cellmissy.analysis.AnalysisUtils;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
 import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
 import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache.DataCategory;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeInterval;
 import be.ugent.maf.cellmissy.entity.TimeStep;
-import be.ugent.maf.cellmissy.gui.GuiUtils;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.view.ComputedDataTableModel;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache;
@@ -21,18 +21,19 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.BulkCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.CorrectedAreaPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DistanceMatrixPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.TimeFramesSelectionPanel;
-import be.ugent.maf.cellmissy.gui.view.AreaPlotRenderer;
-import be.ugent.maf.cellmissy.gui.view.CheckBoxOutliersRenderer;
-import be.ugent.maf.cellmissy.gui.view.OutliersRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.AreaPlotRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.CheckBoxOutliersRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.OutliersRenderer;
 import be.ugent.maf.cellmissy.gui.view.DistanceMatrixTableModel;
-import be.ugent.maf.cellmissy.gui.view.FormatRenderer;
-import be.ugent.maf.cellmissy.gui.view.TableHeaderRenderer;
-import be.ugent.maf.cellmissy.gui.view.VelocityBarRenderer;
-import java.awt.BasicStroke;
+import be.ugent.maf.cellmissy.gui.view.RectIcon;
+import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.VelocityBarRenderer;
+import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -44,6 +45,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -77,12 +79,9 @@ import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.statistics.DefaultStatisticalCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.TextAnchor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -94,6 +93,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.jdesktop.swingbinding.JComboBoxBinding;
+import org.jdesktop.swingbinding.JListBinding;
 import org.jfree.data.Range;
 
 /**
@@ -337,31 +337,19 @@ public class BulkCellAnalysisController {
         // Transpose Normalized Area
         Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedArea);
         List wellList = new ArrayList(plateCondition.getWellCollection());
-        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
         // array for x axis
         double[] xValues = dataAnalysisController.getTimeFrames();
         for (int i = 0; i < transposedArea.length; i++) {
             double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
-            XYSeries xySeries = generateXYSeries(xValues, yValues);
+            XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
             xySeries.setKey("" + (wellList.get(i)));
-            xySeriesCollection.addSeries(xySeries);
+            xYSeriesCollection.addSeries(xySeries);
         }
         // Plot Logic
         String chartTitle = "Raw Data Condition " + conditionIndex + " (replicates)";
-        JFreeChart rawDataAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
-        rawDataAreaChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
-        rawDataAreaChart.getLegend().setPosition(RectangleEdge.RIGHT);
-        rawDataAreaChart.getXYPlot().setBackgroundPaint(Color.white);
-        rawDataAreaChart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
-        XYItemRenderer renderer = rawDataAreaChart.getXYPlot().getRenderer();
-        BasicStroke wideLine = new BasicStroke(1.3f);
-        for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
-            // plot lines with colors according to well (replicate) index
-            String wellCoordinates = xySeriesCollection.getSeriesKey(i).toString();
-            int wellIndex = getWellIndex(wellCoordinates, wellList);
-            renderer.setSeriesStroke(i, wideLine);
-            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[wellIndex + 1]);
-        }
+        JFreeChart rawDataAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        JFreeChartUtils.setupAreaChart(rawDataAreaChart, xYSeriesCollection, wellList);
         rawDataChartPanel.setChart(rawDataAreaChart);
         bulkCellAnalysisPanel.getGraphicsParentPanel().remove(densityChartPanel);
         bulkCellAnalysisPanel.getGraphicsParentPanel().remove(correctedDensityChartPanel);
@@ -384,7 +372,7 @@ public class BulkCellAnalysisController {
         // check if some replicates need to be hidden from plot (this means these replicates are outliers)
         boolean[] excludeReplicates = areaPreProcessingResultsHolder.getExcludeReplicates();
         List excludedWells = new ArrayList();
-        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
         // array for x axis
         double[] xValues = dataAnalysisController.getTimeFrames();
         for (int i = 0; i < excludeReplicates.length; i++) {
@@ -392,9 +380,9 @@ public class BulkCellAnalysisController {
             if (!excludeReplicates[i]) {
                 // array for y axis
                 double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
-                XYSeries xySeries = generateXYSeries(xValues, yValues);
+                XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
                 xySeries.setKey("" + (wellList.get(i)));
-                xySeriesCollection.addSeries(xySeries);
+                xYSeriesCollection.addSeries(xySeries);
             } else {
                 // replicates excluded
                 excludedWells.add(wellList.get(i));
@@ -402,22 +390,9 @@ public class BulkCellAnalysisController {
         }
         // Plot Logic
         String chartTitle = "Corrected Data Condition " + conditionIndex + " (replicates)";
-        JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
-        correctedAreaChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
-        correctedAreaChart.getLegend().setPosition(RectangleEdge.RIGHT);
-        correctedAreaChart.getXYPlot().setBackgroundPaint(Color.white);
-        correctedAreaChart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
-        // 
+        JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        JFreeChartUtils.setupAreaChart(correctedAreaChart, xYSeriesCollection, wellList);
         correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
-        XYItemRenderer renderer = correctedAreaChart.getXYPlot().getRenderer();
-        BasicStroke wideLine = new BasicStroke(1.3f);
-        for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
-            // plot lines with colors according to well (replicate) index
-            String wellCoordinates = xySeriesCollection.getSeriesKey(i).toString();
-            int wellIndex = getWellIndex(wellCoordinates, wellList);
-            renderer.setSeriesStroke(i, wideLine);
-            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[wellIndex + 1]);
-        }
         correctedAreaChartPanel.setChart(correctedAreaChart);
         correctedAreaPanel.getReplicatesAreaChartParentPanel().add(correctedAreaChartPanel, gridBagConstraints);
         correctedAreaPanel.getCutOffCheckBox().setSelected(false);
@@ -446,7 +421,7 @@ public class BulkCellAnalysisController {
         boolean[][] transposedOutliersMatrix = AnalysisUtils.transposeBooleanMatrix(outliersMatrix);
         DistanceMatrixTableModel distanceMatrixTableModel = new DistanceMatrixTableModel(distanceMatrix, outliersMatrix, plateCondition);
         // if user already had interaction through check boxes overwrite distance matrix table behavior 
-        if (areaPreProcessingResultsHolder.isUserHadInteraction()) {
+        if (areaPreProcessingResultsHolder.isUserSelectedReplicates()) {
             distanceMatrixTableModel.setCheckboxOutliers(areaPreProcessingResultsHolder.getExcludeReplicates());
         }
         JTable distanceMatrixTable = new JTable(distanceMatrixTableModel);
@@ -500,7 +475,7 @@ public class BulkCellAnalysisController {
                     yValues[j] = transposedArea[i][index];
                     index++;
                 }
-                XYSeries xySeries = generateXYSeries(xValues, yValues);
+                XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
                 xySeries.setKey("" + (wellList.get(i)));
                 xySeriesCollection.addSeries(xySeries);
             }
@@ -508,21 +483,8 @@ public class BulkCellAnalysisController {
         // Plot Logic
         String chartTitle = "Corrected Data Condition " + conditionIndex + " (replicates)";
         JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
-        correctedAreaChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
-        correctedAreaChart.getLegend().setPosition(RectangleEdge.RIGHT);
-        correctedAreaChart.getXYPlot().setBackgroundPaint(Color.white);
-        correctedAreaChart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
-        // show entire time frame dataset even if a subset was selected
+        JFreeChartUtils.setupAreaChart(correctedAreaChart, xySeriesCollection, wellList);
         correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
-        XYItemRenderer renderer = correctedAreaChart.getXYPlot().getRenderer();
-        BasicStroke wideLine = new BasicStroke(1.3f);
-        for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
-            // plot lines with colors according to well (replicate) index
-            String wellCoordinates = xySeriesCollection.getSeriesKey(i).toString();
-            int wellIndex = getWellIndex(wellCoordinates, wellList);
-            renderer.setSeriesStroke(i, wideLine);
-            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[wellIndex + 1]);
-        }
         correctedAreaChartPanel.setChart(correctedAreaChart);
         correctedAreaPanel.getReplicatesAreaChartParentPanel().add(correctedAreaChartPanel, gridBagConstraints);
         // time frame info
@@ -563,10 +525,7 @@ public class BulkCellAnalysisController {
                 xValues[i] = timeFramesBindingList.get(index);
                 index++;
             }
-            // double[] xValues = dataAnalysisController.getTimeFrames();
             double[] yValues = new double[xValues.length];
-            //double[] mads = new double[timeFrames.length];
-
             //time frames direction
             index = timeInterval.getFirstTimeFrame();
             for (int i = 0; i < yValues.length; i++) {
@@ -580,20 +539,77 @@ public class BulkCellAnalysisController {
                 }
                 Double[] replicatesToIncludeArray = replicatesToIncludeList.toArray(new Double[replicatesToIncludeList.size()]);
                 double median = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(replicatesToIncludeArray));
-                //mads[columnIndex] = AnalysisUtils.scaleMAD(replicateValues);
                 yValues[i] = median;
                 index++;
             }
-            XYSeries xySeries = generateXYSeries(xValues, yValues);
+            XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
             xySeries.setKey("Cond " + (dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1));
             xySeriesCollection.addSeries(xySeries);
         }
-
-        //@todo give an estimate on the median value (SEM?)
         JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area (all conditions)", "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         globalAreaChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
         globalAreaChart.getXYPlot().setBackgroundPaint(Color.white);
         globalAreaChart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        AreaPlotRenderer areaPlotRenderer = new AreaPlotRenderer();
+        globalAreaChart.getXYPlot().setRenderer(areaPlotRenderer);
+        globalAreaChartPanel.setChart(globalAreaChart);
+        bulkCellAnalysisPanel.getGlobalViewPanel().add(globalAreaChartPanel, gridBagConstraints);
+        bulkCellAnalysisPanel.getGlobalViewPanel().repaint();
+    }
+
+    /**
+     * Show Error bars on top of area increase
+     */
+    private void plotGlobalAreaWithErrorBars() {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        List<Double[]> yErrorsList = new ArrayList<>();
+        for (PlateCondition plateCondition : map.keySet()) {
+            AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(plateCondition);
+            Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
+            // Boolean (Exclude Replicates from dataset)
+            boolean[] excludeReplicates = areaPreProcessingResultsHolder.getExcludeReplicates();
+            // time interval to use
+            TimeInterval timeInterval = areaPreProcessingResultsHolder.getTimeInterval();
+            // array for x axis: sub selection of time frames
+            double[] xValues = new double[timeInterval.getLastTimeFrame() - timeInterval.getFirstTimeFrame() + 1];
+            // array for y axis: same length of x axis
+            double[] yValues = new double[xValues.length];
+            Double[] yErrors = new Double[xValues.length];
+
+            int index = timeInterval.getFirstTimeFrame();
+            for (int i = 0; i < xValues.length; i++) {
+                xValues[i] = timeFramesBindingList.get(index);
+                index++;
+            }
+            //time frames direction
+            index = timeInterval.getFirstTimeFrame();
+            for (int i = 0; i < yValues.length; i++) {
+                double[] allReplicateValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(normalizedCorrectedArea[index]));
+                List<Double> replicatesToIncludeList = new ArrayList();
+                for (int j = 0; j < allReplicateValues.length; j++) {
+                    // check if replicate has to be excluded from dataset
+                    if (!excludeReplicates[j]) {
+                        replicatesToIncludeList.add(allReplicateValues[j]);
+                    }
+                }
+                Double[] replicatesToIncludeArray = replicatesToIncludeList.toArray(new Double[replicatesToIncludeList.size()]);
+                double median = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(replicatesToIncludeArray));
+                yValues[i] = median;
+                double mad = AnalysisUtils.scaleMAD(ArrayUtils.toPrimitive(replicatesToIncludeArray));
+                yErrors[i] = mad;
+                index++;
+            }
+            yErrorsList.add(yErrors);
+            XYSeries values = JFreeChartUtils.generateXYSeries(xValues, yValues);
+            values.setKey("Cond " + (dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1));
+            xySeriesCollection.addSeries(values);
+        }
+        JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area (all conditions)", "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        JFreeChartUtils.plotVerticalErrorBars(globalAreaChart, xySeriesCollection, yErrorsList);
+        globalAreaChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
+        globalAreaChart.getXYPlot().setBackgroundPaint(Color.white);
+        globalAreaChart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        globalAreaChart.getXYPlot().getRangeAxis().setUpperBound(JFreeChartUtils.computeMaxY(xySeriesCollection) + AnalysisUtils.getMaxOfAList(yErrorsList));
         AreaPlotRenderer areaPlotRenderer = new AreaPlotRenderer();
         globalAreaChart.getXYPlot().setRenderer(areaPlotRenderer);
         globalAreaChartPanel.setChart(globalAreaChart);
@@ -637,7 +653,7 @@ public class BulkCellAnalysisController {
         velocityPlot.setRenderer(velocityBarRenderer);
 
         velocityPlot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
-        GuiUtils.setShadowVisible(velocityChart, false);
+        JFreeChartUtils.setShadowVisible(velocityChart, false);
         velocityChartPanel.setChart(velocityChart);
         bulkCellAnalysisPanel.getVelocityChartPanel().add(velocityChartPanel, gridBagConstraints);
         bulkCellAnalysisPanel.getVelocityChartPanel().repaint();
@@ -753,37 +769,6 @@ public class BulkCellAnalysisController {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         bulkCellAnalysisPanel.getGraphicsParentPanel().add(correctedDensityChartPanel, gridBagConstraints);
-    }
-
-    /**
-     * Given a xySeriesCollection and a string as a title, create a chart to show density function in a plot
-     * @param plateCondition
-     * @param dataCategory
-     * @param chartTitle
-     * @return 
-     */
-    private JFreeChart generateDensityChart(PlateCondition plateCondition, XYSeriesCollection xYSeriesCollection, String chartTitle) {
-        int conditionIndex = dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1;
-        String specificChartTitle = chartTitle + " Condition " + conditionIndex + " (replicates)";
-        JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, "% increase (Area)", "Density", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
-        densityChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
-        //XYplot
-        XYPlot xYPlot = densityChart.getXYPlot();
-        //disable autorange for the axes
-        xYPlot.getDomainAxis().setAutoRange(false);
-        xYPlot.getRangeAxis().setAutoRange(false);
-        //set ranges for x and y axes
-        xYPlot.getDomainAxis().setRange(xYSeriesCollection.getDomainLowerBound(true) - 0.05, xYSeriesCollection.getDomainUpperBound(true) + 0.05);
-        xYPlot.getRangeAxis().setUpperBound(computeMaxY(xYSeriesCollection) + 0.05);
-        xYPlot.setBackgroundPaint(Color.white);
-        //renderer for wide line
-        XYItemRenderer renderer = xYPlot.getRenderer();
-        BasicStroke wideLine = new BasicStroke(1.3f);
-        for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
-            renderer.setSeriesStroke(i, wideLine);
-            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[i + 1]);
-        }
-        return densityChart;
     }
 
     /**
@@ -912,6 +897,7 @@ public class BulkCellAnalysisController {
         // hide warning message
         timeFramesSelectionPanel.getWarningLabel().setVisible(false);
         map = new LinkedHashMap<>();
+        bulkCellAnalysisPanel.getPlotErrorBarsCheckBox().setEnabled(false);
 
         // add action listeners
 
@@ -1034,19 +1020,48 @@ public class BulkCellAnalysisController {
                 //click on Global View Panel and show Global Area increase among ALL conditions.
                 //If some conditions still need to be analyzed, a swing worker is needed.
                 if (bulkCellAnalysisPanel.getBulkTabbedPane().getSelectedIndex() == 2) {
+
+                    List<RectIcon> rectIconList = new ArrayList<>();
+                    for (int i = 0; i < dataAnalysisController.getPlateConditionList().size(); i++) {
+                        RectIcon rectIcon = new RectIcon(GuiUtils.getAvailableColors()[i + 1]);
+                        rectIconList.add(rectIcon);
+                    }
+                    ObservableList<RectIcon> rectIconBindingList = ObservableCollections.observableList(rectIconList);
+                    JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, rectIconBindingList, bulkCellAnalysisPanel.getConditionsList());
+                    bindingGroup.addBinding(jListBinding);
+                    bindingGroup.bind();
+
                     // check if a swing worker with a progress bar is actually needed: only if the number of fetched conditions is not equal to the number of all conditions of experiment
                     if (getNumberOfFetchedCondition() != dataAnalysisController.getPlateConditionList().size()) {
                         // create and execute a swinger
                         FetchAllConditionsTimeStepsSwingWorker fetchAllConditionsSwingWorker = new FetchAllConditionsTimeStepsSwingWorker();
                         fetchAllConditionsSwingWorker.execute();
+                    } else if (bulkCellAnalysisPanel.getPlotErrorBarsCheckBox().isSelected()) {
+                        plotGlobalAreaWithErrorBars();
                     } else {
-                        // swinger is no needed: plot Global Area
                         plotGlobalArea();
                     }
                 }
+
                 // click on "Analysis" tab, show Linear Model Results
                 if (bulkCellAnalysisPanel.getBulkTabbedPane().getSelectedIndex() == 3) {
                     showLinearModelInTable();
+                    bulkCellAnalysisPanel.getSlopesTable().setRowSelectionInterval(0, bulkCellAnalysisPanel.getSlopesTable().getRowCount() - 1);
+                }
+            }
+        });
+
+
+        bulkCellAnalysisPanel.getPlotErrorBarsCheckBox().addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    // plot global area and show error bars on top
+                    plotGlobalAreaWithErrorBars();
+                } else {
+                    // if check box is delesected show only Global area
+                    plotGlobalArea();
                 }
             }
         });
@@ -1103,59 +1118,11 @@ public class BulkCellAnalysisController {
         @Override
         protected void done() {
             // once xySeriesCollections are generated, generate also Charts and show results
-            plotRawDataDensityFunctions(generateDensityChart(plateCondition, rawDataXYSeriesCollection, "KDE raw data"));
-            plotCorrectedDataDensityFunctions(generateDensityChart(plateCondition, correctedDataXYSeriesCollection, "KDE corrected data"));
+            int conditionIndex = dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1;
+            plotRawDataDensityFunctions(JFreeChartUtils.generateDensityFunctionChart(conditionIndex, rawDataXYSeriesCollection, "KDE raw data"));
+            plotCorrectedDataDensityFunctions(JFreeChartUtils.generateDensityFunctionChart(conditionIndex, correctedDataXYSeriesCollection, "KDE corrected data"));
             dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
         }
-    }
-
-    /**
-     * Generate Series for (x,y) Area plotting
-     * @param xValues
-     * @param yValues
-     * @return 
-     */
-    private XYSeries generateXYSeries(double[] xValues, double[] yValues) {
-        // autosort False
-        XYSeries series = new XYSeries("", false);
-        for (int i = 0; i < yValues.length; i++) {
-            double x = xValues[i];
-            double y = yValues[i];
-            series.add(x, y);
-        }
-        return series;
-    }
-
-    /**
-     * compute Max value of Y for density plot
-     * @param xYSeriesCollection
-     * @return 
-     */
-    private double computeMaxY(XYSeriesCollection xYSeriesCollection) {
-        double maxY = 0;
-        List<XYSeries> seriesList = xYSeriesCollection.getSeries();
-        for (int i = 0; i < seriesList.size(); i++) {
-            if (seriesList.get(i).getMaxY() > maxY) {
-                maxY = seriesList.get(i).getMaxY();
-            }
-        }
-        return maxY;
-    }
-
-    /**
-     * Given a list of wells and one well's coordinate, get the index of the well in the List
-     * @param wellCoordinates
-     * @param wellList
-     * @return 
-     */
-    private int getWellIndex(String wellCoordinates, List<Well> wellList) {
-        int wellIndex = 0;
-        for (Well well : wellList) {
-            if (well.toString().equals(wellCoordinates)) {
-                wellIndex = wellList.indexOf(well);
-            }
-        }
-        return wellIndex;
     }
 
     /**
@@ -1217,7 +1184,7 @@ public class BulkCellAnalysisController {
             // update area image excluding selected technical replicates
             plotCorrectedDataReplicates(plateCondition);
             // keep note of the fact that the user had interaction with check boxes
-            map.get(plateCondition).setUserHadInteraction(true);
+            map.get(plateCondition).setUserSelectedReplicates(true);
             // recompute time interval for selected condition
             areaPreProcessor.setTimeInterval(areaPreProcessingResultsHolder);
             int lastTimeFrame = areaPreProcessingResultsHolder.getTimeInterval().getLastTimeFrame();
@@ -1275,6 +1242,8 @@ public class BulkCellAnalysisController {
             plotGlobalArea();
             // enable now tab for analysis
             bulkCellAnalysisPanel.getBulkTabbedPane().setEnabledAt(3, true);
+            // enable check box to show error bars
+            bulkCellAnalysisPanel.getPlotErrorBarsCheckBox().setEnabled(true);
         }
     }
 
@@ -1322,17 +1291,20 @@ public class BulkCellAnalysisController {
                 timeFramesSelectionPanel.getWarningLabel().setVisible(false);
                 // results holder for currently selected condition
                 AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(dataAnalysisController.getSelectedCondition());
+                TimeInterval timeInterval = areaPreProcessingResultsHolder.getTimeInterval();
                 // get last time frame selected
                 int selectedLastTimeFrame = timeFramesBindingList.indexOf(timeFramesSelectionPanel.getCutOffTimeFrameComboBox().getSelectedItem());
 
-                // if last time frame provided by the user is equal or smaller than cut off time frame: No problem
-                if (selectedLastTimeFrame == areaPreProcessingResultsHolder.getTimeInterval().getProposedCutOff() || selectedLastTimeFrame < areaPreProcessingResultsHolder.getTimeInterval().getProposedCutOff()) {
-                    areaPreProcessingResultsHolder.getTimeInterval().setLastTimeFrame(selectedLastTimeFrame);
+                // if last time frame provided by the user is equal or smaller than cut off time frame (and greater than first time frame): No problem
+                if (selectedLastTimeFrame <= timeInterval.getProposedCutOff() && selectedLastTimeFrame > timeInterval.getFirstTimeFrame()) {
+                    timeInterval.setLastTimeFrame(selectedLastTimeFrame);
                     // update plot
                     plotCorrectedDataInTimeInterval(dataAnalysisController.getSelectedCondition());
-                } else {
+                } else if (selectedLastTimeFrame > timeInterval.getProposedCutOff()) {
                     // if last time frame provided by the user is greater than cut off time frame: Warn the user!
                     timeFramesSelectionPanel.getWarningLabel().setVisible(true);
+                } else if (selectedLastTimeFrame < timeInterval.getFirstTimeFrame()) {
+                    // last time frame can not be smaller than first one: warn the user and ignore selection
                 }
             }
         });
@@ -1347,11 +1319,16 @@ public class BulkCellAnalysisController {
             public void actionPerformed(ActionEvent e) {
                 // results holder for currently selected condition
                 AreaPreProcessingResultsHolder areaPreProcessingResultsHolder = map.get(dataAnalysisController.getSelectedCondition());
-                // get last time frame selected
+                TimeInterval timeInterval = areaPreProcessingResultsHolder.getTimeInterval();
+                // get first time frame selected
                 int selectedFirstTimeFrame = timeFramesBindingList.indexOf(timeFramesSelectionPanel.getFirstTimeFrameComboBox().getSelectedItem());
-                areaPreProcessingResultsHolder.getTimeInterval().setFirstTimeFrame(selectedFirstTimeFrame);
-                // update plot
-                plotCorrectedDataInTimeInterval(dataAnalysisController.getSelectedCondition());
+                if (selectedFirstTimeFrame <= timeInterval.getLastTimeFrame()) {
+                    timeInterval.setFirstTimeFrame(selectedFirstTimeFrame);
+                    // update plot
+                    plotCorrectedDataInTimeInterval(dataAnalysisController.getSelectedCondition());
+                } else {
+                    // first time frame can not be greater than last one: warn the user and ignore selection
+                }
             }
         });
 

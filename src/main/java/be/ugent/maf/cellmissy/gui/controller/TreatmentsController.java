@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
-import be.ugent.maf.cellmissy.gui.GuiUtils;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.setup.AddDrugsTreatmentsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.TreatmentsPanel;
 import be.ugent.maf.cellmissy.service.TreatmentService;

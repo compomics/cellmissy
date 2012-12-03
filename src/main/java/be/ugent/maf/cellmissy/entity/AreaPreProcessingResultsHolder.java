@@ -30,7 +30,7 @@ public class AreaPreProcessingResultsHolder {
     // Array of boolean: exclude (or not) a technical replicate (i.e. a well) from analysis
     private boolean[] excludeReplicates;
     // user has changed standard behaviour of outliers detection?
-    private boolean userHadInteraction;
+    private boolean userSelectedReplicates;
     // time interval
     private TimeInterval timeInterval;
 
@@ -94,12 +94,12 @@ public class AreaPreProcessingResultsHolder {
         this.excludeReplicates = excludeReplicates;
     }
 
-    public boolean isUserHadInteraction() {
-        return userHadInteraction;
+    public boolean isUserSelectedReplicates() {
+        return userSelectedReplicates;
     }
 
-    public void setUserHadInteraction(boolean userHadInteraction) {
-        this.userHadInteraction = userHadInteraction;
+    public void setUserSelectedReplicates(boolean userSelectedReplicates) {
+        this.userSelectedReplicates = userSelectedReplicates;
     }
 
     public TimeInterval getTimeInterval() {
