@@ -103,9 +103,9 @@ public class TimeFramesSelectionPanel extends javax.swing.JPanel {
         );
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 116, Short.MAX_VALUE)
+            .addGap(0, 119, Short.MAX_VALUE)
             .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -133,7 +133,7 @@ public class TimeFramesSelectionPanel extends javax.swing.JPanel {
 
         jLabel3.setText("Default cut off:");
 
-        defaultCutOffTextField.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        defaultCutOffTextField.setFont(new java.awt.Font("Tahoma", 1, 11));
         defaultCutOffTextField.setFocusable(false);
         defaultCutOffTextField.setMinimumSize(new java.awt.Dimension(20, 20));
         defaultCutOffTextField.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -179,7 +179,7 @@ public class TimeFramesSelectionPanel extends javax.swing.JPanel {
                     .addComponent(cutOffTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(resetCutOffButton)
                     .addComponent(jLabel1))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -195,9 +195,9 @@ public class TimeFramesSelectionPanel extends javax.swing.JPanel {
         warningPanel.setOpaque(false);
         warningPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        warningLabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        warningLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         warningLabel.setForeground(new java.awt.Color(255, 0, 0));
-        warningLabel.setText("The chosen value is greater than default cut off, so default cut off is still going to be used in analysis!");
+        warningLabel.setText("The chosen value is greater than default cut off, so default cut off will be used in analysis!");
 
         javax.swing.GroupLayout warningPanelLayout = new javax.swing.GroupLayout(warningPanel);
         warningPanel.setLayout(warningPanelLayout);
@@ -213,7 +213,7 @@ public class TimeFramesSelectionPanel extends javax.swing.JPanel {
             .addGroup(warningPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(warningLabel)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();

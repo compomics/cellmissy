@@ -14,7 +14,6 @@ import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JTabbedPane;
 
 /**
  *
@@ -87,7 +86,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         jScrollPane3 = new javax.swing.JScrollPane();
         conditionsList = new javax.swing.JList();
         bottomPanel = new javax.swing.JPanel();
-        infolabel = new javax.swing.JLabel();
         fetchAllConditionsProgressBar = new javax.swing.JProgressBar();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -104,7 +102,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.7;
-        gridBagConstraints.weighty = 0.9;
+        gridBagConstraints.weighty = 0.95;
         add(bulkCellAnalysisParentPanel, gridBagConstraints);
 
         leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -168,7 +166,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                 .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(imagingTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -211,7 +209,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         );
         conditionsPanelLayout.setVerticalGroup(
             conditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -229,35 +227,26 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.weighty = 0.9;
+        gridBagConstraints.weighty = 0.95;
         add(leftPanel, gridBagConstraints);
 
-        bottomPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
-        bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         bottomPanel.setOpaque(false);
-        bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addGap(41, 41, 41)
-                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(1174, 1174, 1174))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addContainerGap(937, Short.MAX_VALUE)
-                .addComponent(fetchAllConditionsProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(1031, Short.MAX_VALUE)
+                .addComponent(fetchAllConditionsProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(18, Short.MAX_VALUE)
                 .addComponent(fetchAllConditionsProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -267,7 +256,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weighty = 0.05;
         add(bottomPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -284,7 +273,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JList experimentJList;
     private javax.swing.JProgressBar fetchAllConditionsProgressBar;
     private javax.swing.JComboBox imagingTypeComboBox;
-    private javax.swing.JLabel infolabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;

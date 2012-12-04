@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.utils;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +17,7 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 public class AnalysisUtils {
 
     /**
-     * exclude null values from an array of Double
+     * Exclude null values from an array of Double
      * @param data 
      * @return another Double array with no longer null values
      */
@@ -32,7 +33,7 @@ public class AnalysisUtils {
     }
 
     /**
-     * transpose a 2D array of double
+     * Transpose a 2D array of double
      * @param data
      * @return the same 2D array but transposed
      */
@@ -49,7 +50,7 @@ public class AnalysisUtils {
     }
 
     /**
-     * transpose a 2D array of boolean
+     * Transpose a 2D array of boolean
      * @param matrix
      * @return 
      */
@@ -63,6 +64,16 @@ public class AnalysisUtils {
             }
         }
         return transposed;
+    }
+
+    /**
+     * Round up to two decimals
+     * @param d
+     * @return  
+     */
+    public static Double roundThreeDecimals(Double d) {
+        DecimalFormat twoDForm = new DecimalFormat("###.###");
+        return Double.valueOf(twoDForm.format(d));
     }
 
     /**
@@ -193,7 +204,7 @@ public class AnalysisUtils {
      * Given two vectors A and B, this method is computing the Euclidean Distance between them
      * @param firstVector
      * @param secondVector
-     * @return 
+     * @return a double value for the distance
      */
     public static double computeEuclideanDistance(Double[] firstVector, Double[] secondVector) {
         double distance = 0;

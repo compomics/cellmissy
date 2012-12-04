@@ -24,6 +24,7 @@ import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.title.Title;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
@@ -112,12 +113,11 @@ public class JFreeChartUtils {
 
     /**
      * Adjust font and title of chart, as well as  legend's position and background color.
-     * 
      * @param chart
      * @param xYSeriesCollection
      * @param wellList  
      */
-    public static void setupAreaChart(JFreeChart chart, XYSeriesCollection xYSeriesCollection, List<Well> wellList) {
+    public static void setupReplicatesAreaChart(JFreeChart chart, XYSeriesCollection xYSeriesCollection, List<Well> wellList) {
         // set title font 
         chart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
         // put legend on the right edge
@@ -135,6 +135,31 @@ public class JFreeChartUtils {
             renderer.setSeriesStroke(i, wideLine);
             renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[wellIndex + 1]);
         }
+    }
+
+    /**
+     * 
+     * @param chart
+     * @param xYSeriesCollection 
+     */
+    public static void setupGlobalAreaChart(JFreeChart chart, XYSeriesCollection xYSeriesCollection) {
+        // set title font 
+        chart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
+        // set background to white and grid color to black
+        chart.getXYPlot().setBackgroundPaint(Color.white);
+        chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        // get renderer
+        XYItemRenderer renderer = chart.getXYPlot().getRenderer();
+        BasicStroke wideLine = new BasicStroke(1.3f);
+        for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
+            // plot lines according to conditions indexes
+            String conditionName = xYSeriesCollection.getSeriesKey(i).toString();
+            int length = conditionName.length();
+            CharSequence subSequence = conditionName.subSequence(5, length);
+            int conditionIndex = Integer.parseInt(subSequence.toString());
+            renderer.setSeriesStroke(i, wideLine);
+            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[conditionIndex]);
+        }      
     }
 
     /**
@@ -175,7 +200,11 @@ public class JFreeChartUtils {
                 double x = values.getX(j).doubleValue();
                 double y = values.getY(j).doubleValue();
                 double dy = errors[j];
-                XYLineAnnotation vertical = new XYLineAnnotation(x, y - dy, x, y + dy, stroke, GuiUtils.getAvailableColors()[i + 1]);
+                String conditionName = valuesCollection.getSeriesKey(i).toString();
+                int length = conditionName.length();
+                CharSequence subSequence = conditionName.subSequence(5, length);
+                int conditionIndex = Integer.parseInt(subSequence.toString());
+                XYLineAnnotation vertical = new XYLineAnnotation(x, y - dy, x, y + dy, stroke, GuiUtils.getAvailableColors()[conditionIndex]);
                 plot.addAnnotation(vertical);
             }
         }
