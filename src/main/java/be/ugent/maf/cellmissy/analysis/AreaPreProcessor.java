@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
+import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 
 /**
@@ -15,40 +15,40 @@ public interface AreaPreProcessor {
 
     /**
      * Normalize Area values (Area @ Time Frame zero is zero)
-     * @param areaPreProcessingResultsHolder 
+     * @param areaPreProcessingResults 
      */
-    public void computeNormalizedArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
+    public void computeNormalizedArea(AreaPreProcessingResults areaPreProcessingResults);
 
     /**
      * Compute increments of Area from one time frame to the following one (Delta Area Values)
-     * @param areaPreProcessingResultsHolder 
+     * @param areaPreProcessingResults 
      */
-    public void computeDeltaArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
+    public void computeDeltaArea(AreaPreProcessingResults areaPreProcessingResults);
 
     /**
      * Compute %area increase for a certain condition
-     * @param areaPreProcessingResultsHolder 
+     * @param areaPreProcessingResults 
      */
-    public void computeAreaIncrease(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
+    public void computeAreaIncrease(AreaPreProcessingResults areaPreProcessingResults);
 
     /**
      * Compute Normalized Corrected Area values for a certain Condition
-     * @param areaPreProcessingResultsHolder 
+     * @param areaPreProcessingResults 
      */
-    public void normalizeCorrectedArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
+    public void normalizeCorrectedArea(AreaPreProcessingResults areaPreProcessingResults);
 
     /**
      * For Normalized and Corrected Area, compute Euclidean Distances between one replicate and all the others
-     * @param areaPreProcessingResultsHolder
+     * @param areaPreProcessingResults
      */
-    public void computeDistanceMatrix(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
+    public void computeDistanceMatrix(AreaPreProcessingResults areaPreProcessingResults);
 
     /**
      * Check if a replicate can be considered as an Outlier
-     * @param areaPreProcessingResultsHolder
+     * @param areaPreProcessingResults
      * @param plateCondition
      */
-    public void excludeReplicates(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder, PlateCondition plateCondition);
+    public void excludeReplicates(AreaPreProcessingResults areaPreProcessingResults, PlateCondition plateCondition);
 
     /**
      * Detect outliers for a 2D array of double (one condition)
@@ -66,7 +66,7 @@ public interface AreaPreProcessor {
     
     /**
      * Set time frame interval used for analysis
-     * @param areaPreProcessingResultsHolder
+     * @param areaPreProcessingResults
      */
-    public void setTimeInterval(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder);
+    public void setTimeInterval(AreaPreProcessingResults areaPreProcessingResults);
 }

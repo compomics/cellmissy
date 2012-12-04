@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.analysis.impl;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
 import be.ugent.maf.cellmissy.analysis.OutliersHandler;
-import be.ugent.maf.cellmissy.entity.AreaPreProcessingResultsHolder;
+import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeInterval;
 import be.ugent.maf.cellmissy.gui.view.DistanceMatrixTableModel;
@@ -26,8 +26,8 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
     private OutliersHandler outliersHandler;
 
     @Override
-    public void computeNormalizedArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
-        Double[][] areaRawData = areaPreProcessingResultsHolder.getAreaRawData();
+    public void computeNormalizedArea(AreaPreProcessingResults areaPreProcessingResults) {
+        Double[][] areaRawData = areaPreProcessingResults.getAreaRawData();
         Double[][] normalizedArea = new Double[areaRawData.length][areaRawData[0].length];
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
@@ -36,12 +36,12 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
                 }
             }
         }
-        areaPreProcessingResultsHolder.setNormalizedArea(normalizedArea);
+        areaPreProcessingResults.setNormalizedArea(normalizedArea);
     }
 
     @Override
-    public void computeDeltaArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
-        Double[][] areaRawData = areaPreProcessingResultsHolder.getAreaRawData();
+    public void computeDeltaArea(AreaPreProcessingResults areaPreProcessingResults) {
+        Double[][] areaRawData = areaPreProcessingResults.getAreaRawData();
         Double[][] deltaArea = new Double[areaRawData.length][areaRawData[0].length];
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 1; rowIndex < areaRawData.length; rowIndex++) {
@@ -50,13 +50,13 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
                 }
             }
         }
-        areaPreProcessingResultsHolder.setDeltaArea(deltaArea);
+        areaPreProcessingResults.setDeltaArea(deltaArea);
     }
 
     @Override
-    public void computeAreaIncrease(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
-        Double[][] areaRawData = areaPreProcessingResultsHolder.getAreaRawData();
-        Double[][] deltaArea = areaPreProcessingResultsHolder.getDeltaArea();
+    public void computeAreaIncrease(AreaPreProcessingResults areaPreProcessingResults) {
+        Double[][] areaRawData = areaPreProcessingResults.getAreaRawData();
+        Double[][] deltaArea = areaPreProcessingResults.getDeltaArea();
         Double[][] percentageAreaIncrease = new Double[deltaArea.length][deltaArea[0].length];
         for (int columnIndex = 0; columnIndex < deltaArea[0].length; columnIndex++) {
             for (int rowIndex = 1; rowIndex < deltaArea.length; rowIndex++) {
@@ -65,12 +65,12 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
                 }
             }
         }
-        areaPreProcessingResultsHolder.setPercentageAreaIncrease(percentageAreaIncrease);
+        areaPreProcessingResults.setPercentageAreaIncrease(percentageAreaIncrease);
     }
 
     @Override
-    public void normalizeCorrectedArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
-        Double[][] correctedArea = computeCorrectedArea(areaPreProcessingResultsHolder);
+    public void normalizeCorrectedArea(AreaPreProcessingResults areaPreProcessingResults) {
+        Double[][] correctedArea = computeCorrectedArea(areaPreProcessingResults);
         Double[][] normalizedCorrectedArea = new Double[correctedArea.length][correctedArea[0].length];
         for (int columnIndex = 0; columnIndex < correctedArea[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < correctedArea.length; rowIndex++) {
@@ -79,12 +79,12 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
                 }
             }
         }
-        areaPreProcessingResultsHolder.setNormalizedCorrectedArea(normalizedCorrectedArea);
+        areaPreProcessingResults.setNormalizedCorrectedArea(normalizedCorrectedArea);
     }
 
     @Override
-    public void computeDistanceMatrix(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
-        Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
+    public void computeDistanceMatrix(AreaPreProcessingResults areaPreProcessingResults) {
+        Double[][] normalizedCorrectedArea = areaPreProcessingResults.getNormalizedCorrectedArea();
         Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
         Double[][] distanceMatrix = new Double[transposedArea.length][transposedArea.length];
         for (int rowIndex = 0; rowIndex < transposedArea.length; rowIndex++) {
@@ -97,7 +97,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
                 }
             }
         }
-        areaPreProcessingResultsHolder.setDistanceMatrix(distanceMatrix);
+        areaPreProcessingResults.setDistanceMatrix(distanceMatrix);
     }
 
     @Override
@@ -112,13 +112,13 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
 
     /**
      * Correct Area
-     * @param areaPreProcessingResultsHolder
+     * @param areaPreProcessingResults
      * @return 2D array with corrected area values (still need to be normalized)
      */
-    private Double[][] computeCorrectedArea(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
-        Double[][] percentageAreaIncrease = areaPreProcessingResultsHolder.getPercentageAreaIncrease();
-        Double[][] areaRawData = areaPreProcessingResultsHolder.getAreaRawData();
-        Double[][] deltaArea = areaPreProcessingResultsHolder.getDeltaArea();
+    private Double[][] computeCorrectedArea(AreaPreProcessingResults areaPreProcessingResults) {
+        Double[][] percentageAreaIncrease = areaPreProcessingResults.getPercentageAreaIncrease();
+        Double[][] areaRawData = areaPreProcessingResults.getAreaRawData();
+        Double[][] deltaArea = areaPreProcessingResults.getDeltaArea();
         Double[][] correctedArea = new Double[percentageAreaIncrease.length][percentageAreaIncrease[0].length];
         boolean[][] outliers = detectOutliers(percentageAreaIncrease);
         for (int rowIndex = 0; rowIndex < outliers.length; rowIndex++) {
@@ -141,29 +141,29 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
 
     /**
      * Exclude Technical replicates (wells) from analysis
-     * @param areaPreProcessingResultsHolder
+     * @param areaPreProcessingResults
      * @param plateCondition
      */
     @Override
-    public void excludeReplicates(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder, PlateCondition plateCondition) {
+    public void excludeReplicates(AreaPreProcessingResults areaPreProcessingResults, PlateCondition plateCondition) {
         // detect outliers for distance matrix
-        Double[][] distanceMatrix = areaPreProcessingResultsHolder.getDistanceMatrix();
+        Double[][] distanceMatrix = areaPreProcessingResults.getDistanceMatrix();
         boolean[][] outliersMatrix = detectOutliers(distanceMatrix);
         // create a new distance matrix table model and set boolean for results holder from the model
-        DistanceMatrixTableModel distanceMatrixTableModel = new DistanceMatrixTableModel(areaPreProcessingResultsHolder.getDistanceMatrix(), outliersMatrix, plateCondition);
-        areaPreProcessingResultsHolder.setExcludeReplicates(distanceMatrixTableModel.getCheckboxOutliers());
+        DistanceMatrixTableModel distanceMatrixTableModel = new DistanceMatrixTableModel(areaPreProcessingResults.getDistanceMatrix(), outliersMatrix, plateCondition);
+        areaPreProcessingResults.setExcludeReplicates(distanceMatrixTableModel.getCheckboxOutliers());
     }
 
     /**
      * 
-     * @param areaPreProcessingResultsHolder 
+     * @param areaPreProcessingResults 
      */
     @Override
-    public void setTimeInterval(AreaPreProcessingResultsHolder areaPreProcessingResultsHolder) {
-        Double[][] normalizedCorrectedArea = areaPreProcessingResultsHolder.getNormalizedCorrectedArea();
+    public void setTimeInterval(AreaPreProcessingResults areaPreProcessingResults) {
+        Double[][] normalizedCorrectedArea = areaPreProcessingResults.getNormalizedCorrectedArea();
         Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
         // check if some replicates need to be excluded from computation (this means these replicates are outliers)
-        boolean[] excludeReplicates = areaPreProcessingResultsHolder.getExcludeReplicates();
+        boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
         // first time point for interval is set to zero by default
         // this is changed if user decides to analyse only a subset of entire time frames
         int firstTimeFrame = 0;
@@ -188,6 +188,6 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         }
         TimeInterval timeInterval = new TimeInterval(firstTimeFrame, lastTimeFrame);
         timeInterval.setProposedCutOff(lastTimeFrame);
-        areaPreProcessingResultsHolder.setTimeInterval(timeInterval);
+        areaPreProcessingResults.setTimeInterval(timeInterval);
     }
 }

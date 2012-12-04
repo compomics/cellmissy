@@ -6,16 +6,16 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Algorithm;
+import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.TimeStep;
-import be.ugent.maf.cellmissy.entity.Track;
-import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.AreaAnalysisPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
@@ -24,12 +24,8 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,9 +36,7 @@ import java.text.Format;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
-import javax.swing.JList;
+import java.util.Map;
 import javax.swing.SwingWorker;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -84,7 +78,9 @@ public class DataAnalysisController {
     private CellMissyController cellMissyController;
     //child controllers
     @Autowired
-    private BulkCellAnalysisController bulkCellAnalysisController;
+    private AreaPreProcessingController areaPreProcessingController;
+    @Autowired
+    private AreaAnalysisController areaAnalysisController;
     //services
     @Autowired
     private ExperimentService experimentService;
@@ -107,7 +103,9 @@ public class DataAnalysisController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         format = new DecimalFormat(DATA_FORMAT);
         //init child controllers
-        bulkCellAnalysisController.init();
+        areaPreProcessingController.init();
+        areaAnalysisController.init();
+        // init other view
         initPlatePanel();
         initExperimentDataPanel();
     }
@@ -140,6 +138,14 @@ public class DataAnalysisController {
         return format;
     }
 
+    public AreaAnalysisPanel getAreaAnalysisPanel() {
+        return areaPreProcessingController.getAreaAnalysisPanel();
+    }
+
+    public Map<PlateCondition, AreaPreProcessingResults> getPreProcessingMap() {
+        return areaPreProcessingController.getPreProcessingMap();
+    }
+
     /**
      * Fetch time steps objects from DB, update TimeStepList according to Plate Condition
      * @param plateCondition 
@@ -157,19 +163,20 @@ public class DataAnalysisController {
     }
 
     /**
-     * Fetch Tracks Objects from DB 
-     * @param plateCondition 
+     * Set cursor from main controller
+     * @param type 
      */
-//    public void fetchConditionTracks(PlateCondition plateCondition) {
-//        List<Well> wellList = new ArrayList<>();
-//        wellList.addAll(plateCondition.getWellCollection());
-//
-//        for (int i = 0; i < wellList.size(); i++) {
-//            //fetch time step collection for the wellhasimagingtype of interest
-//            wellService.fetchTracks(wellList.get(i), algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
-//            wellService.fetchTrackPoints(wellList.get(i), algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
-//        }
-//    }
+    public void setCursor(int type) {
+        cellMissyController.setCursor(Cursor.getPredefinedCursor(type));
+    }
+
+    /**
+     * Show Linear regression results from child controller
+     */
+    public void showLinearRegressionResults() {
+        areaAnalysisController.showLinearModelInTable();
+    }
+
     /**
      * private methods and classes
      */
@@ -262,9 +269,9 @@ public class DataAnalysisController {
                     }
                 }
                 //init map with conditions and results holders
-                bulkCellAnalysisController.initMap();
+                areaPreProcessingController.initMap();
                 // init timeframes binding list with an empty one
-                bulkCellAnalysisController.initTimeFramesList();
+                areaPreProcessingController.initTimeFramesList();
                 //set selected algorithm to the first of the list
                 dataAnalysisPanel.getAlgorithmComboBox().setSelectedIndex(0);
                 //set selected imaging types to the first of the list
@@ -296,8 +303,8 @@ public class DataAnalysisController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                bulkCellAnalysisController.initMap();
-                bulkCellAnalysisController.emptyDensityFunctionCache();
+                areaPreProcessingController.initMap();
+                areaPreProcessingController.emptyDensityFunctionCache();
             }
         });
 
@@ -307,8 +314,8 @@ public class DataAnalysisController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                bulkCellAnalysisController.initMap();
-                bulkCellAnalysisController.emptyDensityFunctionCache();
+                areaPreProcessingController.initMap();
+                areaPreProcessingController.emptyDensityFunctionCache();
             }
         });
 
@@ -349,14 +356,14 @@ public class DataAnalysisController {
      */
     private void updateTimeStepsList(PlateCondition plateCondition) {
         //clear the actual timeStepList
-        if (!bulkCellAnalysisController.getTimeStepsBindingList().isEmpty()) {
-            bulkCellAnalysisController.getTimeStepsBindingList().clear();
+        if (!areaPreProcessingController.getTimeStepsBindingList().isEmpty()) {
+            areaPreProcessingController.getTimeStepsBindingList().clear();
         }
         for (Well well : plateCondition.getWellCollection()) {
             for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
                 Collection<TimeStep> timeStepCollection = wellHasImagingType.getTimeStepCollection();
                 for (TimeStep timeStep : timeStepCollection) {
-                    bulkCellAnalysisController.getTimeStepsBindingList().add(timeStep);
+                    areaPreProcessingController.getTimeStepsBindingList().add(timeStep);
                 }
             }
         }
@@ -384,47 +391,39 @@ public class DataAnalysisController {
             updateTimeStepsList(getSelectedCondition());
 
             //put the plate condition together with a pre-processing results holder in the map
-            bulkCellAnalysisController.updateMapWithCondition(getSelectedCondition());
+            areaPreProcessingController.updateMapWithCondition(getSelectedCondition());
             return null;
         }
 
         @Override
         protected void done() {
             //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO look at motility track RESULTS
-            bulkCellAnalysisController.showTimeStepsInTable();
+            areaPreProcessingController.showTimeStepsInTable();
             //check which button is selected for analysis:
-            if (bulkCellAnalysisController.getBulkCellAnalysisPanel().getNormalizeAreaButton().isSelected()) {
+            if (areaPreProcessingController.getAreaAnalysisPanel().getNormalizeAreaButton().isSelected()) {
                 //for current selected condition show normalized area values together with time frames
-                bulkCellAnalysisController.showNormalizedAreaInTable(getSelectedCondition());
+                areaPreProcessingController.showNormalizedAreaInTable(getSelectedCondition());
                 // show raw data plot (all replicates)
-                bulkCellAnalysisController.plotRawDataReplicates(getSelectedCondition());
+                areaPreProcessingController.plotRawDataReplicates(getSelectedCondition());
             }
-            if (bulkCellAnalysisController.getBulkCellAnalysisPanel().getDeltaAreaButton().isSelected()) {
+            if (areaPreProcessingController.getAreaAnalysisPanel().getDeltaAreaButton().isSelected()) {
                 //for current selected condition show delta area values 
-                bulkCellAnalysisController.showDeltaAreaInTable(getSelectedCondition());
+                areaPreProcessingController.showDeltaAreaInTable(getSelectedCondition());
             }
-            if (bulkCellAnalysisController.getBulkCellAnalysisPanel().getPercentageAreaIncreaseButton().isSelected()) {
+            if (areaPreProcessingController.getAreaAnalysisPanel().getPercentageAreaIncreaseButton().isSelected()) {
                 //for current selected condition show %increments (for outliers detection)
-                bulkCellAnalysisController.showAreaIncreaseInTable(getSelectedCondition());
+                areaPreProcessingController.showAreaIncreaseInTable(getSelectedCondition());
                 //show density function for selected condition (Raw Data)
-                bulkCellAnalysisController.plotDensityFunctions(getSelectedCondition());
+                areaPreProcessingController.plotDensityFunctions(getSelectedCondition());
             }
-            if (bulkCellAnalysisController.getBulkCellAnalysisPanel().getCorrectedAreaButton().isSelected()) {
+            if (areaPreProcessingController.getAreaAnalysisPanel().getCorrectedAreaButton().isSelected()) {
                 //for current selected condition show corrected area values (outliers have been deleted from distribution)
-                bulkCellAnalysisController.showCorrectedAreaInTable(getSelectedCondition());
+                areaPreProcessingController.showCorrectedAreaInTable(getSelectedCondition());
                 //show Area increases with time frames
-                bulkCellAnalysisController.plotCorrectedDataReplicates(getSelectedCondition());
+                areaPreProcessingController.plotCorrectedDataReplicates(getSelectedCondition());
             }
             // set cursor back to default and show all computed results for selected condition
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
-    }
-
-    /**
-     * 
-     * @param type 
-     */
-    public void setCursor(int type) {
-        cellMissyController.setCursor(Cursor.getPredefinedCursor(type));
     }
 }

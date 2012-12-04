@@ -4,12 +4,13 @@
  */
 
 /*
- * BulkCellAnalysisPanel.java
+ * AreaAnalysisPanel.java
  *
  * Created on Nov 22, 2012, 10:57:22 AM
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -23,10 +24,10 @@ import javax.swing.JTable;
  *
  * @author Paola Masuzzo
  */
-public class BulkCellAnalysisPanel extends javax.swing.JPanel {
+public class AreaAnalysisPanel extends javax.swing.JPanel {
 
-    /** Creates new form BulkCellAnalysisPanel */
-    public BulkCellAnalysisPanel() {
+    /** Creates new form AreaAnalysisPanel */
+    public AreaAnalysisPanel() {
         initComponents();
     }
 
@@ -58,18 +59,6 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         return graphicsParentPanel;
     }
 
-    public JTable getSlopesTable() {
-        return slopesTable;
-    }
-
-    public JScrollPane getSlopesTableScrollPane() {
-        return slopesTableScrollPane;
-    }
-
-    public JPanel getVelocityChartPanel() {
-        return velocityChartPanel;
-    }
-
     public JLabel getTableInfoLabel() {
         return tableInfoLabel;
     }
@@ -92,6 +81,18 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
 
     public JList getConditionsList() {
         return conditionsList;
+    }
+
+    public JButton getPlotSelectedConditionsButton() {
+        return plotSelectedConditionsButton;
+    }
+
+    public JButton getPlotAllConditionsButton() {
+        return plotAllConditionsButton;
+    }
+
+    public JPanel getLinearModelParentPanel() {
+        return linearModelParentPanel;
     }
 
     /** This method is called from within the constructor to
@@ -124,14 +125,12 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         plotErrorBarsCheckBox = new javax.swing.JCheckBox();
         jScrollPane3 = new javax.swing.JScrollPane();
         conditionsList = new javax.swing.JList();
-        jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        plotSelectedConditionsButton = new javax.swing.JButton();
+        plotAllConditionsButton = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
         globalViewPanel = new javax.swing.JPanel();
-        bulkAnalysisPanel = new javax.swing.JPanel();
-        tablePanel = new javax.swing.JPanel();
-        slopesTableScrollPane = new javax.swing.JScrollPane();
-        slopesTable = new javax.swing.JTable();
-        velocityChartPanel = new javax.swing.JPanel();
+        linearModelParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -280,7 +279,7 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         leftPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 2, 12));
-        jLabel1.setText("Show Error Bars on top of the plot");
+        jLabel1.setText("Show Error Bars");
 
         plotErrorBarsCheckBox.setText("Plot SEM");
         plotErrorBarsCheckBox.setOpaque(false);
@@ -291,10 +290,15 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         conditionsList.setSelectedIndex(0);
         jScrollPane3.setViewportView(conditionsList);
 
-        jButton1.setText("Save plot as...");
-
         jLabel2.setFont(new java.awt.Font("Tahoma", 2, 12));
         jLabel2.setText("Select Conditions to plot");
+
+        plotSelectedConditionsButton.setText("Plot selected conditions");
+
+        plotAllConditionsButton.setText("Plot all conditions");
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 2, 12));
+        jLabel4.setText("N: number of Replicates");
 
         javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
         leftPanel.setLayout(leftPanelLayout);
@@ -303,28 +307,45 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
             .addGroup(leftPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(plotErrorBarsCheckBox)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jButton1))
-                .addContainerGap(18, Short.MAX_VALUE))
+                    .addGroup(leftPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(leftPanelLayout.createSequentialGroup()
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                            .addContainerGap(59, Short.MAX_VALUE))
+                        .addGroup(leftPanelLayout.createSequentialGroup()
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                            .addGap(59, 59, 59))
+                        .addGroup(leftPanelLayout.createSequentialGroup()
+                            .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(plotErrorBarsCheckBox)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(plotSelectedConditionsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(plotAllConditionsButton, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE))
+                            .addGap(64, 64, 64)))))
         );
+
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotAllConditionsButton, plotSelectedConditionsButton});
+
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(leftPanelLayout.createSequentialGroup()
-                .addGap(22, 22, 22)
+                .addGap(36, 36, 36)
+                .addComponent(jLabel2)
+                .addGap(3, 3, 3)
+                .addComponent(jLabel4)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(plotErrorBarsCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addGap(4, 4, 4)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addContainerGap(254, Short.MAX_VALUE))
+                .addGap(24, 24, 24)
+                .addComponent(plotSelectedConditionsButton)
+                .addGap(12, 12, 12)
+                .addComponent(plotAllConditionsButton)
+                .addContainerGap(137, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -351,67 +372,9 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
 
         bulkTabbedPane.addTab("Global View", bulkGlobalAreaPanel);
 
-        bulkAnalysisPanel.setOpaque(false);
-        bulkAnalysisPanel.setLayout(new java.awt.GridBagLayout());
-
-        tablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Linear Regression Model"));
-        tablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        tablePanel.setOpaque(false);
-
-        slopesTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        slopesTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        slopesTableScrollPane.setViewportView(slopesTable);
-
-        javax.swing.GroupLayout tablePanelLayout = new javax.swing.GroupLayout(tablePanel);
-        tablePanel.setLayout(tablePanelLayout);
-        tablePanelLayout.setHorizontalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tablePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(slopesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1003, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        tablePanelLayout.setVerticalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tablePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(slopesTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(291, Short.MAX_VALUE))
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.5;
-        bulkAnalysisPanel.add(tablePanel, gridBagConstraints);
-
-        velocityChartPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        velocityChartPanel.setOpaque(false);
-        velocityChartPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        velocityChartPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.5;
-        bulkAnalysisPanel.add(velocityChartPanel, gridBagConstraints);
-
-        bulkTabbedPane.addTab("Analysis", bulkAnalysisPanel);
+        linearModelParentPanel.setOpaque(false);
+        linearModelParentPanel.setLayout(new java.awt.GridBagLayout());
+        bulkTabbedPane.addTab("Linear Regression Model", linearModelParentPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -425,7 +388,6 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel bulkAnalysisPanel;
     private javax.swing.JPanel bulkGlobalAreaPanel;
     private javax.swing.JPanel bulkImporterPanel;
     private javax.swing.JPanel bulkPreProcessPanel;
@@ -436,22 +398,21 @@ public class BulkCellAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton deltaAreaButton;
     private javax.swing.JPanel globalViewPanel;
     private javax.swing.JPanel graphicsParentPanel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel leftPanel;
+    private javax.swing.JPanel linearModelParentPanel;
     private javax.swing.JRadioButton normalizeAreaButton;
     private javax.swing.JRadioButton percentageAreaIncreaseButton;
+    private javax.swing.JButton plotAllConditionsButton;
     private javax.swing.JCheckBox plotErrorBarsCheckBox;
+    private javax.swing.JButton plotSelectedConditionsButton;
     private javax.swing.JPanel radioButtonsPanel;
-    private javax.swing.JTable slopesTable;
-    private javax.swing.JScrollPane slopesTableScrollPane;
     private javax.swing.JLabel tableInfoLabel;
-    private javax.swing.JPanel tablePanel;
     private javax.swing.JTable timeStepsTable;
     private javax.swing.JScrollPane timeStepsTableScrollPane;
-    private javax.swing.JPanel velocityChartPanel;
     // End of variables declaration//GEN-END:variables
 }
