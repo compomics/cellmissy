@@ -872,7 +872,8 @@ public class AreaPreProcessingController {
 
                 // click on "Analysis" tab, show Linear Model Results
                 if (areaAnalysisPanel.getBulkTabbedPane().getSelectedIndex() == 3) {
-                    dataAnalysisController.showLinearRegressionResults();
+                    // show Linear Model Results from the other child controller
+                    dataAnalysisController.showLinearModelInTable();
                 }
             }
         });

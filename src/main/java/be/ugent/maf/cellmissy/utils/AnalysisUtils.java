@@ -117,8 +117,8 @@ public class AnalysisUtils {
     public static double computeStandardDeviation(double[] data) {
         double sum = 0;
         for (int i = 0; i < data.length; i++) {
-            final double v = data[i] - computeMean(data);
-            sum += v * v;
+            final double diff = data[i] - computeMean(data);
+            sum += diff * diff;
         }
         return Math.sqrt(sum / data.length);
     }

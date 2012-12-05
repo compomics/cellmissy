@@ -173,7 +173,7 @@ public class DataAnalysisController {
     /**
      * Show Linear regression results from child controller
      */
-    public void showLinearRegressionResults() {
+    public void showLinearModelInTable() {
         areaAnalysisController.showLinearModelInTable();
     }
 
