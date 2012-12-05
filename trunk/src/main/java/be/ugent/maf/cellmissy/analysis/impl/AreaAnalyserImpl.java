@@ -29,9 +29,9 @@ public class AreaAnalyserImpl implements AreaAnalyser {
     public void estimateLinearModel(AreaPreProcessingResults areaPreProcessingResults, AreaAnalysisResults areaAnalysisResults, double[] timeFrames) {
         Double[][] normalizedCorrectedArea = areaPreProcessingResults.getNormalizedCorrectedArea();
         Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
-
+        // check if some replicates need to be excluded
         boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
-
+        // Double arrays for slopes and R2 coefficients
         Double[] slopes = new Double[transposedArea.length];
         Double[] goodnessOfFit = new Double[transposedArea.length];
         for (int columnIndex = 0; columnIndex < transposedArea.length; columnIndex++) {
@@ -62,7 +62,7 @@ public class AreaAnalyserImpl implements AreaAnalyser {
         areaAnalysisResults.setGoodnessOfFit(goodnessOfFit);
         // set mean slope
         areaAnalysisResults.setMeanSlope(AnalysisUtils.computeMean(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(slopes))));
-        // set Mad for slope
+        // set MAD for mean slope
         areaAnalysisResults.setMadSlope(AnalysisUtils.scaleMAD(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(slopes))));
     }
 

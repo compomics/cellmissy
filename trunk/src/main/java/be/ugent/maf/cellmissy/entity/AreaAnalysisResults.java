@@ -16,7 +16,7 @@ public class AreaAnalysisResults {
     private Double[] goodnessOfFit;
     // mean velocity
     private double meanSlope;
-    // mad velocity
+    // MAD of mean slope
     private double madSlope;
 
     public Double[] getGoodnessOfFit() {
