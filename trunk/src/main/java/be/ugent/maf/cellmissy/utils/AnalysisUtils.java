@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.utils;
 
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -229,6 +230,22 @@ public class AnalysisUtils {
             double tempMax = doubles[doubles.length - 1];
             if (tempMax > max) {
                 max = tempMax;
+            }
+        }
+        return max;
+    }
+
+    /**
+     * Compute maximum number of Replicates overall the experiment
+     * @param plateConditions 
+     * @return 
+     */
+    public static int getMaximumNumberOfReplicates(List<PlateCondition> plateConditions) {
+        int max = 0;
+        for (PlateCondition plateCondition : plateConditions) {
+            int numberOfReplicates = plateCondition.getWellCollection().size();
+            if (numberOfReplicates > max) {
+                max = numberOfReplicates;
             }
         }
         return max;
