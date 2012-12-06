@@ -11,7 +11,7 @@ import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
  * Interface for Analysis of Area Data (after pre-processing step)
  * @author Paola Masuzzo
  */
-public interface AreaAnalyser {
+public interface AreaAnalyzer {
 
     /**
      * Estimate Linear Regression Model: compute slopes and R squared coefficients

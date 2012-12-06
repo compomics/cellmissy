@@ -699,7 +699,7 @@ public class AreaPreProcessingController {
         correctedAreaChartPanel.setOpaque(false);
         globalAreaChartPanel = new ChartPanel(null);
         globalAreaChartPanel.setOpaque(false);
-       
+
         distanceMatrixScrollPane = new JScrollPane();
         dialog = new JDialog();
         dialog.setAlwaysOnTop(true);
@@ -718,6 +718,9 @@ public class AreaPreProcessingController {
         styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
         styledDocument = timeFramesSelectionPanel.getInfoTextPane().getStyledDocument();
         styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
+        styledDocument = areaAnalysisPanel.getInfoTextPane().getStyledDocument();
+        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
+
         // hide warning message
         timeFramesSelectionPanel.getWarningLabel().setVisible(false);
         preProcessingMap = new LinkedHashMap<>();

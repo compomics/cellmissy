@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.impl;
 
-import be.ugent.maf.cellmissy.analysis.AreaAnalyser;
+import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
 import be.ugent.maf.cellmissy.analysis.LinearRegressor;
 import be.ugent.maf.cellmissy.entity.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
@@ -19,8 +19,8 @@ import org.springframework.stereotype.Component;
  *
  * @author Paola Masuzzo
  */
-@Component("areaAnalyser")
-public class AreaAnalyserImpl implements AreaAnalyser {
+@Component("areaAnalyzer")
+public class AreaAnalyzerImpl implements AreaAnalyzer {
 
     @Autowired
     private LinearRegressor linearRegressor;
