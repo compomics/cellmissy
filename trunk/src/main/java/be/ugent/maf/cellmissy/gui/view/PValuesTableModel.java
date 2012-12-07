@@ -5,24 +5,29 @@
 package be.ugent.maf.cellmissy.gui.view;
 
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
+import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 /**
- *
+ * Table Model to show p - values in a pairwise test
  * @author Paola Masuzzo
  */
 public class PValuesTableModel extends AbstractTableModel {
 
     private Object[][] data;
     private String columnNames[];
-    private Double[][] pValues;
+    private AnalysisGroup analysisGroup;
+    private List<PlateCondition> plateConditionList;
 
     /**
      * Constructor
-     * @param pValues 
+     * @param analysisGroup
+     * @param plateConditionList  
      */
-    public PValuesTableModel(Double[][] pValues) {
-        this.pValues = pValues;
+    public PValuesTableModel(AnalysisGroup analysisGroup, List<PlateCondition> plateConditionList) {
+        this.analysisGroup = analysisGroup;
+        this.plateConditionList = plateConditionList;
         initTable();
     }
 
@@ -47,20 +52,26 @@ public class PValuesTableModel extends AbstractTableModel {
     }
 
     /**
-     * Initialize matrix
+     * Initialize table
      */
     private void initTable() {
-        columnNames = new String[pValues.length + 1];
+        // p-values matrix of analysis group
+        Double[][] pValuesMatrix = analysisGroup.getpValuesMatrix();
+        // columns
+        List<PlateCondition> plateConditions = analysisGroup.getPlateConditions();
+        columnNames = new String[pValuesMatrix.length + 1];
         columnNames[0] = "";
         for (int i = 1; i < columnNames.length; i++) {
-            columnNames[i] = "Cond" + i;
+            columnNames[i] = "Cond " + (plateConditionList.indexOf(plateConditions.get(i - 1)) + 1);
         }
 
-        data = new Object[pValues.length][columnNames.length];
+        // data
+        data = new Object[pValuesMatrix.length][columnNames.length];
+        // fill in data
         for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-            data[rowIndex][0] = "Cond " + (rowIndex + 1);
+            data[rowIndex][0] = "Cond " + (plateConditionList.indexOf(plateConditions.get(rowIndex)) + 1);
             for (int columnIndex = 1; columnIndex < columnNames.length; columnIndex++) {
-                data[rowIndex][columnIndex] = pValues[rowIndex][columnIndex - 1];
+                data[rowIndex][columnIndex] = pValuesMatrix[rowIndex][columnIndex - 1];
             }
         }
     }

@@ -15,6 +15,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 
 /**
  *
@@ -39,8 +40,8 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
         return slopesTableScrollPane;
     }
 
-    public JButton getMannWTestButton() {
-        return mannWTestButton;
+    public JButton getStatisticsButton() {
+        return statisticsButton;
     }
 
     public JList getGroupsList() {
@@ -53,6 +54,10 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
 
     public JButton getRemoveGroupButton() {
         return removeGroupButton;
+    }
+
+    public JTextField getGroupNameTextField() {
+        return groupNameTextField;
     }
 
     /** This method is called from within the constructor to
@@ -71,11 +76,13 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         chartParentPanel = new javax.swing.JPanel();
         testPanel = new javax.swing.JPanel();
-        mannWTestButton = new javax.swing.JButton();
+        statisticsButton = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         groupsList = new javax.swing.JList();
         addGroupButton = new javax.swing.JButton();
         removeGroupButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        groupNameTextField = new javax.swing.JTextField();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -147,7 +154,7 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
         testPanel.setOpaque(false);
         testPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        mannWTestButton.setText("Mann Withney Test...");
+        statisticsButton.setText("Statistical Analysis...");
 
         jScrollPane3.setBorder(null);
         jScrollPane3.setOpaque(false);
@@ -158,9 +165,11 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
         groupsList.setSelectedIndex(0);
         jScrollPane3.setViewportView(groupsList);
 
-        addGroupButton.setText("Add Group");
+        addGroupButton.setText("Add Group to Analysis");
 
         removeGroupButton.setText("Remove Group");
+
+        jLabel2.setText("Type in a name for the Analysis Group:");
 
         javax.swing.GroupLayout testPanelLayout = new javax.swing.GroupLayout(testPanel);
         testPanel.setLayout(testPanelLayout);
@@ -168,37 +177,41 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
             testPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(testPanelLayout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(testPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(addGroupButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(groupNameTextField)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(27, 27, 27)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(testPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(testPanelLayout.createSequentialGroup()
-                        .addComponent(removeGroupButton, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(testPanelLayout.createSequentialGroup()
-                        .addComponent(mannWTestButton, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(testPanelLayout.createSequentialGroup()
-                        .addComponent(addGroupButton, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                        .addContainerGap())))
+                    .addComponent(removeGroupButton, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(statisticsButton, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
-        testPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addGroupButton, mannWTestButton, removeGroupButton});
+        testPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {removeGroupButton, statisticsButton});
 
         testPanelLayout.setVerticalGroup(
             testPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(testPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(testPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
-                    .addGroup(testPanelLayout.createSequentialGroup()
-                        .addGap(9, 9, 9)
-                        .addComponent(addGroupButton)
-                        .addGap(18, 18, 18)
+                .addGroup(testPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, testPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(testPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+                            .addGroup(testPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(groupNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(20, 20, 20)
+                                .addComponent(addGroupButton))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, testPanelLayout.createSequentialGroup()
+                        .addGap(19, 19, 19)
                         .addComponent(removeGroupButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
-                        .addComponent(mannWTestButton)
-                        .addGap(9, 9, 9)))
-                .addGap(23, 23, 23))
+                        .addGap(27, 27, 27)
+                        .addComponent(statisticsButton)))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -213,14 +226,16 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addGroupButton;
     private javax.swing.JPanel chartParentPanel;
+    private javax.swing.JTextField groupNameTextField;
     private javax.swing.JList groupsList;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel linearRegressionTablePanel;
-    private javax.swing.JButton mannWTestButton;
     private javax.swing.JButton removeGroupButton;
     private javax.swing.JTable slopesTable;
     private javax.swing.JScrollPane slopesTableScrollPane;
+    private javax.swing.JButton statisticsButton;
     private javax.swing.JPanel testPanel;
     // End of variables declaration//GEN-END:variables
 }
