@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.entity;
 
 import java.util.List;
 import java.util.Objects;
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 
 /**
  * This class contains list of conditions that were compared, together with results from statistical analysis
@@ -13,14 +14,16 @@ import java.util.Objects;
  */
 public class AnalysisGroup {
 
+    // name for the group
+    private String groupName;
     // list of conditions
     private List<PlateCondition> plateConditions;
     // list of area analysis results to be used in statistical comparison
     private List<AreaAnalysisResults> analysisResults;
     // matrix with p-values
     private Double[][] pValuesMatrix;
-    // adjusted pvalues
-    private Double[][] adjustedPValues;
+    // Summary Statistics for each Condition of the group
+    private List<StatisticalSummary> statisticalSummaries;
 
     /**
      * Constructor
@@ -30,6 +33,14 @@ public class AnalysisGroup {
     public AnalysisGroup(List<PlateCondition> plateConditions, List<AreaAnalysisResults> analysisResults) {
         this.plateConditions = plateConditions;
         this.analysisResults = analysisResults;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     public List<PlateCondition> getPlateConditions() {
@@ -56,12 +67,12 @@ public class AnalysisGroup {
         this.pValuesMatrix = pValuesMatrix;
     }
 
-    public Double[][] getAdjustedPValues() {
-        return adjustedPValues;
+    public List<StatisticalSummary> getStatisticalSummaries() {
+        return statisticalSummaries;
     }
 
-    public void setAdjustedPValues(Double[][] adjustedPValues) {
-        this.adjustedPValues = adjustedPValues;
+    public void setStatisticalSummaries(List<StatisticalSummary> statisticalSummaries) {
+        this.statisticalSummaries = statisticalSummaries;
     }
 
     public boolean equals(Object obj) {
@@ -86,5 +97,9 @@ public class AnalysisGroup {
         hash = 19 * hash + Objects.hashCode(this.plateConditions);
         hash = 19 * hash + Objects.hashCode(this.analysisResults);
         return hash;
+    }
+
+    public String toString() {
+        return groupName;
     }
 }

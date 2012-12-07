@@ -5,16 +5,20 @@
 package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
+import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory;
+import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.correctionMethod;
+import be.ugent.maf.cellmissy.analysis.SignificanceLevel;
 import be.ugent.maf.cellmissy.analysis.StatisticsAnalyzer;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
 import be.ugent.maf.cellmissy.entity.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.LinearRegressionPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.MannWhitneyTestPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.StatisticsPanel;
 import be.ugent.maf.cellmissy.gui.view.PValuesTableModel;
+import be.ugent.maf.cellmissy.gui.view.StatisticalSummaryTableModel;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.GroupsListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.PValuesTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.VelocityBarRenderer;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -36,10 +40,14 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
+import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.jfree.chart.ChartFactory;
@@ -64,13 +72,14 @@ public class AreaAnalysisController {
     // model
     private BindingGroup bindingGroup;
     private Map<PlateCondition, AreaAnalysisResults> analysisMap;
-    //private List<List<PlateCondition>> groupsList;
     private ObservableList<AnalysisGroup> groupsBindingList;
+    private ObservableList<Double> significanceLevelsBindingList;
+    private ObservableList<MultipleComparisonsCorrectionFactory.correctionMethod> correctionMethodsBindingList;
     // view
     private LinearRegressionPanel linearRegressionPanel;
     private ChartPanel velocityChartPanel;
     private JDialog dialog;
-    private MannWhitneyTestPanel mannWhitneyTestPanel;
+    private StatisticsPanel statisticsPanel;
     // parent controller
     @Autowired
     private DataAnalysisController dataAnalysisController;
@@ -216,7 +225,7 @@ public class AreaAnalysisController {
         // init chart panel
         velocityChartPanel = new ChartPanel(null);
         velocityChartPanel.setOpaque(false);
-        mannWhitneyTestPanel = new MannWhitneyTestPanel();
+        statisticsPanel = new StatisticsPanel();
         dialog = new JDialog();
         dialog.setAlwaysOnTop(true);
         dialog.setModal(true);
@@ -224,15 +233,37 @@ public class AreaAnalysisController {
         dialog.getContentPane().setLayout(new GridBagLayout());
         //center the dialog on the main screen
         dialog.setLocationRelativeTo(null);
+        dialog.setTitle("Statistics");
 
-        mannWhitneyTestPanel.getpValuesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
-        mannWhitneyTestPanel.getpValuesScrollPane().getViewport().setBackground(Color.white);
+        statisticsPanel.getSummaryTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
+        statisticsPanel.getSummaryScrollPane().getViewport().setBackground(Color.white);
+        statisticsPanel.getpValuesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
+        statisticsPanel.getpValuesScrollPane().getViewport().setBackground(Color.white);
+
+        SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
+        StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
+        StyledDocument styledDocument = statisticsPanel.getInfoTextPane().getStyledDocument();
+        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
+
         groupsBindingList = ObservableCollections.observableList(new ArrayList<AnalysisGroup>());
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, groupsBindingList, linearRegressionPanel.getGroupsList());
         bindingGroup.addBinding(jListBinding);
+
+        List<Double> significanceLevels = new ArrayList<>();
+        for (SignificanceLevel significanceLevel : SignificanceLevel.values()) {
+            significanceLevels.add(significanceLevel.getValue());
+        }
+        significanceLevelsBindingList = ObservableCollections.observableList(significanceLevels);
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, significanceLevelsBindingList, statisticsPanel.getSignificanceLevelComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+
+        for (correctionMethod method : correctionMethod.values()) {
+            statisticsPanel.getCorrectionMethodsComboBox().addItem(method);
+        }
+
+        statisticsPanel.getSignificanceLevelComboBox().setSelectedIndex(0);
+        statisticsPanel.getCorrectionMethodsComboBox().setSelectedIndex(0);
         bindingGroup.bind();
-        // set renderer for gropus list
-        linearRegressionPanel.getGroupsList().setCellRenderer(new GroupsListRenderer(groupsBindingList));
 
         /**
          * List selection Listener for linear model results Table
@@ -246,8 +277,6 @@ public class AreaAnalysisController {
                 showVelocityChart();
             }
         });
-
-
 
         /**
          * Add a group to analysis
@@ -276,19 +305,19 @@ public class AreaAnalysisController {
         /**
          * Execute a Mann Whitney Test on selected Analysis Group
          */
-        linearRegressionPanel.getMannWTestButton().addActionListener(new ActionListener() {
+        linearRegressionPanel.getStatisticsButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
                 AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
-                // execute the test for the selected group of conditions
-                statisticsAnalyzer.computePValues(selectedGroup);
-                Double[][] pValuesMatrix = selectedGroup.getpValuesMatrix();
-                // show the p-values in table
-                showPValuesInTable(pValuesMatrix);
+                // compute statistics
+                computeStatistics(selectedGroup);
+                // show statistics in tables
+                showSummary(selectedGroup);
+                showPValues(selectedGroup);
                 // add new panel 
-                dialog.getContentPane().add(mannWhitneyTestPanel, gridBagConstraints);
+                dialog.getContentPane().add(statisticsPanel, gridBagConstraints);
                 // show the dialog
                 dialog.pack();
                 dialog.setVisible(true);
@@ -298,17 +327,32 @@ public class AreaAnalysisController {
         /**
          * Correct for multiple comparisons
          */
-        mannWhitneyTestPanel.getCorrectionButton().addActionListener(new ActionListener() {
+        statisticsPanel.getCorrectionButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
                 AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
                 // adjust p values
-                statisticsAnalyzer.adjustPValues(selectedGroup);
-                Double[][] adjustedPValues = selectedGroup.getAdjustedPValues();
-                // show adjusted p values in a table
-                showPValuesInTable(adjustedPValues);
+                statisticsAnalyzer.correctForMultipleComparisons(selectedGroup, (correctionMethod) statisticsPanel.getCorrectionMethodsComboBox().getSelectedItem());
+                showPValues(selectedGroup);
+            }
+        });
+
+        /**
+         * Refresh p value table with current selected significance of level
+         */
+        statisticsPanel.getSignificanceLevelComboBox().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (statisticsPanel.getSignificanceLevelComboBox().getSelectedIndex() != -1) {
+                    Double selectedSignLevel = (Double) statisticsPanel.getSignificanceLevelComboBox().getSelectedItem();
+                    for (int i = 1; i < statisticsPanel.getpValuesTable().getColumnCount(); i++) {
+                        statisticsPanel.getpValuesTable().getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(selectedSignLevel, new DecimalFormat("#.####")));
+                    }
+                    statisticsPanel.getpValuesTable().repaint();
+                }
             }
         });
 
@@ -317,15 +361,41 @@ public class AreaAnalysisController {
     }
 
     /**
-     * Show P values in a table for a certain analysis group
+     * Show Statistics for the selected Group
      * @param analysisGroup 
      */
-    private void showPValuesInTable(Double[][] pValues) {
+    private void computeStatistics(AnalysisGroup analysisGroup) {
+        // generate summary statistics
+        statisticsAnalyzer.generateSummaryStatistics(analysisGroup);
+        // execute mann whitney test
+        statisticsAnalyzer.executePairwiseComparisons(analysisGroup);
+    }
 
-        JTable pValuesTable = mannWhitneyTestPanel.getpValuesTable();
-        pValuesTable.setModel(new PValuesTableModel(pValues));
+    /**
+     * Show Summary Statistics in correspondent table
+     * @param analysisGroup 
+     */
+    private void showSummary(AnalysisGroup analysisGroup) {
+        statisticsPanel.getGroupNameLabel().setName(analysisGroup.getGroupName());
+        // set model and cell renderer for statistics summary table
+        JTable summaryTable = statisticsPanel.getSummaryTable();
+        summaryTable.setModel(new StatisticalSummaryTableModel(analysisGroup));
+        for (int i = 1; i < summaryTable.getColumnCount(); i++) {
+            summaryTable.getColumnModel().getColumn(i).setCellRenderer(new FormatRenderer(new DecimalFormat("#.####")));
+        }
+    }
+
+    /**
+     * Show p-values in correspondent table
+     * @param analysisGroup 
+     */
+    private void showPValues(AnalysisGroup analysisGroup) {
+        // set model and cell renderer for p-values table
+        JTable pValuesTable = statisticsPanel.getpValuesTable();
+        pValuesTable.setModel(new PValuesTableModel(analysisGroup, dataAnalysisController.getPlateConditionList()));
+        Double selectedSignLevel = (Double) statisticsPanel.getSignificanceLevelComboBox().getSelectedItem();
         for (int i = 1; i < pValuesTable.getColumnCount(); i++) {
-            pValuesTable.getColumnModel().getColumn(i).setCellRenderer(new FormatRenderer(new DecimalFormat("#.####")));
+            pValuesTable.getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(selectedSignLevel, new DecimalFormat("#.####")));
         }
     }
 
@@ -353,6 +423,11 @@ public class AreaAnalysisController {
         }
         // make a new analysis group, with those conditions and those results
         AnalysisGroup analysisGroup = new AnalysisGroup(plateConditionsList, areaAnalysisResultsList);
+        //set name for the group
+        if (linearRegressionPanel.getGroupNameTextField().getText() != null) {
+            analysisGroup.setGroupName(linearRegressionPanel.getGroupNameTextField().getText());
+        }
+        linearRegressionPanel.getGroupNameTextField().setText("");
         if (!groupsBindingList.contains(analysisGroup)) {
             groupsBindingList.add(analysisGroup);
         }

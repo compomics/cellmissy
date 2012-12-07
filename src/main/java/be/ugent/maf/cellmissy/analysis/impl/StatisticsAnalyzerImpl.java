@@ -4,14 +4,18 @@
  */
 package be.ugent.maf.cellmissy.analysis.impl;
 
+import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory;
+import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrector;
 import be.ugent.maf.cellmissy.analysis.StatisticsAnalyzer;
 import be.ugent.maf.cellmissy.analysis.StatisticsCalculator;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
 import be.ugent.maf.cellmissy.entity.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,17 +28,30 @@ public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
 
     @Autowired
     private StatisticsCalculator statisticsCalculator;
+    @Autowired
+    private MultipleComparisonsCorrector multipleComparisonsCorrector;
 
     @Override
-    public void computePValues(AnalysisGroup analysisGroup) {
+    public void generateSummaryStatistics(AnalysisGroup analysisGroup) {
+        List<StatisticalSummary> statisticalSummaries = new ArrayList<>();
+        for (AreaAnalysisResults areaAnalysisResults : analysisGroup.getAnalysisResults()) {
+            Double[] slopes = areaAnalysisResults.getSlopes();
+            StatisticalSummary statisticalSummary = statisticsCalculator.getSummaryStatistics(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(slopes)));
+            statisticalSummaries.add(statisticalSummary);
+        }
+        analysisGroup.setStatisticalSummaries(statisticalSummaries);
+    }
+
+    @Override
+    public void executePairwiseComparisons(AnalysisGroup analysisGroup) {
         List<PlateCondition> plateConditions = analysisGroup.getPlateConditions();
         int sizeOfGroup = plateConditions.size();
         int maximumNumberOfReplicates = AnalysisUtils.getMaximumNumberOfReplicates(plateConditions);
         Double[][] slopesMatrix = generateSlopesMatrix(sizeOfGroup, maximumNumberOfReplicates, analysisGroup.getAnalysisResults());
         Double[][] pValuesMatrix = new Double[sizeOfGroup][sizeOfGroup];
-        for (int i = 0; i < slopesMatrix.length; i++) {
+        for (int i = 0; i < sizeOfGroup; i++) {
             double[] firstVector = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(slopesMatrix[i]));
-            for (int seq = 0; seq < pValuesMatrix.length; seq++) {
+            for (int seq = 0; seq < sizeOfGroup; seq++) {
                 if (seq != i) {
                     double[] secondVector = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(slopesMatrix[seq]));
                     double pValue = statisticsCalculator.executeMannWhitneyUTest(firstVector, secondVector);
@@ -42,14 +59,16 @@ public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
                 }
             }
         }
-        analysisGroup.setpValuesMatrix(AnalysisUtils.transpose2DArray(pValuesMatrix));
+        Double[][] transposedMatrix = AnalysisUtils.transpose2DArray(pValuesMatrix);
+        Double[][] formatSymmetricMatrix = AnalysisUtils.formatSymmetricMatrix(transposedMatrix);
+        analysisGroup.setpValuesMatrix(formatSymmetricMatrix);
     }
 
     @Override
-    public void adjustPValues(AnalysisGroup analysisGroup) {
-        Double[][] pValuesMatrix = analysisGroup.getpValuesMatrix();
-        Double[][] adjustedPValues = statisticsCalculator.correctForMultipleComparisons(pValuesMatrix);
-        analysisGroup.setAdjustedPValues(adjustedPValues);
+    public void correctForMultipleComparisons(AnalysisGroup analysisGroup, MultipleComparisonsCorrectionFactory.correctionMethod correctionMethod) {
+       if(correctionMethod == MultipleComparisonsCorrectionFactory.getBonferroniCorrection()){
+           multipleComparisonsCorrector.correctForMultipleComparisons(analysisGroup);
+       }
     }
 
     /**

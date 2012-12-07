@@ -68,6 +68,33 @@ public class AnalysisUtils {
     }
 
     /**
+     * 
+     * @param matrix
+     * @return 
+     */
+    public static Double[][] formatSymmetricMatrix(Double[][] matrix) {
+
+        Double[][] formattedMatrix = new Double[matrix.length][matrix[0].length];
+        // copy content to new matrix
+        for (int rowIndex = 0; rowIndex < matrix.length; rowIndex++) {
+            System.arraycopy(matrix[rowIndex], 0, formattedMatrix[rowIndex], 0, matrix[0].length);
+        }
+
+        for (int rowIndex = 0; rowIndex < matrix.length; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < matrix[0].length; columnIndex++) {
+                Double value = formattedMatrix[rowIndex][columnIndex];
+                Double symmValue = formattedMatrix[columnIndex][rowIndex];
+                if (value != null && symmValue != null) {
+                    if (value.equals(symmValue)) {
+                        formattedMatrix[rowIndex][columnIndex] = null;
+                    }
+                }
+            }
+        }
+        return formattedMatrix;
+    }
+
+    /**
      * Round up to two decimals
      * @param d
      * @return  
