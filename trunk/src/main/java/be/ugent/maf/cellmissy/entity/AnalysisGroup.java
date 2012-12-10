@@ -22,6 +22,8 @@ public class AnalysisGroup {
     private List<AreaAnalysisResults> analysisResults;
     // matrix with p-values
     private Double[][] pValuesMatrix;
+    // matrix with adjusted p-values
+    private Double[][] adjustedPValuesMatrix;
     // Summary Statistics for each Condition of the group
     private List<StatisticalSummary> statisticalSummaries;
 
@@ -73,6 +75,14 @@ public class AnalysisGroup {
 
     public void setStatisticalSummaries(List<StatisticalSummary> statisticalSummaries) {
         this.statisticalSummaries = statisticalSummaries;
+    }
+
+    public Double[][] getAdjustedPValuesMatrix() {
+        return adjustedPValuesMatrix;
+    }
+
+    public void setAdjustedPValuesMatrix(Double[][] adjustedPValuesMatrix) {
+        this.adjustedPValuesMatrix = adjustedPValuesMatrix;
     }
 
     public boolean equals(Object obj) {

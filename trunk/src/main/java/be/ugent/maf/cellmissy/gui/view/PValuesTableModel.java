@@ -23,12 +23,13 @@ public class PValuesTableModel extends AbstractTableModel {
     /**
      * Constructor
      * @param analysisGroup
-     * @param plateConditionList  
+     * @param plateConditionList
+     * @param isAdjusted  
      */
-    public PValuesTableModel(AnalysisGroup analysisGroup, List<PlateCondition> plateConditionList) {
+    public PValuesTableModel(AnalysisGroup analysisGroup, List<PlateCondition> plateConditionList, boolean isAdjusted) {
         this.analysisGroup = analysisGroup;
         this.plateConditionList = plateConditionList;
-        initTable();
+        initTable(isAdjusted);
     }
 
     @Override
@@ -54,9 +55,16 @@ public class PValuesTableModel extends AbstractTableModel {
     /**
      * Initialize table
      */
-    private void initTable() {
-        // p-values matrix of analysis group
-        Double[][] pValuesMatrix = analysisGroup.getpValuesMatrix();
+    private void initTable(boolean adjusted) {
+        Double[][] pValuesMatrix = null;
+        //take data according to boolean: are p -values adjusted or not?
+        if (!adjusted) {
+            // p-values matrix of analysis group
+            pValuesMatrix = analysisGroup.getpValuesMatrix();
+        } else {
+            pValuesMatrix = analysisGroup.getAdjustedPValuesMatrix();
+        }
+
         // columns
         List<PlateCondition> plateConditions = analysisGroup.getPlateConditions();
         columnNames = new String[pValuesMatrix.length + 1];

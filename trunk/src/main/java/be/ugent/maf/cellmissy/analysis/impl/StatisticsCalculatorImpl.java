@@ -34,18 +34,4 @@ public class StatisticsCalculatorImpl implements StatisticsCalculator {
         StatisticalSummary summary = summaryStatistics.getSummary();
         return summary;
     }
-
-    @Override
-    public Double[][] correctForMultipleComparisons(Double[][] pValuesMatrix) {
-        Double[][] adjustedPValues = new Double[pValuesMatrix.length][pValuesMatrix.length];
-        int numberOfComparisons = (pValuesMatrix.length) * (pValuesMatrix.length - 1) / 2;
-        for (int i = 0; i < pValuesMatrix.length; i++) {
-            for (int j = 0; j < pValuesMatrix[0].length; j++) {
-                if (pValuesMatrix[i][j] != null) {
-                    adjustedPValues[i][j] = pValuesMatrix[i][j] * numberOfComparisons;
-                }
-            }
-        }
-        return adjustedPValues;
-    }
 }

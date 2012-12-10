@@ -4,29 +4,36 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
+import be.ugent.maf.cellmissy.analysis.impl.BenjaminiCorrector;
+import be.ugent.maf.cellmissy.analysis.impl.BonferroniCorrector;
+
 /**
  *
  * @author Paola Masuzzo
  */
 public class MultipleComparisonsCorrectionFactory {
 
-    public enum correctionMethod {
+    //implementations of Corrector
+    private static BonferroniCorrector bonferroniCorrector = new BonferroniCorrector();
+    private static BenjaminiCorrector benjaminiCorrector = new BenjaminiCorrector();
+
+    public enum CorrectionMethod {
+
         BONFERRONI, BENJAMINI, NONE;
     }
 
     /**
-     * 
+     * Get the corrector according to correction method
+     * @param correctionMethod
      * @return 
      */
-    public static correctionMethod getBonferroniCorrection() {
-        return correctionMethod.BONFERRONI;
-    }
-
-    /**
-     * 
-     * @return 
-     */
-    public static correctionMethod getBenjaminiCorrection() {
-        return correctionMethod.BENJAMINI;
+    public static MultipleComparisonsCorrector getCorrector(CorrectionMethod correctionMethod) {
+        MultipleComparisonsCorrector multipleComparisonsCorrector = null;
+        if (correctionMethod.equals(CorrectionMethod.BONFERRONI)) {
+            multipleComparisonsCorrector = bonferroniCorrector;
+        } else if (correctionMethod.equals(CorrectionMethod.BENJAMINI)) {
+            multipleComparisonsCorrector = benjaminiCorrector;
+        }
+        return multipleComparisonsCorrector;
     }
 }
