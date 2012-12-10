@@ -6,7 +6,7 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory;
-import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.correctionMethod;
+import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
 import be.ugent.maf.cellmissy.analysis.SignificanceLevel;
 import be.ugent.maf.cellmissy.analysis.StatisticsAnalyzer;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
@@ -74,7 +74,7 @@ public class AreaAnalysisController {
     private Map<PlateCondition, AreaAnalysisResults> analysisMap;
     private ObservableList<AnalysisGroup> groupsBindingList;
     private ObservableList<Double> significanceLevelsBindingList;
-    private ObservableList<MultipleComparisonsCorrectionFactory.correctionMethod> correctionMethodsBindingList;
+    private ObservableList<MultipleComparisonsCorrectionFactory.CorrectionMethod> correctionMethodsBindingList;
     // view
     private LinearRegressionPanel linearRegressionPanel;
     private ChartPanel velocityChartPanel;
@@ -256,14 +256,13 @@ public class AreaAnalysisController {
         significanceLevelsBindingList = ObservableCollections.observableList(significanceLevels);
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, significanceLevelsBindingList, statisticsPanel.getSignificanceLevelComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
+        bindingGroup.bind();
 
-        for (correctionMethod method : correctionMethod.values()) {
+        for (CorrectionMethod method : CorrectionMethod.values()) {
             statisticsPanel.getCorrectionMethodsComboBox().addItem(method);
         }
-
-        statisticsPanel.getSignificanceLevelComboBox().setSelectedIndex(0);
-        statisticsPanel.getCorrectionMethodsComboBox().setSelectedIndex(0);
-        bindingGroup.bind();
+        //significance level of 0.05
+        statisticsPanel.getSignificanceLevelComboBox().setSelectedIndex(1);
 
         /**
          * List selection Listener for linear model results Table
@@ -303,6 +302,17 @@ public class AreaAnalysisController {
         });
 
         /**
+         * Create report from Analysis
+         */
+        linearRegressionPanel.getCreateReportButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               
+            }
+        });
+
+        /**
          * Execute a Mann Whitney Test on selected Analysis Group
          */
         linearRegressionPanel.getStatisticsButton().addActionListener(new ActionListener() {
@@ -315,27 +325,13 @@ public class AreaAnalysisController {
                 computeStatistics(selectedGroup);
                 // show statistics in tables
                 showSummary(selectedGroup);
-                showPValues(selectedGroup);
+                // by default show p-values without adjustment
+                showPValues(selectedGroup, false);
                 // add new panel 
                 dialog.getContentPane().add(statisticsPanel, gridBagConstraints);
                 // show the dialog
                 dialog.pack();
                 dialog.setVisible(true);
-            }
-        });
-
-        /**
-         * Correct for multiple comparisons
-         */
-        statisticsPanel.getCorrectionButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
-                AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
-                // adjust p values
-                statisticsAnalyzer.correctForMultipleComparisons(selectedGroup, (correctionMethod) statisticsPanel.getCorrectionMethodsComboBox().getSelectedItem());
-                showPValues(selectedGroup);
             }
         });
 
@@ -356,8 +352,58 @@ public class AreaAnalysisController {
             }
         });
 
+        /**
+         * Apply correction for multiple comparisons
+         */
+        statisticsPanel.getCorrectionMethodsComboBox().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
+                if (selectedIndex != -1) {
+                    AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
+                    CorrectionMethod correctionMethod = (CorrectionMethod) statisticsPanel.getCorrectionMethodsComboBox().getSelectedItem();
+                    // update test description
+                    updateTestDescriptionPane(correctionMethod);
+                    // if the correction method is not "NONE"
+                    if (correctionMethod != CorrectionMethod.NONE) {
+                        // adjust p values
+                        statisticsAnalyzer.correctForMultipleComparisons(selectedGroup, correctionMethod);
+                        // show p - values with the applied correction
+                        showPValues(selectedGroup, true);
+                    } else {
+                        // if selected correction method is "NONE", do not apply correction and only show normal p-values
+                        showPValues(selectedGroup, false);
+                    }
+                }
+            }
+        });
+        //multiple comparison correction: NONE
+        statisticsPanel.getCorrectionMethodsComboBox().setSelectedIndex(2);
+        updateTestDescriptionPane(CorrectionMethod.NONE);
+
         // add view to parent panel
         dataAnalysisController.getAreaAnalysisPanel().getLinearModelParentPanel().add(linearRegressionPanel, gridBagConstraints);
+    }
+
+    /**
+     * Update text pane with description of statistical test
+     * @param correctionMethod 
+     */
+    private void updateTestDescriptionPane(CorrectionMethod correctionMethod) {
+        String testDescription = "";
+        if (correctionMethod == CorrectionMethod.NONE) {
+            testDescription = "No correction is applied.";
+        } else if (correctionMethod == CorrectionMethod.BONFERRONI) {
+            testDescription = "This correction is the stringent one; p values are multiplied for number of pairwise comparisons.";
+        } else if (correctionMethod == CorrectionMethod.BENJAMINI) {
+            testDescription = "This correction is less stringent than the Bonferroni one; the p values are first ranked from the smallest to the largest. The largest p value remains as it is. The second largest p value is multiplied by the total number of comparisons divided by its rank. This is repeated for the third p value and so on.";
+        }
+        statisticsPanel.getTestDescriptionTextPane().setText(testDescription);
+        SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
+        StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
+        StyledDocument styledDocument = statisticsPanel.getTestDescriptionTextPane().getStyledDocument();
+        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
     }
 
     /**
@@ -376,7 +422,7 @@ public class AreaAnalysisController {
      * @param analysisGroup 
      */
     private void showSummary(AnalysisGroup analysisGroup) {
-        statisticsPanel.getGroupNameLabel().setName(analysisGroup.getGroupName());
+        statisticsPanel.getGroupNameLabel().setText(analysisGroup.getGroupName());
         // set model and cell renderer for statistics summary table
         JTable summaryTable = statisticsPanel.getSummaryTable();
         summaryTable.setModel(new StatisticalSummaryTableModel(analysisGroup));
@@ -389,10 +435,10 @@ public class AreaAnalysisController {
      * Show p-values in correspondent table
      * @param analysisGroup 
      */
-    private void showPValues(AnalysisGroup analysisGroup) {
+    private void showPValues(AnalysisGroup analysisGroup, boolean isAdjusted) {
         // set model and cell renderer for p-values table
         JTable pValuesTable = statisticsPanel.getpValuesTable();
-        pValuesTable.setModel(new PValuesTableModel(analysisGroup, dataAnalysisController.getPlateConditionList()));
+        pValuesTable.setModel(new PValuesTableModel(analysisGroup, dataAnalysisController.getPlateConditionList(), isAdjusted));
         Double selectedSignLevel = (Double) statisticsPanel.getSignificanceLevelComboBox().getSelectedItem();
         for (int i = 1; i < pValuesTable.getColumnCount(); i++) {
             pValuesTable.getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(selectedSignLevel, new DecimalFormat("#.####")));

@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory;
+import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrector;
 import be.ugent.maf.cellmissy.analysis.StatisticsAnalyzer;
 import be.ugent.maf.cellmissy.analysis.StatisticsCalculator;
@@ -28,8 +29,6 @@ public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
 
     @Autowired
     private StatisticsCalculator statisticsCalculator;
-    @Autowired
-    private MultipleComparisonsCorrector multipleComparisonsCorrector;
 
     @Override
     public void generateSummaryStatistics(AnalysisGroup analysisGroup) {
@@ -65,10 +64,9 @@ public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
     }
 
     @Override
-    public void correctForMultipleComparisons(AnalysisGroup analysisGroup, MultipleComparisonsCorrectionFactory.correctionMethod correctionMethod) {
-       if(correctionMethod == MultipleComparisonsCorrectionFactory.getBonferroniCorrection()){
-           multipleComparisonsCorrector.correctForMultipleComparisons(analysisGroup);
-       }
+    public void correctForMultipleComparisons(AnalysisGroup analysisGroup, CorrectionMethod correctionMethod) {
+        MultipleComparisonsCorrector corrector = MultipleComparisonsCorrectionFactory.getCorrector(correctionMethod);
+        corrector.correctForMultipleComparisons(analysisGroup);
     }
 
     /**

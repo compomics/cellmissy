@@ -14,7 +14,7 @@ public interface MultipleComparisonsCorrector {
 
     /**
      * Correct for multiple Comparisons
-     * @param analysisGroup 
+     * @param analysisGroup
      */
     public void correctForMultipleComparisons(AnalysisGroup analysisGroup);
 }

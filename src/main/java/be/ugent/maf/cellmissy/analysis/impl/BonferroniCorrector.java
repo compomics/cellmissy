@@ -6,13 +6,11 @@ package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrector;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
-import org.springframework.stereotype.Component;
 
 /**
  *
  * @author Paola Masuzzo
  */
-@Component("bonferroniCorrector")
 public class BonferroniCorrector implements MultipleComparisonsCorrector {
 
     @Override
@@ -27,6 +25,6 @@ public class BonferroniCorrector implements MultipleComparisonsCorrector {
                 }
             }
         }
-        analysisGroup.setpValuesMatrix(adjustedPValues);
+        analysisGroup.setAdjustedPValuesMatrix(adjustedPValues);
     }
 }

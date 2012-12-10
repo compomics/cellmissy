@@ -27,11 +27,4 @@ public interface StatisticsCalculator {
      * @return 
      */
     public StatisticalSummary getSummaryStatistics(double[] x);
-    
-    /**
-     * Correct for Multiple Comparisons
-     * @param pValuesMatrix
-     * @return 
-     */
-    public Double[][] correctForMultipleComparisons(Double[][] pValuesMatrix);    
 }

@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
+import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
 
 /**
@@ -29,5 +30,5 @@ public interface StatisticsAnalyzer {
      * @param analysisGroup
      * @param correctionMethod  
      */
-    public void correctForMultipleComparisons(AnalysisGroup analysisGroup, MultipleComparisonsCorrectionFactory.correctionMethod correctionMethod);
+    public void correctForMultipleComparisons(AnalysisGroup analysisGroup, CorrectionMethod correctionMethod);
 }

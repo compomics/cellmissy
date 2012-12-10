@@ -44,10 +44,6 @@ public class StatisticsPanel extends javax.swing.JPanel {
         return summaryTable;
     }
 
-    public JButton getCorrectionButton() {
-        return correctionButton;
-    }
-
     public JTextPane getInfoTextPane() {
         return infoTextPane;
     }
@@ -62,6 +58,10 @@ public class StatisticsPanel extends javax.swing.JPanel {
 
     public JComboBox getCorrectionMethodsComboBox() {
         return correctionMethodsComboBox;
+    }
+
+    public JTextPane getTestDescriptionTextPane() {
+        return testDescriptionTextPane;
     }
 
     /** This method is called from within the constructor to
@@ -87,13 +87,15 @@ public class StatisticsPanel extends javax.swing.JPanel {
         pValuesTable = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        correctionButton = new javax.swing.JButton();
         significanceLevelComboBox = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
         correctionMethodsComboBox = new javax.swing.JComboBox();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        testDescriptionTextPane = new javax.swing.JTextPane();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(600, 300));
+        setPreferredSize(new java.awt.Dimension(700, 400));
         setLayout(new java.awt.GridBagLayout());
 
         infoPanel.setMinimumSize(new java.awt.Dimension(400, 300));
@@ -112,8 +114,14 @@ public class StatisticsPanel extends javax.swing.JPanel {
         infoTextPane.setPreferredSize(new java.awt.Dimension(600, 150));
         infoScrollPane.setViewportView(infoTextPane);
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel3.setText("ANALYISIS OF GROUP: ");
+
+        groupNameLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        groupNameLabel.setForeground(new java.awt.Color(255, 0, 0));
+        groupNameLabel.setMaximumSize(new java.awt.Dimension(20, 20));
+        groupNameLabel.setMinimumSize(new java.awt.Dimension(20, 20));
+        groupNameLabel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
         infoPanel.setLayout(infoPanelLayout);
@@ -122,25 +130,27 @@ public class StatisticsPanel extends javax.swing.JPanel {
             .addGroup(infoPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(groupNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(595, Short.MAX_VALUE))
+                .addContainerGap(616, Short.MAX_VALUE))
             .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(infoScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 935, Short.MAX_VALUE))
         );
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, infoPanelLayout.createSequentialGroup()
-                .addContainerGap(49, Short.MAX_VALUE)
-                .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(groupNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21))
+                .addContainerGap(73, Short.MAX_VALUE)
+                .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(groupNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(16, 16, 16))
             .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(infoPanelLayout.createSequentialGroup()
-                    .addComponent(infoScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(45, Short.MAX_VALUE)))
+                    .addComponent(infoScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(44, Short.MAX_VALUE)))
         );
+
+        infoPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {groupNameLabel, jLabel3});
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -180,7 +190,7 @@ public class StatisticsPanel extends javax.swing.JPanel {
         );
         summaryPanelLayout.setVerticalGroup(
             summaryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(summaryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+            .addComponent(summaryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -221,7 +231,7 @@ public class StatisticsPanel extends javax.swing.JPanel {
         );
         pValuesPanelLayout.setVerticalGroup(
             pValuesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pValuesScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+            .addComponent(pValuesScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -236,14 +246,18 @@ public class StatisticsPanel extends javax.swing.JPanel {
         jPanel1.setOpaque(false);
         jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
         jLabel1.setText("Multiple Comparisons Correction");
-
-        correctionButton.setText("Correct");
 
         significanceLevelComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel2.setText("Significance Level");
+
+        jScrollPane1.setBorder(null);
+
+        testDescriptionTextPane.setBorder(null);
+        testDescriptionTextPane.setFocusable(false);
+        jScrollPane1.setViewportView(testDescriptionTextPane);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -253,15 +267,19 @@ public class StatisticsPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
-                        .addComponent(significanceLevelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(significanceLevelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(212, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(correctionMethodsComboBox, 0, 143, Short.MAX_VALUE))
-                    .addComponent(correctionButton))
-                .addContainerGap())
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(171, 171, 171))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(correctionMethodsComboBox, 0, 158, Short.MAX_VALUE)
+                        .addGap(212, 212, 212))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -270,28 +288,25 @@ public class StatisticsPanel extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(significanceLevelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(50, 50, 50)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(correctionMethodsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(correctionButton)))
-                .addContainerGap(273, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(correctionMethodsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.4;
-        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.weighty = 0.4;
         add(jPanel1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton correctionButton;
     private javax.swing.JComboBox correctionMethodsComboBox;
     private javax.swing.JLabel groupNameLabel;
     private javax.swing.JPanel infoPanel;
@@ -301,6 +316,7 @@ public class StatisticsPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pValuesPanel;
     private javax.swing.JScrollPane pValuesScrollPane;
     private javax.swing.JTable pValuesTable;
@@ -308,5 +324,6 @@ public class StatisticsPanel extends javax.swing.JPanel {
     private javax.swing.JPanel summaryPanel;
     private javax.swing.JScrollPane summaryScrollPane;
     private javax.swing.JTable summaryTable;
+    private javax.swing.JTextPane testDescriptionTextPane;
     // End of variables declaration//GEN-END:variables
 }

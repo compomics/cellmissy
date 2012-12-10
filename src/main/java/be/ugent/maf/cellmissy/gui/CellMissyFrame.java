@@ -33,7 +33,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
     }
 
     public JPanel getOverviewPanel() {
-        return overviewParentPanel;
+        return overviewPanel;
     }
 
     public JPanel getUserParentPanel() {
@@ -59,7 +59,13 @@ public class CellMissyFrame extends javax.swing.JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        overviewParentPanel = new javax.swing.JPanel();
+        overviewPanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         userParentPanel = new javax.swing.JPanel();
         experimentSetupParentPanel = new javax.swing.JPanel();
         loadExperimentParentPanel = new javax.swing.JPanel();
@@ -75,9 +81,94 @@ public class CellMissyFrame extends javax.swing.JFrame {
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
         jTabbedPane1.setOpaque(true);
 
-        overviewParentPanel.setOpaque(false);
-        overviewParentPanel.setLayout(new java.awt.GridBagLayout());
-        jTabbedPane1.addTab("Overview", overviewParentPanel);
+        overviewPanel.setOpaque(false);
+        overviewPanel.setLayout(new java.awt.GridBagLayout());
+
+        jPanel1.setMinimumSize(new java.awt.Dimension(20, 20));
+        jPanel1.setOpaque(false);
+        jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        jLabel1.setFont(new java.awt.Font("Lucida Sans", 1, 36));
+        jLabel1.setText("CellMissy");
+
+        jLabel4.setText("jLabel4");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(54, 54, 54)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addContainerGap(216, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(206, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(35, 35, 35))))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.6;
+        overviewPanel.add(jPanel1, gridBagConstraints);
+
+        jPanel2.setMinimumSize(new java.awt.Dimension(20, 20));
+        jPanel2.setOpaque(false);
+        jPanel2.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        jLabel2.setFont(new java.awt.Font("SansSerif", 1, 18));
+        jLabel2.setText("Cell Migration - Invasion");
+
+        jLabel3.setFont(new java.awt.Font("SansSerif", 1, 18));
+        jLabel3.setText("Storage System");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(179, 179, 179)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(45, 45, 45)
+                        .addComponent(jLabel3)))
+                .addContainerGap(201, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addContainerGap(131, Short.MAX_VALUE))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.4;
+        overviewPanel.add(jPanel2, gridBagConstraints);
+
+        jTabbedPane1.addTab("Overview", overviewPanel);
 
         userParentPanel.setOpaque(false);
         userParentPanel.setLayout(new java.awt.GridBagLayout());
@@ -148,9 +239,15 @@ public class CellMissyFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel dataAnalysisParentPanel;
     private javax.swing.JPanel experimentSetupParentPanel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel loadExperimentParentPanel;
-    private javax.swing.JPanel overviewParentPanel;
+    private javax.swing.JPanel overviewPanel;
     private javax.swing.JPanel userParentPanel;
     // End of variables declaration//GEN-END:variables
 }
