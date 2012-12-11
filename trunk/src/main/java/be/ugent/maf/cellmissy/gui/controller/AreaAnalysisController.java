@@ -24,12 +24,16 @@ import be.ugent.maf.cellmissy.gui.view.renderer.VelocityBarRenderer;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -54,10 +58,12 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.CategoryAnnotation;
+import org.jfree.chart.annotations.CategoryLineAnnotation;
 import org.jfree.chart.annotations.CategoryTextAnnotation;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.Range;
 import org.jfree.data.statistics.DefaultStatisticalCategoryDataset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -74,7 +80,6 @@ public class AreaAnalysisController {
     private Map<PlateCondition, AreaAnalysisResults> analysisMap;
     private ObservableList<AnalysisGroup> groupsBindingList;
     private ObservableList<Double> significanceLevelsBindingList;
-    private ObservableList<MultipleComparisonsCorrectionFactory.CorrectionMethod> correctionMethodsBindingList;
     // view
     private LinearRegressionPanel linearRegressionPanel;
     private ChartPanel velocityChartPanel;
@@ -227,7 +232,7 @@ public class AreaAnalysisController {
         velocityChartPanel.setOpaque(false);
         statisticsPanel = new StatisticsPanel();
         dialog = new JDialog();
-        dialog.setAlwaysOnTop(true);
+        dialog.setAlwaysOnTop(false);
         dialog.setModal(true);
         dialog.getContentPane().setBackground(Color.white);
         dialog.getContentPane().setLayout(new GridBagLayout());
@@ -261,7 +266,7 @@ public class AreaAnalysisController {
         for (CorrectionMethod method : CorrectionMethod.values()) {
             statisticsPanel.getCorrectionMethodsComboBox().addItem(method);
         }
-        //significance level of 0.05
+        //significance level to 0.05
         statisticsPanel.getSignificanceLevelComboBox().setSelectedIndex(1);
 
         /**
@@ -308,7 +313,6 @@ public class AreaAnalysisController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-               
             }
         });
 
@@ -320,18 +324,44 @@ public class AreaAnalysisController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
-                AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
-                // compute statistics
-                computeStatistics(selectedGroup);
-                // show statistics in tables
-                showSummary(selectedGroup);
-                // by default show p-values without adjustment
-                showPValues(selectedGroup, false);
-                // add new panel 
-                dialog.getContentPane().add(statisticsPanel, gridBagConstraints);
-                // show the dialog
-                dialog.pack();
-                dialog.setVisible(true);
+                // check that an analysis group is being selected
+                if (selectedIndex != -1) {
+                    AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
+                    // compute statistics
+                    computeStatistics(selectedGroup);
+                    // show statistics in tables
+                    showSummary(selectedGroup);
+                    // set the correction combobox to the one already chosen
+                    statisticsPanel.getCorrectionMethodsComboBox().setSelectedItem((Object) selectedGroup.getCorrectionMethod());
+                    if (selectedGroup.getCorrectionMethod() == CorrectionMethod.NONE) {
+                        // by default show p-values without adjustment
+                        showPValues(selectedGroup, false);
+                    } else {
+                        // show p values with adjustement
+                        showPValues(selectedGroup, true);
+                    }
+                    // add new panel 
+                    dialog.getContentPane().add(statisticsPanel, gridBagConstraints);
+                    // show the dialog
+                    dialog.pack();
+                    dialog.setVisible(true);
+                }
+            }
+        });
+
+        /**
+         * Update button text if analysis was already done
+         */
+        linearRegressionPanel.getGroupsList().addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int locationToIndex = linearRegressionPanel.getGroupsList().locationToIndex(e.getPoint());
+                if (groupsBindingList.get(locationToIndex).getpValuesMatrix() == null) {
+                    linearRegressionPanel.getStatisticsButton().setText("Perform Statistical Analysis...");
+                } else {
+                    linearRegressionPanel.getStatisticsButton().setText("Modify Statistical Analysis...");
+                }
             }
         });
 
@@ -344,8 +374,17 @@ public class AreaAnalysisController {
             public void actionPerformed(ActionEvent e) {
                 if (statisticsPanel.getSignificanceLevelComboBox().getSelectedIndex() != -1) {
                     Double selectedSignLevel = (Double) statisticsPanel.getSignificanceLevelComboBox().getSelectedItem();
+                    AnalysisGroup selectedGroup = groupsBindingList.get(linearRegressionPanel.getGroupsList().getSelectedIndex());
+                    boolean isAdjusted;
+                    if (selectedGroup.getCorrectionMethod() == CorrectionMethod.NONE) {
+                        isAdjusted = false;
+                    } else {
+                        isAdjusted = true;
+                    }
+                    statisticsAnalyzer.detectSignificance(selectedGroup, selectedSignLevel, isAdjusted);
+                    boolean[][] significances = selectedGroup.getSignificances();
                     for (int i = 1; i < statisticsPanel.getpValuesTable().getColumnCount(); i++) {
-                        statisticsPanel.getpValuesTable().getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(selectedSignLevel, new DecimalFormat("#.####")));
+                        statisticsPanel.getpValuesTable().getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(new DecimalFormat("#.####"), significances));
                     }
                     statisticsPanel.getpValuesTable().repaint();
                 }
@@ -379,8 +418,28 @@ public class AreaAnalysisController {
             }
         });
         //multiple comparison correction: NONE
-        statisticsPanel.getCorrectionMethodsComboBox().setSelectedIndex(2);
+        statisticsPanel.getCorrectionMethodsComboBox().setSelectedItem((Object) CorrectionMethod.NONE);
         updateTestDescriptionPane(CorrectionMethod.NONE);
+
+        /**
+         * Save analysis
+         */
+        statisticsPanel.getSaveAnalysisButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // analysis group
+                int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
+                if (selectedIndex != -1) {
+                    AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
+                    // set correction method (summary statistics, p-values and adjusted p-values are already set)
+                    selectedGroup.setCorrectionMethod((CorrectionMethod) statisticsPanel.getCorrectionMethodsComboBox().getSelectedItem());
+                    //show message to the user
+                    dataAnalysisController.showMessage("Analysis was saved", 1);
+                    addAnnotationsOnVelocityChart(selectedGroup);
+                }
+            }
+        });
 
         // add view to parent panel
         dataAnalysisController.getAreaAnalysisPanel().getLinearModelParentPanel().add(linearRegressionPanel, gridBagConstraints);
@@ -407,13 +466,13 @@ public class AreaAnalysisController {
     }
 
     /**
-     * Show Statistics for the selected Group
+     * Compute Statistics for the selected Group
      * @param analysisGroup 
      */
     private void computeStatistics(AnalysisGroup analysisGroup) {
         // generate summary statistics
         statisticsAnalyzer.generateSummaryStatistics(analysisGroup);
-        // execute mann whitney test
+        // execute mann whitney test --- set p values matrix (no adjustment)
         statisticsAnalyzer.executePairwiseComparisons(analysisGroup);
     }
 
@@ -425,7 +484,7 @@ public class AreaAnalysisController {
         statisticsPanel.getGroupNameLabel().setText(analysisGroup.getGroupName());
         // set model and cell renderer for statistics summary table
         JTable summaryTable = statisticsPanel.getSummaryTable();
-        summaryTable.setModel(new StatisticalSummaryTableModel(analysisGroup));
+        summaryTable.setModel(new StatisticalSummaryTableModel(analysisGroup, dataAnalysisController.getPlateConditionList()));
         for (int i = 1; i < summaryTable.getColumnCount(); i++) {
             summaryTable.getColumnModel().getColumn(i).setCellRenderer(new FormatRenderer(new DecimalFormat("#.####")));
         }
@@ -440,9 +499,44 @@ public class AreaAnalysisController {
         JTable pValuesTable = statisticsPanel.getpValuesTable();
         pValuesTable.setModel(new PValuesTableModel(analysisGroup, dataAnalysisController.getPlateConditionList(), isAdjusted));
         Double selectedSignLevel = (Double) statisticsPanel.getSignificanceLevelComboBox().getSelectedItem();
+        // detect significances with selected alpha level
+        statisticsAnalyzer.detectSignificance(analysisGroup, selectedSignLevel, isAdjusted);
+        boolean[][] significances = analysisGroup.getSignificances();
         for (int i = 1; i < pValuesTable.getColumnCount(); i++) {
-            pValuesTable.getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(selectedSignLevel, new DecimalFormat("#.####")));
+            pValuesTable.getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(new DecimalFormat("#.####"), significances));
         }
+    }
+
+    /**
+     * Add Annotations on velocity Chart
+     */
+    private void addAnnotationsOnVelocityChart(AnalysisGroup analysisGroup) {
+        Stroke stroke = new BasicStroke(1.0f);
+        CategoryPlot velocityPlot = velocityChartPanel.getChart().getCategoryPlot();
+        DefaultStatisticalCategoryDataset dataset = (DefaultStatisticalCategoryDataset) velocityPlot.getDataset();
+        Comparable rowKey = dataset.getRowKey(0);
+        int counter = 30;
+        boolean[][] significances = analysisGroup.getSignificances();
+        for (int i = 0; i < significances.length; i++) {
+            for (int j = 0; j < significances[0].length; j++) {
+
+                // if p - value has been detected as significant
+                if (significances[i][j]) {
+                    Comparable firstKey = dataset.getColumnKey(j);
+                    Comparable secondKey = dataset.getColumnKey(i);
+                    Double value1 = (Double) dataset.getMeanValue(rowKey, firstKey);
+                    Double value2 = (Double) dataset.getMeanValue(rowKey, secondKey);
+                    // where the line has to start and finish
+                    double value = Math.max(value1, value2) + counter;
+                    // add a line annotation on plot
+                    CategoryLineAnnotation categoryLineAnnotation = new CategoryLineAnnotation(firstKey, value, secondKey, value, Color.black, stroke);
+                    velocityPlot.addAnnotation(categoryLineAnnotation);
+                    counter = counter + 50;
+                }
+            }
+        }
+        Range range = new Range(0, velocityPlot.getRangeAxis().getRange().getUpperBound() + counter);
+        velocityPlot.getRangeAxis().setRange(range);
     }
 
     /**
@@ -473,6 +567,8 @@ public class AreaAnalysisController {
         if (linearRegressionPanel.getGroupNameTextField().getText() != null) {
             analysisGroup.setGroupName(linearRegressionPanel.getGroupNameTextField().getText());
         }
+        // set correction method to NONE by default
+        analysisGroup.setCorrectionMethod(CorrectionMethod.NONE);
         linearRegressionPanel.getGroupNameTextField().setText("");
         if (!groupsBindingList.contains(analysisGroup)) {
             groupsBindingList.add(analysisGroup);

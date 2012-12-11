@@ -18,13 +18,12 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class PValuesTableRenderer extends DefaultTableCellRenderer {
 
-    // alpha level for significance
-    private Double alpha;
     private Format formatter;
+    private boolean[][] significances;
 
-    public PValuesTableRenderer(Double alpha, Format formatter) {
-        this.alpha = alpha;
+    public PValuesTableRenderer(Format formatter, boolean[][] significances) {
         this.formatter = formatter;
+        this.significances = significances;
     }
 
     /**
@@ -39,7 +38,7 @@ public class PValuesTableRenderer extends DefaultTableCellRenderer {
             setForeground(table.getSelectionForeground());
         } else {
             setBackground(table.getBackground());
-            if (value != null && (Double) value < alpha) {
+            if (significances[row][column - 1]) {
                 setForeground(Color.green);
                 setFont(new Font("Tahoma", Font.BOLD, 11));
             } else {

@@ -64,6 +64,18 @@ public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
     }
 
     @Override
+    public void detectSignificance(AnalysisGroup analysisGroup, double alpha, boolean isAdjusted) {
+        Double[][] dataToLook = null;
+        if (!isAdjusted) {
+            dataToLook = analysisGroup.getpValuesMatrix();
+        } else {
+            dataToLook = analysisGroup.getAdjustedPValuesMatrix();
+        }
+        boolean[][] significances = statisticsCalculator.detectSignificance(dataToLook, alpha);
+        analysisGroup.setSignificances(significances);
+    }
+
+    @Override
     public void correctForMultipleComparisons(AnalysisGroup analysisGroup, CorrectionMethod correctionMethod) {
         MultipleComparisonsCorrector corrector = MultipleComparisonsCorrectionFactory.getCorrector(correctionMethod);
         corrector.correctForMultipleComparisons(analysisGroup);

@@ -176,6 +176,15 @@ public class DataAnalysisController {
     public void showLinearModelInTable() {
         areaAnalysisController.showLinearModelInTable();
     }
+    
+    /**
+     * Show message through the main controller
+     * @param message
+     * @param messageType  
+     */
+    public void showMessage(String message, Integer messageType){
+        cellMissyController.showMessage(message, messageType);
+    }
 
     /**
      * private methods and classes

@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.entity;
 
+import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
@@ -26,6 +27,10 @@ public class AnalysisGroup {
     private Double[][] adjustedPValuesMatrix;
     // Summary Statistics for each Condition of the group
     private List<StatisticalSummary> statisticalSummaries;
+    // correction method chosen for multiple comparisons correction
+    private CorrectionMethod correctionMethod;
+    // boolean to keep significances
+    private boolean[][] significances;
 
     /**
      * Constructor
@@ -85,6 +90,22 @@ public class AnalysisGroup {
         this.adjustedPValuesMatrix = adjustedPValuesMatrix;
     }
 
+    public CorrectionMethod getCorrectionMethod() {
+        return correctionMethod;
+    }
+
+    public void setCorrectionMethod(CorrectionMethod correctionMethod) {
+        this.correctionMethod = correctionMethod;
+    }
+
+    public boolean[][] getSignificances() {
+        return significances;
+    }
+
+    public void setSignificances(boolean[][] significances) {
+        this.significances = significances;
+    }
+
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -99,13 +120,17 @@ public class AnalysisGroup {
         if (!Objects.equals(this.analysisResults, other.analysisResults)) {
             return false;
         }
+        if (this.correctionMethod != other.correctionMethod) {
+            return false;
+        }
         return true;
     }
 
     public int hashCode() {
         int hash = 7;
-        hash = 19 * hash + Objects.hashCode(this.plateConditions);
-        hash = 19 * hash + Objects.hashCode(this.analysisResults);
+        hash = 89 * hash + Objects.hashCode(this.plateConditions);
+        hash = 89 * hash + Objects.hashCode(this.analysisResults);
+        hash = 89 * hash + (this.correctionMethod != null ? this.correctionMethod.hashCode() : 0);
         return hash;
     }
 

@@ -25,6 +25,15 @@ public interface StatisticsAnalyzer {
      */
     public void executePairwiseComparisons(AnalysisGroup analysisGroup);
     
+    
+    /**
+     * For a certain analysis group and an alpha level, get significance for
+     * non adjusted (if boolean is false) or adjusted (boolean is true) p-values matrix
+     * @param analysisGroup
+     * @param alpha
+     * @param isAdjusted
+     */
+    public void detectSignificance(AnalysisGroup analysisGroup, double alpha, boolean isAdjusted);
     /**
      * Correct p values for multiple comparisons
      * @param analysisGroup

@@ -20,6 +20,14 @@ public interface StatisticsCalculator {
      * @return p-value associated with the test 
      */
     public double executeMannWhitneyUTest(double[] x, double[] y);
+    
+    /**
+     * Given data and alpha level, detect significance
+     * @param data
+     * @param alpha
+     * @return a 2D array of boolean
+     */
+    public boolean[][] detectSignificance(Double[][] data, double alpha);
 
     /**
      * Get Statistical summary for a distribution of doubles x
