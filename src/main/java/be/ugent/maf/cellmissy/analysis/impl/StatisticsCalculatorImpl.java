@@ -34,4 +34,20 @@ public class StatisticsCalculatorImpl implements StatisticsCalculator {
         StatisticalSummary summary = summaryStatistics.getSummary();
         return summary;
     }
+
+    @Override
+    public boolean[][] detectSignificance(Double[][] data, double alpha) {
+        boolean[][] significances = new boolean[data.length][data[0].length];
+        for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < data[0].length; columnIndex++) {
+                Double pValue = data[rowIndex][columnIndex];
+                // if p value is not null and it's less than alpha level, set boolean to true:
+                // correspondent pairwise comparison is statistically significant
+                if (pValue != null && pValue <= alpha) {
+                    significances[rowIndex][columnIndex] = true;
+                }
+            }
+        }
+        return significances;
+    }
 }

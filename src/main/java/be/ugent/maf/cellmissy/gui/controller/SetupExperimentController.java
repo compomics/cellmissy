@@ -25,6 +25,7 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import com.compomics.util.Export;
 import com.compomics.util.enumeration.ImageType;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -641,6 +642,7 @@ public class SetupExperimentController {
             Dimension reportDimension = new Dimension(1200, 750);
             frame.setSize(reportDimension);
             frame.add(reportPanel);
+            frame.setBackground(Color.white);
             //set the frame to visible
             frame.setVisible(true);
             //export Panel to Pdf

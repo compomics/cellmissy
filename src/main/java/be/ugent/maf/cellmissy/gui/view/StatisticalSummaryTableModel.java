@@ -24,10 +24,12 @@ public class StatisticalSummaryTableModel extends AbstractTableModel {
 
     /** 
      * Constructor
-     * @param analysisGroup 
+     * @param analysisGroup
+     * @param plateConditionList  
      */
-    public StatisticalSummaryTableModel(AnalysisGroup analysisGroup) {
+    public StatisticalSummaryTableModel(AnalysisGroup analysisGroup, List<PlateCondition> plateConditionList) {
         this.analysisGroup = analysisGroup;
+        this.plateConditionList = plateConditionList;
         initTable();
     }
 
@@ -67,11 +69,11 @@ public class StatisticalSummaryTableModel extends AbstractTableModel {
         columnNames[4] = "N";
         columnNames[5] = "SD";
         columnNames[6] = "Variance";
-
+        List<PlateCondition> plateConditions = analysisGroup.getPlateConditions();
         data = new Object[size][columnNames.length];
         // fill in data
         for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-            data[rowIndex][0] = "Cond " + (rowIndex + 1);
+            data[rowIndex][0] = "Cond " + (plateConditionList.indexOf(plateConditions.get(rowIndex)) + 1);
             // summary for a row
             StatisticalSummary statisticalSummary = statisticalSummaries.get(rowIndex);
             // distribute statistical objects per columns
