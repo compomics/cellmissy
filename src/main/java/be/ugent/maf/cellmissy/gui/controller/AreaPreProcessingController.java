@@ -77,6 +77,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.data.Range;
 
 /**
@@ -143,6 +144,10 @@ public class AreaPreProcessingController {
 
     public Map<PlateCondition, AreaPreProcessingResults> getPreProcessingMap() {
         return preProcessingMap;
+    }
+
+    public ChartPanel getGlobalAreaChartPanel() {
+        return globalAreaChartPanel;
     }
 
     /**

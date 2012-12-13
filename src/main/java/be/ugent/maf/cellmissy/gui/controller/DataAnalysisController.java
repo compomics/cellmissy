@@ -45,6 +45,8 @@ import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -146,6 +148,10 @@ public class DataAnalysisController {
         return areaPreProcessingController.getPreProcessingMap();
     }
 
+    public ChartPanel getGlobalAreaChartPanel(){
+        return areaPreProcessingController.getGlobalAreaChartPanel();
+    }
+    
     /**
      * Fetch time steps objects from DB, update TimeStepList according to Plate Condition
      * @param plateCondition 

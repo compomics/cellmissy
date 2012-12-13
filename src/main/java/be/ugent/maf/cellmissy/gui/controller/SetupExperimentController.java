@@ -683,7 +683,7 @@ public class SetupExperimentController {
             //setupFolder
             File setupFolder = experiment.getSetupFolder();
             //file to which export the panel
-            File pdfFile = new File(setupFolder, experiment.getExperimentFolder().getName() + ".pdf");
+            File pdfFile = new File(setupFolder, experiment.getExperimentFolder().getName() + " Setup-Report"+ ".pdf");
             //the same file is also exported as a jpeg file to be pasted into excel template for calculations
             File imageFile = new File(setupFolder, experiment.getExperimentFolder().getName() + ".png");
             try {
