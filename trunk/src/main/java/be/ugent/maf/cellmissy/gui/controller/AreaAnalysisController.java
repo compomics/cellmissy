@@ -5,14 +5,15 @@
 package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
-import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory;
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
 import be.ugent.maf.cellmissy.analysis.SignificanceLevel;
 import be.ugent.maf.cellmissy.analysis.StatisticsAnalyzer;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
 import be.ugent.maf.cellmissy.entity.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisReport;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.LinearRegressionPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.StatisticsPanel;
 import be.ugent.maf.cellmissy.gui.view.PValuesTableModel;
@@ -26,6 +27,7 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -34,6 +36,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -41,12 +44,14 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JDialog;
 import javax.swing.JTable;
+import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -89,6 +94,8 @@ public class AreaAnalysisController {
     @Autowired
     private DataAnalysisController dataAnalysisController;
     // child controllers
+    @Autowired
+    private AreaAnalysisReportController areaAnalysisReportController;
     //services
     @Autowired
     private AreaAnalyzer areaAnalyzer;
@@ -103,10 +110,20 @@ public class AreaAnalysisController {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         analysisMap = new LinkedHashMap<>();
+        //init child controller
+        areaAnalysisReportController.init();
         //init views
         initLinearRegressionPanel();
     }
+    
+    public Experiment getExperiment(){
+        return dataAnalysisController.getExperiment();
+    }
 
+    public ChartPanel getGlobalAreaChartPanel(){
+        return dataAnalysisController.getGlobalAreaChartPanel();
+    }
+    
     /**
      * Show Results from Linear Regression Model in a table
      */
@@ -187,12 +204,14 @@ public class AreaAnalysisController {
             dataset.add(meanSlopes[i], semSlopes[i], "Conditions", "Condition " + (selectedRows[i] + 1));
         }
 
-        JFreeChart velocityChart = ChartFactory.createLineChart("Median Velocity", "", "Velocity " + "(\u00B5" + "m" + "\u00B2" + "\\min)", dataset, PlotOrientation.VERTICAL, true, true, false);
+        JFreeChart velocityChart = ChartFactory.createLineChart("Median Velocity", "", "Velocity " + "(\u00B5" + "m" + "\u00B2" + "\\min)", dataset, PlotOrientation.VERTICAL, false, false, false);
         velocityChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
         CategoryPlot velocityPlot = velocityChart.getCategoryPlot();
         velocityPlot.setBackgroundPaint(Color.white);
         VelocityBarRenderer velocityBarRenderer = new VelocityBarRenderer();
         velocityBarRenderer.setErrorIndicatorPaint(Color.black);
+        velocityPlot.setRenderer(velocityBarRenderer);
+
         // set CategoryTextAnnotation to show number of replicates on top of bars
         for (int i = 0; i < dataset.getColumnCount(); i++) {
             Double[] numberOfReplicates = AnalysisUtils.excludeNullValues(analysisMap.get(dataAnalysisController.getPlateConditionList().get(i)).getSlopes());
@@ -200,7 +219,6 @@ public class AreaAnalysisController {
             velocityPlot.addAnnotation(annotation);
         }
 
-        velocityPlot.setRenderer(velocityBarRenderer);
         velocityPlot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
         JFreeChartUtils.setShadowVisible(velocityChart, false);
         velocityChartPanel.setChart(velocityChart);
@@ -313,6 +331,8 @@ public class AreaAnalysisController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                AnalysisReportSwingWorker analysisReportSwingWorker = new AnalysisReportSwingWorker();
+                analysisReportSwingWorker.execute();
             }
         });
 
@@ -357,10 +377,12 @@ public class AreaAnalysisController {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int locationToIndex = linearRegressionPanel.getGroupsList().locationToIndex(e.getPoint());
-                if (groupsBindingList.get(locationToIndex).getpValuesMatrix() == null) {
-                    linearRegressionPanel.getStatisticsButton().setText("Perform Statistical Analysis...");
-                } else {
-                    linearRegressionPanel.getStatisticsButton().setText("Modify Statistical Analysis...");
+                if (locationToIndex != -1) {
+                    if (groupsBindingList.get(locationToIndex).getpValuesMatrix() == null) {
+                        linearRegressionPanel.getStatisticsButton().setText("Perform Statistical Analysis...");
+                    } else {
+                        linearRegressionPanel.getStatisticsButton().setText("Modify Statistical Analysis...");
+                    }
                 }
             }
         });
@@ -509,24 +531,34 @@ public class AreaAnalysisController {
 
     /**
      * Add Annotations on velocity Chart
+     * A line is added horizontally between two conditions that were detected to be statistically different.
+     * If lines from previous analysis are present, delete them. 
      */
     private void addAnnotationsOnVelocityChart(AnalysisGroup analysisGroup) {
-        Stroke stroke = new BasicStroke(1.0f);
+        Stroke stroke = new BasicStroke(0.5f);
         CategoryPlot velocityPlot = velocityChartPanel.getChart().getCategoryPlot();
         DefaultStatisticalCategoryDataset dataset = (DefaultStatisticalCategoryDataset) velocityPlot.getDataset();
         Comparable rowKey = dataset.getRowKey(0);
         int counter = 30;
         boolean[][] significances = analysisGroup.getSignificances();
+        // get eventual annotations already present on the plot and delete them
+        List<CategoryAnnotation> annotations = velocityPlot.getAnnotations();
+        if (!annotations.isEmpty()) {
+            annotations.clear();
+            velocityPlot.getRangeAxis().setAutoRange(true);
+        }
+        // check when the line has to be drawn
         for (int i = 0; i < significances.length; i++) {
             for (int j = 0; j < significances[0].length; j++) {
-
                 // if p - value has been detected as significant
                 if (significances[i][j]) {
+                    // get the two conditions that were detected as significantly different
                     Comparable firstKey = dataset.getColumnKey(j);
                     Comparable secondKey = dataset.getColumnKey(i);
+                    // mean values of the two conditions
                     Double value1 = (Double) dataset.getMeanValue(rowKey, firstKey);
                     Double value2 = (Double) dataset.getMeanValue(rowKey, secondKey);
-                    // where the line has to start and finish
+                    // where the line has to start and finish (y-value)
                     double value = Math.max(value1, value2) + counter;
                     // add a line annotation on plot
                     CategoryLineAnnotation categoryLineAnnotation = new CategoryLineAnnotation(firstKey, value, secondKey, value, Color.black, stroke);
@@ -535,6 +567,13 @@ public class AreaAnalysisController {
                 }
             }
         }
+        // add again annotation for number of replicates
+        for (int i = 0; i < dataset.getColumnCount(); i++) {
+            Double[] numberOfReplicates = AnalysisUtils.excludeNullValues(analysisMap.get(dataAnalysisController.getPlateConditionList().get(i)).getSlopes());
+            CategoryAnnotation annotation = new CategoryTextAnnotation("N " + numberOfReplicates.length, dataset.getColumnKey(i), 10);
+            velocityPlot.addAnnotation(annotation);
+        }
+
         Range range = new Range(0, velocityPlot.getRangeAxis().getRange().getUpperBound() + counter);
         velocityPlot.getRangeAxis().setRange(range);
     }
@@ -564,14 +603,18 @@ public class AreaAnalysisController {
         // make a new analysis group, with those conditions and those results
         AnalysisGroup analysisGroup = new AnalysisGroup(plateConditionsList, areaAnalysisResultsList);
         //set name for the group
-        if (linearRegressionPanel.getGroupNameTextField().getText() != null) {
+        if (!linearRegressionPanel.getGroupNameTextField().getText().isEmpty()) {
             analysisGroup.setGroupName(linearRegressionPanel.getGroupNameTextField().getText());
-        }
-        // set correction method to NONE by default
-        analysisGroup.setCorrectionMethod(CorrectionMethod.NONE);
-        linearRegressionPanel.getGroupNameTextField().setText("");
-        if (!groupsBindingList.contains(analysisGroup)) {
-            groupsBindingList.add(analysisGroup);
+            // set correction method to NONE by default
+            analysisGroup.setCorrectionMethod(CorrectionMethod.NONE);
+            linearRegressionPanel.getGroupNameTextField().setText("");
+            // actually add the group to the analysis list
+            if (!groupsBindingList.contains(analysisGroup)) {
+                groupsBindingList.add(analysisGroup);
+            }
+        } else {
+            // ask the user to type a name for the group
+            dataAnalysisController.showMessage("Please choose a name for the analysis group.", 1);
         }
     }
 
@@ -584,6 +627,37 @@ public class AreaAnalysisController {
         // check if an element is selected first
         if (selectedIndex != -1) {
             groupsBindingList.remove(selectedIndex);
+        }
+    }
+
+    /**
+     * 
+     * @throws IOException
+     * @throws COSVisitorException 
+     */
+    private void generatePdfReport() throws IOException, COSVisitorException {
+        AnalysisReport analysisReport = new AnalysisReport(dataAnalysisController.getExperiment(), dataAnalysisController.getPreProcessingMap(), analysisMap, groupsBindingList);
+    }
+
+    /**
+     * Swing Worker to generate PDF report
+     */
+    private class AnalysisReportSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            //set cursor to waiting one
+            dataAnalysisController.setCursor(Cursor.WAIT_CURSOR);
+            //call the child controller to create report
+            areaAnalysisReportController.createAnalysisReport();
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            //set cursor back to default
+            dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
+            // open the created pdf file
         }
     }
 }
