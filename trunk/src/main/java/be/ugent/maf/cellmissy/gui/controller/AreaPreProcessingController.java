@@ -77,7 +77,6 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
-import org.jfree.chart.ChartUtilities;
 import org.jfree.data.Range;
 
 /**
@@ -492,14 +491,7 @@ public class AreaPreProcessingController {
         plotDensityFunctionSwingWorker.execute();
     }
 
-    /**
-     * private methods and classes
-     */
-    /**
-     * 
-     * @param plotErrorBars 
-     */
-    private void plotGlobalArea(List<PlateCondition> plateConditionList, boolean plotErrorBars) {
+    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean plotErrorBars) {
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
         List<Double[]> yErrorsList = new ArrayList<>();
         for (PlateCondition plateCondition : plateConditionList) {
@@ -550,6 +542,18 @@ public class AreaPreProcessingController {
             globalAreaChart.getXYPlot().getRangeAxis().setUpperBound(JFreeChartUtils.computeMaxY(xySeriesCollection) + AnalysisUtils.getMaxOfAList(yErrorsList));
         }
         JFreeChartUtils.setupGlobalAreaChart(globalAreaChart, xySeriesCollection);
+        return globalAreaChart;
+    }
+
+    /**
+     * private methods and classes
+     */
+    /**
+     * 
+     * @param plotErrorBars 
+     */
+    private void plotGlobalArea(List<PlateCondition> plateConditionList, boolean plotErrorBars) {
+        JFreeChart globalAreaChart = createGlobalAreaChart(plateConditionList, plotErrorBars);
         globalAreaChartPanel.setChart(globalAreaChart);
         areaAnalysisPanel.getGlobalViewPanel().add(globalAreaChartPanel, gridBagConstraints);
         areaAnalysisPanel.getGlobalViewPanel().repaint();

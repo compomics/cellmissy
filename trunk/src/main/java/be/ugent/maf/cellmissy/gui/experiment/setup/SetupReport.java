@@ -8,20 +8,18 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
+import be.ugent.maf.cellmissy.gui.view.RectIcon;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -236,7 +234,7 @@ public class SetupReport {
                 int length = ((String) value).length();
                 String substring = ((String) value).substring(length - 1);
                 int conditionIndex = Integer.parseInt(substring);
-                setIcon(new rectIcon(GuiUtils.getAvailableColors()[conditionIndex]));
+                setIcon(new RectIcon(GuiUtils.getAvailableColors()[conditionIndex]));
             }
             if (column == 5) {
                 //show treatments in bold
@@ -244,42 +242,6 @@ public class SetupReport {
             }
             setHorizontalAlignment(SwingConstants.LEFT);
             return this;
-        }
-    }
-
-    /**
-     * rectangular icon for the Condition list
-     */
-    private class rectIcon implements Icon {
-
-        private final Integer rectHeight = 10;
-        private final Integer rectWidth = 25;
-        private Color color;
-
-        /**
-         * constructor
-         * @param color 
-         */
-        public rectIcon(Color color) {
-            this.color = color;
-        }
-
-        @Override
-        public void paintIcon(Component c, Graphics g, int x, int y) {
-            Graphics2D g2d = (Graphics2D) g;
-            setupPlatePanel.setGraphics(g2d);
-            g2d.setColor(color);
-            g2d.fillRect(x, y, rectWidth, rectHeight);
-        }
-
-        @Override
-        public int getIconWidth() {
-            return rectWidth;
-        }
-
-        @Override
-        public int getIconHeight() {
-            return rectHeight;
         }
     }
 }

@@ -16,12 +16,9 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.setup.ConditionsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.SetupConditionsPanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsSetupListRenderer;
 import be.ugent.maf.cellmissy.service.CellLineService;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,10 +27,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.PersistenceException;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
-import javax.swing.JList;
+import javax.swing.JOptionPane;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Binding;
@@ -86,15 +80,12 @@ public class SetupConditionsController {
     public void init() {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-
         //create panels
         conditionsPanel = new ConditionsPanel();
         setupConditionsPanel = new SetupConditionsPanel();
-
         //init child controllers
         assayEcmController.init();
         treatmentsController.init();
-        
         //init views
         initCellLinePanel();
         initConditionsPanel();
@@ -179,7 +170,6 @@ public class SetupConditionsController {
         if (assayEcmController.validate3DEcm().isEmpty()) {
             messages.addAll(assayEcmController.validate3DEcm());
         }
-        //validate treatments
 
         //if validation was OK, validate the condition: check for wells collection
         if (messages.isEmpty()) {
@@ -242,7 +232,7 @@ public class SetupConditionsController {
                         cellLineTypeBindingList.add(newCellLineType);
                         setupConditionsPanel.getCellLineNameTextField().setText("");
                     } catch (PersistenceException exception) {
-                        showMessage("Cell Line already present in DB.", 1);
+                        showMessage("Cell Line already present in DB.", JOptionPane.INFORMATION_MESSAGE);
                         setupConditionsPanel.getCellLineNameTextField().setText("");
                         setupConditionsPanel.getCellLineNameTextField().requestFocusInWindow();
                     }
@@ -264,6 +254,7 @@ public class SetupConditionsController {
         conditionIndex = 0;
         previousConditionIndex = -1;
 
+        conditionsPanel.getAddButton().setEnabled(false);
         //init conditionJList (create new empty list) (conditions are NOT retrieved from DB)
         plateConditionBindingList = ObservableCollections.observableList(new ArrayList<PlateCondition>());
 
@@ -315,7 +306,7 @@ public class SetupConditionsController {
         plateConditionBindingList.add(firstCondition);
 
         //set cell renderer for conditionJList
-        conditionsPanel.getConditionsJList().setCellRenderer(new ConditionsRenderer());
+        conditionsPanel.getConditionsJList().setCellRenderer(new ConditionsSetupListRenderer());
 
         /**
          * add mouse listeners
@@ -325,6 +316,7 @@ public class SetupConditionsController {
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                conditionsPanel.getAddButton().setEnabled(true);
                 int locationToIndex = conditionsPanel.getConditionsJList().locationToIndex(e.getPoint());
                 //add mouse listener and enable tabbed pane on the right (only once, for Condition 1)
                 if (locationToIndex == 0) {
@@ -405,7 +397,7 @@ public class SetupConditionsController {
      */
     private void initFirstCondition(PlateCondition firstCondition) {
         //set the name
-        firstCondition.setName("Condition " + ++conditionIndex);
+        firstCondition.setName("Cond " + ++conditionIndex);
 
         //set the cell line
         CellLine cellLine = new CellLine();
@@ -459,7 +451,7 @@ public class SetupConditionsController {
      */
     private void initNewCondition(PlateCondition newCondition) {
         //set the name
-        newCondition.setName("Condition " + ++conditionIndex);
+        newCondition.setName("Cond " + ++conditionIndex);
         //set the cell line (the same as the previous condition)
         CellLine cellLine = plateConditionBindingList.get(previousConditionIndex).getCellLine();
         CellLine newCellLine = new CellLine(cellLine.getSeedingTime(), cellLine.getSeedingDensity(), cellLine.getGrowthMedium(), cellLine.getSerumConcentration(), cellLine.getCellLineType(), cellLine.getSerum());
@@ -512,71 +504,6 @@ public class SetupConditionsController {
      */
     private List<String> validateCellLine(CellLine cellLine) {
         return ValidationUtils.validateObject(cellLine);
-    }
-
-    /**
-     * renderer for the Conditions JList
-     */
-    private class ConditionsRenderer extends DefaultListCellRenderer {
-
-        /*
-         *constructor
-         */
-        public ConditionsRenderer() {
-            setOpaque(true);
-            setIconTextGap(10);
-        }
-
-        //Overrides method from the DefaultListCellRenderer
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            PlateCondition newCondition = (PlateCondition) value;
-            setText(newCondition.getName());
-            setIcon(new rectIcon(GuiUtils.getAvailableColors()[((PlateCondition) value).getConditionIndex()]));
-            if (isSelected) {
-                setBackground(Color.lightGray);
-                setBorder(BorderFactory.createLineBorder(Color.black, 2));
-                setFont(new Font("Roman", Font.BOLD, 14));
-            } else {
-                setFont(new Font("Roman", Font.BOLD, 12));
-            }
-            return this;
-        }
-    }
-
-    /**
-     * rectangular icon for the Condition list
-     */
-    private class rectIcon implements Icon {
-
-        private final Integer rectSize = 10;
-        private Color color;
-
-        /**
-         * constructor
-         * @param color 
-         */
-        public rectIcon(Color color) {
-            this.color = color;
-        }
-
-        @Override
-        public void paintIcon(Component c, Graphics g, int x, int y) {
-            Graphics2D g2d = (Graphics2D) g;
-            setupExperimentPanelController.getSetupPlatePanel().setGraphics(g2d);
-            g2d.setColor(color);
-            g2d.drawRect(x, y, rectSize, rectSize);
-        }
-
-        @Override
-        public int getIconWidth() {
-            return rectSize;
-        }
-
-        @Override
-        public int getIconHeight() {
-            return rectSize;
-        }
     }
 
     /**

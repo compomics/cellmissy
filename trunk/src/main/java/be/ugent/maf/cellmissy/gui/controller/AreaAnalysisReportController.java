@@ -4,26 +4,38 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
+import be.ugent.maf.cellmissy.entity.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import com.compomics.util.Export;
-import com.compomics.util.enumeration.ImageType;
-import java.awt.image.BufferedImage;
+import be.ugent.maf.cellmissy.gui.view.PValuesTableModel;
+import be.ugent.maf.cellmissy.gui.view.StatisticalSummaryTableModel;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
+import com.lowagie.text.BadElementException;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.Image;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.pdf.PdfWriter;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.imageio.ImageIO;
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.pdfbox.exceptions.COSVisitorException;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDSimpleFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDJpeg;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
-import org.jfree.chart.ChartUtilities;
+import java.util.Map;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import org.jdesktop.observablecollections.ObservableList;
 import org.jfree.chart.JFreeChart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,12 +48,15 @@ import org.springframework.stereotype.Controller;
 public class AreaAnalysisReportController {
 
     //model
-    private PDDocument document;
-    private final static PDSimpleFont normalFont = PDType1Font.HELVETICA;
-    private final static PDSimpleFont boldFont = PDType1Font.HELVETICA_BOLD;
-    private final static int normalFontSize = 10;
-    private final static int bigFontSize = 12;
-    private float height;
+    private Experiment experiment;
+    private Document document;
+    private PdfWriter writer;
+    private static Font bodyFont = new Font(Font.TIMES_ROMAN, 8);
+    private static Font titleFont = new Font(Font.TIMES_ROMAN, 10, Font.BOLD);
+    private static int chartWidth = 500;
+    private static int chartHeight = 450;
+    private static int rectChartWidth = 500;
+    private static int rectChartHeigth = 300;
     //view
     //parent controller
     @Autowired
@@ -53,113 +68,470 @@ public class AreaAnalysisReportController {
      * Initialize controller
      */
     public void init() {
+    }
+
+    /**
+     * 
+     * @param directory 
+     * @param reportName 
+     * @return the file created
+     */
+    public File createAnalysisReport(File directory, String reportName) {
+        this.experiment = areaAnalysisController.getExperiment();
+        File pdfFile = new File(directory, reportName);
+        if (reportName.endsWith(".pdf")) {
+            tryToCreateFile(pdfFile);
+        } else {
+            areaAnalysisController.showMessage("Please use .pdf extension for the file.", JOptionPane.WARNING_MESSAGE);
+            // retry to create pdf file
+            try {
+                areaAnalysisController.createPdfReport();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return pdfFile;
+    }
+
+    /**
+     * 
+     * @param pdfFile 
+     */
+    private void tryToCreateFile(File pdfFile) {
         try {
-            document = new PDDocument();
+            boolean success = pdfFile.createNewFile();
+            if (success) {
+                areaAnalysisController.showMessage("Pdf Report successfully created!", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                Object[] options = {"Yes", "No", "Cancel"};
+                int showOptionDialog = JOptionPane.showOptionDialog(null, "File already exists. Do you want to replace it?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+                // if YES, user wants to delete existing file and replace it
+                if (showOptionDialog == 0) {
+                    try {
+                        pdfFile.delete();
+                    } catch (Exception e) {
+                        areaAnalysisController.showMessage("Error deleting file.\nClose the file if it is open.", JOptionPane.ERROR_MESSAGE);
+                    }
+                    // if NO, returns already existing file
+                } else if (showOptionDialog == 1) {
+                    return;
+                }
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
+        }
+        try {
+            // actually create PDF file
+            createPdfFile(new FileOutputStream(pdfFile));
+        } catch (FileNotFoundException ex) {
+            areaAnalysisController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     /**
      * 
-     * @throws IOException 
+     * @param outputStream 
      */
-    public void createAnalysisReport() throws IOException {
-        createOverview();
-        closeAndSaveReport();
+    private void createPdfFile(FileOutputStream outputStream) {
+        document = null;
+        writer = null;
+        try {
+            // get new instances
+            // the Document is the base layout element
+            document = new Document();
+            // the pdfWriter is actually creating the file
+            writer = PdfWriter.getInstance(document, outputStream);
+            //open document
+            document.open();
+            // add content to document
+            addContent();
+            //dispose resources
+            document.close();
+            document = null;
+            writer.close();
+            writer = null;
+        } catch (DocumentException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
-     * create first section of Report
+     * Add content to document
      */
-    private void createOverview() throws IOException {
+    private void addContent() {
+        addOverview();
+        addEmptyLine(1);
+        addConditionsInfoTable();
+        addEmptyLine(2);
+        addGlobalAreaChart();
+        addEmptyLine(2);
+        addGlobalVelocityChart();
+        addEmptyLine(2);
+        addParagraphPerAnalysis();
+    }
 
-        Experiment experiment = areaAnalysisController.getExperiment();
+    /**
+     * Overview of Report
+     * experiment and project numbers + number of conditions
+     */
+    private void addOverview() {
+        String title = "Analysis Report of Experiment " + experiment.getExperimentNumber() + " - " + "Project " + experiment.getProject().getProjectNumber();
+        addTitle(title);
+        addEmptyLine(1);
         //lines to be printed
         List<String> lines = new ArrayList<>();
-        String line = "OVERVIEW";
+        String line = "Number of conditions: " + experiment.getPlateConditionCollection().size();
         lines.add(line);
-        line = "Analysis Report of Experiment " + experiment.getExperimentNumber() + " - " + "Project " + experiment.getProject().getProjectNumber();
-        lines.add(line);
-        line = "Number of Conditions: " + experiment.getPlateConditionCollection().size();
-        lines.add(line);
-
-        // descriptions for plate conditions
+        addText(lines, false, Element.ALIGN_JUSTIFIED);
+        addEmptyLine(1);
+        // add conditions info
+        lines.clear();
         List<PlateCondition> plateConditonsList = new ArrayList<>(experiment.getPlateConditionCollection());
         for (PlateCondition plateCondition : plateConditonsList) {
             lines.add("Condition " + (plateConditonsList.indexOf(plateCondition) + 1) + ": " + plateCondition.toString());
         }
+        addText(lines, true, Element.ALIGN_JUSTIFIED);
+    }
 
-        height = normalFont.getFontDescriptor().getFontBoundingBox().getHeight() / 1000;
-        height = height * normalFontSize * 1.05f;
-        int margin = 20;
-        PDPage page = new PDPage();
-        document.addPage(page);
-        PDPageContentStream contentStream = null;
-        float y = -1;
-        for (int i = 0; i < lines.size(); i++) {
+    /**
+     * Add image with global area chart
+     */
+    private void addGlobalAreaChart() {
+        List<PlateCondition> plateConditonsList = new ArrayList<>(experiment.getPlateConditionCollection());
+        // create chart (for all conditions, no error bars on top)
+        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, false);
+        // add chart as image
+        addImageFromChart(globalAreaChart, chartWidth, chartHeight);
+    }
 
-            if (y < margin) {
-                if (contentStream != null) {
-                    contentStream.endText();
-                    contentStream.close();
-                }
-                contentStream = new PDPageContentStream(document, page);
-                contentStream.setFont(normalFont, normalFontSize);
-                contentStream.beginText();
-                y = page.getMediaBox().getHeight() - margin + height;
-                contentStream.moveTextPositionByAmount(margin, y);
-            }
-
-            if (contentStream != null) {
-                contentStream.moveTextPositionByAmount(0, -height);
-                y -= height;
-                contentStream.drawString(lines.get(i));
-            }
+    /**
+     * Add image with velocity chart
+     * Velocity Chart is created will all the conditions 
+     */
+    private void addGlobalVelocityChart() {
+        List<PlateCondition> plateConditonsList = new ArrayList<>(experiment.getPlateConditionCollection());
+        int[] conditionsToShow = new int[plateConditonsList.size()];
+        for (int i = 0; i < conditionsToShow.length; i++) {
+            conditionsToShow[i] = i;
         }
-        // move to print Global view
-        contentStream.moveTextPositionByAmount(0, -height);
-        contentStream.drawString("GLOBAL VIEW");
-        
-        // add global view image
-        y -= height;
-        contentStream.moveTextPositionByAmount(0, -height);
-        PDJpeg globalViewImage = getGlobalViewImage();
+        // create chart
+        JFreeChart velocityChart = areaAnalysisController.createVelocityChart(conditionsToShow);
+        // add chart as image
+        addImageFromChart(velocityChart, rectChartWidth, rectChartHeigth);
+    }
 
-        contentStream.drawImage(globalViewImage, margin, y);
-
-        if (contentStream != null) {
-            contentStream.endText();
-            contentStream.close();
+    /**
+     * Create Image from a aJFreeChart and add it to document
+     * @param chart 
+     */
+    private void addImageFromChart(JFreeChart chart, int chartWidth, int chartHeight) {
+        PdfContentByte contentByte = writer.getDirectContent();
+        PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
+        Graphics2D graphics = template.createGraphics(chartWidth, chartHeight);
+        Rectangle rect = new Rectangle(0, 0, chartWidth, chartHeight);
+        chart.draw(graphics, rect);
+        graphics.dispose();
+        try {
+            Image image = Image.getInstance(template);
+            // put image in the center
+            image.setAlignment(Element.ALIGN_CENTER);
+            try {
+                document.add(image);
+            } catch (DocumentException ex) {
+                ex.printStackTrace();
+            }
+        } catch (BadElementException ex) {
+            ex.printStackTrace();
         }
     }
 
     /**
      * 
+     * @param paragraph
+     * @param number 
+     */
+    private void addEmptyLine(int number) {
+        for (int i = 0; i < number; i++) {
+            try {
+                document.add(new Paragraph(" "));
+            } catch (DocumentException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Add text to document
+     * @param text 
+     */
+    private void addText(List<String> text, boolean isIndented, int alignment) {
+        for (String string : text) {
+            try {
+                Chunk chunk = new Chunk(string, bodyFont);
+                Paragraph paragraph = new Paragraph(chunk);
+                paragraph.setAlignment(alignment);
+                paragraph.setSpacingAfter(1.8f);
+                if (isIndented) {
+                    paragraph.setIndentationLeft(10);
+                }
+                document.add(paragraph);
+            } catch (DocumentException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * add a paragraph for each analysis group
+     */
+    private void addParagraphPerAnalysis() {
+        // add main title for section
+        addTitle("ANALYSIS GROUPS");
+        ObservableList<AnalysisGroup> groupsList = areaAnalysisController.getGroupsBindingList();
+        for (int i = 0; i < groupsList.size(); i++) {
+            Paragraph paragraph = new Paragraph("Analysis group: " + groupsList.get(i).getGroupName());
+            try {
+                document.add(paragraph);
+                addAnalysisInfo(groupsList.get(i));
+                addEmptyLine(2);
+            } catch (DocumentException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Add a simple line with some text
+     * @param title to add
+     */
+    private void addTitle(String title) {
+        try {
+            //Paragraph paragraph = new Paragraph(title, titleFont);
+            Chunk chunk = new Chunk(title, titleFont);
+            Paragraph paragraph = new Paragraph(chunk);
+            paragraph.setAlignment(Element.ALIGN_CENTER);
+            paragraph.setSpacingAfter(1.5f);
+            document.add(paragraph);
+        } catch (DocumentException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Use a PdfTable with info on each condition
+     */
+    private PdfPTable getConditionsInfoTable() {
+        Map<PlateCondition, AreaPreProcessingResults> preProcessingMap = areaAnalysisController.getPreProcessingMap();
+        List<PlateCondition> plateConditionList = new ArrayList<>(experiment.getPlateConditionCollection());
+        // new table with 5 columns
+        PdfPTable dataTable = new PdfPTable(5);
+        setUpPdfPTable(dataTable);
+        // add 1st row: column names
+        addCustomizedCell(dataTable, "Conditions", titleFont);
+        addCustomizedCell(dataTable, "# Replicates", titleFont);
+        addCustomizedCell(dataTable, "User Selected Replicates", titleFont);
+        addCustomizedCell(dataTable, "Time Interval", titleFont);
+        addCustomizedCell(dataTable, "Proposed cut off", titleFont);
+
+        // for each condition get results and add a cell
+        for (PlateCondition plateCondition : plateConditionList) {
+            AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
+            addCustomizedCell(dataTable, "Condition " + (plateConditionList.indexOf(plateCondition) + 1), bodyFont);
+            addCustomizedCell(dataTable, "" + findNumberOfReplicates(areaPreProcessingResults), bodyFont);
+            addCustomizedCell(dataTable, areaPreProcessingResults.isUserSelectedReplicates() ? "Yes" : "No", bodyFont);
+            addCustomizedCell(dataTable, areaPreProcessingResults.getTimeInterval().toString(), bodyFont);
+            addCustomizedCell(dataTable, "" + areaPreProcessingResults.getTimeInterval().getProposedCutOff(), bodyFont);
+        }
+        return dataTable;
+    }
+
+    /**
+     * Get statistical summary table
+     * @param analysisGroup
+     * @return Table
+     */
+    private PdfPTable createStatisticalSummaryTable(AnalysisGroup analysisGroup) {
+        // 7 columns
+        PdfPTable dataTable = new PdfPTable(7);
+        setUpPdfPTable(dataTable);
+        // add 1st row: column names
+        addCustomizedCell(dataTable, "Condition", titleFont);
+        addCustomizedCell(dataTable, "Max", titleFont);
+        addCustomizedCell(dataTable, "Min", titleFont);
+        addCustomizedCell(dataTable, "Mean", titleFont);
+        addCustomizedCell(dataTable, "N", titleFont);
+        addCustomizedCell(dataTable, "SD", titleFont);
+        addCustomizedCell(dataTable, "Variance", titleFont);
+        Map<PlateCondition, AreaPreProcessingResults> preProcessingMap = areaAnalysisController.getPreProcessingMap();
+        List<PlateCondition> plateConditions = new ArrayList<>(preProcessingMap.keySet());
+        // table with statistical summary for analysis group
+        JTable table = new JTable(new StatisticalSummaryTableModel(analysisGroup, plateConditions));
+        copyDataFromJTable(dataTable, table);
+        return dataTable;
+    }
+
+    /**
+     * Get P values table
+     * @param analysisGroup
+     * @param isAdjusted
      * @return 
      */
-    private PDJpeg getGlobalViewImage() {
-        PDJpeg pdj = null;
-        JFreeChart chart = areaAnalysisController.getGlobalAreaChartPanel().getChart();
-        BufferedImage createBufferedImage = chart.createBufferedImage(700, 300);
-        try {
-            pdj = new PDJpeg(document, createBufferedImage);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+    private PdfPTable createPValuesTable(AnalysisGroup analysisGroup, boolean isAdjusted) {
+        // list of conditions that have been compared
+        List<PlateCondition> plateConditions = analysisGroup.getPlateConditions();
+        PdfPTable dataTable = new PdfPTable(plateConditions.size() + 1);
+        setUpPdfPTable(dataTable);
+        Map<PlateCondition, AreaPreProcessingResults> preProcessingMap = areaAnalysisController.getPreProcessingMap();
+        List<PlateCondition> plateConditionList = new ArrayList<>(preProcessingMap.keySet());
+        // add 1st row
+        addCustomizedCell(dataTable, " ", titleFont);
+        for (int i = 0; i < plateConditions.size(); i++) {
+            addCustomizedCell(dataTable, "Cond " + (plateConditionList.indexOf(plateConditions.get(i)) + 1), titleFont);
         }
-        return pdj;
+        // table with p values for analysis group
+        JTable table = new JTable(new PValuesTableModel(analysisGroup, plateConditionList, isAdjusted));
+        copyDataFromJTable(dataTable, table);
+        return dataTable;
     }
 
     /**
-     * 
+     * Copy data from a JTable to a PdfPTable
+     * @param dataTable
+     * @param table 
      */
-    private void closeAndSaveReport() {
+    private void copyDataFromJTable(PdfPTable dataTable, JTable table) {
+        for (int rowIndex = 0; rowIndex < table.getRowCount(); rowIndex++) {
+            for (int columnIndex = 0; columnIndex < table.getColumnCount(); columnIndex++) {
+                Object valueAt = table.getModel().getValueAt(rowIndex, columnIndex);
+                if (valueAt != null) {
+                    // if value is a Double, get primitive value of it
+                    if (valueAt.getClass().equals(Double.class)) {
+                        String valueString = valueAt.toString();
+                        double doubleValue = Double.valueOf(valueString).doubleValue();
+                        Double roundedValue = AnalysisUtils.roundThreeDecimals(doubleValue);
+                        addCustomizedCell(dataTable, "" + roundedValue, bodyFont);
+                    } else {
+                        // if value is a string
+                        addCustomizedCell(dataTable, "" + valueAt, bodyFont);
+                    }
+                } else {
+                    // if value is null, show a dash in the table
+                    addCustomizedCell(dataTable, "-", bodyFont);
+                }
+            }
+        }
+    }
+
+    /**
+     * Set up the look of a PdfPTable
+     * @param dataTable 
+     */
+    private void setUpPdfPTable(PdfPTable dataTable) {
+        dataTable.setWidthPercentage(100f);
+        dataTable.getDefaultCell().setPadding(3);
+        dataTable.getDefaultCell().setUseAscender(true);
+        dataTable.getDefaultCell().setUseDescender(true);
+        dataTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+        dataTable.getDefaultCell().setColspan(1);
+    }
+
+    /**
+     * Add table with info per each condition
+     */
+    private void addConditionsInfoTable() {
+        //add title before the table
+        addTitle("Conditions Summary");
+        PdfPTable conditionsInfoTable = getConditionsInfoTable();
+        addTable(conditionsInfoTable);
+    }
+
+    /**
+     * Add table with statistical summary for each analysis group
+     * @param analysisGroup 
+     */
+    private void addSummaryStatisticsTable(AnalysisGroup analysisGroup) {
+        //add title before the table
+        addTitle("SUMMARY STATISTICS");
+        addEmptyLine(1);
+        PdfPTable statisticalSummaryTable = createStatisticalSummaryTable(analysisGroup);
+        addTable(statisticalSummaryTable);
+    }
+
+    /**
+     * Add table with p-values
+     * if isAdjusted is false, not corrected P values are shown
+     * @param analysisGroup
+     * @param isAdjusted 
+     */
+    private void addPValuesTable(AnalysisGroup analysisGroup, boolean isAdjusted) {
+        PdfPTable pValuesTable = createPValuesTable(analysisGroup, isAdjusted);
+        addTable(pValuesTable);
+    }
+
+    /**
+     * Add a PdfPTable to the document
+     * @param dataTable 
+     */
+    private void addTable(PdfPTable dataTable) {
         try {
-            File file = new File("C:\\CellMissy_Test", "Analysis-Report" + ".pdf");
-            document.save(file.getPath());
-            document.close();
-        } catch (IOException | COSVisitorException ex) {
+            document.add(dataTable);
+        } catch (DocumentException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Add a cell to a table, with customized font to display
+     * @param table
+     * @param cellText
+     * @param font 
+     */
+    private void addCustomizedCell(PdfPTable table, String cellText, Font font) {
+        Paragraph paragraph = new Paragraph(cellText, font);
+        table.addCell(paragraph);
+    }
+
+    /*
+     * Find number of Replicates used for each condition
+     */
+    private int findNumberOfReplicates(AreaPreProcessingResults areaPreProcessingResults) {
+        // number of replicates info
+        int numberOfReplicates = 0;
+        boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
+        for (int i = 0; i < excludeReplicates.length; i++) {
+            if (!excludeReplicates[i]) {
+                numberOfReplicates++;
+            }
+        }
+        return numberOfReplicates;
+    }
+
+    /**
+     * For each Analysis create a paragraph
+     * @param analysisGroup 
+     */
+    private void addAnalysisInfo(AnalysisGroup analysisGroup) {
+        List<String> lines = new ArrayList<>();
+        String line = "Number of conditions: " + analysisGroup.getPlateConditions().size();
+        lines.add(line);
+        addText(lines, true, Element.ALIGN_JUSTIFIED);
+        // check if the group was actually analyzed or not
+        if (analysisGroup.getpValuesMatrix() != null) {
+            addEmptyLine(1);
+            // add statistical summary table
+            addSummaryStatisticsTable(analysisGroup);
+            addEmptyLine(1);
+            addTitle("PAIRWISE COMPARISONS");
+            addTitle("Multiple comparisons correction: NONE");
+            // add not corrected p values
+            addPValuesTable(analysisGroup, false);
+            // if a correction method was chosen for the analysis group, choose also corrected values
+            if (analysisGroup.getCorrectionMethod() != CorrectionMethod.NONE) {
+                addEmptyLine(1);
+                addTitle("Multiple comparisons correction: " + analysisGroup.getCorrectionMethod());
+                // add corrected p values
+                addPValuesTable(analysisGroup, true);
+            }
         }
     }
 }

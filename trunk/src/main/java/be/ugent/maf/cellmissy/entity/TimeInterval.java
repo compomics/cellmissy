@@ -51,4 +51,9 @@ public class TimeInterval {
     public void setProposedCutOff(int proposedCutOff) {
         this.proposedCutOff = proposedCutOff;
     }
+
+    @Override
+    public String toString() {
+        return "(" + firstTimeFrame + ", " + lastTimeFrame + ")";
+    }
 }
