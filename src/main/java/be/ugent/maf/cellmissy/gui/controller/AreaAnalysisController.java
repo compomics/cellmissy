@@ -13,7 +13,6 @@ import be.ugent.maf.cellmissy.entity.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisReport;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.LinearRegressionPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.StatisticsPanel;
 import be.ugent.maf.cellmissy.gui.view.PValuesTableModel;
@@ -28,6 +27,7 @@ import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -36,13 +36,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
@@ -51,7 +58,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -115,15 +121,31 @@ public class AreaAnalysisController {
         //init views
         initLinearRegressionPanel();
     }
-    
-    public Experiment getExperiment(){
+
+    public Experiment getExperiment() {
         return dataAnalysisController.getExperiment();
     }
 
-    public ChartPanel getGlobalAreaChartPanel(){
-        return dataAnalysisController.getGlobalAreaChartPanel();
+    public Map<PlateCondition, AreaAnalysisResults> getAnalysisMap() {
+        return analysisMap;
     }
-    
+
+    public ObservableList<AnalysisGroup> getGroupsBindingList() {
+        return groupsBindingList;
+    }
+
+    public Map<PlateCondition, AreaPreProcessingResults> getPreProcessingMap() {
+        return dataAnalysisController.getPreProcessingMap();
+    }
+
+    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean plotErrorBars) {
+        return dataAnalysisController.createGlobalAreaChart(plateConditionList, plotErrorBars);
+    }
+
+    public void showMessage(String message, Integer messageType) {
+        dataAnalysisController.showMessage(message, messageType);
+    }
+
     /**
      * Show Results from Linear Regression Model in a table
      */
@@ -187,24 +209,13 @@ public class AreaAnalysisController {
     }
 
     /**
-     * Plot bar charts for velocity
+     * create velocity chart
+     * @param conditionsToShow 
+     * @return 
      */
-    private void showVelocityChart() {
-        // dataset for chart
-        DefaultStatisticalCategoryDataset dataset = new DefaultStatisticalCategoryDataset();
-        int[] selectedRows = linearRegressionPanel.getSlopesTable().getSelectedRows();
-        double[] meanSlopes = new double[selectedRows.length];
-        double[] semSlopes = new double[selectedRows.length];
-        for (int i = 0; i < meanSlopes.length; i++) {
-            AreaAnalysisResults areaAnalysisResults = analysisMap.get(dataAnalysisController.getPlateConditionList().get(selectedRows[i]));
-            double meanSlope = areaAnalysisResults.getMeanSlope();
-            double madSlopes = areaAnalysisResults.getMadSlope();
-            meanSlopes[i] = meanSlope;
-            semSlopes[i] = madSlopes;
-            dataset.add(meanSlopes[i], semSlopes[i], "Conditions", "Condition " + (selectedRows[i] + 1));
-        }
-
-        JFreeChart velocityChart = ChartFactory.createLineChart("Median Velocity", "", "Velocity " + "(\u00B5" + "m" + "\u00B2" + "\\min)", dataset, PlotOrientation.VERTICAL, false, false, false);
+    public JFreeChart createVelocityChart(int[] conditionsToShow) {
+        DefaultStatisticalCategoryDataset velocityDataset = getVelocityDataset(conditionsToShow);
+        JFreeChart velocityChart = ChartFactory.createLineChart("Median Velocity", "", "Velocity " + "(\u00B5" + "m" + "\u00B2" + "\\min)", velocityDataset, PlotOrientation.VERTICAL, false, false, false);
         velocityChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
         CategoryPlot velocityPlot = velocityChart.getCategoryPlot();
         velocityPlot.setBackgroundPaint(Color.white);
@@ -213,14 +224,69 @@ public class AreaAnalysisController {
         velocityPlot.setRenderer(velocityBarRenderer);
 
         // set CategoryTextAnnotation to show number of replicates on top of bars
-        for (int i = 0; i < dataset.getColumnCount(); i++) {
+        for (int i = 0; i < velocityDataset.getColumnCount(); i++) {
             Double[] numberOfReplicates = AnalysisUtils.excludeNullValues(analysisMap.get(dataAnalysisController.getPlateConditionList().get(i)).getSlopes());
-            CategoryAnnotation annotation = new CategoryTextAnnotation("N " + numberOfReplicates.length, dataset.getColumnKey(i), 10);
+            CategoryAnnotation annotation = new CategoryTextAnnotation("N " + numberOfReplicates.length, velocityDataset.getColumnKey(i), 10);
             velocityPlot.addAnnotation(annotation);
         }
 
         velocityPlot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
         JFreeChartUtils.setShadowVisible(velocityChart, false);
+        return velocityChart;
+    }
+
+    /**
+     * Ask user to choose for a directory and invoke swing worker for creating PDF report
+     * @throws IOException 
+     */
+    public void createPdfReport() throws IOException {
+        Experiment experiment = dataAnalysisController.getExperiment();
+        final int experimentNumber = experiment.getExperimentNumber();
+        final int projectNumber = experiment.getProject().getProjectNumber();
+        // choose directory to save pdf file
+        JFileChooser chooseDirectory = new JFileChooser();
+        chooseDirectory.setDialogTitle("Choose a directory to save the report");
+        chooseDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooseDirectory.setSelectedFile(new File("Analysis Report " + experimentNumber + " - " + projectNumber + ".pdf"));
+
+        // in response to the button click, show open dialog
+        int returnVal = chooseDirectory.showSaveDialog(dataAnalysisController.getDataAnalysisPanel());
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File directory = chooseDirectory.getCurrentDirectory();
+            AnalysisReportSwingWorker analysisReportSwingWorker = new AnalysisReportSwingWorker(directory, chooseDirectory.getSelectedFile().getName());
+            analysisReportSwingWorker.execute();
+        } else {
+            dataAnalysisController.showMessage("Open command cancelled by user", 1);
+        }
+    }
+
+    /**
+     * 
+     * @param conditionsToShow 
+     * @return 
+     */
+    private DefaultStatisticalCategoryDataset getVelocityDataset(int[] conditionsToShow) {
+        // dataset for chart
+        DefaultStatisticalCategoryDataset dataset = new DefaultStatisticalCategoryDataset();
+        double[] meanSlopes = new double[conditionsToShow.length];
+        double[] semSlopes = new double[conditionsToShow.length];
+        for (int i = 0; i < meanSlopes.length; i++) {
+            AreaAnalysisResults areaAnalysisResults = analysisMap.get(dataAnalysisController.getPlateConditionList().get(conditionsToShow[i]));
+            double meanSlope = areaAnalysisResults.getMeanSlope();
+            double madSlopes = areaAnalysisResults.getMadSlope();
+            meanSlopes[i] = meanSlope;
+            semSlopes[i] = madSlopes;
+            dataset.add(meanSlopes[i], semSlopes[i], "Conditions", "Condition " + (conditionsToShow[i] + 1));
+        }
+        return dataset;
+    }
+
+    /**
+     * show chart
+     */
+    private void showVelocityChart() {
+        int[] selectedRows = linearRegressionPanel.getSlopesTable().getSelectedRows();
+        JFreeChart velocityChart = createVelocityChart(selectedRows);
         velocityChartPanel.setChart(velocityChart);
         linearRegressionPanel.getChartParentPanel().add(velocityChartPanel, gridBagConstraints);
         linearRegressionPanel.getChartParentPanel().repaint();
@@ -331,8 +397,27 @@ public class AreaAnalysisController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                AnalysisReportSwingWorker analysisReportSwingWorker = new AnalysisReportSwingWorker();
-                analysisReportSwingWorker.execute();
+                // if every group has been analyzed
+                // create report
+                if (validateAnalysis()) {
+                    try {
+                        createPdfReport();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    // else, show a message warning the user
+                    // let him decide if continue with report creation or not
+                    int reply = JOptionPane.showConfirmDialog(dataAnalysisController.getDataAnalysisPanel(), "Not every group was analyzed.\nContinue with report creation?", "", JOptionPane.OK_CANCEL_OPTION);
+                    if (reply == JOptionPane.OK_OPTION) {
+                        try {
+                            // if OK, create report
+                            createPdfReport();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
             }
         });
 
@@ -365,6 +450,9 @@ public class AreaAnalysisController {
                     // show the dialog
                     dialog.pack();
                     dialog.setVisible(true);
+                } else {
+                    // ask user to select a group
+                    dataAnalysisController.showMessage("Please select a group to perform analysis on.", 1);
                 }
             }
         });
@@ -457,7 +545,7 @@ public class AreaAnalysisController {
                     // set correction method (summary statistics, p-values and adjusted p-values are already set)
                     selectedGroup.setCorrectionMethod((CorrectionMethod) statisticsPanel.getCorrectionMethodsComboBox().getSelectedItem());
                     //show message to the user
-                    dataAnalysisController.showMessage("Analysis was saved", 1);
+                    dataAnalysisController.showMessage("Analysis saved!", 1);
                     addAnnotationsOnVelocityChart(selectedGroup);
                 }
             }
@@ -476,7 +564,7 @@ public class AreaAnalysisController {
         if (correctionMethod == CorrectionMethod.NONE) {
             testDescription = "No correction is applied.";
         } else if (correctionMethod == CorrectionMethod.BONFERRONI) {
-            testDescription = "This correction is the stringent one; p values are multiplied for number of pairwise comparisons.";
+            testDescription = "This correction is the most stringent one; p values are multiplied for number of pairwise comparisons.";
         } else if (correctionMethod == CorrectionMethod.BENJAMINI) {
             testDescription = "This correction is less stringent than the Bonferroni one; the p values are first ranked from the smallest to the largest. The largest p value remains as it is. The second largest p value is multiplied by the total number of comparisons divided by its rank. This is repeated for the third p value and so on.";
         }
@@ -631,12 +719,18 @@ public class AreaAnalysisController {
     }
 
     /**
-     * 
-     * @throws IOException
-     * @throws COSVisitorException 
+     * Validate analysis
+     * @return true if analysis was performed for each group created
      */
-    private void generatePdfReport() throws IOException, COSVisitorException {
-        AnalysisReport analysisReport = new AnalysisReport(dataAnalysisController.getExperiment(), dataAnalysisController.getPreProcessingMap(), analysisMap, groupsBindingList);
+    private boolean validateAnalysis() {
+        boolean isValid = true;
+        // check if analysis was performed for each group
+        for (AnalysisGroup analysisGroup : groupsBindingList) {
+            if (analysisGroup.getpValuesMatrix() == null) {
+                isValid = false;
+            }
+        }
+        return isValid;
     }
 
     /**
@@ -644,20 +738,45 @@ public class AreaAnalysisController {
      */
     private class AnalysisReportSwingWorker extends SwingWorker<Void, Void> {
 
+        private File directory;
+        private String reportName;
+
+        public AnalysisReportSwingWorker(File directory, String reportName) {
+            this.directory = directory;
+            this.reportName = reportName;
+        }
+
         @Override
         protected Void doInBackground() throws Exception {
+            // disable button
+            linearRegressionPanel.getCreateReportButton().setEnabled(false);
             //set cursor to waiting one
             dataAnalysisController.setCursor(Cursor.WAIT_CURSOR);
             //call the child controller to create report
-            areaAnalysisReportController.createAnalysisReport();
+            File analysisReport = areaAnalysisReportController.createAnalysisReport(directory, reportName);
+            try {
+                // open the created pdf file
+                Desktop.getDesktop().open(analysisReport);
+            } catch (IOException ex) {
+                dataAnalysisController.showMessage(ex.getMessage(), 1);
+            }
             return null;
         }
 
         @Override
         protected void done() {
+            try {
+                get();
+            } catch (InterruptedException | CancellationException ex) {
+                ex.printStackTrace();
+            } catch (ExecutionException ex) {
+                dataAnalysisController.showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", JOptionPane.ERROR_MESSAGE);
+            }
+
             //set cursor back to default
             dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
-            // open the created pdf file
+            // enable button
+            linearRegressionPanel.getCreateReportButton().setEnabled(true);
         }
     }
 }

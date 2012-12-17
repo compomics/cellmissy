@@ -45,7 +45,6 @@ import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -148,10 +147,10 @@ public class DataAnalysisController {
         return areaPreProcessingController.getPreProcessingMap();
     }
 
-    public ChartPanel getGlobalAreaChartPanel(){
-        return areaPreProcessingController.getGlobalAreaChartPanel();
+    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean plotErrorBars) {
+        return areaPreProcessingController.createGlobalAreaChart(plateConditionList, plotErrorBars);
     }
-    
+
     /**
      * Fetch time steps objects from DB, update TimeStepList according to Plate Condition
      * @param plateCondition 
@@ -182,13 +181,13 @@ public class DataAnalysisController {
     public void showLinearModelInTable() {
         areaAnalysisController.showLinearModelInTable();
     }
-    
+
     /**
      * Show message through the main controller
      * @param message
      * @param messageType  
      */
-    public void showMessage(String message, Integer messageType){
+    public void showMessage(String message, Integer messageType) {
         cellMissyController.showMessage(message, messageType);
     }
 

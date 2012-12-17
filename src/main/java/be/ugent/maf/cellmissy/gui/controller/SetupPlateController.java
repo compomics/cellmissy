@@ -57,10 +57,8 @@ public class SetupPlateController {
     public void init() {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-
         //create new panel
         platePanelGui = new PlatePanelGui();
-
         //init views
         initSetupPlatePanel();
     }
@@ -68,6 +66,7 @@ public class SetupPlateController {
     /**
      * setters and getters
      * 
+     * @return 
      */
     public SetupPlatePanel getSetupPlatePanel() {
         return setupPlatePanel;
@@ -83,10 +82,10 @@ public class SetupPlateController {
      */
     /**
      * add to the map a new entry: new condition-empty list of rectangles
-     * @param newCondition added to the list
+     * @param conditionToAdd added to the list
      */
-    public void addNewRectangleEntry(PlateCondition newCondition) {
-        setupPlatePanel.getRectangles().put(newCondition, new ArrayList<Rectangle>());
+    public void addNewRectangleEntry(PlateCondition conditionToAdd) {
+        setupPlatePanel.getRectangles().put(conditionToAdd, new ArrayList<Rectangle>());
     }
 
     /**
@@ -102,7 +101,9 @@ public class SetupPlateController {
      */
     public void addMouseListener() {
         SetupPlateListener setupPlateListener = new SetupPlateListener();
+        // a mouse listener listens to a mouse pressing/releasing
         setupPlatePanel.addMouseListener(setupPlateListener);
+        // a mouse motion listener listens also to a mouse moving/dragging
         setupPlatePanel.addMouseMotionListener(setupPlateListener);
     }
 
@@ -187,9 +188,9 @@ public class SetupPlateController {
         private int yMin;
         private int yMax;
 
+        // mouse has been pressed
         @Override
         public void mousePressed(MouseEvent e) {
-
             setupPlatePanel.setStartPoint(e.getPoint());
             setupPlatePanel.setEndPoint(setupPlatePanel.getStartPoint());
             xMin = setupPlatePanel.getStartPoint().x;
@@ -198,6 +199,7 @@ public class SetupPlateController {
             yMax = setupPlatePanel.getStartPoint().y;
         }
 
+        // mouse is being dragged
         @Override
         public void mouseDragged(MouseEvent e) {
 
@@ -210,23 +212,25 @@ public class SetupPlateController {
             setupPlatePanel.repaint(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1);
         }
 
+        // mouse has been released
         @Override
         public void mouseReleased(MouseEvent e) {
 
-            System.out.println("start point is: " + setupPlatePanel.getStartPoint());
-            int x = Math.min(setupPlatePanel.getStartPoint().x, setupPlatePanel.getEndPoint().x);
-            int y = Math.min(setupPlatePanel.getStartPoint().y, setupPlatePanel.getEndPoint().y);
-            int width = Math.abs(setupPlatePanel.getStartPoint().x - setupPlatePanel.getEndPoint().x);
-            int height = Math.abs(setupPlatePanel.getStartPoint().y - setupPlatePanel.getEndPoint().y);
-            rectangle = new Rectangle(x, y, width, height);
-            if (rectangle.width != 0 || rectangle.height != 0) {
-                //if the selection of wells is valid (wells do not already have a condition set), add the rectangle to the map
-                if (setupExperimentController.updateWellCollection(setupExperimentController.getCurrentCondition(), rectangle)) {
-                    setupPlatePanel.getRectangles().get(setupExperimentController.getCurrentCondition()).add(rectangle);
+            if (setupPlatePanel.getStartPoint() != null && setupPlatePanel.getEndPoint() != null) {
+                int x = Math.min(setupPlatePanel.getStartPoint().x, setupPlatePanel.getEndPoint().x);
+                int y = Math.min(setupPlatePanel.getStartPoint().y, setupPlatePanel.getEndPoint().y);
+                int width = Math.abs(setupPlatePanel.getStartPoint().x - setupPlatePanel.getEndPoint().x);
+                int height = Math.abs(setupPlatePanel.getStartPoint().y - setupPlatePanel.getEndPoint().y);
+                rectangle = new Rectangle(x, y, width, height);
+                if (rectangle.width != 0 || rectangle.height != 0) {
+                    //if the selection of wells is valid (wells do not already have a condition set), add the rectangle to the map
+                    if (setupExperimentController.updateWellCollection(setupExperimentController.getCurrentCondition(), rectangle)) {
+                        setupPlatePanel.getRectangles().get(setupExperimentController.getCurrentCondition()).add(rectangle);
+                    }
                 }
+                setupPlatePanel.setStartPoint(null);
+                setupPlatePanel.repaint();
             }
-            setupPlatePanel.setStartPoint(null);
-            setupPlatePanel.repaint();
         }
     }
 }

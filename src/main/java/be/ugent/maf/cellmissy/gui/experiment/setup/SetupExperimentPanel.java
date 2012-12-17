@@ -49,6 +49,10 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
         return reportButton;
     }
 
+    public JButton getConditionsOverviewButton() {
+        return conditionsOverviewButton;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -66,6 +70,7 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
         infolabel = new javax.swing.JLabel();
         finishButton = new javax.swing.JButton();
         reportButton = new javax.swing.JButton();
+        conditionsOverviewButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(20, 20));
@@ -95,14 +100,18 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
 
         reportButton.setText("Create Report");
 
+        conditionsOverviewButton.setText("See Conditions Overview");
+
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
-                .addGap(117, 117, 117)
+                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(conditionsOverviewButton)
+                .addGap(26, 26, 26)
                 .addComponent(reportButton)
                 .addGap(18, 18, 18)
                 .addComponent(previousButton)
@@ -125,7 +134,8 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
                         .addComponent(previousButton)
                         .addComponent(nextButton)
                         .addComponent(finishButton)
-                        .addComponent(reportButton)))
+                        .addComponent(reportButton)
+                        .addComponent(conditionsOverviewButton)))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
@@ -140,6 +150,7 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
+    private javax.swing.JButton conditionsOverviewButton;
     private javax.swing.JButton finishButton;
     private javax.swing.JLabel infolabel;
     private javax.swing.JButton nextButton;
