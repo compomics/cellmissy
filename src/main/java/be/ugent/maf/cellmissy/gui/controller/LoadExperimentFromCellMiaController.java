@@ -10,7 +10,7 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
-import be.ugent.maf.cellmissy.gui.experiment.load.LoadExperimentPanel;
+import be.ugent.maf.cellmissy.gui.experiment.load.LoadDataFromCellMiaPanel;
 import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.parser.ObsepFileParser;
@@ -38,12 +38,12 @@ import org.springframework.stereotype.Controller;
  * @author Paola Masuzzo
  */
 @Controller("loadExperimentController")
-public class LoadExperimentController {
+public class LoadExperimentFromCellMiaController {
 
     //model
     private Experiment experiment;
     //view
-    private LoadExperimentPanel loadExperimentPanel;
+    private LoadDataFromCellMiaPanel loadDataFromCellMiaPanel;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -62,8 +62,8 @@ public class LoadExperimentController {
      * initialize controller 
      */
     public void init() {
-        //create main panel
-        loadExperimentPanel = new LoadExperimentPanel();
+        // init main view
+        loadDataFromCellMiaPanel = new LoadDataFromCellMiaPanel();
         //init main view
         initMainPanel();
         //init child controller
@@ -74,8 +74,8 @@ public class LoadExperimentController {
     /*
      * getters and setters
      */
-    public LoadExperimentPanel getLoadExperimentPanel() {
-        return loadExperimentPanel;
+    public LoadDataFromCellMiaPanel getLoadDataFromCellMiaPanel() {
+        return loadDataFromCellMiaPanel;
     }
 
     public Experiment getExperiment() {
@@ -119,21 +119,21 @@ public class LoadExperimentController {
     private void initMainPanel() {
 
         //disable buttons
-        loadExperimentPanel.getFinishButton().setEnabled(false);
-        loadExperimentPanel.getExpDataButton().setEnabled(false);
-        loadExperimentPanel.getForwardButton().setEnabled(false);
-        loadExperimentPanel.getCancelButton().setEnabled(false);
+        loadDataFromCellMiaPanel.getFinishButton().setEnabled(false);
+        loadDataFromCellMiaPanel.getExpDataButton().setEnabled(false);
+        loadDataFromCellMiaPanel.getForwardButton().setEnabled(false);
+        loadDataFromCellMiaPanel.getCancelButton().setEnabled(false);
         //hide progress bar
-        loadExperimentPanel.getjProgressBar1().setVisible(false);
+        loadDataFromCellMiaPanel.getjProgressBar1().setVisible(false);
 
         //update info message
-        cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Select a project and then an experiment in progress to load CELLMIA data.");
+        cellMissyController.updateInfoLabel(loadDataFromCellMiaPanel.getInfolabel(), "Select a project and then an experiment in progress to load CELLMIA data.");
 
         /**
          * add action listeners
          */
         //parse obseo file from the microscope
-        loadExperimentPanel.getExpDataButton().addActionListener(new ActionListener() {
+        loadDataFromCellMiaPanel.getExpDataButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -168,14 +168,14 @@ public class LoadExperimentController {
                         cellMissyController.showMessage("Open command cancelled by user", 1);
                     }
                 }
-                cellMissyController.updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click <<Forward>> to process imaging data for the experiment.");
-                loadExperimentPanel.getForwardButton().setEnabled(true);
-                loadExperimentPanel.getExpDataButton().setEnabled(false);
+                cellMissyController.updateInfoLabel(loadDataFromCellMiaPanel.getInfolabel(), "Click <<Forward>> to process imaging data for the experiment.");
+                loadDataFromCellMiaPanel.getForwardButton().setEnabled(true);
+                loadDataFromCellMiaPanel.getExpDataButton().setEnabled(false);
             }
         });
 
         //cancel the selection: reset Plate View
-        loadExperimentPanel.getCancelButton().addActionListener(new ActionListener() {
+        loadDataFromCellMiaPanel.getCancelButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -195,18 +195,18 @@ public class LoadExperimentController {
                     imagedPlateController.getLoadDataPlatePanel().repaint();
                 }
                 //update info message (the user needs to click again on forward)
-                updateInfoLabel(loadExperimentPanel.getInfolabel(), "Click again <<Forward>> to process imaging data.");
+                updateInfoLabel(loadDataFromCellMiaPanel.getInfolabel(), "Click again <<Forward>> to process imaging data.");
                 //set boolean isFirtTime to false
                 imagedPlateController.setIsFirtTime(false);
                 //disable and enable buttons
-                loadExperimentPanel.getFinishButton().setEnabled(false);
-                loadExperimentPanel.getForwardButton().setEnabled(true);
-                loadExperimentPanel.getCancelButton().setEnabled(false);
+                loadDataFromCellMiaPanel.getFinishButton().setEnabled(false);
+                loadDataFromCellMiaPanel.getForwardButton().setEnabled(true);
+                loadDataFromCellMiaPanel.getCancelButton().setEnabled(false);
             }
         });
 
         //save the experiment once all data have been loaded
-        loadExperimentPanel.getFinishButton().addActionListener(new ActionListener() {
+        loadDataFromCellMiaPanel.getFinishButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -274,11 +274,11 @@ public class LoadExperimentController {
         protected Void doInBackground() throws Exception {
 
             //disable the Finish button and show a waiting cursor
-            loadExperimentPanel.getFinishButton().setEnabled(false);
+            loadDataFromCellMiaPanel.getFinishButton().setEnabled(false);
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             //show a progress bar (indeterminate)
-            loadExperimentPanel.getjProgressBar1().setVisible(true);
-            loadExperimentPanel.getjProgressBar1().setIndeterminate(true);
+            loadDataFromCellMiaPanel.getjProgressBar1().setVisible(true);
+            loadDataFromCellMiaPanel.getjProgressBar1().setIndeterminate(true);
 
             //INSERT experiment to DB
             experimentService.save(experiment);
@@ -290,10 +290,10 @@ public class LoadExperimentController {
 
             //show back default cursor and hide the progress bar
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            loadExperimentPanel.getjProgressBar1().setVisible(false);
+            loadDataFromCellMiaPanel.getjProgressBar1().setVisible(false);
             //update info for the user
             showMessage("Experiment was successfully saved to DB.", 1);
-            updateInfoLabel(loadExperimentPanel.getInfolabel(), "Experiment was successfully saved to DB.");
+            updateInfoLabel(loadDataFromCellMiaPanel.getInfolabel(), "Experiment was successfully saved to DB.");
         }
     }
 }
