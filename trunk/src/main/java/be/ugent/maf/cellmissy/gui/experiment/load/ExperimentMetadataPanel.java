@@ -26,36 +26,17 @@ public class ExperimentMetadataPanel extends javax.swing.JPanel {
         initComponents();
     }
 
-    public JList getConditionsList() {
-        return conditionsList;
-    }
-
     public JTextField getDurationTextField() {
         return durationTextField;
-    }
-
-    public JList getExperimentJList() {
-        return experimentJList;
     }
 
     public JTextField getIntervalTextField() {
         return intervalTextField;
     }
 
-    public JList getProjectJList() {
-        return projectJList;
-    }
-
     public JTextField getTimeFramesTextField() {
         return timeFramesTextField;
-    }
 
-    public JScrollPane getjScrollPane3() {
-        return jScrollPane3;
-    }
-
-    public JLabel getjLabel2() {
-        return jLabel2;
     }
 
     public JLabel getUnitLabel() {
@@ -79,14 +60,6 @@ public class ExperimentMetadataPanel extends javax.swing.JPanel {
         timeFramesTextField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         unitLabel = new javax.swing.JLabel();
-        experimentConditionsPanel = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        conditionsList = new javax.swing.JList();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        experimentJList = new javax.swing.JList();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        projectJList = new javax.swing.JList();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment Metadata", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.black));
@@ -112,79 +85,12 @@ public class ExperimentMetadataPanel extends javax.swing.JPanel {
 
         unitLabel.setToolTipText("");
 
-        experimentConditionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment Conditions"));
-        experimentConditionsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        experimentConditionsPanel.setOpaque(false);
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11));
-        jLabel2.setText("Select an Experiment to see its Conditions.");
-
-        conditionsList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        conditionsList.setMinimumSize(new java.awt.Dimension(20, 20));
-        conditionsList.setPreferredSize(new java.awt.Dimension(20, 20));
-        jScrollPane3.setViewportView(conditionsList);
-
-        javax.swing.GroupLayout experimentConditionsPanelLayout = new javax.swing.GroupLayout(experimentConditionsPanel);
-        experimentConditionsPanel.setLayout(experimentConditionsPanelLayout);
-        experimentConditionsPanelLayout.setHorizontalGroup(
-            experimentConditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(experimentConditionsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(experimentConditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(15, Short.MAX_VALUE))
-        );
-        experimentConditionsPanelLayout.setVerticalGroup(
-            experimentConditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(experimentConditionsPanelLayout.createSequentialGroup()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jScrollPane2.setBackground(new java.awt.Color(204, 204, 204));
-        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiments in progress"));
-        jScrollPane2.setMinimumSize(new java.awt.Dimension(20, 20));
-        jScrollPane2.setOpaque(false);
-        jScrollPane2.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        jScrollPane2.setViewportView(experimentJList);
-
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Projects"));
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(20, 20));
-        jScrollPane1.setOpaque(false);
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        projectJList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(projectJList);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(experimentConditionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(unitLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(565, 565, 565))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(31, 31, 31)
+                .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(timeFramesLabel)
                     .addGroup(layout.createSequentialGroup()
@@ -204,50 +110,40 @@ public class ExperimentMetadataPanel extends javax.swing.JPanel {
                             .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
-                .addContainerGap(607, Short.MAX_VALUE))
+                .addGap(41, 41, 41)
+                .addComponent(unitLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(40, 40, 40))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, 0, 0, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE))
-                .addGap(65, 65, 65)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(unitLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(experimentConditionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(84, 84, 84)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(durationLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(intervalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(intervalLabel))
-                .addGap(14, 14, 14)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(timeFramesLabel)
-                    .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(646, 646, 646))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(76, 76, 76)
+                        .addComponent(unitLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1)
+                            .addComponent(durationLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(intervalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(intervalLabel))
+                        .addGap(14, 14, 14)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(timeFramesLabel)
+                            .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JList conditionsList;
     private javax.swing.JLabel durationLabel;
     private javax.swing.JTextField durationTextField;
-    private javax.swing.JPanel experimentConditionsPanel;
-    private javax.swing.JList experimentJList;
     private javax.swing.JLabel intervalLabel;
     private javax.swing.JTextField intervalTextField;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JList projectJList;
     private javax.swing.JLabel timeFramesLabel;
     private javax.swing.JTextField timeFramesTextField;
     private javax.swing.JLabel unitLabel;

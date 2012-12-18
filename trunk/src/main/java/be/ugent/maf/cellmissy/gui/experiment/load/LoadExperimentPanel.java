@@ -6,14 +6,13 @@
 /*
  * LoadExperimentPanel.java
  *
- * Created on Jun 15, 2012, 1:36:56 PM
+ * Created on Dec 18, 2012, 2:30:39 PM
  */
 package be.ugent.maf.cellmissy.gui.experiment.load;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 
 /**
  *
@@ -26,36 +25,24 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         initComponents();
     }
 
-    public JPanel getLoadDataPlateParentPanel() {
-        return loadDataPlateParentPanel;
+    public JList getConditionsList() {
+        return conditionsList;
     }
 
-    public JPanel getLoadExperimentInfoParentPanel() {
-        return loadExperimentInfoParentPanel;
+    public JList getExperimentJList() {
+        return experimentJList;
     }
 
-    public JLabel getInfolabel() {
-        return infolabel;
+    public JList getProjectJList() {
+        return projectJList;
     }
 
-    public JButton getExpDataButton() {
-        return parseObsepFileButton;
+    public JLabel getjLabel2() {
+        return jLabel2;
     }
 
-    public JButton getForwardButton() {
-        return forwardButton;
-    }
-
-    public JButton getFinishButton() {
-        return finishButton;
-    }
-
-    public JProgressBar getjProgressBar1() {
-        return jProgressBar1;
-    }
-
-    public JButton getCancelButton() {
-        return cancelButton;
+    public JScrollPane getjScrollPane3() {
+        return jScrollPane3;
     }
 
     /** This method is called from within the constructor to
@@ -69,49 +56,71 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         topPanel = new javax.swing.JPanel();
-        loadExperimentInfoParentPanel = new javax.swing.JPanel();
-        loadDataPlateParentPanel = new javax.swing.JPanel();
-        bottomPanel = new javax.swing.JPanel();
-        infolabel = new javax.swing.JLabel();
-        forwardButton = new javax.swing.JButton();
-        finishButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
-        parseObsepFileButton = new javax.swing.JButton();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        projectJList = new javax.swing.JList();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        experimentJList = new javax.swing.JList();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        conditionsList = new javax.swing.JList();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setMinimumSize(new java.awt.Dimension(20, 20));
         setLayout(new java.awt.GridBagLayout());
 
         topPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         topPanel.setOpaque(false);
         topPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        topPanel.setLayout(new java.awt.GridBagLayout());
 
-        loadExperimentInfoParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        loadExperimentInfoParentPanel.setOpaque(false);
-        loadExperimentInfoParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        loadExperimentInfoParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.weighty = 1.0;
-        topPanel.add(loadExperimentInfoParentPanel, gridBagConstraints);
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Projects"));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(20, 20));
+        jScrollPane1.setOpaque(false);
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        loadDataPlateParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        loadDataPlateParentPanel.setOpaque(false);
-        loadDataPlateParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        loadDataPlateParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.7;
-        gridBagConstraints.weighty = 0.9;
-        topPanel.add(loadDataPlateParentPanel, gridBagConstraints);
+        projectJList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane1.setViewportView(projectJList);
+
+        jScrollPane2.setBackground(new java.awt.Color(204, 204, 204));
+        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiments in progress"));
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(20, 20));
+        jScrollPane2.setOpaque(false);
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        jScrollPane2.setViewportView(experimentJList);
+
+        javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
+        topPanel.setLayout(topPanelLayout);
+        topPanelLayout.setHorizontalGroup(
+            topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(topPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(45, Short.MAX_VALUE))
+        );
+
+        topPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jScrollPane1, jScrollPane2});
+
+        topPanelLayout.setVerticalGroup(
+            topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(topPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(topPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(topPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+                        .addGap(50, 50, 50))))
+        );
+
+        topPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jScrollPane1, jScrollPane2});
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -119,57 +128,41 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.9;
+        gridBagConstraints.weighty = 0.5;
         add(topPanel, gridBagConstraints);
 
-        bottomPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
-        bottomPanel.setOpaque(false);
-        bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        jPanel1.setMinimumSize(new java.awt.Dimension(20, 20));
+        jPanel1.setOpaque(false);
+        jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        forwardButton.setText("Forward");
+        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11));
+        jLabel2.setText("Select an Experiment to see its Conditions.");
 
-        finishButton.setText("Finish");
+        jScrollPane3.setBorder(null);
 
-        cancelButton.setText("Cancel");
+        conditionsList.setMinimumSize(new java.awt.Dimension(20, 20));
+        conditionsList.setPreferredSize(new java.awt.Dimension(20, 20));
+        jScrollPane3.setViewportView(conditionsList);
 
-        parseObsepFileButton.setText("Exp Data");
-
-        javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
-        bottomPanel.setLayout(bottomPanelLayout);
-        bottomPanelLayout.setHorizontalGroup(
-            bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(bottomPanelLayout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(357, 357, 357)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(63, 63, 63)
-                .addComponent(parseObsepFileButton)
-                .addGap(18, 18, 18)
-                .addComponent(cancelButton)
-                .addGap(18, 18, 18)
-                .addComponent(forwardButton)
-                .addGap(18, 18, 18)
-                .addComponent(finishButton)
-                .addGap(539, 539, 539))
-        );
-
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, finishButton, forwardButton, parseObsepFileButton});
-
-        bottomPanelLayout.setVerticalGroup(
-            bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(bottomPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(finishButton)
-                            .addComponent(forwardButton)
-                            .addComponent(cancelButton)
-                            .addComponent(parseObsepFileButton))
-                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addContainerGap(45, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -178,19 +171,18 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
-        add(bottomPanel, gridBagConstraints);
+        gridBagConstraints.weighty = 0.5;
+        add(jPanel1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel bottomPanel;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JButton finishButton;
-    private javax.swing.JButton forwardButton;
-    private javax.swing.JLabel infolabel;
-    private javax.swing.JProgressBar jProgressBar1;
-    private javax.swing.JPanel loadDataPlateParentPanel;
-    private javax.swing.JPanel loadExperimentInfoParentPanel;
-    private javax.swing.JButton parseObsepFileButton;
+    private javax.swing.JList conditionsList;
+    private javax.swing.JList experimentJList;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JList projectJList;
     private javax.swing.JPanel topPanel;
     // End of variables declaration//GEN-END:variables
 }

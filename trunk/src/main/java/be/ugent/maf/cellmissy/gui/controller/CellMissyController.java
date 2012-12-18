@@ -35,7 +35,9 @@ public class CellMissyController {
     @Autowired
     private SetupExperimentController setupExperimentController;
     @Autowired
-    private LoadExperimentController loadExperimentController;
+    private LoadExperimentFromCellMiaController loadExperimentFromCellMiaController;
+    @Autowired
+    private LoadExperimentFromGenericInputController loadExperimentFromGenericInputController;
     @Autowired
     private DataAnalysisController dataAnalysisController;
     private GridBagConstraints gridBagConstraints;
@@ -51,7 +53,8 @@ public class CellMissyController {
         //init child controllers
         userManagementController.init();
         setupExperimentController.init();
-        loadExperimentController.init();
+        loadExperimentFromCellMiaController.init();
+        loadExperimentFromGenericInputController.init();
         dataAnalysisController.init();
 
         //create main frame
@@ -63,7 +66,7 @@ public class CellMissyController {
         //init sub views
         cellMissyFrame.getUserParentPanel().add(userManagementController.getUserPanel(), gridBagConstraints);
         cellMissyFrame.getExperimentSetupParentPanel().add(setupExperimentController.getSetupExperimentPanel(), gridBagConstraints);
-        cellMissyFrame.getLoadExperimentParentPanel().add(loadExperimentController.getLoadExperimentPanel(), gridBagConstraints);
+        cellMissyFrame.getLoadExperimentParentPanel().add(loadExperimentFromCellMiaController.getLoadDataFromCellMiaPanel(), gridBagConstraints);
         cellMissyFrame.getDataAnalysisParentPanel().add(dataAnalysisController.getDataAnalysisPanel(), gridBagConstraints);
     }
 

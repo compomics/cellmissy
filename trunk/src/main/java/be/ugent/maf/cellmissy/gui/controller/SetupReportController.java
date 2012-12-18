@@ -22,8 +22,9 @@ import java.awt.Graphics2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.List;
-import javax.swing.JPanel;
+import java.io.IOException;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -56,12 +57,43 @@ public class SetupReportController {
         int projectNumber = experiment.getProject().getProjectNumber();
         String reportName = "Setup Report " + experimentNumber + " - " + projectNumber + ".pdf";
         File pdfFile = new File(directory, reportName);
+        tryToCreateFile(pdfFile);
+        return pdfFile;
+    }
+
+    /**
+     * 
+     * @param pdfFile 
+     */
+    private void tryToCreateFile(File pdfFile) {
         try {
-            createPdfFile(new FileOutputStream(pdfFile));
-        } catch (FileNotFoundException ex) {
+            boolean success = pdfFile.createNewFile();
+            if (success) {
+                setupExperimentController.showMessage("Pdf Report successfully created!", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                Object[] options = {"Yes", "No", "Cancel"};
+                int showOptionDialog = JOptionPane.showOptionDialog(null, "File already exists. Do you want to replace it?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+                // if YES, user wants to delete existing file and replace it
+                if (showOptionDialog == 0) {
+                    try {
+                        pdfFile.delete();
+                    } catch (Exception e) {
+                        setupExperimentController.showMessage("Error deleting file.\nClose the file if it is open.", JOptionPane.ERROR_MESSAGE);
+                    }
+                    // if NO or CANCEL, returns already existing file
+                } else if (showOptionDialog == 1 || showOptionDialog == 2) {
+                    return;
+                }
+            }
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
-        return pdfFile;
+        try {
+            // actually create PDF file
+            createPdfFile(new FileOutputStream(pdfFile));
+        } catch (FileNotFoundException ex) {
+            setupExperimentController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -98,7 +130,7 @@ public class SetupReportController {
         addEmptyLine(1);
         addPlateView();
         addEmptyLine(1);
-        addConditionsSummary();
+        addConditionsOverview();
     }
 
     /**
@@ -115,21 +147,21 @@ public class SetupReportController {
      */
     private void addPlateView() {
         SetupPlatePanel setupPlatePanel = setupExperimentController.getSetupPlatePanel();
-        Image imageFromJPanel = getImageFromJPanel(setupPlatePanel);
+        Image image = getImageFromJComponent(setupPlatePanel);
         float scale = 0.5f;
-        imageFromJPanel.scalePercent(scale * 100);
-        addImage(imageFromJPanel);
+        image.scalePercent(scale * 100);
+        addImage(image);
     }
 
     /**
      * Add summary with all conditions
      */
-    private void addConditionsSummary() {
-        JPanel conditionsOverviewPanel = setupExperimentController.getConditionsOverviewPanel();
-        Image imageFromJPanel = getImageFromJPanel(conditionsOverviewPanel);
-        float scale = (document.right() - document.left()) / ((float) imageFromJPanel.getWidth());
-        imageFromJPanel.scalePercent(scale * 100);
-        addImage(imageFromJPanel);
+    private void addConditionsOverview() {
+        JTable conditionsTable = setupExperimentController.getConditionsTable();
+        Image image = getImageFromJComponent(conditionsTable);
+        float scale = (document.right() - document.left()) / ((float) image.getWidth());
+        image.scalePercent(scale * 100);
+        addImage(image);
     }
 
     /**
@@ -179,15 +211,17 @@ public class SetupReportController {
 
     /**
      * 
+     * @param component
+     * @return 
      */
-    private Image getImageFromJPanel(JPanel panel) {
+    private Image getImageFromJComponent(java.awt.Component component) {
         Image image = null;
-        int width = panel.getWidth();
-        int height = panel.getHeight();
+        int width = component.getWidth();
+        int height = component.getHeight();
         PdfContentByte contentByte = writer.getDirectContent();
         PdfTemplate template = contentByte.createTemplate(width, height);
         Graphics2D graphics = template.createGraphics(width, height);
-        panel.paint(graphics);
+        component.paint(graphics);
         graphics.dispose();
         // wrap the pdfTemplate inside an image ensures better quality (pixels) 
         try {
