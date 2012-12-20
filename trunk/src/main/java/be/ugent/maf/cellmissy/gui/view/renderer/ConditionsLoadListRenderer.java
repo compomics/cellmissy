@@ -13,19 +13,20 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
 /**
- *
+ * This renderer is used in the loading step.
+ * Conditions were set up, but we only need to display them, so JList is not focusable, either selectable.
  * @author Paola Masuzzo
  */
-public class ConditionsListRenderer extends DefaultListCellRenderer {
-
+public class ConditionsLoadListRenderer extends DefaultListCellRenderer {
     // Plate Conditions List
+
     private List<PlateCondition> plateConditionList;
 
     /**
      * Constructor
      * @param plateConditionList 
      */
-    public ConditionsListRenderer(List<PlateCondition> plateConditionList) {
+    public ConditionsLoadListRenderer(List<PlateCondition> plateConditionList) {
         this.plateConditionList = plateConditionList;
         setOpaque(true);
         setIconTextGap(10);
@@ -41,7 +42,7 @@ public class ConditionsListRenderer extends DefaultListCellRenderer {
      * @return this class
      */
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        super.getListCellRendererComponent(list, value, index, false, false);
         int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
         setIcon(new RectIcon(GuiUtils.getAvailableColors()[conditionIndex + 1]));
         return this;

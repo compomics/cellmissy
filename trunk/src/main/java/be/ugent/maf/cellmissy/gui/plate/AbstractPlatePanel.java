@@ -31,6 +31,7 @@ public abstract class AbstractPlatePanel extends JPanel {
     public AbstractPlatePanel() {
         setOpaque(false);
     }
+    
     protected List<WellGui> wellGuiList;
     protected PlateFormat plateFormat;
     protected static final int pixelsGrid = 7;
@@ -189,8 +190,8 @@ public abstract class AbstractPlatePanel extends JPanel {
     }
 
     /**
-     * abstract method to be implemented
-     * Redraw wells according to events: Show rectangles for conditions, show ellipsis for imaging types and son on. 
+     * Abstract method to be implemented
+     * Redraw wells according to events: Show rectangles for conditions, show ellipsis for imaging types and so on. 
      * @param g 
      */
     protected abstract void reDrawWells(Graphics g);

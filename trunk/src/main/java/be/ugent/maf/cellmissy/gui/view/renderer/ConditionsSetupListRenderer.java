@@ -13,7 +13,8 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
 /**
- *
+ *This renderer is only used in the setup step: 
+ * Conditions still need to be designed, so only condition indexes are shown.
  * @author Paola Masuzzo
  */
 public class ConditionsSetupListRenderer extends DefaultListCellRenderer {

@@ -69,9 +69,7 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="infolabel" pref="486" max="32767" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="conditionsOverviewButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="197" max="-2" attributes="0"/>
                   <Component id="reportButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="previousButton" linkSize="1" min="-2" max="-2" attributes="0"/>
@@ -94,7 +92,6 @@
                           <Component id="nextButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="finishButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="reportButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="conditionsOverviewButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace pref="17" max="32767" attributes="0"/>
@@ -123,11 +120,6 @@
         <Component class="javax.swing.JButton" name="reportButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Create Report"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="conditionsOverviewButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="See Conditions Overview"/>
           </Properties>
         </Component>
       </SubComponents>

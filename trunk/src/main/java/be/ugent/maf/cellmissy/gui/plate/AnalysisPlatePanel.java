@@ -76,6 +76,8 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
 
     /**
      * Render wells
+     * Override method from Abstract Plate Panel:
+     * if wells have already been rendered, just redraw them
      * @param g 
      */
     @Override

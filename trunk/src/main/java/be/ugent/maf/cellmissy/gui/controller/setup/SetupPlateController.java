@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller;
+package be.ugent.maf.cellmissy.gui.controller.setup;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
@@ -74,6 +74,10 @@ public class SetupPlateController {
 
     public PlatePanelGui getPlatePanelGui() {
         return platePanelGui;
+    }
+
+    public PlateFormat getSelectedPlateFormat() {
+        return (PlateFormat) platePanelGui.getPlateFormatComboBox().getSelectedItem();
     }
 
     /**

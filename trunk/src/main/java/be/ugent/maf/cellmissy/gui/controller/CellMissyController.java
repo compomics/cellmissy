@@ -4,10 +4,13 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.gui.controller.setup.SetupExperimentController;
+import be.ugent.maf.cellmissy.gui.controller.load.generic.LoadExperimentFromGenericInputController;
+import be.ugent.maf.cellmissy.gui.controller.load.cellmia.LoadExperimentFromCellMiaController;
+import be.ugent.maf.cellmissy.gui.controller.analysis.DataAnalysisController;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.Toolkit;
@@ -43,6 +46,14 @@ public class CellMissyController {
     private GridBagConstraints gridBagConstraints;
 
     /**
+     * getter
+     * @return 
+     */
+    public CellMissyFrame getCellMissyFrame() {
+        return cellMissyFrame;
+    }
+
+    /**
      * initialize controller
      */
     public void init() {
@@ -53,7 +64,7 @@ public class CellMissyController {
         //init child controllers
         userManagementController.init();
         setupExperimentController.init();
-        loadExperimentFromCellMiaController.init();
+//        loadExperimentFromCellMiaController.init();
         loadExperimentFromGenericInputController.init();
         dataAnalysisController.init();
 
@@ -66,7 +77,8 @@ public class CellMissyController {
         //init sub views
         cellMissyFrame.getUserParentPanel().add(userManagementController.getUserPanel(), gridBagConstraints);
         cellMissyFrame.getExperimentSetupParentPanel().add(setupExperimentController.getSetupExperimentPanel(), gridBagConstraints);
-        cellMissyFrame.getLoadExperimentParentPanel().add(loadExperimentFromCellMiaController.getLoadDataFromCellMiaPanel(), gridBagConstraints);
+        cellMissyFrame.getLoadExperimentParentPanel().add(loadExperimentFromGenericInputController.getLoadExperimentFromGenericInputPanel(), gridBagConstraints);
+//        cellMissyFrame.getLoadExperimentParentPanel().add(loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel(), gridBagConstraints);
         cellMissyFrame.getDataAnalysisParentPanel().add(dataAnalysisController.getDataAnalysisPanel(), gridBagConstraints);
     }
 

@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller;
+package be.ugent.maf.cellmissy.gui.controller.load.cellmia;
 
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
+import be.ugent.maf.cellmissy.gui.plate.CellMiaImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.WellService;
@@ -34,14 +34,14 @@ import org.springframework.stereotype.Controller;
  * @author Paola Masuzzo
  */
 @Controller("imagedPlateController")
-public class ImagedPlateController {
+public class CellMiaImagedPlateController {
 
     //model
     //view
-    private ImagedPlatePanel imagedPlatePanel;
+    private CellMiaImagedPlatePanel cellMiaImagedPlatePanel;
     //parent controller
     @Autowired
-    private LoadExperimentFromCellMiaController loadExperimentController;
+    private LoadExperimentFromCellMiaController loadExperimentFromCellMiaController;
     //child controllers
     //services
     @Autowired
@@ -58,7 +58,7 @@ public class ImagedPlateController {
     public void init() {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         //create panels
-        imagedPlatePanel = new ImagedPlatePanel();
+        cellMiaImagedPlatePanel = new CellMiaImagedPlatePanel();
         //first time that data are processed
         isFirtTime = true;
         //disable mouse Listener
@@ -71,8 +71,8 @@ public class ImagedPlateController {
      * getters and setters
      * @return 
      */
-    public ImagedPlatePanel getLoadDataPlatePanel() {
-        return imagedPlatePanel;
+    public CellMiaImagedPlatePanel getCellMiaImagedPlatePanel() {
+        return cellMiaImagedPlatePanel;
     }
 
     public void setIsFirtTime(boolean isFirtTime) {
@@ -85,16 +85,16 @@ public class ImagedPlateController {
     private void initLoadDataPlatePanel() {
 
         //show as default a 96 plate format
-        Dimension parentDimension = loadExperimentController.getLoadDataFromCellMiaPanel().getLoadDataPlateParentPanel().getSize();
-        imagedPlatePanel.initPanel(plateService.findByFormat(96), parentDimension);
-        loadExperimentController.getLoadDataFromCellMiaPanel().getLoadDataPlateParentPanel().add(imagedPlatePanel, gridBagConstraints);
-        loadExperimentController.getLoadDataFromCellMiaPanel().getLoadDataPlateParentPanel().repaint();
+        Dimension parentDimension = loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getLoadDataPlateParentPanel().getSize();
+        cellMiaImagedPlatePanel.initPanel(plateService.findByFormat(96), parentDimension);
+        loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getLoadDataPlateParentPanel().add(cellMiaImagedPlatePanel, gridBagConstraints);
+        loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getLoadDataPlateParentPanel().repaint();
 
         /**
          * add action listeners
          */
         //forward button
-        loadExperimentController.getLoadDataFromCellMiaPanel().getForwardButton().addActionListener(new ActionListener() {
+        loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getForwardButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -102,40 +102,40 @@ public class ImagedPlateController {
                 isEnable = true;
                 // process first Imaging Type data:
                 // ImagingTypeList is null, create a new PlateWorker and execute it             
-                if (imagedPlatePanel.getImagingTypeList() == null) {
-                    loadExperimentController.getLoadDataFromCellMiaPanel().getForwardButton().setEnabled(false);
-                    loadExperimentController.getLoadDataFromCellMiaPanel().getjProgressBar1().setIndeterminate(true);
+                if (cellMiaImagedPlatePanel.getImagingTypeList() == null) {
+                    loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getForwardButton().setEnabled(false);
+                    loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getjProgressBar1().setIndeterminate(true);
                     PlateWorker plateWorker = new PlateWorker();
                     //set cursor to wait
-                    loadExperimentController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    loadExperimentFromCellMiaController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     plateWorker.execute();
                 } else {
                     //check if data are being processed for the first time                    
                     if (isFirtTime) {
                         // forward to next Imaging Type
-                        List<ImagingType> imagingTypeList = imagedPlatePanel.getImagingTypeList();
+                        List<ImagingType> imagingTypeList = cellMiaImagedPlatePanel.getImagingTypeList();
 
                         // check if there are still more Imaging Types
-                        if (imagedPlatePanel.getImagingTypeList().indexOf(imagedPlatePanel.getCurrentImagingType()) < imagingTypeList.size() - 1) {
+                        if (cellMiaImagedPlatePanel.getImagingTypeList().indexOf(cellMiaImagedPlatePanel.getCurrentImagingType()) < imagingTypeList.size() - 1) {
                             // get next Imaging Type
-                            ImagingType imagingType = imagingTypeList.get(imagedPlatePanel.getImagingTypeList().indexOf(imagedPlatePanel.getCurrentImagingType()) + 1);
-                            imagedPlatePanel.setCurrentImagingType(imagingType);
+                            ImagingType imagingType = imagingTypeList.get(cellMiaImagedPlatePanel.getImagingTypeList().indexOf(cellMiaImagedPlatePanel.getCurrentImagingType()) + 1);
+                            cellMiaImagedPlatePanel.setCurrentImagingType(imagingType);
                             // update info Label
                             String message = "Please select first well imaged with " + imagingType.getName() + " (imaging type " + (imagingTypeList.indexOf(imagingType) + 1) + "/" + imagingTypeList.size() + ")" + "\nExposure time: " + imagingType.getExposureTime() + " " + imagingType.getExposureTimeUnit() + ", Light intensity: " + imagingType.getLightIntensity() + " V";
-                            loadExperimentController.showMessage(message, 1);
+                            loadExperimentFromCellMiaController.showMessage(message, 1);
                             message = "Select first well imaged.";
-                            loadExperimentController.updateInfoLabel(loadExperimentController.getLoadDataFromCellMiaPanel().getInfolabel(), message);
-                            loadExperimentController.getLoadDataFromCellMiaPanel().getForwardButton().setEnabled(false);
+                            loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getInfolabel(), message);
+                            loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getForwardButton().setEnabled(false);
                         }
                     } else {
                         //if not, a call to cancel Method has been done ! Need to process data from the beginning
                         //set as current imaging type the first one of the list
-                        imagedPlatePanel.setCurrentImagingType(imagedPlatePanel.getImagingTypeList().get(0));
+                        cellMiaImagedPlatePanel.setCurrentImagingType(cellMiaImagedPlatePanel.getImagingTypeList().get(0));
                         // ask the user to select first well for the imaging type
-                        String message = "Please select first well imaged with " + imagedPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (imagedPlatePanel.getImagingTypeList().indexOf(imagedPlatePanel.getCurrentImagingType()) + 1) + "/" + imagedPlatePanel.getImagingTypeList().size() + ")" + "\nExposure time: " + imagedPlatePanel.getCurrentImagingType().getExposureTime() + " " + imagedPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + imagedPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
-                        loadExperimentController.showMessage(message, 1);
+                        String message = "Please select first well imaged with " + cellMiaImagedPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (cellMiaImagedPlatePanel.getImagingTypeList().indexOf(cellMiaImagedPlatePanel.getCurrentImagingType()) + 1) + "/" + cellMiaImagedPlatePanel.getImagingTypeList().size() + ")" + "\nExposure time: " + cellMiaImagedPlatePanel.getCurrentImagingType().getExposureTime() + " " + cellMiaImagedPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + cellMiaImagedPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
+                        loadExperimentFromCellMiaController.showMessage(message, 1);
                         message = "Select first well imaged.";
-                        loadExperimentController.updateInfoLabel(loadExperimentController.getLoadDataFromCellMiaPanel().getInfolabel(), message);
+                        loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getInfolabel(), message);
                         isFirtTime = true;
                     }
                 }
@@ -145,14 +145,14 @@ public class ImagedPlateController {
         /**
          * add mouse listeners
          */
-        imagedPlatePanel.addMouseListener(new MouseAdapter() {
+        cellMiaImagedPlatePanel.addMouseListener(new MouseAdapter() {
 
             // if the mouse has been pressed and released on a wellGui, set it as firstWellGui and show imaged wells
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (isEnable == true) {
                     WellGui firstWellGui = null;
-                    for (WellGui wellGui : imagedPlatePanel.getWellGuiList()) {
+                    for (WellGui wellGui : cellMiaImagedPlatePanel.getWellGuiList()) {
                         List<Ellipse2D> ellipsi = wellGui.getEllipsi();
                         if ((e.getButton() == 1) && ellipsi.get(0).contains(e.getX(), e.getY())) {
                             firstWellGui = wellGui;
@@ -167,15 +167,15 @@ public class ImagedPlateController {
                         //show a warning message
                         String message = "Some wells chosen do not have a condition; these wells will not be stored. Confirm this selection?";
                         String title = "Error in Selection!";
-                        int showConfirmDialog = loadExperimentController.showConfirmDialog(message, title, JOptionPane.YES_NO_OPTION);
+                        int showConfirmDialog = loadExperimentFromCellMiaController.showConfirmDialog(message, title, JOptionPane.YES_NO_OPTION);
                         if (showConfirmDialog == JOptionPane.YES_OPTION) {
                             //selection was confirmed: proceed
                             onForward();
                         } else {
                             //selection was not confirmed: cancel it
                             onCancel();
-                            message = "Select again first well imaged with " + imagedPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (imagedPlatePanel.getImagingTypeList().indexOf(imagedPlatePanel.getCurrentImagingType()) + 1) + "/" + imagedPlatePanel.getImagingTypeList().size() + ")" + "\nExposure time: " + imagedPlatePanel.getCurrentImagingType().getExposureTime() + " " + imagedPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + imagedPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
-                            loadExperimentController.showMessage(message, 1);
+                            message = "Select again first well imaged with " + cellMiaImagedPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (cellMiaImagedPlatePanel.getImagingTypeList().indexOf(cellMiaImagedPlatePanel.getCurrentImagingType()) + 1) + "/" + cellMiaImagedPlatePanel.getImagingTypeList().size() + ")" + "\nExposure time: " + cellMiaImagedPlatePanel.getCurrentImagingType().getExposureTime() + " " + cellMiaImagedPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + cellMiaImagedPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
+                            loadExperimentFromCellMiaController.showMessage(message, 1);
                         }
                     }
                 }
@@ -188,18 +188,18 @@ public class ImagedPlateController {
      */
     private void onForward() {
         //check if there are more imaging types to process
-        if (imagedPlatePanel.getImagingTypeList().indexOf(imagedPlatePanel.getCurrentImagingType()) == imagedPlatePanel.getImagingTypeList().size() - 1) {
+        if (cellMiaImagedPlatePanel.getImagingTypeList().indexOf(cellMiaImagedPlatePanel.getCurrentImagingType()) == cellMiaImagedPlatePanel.getImagingTypeList().size() - 1) {
             // there are no more imaging types to process, the experiment can be saved to DB
-            loadExperimentController.updateInfoLabel(loadExperimentController.getLoadDataFromCellMiaPanel().getInfolabel(), "Click <<Cancel>> to reset plate view or <<Finish>> to save the experiment");
+            loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getInfolabel(), "Click <<Cancel>> to reset plate view or <<Finish>> to save the experiment");
             //disable Forward button
-            loadExperimentController.getLoadDataFromCellMiaPanel().getForwardButton().setEnabled(false);
+            loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getForwardButton().setEnabled(false);
             // enable Cancel and Finish buttons
-            loadExperimentController.getLoadDataFromCellMiaPanel().getCancelButton().setEnabled(true);
-            loadExperimentController.getLoadDataFromCellMiaPanel().getFinishButton().setEnabled(true);
+            loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getCancelButton().setEnabled(true);
+            loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getFinishButton().setEnabled(true);
         } else {
             // ask the user to click on Forward button to proceed with next imaging type
-            loadExperimentController.updateInfoLabel(loadExperimentController.getLoadDataFromCellMiaPanel().getInfolabel(), "Click <<Forward>> to proceed with next imaging type.");
-            loadExperimentController.getLoadDataFromCellMiaPanel().getForwardButton().setEnabled(true);
+            loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getInfolabel(), "Click <<Forward>> to proceed with next imaging type.");
+            loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getForwardButton().setEnabled(true);
         }
         isEnable = false;
     }
@@ -208,11 +208,11 @@ public class ImagedPlateController {
      * if a selection is not validated, reset plate view (ONLY for current imaging type)
      */
     public void onCancel() {
-        for (WellGui wellGui : imagedPlatePanel.getWellGuiList()) {
+        for (WellGui wellGui : cellMiaImagedPlatePanel.getWellGuiList()) {
             //empty the collection of WellHasImagingType (so color is set to default) but ONLY for current Imaging Type
             Iterator<WellHasImagingType> iterator = wellGui.getWell().getWellHasImagingTypeCollection().iterator();
             while (iterator.hasNext()) {
-                if (iterator.next().getImagingType().equals(imagedPlatePanel.getCurrentImagingType())) {
+                if (iterator.next().getImagingType().equals(cellMiaImagedPlatePanel.getCurrentImagingType())) {
                     iterator.remove();
                 }
             }
@@ -220,13 +220,13 @@ public class ImagedPlateController {
             List<Ellipse2D> ellipse2DList = new ArrayList<>();
 
             for (Ellipse2D ellipse2D : wellGui.getEllipsi()) {
-                if (wellGui.getEllipsi().indexOf(ellipse2D) == imagedPlatePanel.getImagingTypeList().indexOf(imagedPlatePanel.getCurrentImagingType()) && wellGui.getEllipsi().indexOf(ellipse2D) > 0) {
+                if (wellGui.getEllipsi().indexOf(ellipse2D) == cellMiaImagedPlatePanel.getImagingTypeList().indexOf(cellMiaImagedPlatePanel.getCurrentImagingType()) && wellGui.getEllipsi().indexOf(ellipse2D) > 0) {
                     ellipse2DList.add(ellipse2D);
                 }
             }
             wellGui.getEllipsi().removeAll(ellipse2DList);
         }
-        imagedPlatePanel.repaint();
+        cellMiaImagedPlatePanel.repaint();
     }
 
     /**
@@ -235,18 +235,18 @@ public class ImagedPlateController {
      */
     private void showImagedWells(WellGui firstWellGui) {
         //update WellGuiList and show imaged wells positions on the plate
-        wellService.updateWellGuiListWithImagingType(imagedPlatePanel.getCurrentImagingType(), imagedPlatePanel.getPlateFormat(), firstWellGui, imagedPlatePanel.getWellGuiList());
-        int currentImagingTypeIndex = imagedPlatePanel.getImagingTypeList().indexOf(imagedPlatePanel.getCurrentImagingType());
+        wellService.updateWellGuiListWithImagingType(cellMiaImagedPlatePanel.getCurrentImagingType(), cellMiaImagedPlatePanel.getPlateFormat(), firstWellGui, cellMiaImagedPlatePanel.getWellGuiList());
+        int currentImagingTypeIndex = cellMiaImagedPlatePanel.getImagingTypeList().indexOf(cellMiaImagedPlatePanel.getCurrentImagingType());
 
         if (currentImagingTypeIndex != 0) {
-            for (WellGui wellGui : imagedPlatePanel.getWellGuiList()) {
-                if (containsImagingType(wellGui.getWell().getWellHasImagingTypeCollection(), imagedPlatePanel.getCurrentImagingType())) {
+            for (WellGui wellGui : cellMiaImagedPlatePanel.getWellGuiList()) {
+                if (containsImagingType(wellGui.getWell().getWellHasImagingTypeCollection(), cellMiaImagedPlatePanel.getCurrentImagingType())) {
 
                     List<Ellipse2D> ellipsi = wellGui.getEllipsi();
                     // get the bigger ellipsi and calculate factors for the new ones (concentric wells)
                     Ellipse2D ellipse2D = ellipsi.get(currentImagingTypeIndex - 1);
                     double size = ellipse2D.getHeight();
-                    double newSize = (size / imagedPlatePanel.getUniqueImagingTypes(wellGui.getWell().getWellHasImagingTypeCollection()).size());
+                    double newSize = (size / cellMiaImagedPlatePanel.getUniqueImagingTypes(wellGui.getWell().getWellHasImagingTypeCollection()).size());
                     double newTopLeftX = ellipse2D.getCenterX() - (newSize / 2);
                     double newTopLeftY = ellipse2D.getCenterY() - (newSize / 2);
 
@@ -259,7 +259,7 @@ public class ImagedPlateController {
             }
         }
         // this calls the paintComponent method
-        imagedPlatePanel.repaint();
+        cellMiaImagedPlatePanel.repaint();
     }
 
     /**
@@ -269,7 +269,7 @@ public class ImagedPlateController {
     private boolean validateSelection() {
         boolean isSelectionValid = true;
 
-        for (WellGui wellGui : imagedPlatePanel.getWellGuiList()) {
+        for (WellGui wellGui : cellMiaImagedPlatePanel.getWellGuiList()) {
             //check if the wellGui was imaged
             if (!wellGui.getWell().getWellHasImagingTypeCollection().isEmpty()) {
                 //check if the imaged wellGui has a condition
@@ -306,13 +306,13 @@ public class ImagedPlateController {
         protected Void doInBackground() throws Exception {
 
             //show progress bar
-            loadExperimentController.getLoadDataFromCellMiaPanel().getjProgressBar1().setVisible(true);
+            loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getjProgressBar1().setVisible(true);
             //init wellService: init also CellMiaData Service and MicroscopeData Service
-            wellService.init(loadExperimentController.getExperiment());
+            wellService.init(loadExperimentFromCellMiaController.getExperiment());
             // get the list of imaging types
             List<ImagingType> imagingTypes = wellService.getImagingTypes();
-            imagedPlatePanel.setImagingTypeList(imagingTypes);
-            imagedPlatePanel.setAlgoMap(wellService.getMap());
+            cellMiaImagedPlatePanel.setImagingTypeList(imagingTypes);
+            cellMiaImagedPlatePanel.setAlgoMap(wellService.getMap());
             return null;
         }
 
@@ -320,26 +320,26 @@ public class ImagedPlateController {
         protected void done() {
 
             //set cursor back to normal
-            loadExperimentController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            loadExperimentController.getLoadDataFromCellMiaPanel().getjProgressBar1().setVisible(false);
+            loadExperimentFromCellMiaController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getjProgressBar1().setVisible(false);
             // get first Imaging Type
-            imagedPlatePanel.setCurrentImagingType(imagedPlatePanel.getImagingTypeList().get(0));
+            cellMiaImagedPlatePanel.setCurrentImagingType(cellMiaImagedPlatePanel.getImagingTypeList().get(0));
             // ask the user to select first well for the imaging type
             String message = "";
             List<String> list = new ArrayList<>();
 
             String string = "Imaging data was successfully processed";
             list.add(string);
-            string = wellService.getImagingTypes().size() + " imaging type(s) and " + imagedPlatePanel.getAlgoMap().keySet().size() + " algorithm(s) were found";
+            string = wellService.getImagingTypes().size() + " imaging type(s) and " + cellMiaImagedPlatePanel.getAlgoMap().keySet().size() + " algorithm(s) were found";
             list.add(string);
-            string = "Please select first well imaged with " + imagedPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (imagedPlatePanel.getImagingTypeList().indexOf(imagedPlatePanel.getCurrentImagingType()) + 1) + "/" + imagedPlatePanel.getImagingTypeList().size() + ")" + "\nExposure time: " + imagedPlatePanel.getCurrentImagingType().getExposureTime() + " " + imagedPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + imagedPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
+            string = "Please select first well imaged with " + cellMiaImagedPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (cellMiaImagedPlatePanel.getImagingTypeList().indexOf(cellMiaImagedPlatePanel.getCurrentImagingType()) + 1) + "/" + cellMiaImagedPlatePanel.getImagingTypeList().size() + ")" + "\nExposure time: " + cellMiaImagedPlatePanel.getCurrentImagingType().getExposureTime() + " " + cellMiaImagedPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + cellMiaImagedPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
             list.add(string);
             for (String s : list) {
                 message += s + "\n";
             }
-            loadExperimentController.showMessage(message, 1);
+            loadExperimentFromCellMiaController.showMessage(message, 1);
             message = "Select first well imaged.";
-            loadExperimentController.updateInfoLabel(loadExperimentController.getLoadDataFromCellMiaPanel().getInfolabel(), message);
+            loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadExperimentFromCellMiaPanel().getInfolabel(), message);
         }
     }
 }
