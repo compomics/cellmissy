@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller;
+package be.ugent.maf.cellmissy.gui.controller.setup;
 
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Experiment;
@@ -13,6 +13,7 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.setup.ExperimentInfoPanel;
@@ -21,11 +22,8 @@ import be.ugent.maf.cellmissy.gui.experiment.setup.SetupPanel;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.SetupTableRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.GridBagConstraints;
@@ -41,12 +39,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.persistence.PersistenceException;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
@@ -85,7 +82,6 @@ public class SetupExperimentController {
     private SetupExperimentPanel setupExperimentPanel;
     private ExperimentInfoPanel experimentInfoPanel;
     private SetupPanel setupPanel;
-    private JTable conditionsTable;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -143,8 +139,8 @@ public class SetupExperimentController {
         return experiment;
     }
 
-    public JTable getConditionsTable() {
-        return conditionsTable;
+    public PlateFormat getSelectedPlateFormat() {
+        return setupPlateController.getSelectedPlateFormat();
     }
 
     /**
@@ -419,8 +415,6 @@ public class SetupExperimentController {
         setupExperimentPanel.getFinishButton().setVisible(false);
         setupExperimentPanel.getFinishButton().setEnabled(false);
         setupExperimentPanel.getReportButton().setVisible(false);
-        setupExperimentPanel.getReportButton().setEnabled(false);
-        setupExperimentPanel.getConditionsOverviewButton().setVisible(false);
         cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and fill in experiment data");
 
         /**
@@ -445,7 +439,8 @@ public class SetupExperimentController {
                     experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());
                     experiment.setPurpose(experimentInfoPanel.getPurposeTextArea().getText());
 
-                    //create experiment's folder structure on the server (the report needs to be saved in the setup subfolder)
+                    //create experiment's folder structure on the server
+                    // this method is not needed for generic input loading
                     experimentService.createFolderStructure(experiment);
 
                     //show the setupPanel and hide the experimentInfoPanel
@@ -461,7 +456,6 @@ public class SetupExperimentController {
                         setupExperimentPanel.getFinishButton().setEnabled(false);
                     }
                     setupExperimentPanel.getReportButton().setVisible(true);
-                    setupExperimentPanel.getConditionsOverviewButton().setVisible(true);
                     setupExperimentPanel.getTopPanel().revalidate();
                     setupExperimentPanel.getTopPanel().repaint();
                 }
@@ -478,47 +472,22 @@ public class SetupExperimentController {
                 setupExperimentPanel.getNextButton().setEnabled(true);
                 setupExperimentPanel.getFinishButton().setVisible(false);
                 setupExperimentPanel.getReportButton().setVisible(false);
-                setupExperimentPanel.getConditionsOverviewButton().setVisible(false);
                 setupExperimentPanel.getTopPanel().revalidate();
                 setupExperimentPanel.getTopPanel().repaint();
             }
         });
 
-        // show overview of conditions
-        setupExperimentPanel.getConditionsOverviewButton().addActionListener(new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (validateCondition(setupConditionsController.getCurrentCondition())) {
-                    //update last condition of the experiment
-                    updateLastCondition();
-                    // new dialog
-                    JDialog dialog = new JDialog();
-                    dialog.setAlwaysOnTop(true);
-                    dialog.setModal(true);
-                    dialog.getContentPane().setBackground(Color.white);
-                    dialog.getContentPane().setLayout(new BorderLayout());
-                    //center the dialog on the main screen
-                    dialog.setLocationRelativeTo(null);
-
-                    createConditionsTable();
-                    // add table to dialog
-                    dialog.getContentPane().add(conditionsTable.getTableHeader(), BorderLayout.NORTH);
-                    dialog.getContentPane().add(conditionsTable, BorderLayout.CENTER);
-                    // show the dialog
-                    dialog.pack();
-                    dialog.setVisible(true);
-                    setupExperimentPanel.getReportButton().setEnabled(true);
-                }
-            }
-        });
 
         //create a pdf from the plate panel (ONLY if experiment set up is OK)
         setupExperimentPanel.getReportButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                if (validateCondition(setupConditionsController.getCurrentCondition())) {
+                    //update last condition of the experiment
+                    updateLastCondition();
+                }
                 //set the experiment for each plate condition in the List
                 for (PlateCondition plateCondition : setupConditionsController.getPlateConditionBindingList()) {
                     plateCondition.setExperiment(experiment);
@@ -531,7 +500,6 @@ public class SetupExperimentController {
                 //create PDF report, execute SwingWorker
                 SetupReportWorker setupReportWorker = new SetupReportWorker();
                 setupReportWorker.execute();
-
             }
         });
 
@@ -649,28 +617,26 @@ public class SetupExperimentController {
      */
     private class SetupReportWorker extends SwingWorker<File, Void> {
 
-        private File setupReport;
-
         @Override
         protected File doInBackground() throws Exception {
-
             //disable the pdf report button and show a waiting cursor
             setupExperimentPanel.getReportButton().setEnabled(false);
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            setupReport = setupReportController.createSetupReport(experiment.getSetupFolder());
-            return setupReport;
+            File file = setupReportController.createSetupReport(experiment.getSetupFolder());
+            return file;
         }
 
         @Override
         protected void done() {
+            File file = null;
             try {
-                get();
-            } catch (InterruptedException | ExecutionException ex) {
+                file = get();
+            } catch (InterruptedException | ExecutionException | CancellationException ex) {
                 ex.printStackTrace();
             }
             try {
                 //if export to PDF was successfull, open the PDF file from the desktop
-                Desktop.getDesktop().open(setupReport);
+                Desktop.getDesktop().open(file);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -678,46 +644,5 @@ public class SetupExperimentController {
             setupExperimentPanel.getFinishButton().setEnabled(true);
             setupExperimentPanel.getReportButton().setEnabled(true);
         }
-    }
-
-    /**
-     * reportPanel contains a JTable listing all the conditions and their setup details
-     * @return 
-     */
-    private void createConditionsTable() {
-        //creta a JTable
-        //column names
-        Object columnNames[] = {"Condition", "Cell Line", "MD", "Assay", "ECM", "Treatments", "Assay"};
-        ObservableList<PlateCondition> plateConditionBindingList = setupConditionsController.getPlateConditionBindingList();
-        //row data
-        Object[][] data = new Object[plateConditionBindingList.size()][];
-        for (int i = 0; i < data.length; i++) {
-            PlateCondition plateCondition = plateConditionBindingList.get(i);
-            data[i] = new Object[]{plateCondition.getName(), plateCondition.getCellLine(), plateCondition.getMatrixDimension(), plateCondition.getAssay().getAssayType(), plateCondition.getEcm(), plateCondition.getTreatmentCollection(), plateCondition.getAssayMedium()};
-        }
-        conditionsTable = new JTable(data, columnNames);
-        conditionsTable.getColumnModel().setColumnSelectionAllowed(false);
-
-        conditionsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        conditionsTable.getColumnModel().getColumn(0).setPreferredWidth(50);
-        conditionsTable.getColumnModel().getColumn(1).setPreferredWidth(50);
-        conditionsTable.getColumnModel().getColumn(2).setPreferredWidth(50);
-        conditionsTable.getColumnModel().getColumn(3).setPreferredWidth(50);
-        conditionsTable.getColumnModel().getColumn(4).setPreferredWidth(90);
-        conditionsTable.getColumnModel().getColumn(6).setPreferredWidth(90);
-        
-        conditionsTable.getColumnModel().getColumn(0).setMinWidth(50);
-        conditionsTable.getColumnModel().getColumn(1).setMinWidth(50);
-        conditionsTable.getColumnModel().getColumn(2).setMinWidth(50);
-        conditionsTable.getColumnModel().getColumn(3).setMinWidth(50);
-        conditionsTable.getColumnModel().getColumn(4).setMinWidth(90);
-        conditionsTable.getColumnModel().getColumn(6).setMinWidth(90);
-
-        //adjust table columns width (still need to set proper size) ***********
-        for (int i = 0; i < conditionsTable.getColumnCount(); i++) {
-            //set Cell Renderer for each column of the table
-            conditionsTable.getColumnModel().getColumn(i).setCellRenderer(new SetupTableRenderer());
-        }
-
     }
 }

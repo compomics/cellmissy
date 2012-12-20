@@ -16,14 +16,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *This class is used in the setup step: show wells and let the user select them, assigning conditions
+ * This class is used in the setup step: show wells and let the user select them, assigning conditions
+ * Drawing the mouse on the plate view, we select conditions (group of wells).
  * @author Paola
  */
 public class SetupPlatePanel extends AbstractPlatePanel {
 
+    // start point of mouse dragging
     private Point startPoint;
+    // end point of mouse dragging
     private Point endPoint;
+    // map between a Condition and a list of rectangles
     private Map<PlateCondition, List<Rectangle>> rectangles;
+    // current plate condition
     private PlateCondition currentCondition;
 
     /**
@@ -76,17 +81,19 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        // if both start point and end point are not null, draw rectangle while dragging the mouse
         if (startPoint != null && endPoint != null) {
             drawRect(g);
         }
 
+        // if rectangles have already been drawn, keep them in the paint
         if (!rectangles.values().isEmpty()) {
             drawRectangles(g);
         }
     }
 
     /**
-     * Render one Rectangle
+     * Render one Rectangle (for current condition).
      * @param g 
      */
     private void drawRect(Graphics g) {
@@ -111,7 +118,7 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     }
 
     /**
-     * Render all rectangles already drawn by the user
+     * Render all rectangles already drawn by the user (for all conditions in the map).
      * @param g 
      */
     private void drawRectangles(Graphics g) {
@@ -143,6 +150,8 @@ public class SetupPlatePanel extends AbstractPlatePanel {
 
     /**
      * Render wells
+     * Override method from Abstract Plate Panel:
+     * if wells have already been rendered, just redraw them
      * @param g 
      */
     @Override

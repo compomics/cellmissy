@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller;
+package be.ugent.maf.cellmissy.gui.controller.analysis;
 
+import be.ugent.maf.cellmissy.gui.controller.analysis.AreaAnalysisController;
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
@@ -12,20 +13,15 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.view.PValuesTableModel;
 import be.ugent.maf.cellmissy.gui.view.StatisticalSummaryTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
-import com.lowagie.text.BadElementException;
-import com.lowagie.text.Chunk;
+import be.ugent.maf.cellmissy.utils.PdfUtils;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -160,13 +156,13 @@ public class AreaAnalysisReportController {
      */
     private void addContent() {
         addOverview();
-        addEmptyLine(1);
+        PdfUtils.addEmptyLines(document, 1);
         addConditionsInfoTable();
-        addEmptyLine(2);
+        PdfUtils.addEmptyLines(document, 2);
         addGlobalAreaChart();
-        addEmptyLine(2);
+        PdfUtils.addEmptyLines(document, 2);
         addGlobalVelocityChart();
-        addEmptyLine(2);
+        PdfUtils.addEmptyLines(document, 2);
         addParagraphPerAnalysis();
     }
 
@@ -176,21 +172,21 @@ public class AreaAnalysisReportController {
      */
     private void addOverview() {
         String title = "Analysis Report of Experiment " + experiment.getExperimentNumber() + " - " + "Project " + experiment.getProject().getProjectNumber();
-        addTitle(title);
-        addEmptyLine(1);
+        PdfUtils.addTitle(document, title, titleFont);
+        PdfUtils.addEmptyLines(document, 1);
         //lines to be printed
         List<String> lines = new ArrayList<>();
         String line = "Number of conditions: " + experiment.getPlateConditionCollection().size();
         lines.add(line);
-        addText(lines, false, Element.ALIGN_JUSTIFIED);
-        addEmptyLine(1);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
         // add conditions info
         lines.clear();
         List<PlateCondition> plateConditonsList = new ArrayList<>(experiment.getPlateConditionCollection());
         for (PlateCondition plateCondition : plateConditonsList) {
             lines.add("Condition " + (plateConditonsList.indexOf(plateCondition) + 1) + ": " + plateCondition.toString());
         }
-        addText(lines, true, Element.ALIGN_JUSTIFIED);
+        PdfUtils.addText(document, lines, true, Element.ALIGN_JUSTIFIED, bodyFont);
     }
 
     /**
@@ -224,60 +220,14 @@ public class AreaAnalysisReportController {
      * Create Image from a aJFreeChart and add it to document
      * @param chart 
      */
-    private void addImageFromChart(JFreeChart chart, int chartWidth, int chartHeight) {
-        PdfContentByte contentByte = writer.getDirectContent();
-        PdfTemplate template = contentByte.createTemplate(chartWidth, chartHeight);
-        Graphics2D graphics = template.createGraphics(chartWidth, chartHeight);
-        Rectangle rect = new Rectangle(0, 0, chartWidth, chartHeight);
-        chart.draw(graphics, rect);
-        graphics.dispose();
+    private void addImageFromChart(JFreeChart chart, int imageWidth, int imageHeight) {
+        Image imageFromChart = PdfUtils.getImageFromChart(writer, chart, imageWidth, imageHeight);
+        // put image in the center
+        imageFromChart.setAlignment(Element.ALIGN_CENTER);
         try {
-            Image image = Image.getInstance(template);
-            // put image in the center
-            image.setAlignment(Element.ALIGN_CENTER);
-            try {
-                document.add(image);
-            } catch (DocumentException ex) {
-                ex.printStackTrace();
-            }
-        } catch (BadElementException ex) {
+            document.add(imageFromChart);
+        } catch (DocumentException ex) {
             ex.printStackTrace();
-        }
-    }
-
-    /**
-     * 
-     * @param paragraph
-     * @param number 
-     */
-    private void addEmptyLine(int number) {
-        for (int i = 0; i < number; i++) {
-            try {
-                document.add(new Paragraph(" "));
-            } catch (DocumentException ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Add text to document
-     * @param text 
-     */
-    private void addText(List<String> text, boolean isIndented, int alignment) {
-        for (String string : text) {
-            try {
-                Chunk chunk = new Chunk(string, bodyFont);
-                Paragraph paragraph = new Paragraph(chunk);
-                paragraph.setAlignment(alignment);
-                paragraph.setSpacingAfter(1.8f);
-                if (isIndented) {
-                    paragraph.setIndentationLeft(10);
-                }
-                document.add(paragraph);
-            } catch (DocumentException ex) {
-                ex.printStackTrace();
-            }
         }
     }
 
@@ -286,14 +236,14 @@ public class AreaAnalysisReportController {
      */
     private void addParagraphPerAnalysis() {
         // add main title for section
-        addTitle("ANALYSIS GROUPS");
+        PdfUtils.addTitle(document, "ANALYSIS GROUPS", titleFont);
         ObservableList<AnalysisGroup> groupsList = areaAnalysisController.getGroupsBindingList();
         for (int i = 0; i < groupsList.size(); i++) {
             Paragraph paragraph = new Paragraph("Analysis group: " + groupsList.get(i).getGroupName());
             try {
                 document.add(paragraph);
                 addAnalysisInfo(groupsList.get(i));
-                addEmptyLine(2);
+                PdfUtils.addEmptyLines(document, 2);
             } catch (DocumentException ex) {
                 ex.printStackTrace();
             }
@@ -301,46 +251,29 @@ public class AreaAnalysisReportController {
     }
 
     /**
-     * Add a simple line with some text
-     * @param title to add
-     */
-    private void addTitle(String title) {
-        try {
-            //Paragraph paragraph = new Paragraph(title, titleFont);
-            Chunk chunk = new Chunk(title, titleFont);
-            Paragraph paragraph = new Paragraph(chunk);
-            paragraph.setAlignment(Element.ALIGN_CENTER);
-            paragraph.setSpacingAfter(1.5f);
-            document.add(paragraph);
-        } catch (DocumentException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    /**
      * Use a PdfTable with info on each condition
      */
-    private PdfPTable getConditionsInfoTable() {
+    private PdfPTable createConditionsInfoTable() {
         Map<PlateCondition, AreaPreProcessingResults> preProcessingMap = areaAnalysisController.getPreProcessingMap();
         List<PlateCondition> plateConditionList = new ArrayList<>(experiment.getPlateConditionCollection());
         // new table with 5 columns
         PdfPTable dataTable = new PdfPTable(5);
-        setUpPdfPTable(dataTable);
+        PdfUtils.setUpPdfPTable(dataTable);
         // add 1st row: column names
-        addCustomizedCell(dataTable, "Conditions", titleFont);
-        addCustomizedCell(dataTable, "# Replicates", titleFont);
-        addCustomizedCell(dataTable, "User Selected Replicates", titleFont);
-        addCustomizedCell(dataTable, "Time Interval", titleFont);
-        addCustomizedCell(dataTable, "Proposed cut off", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Conditions", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "# Replicates", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "User Selected Replicates", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Time Interval", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Proposed cut off", titleFont);
 
         // for each condition get results and add a cell
         for (PlateCondition plateCondition : plateConditionList) {
             AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
-            addCustomizedCell(dataTable, "Condition " + (plateConditionList.indexOf(plateCondition) + 1), bodyFont);
-            addCustomizedCell(dataTable, "" + findNumberOfReplicates(areaPreProcessingResults), bodyFont);
-            addCustomizedCell(dataTable, areaPreProcessingResults.isUserSelectedReplicates() ? "Yes" : "No", bodyFont);
-            addCustomizedCell(dataTable, areaPreProcessingResults.getTimeInterval().toString(), bodyFont);
-            addCustomizedCell(dataTable, "" + areaPreProcessingResults.getTimeInterval().getProposedCutOff(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, "Condition " + (plateConditionList.indexOf(plateCondition) + 1), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, "" + findNumberOfReplicates(areaPreProcessingResults), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, areaPreProcessingResults.isUserSelectedReplicates() ? "Yes" : "No", bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, areaPreProcessingResults.getTimeInterval().toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, "" + areaPreProcessingResults.getTimeInterval().getProposedCutOff(), bodyFont);
         }
         return dataTable;
     }
@@ -353,15 +286,15 @@ public class AreaAnalysisReportController {
     private PdfPTable createStatisticalSummaryTable(AnalysisGroup analysisGroup) {
         // 7 columns
         PdfPTable dataTable = new PdfPTable(7);
-        setUpPdfPTable(dataTable);
+        PdfUtils.setUpPdfPTable(dataTable);
         // add 1st row: column names
-        addCustomizedCell(dataTable, "Condition", titleFont);
-        addCustomizedCell(dataTable, "Max", titleFont);
-        addCustomizedCell(dataTable, "Min", titleFont);
-        addCustomizedCell(dataTable, "Mean", titleFont);
-        addCustomizedCell(dataTable, "N", titleFont);
-        addCustomizedCell(dataTable, "SD", titleFont);
-        addCustomizedCell(dataTable, "Variance", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Condition", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Max", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Min", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Mean", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "N", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "SD", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Variance", titleFont);
         Map<PlateCondition, AreaPreProcessingResults> preProcessingMap = areaAnalysisController.getPreProcessingMap();
         List<PlateCondition> plateConditions = new ArrayList<>(preProcessingMap.keySet());
         // table with statistical summary for analysis group
@@ -380,13 +313,13 @@ public class AreaAnalysisReportController {
         // list of conditions that have been compared
         List<PlateCondition> plateConditions = analysisGroup.getPlateConditions();
         PdfPTable dataTable = new PdfPTable(plateConditions.size() + 1);
-        setUpPdfPTable(dataTable);
+        PdfUtils.setUpPdfPTable(dataTable);
         Map<PlateCondition, AreaPreProcessingResults> preProcessingMap = areaAnalysisController.getPreProcessingMap();
         List<PlateCondition> plateConditionList = new ArrayList<>(preProcessingMap.keySet());
         // add 1st row
-        addCustomizedCell(dataTable, " ", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, " ", titleFont);
         for (int i = 0; i < plateConditions.size(); i++) {
-            addCustomizedCell(dataTable, "Cond " + (plateConditionList.indexOf(plateConditions.get(i)) + 1), titleFont);
+            PdfUtils.addCustomizedCell(dataTable, "Cond " + (plateConditionList.indexOf(plateConditions.get(i)) + 1), titleFont);
         }
         // table with p values for analysis group
         JTable table = new JTable(new PValuesTableModel(analysisGroup, plateConditionList, isAdjusted));
@@ -409,30 +342,17 @@ public class AreaAnalysisReportController {
                         String valueString = valueAt.toString();
                         double doubleValue = Double.valueOf(valueString).doubleValue();
                         Double roundedValue = AnalysisUtils.roundThreeDecimals(doubleValue);
-                        addCustomizedCell(dataTable, "" + roundedValue, bodyFont);
+                        PdfUtils.addCustomizedCell(dataTable, "" + roundedValue, bodyFont);
                     } else {
                         // if value is a string
-                        addCustomizedCell(dataTable, "" + valueAt, bodyFont);
+                        PdfUtils.addCustomizedCell(dataTable, "" + valueAt, bodyFont);
                     }
                 } else {
                     // if value is null, show a dash in the table
-                    addCustomizedCell(dataTable, "-", bodyFont);
+                    PdfUtils.addCustomizedCell(dataTable, "-", bodyFont);
                 }
             }
         }
-    }
-
-    /**
-     * Set up the look of a PdfPTable
-     * @param dataTable 
-     */
-    private void setUpPdfPTable(PdfPTable dataTable) {
-        dataTable.setWidthPercentage(100f);
-        dataTable.getDefaultCell().setPadding(3);
-        dataTable.getDefaultCell().setUseAscender(true);
-        dataTable.getDefaultCell().setUseDescender(true);
-        dataTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
-        dataTable.getDefaultCell().setColspan(1);
     }
 
     /**
@@ -440,8 +360,8 @@ public class AreaAnalysisReportController {
      */
     private void addConditionsInfoTable() {
         //add title before the table
-        addTitle("Conditions Summary");
-        PdfPTable conditionsInfoTable = getConditionsInfoTable();
+        PdfUtils.addTitle(document, "Conditions Summary", titleFont);
+        PdfPTable conditionsInfoTable = createConditionsInfoTable();
         addTable(conditionsInfoTable);
     }
 
@@ -451,8 +371,8 @@ public class AreaAnalysisReportController {
      */
     private void addSummaryStatisticsTable(AnalysisGroup analysisGroup) {
         //add title before the table
-        addTitle("SUMMARY STATISTICS");
-        addEmptyLine(1);
+        PdfUtils.addTitle(document, "SUMMARY STATISTICS", titleFont);
+        PdfUtils.addEmptyLines(document, 1);
         PdfPTable statisticalSummaryTable = createStatisticalSummaryTable(analysisGroup);
         addTable(statisticalSummaryTable);
     }
@@ -480,17 +400,6 @@ public class AreaAnalysisReportController {
         }
     }
 
-    /**
-     * Add a cell to a table, with customized font to display
-     * @param table
-     * @param cellText
-     * @param font 
-     */
-    private void addCustomizedCell(PdfPTable table, String cellText, Font font) {
-        Paragraph paragraph = new Paragraph(cellText, font);
-        table.addCell(paragraph);
-    }
-
     /*
      * Find number of Replicates used for each condition
      */
@@ -514,21 +423,21 @@ public class AreaAnalysisReportController {
         List<String> lines = new ArrayList<>();
         String line = "Number of conditions: " + analysisGroup.getPlateConditions().size();
         lines.add(line);
-        addText(lines, true, Element.ALIGN_JUSTIFIED);
+        PdfUtils.addText(document, lines, true, Element.ALIGN_JUSTIFIED, bodyFont);
         // check if the group was actually analyzed or not
         if (analysisGroup.getpValuesMatrix() != null) {
-            addEmptyLine(1);
+            PdfUtils.addEmptyLines(document, 1);
             // add statistical summary table
             addSummaryStatisticsTable(analysisGroup);
-            addEmptyLine(1);
-            addTitle("PAIRWISE COMPARISONS");
-            addTitle("Multiple comparisons correction: NONE");
+            PdfUtils.addEmptyLines(document, 1);
+            PdfUtils.addTitle(document, "PAIRWISE COMPARISONS", titleFont);
+            PdfUtils.addTitle(document, "Multiple comparisons correction: NONE", titleFont);
             // add not corrected p values
             addPValuesTable(analysisGroup, false);
             // if a correction method was chosen for the analysis group, choose also corrected values
             if (analysisGroup.getCorrectionMethod() != CorrectionMethod.NONE) {
-                addEmptyLine(1);
-                addTitle("Multiple comparisons correction: " + analysisGroup.getCorrectionMethod());
+                PdfUtils.addEmptyLines(document, 1);
+                PdfUtils.addTitle(document, "Multiple comparisons correction: " + analysisGroup.getCorrectionMethod(), titleFont);
                 // add corrected p values
                 addPValuesTable(analysisGroup, true);
             }

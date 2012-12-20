@@ -2,48 +2,46 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller;
+package be.ugent.maf.cellmissy.gui.controller.load.generic;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
-import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.load.ExperimentMetadataPanel;
 import be.ugent.maf.cellmissy.gui.experiment.load.LoadExperimentPanel;
-import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsLoadListRenderer;
+import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl.CycleTimeUnit;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdesktop.beansbinding.Binding;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.BindingGroup;
-import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.jdesktop.beansbinding.Binding;
+import org.jdesktop.beansbinding.Bindings;
 
 /**
- * Experiment Metadata Controller: get experiment metadata from microscope (as well conditions from DB)
- * Parent Controller: Load Experiment Controller
+ *
  * @author Paola Masuzzo
  */
-@Controller("experimentMetadataController")
-public class ExperimentMetadataController {
+@Controller("genericExperimentDataController")
+public class GenericExperimentDataController {
 
-    private static final Logger LOG = Logger.getLogger(LoadExperimentFromCellMiaController.class);
     //model
     private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
@@ -54,7 +52,7 @@ public class ExperimentMetadataController {
     private ExperimentMetadataPanel experimentMetadataPanel;
     //parent controller
     @Autowired
-    private LoadExperimentFromCellMiaController loadExperimentFromCellMiaController;
+    private LoadExperimentFromGenericInputController loadExperimentFromGenericInputController;
     //child controllers
     //services
     @Autowired
@@ -77,13 +75,8 @@ public class ExperimentMetadataController {
     }
 
     /**
-     * getters and setters
-     * @return 
+     * 
      */
-    public ExperimentMetadataPanel getLoadExperimentInfoPanel() {
-        return experimentMetadataPanel;
-    }
-
     private void initExperimentInfoPanel() {
         //hide conditions JList
         loadExperimentPanel.getjScrollPane3().setVisible(false);
@@ -108,6 +101,13 @@ public class ExperimentMetadataController {
         //do the binding
         bindingGroup.bind();
 
+        // fill in combobox with units
+        for (CycleTimeUnit unit : CycleTimeUnit.values()) {
+            experimentMetadataPanel.getIntervalUnitComboBox().addItem(unit);
+        }
+        // show MINUTES as default
+        experimentMetadataPanel.getIntervalUnitComboBox().setSelectedIndex(1);
+
         /**
          * add mouse listeners
          */
@@ -125,7 +125,7 @@ public class ExperimentMetadataController {
                     bindingGroup.addBinding(jListBinding);
                     bindingGroup.bind();
                 } else {
-                    loadExperimentFromCellMiaController.showMessage("There are no experiments in progress for this project!", 1);
+                    loadExperimentFromGenericInputController.showMessage("There are no experiments in progress for this project!", 1);
                     if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                         experimentBindingList.clear();
                     }
@@ -141,33 +141,29 @@ public class ExperimentMetadataController {
 
                 int locationToIndex = loadExperimentPanel.getExperimentJList().locationToIndex(e.getPoint());
                 //set experiment of parent controller
-                loadExperimentFromCellMiaController.setExperiment(experimentBindingList.get(locationToIndex));
+                loadExperimentFromGenericInputController.setExperiment(experimentBindingList.get(locationToIndex));
                 plateConditionList = new ArrayList<>();
-                plateConditionList.addAll(loadExperimentFromCellMiaController.getExperiment().getPlateConditionCollection());
-                Dimension parentDimension = loadExperimentFromCellMiaController.getLoadDataFromCellMiaPanel().getLoadDataPlateParentPanel().getSize();
-                PlateFormat plateFormat = loadExperimentFromCellMiaController.getExperiment().getPlateFormat();
+                plateConditionList.addAll(loadExperimentFromGenericInputController.getExperiment().getPlateConditionCollection());
+                Dimension parentDimension = loadExperimentFromGenericInputController.getLoadExperimentFromGenericInputPanel().getLoadDataPlateParentPanel().getSize();
+                PlateFormat plateFormat = loadExperimentFromGenericInputController.getExperiment().getPlateFormat();
                 //init plate panel with current experiment plate format
-                loadExperimentFromCellMiaController.initPlatePanel(plateFormat, parentDimension);
+                loadExperimentFromGenericInputController.initPlatePanel(plateFormat, parentDimension);
 
-                loadExperimentFromCellMiaController.getLoadDataPlatePanel().setExperiment(loadExperimentFromCellMiaController.getExperiment());
-                loadExperimentFromCellMiaController.getLoadDataPlatePanel().repaint();
+                loadExperimentFromGenericInputController.getCellMiaImagedPlatePanel().setExperiment(loadExperimentFromGenericInputController.getExperiment());
+                loadExperimentFromGenericInputController.getCellMiaImagedPlatePanel().repaint();
 
                 //hide label
                 loadExperimentPanel.getjLabel2().setVisible(false);
                 //and show Conditions JList
                 showConditionsList();
 
-                //load experiment folders
-                experimentService.loadFolderStructure(loadExperimentFromCellMiaController.getExperiment());
-                LOG.debug("Folders have been loaded");
-                loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadDataFromCellMiaPanel().getInfolabel(), "Click <<Exp Data>> to get experiment data from microscope.");
-                loadExperimentFromCellMiaController.getLoadDataFromCellMiaPanel().getExpDataButton().setEnabled(true);
+                loadExperimentFromGenericInputController.updateInfoLabel(loadExperimentFromGenericInputController.getLoadExperimentFromGenericInputPanel().getInfolabel(), "Insert experiment metadata.");
             }
         });
 
         //add view to parent panel
-        loadExperimentFromCellMiaController.getLoadDataFromCellMiaPanel().getLoadExperimentParentPanel().add(loadExperimentPanel, gridBagConstraints);
-        loadExperimentFromCellMiaController.getLoadDataFromCellMiaPanel().getExpMetadataParentPanel().add(experimentMetadataPanel, gridBagConstraints);
+        loadExperimentFromGenericInputController.getLoadExperimentFromGenericInputPanel().getLoadExperimentParentPanel().add(loadExperimentPanel, gridBagConstraints);
+        loadExperimentFromGenericInputController.getLoadExperimentFromGenericInputPanel().getExpMetadataParentPanel().add(experimentMetadataPanel, gridBagConstraints);
     }
 
     /**
@@ -177,10 +173,27 @@ public class ExperimentMetadataController {
         //make the conditions List visible
         loadExperimentPanel.getjScrollPane3().setVisible(true);
         //set Cell Renderer for Condition List
-        loadExperimentPanel.getConditionsList().setCellRenderer(new ConditionsListRenderer(plateConditionList));
+        loadExperimentPanel.getConditionsList().setCellRenderer(new ConditionsLoadListRenderer(plateConditionList));
         ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(plateConditionList);
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, plateConditionBindingList, loadExperimentPanel.getConditionsList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
+    }
+
+    /**
+     * this method checks experiment Info
+     * @return messages to show if validation was not successful 
+     */
+    private void setExperimentMetadata() {
+        Experiment experiment = loadExperimentFromGenericInputController.getExperiment();
+        List<String> messages = new ArrayList<>();
+        try {
+            // time frames
+            experiment.setTimeFrames(Integer.parseInt(experimentMetadataPanel.getTimeFramesTextField().getText()));
+            // interval
+            experiment.setExperimentInterval(Double.parseDouble(experimentMetadataPanel.getIntervalTextField().getText()));
+        } catch (NumberFormatException e) {
+            messages.add("Please insert Numbers!");
+        }
     }
 }

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller;
+package be.ugent.maf.cellmissy.gui.controller.setup;
 
 import be.ugent.maf.cellmissy.entity.AssayMedium;
 import be.ugent.maf.cellmissy.entity.CellLine;
@@ -16,7 +16,6 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.setup.ConditionsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.SetupConditionsPanel;
-import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsSetupListRenderer;
 import be.ugent.maf.cellmissy.service.CellLineService;
 import java.awt.GridBagConstraints;

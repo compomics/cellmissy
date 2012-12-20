@@ -2,29 +2,32 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller;
+package be.ugent.maf.cellmissy.gui.controller.setup;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
-import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
-import com.lowagie.text.BadElementException;
-import com.lowagie.text.Chunk;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
+import be.ugent.maf.cellmissy.utils.PdfUtils;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
+import javax.swing.JPanel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +43,7 @@ public class SetupReportController {
     private Document document;
     private PdfWriter writer;
     private static Font titleFont = new Font(Font.TIMES_ROMAN, 10, Font.BOLD);
+    private static Font bodyFont = new Font(Font.TIMES_ROMAN, 8);
     // view
     // parent controller
     @Autowired
@@ -126,109 +130,105 @@ public class SetupReportController {
      * Add content to PDF file
      */
     private void addContent() {
-        addOverview();
-        addEmptyLine(1);
-        addPlateView();
-        addEmptyLine(1);
-        addConditionsOverview();
+        addMainTitle();
+        PdfUtils.addEmptyLines(document, 1);
+        addPlatePanel();
+        PdfUtils.addEmptyLines(document, 1);
+        addConditionsTable();
     }
 
     /**
      * Add general info on report
      */
-    private void addOverview() {
+    private void addMainTitle() {
         String title = "Setup Report of Experiment " + experiment.getExperimentNumber() + " - " + "Project " + experiment.getProject().getProjectNumber();
-        addTitle(title);
-        addEmptyLine(1);
+        PdfUtils.addTitle(document, title, titleFont);
+        PdfUtils.addEmptyLines(document, 1);
     }
 
     /**
      * Add plate view
      */
-    private void addPlateView() {
-        SetupPlatePanel setupPlatePanel = setupExperimentController.getSetupPlatePanel();
-        Image image = getImageFromJComponent(setupPlatePanel);
-        float scale = 0.5f;
-        image.scalePercent(scale * 100);
-        addImage(image);
-    }
-
-    /**
-     * Add summary with all conditions
-     */
-    private void addConditionsOverview() {
-        JTable conditionsTable = setupExperimentController.getConditionsTable();
-        Image image = getImageFromJComponent(conditionsTable);
-        float scale = (document.right() - document.left()) / ((float) image.getWidth());
-        image.scalePercent(scale * 100);
-        addImage(image);
+    private void addPlatePanel() {
+        AnalysisPlatePanel platePanel = createPanelView();
+        addImageFromJPanel(platePanel, platePanel.getWidth(), platePanel.getHeight());
     }
 
     /**
      * 
-     * @param paragraph
-     * @param number 
-     */
-    private void addEmptyLine(int number) {
-        for (int i = 0; i < number; i++) {
-            try {
-                document.add(new Paragraph(" "));
-            } catch (DocumentException ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Add a simple line with some text
-     * @param title to add
-     */
-    private void addTitle(String title) {
-        try {
-            //Paragraph paragraph = new Paragraph(title, titleFont);
-            Chunk chunk = new Chunk(title, titleFont);
-            Paragraph paragraph = new Paragraph(chunk);
-            paragraph.setAlignment(Element.ALIGN_CENTER);
-            paragraph.setSpacingAfter(1.5f);
-            document.add(paragraph);
-        } catch (DocumentException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    /**
-     * Add a pdfTemplate with a JPanel in it
-     */
-    private void addImage(Image image) {
-        // put image in the center
-        image.setAlignment(Element.ALIGN_CENTER);
-        try {
-            document.add(image);
-        } catch (DocumentException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    /**
-     * 
-     * @param component
      * @return 
      */
-    private Image getImageFromJComponent(java.awt.Component component) {
-        Image image = null;
-        int width = component.getWidth();
-        int height = component.getHeight();
-        PdfContentByte contentByte = writer.getDirectContent();
-        PdfTemplate template = contentByte.createTemplate(width, height);
-        Graphics2D graphics = template.createGraphics(width, height);
-        component.paint(graphics);
-        graphics.dispose();
-        // wrap the pdfTemplate inside an image ensures better quality (pixels) 
+    private AnalysisPlatePanel createPanelView() {
+        // what we need to show is actually an analysis plate panel
+        AnalysisPlatePanel platePanel = new AnalysisPlatePanel();
+        platePanel.initPanel(setupExperimentController.getSelectedPlateFormat(), new Dimension(400, 500));
+        platePanel.setExperiment(experiment);
+        return platePanel;
+    }
+
+    /**
+     * Create Image from a aJFreeChart and add it to document
+     * @param chart 
+     */
+    private void addImageFromJPanel(JPanel panel, int imageWidth, int imageHeight) {
+        Image imageFromJPanel = PdfUtils.getImageFromJPanel(writer, panel, imageWidth, imageHeight);
+        // put image in the center
+        imageFromJPanel.setAlignment(Element.ALIGN_CENTER);
         try {
-            image = Image.getInstance(template);
-        } catch (BadElementException ex) {
+            document.add(imageFromJPanel);
+        } catch (DocumentException ex) {
             ex.printStackTrace();
         }
-        return image;
+    }
+
+    /**
+     * Add table with conditions overview
+     */
+    private void addConditionsTable() {
+        PdfPTable conditionsTable = createConditionsTable();
+        addTable(conditionsTable);
+    }
+
+    /**
+     * Create Table with conditions overview
+     * @return 
+     */
+    private PdfPTable createConditionsTable() {
+        // 7 columns
+        PdfPTable dataTable = new PdfPTable(7);
+        PdfUtils.setUpPdfPTable(dataTable);
+        PdfUtils.addCustomizedCell(dataTable, "Condition", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Cell Line", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "MD", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Assay", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "ECM", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Treatments", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Assay(Medium, %Serum)", titleFont);
+        Collection<PlateCondition> plateConditionCollection = experiment.getPlateConditionCollection();
+        List<PlateCondition> plateConditions = new ArrayList<>(plateConditionCollection);
+        for (int i = 0; i < plateConditions.size(); i++) {
+            PlateCondition plateCondition = plateConditions.get(i);
+            Color color = GuiUtils.getAvailableColors()[i + 1];
+            PdfUtils.addColoredCell(dataTable, color);
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getCellLine().toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getMatrixDimension().toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssay().getAssayType().toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getEcm().toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getTreatmentCollection().toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssayMedium().toString(), bodyFont);
+        }
+        return dataTable;
+    }
+
+    /**
+     * Add a PdfPTable to the document
+     * @param dataTable 
+     */
+    private void addTable(PdfPTable dataTable) {
+        try {
+            document.add(dataTable);
+        } catch (DocumentException ex) {
+            ex.printStackTrace();
+        }
     }
 }
