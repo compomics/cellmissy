@@ -21,6 +21,7 @@ import be.ugent.maf.cellmissy.gui.experiment.setup.SetupExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.SetupPanel;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
+import be.ugent.maf.cellmissy.gui.project.OverviewPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
@@ -41,7 +42,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import javax.persistence.PersistenceException;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -82,6 +82,7 @@ public class SetupExperimentController {
     private SetupExperimentPanel setupExperimentPanel;
     private ExperimentInfoPanel experimentInfoPanel;
     private SetupPanel setupPanel;
+    private OverviewPanel overviewPanel;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -139,6 +140,10 @@ public class SetupExperimentController {
         return experiment;
     }
 
+    public OverviewPanel getOverviewPanel() {
+        return overviewPanel;
+    }
+
     public PlateFormat getSelectedPlateFormat() {
         return setupPlateController.getSelectedPlateFormat();
     }
@@ -191,6 +196,16 @@ public class SetupExperimentController {
      */
     public void showMessage(String message, Integer messageType) {
         cellMissyController.showMessage(message, messageType);
+    }
+
+    /**
+     * Create a new Project
+     * @param projectNumber
+     * @param projectDescription  
+     */
+    public void createNewProject(int projectNumber, String projectDescription) {
+        Project savedProject = projectService.setupProject(projectNumber, projectDescription, mainDirectory);
+        projectBindingList.add(savedProject);
     }
 
     /**
@@ -264,7 +279,7 @@ public class SetupExperimentController {
         List<String> messages = new ArrayList<>();
         try {
             //if the selected project does not have already the current experiment number, set the experiment number
-            if (!projectHasExperiment(((Project) experimentInfoPanel.getProjectJList().getSelectedValue()).getProjectid(), Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()))) {
+            if (!projectHasExperiment(((Project) overviewPanel.getProjectJList().getSelectedValue()).getProjectid(), Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()))) {
                 experiment.setExperimentNumber(Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()));
             } else {
                 String message = "Experiment number " + experimentInfoPanel.getNumberTextField().getText() + " already exists for this project";
@@ -310,9 +325,12 @@ public class SetupExperimentController {
      * initializes the experiment info panel
      */
     private void initExperimentInfoPanel() {
+        overviewPanel = new OverviewPanel();
+        // add overview panel
+        experimentInfoPanel.getOverviewParentPanel().add(overviewPanel, gridBagConstraints);
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
-        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectJList());
+        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, overviewPanel.getProjectJList());
         bindingGroup.addBinding(jListBinding);
         //init instrument combo box
         instrumentBindingList = ObservableCollections.observableList(experimentService.findAllInstruments());
@@ -328,10 +346,10 @@ public class SetupExperimentController {
         setupExperimentPanel.getTopPanel().add(experimentInfoPanel, gridBagConstraints);
 
         //select first project in the ProjectList
-        experimentInfoPanel.getProjectJList().setSelectedIndex(0);
+        overviewPanel.getProjectJList().setSelectedIndex(0);
 
         //set cell renderer for experimentJList
-        experimentInfoPanel.getExperimentJList().setCellRenderer(new ExperimentsListRenderer());
+        overviewPanel.getExperimentJList().setCellRenderer(new ExperimentsListRenderer());
 
         //date cannot be modified manually
         experimentInfoPanel.getDateChooser().getDateEditor().setEnabled(false);
@@ -346,52 +364,19 @@ public class SetupExperimentController {
         experimentListener.registerDoc(((JTextField) experimentInfoPanel.getDateChooser().getDateEditor().getUiComponent()).getDocument());
 
         /**
-         * add action listeners
-         */
-        //create new project: save it to DB and create folder on the server
-        experimentInfoPanel.getCreateProjectButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!experimentInfoPanel.getProjectNumberTextField().getText().isEmpty()) {
-                    try {
-                        int projectNumber = Integer.parseInt(experimentInfoPanel.getProjectNumberTextField().getText());
-                        //project description is not mandatory
-                        String projectDescription = experimentInfoPanel.getDescriptionTextField().getText();
-                        Project savedProject = projectService.setupProject(projectNumber, projectDescription, mainDirectory);
-
-                        projectBindingList.add(savedProject);
-                        experimentInfoPanel.getProjectNumberTextField().setText("");
-                    } catch (PersistenceException exception) {
-                        cellMissyController.showMessage("Project already present in the DB", JOptionPane.WARNING_MESSAGE);
-                        experimentInfoPanel.getProjectNumberTextField().setText("");
-                        experimentInfoPanel.getProjectNumberTextField().requestFocusInWindow();
-                    } catch (NumberFormatException exception) {
-                        cellMissyController.showMessage("Please insert a valid number", JOptionPane.WARNING_MESSAGE);
-                        experimentInfoPanel.getProjectNumberTextField().setText("");
-                        experimentInfoPanel.getProjectNumberTextField().requestFocusInWindow();
-                    }
-                } else {
-                    cellMissyController.showMessage("Please insert a number for the project you want to create", JOptionPane.WARNING_MESSAGE);
-                    experimentInfoPanel.getProjectNumberTextField().requestFocusInWindow();
-                }
-            }
-        });
-
-        /**
          * add mouse listeners
          */
         //show experiments for the project selected
-        experimentInfoPanel.getProjectJList().addMouseListener(new MouseAdapter() {
+        overviewPanel.getProjectJList().addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
 
                 //init experimentJList
-                int locationToIndex = experimentInfoPanel.getProjectJList().locationToIndex(e.getPoint());
+                int locationToIndex = overviewPanel.getProjectJList().locationToIndex(e.getPoint());
                 if (experimentService.findExperimentNumbersByProjectId(projectBindingList.get(locationToIndex).getProjectid()) != null) {
                     experimentBindingList = ObservableCollections.observableList(experimentService.findExperimentsByProjectId(projectBindingList.get(locationToIndex).getProjectid()));
-                    JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, experimentInfoPanel.getExperimentJList());
+                    JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, overviewPanel.getExperimentJList());
                     bindingGroup.addBinding(jListBinding);
                     bindingGroup.bind();
                 } else {
@@ -433,7 +418,7 @@ public class SetupExperimentController {
                     //set the User of the experiment
                     //@todo: need to set the user like this NOW, to be changed!!!=====================================================================================
                     experiment.setUser(cellMissyController.getAUser());
-                    experiment.setProject((Project) experimentInfoPanel.getProjectJList().getSelectedValue());
+                    experiment.setProject((Project) overviewPanel.getProjectJList().getSelectedValue());
                     experiment.setInstrument((Instrument) experimentInfoPanel.getInstrumentComboBox().getSelectedItem());
                     experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());
                     experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());

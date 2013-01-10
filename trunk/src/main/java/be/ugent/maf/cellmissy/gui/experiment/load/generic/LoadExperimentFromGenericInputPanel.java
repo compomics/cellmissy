@@ -81,8 +81,6 @@ public class LoadExperimentFromGenericInputPanel extends javax.swing.JPanel {
         leftPanel = new javax.swing.JPanel();
         loadExperimentParentPanel = new javax.swing.JPanel();
         expMetadataParentPanel = new javax.swing.JPanel();
-        titlePanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         loadDataPlateParentPanel = new javax.swing.JPanel();
         userInteractionPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -122,6 +120,7 @@ public class LoadExperimentFromGenericInputPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.65;
+        gridBagConstraints.insets = new java.awt.Insets(20, 10, 0, 0);
         leftPanel.add(loadExperimentParentPanel, gridBagConstraints);
 
         expMetadataParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -135,6 +134,7 @@ public class LoadExperimentFromGenericInputPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.35;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 20, 0);
         leftPanel.add(expMetadataParentPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -147,38 +147,7 @@ public class LoadExperimentFromGenericInputPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         topPanel.add(leftPanel, gridBagConstraints);
 
-        titlePanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        titlePanel.setOpaque(false);
-        titlePanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 2, 14));
-        jLabel1.setText("Import motility datasets to CellMissy from generic input");
-
-        javax.swing.GroupLayout titlePanelLayout = new javax.swing.GroupLayout(titlePanel);
-        titlePanel.setLayout(titlePanelLayout);
-        titlePanelLayout.setHorizontalGroup(
-            titlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, titlePanelLayout.createSequentialGroup()
-                .addContainerGap(171, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(167, 167, 167))
-        );
-        titlePanelLayout.setVerticalGroup(
-            titlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, titlePanelLayout.createSequentialGroup()
-                .addContainerGap(13, Short.MAX_VALUE)
-                .addComponent(jLabel1))
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.02;
-        topPanel.add(titlePanel, gridBagConstraints);
-
+        loadDataPlateParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plate view"));
         loadDataPlateParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         loadDataPlateParentPanel.setOpaque(false);
         loadDataPlateParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -189,8 +158,8 @@ public class LoadExperimentFromGenericInputPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.6;
-        gridBagConstraints.insets = new java.awt.Insets(0, 100, 0, 100);
+        gridBagConstraints.weighty = 0.7;
+        gridBagConstraints.insets = new java.awt.Insets(0, 100, 0, 80);
         topPanel.add(loadDataPlateParentPanel, gridBagConstraints);
 
         userInteractionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Algorithm - Imaging Info"));
@@ -226,7 +195,7 @@ public class LoadExperimentFromGenericInputPanel extends javax.swing.JPanel {
             userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(userInteractionPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(algoScrollPane, 0, 0, Short.MAX_VALUE)
                     .addGroup(userInteractionPanelLayout.createSequentialGroup()
                         .addComponent(jLabel2)
@@ -261,9 +230,9 @@ public class LoadExperimentFromGenericInputPanel extends javax.swing.JPanel {
                     .addComponent(addAlgoButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(algoScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(imagingScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(22, Short.MAX_VALUE))
+                    .addComponent(imagingScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(algoScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -272,7 +241,7 @@ public class LoadExperimentFromGenericInputPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.4;
+        gridBagConstraints.weighty = 0.3;
         topPanel.add(userInteractionPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -327,13 +296,11 @@ public class LoadExperimentFromGenericInputPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane imagingScrollPane;
     private javax.swing.JTextField imagingTextField;
     private javax.swing.JLabel infolabel;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JPanel loadDataPlateParentPanel;
     private javax.swing.JPanel loadExperimentParentPanel;
-    private javax.swing.JPanel titlePanel;
     private javax.swing.JPanel topPanel;
     private javax.swing.JPanel userInteractionPanel;
     // End of variables declaration//GEN-END:variables

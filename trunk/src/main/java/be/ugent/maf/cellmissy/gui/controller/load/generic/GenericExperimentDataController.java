@@ -152,9 +152,7 @@ public class GenericExperimentDataController {
                 loadExperimentFromGenericInputController.getCellMiaImagedPlatePanel().setExperiment(loadExperimentFromGenericInputController.getExperiment());
                 loadExperimentFromGenericInputController.getCellMiaImagedPlatePanel().repaint();
 
-                //hide label
-                loadExperimentPanel.getjLabel2().setVisible(false);
-                //and show Conditions JList
+                // show Conditions JList
                 showConditionsList();
 
                 loadExperimentFromGenericInputController.updateInfoLabel(loadExperimentFromGenericInputController.getLoadExperimentFromGenericInputPanel().getInfolabel(), "Insert experiment metadata.");

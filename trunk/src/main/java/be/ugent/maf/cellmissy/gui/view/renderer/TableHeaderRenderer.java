@@ -19,7 +19,7 @@ public class TableHeaderRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
         super.getTableCellRendererComponent(table, value, false, false, row, column);
-        setHorizontalAlignment(SwingConstants.LEFT);
+        setHorizontalAlignment(SwingConstants.RIGHT);
         setBorder(BorderFactory.createEmptyBorder());
 
         return this;

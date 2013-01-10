@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import javax.persistence.PersistenceException;
+import javax.swing.JOptionPane;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -55,6 +56,7 @@ public class UserManagementController {
         bindingGroup = new BindingGroup();
         //create a new user panel and init view
         userPanel = new UserPanel();
+        newUser = new User();
         initUserPanel();
     }
 
@@ -121,7 +123,7 @@ public class UserManagementController {
                     } // handle ConstraintViolationException(UniqueConstraint)
                     catch (PersistenceException persistenceException) {
                         String message = "User already present in the db";
-                        cellMissyController.showMessage(message, 0);
+                        cellMissyController.showMessage(message, JOptionPane.INFORMATION_MESSAGE);
                         resetCreateUserTextFields();
                     }
                 } else {
@@ -139,12 +141,12 @@ public class UserManagementController {
                     User user = userService.findByFullName(userPanel.getSearchUserFirstNameTextField().getText(), userPanel.getSearchUserLastNameTextField().getText());
                     if (user != null) {
                         String message = "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.";
-                        cellMissyController.showMessage(message, 1);
+                        cellMissyController.showMessage(message, JOptionPane.INFORMATION_MESSAGE);
                         userPanel.getSearchUserFirstNameTextField().setText("");
                         userPanel.getSearchUserLastNameTextField().setText("");
                     } else {
                         String message = "No user found";
-                        cellMissyController.showMessage(message, 1);
+                        cellMissyController.showMessage(message, JOptionPane.INFORMATION_MESSAGE);
                         userPanel.getSearchUserFirstNameTextField().setText("");
                         userPanel.getSearchUserLastNameTextField().setText("");
                     }
@@ -153,7 +155,7 @@ public class UserManagementController {
                         User user = userService.findByFirstName(userPanel.getSearchUserFirstNameTextField().getText());
                         if (user != null) {
                             String message = "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.";
-                            cellMissyController.showMessage(message, 1);
+                            cellMissyController.showMessage(message, JOptionPane.INFORMATION_MESSAGE);
                             userPanel.getSearchUserFirstNameTextField().setText("");
                         } else {
                             String message = "No user found";

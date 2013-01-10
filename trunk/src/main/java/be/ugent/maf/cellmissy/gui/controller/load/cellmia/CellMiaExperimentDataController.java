@@ -162,9 +162,7 @@ public class CellMiaExperimentDataController {
                 loadExperimentFromCellMiaController.getCellMiaImagedPlatePanel().setExperiment(loadExperimentFromCellMiaController.getExperiment());
                 loadExperimentFromCellMiaController.getCellMiaImagedPlatePanel().repaint();
 
-                //hide label
-                loadExperimentPanel.getjLabel2().setVisible(false);
-                //and show Conditions JList
+                // show Conditions JList
                 showConditionsList();
 
                 //load experiment folders

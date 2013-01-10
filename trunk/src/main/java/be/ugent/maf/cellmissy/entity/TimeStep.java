@@ -48,19 +48,19 @@ public class TimeStep implements Serializable {
     @Basic(optional = false)
     @Column(name = "area")
     private double area;
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "centroid_x")
     private double centroidX;
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "centroid_y")
     private double centroidY;
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "eccentricity")
     private double eccentricity;
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "major_axis")
     private double majorAxis;
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "minor_axis")
     private double minorAxis;
     @JoinColumn(name = "l_well_has_imaging_typeid", referencedColumnName = "well_has_imaging_typeid")
