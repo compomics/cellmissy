@@ -12,7 +12,11 @@ package be.ugent.maf.cellmissy.gui;
 
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+import java.awt.Color;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -24,26 +28,51 @@ public class CellMissyFrame extends javax.swing.JFrame {
     /** Creates new form CellMissyFrame */
     public CellMissyFrame() {
         initComponents();
+        this.getContentPane().setBackground(new Color(255, 255, 255));
+        UIManager.put("nimbusBase", Color.lightGray);      // Base color
+        UIManager.put("nimbusBlueGrey", Color.lightGray);  // BlueGrey
+        UIManager.put("control", Color.white);         // Control
+        UIManager.put("OptionPane.background", Color.white);
     }
 
-    public JPanel getExperimentSetupParentPanel() {
-        return experimentSetupParentPanel;
+    public JPanel getBackgroundPanel() {
+        return backgroundPanel;
     }
 
-    public JPanel getOverviewPanel() {
-        return overviewPanel;
+    public JMenuItem getCellMiaMenuItem() {
+        return cellMiaMenuItem;
     }
 
-    public JPanel getUserParentPanel() {
-        return userParentPanel;
+    public JMenuItem getDataAnalysisMenuItem() {
+        return dataAnalysisMenuItem;
     }
 
-    public JPanel getLoadExperimentParentPanel() {
-        return loadExperimentParentPanel;
+    public JMenuItem getProjectMenuItem() {
+        return newProjectMenuItem;
     }
 
-    public JPanel getDataAnalysisParentPanel() {
-        return dataAnalysisParentPanel;
+    public JMenuItem getAllProjectsMenuItem() {
+        return allProjectsMenuItem;
+    }
+
+    public JMenuItem getExitMenuItem() {
+        return exitMenuItem;
+    }
+
+    public JMenuItem getNewExperimentMenuItem() {
+        return newExperimentMenuItem;
+    }
+
+    public JMenuItem getNewProjectMenuItem() {
+        return newProjectMenuItem;
+    }
+
+    public JMenuItem getUserMenuItem() {
+        return userMenuItem;
+    }
+
+    public JMenuItem getGenericInputMenuItem() {
+        return genericInputMenuItem;
     }
 
     /** This method is called from within the constructor to
@@ -54,108 +83,95 @@ public class CellMissyFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        overviewPanel = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        userParentPanel = new javax.swing.JPanel();
-        experimentSetupParentPanel = new javax.swing.JPanel();
-        loadExperimentParentPanel = new javax.swing.JPanel();
-        dataAnalysisParentPanel = new javax.swing.JPanel();
+        backgroundPanel = new javax.swing.JPanel();
+        jMenuBar = new javax.swing.JMenuBar();
+        projectMenu = new javax.swing.JMenu();
+        newProjectMenuItem = new javax.swing.JMenuItem();
+        allProjectsMenuItem = new javax.swing.JMenuItem();
+        experimentMenu = new javax.swing.JMenu();
+        newExperimentMenuItem = new javax.swing.JMenuItem();
+        loadDataMenu = new javax.swing.JMenu();
+        cellMiaMenuItem = new javax.swing.JMenuItem();
+        genericInputMenuItem = new javax.swing.JMenuItem();
+        dataAnalysisMenuItem = new javax.swing.JMenuItem();
+        miscMenu = new javax.swing.JMenu();
+        userMenuItem = new javax.swing.JMenuItem();
+        aboutMenuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        exitMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBounds(new java.awt.Rectangle(30, 5, 0, 0));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setMinimumSize(new java.awt.Dimension(120, 300));
-        getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jTabbedPane1.setBackground(new java.awt.Color(255, 255, 255));
-        jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
-        jTabbedPane1.setOpaque(true);
+        backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+        backgroundPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        backgroundPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        backgroundPanel.setLayout(new java.awt.GridBagLayout());
 
-        overviewPanel.setOpaque(false);
-        overviewPanel.setLayout(new java.awt.GridBagLayout());
+        jMenuBar.setBackground(java.awt.Color.white);
+        jMenuBar.setAlignmentY(0.5F);
+        jMenuBar.setMinimumSize(new java.awt.Dimension(5, 2));
 
-        jPanel1.setMinimumSize(new java.awt.Dimension(20, 20));
-        jPanel1.setOpaque(false);
-        jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
+        projectMenu.setText("Project");
 
-        jLabel1.setFont(new java.awt.Font("Lucida Sans", 1, 36));
-        jLabel1.setText("CellMissy");
+        newProjectMenuItem.setText("New Project...");
+        projectMenu.add(newProjectMenuItem);
 
-        jLabel2.setFont(new java.awt.Font("SansSerif", 1, 18));
-        jLabel2.setText("Cell Migration - Invasion");
+        allProjectsMenuItem.setText("View All Projects...");
+        projectMenu.add(allProjectsMenuItem);
 
-        jLabel3.setFont(new java.awt.Font("SansSerif", 1, 18));
-        jLabel3.setText("Storage System");
+        jMenuBar.add(projectMenu);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(187, 187, 187)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel1))
-                    .addComponent(jLabel2)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addComponent(jLabel3)))
-                .addContainerGap(195, Short.MAX_VALUE))
+        experimentMenu.setText("Experiment");
+
+        newExperimentMenuItem.setText("New Experiment");
+        newExperimentMenuItem.setToolTipText("");
+        experimentMenu.add(newExperimentMenuItem);
+
+        loadDataMenu.setText("Load Motility Data...");
+
+        cellMiaMenuItem.setText("... from CELLMIA");
+        loadDataMenu.add(cellMiaMenuItem);
+
+        genericInputMenuItem.setText("... from generic input");
+        loadDataMenu.add(genericInputMenuItem);
+
+        experimentMenu.add(loadDataMenu);
+
+        dataAnalysisMenuItem.setText("Data Analysis");
+        experimentMenu.add(dataAnalysisMenuItem);
+
+        jMenuBar.add(experimentMenu);
+
+        miscMenu.setText("Miscellaneous");
+
+        userMenuItem.setText("User Management");
+        miscMenu.add(userMenuItem);
+
+        aboutMenuItem.setText("About...");
+        miscMenu.add(aboutMenuItem);
+        miscMenu.add(jSeparator1);
+
+        exitMenuItem.setText("Exit");
+        miscMenu.add(exitMenuItem);
+
+        jMenuBar.add(miscMenu);
+
+        setJMenuBar(jMenuBar);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 714, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(167, 167, 167)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
-                .addContainerGap(205, Short.MAX_VALUE))
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)
         );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.6;
-        overviewPanel.add(jPanel1, gridBagConstraints);
-
-        jTabbedPane1.addTab("Overview", overviewPanel);
-
-        userParentPanel.setOpaque(false);
-        userParentPanel.setLayout(new java.awt.GridBagLayout());
-        jTabbedPane1.addTab("User Management", userParentPanel);
-
-        experimentSetupParentPanel.setOpaque(false);
-        experimentSetupParentPanel.setLayout(new java.awt.GridBagLayout());
-        jTabbedPane1.addTab("Experiment Setup", experimentSetupParentPanel);
-
-        loadExperimentParentPanel.setOpaque(false);
-        loadExperimentParentPanel.setLayout(new java.awt.GridBagLayout());
-        jTabbedPane1.addTab("Load Motility Data", loadExperimentParentPanel);
-
-        dataAnalysisParentPanel.setOpaque(false);
-        dataAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
-        jTabbedPane1.addTab("Data Analysis", dataAnalysisParentPanel);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        getContentPane().add(jTabbedPane1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -176,13 +192,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CellMissyFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CellMissyFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CellMissyFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(CellMissyFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
@@ -193,21 +203,27 @@ public class CellMissyFrame extends javax.swing.JFrame {
             public void run() {
                 ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
                 CellMissyController cellMissyController = (CellMissyController) context.getBean("cellMissyController");
-                
+
                 cellMissyController.init();
             }
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel dataAnalysisParentPanel;
-    private javax.swing.JPanel experimentSetupParentPanel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JPanel loadExperimentParentPanel;
-    private javax.swing.JPanel overviewPanel;
-    private javax.swing.JPanel userParentPanel;
+    private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JMenuItem allProjectsMenuItem;
+    private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JMenuItem cellMiaMenuItem;
+    private javax.swing.JMenuItem dataAnalysisMenuItem;
+    private javax.swing.JMenuItem exitMenuItem;
+    private javax.swing.JMenu experimentMenu;
+    private javax.swing.JMenuItem genericInputMenuItem;
+    private javax.swing.JMenuBar jMenuBar;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JMenu loadDataMenu;
+    private javax.swing.JMenu miscMenu;
+    private javax.swing.JMenuItem newExperimentMenuItem;
+    private javax.swing.JMenuItem newProjectMenuItem;
+    private javax.swing.JMenu projectMenu;
+    private javax.swing.JMenuItem userMenuItem;
     // End of variables declaration//GEN-END:variables
 }

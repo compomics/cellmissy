@@ -76,8 +76,6 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
         leftPanel = new javax.swing.JPanel();
         loadExperimentParentPanel = new javax.swing.JPanel();
         expMetadataParentPanel = new javax.swing.JPanel();
-        titlePanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         loadDataPlateParentPanel = new javax.swing.JPanel();
         bottomPanel = new javax.swing.JPanel();
         infolabel = new javax.swing.JLabel();
@@ -111,6 +109,7 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.7;
+        gridBagConstraints.insets = new java.awt.Insets(20, 10, 0, 0);
         leftPanel.add(loadExperimentParentPanel, gridBagConstraints);
 
         expMetadataParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -122,8 +121,9 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weightx = 0.8;
         gridBagConstraints.weighty = 0.3;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 20, 0);
         leftPanel.add(expMetadataParentPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -136,39 +136,7 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         topPanel.add(leftPanel, gridBagConstraints);
 
-        titlePanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        titlePanel.setOpaque(false);
-        titlePanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 2, 14));
-        jLabel1.setText("Import motility datasets to CellMissy from CELLMIA");
-
-        javax.swing.GroupLayout titlePanelLayout = new javax.swing.GroupLayout(titlePanel);
-        titlePanel.setLayout(titlePanelLayout);
-        titlePanelLayout.setHorizontalGroup(
-            titlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, titlePanelLayout.createSequentialGroup()
-                .addContainerGap(180, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(158, 158, 158))
-        );
-        titlePanelLayout.setVerticalGroup(
-            titlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(titlePanelLayout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addComponent(jLabel1)
-                .addContainerGap(70, Short.MAX_VALUE))
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.2;
-        topPanel.add(titlePanel, gridBagConstraints);
-
+        loadDataPlateParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plate view"));
         loadDataPlateParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         loadDataPlateParentPanel.setOpaque(false);
         loadDataPlateParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -180,7 +148,7 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 0.8;
-        gridBagConstraints.insets = new java.awt.Insets(0, 100, 0, 100);
+        gridBagConstraints.insets = new java.awt.Insets(100, 100, 100, 100);
         topPanel.add(loadDataPlateParentPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -258,13 +226,11 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
     private javax.swing.JButton finishButton;
     private javax.swing.JButton forwardButton;
     private javax.swing.JLabel infolabel;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JPanel loadDataPlateParentPanel;
     private javax.swing.JPanel loadExperimentParentPanel;
     private javax.swing.JButton parseObsepFileButton;
-    private javax.swing.JPanel titlePanel;
     private javax.swing.JPanel topPanel;
     // End of variables declaration//GEN-END:variables
 }

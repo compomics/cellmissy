@@ -53,7 +53,7 @@
                   <Component id="selectFormatLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                   <Component id="plateFormatComboBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="109" max="32767" attributes="0"/>
+                  <EmptySpace pref="111" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -84,7 +84,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="selectFormatLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Select a Plate Format"/>
+            <Property name="text" type="java.lang.String" value="Select a plate format"/>
           </Properties>
         </Component>
       </SubComponents>
