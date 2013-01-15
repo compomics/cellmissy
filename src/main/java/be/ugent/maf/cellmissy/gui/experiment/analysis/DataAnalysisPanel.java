@@ -116,7 +116,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         experimentDataPanel.setOpaque(false);
         experimentDataPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jLabel1.setText("Algorithm");
+        jLabel1.setText("Dataset");
 
         jLabel2.setText("Imaging Type");
 
@@ -147,8 +147,8 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(imagingTypeComboBox, 0, 221, Short.MAX_VALUE)
-                            .addComponent(algorithmComboBox, 0, 221, Short.MAX_VALUE)))
+                            .addComponent(imagingTypeComboBox, 0, 213, Short.MAX_VALUE)
+                            .addComponent(algorithmComboBox, 0, 213, Short.MAX_VALUE)))
                     .addGroup(experimentDataPanelLayout.createSequentialGroup()
                         .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)

@@ -4,7 +4,7 @@
  */
 
 /*
- * LoadExperimentFromCellMiaPanel.java
+ * LoadFromCellMiaPanel.java
  *
  * Created on Jun 15, 2012, 1:36:56 PM
  */
@@ -19,19 +19,19 @@ import javax.swing.JProgressBar;
  *
  * @author Paola Masuzzo
  */
-public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
+public class LoadFromCellMiaPanel extends javax.swing.JPanel {
 
-    /** Creates new form LoadExperimentFromCellMiaPanel */
-    public LoadExperimentFromCellMiaPanel() {
+    /** Creates new form LoadFromCellMiaPanel */
+    public LoadFromCellMiaPanel() {
         initComponents();
     }
 
-    public JPanel getLoadDataPlateParentPanel() {
-        return loadDataPlateParentPanel;
+    public JPanel getPlateViewParentPanel() {
+        return plateViewParentPanel;
     }
 
-    public JPanel getLoadExperimentParentPanel() {
-        return loadExperimentParentPanel;
+    public JPanel getExpOverviewParentPanel() {
+        return expOverviewParentPanel;
     }
 
     public JPanel getExpMetadataParentPanel() {
@@ -74,9 +74,9 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
 
         topPanel = new javax.swing.JPanel();
         leftPanel = new javax.swing.JPanel();
-        loadExperimentParentPanel = new javax.swing.JPanel();
+        expOverviewParentPanel = new javax.swing.JPanel();
         expMetadataParentPanel = new javax.swing.JPanel();
-        loadDataPlateParentPanel = new javax.swing.JPanel();
+        plateViewParentPanel = new javax.swing.JPanel();
         bottomPanel = new javax.swing.JPanel();
         infolabel = new javax.swing.JLabel();
         forwardButton = new javax.swing.JButton();
@@ -98,10 +98,10 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
         leftPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         leftPanel.setLayout(new java.awt.GridBagLayout());
 
-        loadExperimentParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        loadExperimentParentPanel.setOpaque(false);
-        loadExperimentParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        loadExperimentParentPanel.setLayout(new java.awt.GridBagLayout());
+        expOverviewParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        expOverviewParentPanel.setOpaque(false);
+        expOverviewParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        expOverviewParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -110,7 +110,7 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.7;
         gridBagConstraints.insets = new java.awt.Insets(20, 10, 0, 0);
-        leftPanel.add(loadExperimentParentPanel, gridBagConstraints);
+        leftPanel.add(expOverviewParentPanel, gridBagConstraints);
 
         expMetadataParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         expMetadataParentPanel.setOpaque(false);
@@ -136,11 +136,11 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         topPanel.add(leftPanel, gridBagConstraints);
 
-        loadDataPlateParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plate view"));
-        loadDataPlateParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        loadDataPlateParentPanel.setOpaque(false);
-        loadDataPlateParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        loadDataPlateParentPanel.setLayout(new java.awt.GridBagLayout());
+        plateViewParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plate view"));
+        plateViewParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        plateViewParentPanel.setOpaque(false);
+        plateViewParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        plateViewParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -149,7 +149,7 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 0.8;
         gridBagConstraints.insets = new java.awt.Insets(100, 100, 100, 100);
-        topPanel.add(loadDataPlateParentPanel, gridBagConstraints);
+        topPanel.add(plateViewParentPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -164,6 +164,8 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
         bottomPanel.setOpaque(false);
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
+        infolabel.setFont(new java.awt.Font("Tahoma", 2, 11));
+
         forwardButton.setText("Forward");
 
         finishButton.setText("Finish");
@@ -176,10 +178,10 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(bottomPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(357, 357, 357)
+                .addGap(484, 484, 484)
                 .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(63, 63, 63)
                 .addComponent(parseObsepFileButton)
@@ -189,7 +191,7 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
                 .addComponent(forwardButton)
                 .addGap(18, 18, 18)
                 .addComponent(finishButton)
-                .addGap(539, 539, 539))
+                .addGap(26, 26, 26))
         );
 
         bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, finishButton, forwardButton, parseObsepFileButton});
@@ -197,17 +199,17 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bottomPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(14, 14, 14)
                 .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(finishButton)
                             .addComponent(forwardButton)
                             .addComponent(cancelButton)
                             .addComponent(parseObsepFileButton))
-                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(24, Short.MAX_VALUE))
+                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -223,14 +225,14 @@ public class LoadExperimentFromCellMiaPanel extends javax.swing.JPanel {
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JPanel expMetadataParentPanel;
+    private javax.swing.JPanel expOverviewParentPanel;
     private javax.swing.JButton finishButton;
     private javax.swing.JButton forwardButton;
     private javax.swing.JLabel infolabel;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JPanel leftPanel;
-    private javax.swing.JPanel loadDataPlateParentPanel;
-    private javax.swing.JPanel loadExperimentParentPanel;
     private javax.swing.JButton parseObsepFileButton;
+    private javax.swing.JPanel plateViewParentPanel;
     private javax.swing.JPanel topPanel;
     // End of variables declaration//GEN-END:variables
 }

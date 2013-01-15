@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -155,28 +156,36 @@ public class WellHasImagingType implements Serializable {
         this.algorithm = algorithm;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (wellHasImagingTypeid != null ? wellHasImagingTypeid.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof WellHasImagingType)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        WellHasImagingType other = (WellHasImagingType) object;
-        if ((this.wellHasImagingTypeid == null && other.wellHasImagingTypeid != null) || (this.wellHasImagingTypeid != null && !this.wellHasImagingTypeid.equals(other.wellHasImagingTypeid))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final WellHasImagingType other = (WellHasImagingType) obj;
+        if (!Objects.equals(this.well, other.well)) {
+            return false;
+        }
+        if (!Objects.equals(this.imagingType, other.imagingType)) {
+            return false;
+        }
+        if (!Objects.equals(this.algorithm, other.algorithm)) {
             return false;
         }
         return true;
     }
 
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.well);
+        hash = 53 * hash + Objects.hashCode(this.imagingType);
+        hash = 53 * hash + Objects.hashCode(this.algorithm);
+        return hash;
+    }
+
     @Override
     public String toString() {
-        return sequenceNumber + ", " + imagingType.getName();
+        return sequenceNumber + ", " + imagingType.getName() + ", " + algorithm.getAlgorithmName();
     }
 }

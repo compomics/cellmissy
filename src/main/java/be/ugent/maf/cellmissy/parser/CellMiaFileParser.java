@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * This interface parses Files in output from CellMIA analysis (one file, i.e. one sample)
- * @author Paola
+ * @author Paola Masuzzo
  */
 public interface CellMiaFileParser {
 
