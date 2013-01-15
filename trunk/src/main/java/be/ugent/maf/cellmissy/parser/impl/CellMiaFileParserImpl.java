@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 /**
  *
- * @author Paola
+ * @author Paola Masuzzo
  */
 @Service("cellMiaFileParser")
 public class CellMiaFileParserImpl implements CellMiaFileParser {

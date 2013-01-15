@@ -4,7 +4,6 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis;
 
-import be.ugent.maf.cellmissy.gui.controller.analysis.AreaAnalysisController;
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;

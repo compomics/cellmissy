@@ -11,8 +11,8 @@ import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
-import be.ugent.maf.cellmissy.gui.experiment.load.cellmia.LoadExperimentFromCellMiaPanel;
-import be.ugent.maf.cellmissy.gui.plate.CellMiaImagedPlatePanel;
+import be.ugent.maf.cellmissy.gui.experiment.load.cellmia.LoadFromCellMiaPanel;
+import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
@@ -44,7 +44,7 @@ public class LoadExperimentFromCellMiaController {
     //model
     private Experiment experiment;
     //view
-    private LoadExperimentFromCellMiaPanel loadExperimentFromCellMiaPanel;
+    private LoadFromCellMiaPanel loadFromCellMiaPanel;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -64,7 +64,7 @@ public class LoadExperimentFromCellMiaController {
      */
     public void init() {
         // init main view
-        loadExperimentFromCellMiaPanel = new LoadExperimentFromCellMiaPanel();
+        loadFromCellMiaPanel = new LoadFromCellMiaPanel();
         //init main view
         initMainPanel();
         //init child controllers
@@ -75,8 +75,8 @@ public class LoadExperimentFromCellMiaController {
     /*
      * getters and setters
      */
-    public LoadExperimentFromCellMiaPanel getLoadExperimentFromCellMiaPanel() {
-        return loadExperimentFromCellMiaPanel;
+    public LoadFromCellMiaPanel getLoadFromCellMiaPanel() {
+        return loadFromCellMiaPanel;
     }
 
     public Experiment getExperiment() {
@@ -104,11 +104,11 @@ public class LoadExperimentFromCellMiaController {
     }
 
     public void initPlatePanel(PlateFormat plateFormat, Dimension dimension) {
-        cellMiaImagedPlateController.getCellMiaImagedPlatePanel().initPanel(plateFormat, dimension);
+        cellMiaImagedPlateController.getImagedPlatePanel().initPanel(plateFormat, dimension);
     }
 
-    public CellMiaImagedPlatePanel getCellMiaImagedPlatePanel() {
-        return cellMiaImagedPlateController.getCellMiaImagedPlatePanel();
+    public ImagedPlatePanel getImagedPlatePanel() {
+        return cellMiaImagedPlateController.getImagedPlatePanel();
     }
 
     /*
@@ -120,21 +120,21 @@ public class LoadExperimentFromCellMiaController {
     private void initMainPanel() {
 
         //disable buttons
-        loadExperimentFromCellMiaPanel.getFinishButton().setEnabled(false);
-        loadExperimentFromCellMiaPanel.getExpDataButton().setEnabled(false);
-        loadExperimentFromCellMiaPanel.getForwardButton().setEnabled(false);
-        loadExperimentFromCellMiaPanel.getCancelButton().setEnabled(false);
+        loadFromCellMiaPanel.getFinishButton().setEnabled(false);
+        loadFromCellMiaPanel.getExpDataButton().setEnabled(false);
+        loadFromCellMiaPanel.getForwardButton().setEnabled(false);
+        loadFromCellMiaPanel.getCancelButton().setEnabled(false);
         //hide progress bar
-        loadExperimentFromCellMiaPanel.getjProgressBar1().setVisible(false);
+        loadFromCellMiaPanel.getjProgressBar1().setVisible(false);
 
         //update info message
-        cellMissyController.updateInfoLabel(loadExperimentFromCellMiaPanel.getInfolabel(), "Select a project and then an experiment in progress to load CELLMIA data.");
+        cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Select a project and then an experiment in progress to load CELLMIA data.");
 
         /**
          * add action listeners
          */
         //parse obseo file from the microscope
-        loadExperimentFromCellMiaPanel.getExpDataButton().addActionListener(new ActionListener() {
+        loadFromCellMiaPanel.getExpDataButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -169,18 +169,18 @@ public class LoadExperimentFromCellMiaController {
                         cellMissyController.showMessage("Open command cancelled by user", 1);
                     }
                 }
-                cellMissyController.updateInfoLabel(loadExperimentFromCellMiaPanel.getInfolabel(), "Click <<Forward>> to process imaging data for the experiment.");
-                loadExperimentFromCellMiaPanel.getForwardButton().setEnabled(true);
-                loadExperimentFromCellMiaPanel.getExpDataButton().setEnabled(false);
+                cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click <<Forward>> to process imaging data for the experiment.");
+                loadFromCellMiaPanel.getForwardButton().setEnabled(true);
+                loadFromCellMiaPanel.getExpDataButton().setEnabled(false);
             }
         });
 
         //cancel the selection: reset Plate View
-        loadExperimentFromCellMiaPanel.getCancelButton().addActionListener(new ActionListener() {
+        loadFromCellMiaPanel.getCancelButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (WellGui wellGui : cellMiaImagedPlateController.getCellMiaImagedPlatePanel().getWellGuiList()) {
+                for (WellGui wellGui : cellMiaImagedPlateController.getImagedPlatePanel().getWellGuiList()) {
 
                     //empty the collection of WellHasImagingType (so color is set to default)
                     wellGui.getWell().getWellHasImagingTypeCollection().clear();
@@ -193,21 +193,21 @@ public class LoadExperimentFromCellMiaController {
                         }
                     }
                     wellGui.getEllipsi().removeAll(ellipse2DList);
-                    cellMiaImagedPlateController.getCellMiaImagedPlatePanel().repaint();
+                    cellMiaImagedPlateController.getImagedPlatePanel().repaint();
                 }
                 //update info message (the user needs to click again on forward)
-                updateInfoLabel(loadExperimentFromCellMiaPanel.getInfolabel(), "Click again <<Forward>> to process imaging data.");
+                updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click again <<Forward>> to process imaging data.");
                 //set boolean isFirtTime to false
                 cellMiaImagedPlateController.setIsFirtTime(false);
                 //disable and enable buttons
-                loadExperimentFromCellMiaPanel.getFinishButton().setEnabled(false);
-                loadExperimentFromCellMiaPanel.getForwardButton().setEnabled(true);
-                loadExperimentFromCellMiaPanel.getCancelButton().setEnabled(false);
+                loadFromCellMiaPanel.getFinishButton().setEnabled(false);
+                loadFromCellMiaPanel.getForwardButton().setEnabled(true);
+                loadFromCellMiaPanel.getCancelButton().setEnabled(false);
             }
         });
 
         //save the experiment once all data have been loaded
-        loadExperimentFromCellMiaPanel.getFinishButton().addActionListener(new ActionListener() {
+        loadFromCellMiaPanel.getFinishButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -241,7 +241,7 @@ public class LoadExperimentFromCellMiaController {
     private void setCellMiaData() {
 
         for (PlateCondition plateCondition : experiment.getPlateConditionCollection()) {
-            for (WellGui wellGui : cellMiaImagedPlateController.getCellMiaImagedPlatePanel().getWellGuiList()) {
+            for (WellGui wellGui : cellMiaImagedPlateController.getImagedPlatePanel().getWellGuiList()) {
 
                 //if the wellGui has a well with a NOT empty collection of wellHasImagingTypes, the well has been imaged
                 //if the wellGui has a rectangle, the well belongs to a certain condition
@@ -275,11 +275,11 @@ public class LoadExperimentFromCellMiaController {
         protected Void doInBackground() throws Exception {
 
             //disable the Finish button and show a waiting cursor
-            loadExperimentFromCellMiaPanel.getFinishButton().setEnabled(false);
+            loadFromCellMiaPanel.getFinishButton().setEnabled(false);
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             //show a progress bar (indeterminate)
-            loadExperimentFromCellMiaPanel.getjProgressBar1().setVisible(true);
-            loadExperimentFromCellMiaPanel.getjProgressBar1().setIndeterminate(true);
+            loadFromCellMiaPanel.getjProgressBar1().setVisible(true);
+            loadFromCellMiaPanel.getjProgressBar1().setIndeterminate(true);
 
             //INSERT experiment to DB
             experimentService.save(experiment);
@@ -291,10 +291,10 @@ public class LoadExperimentFromCellMiaController {
 
             //show back default cursor and hide the progress bar
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            loadExperimentFromCellMiaPanel.getjProgressBar1().setVisible(false);
+            loadFromCellMiaPanel.getjProgressBar1().setVisible(false);
             //update info for the user
             showMessage("Experiment was successfully saved to DB.", 1);
-            updateInfoLabel(loadExperimentFromCellMiaPanel.getInfolabel(), "Experiment was successfully saved to DB.");
+            updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Experiment was successfully saved to DB.");
         }
     }
 }

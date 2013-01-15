@@ -93,8 +93,8 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="imagingTypeComboBox" pref="221" max="32767" attributes="1"/>
-                                  <Component id="algorithmComboBox" alignment="0" pref="221" max="32767" attributes="1"/>
+                                  <Component id="imagingTypeComboBox" pref="213" max="32767" attributes="1"/>
+                                  <Component id="algorithmComboBox" alignment="0" pref="213" max="32767" attributes="1"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -149,7 +149,7 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Algorithm"/>
+                <Property name="text" type="java.lang.String" value="Dataset"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="algorithmComboBox">

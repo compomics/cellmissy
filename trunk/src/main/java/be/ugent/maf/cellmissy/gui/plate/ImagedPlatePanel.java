@@ -24,7 +24,7 @@ import java.util.Map;
  * This class is used in the loading data step: imaged wells are shown with related imaging types
  * @author Paola Masuzzo
  */
-public class CellMiaImagedPlatePanel extends AbstractPlatePanel {
+public class ImagedPlatePanel extends AbstractPlatePanel {
 
     private List<ImagingType> imagingTypeList;
     private ImagingType currentImagingType;
@@ -90,11 +90,11 @@ public class CellMiaImagedPlatePanel extends AbstractPlatePanel {
                     if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
                         g2d.setColor(GuiUtils.getAvailableColors()[plateConditions.indexOf(plateCondition) + 1]);
 
-                        int x = (int) wellGui.getEllipsi().get(0).getX() - CellMiaImagedPlatePanel.pixelsGrid / 2;
-                        int y = (int) wellGui.getEllipsi().get(0).getY() - CellMiaImagedPlatePanel.pixelsGrid / 2;
+                        int x = (int) wellGui.getEllipsi().get(0).getX() - ImagedPlatePanel.pixelsGrid / 2;
+                        int y = (int) wellGui.getEllipsi().get(0).getY() - ImagedPlatePanel.pixelsGrid / 2;
 
-                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + CellMiaImagedPlatePanel.pixelsGrid;
-                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + CellMiaImagedPlatePanel.pixelsGrid;
+                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + ImagedPlatePanel.pixelsGrid;
+                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + ImagedPlatePanel.pixelsGrid;
 
                         //create rectangle that sorrounds the wellGui and draw it
                         Rectangle rect = new Rectangle(x, y, width, height);
@@ -138,6 +138,7 @@ public class CellMiaImagedPlatePanel extends AbstractPlatePanel {
 
             // draw the labels on the plate
             if (wellGui.getRowNumber() == 1 || wellGui.getColumnNumber() == 1) {
+                g2d.setColor(GuiUtils.getAvailableColors()[0]);
                 drawPlateLabel(ellipsi.get(0), g2d, wellGui.getColumnNumber(), wellGui.getRowNumber());
             }
         }

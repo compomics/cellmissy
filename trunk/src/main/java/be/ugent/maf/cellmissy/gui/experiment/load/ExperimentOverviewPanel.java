@@ -4,7 +4,7 @@
  */
 
 /*
- * LoadExperimentPanel.java
+ * ExperimentOverviewPanel.java
  *
  * Created on Dec 18, 2012, 2:30:39 PM
  */
@@ -17,10 +17,10 @@ import javax.swing.JScrollPane;
  *
  * @author Paola Masuzzo
  */
-public class LoadExperimentPanel extends javax.swing.JPanel {
+public class ExperimentOverviewPanel extends javax.swing.JPanel {
 
-    /** Creates new form LoadExperimentPanel */
-    public LoadExperimentPanel() {
+    /** Creates new form ExperimentOverviewPanel */
+    public ExperimentOverviewPanel() {
         initComponents();
     }
 
@@ -34,10 +34,6 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
 
     public JList getProjectJList() {
         return projectJList;
-    }
-
-    public JScrollPane getjScrollPane3() {
-        return jScrollPane3;
     }
 
     /** This method is called from within the constructor to
@@ -76,7 +72,6 @@ public class LoadExperimentPanel extends javax.swing.JPanel {
         jScrollPane3.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
         conditionsList.setMinimumSize(new java.awt.Dimension(20, 20));
-        conditionsList.setPreferredSize(new java.awt.Dimension(20, 20));
         jScrollPane3.setViewportView(conditionsList);
 
         jLabel1.setText("Select a project");
