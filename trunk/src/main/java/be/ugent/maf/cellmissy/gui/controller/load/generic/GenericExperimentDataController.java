@@ -20,6 +20,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -73,6 +75,46 @@ public class GenericExperimentDataController {
     }
 
     /**
+     * this method checks experiment Info
+     * @return 
+     */
+    public List<String> setExperimentMetadata() {
+        Experiment experiment = loadExperimentFromGenericInputController.getExperiment();
+        List<String> messages = validateExperimentMetadata();
+        // check that info is not left blank
+        if (messages.isEmpty()) {
+            try {
+                // time frames
+                experiment.setTimeFrames(Integer.parseInt(experimentMetadataPanel.getTimeFramesTextField().getText()));
+                // interval
+                experiment.setExperimentInterval(Double.parseDouble(experimentMetadataPanel.getIntervalTextField().getText()));
+                // duration
+                experiment.setDuration(Double.parseDouble(experimentMetadataPanel.getDurationTextField().getText()));
+            } catch (NumberFormatException e) {
+                messages.add("Please insert valid experiment metadata");
+            }
+        }
+        return messages;
+    }
+
+    /**
+     * Validate Experiment Metadata 
+     * @return 
+     */
+    private List<String> validateExperimentMetadata() {
+        List<String> messages = new ArrayList<>();
+
+        String durationInfo = experimentMetadataPanel.getDurationTextField().getText();
+        String intervalInfo = experimentMetadataPanel.getIntervalTextField().getText();
+        String timeFramesInfo = experimentMetadataPanel.getTimeFramesTextField().getText();
+        // if one of these fields is empty, set boolean to false
+        if (durationInfo.equals("") || intervalInfo.equals("") || timeFramesInfo.equals("")) {
+            messages.add("Please insert all experiment metadata.");
+        }
+        return messages;
+    }
+
+    /**
      * 
      */
     private void initExperimentInfoPanel() {
@@ -82,16 +124,16 @@ public class GenericExperimentDataController {
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
 
-        //init experiment binding
-        //bind Duration
-        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentOverviewPanel.getExperimentJList(), BeanProperty.create("selectedElement.duration"), experimentMetadataPanel.getDurationTextField(), BeanProperty.create("text"), "durationbinding");
-        bindingGroup.addBinding(binding);
-        //bind Interval
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentOverviewPanel.getExperimentJList(), BeanProperty.create("selectedElement.experimentInterval"), experimentMetadataPanel.getIntervalTextField(), BeanProperty.create("text"), "intervalbinding");
-        bindingGroup.addBinding(binding);
-        //bind Time frames
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentOverviewPanel.getExperimentJList(), BeanProperty.create("selectedElement.timeFrames"), experimentMetadataPanel.getTimeFramesTextField(), BeanProperty.create("text"), "timeframesbinding");
-        bindingGroup.addBinding(binding);
+//        //init experiment binding
+//        //bind Duration
+//        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentOverviewPanel.getExperimentJList(), BeanProperty.create("selectedElement.duration"), experimentMetadataPanel.getDurationTextField(), BeanProperty.create("text"), "durationbinding");
+//        bindingGroup.addBinding(binding);
+//        //bind Interval
+//        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentOverviewPanel.getExperimentJList(), BeanProperty.create("selectedElement.experimentInterval"), experimentMetadataPanel.getIntervalTextField(), BeanProperty.create("text"), "intervalbinding");
+//        bindingGroup.addBinding(binding);
+//        //bind Time frames
+//        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentOverviewPanel.getExperimentJList(), BeanProperty.create("selectedElement.timeFrames"), experimentMetadataPanel.getTimeFramesTextField(), BeanProperty.create("text"), "timeframesbinding");
+//        bindingGroup.addBinding(binding);
 
         //do the binding
         bindingGroup.bind();
@@ -145,7 +187,7 @@ public class GenericExperimentDataController {
 
                 // show Conditions JList
                 showConditionsList();
-                loadExperimentFromGenericInputController.updateInfoLabel(loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getInfolabel(), "Add datasets and imaging types you want to import.");
+                loadExperimentFromGenericInputController.updateInfoLabel(loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getInfolabel(), "Add datasets and imaging types you want to import. Then select on an imaging type to start importing data.");
                 loadExperimentFromGenericInputController.enableButtons();
             }
         });
@@ -165,22 +207,5 @@ public class GenericExperimentDataController {
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, plateConditionBindingList, experimentOverviewPanel.getConditionsList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
-    }
-
-    /**
-     * this method checks experiment Info
-     * @return messages to show if validation was not successful 
-     */
-    private void setExperimentMetadata() {
-        Experiment experiment = loadExperimentFromGenericInputController.getExperiment();
-        List<String> messages = new ArrayList<>();
-        try {
-            // time frames
-            experiment.setTimeFrames(Integer.parseInt(experimentMetadataPanel.getTimeFramesTextField().getText()));
-            // interval
-            experiment.setExperimentInterval(Double.parseDouble(experimentMetadataPanel.getIntervalTextField().getText()));
-        } catch (NumberFormatException e) {
-            messages.add("Please insert Numbers!");
-        }
     }
 }

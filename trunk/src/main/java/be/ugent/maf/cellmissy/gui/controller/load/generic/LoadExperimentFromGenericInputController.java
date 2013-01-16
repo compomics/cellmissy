@@ -22,6 +22,8 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
@@ -173,6 +175,19 @@ public class LoadExperimentFromGenericInputController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                // warn the user that data was already loaded for the selected combination of well/dataset/imaging type
+                Object[] options = {"Continue", "Cancel"};
+                int showOptionDialog = JOptionPane.showOptionDialog(null, "Do you really want to reset everything?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                switch (showOptionDialog) {
+                    case 0:
+                        // reset
+                        genericImagedPlateController.reset();
+                        break;
+                    case 1:
+                        // cancel: do nothing
+                        return;
+                }
             }
         });
 
@@ -183,13 +198,24 @@ public class LoadExperimentFromGenericInputController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //set motility Data
-                setMotilityData();
-                //set experiment status to "performed" and save it to DB
-                experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
-                //launch a swing worker to save the experiment in the background thread
-                SaveExperimentWorker worker = new SaveExperimentWorker();
-                worker.execute();
+                // validate experiment
+                // if everything is valid, save the experiment, else show a message
+                List<String> messages = genericExperimentDataController.setExperimentMetadata();
+                if (messages.isEmpty()) {
+                    //set motility Data
+                    setMotilityData();
+                    //set experiment status to "performed" and save it to DB
+                    experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
+                    //launch a swing worker to save the experiment in the background thread
+                    SaveExperimentWorker worker = new SaveExperimentWorker();
+                    worker.execute();
+                } else {
+                    String message = "";
+                    for (String string : messages) {
+                        message += string + "\n";
+                    }
+                    showMessage(message, JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
 
@@ -258,6 +284,7 @@ public class LoadExperimentFromGenericInputController {
                 if (!datasetName.isEmpty()) {
                     Algorithm newAlgorithm = new Algorithm();
                     newAlgorithm.setAlgorithmName(datasetName);
+                    newAlgorithm.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
                     // add algo to list and to data tree
                     addDataset(newAlgorithm);
                     loadFromGenericInputPanel.getDatasetNameTextField().setText("");
@@ -281,6 +308,7 @@ public class LoadExperimentFromGenericInputController {
                     if (!imagingName.isEmpty()) {
                         ImagingType newImagingType = new ImagingType();
                         newImagingType.setName(imagingName);
+                        newImagingType.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
                         // exposure time and light intensity are not set
                         // add imaging type to list and to data tree
                         addImagingType(newImagingType);
@@ -388,12 +416,11 @@ public class LoadExperimentFromGenericInputController {
 
         @Override
         protected void done() {
-
             //show back default cursor and hide the progress bar
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             loadFromGenericInputPanel.getjProgressBar1().setVisible(false);
             //update info for the user
-            showMessage("Experiment was successfully saved to DB.", 1);
+            showMessage("Experiment was successfully saved to DB.", JOptionPane.INFORMATION_MESSAGE);
             updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Experiment was successfully saved to DB.");
         }
     }

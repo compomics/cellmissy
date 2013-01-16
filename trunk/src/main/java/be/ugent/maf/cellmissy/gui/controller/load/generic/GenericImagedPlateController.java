@@ -27,9 +27,8 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -55,7 +54,6 @@ public class GenericImagedPlateController {
     //model
     private ObservableList<Algorithm> algorithmsBindingList;
     private ObservableList<ImagingType> imagingTypesBindingList;
-    private Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> algoMap;
     private BindingGroup bindingGroup;
     private ObservableList<TimeStep> timeStepsBindingList;
     private JTableBinding timeStepsTableBinding;
@@ -122,6 +120,22 @@ public class GenericImagedPlateController {
     }
 
     /**
+     * Reset data loading and plate view (e.g. if user was importing data from a wrong folder and so on..)
+     */
+    public void reset() {
+        // empty timesteps list
+        timeStepsBindingList.clear();
+        // reset view on the plate
+        // empty wellhasimagingtype collection of each well
+        List<WellGui> wellGuiList = imagedPlatePanel.getWellGuiList();
+        for (WellGui wellGui : wellGuiList) {
+            wellGui.getWell().getWellHasImagingTypeCollection().clear();
+        }
+        // repain the plate view
+        imagedPlatePanel.repaint();
+    }
+
+    /**
      * Initialize plate view
      */
     private void initLoadDataPlatePanel() {
@@ -156,9 +170,9 @@ public class GenericImagedPlateController {
                     if (selectedWellGui != null) {
                         // check if well belongs to condition (otherwise selection is not valid)
                         if (validateSelection(selectedWellGui)) {
-                            JFileChooser chooseRawDataFile = new JFileChooser();
-                            chooseRawDataFile.setFileFilter(new FileFilter() {
-                                // to select only txt files
+                            JFileChooser rawDataChooser = new JFileChooser();
+                            // to select only txt files
+                            rawDataChooser.setFileFilter(new FileFilter() {
 
                                 @Override
                                 public boolean accept(File f) {
@@ -177,72 +191,129 @@ public class GenericImagedPlateController {
                             newWellHasImagingType.setImagingType(currentImagingType);
                             newWellHasImagingType.setAlgorithm(currentAlgorithm);
                             newWellHasImagingType.setWell(selectedWellGui.getWell());
-
+                            // update relation with algorithm and imaging type
+                            currentAlgorithm.getWellHasImagingTypeCollection().add(newWellHasImagingType);
+                            currentImagingType.getWellHasImagingTypeCollection().add(newWellHasImagingType);
                             // get the collection of WellHasImagingType for the selected well
                             Collection<WellHasImagingType> wellHasImagingTypeCollection = selectedWellGui.getWell().getWellHasImagingTypeCollection();
                             // check if the wellHasImagingType was already processed
                             // this is comparing objects with column and row numbers, and algorithm and imaging types
                             if (!wellHasImagingTypeCollection.contains(newWellHasImagingType)) {
-                                int returnVal = chooseRawDataFile.showOpenDialog(loadExperimentFromGenericInputController.getCellMissyFrame());
-                                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                                    // file to parse 
-                                    File bulkCellFile = chooseRawDataFile.getSelectedFile();
-                                    // if not, parse raw data for selected well
-                                    // set the timeStepCollection and add the wellHasImagingType to the collection
-                                    List<TimeStep> timeSteps = genericInputFileParser.parseBulkCellFile(bulkCellFile);
-                                    newWellHasImagingType.setTimeStepCollection(timeSteps);
-                                    wellHasImagingTypeCollection.add(newWellHasImagingType);
-                                    for (TimeStep timeStep : timeSteps) {
-                                        timeStep.setWellHasImagingType(newWellHasImagingType);
-                                    }
-                                    // if the list is not empty and does not contain the selected well, clear it before adding the new timeSteps
-                                    if (!timeStepsBindingList.isEmpty() && !containsWell(selectedWellGui)) {
-                                        timeStepsBindingList.clear();
-                                    }
-                                    timeStepsBindingList.addAll(timeSteps);
-                                    // show imaged well with a different color
+                                // if it was not already processed, choose a file to parse
+                                chooseAndLoadData(rawDataChooser, newWellHasImagingType, selectedWellGui);
+                                if (selectedWellGui.getEllipsi().size() != imagingTypesBindingList.size()) {
+                                    // highlight imaged well
                                     highlightImagedWell(selectedWellGui);
-                                } else {
-                                    Object[] options = {"Overwrite", "See loaded data", "Cancel"};
-                                    int showOptionDialog = JOptionPane.showOptionDialog(null, "Data already loaded for this well.\nWhat do you want to do?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
-                                    switch (showOptionDialog) {
-                                        case 0:
-
-                                            break;
-                                        case 1:
-                                            // empty the list
-                                            timeStepsBindingList.clear();
-                                            // retrieve the already loaded data
-                                            selectedWellGui.getWell().getWellHasImagingTypeCollection();
-                                            for (WellHasImagingType wellHasImagingType : wellHasImagingTypeCollection) {
-                                                for (TimeStep timeStep : wellHasImagingType.getTimeStepCollection()) {
-                                                    timeStepsBindingList.add(timeStep);
-                                                }
-                                            }
-                                            break;
-                                        case 2:
-                                            return;
-
-                                    }
-
                                 }
-
                                 // check if table still has to be initialized
                                 if (timeStepsTableBinding == null) {
                                     showRawDataInTable();
                                 }
                             } else {
-                                loadExperimentFromGenericInputController.showMessage("Open command cancelled by user", JOptionPane.INFORMATION_MESSAGE);
+                                // warn the user that data was already loaded for the selected combination of well/dataset/imaging type
+                                Object[] options = {"Overwrite", "See loaded data", "Cancel"};
+                                int showOptionDialog = JOptionPane.showOptionDialog(null, "Data already loaded for this well / dataset / imaging type.\nWhat do you want to do now?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+                                switch (showOptionDialog) {
+                                    case 0:
+                                        // overwrite loaded data:
+                                        // remove from the list the old data
+                                        removeFromList(newWellHasImagingType);
+                                        // remove the data from the well
+                                        selectedWellGui.getWell().getWellHasImagingTypeCollection().remove(newWellHasImagingType);
+                                        // choose another file to parse (another dataset to load)
+                                        chooseAndLoadData(rawDataChooser, newWellHasImagingType, selectedWellGui);
+                                        break;
+                                    case 1:
+                                        // see again data previously loaded
+                                        reloadData(selectedWellGui);
+                                        break;
+                                    case 2:
+                                        // cancel: do nothing
+                                        return;
+                                }
                             }
+                        } else {
+                            //show a warning message
+                            String message = "The well you selected does not belong to a condition.\nPlease select another well.";
+                            loadExperimentFromGenericInputController.showMessage(message, JOptionPane.WARNING_MESSAGE);
                         }
-                    } else {
-                        //show a warning message
-                        String message = "The well you selected does not belong to a condition.\nPlease select another well.";
-                        loadExperimentFromGenericInputController.showMessage(message, JOptionPane.WARNING_MESSAGE);
                     }
                 }
             }
         });
+    }
+
+    /**
+     * This is parsing a certain file, for a certain selected well and a wellHasImagingType (i.e. dataset and imaging type are chosen)
+     * @param bulkCellFile
+     * @param newWellHasImagingType
+     * @param selectedWellGui 
+     */
+    private void loadData(File bulkCellFile, WellHasImagingType newWellHasImagingType, WellGui selectedWellGui) {
+        Collection<WellHasImagingType> wellHasImagingTypeCollection = selectedWellGui.getWell().getWellHasImagingTypeCollection();
+        // parse raw data for selected well
+        // set the timeStepCollection and add the wellHasImagingType to the collection
+        List<TimeStep> timeSteps = genericInputFileParser.parseBulkCellFile(bulkCellFile);
+        newWellHasImagingType.setTimeStepCollection(timeSteps);
+        wellHasImagingTypeCollection.add(newWellHasImagingType);
+        for (TimeStep timeStep : timeSteps) {
+            timeStep.setWellHasImagingType(newWellHasImagingType);
+        }
+        // if the list is not empty and does not contain the selected well, clear it before adding the new timeSteps
+        if (!timeStepsBindingList.isEmpty() && !containsWell(selectedWellGui)) {
+            timeStepsBindingList.clear();
+        }
+        timeStepsBindingList.addAll(timeSteps);
+        //if other data was already imported, add it to the list:
+        reloadData(selectedWellGui);
+    }
+
+    /**
+     * Opening a dialog to select file to parse and load data parsing the selected file
+     * @param rawDataChooser
+     * @param newWellHasImagingType
+     * @param selectedWellGui 
+     */
+    private void chooseAndLoadData(JFileChooser rawDataChooser, WellHasImagingType newWellHasImagingType, WellGui selectedWellGui) {
+        int returnVal = rawDataChooser.showOpenDialog(loadExperimentFromGenericInputController.getCellMissyFrame());
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            // load selected data
+            // file to parse 
+            File bulkCellFile = rawDataChooser.getSelectedFile();
+            loadData(bulkCellFile, newWellHasImagingType, selectedWellGui);
+        } else {
+            loadExperimentFromGenericInputController.showMessage("Open command cancelled by user", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    /**
+     * Reload data already parsed for a selected well
+     * @param selectedWellGui 
+     */
+    private void reloadData(WellGui selectedWellGui) {
+        Collection<WellHasImagingType> wellHasImagingTypeCollection = selectedWellGui.getWell().getWellHasImagingTypeCollection();
+        // empty the list
+        timeStepsBindingList.clear();
+        // retrieve the already loaded data
+        selectedWellGui.getWell().getWellHasImagingTypeCollection();
+        for (WellHasImagingType wellHasImagingType : wellHasImagingTypeCollection) {
+            for (TimeStep timeStep : wellHasImagingType.getTimeStepCollection()) {
+                timeStepsBindingList.add(timeStep);
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param wellHasImagingTypeToOverwrite 
+     */
+    private void removeFromList(WellHasImagingType wellHasImagingTypeToOverwrite) {
+        Iterator<TimeStep> iterator = timeStepsBindingList.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().getWellHasImagingType().equals(wellHasImagingTypeToOverwrite)) {
+                iterator.remove();
+            }
+        }
     }
 
     /**
@@ -266,8 +337,6 @@ public class GenericImagedPlateController {
      * Initialize panel with datasets and imaging types information (user interaction is here required)
      */
     private void initAlgoImagingPanel() {
-        // init map
-        algoMap = new HashMap<>();
         //init timeStepsBindingList
         timeStepsBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
         // init algo list
@@ -295,7 +364,6 @@ public class GenericImagedPlateController {
      * Show Area values in table
      */
     private void showRawDataInTable() {
-
         //table binding
         timeStepsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, timeStepsBindingList, loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getRawDataTable());
         //add column bindings
@@ -354,7 +422,6 @@ public class GenericImagedPlateController {
             // add the new Ellipse2D to the ellipsi List
             ellipsi.add(newEllipse2D);
         }
-
         // this calls the paintComponent method
         imagedPlatePanel.repaint();
     }

@@ -65,13 +65,13 @@ public class ExperimentMetadataPanel extends javax.swing.JPanel {
         setMinimumSize(new java.awt.Dimension(20, 20));
         setPreferredSize(new java.awt.Dimension(20, 20));
 
-        durationLabel.setText("Duration");
+        durationLabel.setText("Duration*");
 
         durationTextField.setOpaque(false);
 
-        intervalLabel.setText("Interval");
+        intervalLabel.setText("Interval*");
 
-        timeFramesLabel.setText("Time Frames");
+        timeFramesLabel.setText("Time Frames*");
 
         intervalTextField.setOpaque(false);
 
@@ -100,7 +100,7 @@ public class ExperimentMetadataPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(intervalUnitComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addGap(35, 35, 35))
+                .addGap(111, 111, 111))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {durationTextField, intervalTextField, timeFramesTextField});
@@ -122,7 +122,7 @@ public class ExperimentMetadataPanel extends javax.swing.JPanel {
                     .addComponent(durationLabel)
                     .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(145, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {durationTextField, intervalTextField, timeFramesTextField});
