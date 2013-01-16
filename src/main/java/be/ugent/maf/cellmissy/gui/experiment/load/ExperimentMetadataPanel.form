@@ -52,7 +52,7 @@
                   <Component id="intervalUnitComboBox" min="-2" pref="122" max="-2" attributes="0"/>
                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="111" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -76,7 +76,7 @@
                   <Component id="durationTextField" linkSize="3" alignment="3" min="-2" max="-2" attributes="1"/>
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="1"/>
               </Group>
-              <EmptySpace pref="29" max="32767" attributes="0"/>
+              <EmptySpace pref="145" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -84,7 +84,7 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="durationLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Duration"/>
+        <Property name="text" type="java.lang.String" value="Duration*"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="durationTextField">
@@ -94,12 +94,12 @@
     </Component>
     <Component class="javax.swing.JLabel" name="intervalLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Interval"/>
+        <Property name="text" type="java.lang.String" value="Interval*"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="timeFramesLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Time Frames"/>
+        <Property name="text" type="java.lang.String" value="Time Frames*"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="intervalTextField">
