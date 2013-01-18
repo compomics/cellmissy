@@ -15,16 +15,13 @@ import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl.CycleTimeUnit;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
@@ -32,8 +29,6 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.jdesktop.beansbinding.Binding;
-import org.jdesktop.beansbinding.Bindings;
 
 /**
  *
@@ -124,17 +119,6 @@ public class GenericExperimentDataController {
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
 
-//        //init experiment binding
-//        //bind Duration
-//        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentOverviewPanel.getExperimentJList(), BeanProperty.create("selectedElement.duration"), experimentMetadataPanel.getDurationTextField(), BeanProperty.create("text"), "durationbinding");
-//        bindingGroup.addBinding(binding);
-//        //bind Interval
-//        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentOverviewPanel.getExperimentJList(), BeanProperty.create("selectedElement.experimentInterval"), experimentMetadataPanel.getIntervalTextField(), BeanProperty.create("text"), "intervalbinding");
-//        bindingGroup.addBinding(binding);
-//        //bind Time frames
-//        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentOverviewPanel.getExperimentJList(), BeanProperty.create("selectedElement.timeFrames"), experimentMetadataPanel.getTimeFramesTextField(), BeanProperty.create("text"), "timeframesbinding");
-//        bindingGroup.addBinding(binding);
-
         //do the binding
         bindingGroup.bind();
 
@@ -183,11 +167,13 @@ public class GenericExperimentDataController {
                 plateConditionList.addAll(loadExperimentFromGenericInputController.getExperiment().getPlateConditionCollection());
 
                 loadExperimentFromGenericInputController.getImagedPlatePanel().setExperiment(loadExperimentFromGenericInputController.getExperiment());
+                Dimension parentDimension = loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getPlateViewParentPanel().getSize();
+                loadExperimentFromGenericInputController.getImagedPlatePanel().initPanel(experimentBindingList.get(locationToIndex).getPlateFormat(), parentDimension);
                 loadExperimentFromGenericInputController.getImagedPlatePanel().repaint();
 
                 // show Conditions JList
                 showConditionsList();
-                loadExperimentFromGenericInputController.updateInfoLabel(loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getInfolabel(), "Add datasets and imaging types you want to import. Then select on an imaging type to start importing data.");
+                loadExperimentFromGenericInputController.updateInfoLabel(loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getInfolabel(), "Add datasets and imaging types you want to import. Then select an imaging type to start importing data.");
                 loadExperimentFromGenericInputController.enableButtons();
             }
         });
