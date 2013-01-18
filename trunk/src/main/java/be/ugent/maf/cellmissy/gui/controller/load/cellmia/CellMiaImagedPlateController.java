@@ -207,7 +207,7 @@ public class CellMiaImagedPlateController {
     /**
      * if a selection is not validated, reset plate view (ONLY for current imaging type)
      */
-    public void onCancel() {
+    private void onCancel() {
         for (WellGui wellGui : imagedPlatePanel.getWellGuiList()) {
             //empty the collection of WellHasImagingType (so color is set to default) but ONLY for current Imaging Type
             Iterator<WellHasImagingType> iterator = wellGui.getWell().getWellHasImagingTypeCollection().iterator();

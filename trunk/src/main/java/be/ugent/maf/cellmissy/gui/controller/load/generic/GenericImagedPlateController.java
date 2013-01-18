@@ -120,6 +120,24 @@ public class GenericImagedPlateController {
     }
 
     /**
+     * This is checking that each well on the plate that has a condition, contains a collection of WellhasImagingType not empty, i.e. with some data loaded
+     * @return 
+     */
+    public boolean validateDataLoading() {
+        boolean isDataLoadingValid = true;
+        for (WellGui wellGui : imagedPlatePanel.getWellGuiList()) {
+            // wellGui with a condition on the plate
+            if (wellGui.getRectangle() != null) {
+                if (wellGui.getWell().getWellHasImagingTypeCollection().isEmpty()) {
+                    isDataLoadingValid = false;
+                    break;
+                }
+            }
+        }
+        return isDataLoadingValid;
+    }
+
+    /**
      * Reset data loading and plate view (e.g. if user was importing data from a wrong folder and so on..)
      */
     public void reset() {
@@ -130,6 +148,7 @@ public class GenericImagedPlateController {
         List<WellGui> wellGuiList = imagedPlatePanel.getWellGuiList();
         for (WellGui wellGui : wellGuiList) {
             wellGui.getWell().getWellHasImagingTypeCollection().clear();
+            onCancel(wellGui);
         }
         // repain the plate view
         imagedPlatePanel.repaint();
@@ -170,65 +189,68 @@ public class GenericImagedPlateController {
                     if (selectedWellGui != null) {
                         // check if well belongs to condition (otherwise selection is not valid)
                         if (validateSelection(selectedWellGui)) {
-                            JFileChooser rawDataChooser = new JFileChooser();
-                            // to select only txt files
-                            rawDataChooser.setFileFilter(new FileFilter() {
-
-                                @Override
-                                public boolean accept(File f) {
-                                    return f.getName().toLowerCase().endsWith(".txt");
-                                }
-
-                                @Override
-                                public String getDescription() {
-                                    return ("(.txt)");
-                                }
-                            });
-
-                            // new wellHasImagingType (new sample for selected algorithm/imaging type)
-                            WellHasImagingType newWellHasImagingType = new WellHasImagingType();
-                            // set imaging type, algorithm and well (column, row numbers)
-                            newWellHasImagingType.setImagingType(currentImagingType);
-                            newWellHasImagingType.setAlgorithm(currentAlgorithm);
-                            newWellHasImagingType.setWell(selectedWellGui.getWell());
-                            // update relation with algorithm and imaging type
-                            currentAlgorithm.getWellHasImagingTypeCollection().add(newWellHasImagingType);
-                            currentImagingType.getWellHasImagingTypeCollection().add(newWellHasImagingType);
+                            // new wellHasImagingType (for selected well and current imaging type/algorithm)
+                            WellHasImagingType newWellHasImagingType = new WellHasImagingType(selectedWellGui.getWell(), currentImagingType, currentAlgorithm);
                             // get the collection of WellHasImagingType for the selected well
                             Collection<WellHasImagingType> wellHasImagingTypeCollection = selectedWellGui.getWell().getWellHasImagingTypeCollection();
+                            // 
+                            reloadData(selectedWellGui);
                             // check if the wellHasImagingType was already processed
-                            // this is comparing objects with column and row numbers, and algorithm and imaging types
+                            // this is comparing objects with column, row numbers, and algorithm,imaging types
                             if (!wellHasImagingTypeCollection.contains(newWellHasImagingType)) {
                                 // if it was not already processed, choose a file to parse
-                                chooseAndLoadData(rawDataChooser, newWellHasImagingType, selectedWellGui);
-                                if (selectedWellGui.getEllipsi().size() != imagingTypesBindingList.size()) {
+                                File bulkCellFile = chooseData();
+                                if (bulkCellFile != null) {
+                                    // load data
+                                    loadData(bulkCellFile, newWellHasImagingType, selectedWellGui);
+                                    // update relation with algorithm and imaging type
+                                    currentAlgorithm.getWellHasImagingTypeCollection().add(newWellHasImagingType);
+                                    currentImagingType.getWellHasImagingTypeCollection().add(newWellHasImagingType);
+                                    // if (selectedWellGui.getEllipsi().size() < imagingTypesBindingList.size()) {
                                     // highlight imaged well
                                     highlightImagedWell(selectedWellGui);
-                                }
-                                // check if table still has to be initialized
-                                if (timeStepsTableBinding == null) {
-                                    showRawDataInTable();
+                                    //  }
+                                    // check if table still has to be initialized
+                                    if (timeStepsTableBinding == null) {
+                                        showRawDataInTable();
+                                    }
                                 }
                             } else {
                                 // warn the user that data was already loaded for the selected combination of well/dataset/imaging type
-                                Object[] options = {"Overwrite", "See loaded data", "Cancel"};
+                                Object[] options = {"Overwrite", "Clear data", "Cancel"};
                                 int showOptionDialog = JOptionPane.showOptionDialog(null, "Data already loaded for this well / dataset / imaging type.\nWhat do you want to do now?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
                                 switch (showOptionDialog) {
-                                    case 0:
-                                        // overwrite loaded data:
-                                        // remove from the list the old data
-                                        removeFromList(newWellHasImagingType);
-                                        // remove the data from the well
-                                        selectedWellGui.getWell().getWellHasImagingTypeCollection().remove(newWellHasImagingType);
+                                    case 0: // overwrite loaded data:      
                                         // choose another file to parse (another dataset to load)
-                                        chooseAndLoadData(rawDataChooser, newWellHasImagingType, selectedWellGui);
+                                        File newFile = chooseData();
+                                        if (newFile != null) {
+                                            // remove from the list the old data
+                                            removeOldDataFromList(newWellHasImagingType);
+                                            // remove the data from the well
+                                            selectedWellGui.getWell().getWellHasImagingTypeCollection().remove(newWellHasImagingType);
+                                            // update relation with algorithm and imaging type
+                                            currentAlgorithm.getWellHasImagingTypeCollection().remove(newWellHasImagingType);
+                                            currentImagingType.getWellHasImagingTypeCollection().remove(newWellHasImagingType);
+                                            // load new data
+                                            loadData(newFile, newWellHasImagingType, selectedWellGui);
+                                        }
                                         break;
-                                    case 1:
-                                        // see again data previously loaded
-                                        reloadData(selectedWellGui);
+                                    case 1: // clear data for current algorithm/imaging type
+                                        if (!isNotLast(selectedWellGui)) {
+                                            removeOldDataFromList(newWellHasImagingType);
+                                            // remove the data from the well
+                                            selectedWellGui.getWell().getWellHasImagingTypeCollection().remove(newWellHasImagingType);
+                                            // update relation with algorithm and imaging type
+                                            currentAlgorithm.getWellHasImagingTypeCollection().remove(newWellHasImagingType);
+                                            currentImagingType.getWellHasImagingTypeCollection().remove(newWellHasImagingType);
+                                            onCancel(selectedWellGui);
+                                        } else {
+                                            List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(selectedWellGui.getWell().getWellHasImagingTypeCollection());
+                                            ImagingType lastImagingType = uniqueImagingTypes.get(uniqueImagingTypes.size() - 1);
+                                            loadExperimentFromGenericInputController.showMessage("Please remove first last added imaging type " + "(" + lastImagingType.getName() + ")", JOptionPane.WARNING_MESSAGE);
+                                        }
                                         break;
-                                    case 2:
-                                        // cancel: do nothing
+                                    case 2: // cancel: do nothing
                                         return;
                                 }
                             }
@@ -252,8 +274,8 @@ public class GenericImagedPlateController {
     private void loadData(File bulkCellFile, WellHasImagingType newWellHasImagingType, WellGui selectedWellGui) {
         Collection<WellHasImagingType> wellHasImagingTypeCollection = selectedWellGui.getWell().getWellHasImagingTypeCollection();
         // parse raw data for selected well
-        // set the timeStepCollection and add the wellHasImagingType to the collection
         List<TimeStep> timeSteps = genericInputFileParser.parseBulkCellFile(bulkCellFile);
+        // set the timeStepCollection and add the wellHasImagingType to the collection
         newWellHasImagingType.setTimeStepCollection(timeSteps);
         wellHasImagingTypeCollection.add(newWellHasImagingType);
         for (TimeStep timeStep : timeSteps) {
@@ -264,8 +286,6 @@ public class GenericImagedPlateController {
             timeStepsBindingList.clear();
         }
         timeStepsBindingList.addAll(timeSteps);
-        //if other data was already imported, add it to the list:
-        reloadData(selectedWellGui);
     }
 
     /**
@@ -274,16 +294,31 @@ public class GenericImagedPlateController {
      * @param newWellHasImagingType
      * @param selectedWellGui 
      */
-    private void chooseAndLoadData(JFileChooser rawDataChooser, WellHasImagingType newWellHasImagingType, WellGui selectedWellGui) {
-        int returnVal = rawDataChooser.showOpenDialog(loadExperimentFromGenericInputController.getCellMissyFrame());
+    private File chooseData() {
+        File bulkCellFile = null;
+        JFileChooser chooser = new JFileChooser();
+        // to select only txt files
+        chooser.setFileFilter(new FileFilter() {
+
+            @Override
+            public boolean accept(File f) {
+                return f.getName().toLowerCase().endsWith(".txt");
+            }
+
+            @Override
+            public String getDescription() {
+                return ("(.txt)");
+            }
+        });
+        int returnVal = chooser.showOpenDialog(loadExperimentFromGenericInputController.getCellMissyFrame());
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             // load selected data
             // file to parse 
-            File bulkCellFile = rawDataChooser.getSelectedFile();
-            loadData(bulkCellFile, newWellHasImagingType, selectedWellGui);
+            bulkCellFile = chooser.getSelectedFile();
         } else {
             loadExperimentFromGenericInputController.showMessage("Open command cancelled by user", JOptionPane.INFORMATION_MESSAGE);
         }
+        return bulkCellFile;
     }
 
     /**
@@ -291,11 +326,9 @@ public class GenericImagedPlateController {
      * @param selectedWellGui 
      */
     private void reloadData(WellGui selectedWellGui) {
-        Collection<WellHasImagingType> wellHasImagingTypeCollection = selectedWellGui.getWell().getWellHasImagingTypeCollection();
         // empty the list
         timeStepsBindingList.clear();
-        // retrieve the already loaded data
-        selectedWellGui.getWell().getWellHasImagingTypeCollection();
+        Collection<WellHasImagingType> wellHasImagingTypeCollection = selectedWellGui.getWell().getWellHasImagingTypeCollection();
         for (WellHasImagingType wellHasImagingType : wellHasImagingTypeCollection) {
             for (TimeStep timeStep : wellHasImagingType.getTimeStepCollection()) {
                 timeStepsBindingList.add(timeStep);
@@ -304,10 +337,10 @@ public class GenericImagedPlateController {
     }
 
     /**
-     * 
+     * remove timeSteps from List: this is called when the user wants to overwrite data or to clear data.
      * @param wellHasImagingTypeToOverwrite 
      */
-    private void removeFromList(WellHasImagingType wellHasImagingTypeToOverwrite) {
+    private void removeOldDataFromList(WellHasImagingType wellHasImagingTypeToOverwrite) {
         Iterator<TimeStep> iterator = timeStepsBindingList.iterator();
         while (iterator.hasNext()) {
             if (iterator.next().getWellHasImagingType().equals(wellHasImagingTypeToOverwrite)) {
@@ -331,6 +364,90 @@ public class GenericImagedPlateController {
             }
         }
         return containsWell;
+    }
+
+    /**
+     * 
+     * @param selectedWellGui 
+     */
+    private void highlightImagedWell(WellGui selectedWellGui) {
+        List<Ellipse2D> ellipsi = selectedWellGui.getEllipsi();
+        Collection<WellHasImagingType> wellHasImagingTypeCollection = selectedWellGui.getWell().getWellHasImagingTypeCollection();
+        List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(wellHasImagingTypeCollection);
+        // if size is one, only one imaging type was processed: do not add eny ellipsi
+        if (uniqueImagingTypes.size() != 1) {
+            if (ellipsi.size() < uniqueImagingTypes.size()) {
+                int lastIndex = uniqueImagingTypes.size() - 2;
+                Ellipse2D lastEllipse = ellipsi.get(lastIndex);
+                // calculate factors for new ellipse
+                double size = lastEllipse.getHeight();
+                double newSize = (size / uniqueImagingTypes.size());
+                double newTopLeftX = lastEllipse.getCenterX() - (newSize / 2);
+                double newTopLeftY = lastEllipse.getCenterY() - (newSize / 2);
+                if (newSize != size) {
+                    Ellipse2D ellipseToAdd = new Ellipse2D.Double(newTopLeftX, newTopLeftY, newSize, newSize);
+                    // add the new Ellipse2D to the ellipsi List
+                    ellipsi.add(ellipseToAdd);
+                }
+            }
+        }
+        imagedPlatePanel.repaint();
+    }
+
+    /**
+     * On cancel: delete data and, if necessary, repaint the plate view
+     * @param wellGui 
+     */
+    private void onCancel(WellGui wellGui) {
+        Collection<WellHasImagingType> wellHasImagingTypeCollection = wellGui.getWell().getWellHasImagingTypeCollection();
+        Iterator<WellHasImagingType> iterator = wellHasImagingTypeCollection.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().getImagingType().equals(imagedPlatePanel.getCurrentImagingType())) {
+                iterator.remove();
+            }
+        }
+        // get unique imaging types from the collection
+        List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(wellHasImagingTypeCollection);
+        // index of last added ellipse
+        int lastIndex = uniqueImagingTypes.size();
+        // if the ellipse is the first one, do not remove it, neither if it still contains the current imaging type
+        if (lastIndex != 0 && !containsImagingType(wellHasImagingTypeCollection, currentImagingType)) {
+            // ellipse to remove
+            Ellipse2D ellipseToRemove = wellGui.getEllipsi().get(lastIndex);
+            wellGui.getEllipsi().remove(ellipseToRemove);
+        }
+        imagedPlatePanel.repaint();
+    }
+
+    /**
+     * Check if the imaging type the user is attempting to delete is the first one
+     * @return 
+     */
+    private boolean isNotLast(WellGui wellGui) {
+        Collection<WellHasImagingType> wellHasImagingTypeCollection = wellGui.getWell().getWellHasImagingTypeCollection();
+        List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(wellHasImagingTypeCollection);
+        boolean isNotLast = false;
+        int numberOfImagingTypes = uniqueImagingTypes.size();
+        int currentImagingIndex = uniqueImagingTypes.indexOf(currentImagingType);
+        if (numberOfImagingTypes != 1 && currentImagingIndex < uniqueImagingTypes.size() - 1) {
+            isNotLast = true;
+        }
+        return isNotLast;
+    }
+
+    /**
+     * Check if a collection of wellhasImagingTypes contains a certain imaging type
+     * @param wellHasImagingTypes
+     * @param imagingType
+     * @return 
+     */
+    private boolean containsImagingType(Collection<WellHasImagingType> wellHasImagingTypes, ImagingType imagingType) {
+        for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
+            if (wellHasImagingType.getImagingType().equals(imagingType)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -402,27 +519,5 @@ public class GenericImagedPlateController {
 
         bindingGroup.addBinding(timeStepsTableBinding);
         bindingGroup.bind();
-    }
-
-    /**
-     * 
-     * @param selectedWellGui 
-     */
-    private void highlightImagedWell(WellGui selectedWellGui) {
-        List<Ellipse2D> ellipsi = selectedWellGui.getEllipsi();
-        // get the bigger ellipsi and calculate factors for the new ones (concentric wells)
-        Ellipse2D ellipse2D = ellipsi.get(0);
-        double size = ellipse2D.getHeight();
-        double newSize = (size / imagedPlatePanel.getUniqueImagingTypes(selectedWellGui.getWell().getWellHasImagingTypeCollection()).size());
-        double newTopLeftX = ellipse2D.getCenterX() - (newSize / 2);
-        double newTopLeftY = ellipse2D.getCenterY() - (newSize / 2);
-
-        if (newSize != size) {
-            Ellipse2D newEllipse2D = new Ellipse2D.Double(newTopLeftX, newTopLeftY, newSize, newSize);
-            // add the new Ellipse2D to the ellipsi List
-            ellipsi.add(newEllipse2D);
-        }
-        // this calls the paintComponent method
-        imagedPlatePanel.repaint();
     }
 }

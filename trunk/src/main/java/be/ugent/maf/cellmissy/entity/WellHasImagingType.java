@@ -78,6 +78,12 @@ public class WellHasImagingType implements Serializable {
         this.imagingType = imagingType;
     }
 
+    public WellHasImagingType(Well well, ImagingType imagingType, Algorithm algorithm) {
+        this.well = well;
+        this.imagingType = imagingType;
+        this.algorithm = algorithm;
+    }
+
     public WellHasImagingType(Integer wellHasImagingTypeid) {
         this.wellHasImagingTypeid = wellHasImagingTypeid;
     }

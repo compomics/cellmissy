@@ -293,8 +293,11 @@ public class DataAnalysisController {
                 dataAnalysisPanel.getImagingTypeComboBox().setSelectedIndex(0);
                 //show conditions for selected experiment
                 showConditions();
+                Dimension parentDimension = dataAnalysisPanel.getAnalysisPlateParentPanel().getSize();
+                analysisPlatePanel.initPanel(experiment.getPlateFormat(), parentDimension);
                 //show conditions in the plate panel (with rectangles and colors)
                 analysisPlatePanel.setExperiment(experiment);
+                dataAnalysisPanel.getAnalysisPlateParentPanel().repaint();
                 analysisPlatePanel.repaint();
             }
         });

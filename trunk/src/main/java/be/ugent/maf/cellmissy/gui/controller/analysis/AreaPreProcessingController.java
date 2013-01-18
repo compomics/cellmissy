@@ -864,7 +864,17 @@ public class AreaPreProcessingController {
                         // create and execute a swinger
                         FetchAllConditionsTimeStepsSwingWorker fetchAllConditionsSwingWorker = new FetchAllConditionsTimeStepsSwingWorker();
                         fetchAllConditionsSwingWorker.execute();
-                    } else if (areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected()) {
+                    } else {
+                        // enable now tab for analysis
+                        areaAnalysisPanel.getBulkTabbedPane().setEnabledAt(3, true);
+                        // enable check box to show error bars
+                        areaAnalysisPanel.getPlotErrorBarsCheckBox().setEnabled(true);
+                        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(dataAnalysisController.getPlateConditionList());
+                        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, areaAnalysisPanel.getConditionsList());
+                        bindingGroup.addBinding(jListBinding);
+                        bindingGroup.bind();
+                    }
+                    if (areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected()) {
                         areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(dataAnalysisController.getPlateConditionList(), getNumberOfReplicates()));
                         if (getSelectedConditions().isEmpty()) {
                             plotGlobalArea(new ArrayList<>(preProcessingMap.keySet()), true);

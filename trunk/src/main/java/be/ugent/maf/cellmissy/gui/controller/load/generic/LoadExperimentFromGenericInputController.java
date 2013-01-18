@@ -202,13 +202,35 @@ public class LoadExperimentFromGenericInputController {
                 // if everything is valid, save the experiment, else show a message
                 List<String> messages = genericExperimentDataController.setExperimentMetadata();
                 if (messages.isEmpty()) {
-                    //set motility Data
-                    setMotilityData();
-                    //set experiment status to "performed" and save it to DB
-                    experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
-                    //launch a swing worker to save the experiment in the background thread
-                    SaveExperimentWorker worker = new SaveExperimentWorker();
-                    worker.execute();
+                    // check if data loading is valid
+                    if (genericImagedPlateController.validateDataLoading()) {
+                        // if data loading is valid, set motility data and save the experiment
+                        //set motility Data
+                        setMotilityData();
+                        //set experiment status to "performed" and save it to DB
+                        experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
+                        //launch a swing worker to save the experiment in the background thread
+                        SaveExperimentWorker worker = new SaveExperimentWorker();
+                        worker.execute();
+                    } else {
+                        // if data loading is not valid, ask the user if he wants to procede with storing
+                        Object[] options = {"Continue", "Cancel"};
+                        int showOptionDialog = JOptionPane.showOptionDialog(null, "Some wells still do not have any data.\nDo you want to procede with storage?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                        switch (showOptionDialog) {
+                            case 0: // set motility data and procede with storage
+                                //set motility Data
+                                setMotilityData();
+                                //set experiment status to "performed" and save it to DB
+                                experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
+                                //launch a swing worker to save the experiment in the background thread
+                                SaveExperimentWorker worker = new SaveExperimentWorker();
+                                worker.execute();
+                                break;
+                            case 1:
+                                // cancel: do nothing
+                                return;
+                        }
+                    }
                 } else {
                     String message = "";
                     for (String string : messages) {
