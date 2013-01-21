@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+    <persistence-unit name="limspersistenceunit" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <class>be.ugent.maf.cellmissy.entity.MatrixDimension</class>
+        <class>be.ugent.maf.cellmissy.entity.Project</class>
+        <class>be.ugent.maf.cellmissy.entity.PlateFormat</class>
+        <class>be.ugent.maf.cellmissy.entity.EcmCoating</class>
+        <class>be.ugent.maf.cellmissy.entity.PlateCondition</class>
+        <class>be.ugent.maf.cellmissy.entity.Treatment</class>
+        <class>be.ugent.maf.cellmissy.entity.Instrument</class>
+        <class>be.ugent.maf.cellmissy.entity.Magnification</class>
+        <class>be.ugent.maf.cellmissy.entity.Assay</class>
+        <class>be.ugent.maf.cellmissy.entity.Ecm</class>
+        <class>be.ugent.maf.cellmissy.entity.Well</class>
+        <class>be.ugent.maf.cellmissy.entity.Experiment</class>
+        <class>be.ugent.maf.cellmissy.entity.CellLine</class>
+        <class>be.ugent.maf.cellmissy.entity.EcmComposition</class>
+        <class>be.ugent.maf.cellmissy.entity.ImagingType</class>
+        <class>be.ugent.maf.cellmissy.entity.TrackPoint</class>
+        <class>be.ugent.maf.cellmissy.entity.Track</class>
+        <class>be.ugent.maf.cellmissy.entity.TimeStep</class>
+        <class>be.ugent.maf.cellmissy.entity.User</class>
+        <class>be.ugent.maf.cellmissy.entity.EcmDensity</class>
+        <class>be.ugent.maf.cellmissy.entity.WellHasImagingType</class>
+        <class>be.ugent.maf.cellmissy.entity.Algorithm</class>
+        <class>be.ugent.maf.cellmissy.entity.AssayMedium</class>
+        <class>be.ugent.maf.cellmissy.entity.CellLineType</class>
+        <class>be.ugent.maf.cellmissy.entity.TreatmentType</class>
+        <properties>
+<!--            <property name="hibernate.hbm2dll.auto" value="create"/>-->
+        </properties>
+    </persistence-unit>
+</persistence>

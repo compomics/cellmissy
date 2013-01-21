@@ -99,7 +99,7 @@
             </plugin>
             
             <!-- Pack sources on build -->
-            <plugin>
+<!--            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.2</version>
@@ -112,10 +112,10 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
             
             <!-- Create javadoc on build -->
-            <plugin>
+<!--            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9</version>
@@ -127,7 +127,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>       
+            </plugin>       -->
 
         </plugins>
     </build>
@@ -267,6 +267,12 @@
             <artifactId>log4j</artifactId>
             <version>1.2.16</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.2</version>
+        </dependency>
 
         <dependency>
             <groupId>org.jasypt</groupId>
@@ -345,6 +351,14 @@
             <artifactId>pdfbox</artifactId>
             <version>1.7.1</version>
         </dependency>
+        
+        <!-- h2 in memory db for unit testing -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.3.168</version>
+            <scope>test</scope>
+        </dependency>      
             
     </dependencies>  
    
