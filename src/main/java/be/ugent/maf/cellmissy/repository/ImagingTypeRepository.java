@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface ImagingTypeRepository extends GenericRepository<ImagingType, Long> {
     
-    List<ImagingType> findImagingTypesByWellId(Integer wellId);
+    List<ImagingType> findImagingTypesByWellId(Long wellId);
     
 }

@@ -45,7 +45,7 @@ public class TrackPoint implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "track_pointid")
-    private Integer trackPointid;
+    private Long trackPointid;
     @Basic(optional = false)
     @Column(name = "time_index")
     private int timeIndex;
@@ -77,22 +77,22 @@ public class TrackPoint implements Serializable {
     public TrackPoint() {
     }
 
-    public TrackPoint(Integer trackPointid) {
+    public TrackPoint(Long trackPointid) {
         this.trackPointid = trackPointid;
     }
 
-    public TrackPoint(Integer trackPointid, int timeIndex, double cellRow, double cellCol) {
+    public TrackPoint(Long trackPointid, int timeIndex, double cellRow, double cellCol) {
         this.trackPointid = trackPointid;
         this.timeIndex = timeIndex;
         this.cellRow = cellRow;
         this.cellCol = cellCol;
     }
 
-    public Integer getTrackPointid() {
+    public Long getTrackPointid() {
         return trackPointid;
     }
 
-    public void setTrackPointid(Integer trackPointid) {
+    public void setTrackPointid(Long trackPointid) {
         this.trackPointid = trackPointid;
     }
 

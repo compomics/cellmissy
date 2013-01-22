@@ -45,7 +45,7 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "userid")
-    private Integer userid;
+    private Long userid;
     @Basic(optional = false)
     @NotBlank(message = "Please insert user first name")
     @Column(name = "first_name")
@@ -60,7 +60,7 @@ public class User implements Serializable {
     private Role role;
     @Basic(optional = false)
     @Column(name = "password")
-    @Length(min = 6, max = 10, message="Please select a password between 6 and 10 characters")
+    @Length(min = 6, max = 40, message="Please select a password between 6 and 10 characters")
     @Type(type = "encryptedString")
     private String password;
     @Basic(optional = false)
@@ -74,11 +74,11 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(Integer userid) {
+    public User(Long userid) {
         this.userid = userid;
     }
 
-    public User(Integer userid, String firstName, String lastName, String email, Role role, String password) {
+    public User(Long userid, String firstName, String lastName, String email, Role role, String password) {
         this.userid = userid;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -87,11 +87,11 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public Integer getUserid() {
+    public Long getUserid() {
         return userid;
     }
 
-    public void setUserid(Integer userid) {
+    public void setUserid(Long userid) {
         this.userid = userid;
     }
 

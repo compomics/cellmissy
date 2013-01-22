@@ -39,7 +39,7 @@ public class PlateFormat implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "plate_formatid")
-    private Integer plateFormatid;
+    private Long plateFormatid;
     @Basic(optional = false)
     @NotNull
     @Column(name = "format")
@@ -54,20 +54,20 @@ public class PlateFormat implements Serializable {
     public PlateFormat() {
     }
 
-    public PlateFormat(Integer plateFormatid) {
+    public PlateFormat(Long plateFormatid) {
         this.plateFormatid = plateFormatid;
     }
 
-    public PlateFormat(Integer plateFormatid, int format) {
+    public PlateFormat(Long plateFormatid, int format) {
         this.plateFormatid = plateFormatid;
         this.format = format;
     }
 
-    public Integer getPlateFormatid() {
+    public Long getPlateFormatid() {
         return plateFormatid;
     }
 
-    public void setPlateFormatid(Integer plateFormatid) {
+    public void setPlateFormatid(Long plateFormatid) {
         this.plateFormatid = plateFormatid;
     }
 

@@ -45,7 +45,7 @@ public class PlateCondition implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "plate_conditionid")
-    private Integer plateConditionid;
+    private Long plateConditionid;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition", fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SELECT)
     private Collection<Well> wellCollection;
@@ -76,15 +76,15 @@ public class PlateCondition implements Serializable {
     public PlateCondition() {
     }
 
-    public PlateCondition(Integer plateConditionid) {
+    public PlateCondition(Long plateConditionid) {
         this.plateConditionid = plateConditionid;
     }
 
-    public Integer getPlateConditionid() {
+    public Long getPlateConditionid() {
         return plateConditionid;
     }
 
-    public void setPlateConditionid(Integer plateConditionid) {
+    public void setPlateConditionid(Long plateConditionid) {
         this.plateConditionid = plateConditionid;
     }
 

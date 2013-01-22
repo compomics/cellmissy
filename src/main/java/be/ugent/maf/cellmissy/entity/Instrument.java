@@ -39,7 +39,7 @@ public class Instrument implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "instrumentid")
-    private Integer instrumentid;
+    private Long instrumentid;
     @Basic(optional = false)
     @Column(name = "name", unique=true)
     private String name;
@@ -49,20 +49,20 @@ public class Instrument implements Serializable {
     public Instrument() {
     }
 
-    public Instrument(Integer instrumentid) {
+    public Instrument(Long instrumentid) {
         this.instrumentid = instrumentid;
     }
 
-    public Instrument(Integer instrumentid, String name) {
+    public Instrument(Long instrumentid, String name) {
         this.instrumentid = instrumentid;
         this.name = name;
     }
 
-    public Integer getInstrumentid() {
+    public Long getInstrumentid() {
         return instrumentid;
     }
 
-    public void setInstrumentid(Integer instrumentid) {
+    public void setInstrumentid(Long instrumentid) {
         this.instrumentid = instrumentid;
     }
 

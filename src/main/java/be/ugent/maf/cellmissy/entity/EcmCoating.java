@@ -37,7 +37,7 @@ public class EcmCoating implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ecm_coatingid")
-    private Integer ecmCoatingid;
+    private Long ecmCoatingid;
     @Column(name = "coating_type")
     private String coatingType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmCoating")
@@ -46,15 +46,15 @@ public class EcmCoating implements Serializable {
     public EcmCoating() {
     }
 
-    public EcmCoating(Integer ecmCoatingid) {
+    public EcmCoating(Long ecmCoatingid) {
         this.ecmCoatingid = ecmCoatingid;
     }
 
-    public Integer getEcmCoatingid() {
+    public Long getEcmCoatingid() {
         return ecmCoatingid;
     }
 
-    public void setEcmCoatingid(Integer ecmCoatingid) {
+    public void setEcmCoatingid(Long ecmCoatingid) {
         this.ecmCoatingid = ecmCoatingid;
     }
 

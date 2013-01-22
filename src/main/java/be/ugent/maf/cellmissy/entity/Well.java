@@ -41,7 +41,7 @@ public class Well implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "wellid")
-    private Integer wellid;
+    private Long wellid;
     @Column(name = "column_number")
     private Integer columnNumber;
     @Column(name = "row_number")
@@ -55,15 +55,15 @@ public class Well implements Serializable {
     public Well() {
     }
 
-    public Well(Integer wellid) {
+    public Well(Long wellid) {
         this.wellid = wellid;
     }
 
-    public Integer getWellid() {
+    public Long getWellid() {
         return wellid;
     }
 
-    public void setWellid(Integer wellid) {
+    public void setWellid(Long wellid) {
         this.wellid = wellid;
     }
 

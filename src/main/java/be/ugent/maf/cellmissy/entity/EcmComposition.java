@@ -40,7 +40,7 @@ public class EcmComposition implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "composition_typeid")
-    private Integer compositionTypeid;
+    private Long compositionTypeid;
     @Column(name = "composition_type")
     private String compositionType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmComposition")
@@ -52,15 +52,15 @@ public class EcmComposition implements Serializable {
     public EcmComposition() {
     }
 
-    public EcmComposition(Integer compositionTypeid) {
+    public EcmComposition(Long compositionTypeid) {
         this.compositionTypeid = compositionTypeid;
     }
 
-    public Integer getCompositionTypeid() {
+    public Long getCompositionTypeid() {
         return compositionTypeid;
     }
 
-    public void setCompositionTypeid(Integer compositionTypeid) {
+    public void setCompositionTypeid(Long compositionTypeid) {
         this.compositionTypeid = compositionTypeid;
     }
 

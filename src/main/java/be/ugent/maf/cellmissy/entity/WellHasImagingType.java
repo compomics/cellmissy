@@ -46,7 +46,7 @@ public class WellHasImagingType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "well_has_imaging_typeid")
-    private Integer wellHasImagingTypeid;
+    private Long wellHasImagingTypeid;
     @Column(name = "sequence_number")
     private Integer sequenceNumber;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -84,15 +84,15 @@ public class WellHasImagingType implements Serializable {
         this.algorithm = algorithm;
     }
 
-    public WellHasImagingType(Integer wellHasImagingTypeid) {
+    public WellHasImagingType(Long wellHasImagingTypeid) {
         this.wellHasImagingTypeid = wellHasImagingTypeid;
     }
 
-    public Integer getWellHasImagingTypeid() {
+    public Long getWellHasImagingTypeid() {
         return wellHasImagingTypeid;
     }
 
-    public void setWellHasImagingTypeid(Integer wellHasImagingTypeid) {
+    public void setWellHasImagingTypeid(Long wellHasImagingTypeid) {
         this.wellHasImagingTypeid = wellHasImagingTypeid;
     }
 

@@ -41,7 +41,7 @@ public class Treatment implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "treatmentid")
-    private Integer treatmentid;
+    private Long treatmentid;
     @Column(name = "concentration")
     private Double concentration;
     @Column(name = "concentration_unit")
@@ -67,15 +67,15 @@ public class Treatment implements Serializable {
         this.treatmentType = treatmentType;
     }
 
-    public Treatment(Integer treatmentid) {
+    public Treatment(Long treatmentid) {
         this.treatmentid = treatmentid;
     }
 
-    public Integer getTreatmentid() {
+    public Long getTreatmentid() {
         return treatmentid;
     }
 
-    public void setTreatmentid(Integer treatmentid) {
+    public void setTreatmentid(Long treatmentid) {
         this.treatmentid = treatmentid;
     }
 

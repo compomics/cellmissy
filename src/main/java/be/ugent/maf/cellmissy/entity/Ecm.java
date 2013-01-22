@@ -46,7 +46,7 @@ public class Ecm implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ecmid")
-    private Integer ecmid;
+    private Long ecmid;
     @Column(name = "concentration")
     private Double concentration;
     @Column(name = "volume")
@@ -92,15 +92,15 @@ public class Ecm implements Serializable {
         this.volumeUnit = volumeUnit;
     }
 
-    public Ecm(Integer ecmid) {
+    public Ecm(Long ecmid) {
         this.ecmid = ecmid;
     }
 
-    public Integer getEcmid() {
+    public Long getEcmid() {
         return ecmid;
     }
 
-    public void setEcmid(Integer ecmid) {
+    public void setEcmid(Long ecmid) {
         this.ecmid = ecmid;
     }
 

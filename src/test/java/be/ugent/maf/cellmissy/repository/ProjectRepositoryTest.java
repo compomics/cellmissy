@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.repository;
 
-import be.ugent.maf.cellmissy.entity.User;
+import be.ugent.maf.cellmissy.entity.Project;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -23,15 +23,20 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = {"classpath:mySpringXMLConfig.xml", "classpath:myTestSpringXMLConfig.xml"})
 @Transactional
 @TransactionConfiguration(defaultRollback = true)
-public class InMemoryDbTest {
+public class ProjectRepositoryTest {
 
     @Autowired
-    private UserRepository userRepository;
+    ProjectRepository projectRepository;
 
     @Test
-    public void testFindInstrumentByName() {
-        List<User> findAll = userRepository.findAll();
-
-        Assert.assertTrue(findAll.isEmpty());
+    public void testRepository() {
+        // test find all
+        List<Project> projects = projectRepository.findAll();
+        Assert.assertTrue(!projects.isEmpty());
+        // test count all from generic repository
+        //long test = projectRepository.countAll();
+        //Assert.assertEquals(1L, projectRepository.countAll());
+        // test other methods from generic repository
+        
     }
 }

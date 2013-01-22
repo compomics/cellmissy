@@ -37,7 +37,7 @@ public class Magnification implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "magnificationid")
-    private Integer magnificationid;
+    private Long magnificationid;
     @Column(name = "magnification_number")
     private String magnificationNumber;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "magnification")
@@ -46,15 +46,15 @@ public class Magnification implements Serializable {
     public Magnification() {
     }
 
-    public Magnification(Integer magnificationid) {
+    public Magnification(Long magnificationid) {
         this.magnificationid = magnificationid;
     }
 
-    public Integer getMagnificationid() {
+    public Long getMagnificationid() {
         return magnificationid;
     }
 
-    public void setMagnificationid(Integer magnificationid) {
+    public void setMagnificationid(Long magnificationid) {
         this.magnificationid = magnificationid;
     }
 

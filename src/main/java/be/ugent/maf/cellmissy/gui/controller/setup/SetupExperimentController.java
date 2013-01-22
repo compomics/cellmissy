@@ -578,7 +578,7 @@ public class SetupExperimentController {
      * @param experimentNumber
      * @return 
      */
-    private boolean projectHasExperiment(Integer projectId, Integer experimentNumber) {
+    private boolean projectHasExperiment(Long projectId, Integer experimentNumber) {
         boolean hasExperiment = false;
         if (experimentService.findExperimentNumbersByProjectId(projectId) != null) {
             for (Integer number : experimentService.findExperimentNumbersByProjectId(projectId)) {

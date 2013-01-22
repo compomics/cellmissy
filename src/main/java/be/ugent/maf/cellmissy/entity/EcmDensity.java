@@ -34,7 +34,7 @@ public class EcmDensity implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "ecm_densityid")
-    private Integer ecmDensityid;
+    private Long ecmDensityid;
     @Column(name = "ecm_density")
     private Double ecmDensity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmDensity")
@@ -43,15 +43,15 @@ public class EcmDensity implements Serializable {
     public EcmDensity() {
     }
 
-    public EcmDensity(Integer ecmDensityid) {
+    public EcmDensity(Long ecmDensityid) {
         this.ecmDensityid = ecmDensityid;
     }
 
-    public Integer getEcmDensityid() {
+    public Long getEcmDensityid() {
         return ecmDensityid;
     }
 
-    public void setEcmDensityid(Integer ecmDensityid) {
+    public void setEcmDensityid(Long ecmDensityid) {
         this.ecmDensityid = ecmDensityid;
     }
 

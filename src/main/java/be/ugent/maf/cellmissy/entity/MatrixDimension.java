@@ -33,7 +33,7 @@ public class MatrixDimension implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "matrix_dimensionid")
-    private Integer matrixDimensionid;
+    private Long matrixDimensionid;
     @Column(name = "matrix_dimension")
     private String matrixDimension;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matrixDimension")
@@ -46,15 +46,15 @@ public class MatrixDimension implements Serializable {
     public MatrixDimension() {
     }
 
-    public MatrixDimension(Integer matrixDimensionid) {
+    public MatrixDimension(Long matrixDimensionid) {
         this.matrixDimensionid = matrixDimensionid;
     }
 
-    public Integer getMatrixDimensionid() {
+    public Long getMatrixDimensionid() {
         return matrixDimensionid;
     }
 
-    public void setMatrixDimensionid(Integer matrixDimensionid) {
+    public void setMatrixDimensionid(Long matrixDimensionid) {
         this.matrixDimensionid = matrixDimensionid;
     }
 

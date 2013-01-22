@@ -9,7 +9,6 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Track;
-import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
@@ -164,12 +163,12 @@ public class WellServiceImpl implements WellService {
     }
 
     @Override
-    public List<Algorithm> findAlgosByWellId(Integer wellId) {
+    public List<Algorithm> findAlgosByWellId(Long wellId) {
         return algorithmRepository.findAlgosByWellId(wellId);
     }
 
     @Override
-    public List<ImagingType> findImagingTypesByWellId(Integer wellId) {
+    public List<ImagingType> findImagingTypesByWellId(Long wellId) {
         return imagingTypeRepository.findImagingTypesByWellId(wellId);
     }
 
@@ -180,7 +179,7 @@ public class WellServiceImpl implements WellService {
      * @param ImagingTpeId 
      */
     @Override
-    public void fetchTimeSteps(Well well, Integer AlgorithmId, Integer ImagingTpeId) {
+    public void fetchTimeSteps(Well well, Long AlgorithmId, Long ImagingTpeId) {
         //well = wellRepository.save(well);
         //for well, get the wellhasimagingtype for a certain algorithm and imaging type
         WellHasImagingType wellHasImagingType = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
@@ -199,7 +198,7 @@ public class WellServiceImpl implements WellService {
      * @param ImagingTpeId 
      */
     @Override
-    public void fetchTracks(Well well, Integer AlgorithmId, Integer ImagingTpeId) {
+    public void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId) {
         WellHasImagingType wellHasImagingType = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
         //fetch time step collection of that wellHasImagingType
         Hibernate.initialize(wellHasImagingType.getTrackCollection());
@@ -216,7 +215,7 @@ public class WellServiceImpl implements WellService {
      * @param ImagingTpeId 
      */
     @Override
-    public void fetchTrackPoints(Well well, Integer AlgorithmId, Integer ImagingTpeId) {
+    public void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId) {
         WellHasImagingType wellHasImagingType = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
         List<Track> tracks = new ArrayList<>(wellHasImagingType.getTrackCollection());
         for (Track track : tracks) {
@@ -235,7 +234,7 @@ public class WellServiceImpl implements WellService {
      * @param ImagingTpeId
      * @return a list of WellHasImagingType
      */
-    private WellHasImagingType findByWellIdAlgoIdAndImagingTypeId(Integer wellId, Integer AlgorithmId, Integer ImagingTpeId) {
+    private WellHasImagingType findByWellIdAlgoIdAndImagingTypeId(Long wellId, Long AlgorithmId, Long ImagingTpeId) {
         return wellHasImagingTypeRepository.findByWellIdAlgoIdAndImagingTypeId(wellId, AlgorithmId, ImagingTpeId);
     }
 

@@ -13,5 +13,5 @@ import java.util.List;
  */
 public interface AlgorithmRepository extends GenericRepository<Algorithm, Long> {
     
-    List<Algorithm> findAlgosByWellId(Integer wellId);
+    List<Algorithm> findAlgosByWellId(Long wellId);
 }
