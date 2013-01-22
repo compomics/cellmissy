@@ -42,7 +42,7 @@ public class ImagingType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "imaging_typeid")
-    private Integer imagingTypeid;
+    private Long imagingTypeid;
     @Column(name = "name")
     private String name;
     @Column(name = "light_intensity")
@@ -57,15 +57,15 @@ public class ImagingType implements Serializable {
     public ImagingType() {
     }
 
-    public ImagingType(Integer imagingTypeid) {
+    public ImagingType(Long imagingTypeid) {
         this.imagingTypeid = imagingTypeid;
     }
 
-    public Integer getImagingTypeid() {
+    public Long getImagingTypeid() {
         return imagingTypeid;
     }
 
-    public void setImagingTypeid(Integer imagingTypeid) {
+    public void setImagingTypeid(Long imagingTypeid) {
         this.imagingTypeid = imagingTypeid;
     }
 

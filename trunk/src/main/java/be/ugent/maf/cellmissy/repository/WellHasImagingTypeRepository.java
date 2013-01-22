@@ -12,5 +12,5 @@ import be.ugent.maf.cellmissy.entity.WellHasImagingType;
  */
 public interface WellHasImagingTypeRepository extends GenericRepository<WellHasImagingType, Long> {
 
-    WellHasImagingType findByWellIdAlgoIdAndImagingTypeId(Integer wellId, Integer algorithmId, Integer imagingTypeId);
+    WellHasImagingType findByWellIdAlgoIdAndImagingTypeId(Long wellId, Long algorithmId, Long imagingTypeId);
 }

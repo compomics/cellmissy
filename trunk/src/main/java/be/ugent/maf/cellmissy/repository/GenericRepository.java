@@ -73,7 +73,7 @@ public interface GenericRepository<T, ID extends Serializable> {
      *
      * @return the number of entities
      */
-    int countAll();
+    long countAll();
 
     /**
      * Count entities based on an example.

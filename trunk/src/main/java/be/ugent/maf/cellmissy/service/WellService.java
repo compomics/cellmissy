@@ -8,7 +8,6 @@ import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
-import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
@@ -54,14 +53,14 @@ public interface WellService extends GenericService<Well, Long> {
      * @param wellId
      * @return 
      */
-    List<Algorithm> findAlgosByWellId(Integer wellId);
+    List<Algorithm> findAlgosByWellId(Long wellId);
 
     /**
      * find all imaging types for one wellId
      * @param wellId
      * @return 
      */
-    List<ImagingType> findImagingTypesByWellId(Integer wellId);
+    List<ImagingType> findImagingTypesByWellId(Long wellId);
 
     /**
      * fetch time steps collection only for some wellHasImagingTypes
@@ -70,7 +69,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @param AlgorithmId
      * @param ImagingTpeId  
      */
-    void fetchTimeSteps(Well well, Integer AlgorithmId, Integer ImagingTpeId);
+    void fetchTimeSteps(Well well, Long AlgorithmId, Long ImagingTpeId);
 
     /**
      * fetch tracks collection only for some wellHasImagingTypes
@@ -79,7 +78,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @param AlgorithmId
      * @param ImagingTpeId
      */
-    void fetchTracks(Well well, Integer AlgorithmId, Integer ImagingTpeId);
+    void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId);
 
     /**
      * 
@@ -87,5 +86,5 @@ public interface WellService extends GenericService<Well, Long> {
      * @param AlgorithmId
      * @param ImagingTpeId
      */
-    void fetchTrackPoints(Well well, Integer AlgorithmId, Integer ImagingTpeId);
+    void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId);
 }

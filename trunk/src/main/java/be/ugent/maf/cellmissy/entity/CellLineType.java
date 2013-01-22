@@ -40,7 +40,7 @@ public class CellLineType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "cell_line_typeid")
-    private Integer cellLineTypeid;
+    private Long cellLineTypeid;
     @Basic(optional = false)
     @NotNull
     @Column(name = "name", unique = true)
@@ -51,20 +51,20 @@ public class CellLineType implements Serializable {
     public CellLineType() {
     }
 
-    public CellLineType(Integer cellLineTypeid) {
+    public CellLineType(Long cellLineTypeid) {
         this.cellLineTypeid = cellLineTypeid;
     }
 
-    public CellLineType(Integer cellLineTypeid, String name) {
+    public CellLineType(Long cellLineTypeid, String name) {
         this.cellLineTypeid = cellLineTypeid;
         this.name = name;
     }
 
-    public Integer getCellLineTypeid() {
+    public Long getCellLineTypeid() {
         return cellLineTypeid;
     }
 
-    public void setCellLineTypeid(Integer cellLineTypeid) {
+    public void setCellLineTypeid(Long cellLineTypeid) {
         this.cellLineTypeid = cellLineTypeid;
     }
 

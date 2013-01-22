@@ -37,7 +37,7 @@ public class AssayMedium implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "assay_mediumid")
-    private Integer assayMediumid;
+    private Long assayMediumid;
     @Column(name = "medium")
     private String medium;
     @Column(name = "serum")
@@ -56,15 +56,15 @@ public class AssayMedium implements Serializable {
         this.serumConcentration = serumConcentration;
     }
 
-    public AssayMedium(Integer assayMediumid) {
+    public AssayMedium(Long assayMediumid) {
         this.assayMediumid = assayMediumid;
     }
 
-    public Integer getAssayMediumid() {
+    public Long getAssayMediumid() {
         return assayMediumid;
     }
 
-    public void setAssayMediumid(Integer assayMediumid) {
+    public void setAssayMediumid(Long assayMediumid) {
         this.assayMediumid = assayMediumid;
     }
 

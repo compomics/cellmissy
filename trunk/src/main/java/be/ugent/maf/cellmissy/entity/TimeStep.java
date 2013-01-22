@@ -41,7 +41,7 @@ public class TimeStep implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "time_stepid")
-    private Integer timeStepid;
+    private Long timeStepid;
     @Basic(optional = false)
     @Column(name = "time_step_sequence")
     private int timeStepSequence;
@@ -70,11 +70,11 @@ public class TimeStep implements Serializable {
     public TimeStep() {
     }
 
-    public TimeStep(Integer timeStepid) {
+    public TimeStep(Long timeStepid) {
         this.timeStepid = timeStepid;
     }
 
-    public TimeStep(Integer timeStepid, int timeStepSequence, double area, double centroidX, double centroidY, double eccentricity, double majorAxis, double minorAxis) {
+    public TimeStep(Long timeStepid, int timeStepSequence, double area, double centroidX, double centroidY, double eccentricity, double majorAxis, double minorAxis) {
         this.timeStepid = timeStepid;
         this.timeStepSequence = timeStepSequence;
         this.area = area;
@@ -85,11 +85,11 @@ public class TimeStep implements Serializable {
         this.minorAxis = minorAxis;
     }
 
-    public Integer getTimeStepid() {
+    public Long getTimeStepid() {
         return timeStepid;
     }
 
-    public void setTimeStepid(Integer timeStepid) {
+    public void setTimeStepid(Long timeStepid) {
         this.timeStepid = timeStepid;
     }
 

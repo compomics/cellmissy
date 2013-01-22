@@ -39,7 +39,7 @@ public class TreatmentType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "treatment_typeid")
-    private Integer treatmentTypeid;
+    private Long treatmentTypeid;
     @Basic(optional = false)
     @NotNull
     @Column(name = "name", unique = true)
@@ -53,11 +53,11 @@ public class TreatmentType implements Serializable {
     public TreatmentType() {
     }
 
-    public TreatmentType(Integer treatmentTypeid) {
+    public TreatmentType(Long treatmentTypeid) {
         this.treatmentTypeid = treatmentTypeid;
     }
 
-    public TreatmentType(Integer treatmentTypeid, String name) {
+    public TreatmentType(Long treatmentTypeid, String name) {
         this.treatmentTypeid = treatmentTypeid;
         this.name = name;
     }
@@ -70,11 +70,11 @@ public class TreatmentType implements Serializable {
         this.name = name;
     }
 
-    public Integer getTreatmentTypeid() {
+    public Long getTreatmentTypeid() {
         return treatmentTypeid;
     }
 
-    public void setTreatmentTypeid(Integer treatmentTypeid) {
+    public void setTreatmentTypeid(Long treatmentTypeid) {
         this.treatmentTypeid = treatmentTypeid;
     }
 

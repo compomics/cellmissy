@@ -61,7 +61,7 @@ public class Experiment implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "experimentid")
-    private Integer experimentid;
+    private Long experimentid;
     @Basic(optional = false)
     @Range(min = 1, max = 100, message = "Experiment number must be between 1 and 100")
     @Column(name = "experiment_number")
@@ -113,22 +113,22 @@ public class Experiment implements Serializable {
     public Experiment() {
     }
 
-    public Experiment(Integer experimentid) {
+    public Experiment(Long experimentid) {
         this.experimentid = experimentid;
     }
 
-    public Experiment(Integer experimentid, int experimentNumber, Date experimentDate, ExperimentStatus experimentStatus) {
+    public Experiment(Long experimentid, int experimentNumber, Date experimentDate, ExperimentStatus experimentStatus) {
         this.experimentid = experimentid;
         this.experimentNumber = experimentNumber;
         this.experimentDate = experimentDate;
         this.experimentStatus = experimentStatus;
     }
 
-    public Integer getExperimentid() {
+    public Long getExperimentid() {
         return experimentid;
     }
 
-    public void setExperimentid(Integer experimentid) {
+    public void setExperimentid(Long experimentid) {
         this.experimentid = experimentid;
     }
 

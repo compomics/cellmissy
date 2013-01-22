@@ -46,7 +46,7 @@ public class CellLine implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "cell_lineid")
-    private Integer cellLineid;
+    private Long cellLineid;
     @Column(name = "seeding_time")
     @NotBlank(message = "Seeding time must be not null")
     private String seedingTime;
@@ -69,7 +69,7 @@ public class CellLine implements Serializable {
     public CellLine() {
     }
 
-    public CellLine(Integer cellLineid) {
+    public CellLine(Long cellLineid) {
         this.cellLineid = cellLineid;
     }
 
@@ -82,11 +82,11 @@ public class CellLine implements Serializable {
         this.serum = serum;
     }
 
-    public Integer getCellLineid() {
+    public Long getCellLineid() {
         return cellLineid;
     }
 
-    public void setCellLineid(Integer cellLineid) {
+    public void setCellLineid(Long cellLineid) {
         this.cellLineid = cellLineid;
     }
 

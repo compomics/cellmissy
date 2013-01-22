@@ -52,14 +52,14 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @param projectId
      * @return
      */
-    List<Integer> findExperimentNumbersByProjectId(Integer projectId);
+    List<Integer> findExperimentNumbersByProjectId(Long projectId);
 
     /**
      * 
      * @param projectId
      * @return
      */
-    List<Experiment> findExperimentsByProjectId(Integer projectId);
+    List<Experiment> findExperimentsByProjectId(Long projectId);
 
     /**
      * 
@@ -67,5 +67,5 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @param experimentStatus
      * @return
      */
-    List<Experiment> findExperimentsByProjectIdAndStatus(Integer projectId, ExperimentStatus experimentStatus);
+    List<Experiment> findExperimentsByProjectIdAndStatus(Long projectId, ExperimentStatus experimentStatus);
 }

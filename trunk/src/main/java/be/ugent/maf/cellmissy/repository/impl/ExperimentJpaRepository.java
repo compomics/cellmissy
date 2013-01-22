@@ -4,14 +4,9 @@
  */
 package be.ugent.maf.cellmissy.repository.impl;
 
-import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
-import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.Well;
-import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.repository.ExperimentRepository;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
@@ -24,7 +19,7 @@ import org.springframework.stereotype.Repository;
 public class ExperimentJpaRepository extends GenericJpaRepository<Experiment, Long> implements ExperimentRepository {
 
     @Override
-    public List<Integer> findExperimentNumbersByProjectId(Integer projectId) {
+    public List<Integer> findExperimentNumbersByProjectId(Long projectId) {
 
         //annotated query
         Query byNameQuery = getEntityManager().createNamedQuery("Experiment.findExperimentNumbersByProjectId");
@@ -38,7 +33,7 @@ public class ExperimentJpaRepository extends GenericJpaRepository<Experiment, Lo
     }
 
     @Override
-    public List<Experiment> findExperimentsByProjectIdAndStatus(Integer projectId, ExperimentStatus experimentStatus) {
+    public List<Experiment> findExperimentsByProjectIdAndStatus(Long projectId, ExperimentStatus experimentStatus) {
         //annotated query
         Query byNameQuery = getEntityManager().createNamedQuery("Experiment.findExperimentsByProjectIdAndStatus");
         byNameQuery.setParameter("projectid", projectId);
@@ -52,7 +47,7 @@ public class ExperimentJpaRepository extends GenericJpaRepository<Experiment, Lo
     }
 
     @Override
-    public List<Experiment> findExperimentsByProjectId(Integer projectId) {
+    public List<Experiment> findExperimentsByProjectId(Long projectId) {
         //annotated query
         Query byNameQuery = getEntityManager().createNamedQuery("Experiment.findExperimentsByProjectId");
         byNameQuery.setParameter("projectid", projectId);

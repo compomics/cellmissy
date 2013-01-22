@@ -40,7 +40,7 @@ public class Algorithm implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "algorithmid")
-    private Integer algorithmid;
+    private Long algorithmid;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -52,20 +52,20 @@ public class Algorithm implements Serializable {
     public Algorithm() {
     }
 
-    public Algorithm(Integer algorithmid) {
+    public Algorithm(Long algorithmid) {
         this.algorithmid = algorithmid;
     }
 
-    public Algorithm(Integer algorithmid, String algorithmName) {
+    public Algorithm(Long algorithmid, String algorithmName) {
         this.algorithmid = algorithmid;
         this.algorithmName = algorithmName;
     }
 
-    public Integer getAlgorithmid() {
+    public Long getAlgorithmid() {
         return algorithmid;
     }
 
-    public void setAlgorithmid(Integer algorithmid) {
+    public void setAlgorithmid(Long algorithmid) {
         this.algorithmid = algorithmid;
     }
 

@@ -41,7 +41,7 @@ public class Track implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "trackid")
-    private Integer trackid;
+    private Long trackid;
     @Basic(optional = false)
     @Column(name = "track_number")
     private int trackNumber;
@@ -57,21 +57,21 @@ public class Track implements Serializable {
     public Track() {
     }
 
-    public Track(Integer trackid) {
+    public Track(Long trackid) {
         this.trackid = trackid;
     }
 
-    public Track(Integer trackid, int trackNumber, int trackLength) {
+    public Track(Long trackid, int trackNumber, int trackLength) {
         this.trackid = trackid;
         this.trackNumber = trackNumber;
         this.trackLength = trackLength;
     }
 
-    public Integer getTrackid() {
+    public Long getTrackid() {
         return trackid;
     }
 
-    public void setTrackid(Integer trackid) {
+    public void setTrackid(Long trackid) {
         this.trackid = trackid;
     }
 

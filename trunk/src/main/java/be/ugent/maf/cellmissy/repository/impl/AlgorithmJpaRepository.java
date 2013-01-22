@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 public class AlgorithmJpaRepository extends GenericJpaRepository<Algorithm, Long> implements AlgorithmRepository {
 
     @Override
-    public List<Algorithm> findAlgosByWellId(Integer wellId) {
+    public List<Algorithm> findAlgosByWellId(Long wellId) {
         
         //annotated query
         Query byNameQuery = getEntityManager().createNamedQuery("WellHasImagingType.findAlgosByWellId");

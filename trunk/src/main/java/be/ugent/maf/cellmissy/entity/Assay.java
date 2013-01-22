@@ -38,7 +38,7 @@ public class Assay implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "assayid")
-    private Integer assayid;
+    private Long assayid;
     @Column(name = "assay_type")
     private String assayType;
     @JoinColumn(name = "l_matrix_dimensionid", referencedColumnName = "matrix_dimensionid")
@@ -50,15 +50,15 @@ public class Assay implements Serializable {
     public Assay() {
     }
 
-    public Assay(Integer assayid) {
+    public Assay(Long assayid) {
         this.assayid = assayid;
     }
 
-    public Integer getAssayid() {
+    public Long getAssayid() {
         return assayid;
     }
 
-    public void setAssayid(Integer assayid) {
+    public void setAssayid(Long assayid) {
         this.assayid = assayid;
     }
 

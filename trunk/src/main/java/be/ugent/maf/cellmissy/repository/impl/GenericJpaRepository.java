@@ -36,7 +36,7 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
     }
 
     @Override
-    public int countAll() {
+    public long countAll() {
         return countByCriteria();
     }
 
@@ -149,7 +149,7 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
         return result;
     }
 
-    protected int countByCriteria(Criterion... criterion) {
+    protected long countByCriteria(Criterion... criterion) {
         Session session = (Session) getEntityManager().getDelegate();
         Criteria crit = session.createCriteria(getEntityClass());
         crit.setProjection(Projections.rowCount());
@@ -158,7 +158,7 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
             crit.add(c);
         }
 
-        return (Integer) crit.list().get(0);
+        return (Long) crit.list().get(0);
     }
 
     @Override

@@ -223,12 +223,12 @@ public class ExperimentServiceImpl implements ExperimentService {
     }
 
     @Override
-    public List<Integer> findExperimentNumbersByProjectId(Integer projectId) {
+    public List<Integer> findExperimentNumbersByProjectId(Long projectId) {
         return experimentRepository.findExperimentNumbersByProjectId(projectId);
     }
 
     @Override
-    public List<Experiment> findExperimentsByProjectIdAndStatus(Integer projectId, ExperimentStatus experimentStatus) {
+    public List<Experiment> findExperimentsByProjectIdAndStatus(Long projectId, ExperimentStatus experimentStatus) {
         return experimentRepository.findExperimentsByProjectIdAndStatus(projectId, experimentStatus);
     }
 
@@ -238,7 +238,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     }
 
     @Override
-    public List<Experiment> findExperimentsByProjectId(Integer projectId) {
+    public List<Experiment> findExperimentsByProjectId(Long projectId) {
         return experimentRepository.findExperimentsByProjectId(projectId);
     }
 }
