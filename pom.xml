@@ -1,6 +1,6 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>be.ugent.maf</groupId>
@@ -18,9 +18,10 @@
             
     <build>
         <plugins>
-             <!-- Compiler plugin -->
+            <!-- Compiler plugin -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
@@ -29,7 +30,7 @@
                 </configuration>
             </plugin>
             
-             <!-- Dependency plugin -->
+            <!-- Dependency plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -70,7 +71,7 @@
                 </configuration>
             </plugin>
             
-             <!-- Resources plugin -->
+            <!-- Resources plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -99,7 +100,7 @@
             </plugin>
             
             <!-- Pack sources on build -->
-<!--            <plugin>
+            <!--            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.2</version>
@@ -115,7 +116,7 @@
             </plugin>-->
             
             <!-- Create javadoc on build -->
-<!--            <plugin>
+            <!--            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9</version>
@@ -132,7 +133,7 @@
         </plugins>
     </build>
     <repositories>
-<!--        <repository>
+        <!--        <repository>
             <url>http://ftp.ing.umu.se/mirror/eclipse/rt/eclipselink/maven.repo/</url>
             <id>eclipselink</id>
             <layout>default</layout>
@@ -226,7 +227,7 @@
             <version>${org.springframework.version}</version>
         </dependency>
         
-<!--        <dependency>
+        <!--        <dependency>
             <groupId>org.jdesktop</groupId>
             <artifactId>beansbinding</artifactId>
             <version>1.2.1</version>
@@ -270,10 +271,10 @@
         
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <artifactId>slf4j-simple</artifactId>
             <version>1.7.2</version>
         </dependency>
-
+            
         <dependency>
             <groupId>org.jasypt</groupId>
             <artifactId>jasypt</artifactId>
