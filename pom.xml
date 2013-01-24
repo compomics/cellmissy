@@ -302,6 +302,10 @@
                     <artifactId>lennart</artifactId>
                     <groupId>lmjunit</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>xercesImpl</artifactId>
+                    <groupId>xerces</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         

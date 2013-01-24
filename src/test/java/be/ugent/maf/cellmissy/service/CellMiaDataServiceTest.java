@@ -48,15 +48,20 @@ public class CellMiaDataServiceTest {
         experiment.setSetupFolder(setupFolder);
         experiment.setMiaFolder(miaFolder);
 
+        // init the service: set the experiment
         cellMiaDataService.init(experiment);
+        // init also the microscope data service
         cellMiaDataService.getMicroscopeDataService().init(experiment);
 
+        // get the map
         Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processCellMiaData = cellMiaDataService.processCellMiaData();
-
+        // iterate through the algorithms found
         for (Algorithm algorithm : processCellMiaData.keySet()) {
-            Map<ImagingType, List<WellHasImagingType>> get = processCellMiaData.get(algorithm);
-            for (ImagingType imagingType : get.keySet()) {
-                List<WellHasImagingType> list = get.get(imagingType);
+            // get each map for each algorithm found
+            Map<ImagingType, List<WellHasImagingType>> rawDataMap = processCellMiaData.get(algorithm);
+            // iterate through the imaging types
+            for (ImagingType imagingType : rawDataMap.keySet()) {
+                List<WellHasImagingType> list = rawDataMap.get(imagingType);
                 for (WellHasImagingType wellHasImagingType : list) {
                     assertTrue(!wellHasImagingType.getTrackCollection().isEmpty());
                     System.out.println("size tracks: " + wellHasImagingType.getTrackCollection().size());

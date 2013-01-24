@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.repository;
 
-import be.ugent.maf.cellmissy.entity.User;
+import be.ugent.maf.cellmissy.entity.Project;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -23,25 +23,16 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = {"classpath:mySpringXMLConfig.xml", "classpath:myTestSpringXMLConfig.xml"})
 @Transactional
 @TransactionConfiguration(defaultRollback = true)
-public class UserRepositoryTest {
+public class ExperimentRepositoryTest {
 
     @Autowired
-    private UserRepository userRepository;
-
-    /**
-     * Simple test, find all users
-     */
-    @Test
-    public void testFindAllUsers() {
-        List<User> users = userRepository.findAll();
-
-        Assert.assertTrue(!users.isEmpty());
-        Assert.assertEquals(1, users.size());
-    }
+    ExperimentRepository experimentRepository;
+    @Autowired
+    ProjectRepository projectRepository;
 
     @Test
-    public void testFindByFullName() {
-        User findByFullName = userRepository.findByFullName("user1", "user1");
-        Assert.assertNotNull(findByFullName);
+    public void testRepository() {
+        List<Project> projects = projectRepository.findAll();
+        Assert.assertTrue(!projects.isEmpty());
     }
 }
