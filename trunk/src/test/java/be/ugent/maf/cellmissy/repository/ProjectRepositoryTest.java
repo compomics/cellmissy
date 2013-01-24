@@ -30,13 +30,24 @@ public class ProjectRepositoryTest {
 
     @Test
     public void testRepository() {
+        // use import sql file        
         // test find all
         List<Project> projects = projectRepository.findAll();
         Assert.assertTrue(!projects.isEmpty());
         // test count all from generic repository
-        //long test = projectRepository.countAll();
-        //Assert.assertEquals(1L, projectRepository.countAll());
+        Assert.assertEquals(3, projectRepository.countAll());
         // test other methods from generic repository
-        
+        Long projectId = projects.get(0).getProjectid();
+        Project found = projectRepository.findById(projectId);
+        Assert.assertNotNull(found);
+        String projectDescription = projects.get(1).getProjectDescription();
+        Assert.assertTrue(projectDescription.equals("test2"));
+
+        // use generic repository
+        Project project = new Project();
+        project.setProjectNumber(4);
+        project.setProjectDescription("This is a test");
+        projectRepository.save(project);
+        Assert.assertNotNull(project.getProjectid());
     }
 }

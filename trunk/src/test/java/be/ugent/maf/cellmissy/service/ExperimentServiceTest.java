@@ -42,7 +42,9 @@ public class ExperimentServiceTest {
         newProject.setProjectDescription("");
         newProject.setProjectNumber(001);
         experiment.setProject(newProject);
-
+        experiment.setExperimentNumber(1);
+        
+        // this is first checking if folders already exist, if not, create them
         experimentService.createFolderStructure(experiment);
     }
 }

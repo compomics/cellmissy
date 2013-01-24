@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Well.findByColumnNumber", query = "SELECT w FROM Well w WHERE w.columnNumber = :columnNumber"),
     @NamedQuery(name = "Well.findByRowNumber", query = "SELECT w FROM Well w WHERE w.rowNumber = :rowNumber")})
 public class Well implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,13 +47,18 @@ public class Well implements Serializable {
     private Integer columnNumber;
     @Column(name = "row_number")
     private Integer rowNumber;
-    @OneToMany(cascade=CascadeType.ALL, mappedBy = "well")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "well")
     private Collection<WellHasImagingType> wellHasImagingTypeCollection;
     @JoinColumn(name = "l_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = true)
     private PlateCondition plateCondition;
 
     public Well() {
+    }
+
+    public Well(Integer columnNumber, Integer rowNumber) {
+        this.columnNumber = columnNumber;
+        this.rowNumber = rowNumber;
     }
 
     public Well(Long wellid) {
@@ -91,7 +97,7 @@ public class Well implements Serializable {
     public void setWellHasImagingTypeCollection(Collection<WellHasImagingType> wellHasImagingTypeCollection) {
         this.wellHasImagingTypeCollection = wellHasImagingTypeCollection;
     }
-    
+
     public PlateCondition getPlateCondition() {
         return plateCondition;
     }
@@ -132,5 +138,4 @@ public class Well implements Serializable {
     public String toString() {
         return "(" + columnNumber + ", " + rowNumber + ")";
     }
-    
 }
