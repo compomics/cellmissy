@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.service;
 
 import be.ugent.maf.cellmissy.entity.Ecm;
-import be.ugent.maf.cellmissy.entity.EcmCoating;
+import be.ugent.maf.cellmissy.entity.BottomMatrix;
 import be.ugent.maf.cellmissy.entity.EcmComposition;
 import be.ugent.maf.cellmissy.entity.EcmDensity;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
@@ -23,8 +23,10 @@ public interface EcmService extends GenericService<Ecm, Long> {
     
     public void saveEcmComposition(EcmComposition ecmComposition);
     
-    public List<EcmCoating> findAllEcmCoating();
+    public List<BottomMatrix> findAllBottomMatrix();
     
     public List<EcmDensity> findAllEcmDensity();
+    
+    public List<String> findAllPolimerysationPh();
     
 }

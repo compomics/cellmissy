@@ -166,10 +166,9 @@ public class SetupConditionsController {
         if (!assayEcmController.validate2DEcm().isEmpty()) {
             messages.addAll(assayEcmController.validate2DEcm());
         }
-        if (assayEcmController.validate3DEcm().isEmpty()) {
+        if (!assayEcmController.validate3DEcm().isEmpty()) {
             messages.addAll(assayEcmController.validate3DEcm());
         }
-
         //if validation was OK, validate the condition: check for wells collection
         if (messages.isEmpty()) {
             if (plateCondition.getWellCollection().isEmpty()) {
@@ -235,17 +234,15 @@ public class SetupConditionsController {
                         setupConditionsPanel.getCellLineNameTextField().setText("");
                         setupConditionsPanel.getCellLineNameTextField().requestFocusInWindow();
                     }
-
                 }
             }
         });
     }
 
     /**
-     * initialize ConditionsPanel components
+     * Initialize ConditionsPanel components
      */
     private void initConditionsPanel() {
-
         //set selected matrix dimension to "2D"
         setupConditionsPanel.getEcmDimensionComboBox().setSelectedIndex(0);
         setupConditionsPanel.getjTabbedPane1().setEnabled(false);
@@ -286,6 +283,8 @@ public class SetupConditionsController {
         bindingGroup.addBinding(binding);
         //autobind serum concentration
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.serumConcentration"), treatmentsController.getTreatmentsPanel().getSerumConcentrationTextField(), BeanProperty.create("text"), "assayserumconcentrationbinding");
+        // autobind volume
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.volume"), treatmentsController.getTreatmentsPanel().getVolumeTextField(), BeanProperty.create("text"), "assayvolumebinding");
         bindingGroup.addBinding(binding);
 
         //autobind matrix dimension
@@ -361,7 +360,6 @@ public class SetupConditionsController {
                 plateConditionBindingList.add(newCondition);
                 //add a new empty list of rectangles for the just added Condition
                 setupExperimentPanelController.onNewConditionAdded(newCondition);
-
                 //after a new condition is added enable the remove button
                 if (!conditionsPanel.getRemoveButton().isEnabled()) {
                     conditionsPanel.getRemoveButton().setEnabled(true);
@@ -397,7 +395,6 @@ public class SetupConditionsController {
     private void initFirstCondition(PlateCondition firstCondition) {
         //set the name
         firstCondition.setName("Cond " + ++conditionIndex);
-
         //set the cell line
         CellLine cellLine = new CellLine();
         cellLine.setCellLineType(cellLineTypeBindingList.get(0));
@@ -408,25 +405,20 @@ public class SetupConditionsController {
         cellLine.setSerumConcentration(10.0);
         firstCondition.setCellLine(cellLine);
         cellLine.setPlateCondition(firstCondition);
-
-        //set matrix dimension: 2D
-        firstCondition.setMatrixDimension(assayEcmController.getMatrixDimensionBindingList().get(0));
-
-        //set the migration assay: Oris platform
+        //set the migration assay: Oris platform; matrix dimension: 2D
         firstCondition.setAssay(assayEcmController.getAssay2DBindingList().get(0));
-
         //create a new AssayMedium object and set its class members
         AssayMedium assayMedium = new AssayMedium();
         assayMedium.setMedium(treatmentsController.getTreatmentsPanel().getAssayMediumComboBox().getItemAt(0).toString());
         assayMedium.setSerum(serumBindingList.get(0));
         assayMedium.setSerumConcentration(10.0);
+        assayMedium.setVolume(10.0);
         firstCondition.setAssayMedium(assayMedium);
         assayMedium.setPlateCondition(firstCondition);
-
         //create a new ECM object and set its class members
         Ecm ecm = new Ecm();
         ecm.setEcmComposition(assayEcmController.getEcm2DCompositionBindingList().get(0));
-        ecm.setEcmCoating(assayEcmController.getEcmCoatingBindingList().get(0));
+        ecm.setBottomMatrix(assayEcmController.getBottomMatrixBindingList().get(0));
         ecm.setCoatingTemperature("RT");
         ecm.setCoatingTime("60");
         ecm.setConcentration(0.04);
@@ -434,11 +426,9 @@ public class SetupConditionsController {
         ecm.setVolumeUnit("\u00B5" + "l");
         ecm.setConcentrationUnit("mg/ml");
         firstCondition.setEcm(ecm);
-
         //set an empty collection of treatments
         List<Treatment> treatmentList = new ArrayList<>();
         firstCondition.setTreatmentCollection(treatmentList);
-
         //set an empty collection of wells
         List<Well> wellList = new ArrayList<>();
         firstCondition.setWellCollection(wellList);
@@ -449,48 +439,59 @@ public class SetupConditionsController {
      * @param newCondition 
      */
     private void initNewCondition(PlateCondition newCondition) {
+        PlateCondition previousCondition = plateConditionBindingList.get(previousConditionIndex);
         //set the name
         newCondition.setName("Cond " + ++conditionIndex);
         //set the cell line (the same as the previous condition)
-        CellLine cellLine = plateConditionBindingList.get(previousConditionIndex).getCellLine();
+        CellLine cellLine = previousCondition.getCellLine();
         CellLine newCellLine = new CellLine(cellLine.getSeedingTime(), cellLine.getSeedingDensity(), cellLine.getGrowthMedium(), cellLine.getSerumConcentration(), cellLine.getCellLineType(), cellLine.getSerum());
         newCondition.setCellLine(newCellLine);
         newCellLine.setPlateCondition(newCondition);
-        //set matrix dimension (the same as the previous condition)
-        newCondition.setMatrixDimension(plateConditionBindingList.get(previousConditionIndex).getMatrixDimension());
+        //set assay as previous one
+        newCondition.setAssay(previousCondition.getAssay());
         //set assay medium (the same as the previous condition)
-        AssayMedium assayMedium = new AssayMedium(plateConditionBindingList.get(previousConditionIndex).getAssayMedium().getMedium(), plateConditionBindingList.get(previousConditionIndex).getAssayMedium().getSerum(), plateConditionBindingList.get(previousConditionIndex).getAssayMedium().getSerumConcentration());
-        newCondition.setAssayMedium(assayMedium);
-        assayMedium.setPlateCondition(newCondition);
+        AssayMedium assayMedium = previousCondition.getAssayMedium();
+        AssayMedium newAssayMedium = new AssayMedium(assayMedium.getMedium(), assayMedium.getSerum(), assayMedium.getSerumConcentration(), assayMedium.getVolume());
+        newCondition.setAssayMedium(newAssayMedium);
+        newAssayMedium.setPlateCondition(newCondition);
         //set assay and ecm (still default values)
         Ecm ecm = new Ecm();
         //need to set different values according to matrix dimension: 2D or 3D
-        if (newCondition.getMatrixDimension().getMatrixDimension().equals("2D")) {
-            newCondition.setAssay(assayEcmController.getAssay2DBindingList().get(0));
-            //set ecm 2D fields
-            ecm.setEcmComposition(assayEcmController.getEcm2DCompositionBindingList().get(0));
-            ecm.setEcmCoating(assayEcmController.getEcmCoatingBindingList().get(0));
-            ecm.setConcentration(0.04);
-            ecm.setVolume(100.0);
-            ecm.setCoatingTime("60");
-            ecm.setCoatingTemperature("RT");
-            ecm.setVolumeUnit("\u00B5" + "l");
-            ecm.setConcentrationUnit("mg/ml");
-        } else {
-            newCondition.setAssay(assayEcmController.getAssay3DBindingList().get(0));
-            //set ecm 3D fields
-            ecm.setEcmComposition(assayEcmController.getEcm3DCompositionBindingList().get(0));
-            ecm.setEcmDensity((EcmDensity) assayEcmController.getAssayEcm3DPanel().getDensityComboBox().getItemAt(1));
-            ecm.setVolume(40.0);
-            ecm.setPolymerisationTime("30");
-            ecm.setPolymerisationTemperature("37 C");
+        switch (assayEcmController.getMatrixDimensionBindingList().get(setupConditionsPanel.getEcmDimensionComboBox().getSelectedIndex()).getDimension()) {
+            case "2D":
+                //2D matrix: set ecm 2D fields
+                ecm.setEcmComposition(assayEcmController.getEcm2DCompositionBindingList().get(0));
+                ecm.setConcentration(0.04);
+                ecm.setVolume(100.0);
+                ecm.setCoatingTime("60");
+                ecm.setCoatingTemperature("RT");
+                ecm.setVolumeUnit("\u00B5" + "l");
+                ecm.setConcentrationUnit("mg/ml");
+                break;
+            case "3D":
+                //3D matrix: set ecm 3D fields
+                ecm.setEcmComposition(assayEcmController.getEcm3DCompositionBindingList().get(0));
+                ecm.setEcmDensity((EcmDensity) assayEcmController.getAssayEcm3DPanel().getDensityComboBox().getItemAt(1));
+                ecm.setBottomMatrix(assayEcmController.getBottomMatrixBindingList().get(0)); // thin gel coating
+                ecm.setTopMatrixVolume(40.0); // only top volume, not bottom volume
+                ecm.setPolymerisationTime("30");
+                ecm.setPolymerisationTemperature("37 C");
+                ecm.setPolymerisationPh(assayEcmController.getPolymerisationPhBindingList().get(0));
+                break;
+            case "2.5D":
+                //3D matrix: set ecm 2.5D fields
+                ecm.setEcmComposition(assayEcmController.getEcm3DCompositionBindingList().get(0));
+                ecm.setEcmDensity((EcmDensity) assayEcmController.getAssayEcm3DPanel().getDensityComboBox().getItemAt(1));
+                ecm.setBottomMatrix(assayEcmController.getBottomMatrixBindingList().get(0)); // thin gel coating
+                ecm.setPolymerisationTime("30");
+                ecm.setPolymerisationTemperature("37 C");
+                ecm.setPolymerisationPh(assayEcmController.getPolymerisationPhBindingList().get(0));
+                break;
         }
         newCondition.setEcm(ecm);
-
         //set an empty collection of treatments (treatments are not recalled from previous condition)
         List<Treatment> treatmentList = new ArrayList<>();
         newCondition.setTreatmentCollection(treatmentList);
-
         //set an empty collection of wells (wells are not recalled from previous condition)
         List<Well> wellList = new ArrayList<>();
         newCondition.setWellCollection(wellList);

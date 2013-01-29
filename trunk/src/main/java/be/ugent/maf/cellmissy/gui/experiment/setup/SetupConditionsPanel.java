@@ -12,10 +12,8 @@ package be.ugent.maf.cellmissy.gui.experiment.setup;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**

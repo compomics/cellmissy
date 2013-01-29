@@ -129,32 +129,39 @@
                   <EmptySpace pref="229" max="-2" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="polymerizationTimeLabel" alignment="1" min="-2" max="-2" attributes="0"/>
-                      <Component id="polymerizationTemperatureLabel" alignment="1" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel2" alignment="1" min="-2" max="-2" attributes="0"/>
-                      <Component id="volumeLabel" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="jLabel2" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                              <Component id="polymerizationTimeLabel" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="polymerizationTemperatureLabel" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="bottomMatrixVolumeTextField" alignment="1" max="32767" attributes="1"/>
-                              <Component id="topMatrixVolumeTextField" alignment="0" pref="56" max="32767" attributes="1"/>
-                              <Component id="polymerizationTimeTextField" alignment="0" max="32767" attributes="1"/>
-                              <Component id="polymerizationTemperatureTextField" alignment="0" max="32767" attributes="1"/>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="bottomMatrixTypeComboBox" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="polymerizationTimeTextField" pref="158" max="32767" attributes="1"/>
+                              <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="bottomMatrixVolumeTextField" alignment="1" max="32767" attributes="1"/>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="bottomMatrixTypeComboBox" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Component id="densityLabel" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="densityComboBox" min="-2" max="-2" attributes="1"/>
+                                  </Group>
                               </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="densityLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="densityComboBox" min="-2" max="-2" attributes="1"/>
-                              </Group>
+                              <Component id="polymerizationTemperatureTextField" alignment="0" pref="158" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -164,7 +171,7 @@
                       </Group>
                       <Component id="polymerizationPhComboBox" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="141" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="141" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -201,33 +208,30 @@
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                          <Component id="topMatrixVolumeTextField" linkSize="4" alignment="3" min="-2" max="-2" attributes="1"/>
-                          <Component id="volumeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="topVolumeUnitLabel" pref="20" max="32767" attributes="1"/>
+                          <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-                          <Component id="topVolumeUnitLabel" linkSize="4" pref="20" max="32767" attributes="1"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="polymerizationTimeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="polymerizationTimeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="polymerizationTemperatureTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="polymerizationTemperatureLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="polymerizationTimeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="polymerizationTimeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="polymerizationTemperatureTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="polymerizationTemperatureLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="polymerizationPhComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -243,11 +247,6 @@
             <Property name="text" type="java.lang.String" value="Composition"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="volumeLabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Top matrix volume"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="polymerizationTimeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Polymerization time (min)"/>
@@ -256,11 +255,6 @@
         <Component class="javax.swing.JLabel" name="polymerizationTemperatureLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Polymerization temperature"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="topMatrixVolumeTextField">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="0"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="polymerizationTimeTextField">

@@ -48,11 +48,9 @@ public class CellLine implements Serializable {
     @Column(name = "cell_lineid")
     private Long cellLineid;
     @Column(name = "seeding_time")
-    @NotBlank(message = "Seeding time must be not null")
     private String seedingTime;
     @Column(name = "seeding_density")
-    @NotNull(message = "Seeding density must be not null")
-    @Range(min = 30000, max = 90000, message = "Seeding density must be between 30000 and 90000")
+    @Range(min = 3000, max = 90000, message = "Seeding density must be between 30000 and 90000")
     private Integer seedingDensity;
     @Column(name = "growth_medium")
     private String growthMedium;

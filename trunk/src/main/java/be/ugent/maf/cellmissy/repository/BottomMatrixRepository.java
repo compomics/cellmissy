@@ -4,12 +4,12 @@
  */
 package be.ugent.maf.cellmissy.repository;
 
-import be.ugent.maf.cellmissy.entity.EcmCoating;
+import be.ugent.maf.cellmissy.entity.BottomMatrix;
 
 /**
  *
  * @author Paola
  */
-public interface EcmCoatingRepository extends GenericRepository<EcmCoating, Long> {
+public interface BottomMatrixRepository extends GenericRepository<BottomMatrix, Long> {
     
 }

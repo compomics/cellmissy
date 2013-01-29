@@ -25,45 +25,45 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Paola
  */
 @Entity
-@Table(name = "ecm_coating")
+@Table(name = "bottom_matrix")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "EcmCoating.findAll", query = "SELECT e FROM EcmCoating e"),
-    @NamedQuery(name = "EcmCoating.findByEcmCoatingid", query = "SELECT e FROM EcmCoating e WHERE e.ecmCoatingid = :ecmCoatingid"),
-    @NamedQuery(name = "EcmCoating.findByCoatingType", query = "SELECT e FROM EcmCoating e WHERE e.coatingType = :coatingType")})
-public class EcmCoating implements Serializable {
+    @NamedQuery(name = "BottomMatrix.findAll", query = "SELECT b FROM BottomMatrix b"),
+    @NamedQuery(name = "BottomMatrix.findByBottomMatrixid", query = "SELECT b FROM BottomMatrix b WHERE b.bottomMatrixid = :bottomMatrixid"),
+    @NamedQuery(name = "BottomMatrix.findByType", query = "SELECT b FROM BottomMatrix b WHERE b.type = :type")})
+public class BottomMatrix implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "ecm_coatingid")
-    private Long ecmCoatingid;
-    @Column(name = "coating_type")
-    private String coatingType;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmCoating")
+    @Column(name = "bottom_matrixid")
+    private Long bottomMatrixid;
+    @Column(name = "type")
+    private String type;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bottomMatrix")
     private Collection<Ecm> ecmCollection;
 
-    public EcmCoating() {
+    public BottomMatrix() {
     }
 
-    public EcmCoating(Long ecmCoatingid) {
-        this.ecmCoatingid = ecmCoatingid;
+    public BottomMatrix(Long bottomMatrixid) {
+        this.bottomMatrixid = bottomMatrixid;
     }
 
-    public Long getEcmCoatingid() {
-        return ecmCoatingid;
+    public Long getBottomMatrixid() {
+        return bottomMatrixid;
     }
 
-    public void setEcmCoatingid(Long ecmCoatingid) {
-        this.ecmCoatingid = ecmCoatingid;
+    public void setEcmCoatingid(Long bottomMatrixid) {
+        this.bottomMatrixid = bottomMatrixid;
     }
 
-    public String getCoatingType() {
-        return coatingType;
+    public String getType() {
+        return type;
     }
 
-    public void setCoatingType(String coatingType) {
-        this.coatingType = coatingType;
+    public void setType(String type) {
+        this.type = type;
     }
 
     @XmlTransient
@@ -78,18 +78,18 @@ public class EcmCoating implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (ecmCoatingid != null ? ecmCoatingid.hashCode() : 0);
+        hash += (bottomMatrixid != null ? bottomMatrixid.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof EcmCoating)) {
+        if (!(object instanceof BottomMatrix)) {
             return false;
         }
-        EcmCoating other = (EcmCoating) object;
-        if ((this.ecmCoatingid == null && other.ecmCoatingid != null) || (this.ecmCoatingid != null && !this.ecmCoatingid.equals(other.ecmCoatingid))) {
+        BottomMatrix other = (BottomMatrix) object;
+        if ((this.bottomMatrixid == null && other.bottomMatrixid != null) || (this.bottomMatrixid != null && !this.bottomMatrixid.equals(other.bottomMatrixid))) {
             return false;
         }
         return true;
@@ -97,7 +97,7 @@ public class EcmCoating implements Serializable {
 
     @Override
     public String toString() {
-        return coatingType;
+        return type;
     }
     
 }

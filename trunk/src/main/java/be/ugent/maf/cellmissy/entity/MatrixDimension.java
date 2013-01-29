@@ -34,15 +34,13 @@ public class MatrixDimension implements Serializable {
     @Basic(optional = false)
     @Column(name = "matrix_dimensionid")
     private Long matrixDimensionid;
-    @Column(name = "matrix_dimension")
-    private String matrixDimension;
+    @Column(name = "dimension")
+    private String dimension;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matrixDimension")
     private Collection<Assay> assayCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matrixDimension")
     private Collection<EcmComposition> ecmCompositionCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "matrixDimension")
-    private Collection<PlateCondition> plateConditionCollection;
-
+    
     public MatrixDimension() {
     }
 
@@ -58,12 +56,12 @@ public class MatrixDimension implements Serializable {
         this.matrixDimensionid = matrixDimensionid;
     }
 
-    public String getMatrixDimension() {
-        return matrixDimension;
+    public String getDimension() {
+        return dimension;
     }
 
-    public void setMatrixDimension(String matrixDimension) {
-        this.matrixDimension = matrixDimension;
+    public void setDimension(String matrixDimension) {
+        this.dimension = matrixDimension;
     }
 
     @XmlTransient
@@ -82,15 +80,6 @@ public class MatrixDimension implements Serializable {
 
     public void setEcmCompositionCollection(Collection<EcmComposition> ecmCompositionCollection) {
         this.ecmCompositionCollection = ecmCompositionCollection;
-    }
-
-    @XmlTransient
-    public Collection<PlateCondition> getPlateConditionCollection() {
-        return plateConditionCollection;
-    }
-
-    public void setPlateConditionCollection(Collection<PlateCondition> plateConditionCollection) {
-        this.plateConditionCollection = plateConditionCollection;
     }
 
     @Override
@@ -115,7 +104,7 @@ public class MatrixDimension implements Serializable {
 
     @Override
     public String toString() {
-        return matrixDimension;
+        return dimension;
     }
     
 }
