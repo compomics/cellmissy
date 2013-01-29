@@ -70,10 +70,10 @@ public class TreatmentsController {
     public void init() {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        
+
         //create panel
         treatmentsPanel = new TreatmentsPanel();
-        
+
         //init views
         initTreatmentSetupPanel();
         initMainPanel();
@@ -135,6 +135,8 @@ public class TreatmentsController {
      */
     private void initTreatmentSetupPanel() {
 
+        //set volume unit of measure (of assay medium)
+        treatmentsPanel.getVolumeUnitLabel().setText("\u00B5" + "l");
         //init drug and general treatment binding lists
         drugBindingList = ObservableCollections.observableList(treatmentService.findByCategory(1));
         generalTreatmentBindingList = ObservableCollections.observableList(treatmentService.findByCategory(2));

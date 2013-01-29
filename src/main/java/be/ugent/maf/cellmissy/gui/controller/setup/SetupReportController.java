@@ -211,7 +211,7 @@ public class SetupReportController {
             Color color = GuiUtils.getAvailableColors()[i + 1];
             PdfUtils.addColoredCell(dataTable, color);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getCellLine().toString(), bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, plateCondition.getMatrixDimension().toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssay().getMatrixDimension().getDimension(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssay().getAssayType().toString(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getEcm().toString(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getTreatmentCollection().toString(), bodyFont);

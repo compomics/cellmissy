@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "AssayMedium.findBySerumConcentration", query = "SELECT a FROM AssayMedium a WHERE a.serumConcentration = :serumConcentration")})
 public class AssayMedium implements Serializable {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -44,16 +44,19 @@ public class AssayMedium implements Serializable {
     private String serum;
     @Column(name = "serum_concentration")
     private Double serumConcentration;
+    @Column(name = "volume")
+    private Double volume;
     @OneToOne(mappedBy = "assayMedium")
     private PlateCondition plateCondition;
 
     public AssayMedium() {
     }
 
-    public AssayMedium(String medium, String serum, Double serumConcentration) {
+    public AssayMedium(String medium, String serum, Double serumConcentration, Double volume) {
         this.medium = medium;
         this.serum = serum;
         this.serumConcentration = serumConcentration;
+        this.volume = volume;
     }
 
     public AssayMedium(Long assayMediumid) {
@@ -90,6 +93,14 @@ public class AssayMedium implements Serializable {
 
     public void setSerumConcentration(Double serumConcentration) {
         this.serumConcentration = serumConcentration;
+    }
+
+    public Double getVolume() {
+        return volume;
+    }
+
+    public void setVolume(Double volume) {
+        this.volume = volume;
     }
 
     public PlateCondition getPlateCondition() {

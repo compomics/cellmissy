@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "EcmComposition.findAll", query = "SELECT e FROM EcmComposition e"),
     @NamedQuery(name = "EcmComposition.findByCompositionTypeid", query = "SELECT e FROM EcmComposition e WHERE e.compositionTypeid = :compositionTypeid"),
     @NamedQuery(name = "EcmComposition.findByCompositionType", query = "SELECT e FROM EcmComposition e WHERE e.compositionType = :compositionType"),
-    @NamedQuery(name = "EcmComposition.findByMatrixDimensionName", query = "SELECT e FROM EcmComposition e WHERE e.matrixDimension.matrixDimension = :matrixDimension")})
+    @NamedQuery(name = "EcmComposition.findByMatrixDimensionName", query = "SELECT e FROM EcmComposition e WHERE e.matrixDimension.dimension = :matrixDimension")})
 public class EcmComposition implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

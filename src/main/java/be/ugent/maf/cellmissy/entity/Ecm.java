@@ -38,7 +38,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Ecm.findByCoatingTime", query = "SELECT e FROM Ecm e WHERE e.coatingTime = :coatingTime"),
     @NamedQuery(name = "Ecm.findByCoatingTemperature", query = "SELECT e FROM Ecm e WHERE e.coatingTemperature = :coatingTemperature"),
     @NamedQuery(name = "Ecm.findByPolymerisationTime", query = "SELECT e FROM Ecm e WHERE e.polymerisationTime = :polymerisationTime"),
-    @NamedQuery(name = "Ecm.findByPolymerisationTemperature", query = "SELECT e FROM Ecm e WHERE e.polymerisationTemperature = :polymerisationTemperature")})
+    @NamedQuery(name = "Ecm.findByPolymerisationTemperature", query = "SELECT e FROM Ecm e WHERE e.polymerisationTemperature = :polymerisationTemperature"),
+    @NamedQuery(name = "Ecm.findAllPolimerysationPh", query = "SELECT distinct e.polymerisationPh FROM Ecm e")})
 public class Ecm implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,6 +52,10 @@ public class Ecm implements Serializable {
     private Double concentration;
     @Column(name = "volume")
     private Double volume;
+    @Column(name = "top_matrix_volume")
+    private Double topMatrixVolume;
+    @Column(name = "bottom_matrix_volume")
+    private Double bottomMatrixVolume;
     @Column(name = "coating_time")
     private String coatingTime;
     @Column(name = "coating_temperature")
@@ -59,18 +64,20 @@ public class Ecm implements Serializable {
     private String polymerisationTime;
     @Column(name = "polymerisation_temperature")
     private String polymerisationTemperature;
-    @JoinColumn(name = "l_ecm_coatingid", referencedColumnName = "ecm_coatingid")
+    @Column(name = "polymerisation_ph")
+    private String polymerisationPh;
+    @JoinColumn(name = "l_bottom_matrixid", referencedColumnName = "bottom_matrixid")
     @ManyToOne(optional = true)
-    private EcmCoating ecmCoating;
+    private BottomMatrix bottomMatrix;
     @JoinColumn(name = "l_composition_typeid", referencedColumnName = "composition_typeid")
     @ManyToOne(optional = false)
     private EcmComposition ecmComposition;
     @JoinColumn(name = "l_ecm_densityid", referencedColumnName = "ecm_densityid")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     private EcmDensity ecmDensity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecm")
     private Collection<PlateCondition> plateConditionCollection;
-    @Column (name = "concentration_unit")
+    @Column(name = "concentration_unit")
     private String concentrationUnit;
     @Transient
     private String volumeUnit;
@@ -78,14 +85,14 @@ public class Ecm implements Serializable {
     public Ecm() {
     }
 
-    public Ecm(Double concentration, Double volume, String coatingTime, String coatingTemperature, String polymerisationTime, String polymerisationTemperature, EcmCoating ecmCoating, EcmComposition ecmComposition, EcmDensity ecmDensity, String concentrationUnit, String volumeUnit) {
+    public Ecm(Double concentration, Double volume, String coatingTime, String coatingTemperature, String polymerisationTime, String polymerisationTemperature, BottomMatrix bottomMatrix, EcmComposition ecmComposition, EcmDensity ecmDensity, String concentrationUnit, String volumeUnit) {
         this.concentration = concentration;
         this.volume = volume;
         this.coatingTime = coatingTime;
         this.coatingTemperature = coatingTemperature;
         this.polymerisationTime = polymerisationTime;
         this.polymerisationTemperature = polymerisationTemperature;
-        this.ecmCoating = ecmCoating;
+        this.bottomMatrix = bottomMatrix;
         this.ecmComposition = ecmComposition;
         this.ecmDensity = ecmDensity;
         this.concentrationUnit = concentrationUnit;
@@ -120,6 +127,30 @@ public class Ecm implements Serializable {
         this.volume = volume;
     }
 
+    public BottomMatrix getBottomMatrix() {
+        return bottomMatrix;
+    }
+
+    public void setBottomMatrix(BottomMatrix bottomMatrix) {
+        this.bottomMatrix = bottomMatrix;
+    }
+
+    public Double getBottomMatrixVolume() {
+        return bottomMatrixVolume;
+    }
+
+    public void setBottomMatrixVolume(Double bottomMatrixVolume) {
+        this.bottomMatrixVolume = bottomMatrixVolume;
+    }
+
+    public Double getTopMatrixVolume() {
+        return topMatrixVolume;
+    }
+
+    public void setTopMatrixVolume(Double topMatrixVolume) {
+        this.topMatrixVolume = topMatrixVolume;
+    }
+
     public String getCoatingTime() {
         return coatingTime;
     }
@@ -152,12 +183,12 @@ public class Ecm implements Serializable {
         this.polymerisationTemperature = polymerisationTemperature;
     }
 
-    public EcmCoating getEcmCoating() {
-        return ecmCoating;
+    public String getPolymerisationPh() {
+        return polymerisationPh;
     }
 
-    public void setEcmCoating(EcmCoating ecmCoating) {
-        this.ecmCoating = ecmCoating;
+    public void setPolymerisationPh(String polymerisationPh) {
+        this.polymerisationPh = polymerisationPh;
     }
 
     public EcmComposition getEcmComposition() {

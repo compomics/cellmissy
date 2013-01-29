@@ -55,9 +55,6 @@ public class PlateCondition implements Serializable {
     @JoinColumn(name = "l_cell_lineid", referencedColumnName = "cell_lineid")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private CellLine cellLine;
-    @JoinColumn(name = "l_matrix_dimensionid", referencedColumnName = "matrix_dimensionid")
-    @ManyToOne(optional = false)
-    private MatrixDimension matrixDimension;
     @JoinColumn(name = "l_assayid", referencedColumnName = "assayid")
     @ManyToOne(optional = false)
     private Assay assay;
@@ -111,14 +108,6 @@ public class PlateCondition implements Serializable {
 
     public void setCellLine(CellLine cellLine) {
         this.cellLine = cellLine;
-    }
-
-    public MatrixDimension getMatrixDimension() {
-        return matrixDimension;
-    }
-
-    public void setMatrixDimension(MatrixDimension matrixDimension) {
-        this.matrixDimension = matrixDimension;
     }
 
     public Assay getAssay() {
@@ -187,7 +176,7 @@ public class PlateCondition implements Serializable {
 
     @Override
     public String toString() {
-        return cellLine.getCellLineType() + ", " + matrixDimension + ", " + assay + ", " + treatmentCollection;
+        return cellLine.getCellLineType() + ", " + assay.getMatrixDimension() + ", " + assay + ", " + treatmentCollection;
     }
 
     public Integer getConditionIndex() {

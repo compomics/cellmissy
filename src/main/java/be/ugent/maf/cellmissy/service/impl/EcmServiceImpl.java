@@ -5,11 +5,11 @@
 package be.ugent.maf.cellmissy.service.impl;
 
 import be.ugent.maf.cellmissy.entity.Ecm;
-import be.ugent.maf.cellmissy.entity.EcmCoating;
+import be.ugent.maf.cellmissy.entity.BottomMatrix;
 import be.ugent.maf.cellmissy.entity.EcmComposition;
 import be.ugent.maf.cellmissy.entity.EcmDensity;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
-import be.ugent.maf.cellmissy.repository.EcmCoatingRepository;
+import be.ugent.maf.cellmissy.repository.BottomMatrixRepository;
 import be.ugent.maf.cellmissy.repository.EcmCompositionRepository;
 import be.ugent.maf.cellmissy.repository.EcmDensityRepository;
 import be.ugent.maf.cellmissy.repository.EcmRepository;
@@ -35,7 +35,7 @@ public class EcmServiceImpl implements EcmService {
     @Autowired
     private EcmCompositionRepository ecmCompositionRepository;
     @Autowired
-    private EcmCoatingRepository ecmCoatingRepository;
+    private BottomMatrixRepository bottomMatrixRepository;
     @Autowired
     private EcmDensityRepository ecmDensityRepository;
 
@@ -71,8 +71,8 @@ public class EcmServiceImpl implements EcmService {
     }
 
     @Override
-    public List<EcmCoating> findAllEcmCoating() {
-        return ecmCoatingRepository.findAll();
+    public List<BottomMatrix> findAllBottomMatrix() {
+        return bottomMatrixRepository.findAll();
     }
 
     @Override
@@ -83,5 +83,10 @@ public class EcmServiceImpl implements EcmService {
     @Override
     public void saveEcmComposition(EcmComposition ecmComposition) {
         ecmCompositionRepository.saveEcmComposition(ecmComposition);
+    }
+
+    @Override
+    public List<String> findAllPolimerysationPh() {
+        return ecmRepository.findAllPolimerysationPh();
     }
 }
