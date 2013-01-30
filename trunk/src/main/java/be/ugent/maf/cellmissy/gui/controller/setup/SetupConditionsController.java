@@ -4,7 +4,9 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.setup;
 
+import be.ugent.maf.cellmissy.entity.Assay;
 import be.ugent.maf.cellmissy.entity.AssayMedium;
+import be.ugent.maf.cellmissy.entity.BottomMatrix;
 import be.ugent.maf.cellmissy.entity.CellLine;
 import be.ugent.maf.cellmissy.entity.CellLineType;
 import be.ugent.maf.cellmissy.entity.Ecm;
@@ -418,7 +420,6 @@ public class SetupConditionsController {
         //create a new ECM object and set its class members
         Ecm ecm = new Ecm();
         ecm.setEcmComposition(assayEcmController.getEcm2DCompositionBindingList().get(0));
-        ecm.setBottomMatrix(assayEcmController.getBottomMatrixBindingList().get(0));
         ecm.setCoatingTemperature("RT");
         ecm.setCoatingTime("60");
         ecm.setConcentration(0.04);
@@ -447,8 +448,10 @@ public class SetupConditionsController {
         CellLine newCellLine = new CellLine(cellLine.getSeedingTime(), cellLine.getSeedingDensity(), cellLine.getGrowthMedium(), cellLine.getSerumConcentration(), cellLine.getCellLineType(), cellLine.getSerum());
         newCondition.setCellLine(newCellLine);
         newCellLine.setPlateCondition(newCondition);
+
         //set assay as previous one
-        newCondition.setAssay(previousCondition.getAssay());
+        // newCondition.setAssay(previousCondition.getAssay());
+
         //set assay medium (the same as the previous condition)
         AssayMedium assayMedium = previousCondition.getAssayMedium();
         AssayMedium newAssayMedium = new AssayMedium(assayMedium.getMedium(), assayMedium.getSerum(), assayMedium.getSerumConcentration(), assayMedium.getVolume());
@@ -456,38 +459,72 @@ public class SetupConditionsController {
         newAssayMedium.setPlateCondition(newCondition);
         //set assay and ecm (still default values)
         Ecm ecm = new Ecm();
-        //need to set different values according to matrix dimension: 2D or 3D
+        Assay assay = null;
+        BottomMatrix bottomMatrix = null;
+        //need to set different values according to matrix dimension: 2D or 3D or 2.5D
         switch (assayEcmController.getMatrixDimensionBindingList().get(setupConditionsPanel.getEcmDimensionComboBox().getSelectedIndex()).getDimension()) {
             case "2D":
+                //set assay
+                assay = assayEcmController.getAssay2DBindingList().get(assayEcmController.getAssayEcm2DPanel().getAssayComboBox().getSelectedIndex());
                 //2D matrix: set ecm 2D fields
-                ecm.setEcmComposition(assayEcmController.getEcm2DCompositionBindingList().get(0));
-                ecm.setConcentration(0.04);
-                ecm.setVolume(100.0);
-                ecm.setCoatingTime("60");
-                ecm.setCoatingTemperature("RT");
-                ecm.setVolumeUnit("\u00B5" + "l");
-                ecm.setConcentrationUnit("mg/ml");
+                ecm.setEcmComposition(assayEcmController.getEcm2DCompositionBindingList().get(assayEcmController.getAssayEcm2DPanel().getCompositionComboBox().getSelectedIndex()));
+                ecm.setConcentration(Double.parseDouble(assayEcmController.getAssayEcm2DPanel().getConcentrationTextField().getText()));
+                ecm.setVolume(Double.parseDouble(assayEcmController.getAssayEcm2DPanel().getVolumeTextField().getText()));
+                ecm.setCoatingTime(assayEcmController.getAssayEcm2DPanel().getCoatingTimeTextField().getText());
+                ecm.setCoatingTemperature(assayEcmController.getAssayEcm2DPanel().getCoatingTemperatureTextField().getText());
+                ecm.setVolumeUnit(assayEcmController.getAssayEcm2DPanel().getVolumeUnitLabel().getText());
+                ecm.setConcentrationUnit(assayEcmController.getAssayEcm2DPanel().getConcentrationUnitOfMeasure().getSelectedItem().toString());
                 break;
             case "3D":
+                //set assay    
+                assay = assayEcmController.getAssay3DBindingList().get(assayEcmController.getAssayEcm3DPanel().getAssayComboBox().getSelectedIndex());
                 //3D matrix: set ecm 3D fields
-                ecm.setEcmComposition(assayEcmController.getEcm3DCompositionBindingList().get(0));
-                ecm.setEcmDensity((EcmDensity) assayEcmController.getAssayEcm3DPanel().getDensityComboBox().getItemAt(1));
-                ecm.setBottomMatrix(assayEcmController.getBottomMatrixBindingList().get(0)); // thin gel coating
-                ecm.setTopMatrixVolume(40.0); // only top volume, not bottom volume
-                ecm.setPolymerisationTime("30");
-                ecm.setPolymerisationTemperature("37 C");
-                ecm.setPolymerisationPh(assayEcmController.getPolymerisationPhBindingList().get(0));
+                ecm.setEcmComposition(assayEcmController.getEcm3DCompositionBindingList().get(assayEcmController.getAssayEcm3DPanel().getCompositionComboBox().getSelectedIndex()));
+                ecm.setEcmDensity(assayEcmController.getEcmDensityBindingList().get(assayEcmController.getAssayEcm3DPanel().getDensityComboBox().getSelectedIndex()));
+                // bottom matrix
+                bottomMatrix = assayEcmController.getBottomMatrixBindingList().get(assayEcmController.getAssayEcm3DPanel().getBottomMatrixTypeComboBox().getSelectedIndex());
+                ecm.setBottomMatrix(bottomMatrix);
+                switch (bottomMatrix.getType()) {
+                    case "gel":
+                        // both top and bottom matrix volumes
+                        String text = assayEcmController.getAssayEcm3DPanel().getTopMatrixVolumeTextField().getText();
+                        if (!text.isEmpty()) {
+                            ecm.setTopMatrixVolume(Double.parseDouble(text));
+                        } else {
+                            ecm.setTopMatrixVolume(40.0);
+                        }
+                        ecm.setBottomMatrixVolume(Double.parseDouble(assayEcmController.getAssayEcm3DPanel().getBottomMatrixVolumeTextField().getText()));
+                        break;
+                    case "thin gel coating":
+                        // top matrix but no bottom matrix volume
+                        ecm.setTopMatrixVolume(Double.parseDouble(assayEcmController.getAssayEcm3DPanel().getTopMatrixVolumeTextField().getText()));
+                        break;
+                }
+                ecm.setPolymerisationTime(assayEcmController.getAssayEcm3DPanel().getPolymerizationTimeTextField().getText());
+                ecm.setPolymerisationTemperature(assayEcmController.getAssayEcm3DPanel().getPolymerizationTemperatureTextField().getText());
+                ecm.setPolymerisationPh(assayEcmController.getPolymerisationPhBindingList().get(assayEcmController.getAssayEcm3DPanel().getPolymerizationPhComboBox().getSelectedIndex()));
                 break;
             case "2.5D":
+                // set assay
+                assay = assayEcmController.getAssay25DBindingList().get(assayEcmController.getAssayEcm25DPanel().getAssayComboBox().getSelectedIndex());
                 //3D matrix: set ecm 2.5D fields
-                ecm.setEcmComposition(assayEcmController.getEcm3DCompositionBindingList().get(0));
-                ecm.setEcmDensity((EcmDensity) assayEcmController.getAssayEcm3DPanel().getDensityComboBox().getItemAt(1));
-                ecm.setBottomMatrix(assayEcmController.getBottomMatrixBindingList().get(0)); // thin gel coating
-                ecm.setPolymerisationTime("30");
-                ecm.setPolymerisationTemperature("37 C");
-                ecm.setPolymerisationPh(assayEcmController.getPolymerisationPhBindingList().get(0));
+                ecm.setEcmComposition(assayEcmController.getEcm25DCompositionBindingList().get(assayEcmController.getAssayEcm25DPanel().getCompositionComboBox().getSelectedIndex()));
+                ecm.setEcmDensity(assayEcmController.getEcmDensityBindingList().get(assayEcmController.getAssayEcm25DPanel().getDensityComboBox().getSelectedIndex()));
+                // bottom matrix
+                bottomMatrix = assayEcmController.getBottomMatrixBindingList().get(assayEcmController.getAssayEcm25DPanel().getBottomMatrixTypeComboBox().getSelectedIndex());
+                ecm.setBottomMatrix(bottomMatrix);
+                switch (bottomMatrix.getType()) {
+                    case "gel":
+                        // bottom matrix volume
+                        ecm.setBottomMatrixVolume(Double.parseDouble(assayEcmController.getAssayEcm25DPanel().getBottomMatrixVolumeTextField().getText()));
+                        break;
+                }
+                ecm.setPolymerisationTime(assayEcmController.getAssayEcm25DPanel().getPolymerizationTimeTextField().getText());
+                ecm.setPolymerisationTemperature(assayEcmController.getAssayEcm25DPanel().getPolymerizationTemperatureTextField().getText());
+                ecm.setPolymerisationPh(assayEcmController.getPolymerisationPhBindingList().get(assayEcmController.getAssayEcm25DPanel().getPolymerizationPhComboBox().getSelectedIndex()));
                 break;
         }
+        newCondition.setAssay(assay);
         newCondition.setEcm(ecm);
         //set an empty collection of treatments (treatments are not recalled from previous condition)
         List<Treatment> treatmentList = new ArrayList<>();

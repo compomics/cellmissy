@@ -45,7 +45,7 @@
                   <Component id="selectAssayLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="assayComboBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="319" max="32767" attributes="0"/>
+                  <EmptySpace pref="320" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -77,7 +77,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="selectAssayLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Select an invasion assay"/>
+            <Property name="text" type="java.lang.String" value="Select a migration assay"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -164,10 +164,7 @@
                               <Component id="polymerizationTemperatureTextField" alignment="0" pref="158" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="topVolumeUnitLabel" min="-2" pref="43" max="-2" attributes="1"/>
-                              <Component id="bottomVolumeUnitlabel" min="-2" pref="43" max="-2" attributes="1"/>
-                          </Group>
+                          <Component id="bottomVolumeUnitlabel" min="-2" pref="43" max="-2" attributes="1"/>
                       </Group>
                       <Component id="polymerizationPhComboBox" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -209,29 +206,21 @@
                       </Group>
                   </Group>
                   <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="topVolumeUnitLabel" pref="20" max="32767" attributes="1"/>
-                          <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="polymerizationTimeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="polymerizationTimeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="polymerizationTemperatureTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="polymerizationTemperatureLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="polymerizationTimeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="polymerizationTimeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="polymerizationTemperatureTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="polymerizationTemperatureLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="polymerizationPhComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="55" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -292,13 +281,6 @@
         </Component>
         <Component class="javax.swing.JTextField" name="compositionTextField">
         </Component>
-        <Component class="javax.swing.JLabel" name="topVolumeUnitLabel">
-          <Properties>
-            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[10, 10]"/>
-            </Property>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
             <Property name="text" type="java.lang.String" value="Bottom matrix type"/>
@@ -338,7 +320,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Polymerization PH"/>
+            <Property name="text" type="java.lang.String" value="Polymerization pH"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="polymerizationPhComboBox">

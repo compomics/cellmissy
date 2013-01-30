@@ -44,10 +44,12 @@ public class AssayEcmController {
     //binding list for assays (2D and 3D)
     private ObservableList<Assay> assay2DBindingList;
     private ObservableList<Assay> assay3DBindingList;
+    private ObservableList<Assay> assay25DBindingList;
     private ObservableList<String> polymerisationPhBindingList;
     //binding list for ecm composition (2D and 3D)
     private ObservableList<EcmComposition> ecm2DCompositionBindingList;
     private ObservableList<EcmComposition> ecm3DCompositionBindingList;
+    private ObservableList<EcmComposition> ecm25DCompositionBindingList;
     //binding list for ecm coating (only for 2D)
     private ObservableList<BottomMatrix> bottomMatrixBindingList;
     //binding list for ecm density (only for 3D)
@@ -87,6 +89,10 @@ public class AssayEcmController {
         return assay2DBindingList;
     }
 
+    public ObservableList<Assay> getAssay25DBindingList() {
+        return assay25DBindingList;
+    }
+
     public ObservableList<Assay> getAssay3DBindingList() {
         return assay3DBindingList;
     }
@@ -99,6 +105,10 @@ public class AssayEcmController {
         return ecm3DCompositionBindingList;
     }
 
+    public ObservableList<EcmComposition> getEcm25DCompositionBindingList() {
+        return ecm25DCompositionBindingList;
+    }
+
     public ObservableList<BottomMatrix> getBottomMatrixBindingList() {
         return bottomMatrixBindingList;
     }
@@ -107,8 +117,20 @@ public class AssayEcmController {
         return assayEcm3DPanel;
     }
 
+    public AssayEcm25DPanel getAssayEcm25DPanel() {
+        return assayEcm25DPanel;
+    }
+
+    public AssayEcm2DPanel getAssayEcm2DPanel() {
+        return assayEcm2DPanel;
+    }
+
     public ObservableList<String> getPolymerisationPhBindingList() {
         return polymerisationPhBindingList;
+    }
+
+    public ObservableList<EcmDensity> getEcmDensityBindingList() {
+        return ecmDensityBindingList;
     }
 
     /**
@@ -202,16 +224,14 @@ public class AssayEcmController {
             case "2.5D":
                 // 2.5D situation
                 //set assay
-                plateCondition.setAssay(assay3DBindingList.get(assayEcm25DPanel.getAssayComboBox().getSelectedIndex()));
+                plateCondition.setAssay(assay25DBindingList.get(assayEcm25DPanel.getAssayComboBox().getSelectedIndex()));
                 //ecm composition
-                plateCondition.getEcm().setEcmComposition(ecm3DCompositionBindingList.get(assayEcm25DPanel.getCompositionComboBox().getSelectedIndex()));
+                plateCondition.getEcm().setEcmComposition(ecm25DCompositionBindingList.get(assayEcm25DPanel.getCompositionComboBox().getSelectedIndex()));
                 //ecm density
                 plateCondition.getEcm().setEcmDensity(ecmDensityBindingList.get(assayEcm25DPanel.getDensityComboBox().getSelectedIndex()));
                 //ecm volume TOP
                 //unit Of Measure
-                plateCondition.getEcm().setVolumeUnit(assayEcm25DPanel.getTopVolumeUnitLabel().getText());
-                // top matrix volume is null for 2.5D ecm
-                plateCondition.getEcm().setTopMatrixVolume(null);
+                plateCondition.getEcm().setVolumeUnit(assayEcm25DPanel.getBottomVolumeUnitlabel().getText());
                 // bottom matrix
                 plateCondition.getEcm().setBottomMatrix(bottomMatrixBindingList.get(assayEcm25DPanel.getBottomMatrixTypeComboBox().getSelectedIndex()));
                 switch (plateCondition.getEcm().getBottomMatrix().getType()) {
@@ -225,16 +245,16 @@ public class AssayEcmController {
                             String message = "Please insert a valid Volume";
                             setupConditionsController.showMessage(message, 2);
                             setupConditionsController.getConditionsPanel().getConditionsJList().setSelectedIndex(setupConditionsController.getPreviousConditionIndex());
-                            assayEcm3DPanel.getBottomMatrixVolumeTextField().requestFocusInWindow();
+                            assayEcm25DPanel.getBottomMatrixVolumeTextField().requestFocusInWindow();
                         }
                         break;
                 }
                 //ecm polymerization time
-                plateCondition.getEcm().setPolymerisationTime(assayEcm3DPanel.getPolymerizationTimeTextField().getText());
+                plateCondition.getEcm().setPolymerisationTime(assayEcm25DPanel.getPolymerizationTimeTextField().getText());
                 //ecm polymerization temperature
-                plateCondition.getEcm().setPolymerisationTemperature(assayEcm3DPanel.getPolymerizationTemperatureTextField().getText());
+                plateCondition.getEcm().setPolymerisationTemperature(assayEcm25DPanel.getPolymerizationTemperatureTextField().getText());
                 // ecm polymerization ph
-                plateCondition.getEcm().setPolymerisationPh(polymerisationPhBindingList.get(assayEcm3DPanel.getPolymerizationPhComboBox().getSelectedIndex()));
+                plateCondition.getEcm().setPolymerisationPh(polymerisationPhBindingList.get(assayEcm25DPanel.getPolymerizationPhComboBox().getSelectedIndex()));
                 break;
         }
     }
@@ -249,7 +269,6 @@ public class AssayEcmController {
         String dimension = matrixDimension.getDimension();
         switch (dimension) {
             case "2D":
-                //2D matrix
                 assayEcm2DPanel.getAssayComboBox().setSelectedIndex(assay2DBindingList.indexOf(plateCondition.getAssay()));
                 assayEcm2DPanel.getCompositionComboBox().setSelectedIndex(ecm2DCompositionBindingList.indexOf(plateCondition.getEcm().getEcmComposition()));
                 assayEcm2DPanel.getConcentrationTextField().setText("" + plateCondition.getEcm().getConcentration());
@@ -259,21 +278,21 @@ public class AssayEcmController {
                 assayEcm2DPanel.getCoatingTemperatureTextField().setText(plateCondition.getEcm().getCoatingTemperature());
                 break;
             case "3D":
-                //3D matrix
                 assayEcm3DPanel.getAssayComboBox().setSelectedIndex(assay3DBindingList.indexOf(plateCondition.getAssay()));
                 assayEcm3DPanel.getCompositionComboBox().setSelectedIndex(ecm3DCompositionBindingList.indexOf(plateCondition.getEcm().getEcmComposition()));
                 assayEcm3DPanel.getDensityComboBox().setSelectedIndex(ecmDensityBindingList.indexOf(plateCondition.getEcm().getEcmDensity()));
                 assayEcm3DPanel.getBottomMatrixTypeComboBox().setSelectedIndex(bottomMatrixBindingList.indexOf(plateCondition.getEcm().getBottomMatrix()));
-                assayEcm3DPanel.getTopMatrixVolumeTextField().setText("" + plateCondition.getEcm().getVolume());
+                assayEcm3DPanel.getBottomMatrixVolumeTextField().setText("" + plateCondition.getEcm().getBottomMatrixVolume());
+                assayEcm3DPanel.getTopMatrixVolumeTextField().setText("" + plateCondition.getEcm().getTopMatrixVolume());
                 assayEcm3DPanel.getPolymerizationTimeTextField().setText(plateCondition.getEcm().getPolymerisationTime());
                 assayEcm3DPanel.getPolymerizationTemperatureTextField().setText(plateCondition.getEcm().getPolymerisationTemperature());
                 break;
             case "2.5D":
-                //2.5D matrix
-                assayEcm25DPanel.getAssayComboBox().setSelectedIndex(assay3DBindingList.indexOf(plateCondition.getAssay()));
-                assayEcm25DPanel.getCompositionComboBox().setSelectedIndex(ecm3DCompositionBindingList.indexOf(plateCondition.getEcm().getEcmComposition()));
+                assayEcm25DPanel.getAssayComboBox().setSelectedIndex(assay25DBindingList.indexOf(plateCondition.getAssay()));
+                assayEcm25DPanel.getCompositionComboBox().setSelectedIndex(ecm25DCompositionBindingList.indexOf(plateCondition.getEcm().getEcmComposition()));
                 assayEcm25DPanel.getDensityComboBox().setSelectedIndex(ecmDensityBindingList.indexOf(plateCondition.getEcm().getEcmDensity()));
                 assayEcm25DPanel.getBottomMatrixTypeComboBox().setSelectedIndex(bottomMatrixBindingList.indexOf(plateCondition.getEcm().getBottomMatrix()));
+                assayEcm25DPanel.getBottomMatrixVolumeTextField().setText("" + plateCondition.getEcm().getBottomMatrixVolume());
                 assayEcm25DPanel.getPolymerizationTimeTextField().setText(plateCondition.getEcm().getPolymerisationTime());
                 assayEcm25DPanel.getPolymerizationTemperatureTextField().setText(plateCondition.getEcm().getPolymerisationTemperature());
                 break;
@@ -530,11 +549,15 @@ public class AssayEcmController {
      * Initialize assay/ECM panel for 2.5D matrix dimension
      */
     private void initAssayEcm25DPanel() {
-        //init assayJCombo (3D)
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, assay3DBindingList, assayEcm25DPanel.getAssayComboBox());
+        //init assayBindingList
+        assay25DBindingList = ObservableCollections.observableList(assayService.findByMatrixDimensionName("2.5D"));
+        //init assayJCombo (2.5D)
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, assay25DBindingList, assayEcm25DPanel.getAssayComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
+        //init ecmCompositionBindingList
+        ecm25DCompositionBindingList = ObservableCollections.observableList(ecmService.findEcmCompositionByMatrixDimensionName("2.5D"));
         //init ecmCompositionJCombo (3D)
-        jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, ecm3DCompositionBindingList, assayEcm25DPanel.getCompositionComboBox());
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, ecm25DCompositionBindingList, assayEcm25DPanel.getCompositionComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         //init densityJCombo
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, ecmDensityBindingList, assayEcm25DPanel.getDensityComboBox());
@@ -543,7 +566,6 @@ public class AssayEcmController {
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, bottomMatrixBindingList, assayEcm25DPanel.getBottomMatrixTypeComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         //set volume unit of measure
-        assayEcm25DPanel.getTopVolumeUnitLabel().setText("\u00B5" + "l");
         assayEcm25DPanel.getBottomVolumeUnitlabel().setText("\u00B5" + "l");
         //init polymerisation PH JCombo
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, polymerisationPhBindingList, assayEcm25DPanel.getPolymerizationPhComboBox());

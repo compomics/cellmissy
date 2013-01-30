@@ -47,7 +47,7 @@ public class ProjectRepositoryTest {
         Project project = new Project();
         project.setProjectNumber(4);
         project.setProjectDescription("This is a test");
-        projectRepository.save(project);
-        Assert.assertNotNull(project.getProjectid());
+        Project save = projectRepository.save(project);
+        Assert.assertNotNull(save.getProjectid());
     }
 }
