@@ -183,14 +183,14 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
 
         bottomMatrixTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11));
         jLabel2.setText("Bottom matrix volume");
 
         bottomVolumeUnitlabel.setMinimumSize(new java.awt.Dimension(10, 10));
 
         bottomMatrixVolumeTextField.setText("0");
 
-        jLabel3.setText("Polymerization PH");
+        jLabel3.setText("Polymerization pH");
 
         polymerizationPhComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 

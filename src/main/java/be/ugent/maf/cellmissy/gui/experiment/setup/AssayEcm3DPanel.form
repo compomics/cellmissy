@@ -344,7 +344,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Polymerization PH"/>
+            <Property name="text" type="java.lang.String" value="Polymerization pH"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="polymerizationPhComboBox">
