@@ -17,10 +17,11 @@ import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import be.ugent.maf.cellmissy.service.MicroscopeDataService;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,14 +49,12 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
 
     @Override
     public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processCellMiaData() {
-
         long currentTimeMillis = System.currentTimeMillis();
         imagingTypeMap = microscopeDataService.processMicroscopeData();
         algoMap = new HashMap<>();
         File[] algoFiles = experiment.getMiaFolder().listFiles();
 
         for (File file : algoFiles) {
-
             //default algo-0 folder does not contain data to store
             if (!file.getName().endsWith("algo-0")) {
                 //create a new algorithm
@@ -74,11 +73,15 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
 
                     // listFiles does not guarantee any order; sort files in alphabetical order
                     Arrays.sort(sampleFiles);
-
                     int imageTypeStartFolder = 0;
-                    for (ImagingType imagingType : map.keySet()) {
-                        List<WellHasImagingType> wellHasImagingTypeList = map.get(imagingType);
-
+                    // make use of an iterator on a EntrySet is more efficient then iterating through the keys of the map
+                    Set<Map.Entry<ImagingType, List<WellHasImagingType>>> entrySet = map.entrySet();
+                    Iterator<Map.Entry<ImagingType, List<WellHasImagingType>>> iterator = entrySet.iterator();
+                    while(iterator.hasNext()){
+                        Map.Entry<ImagingType, List<WellHasImagingType>> next = iterator.next();
+                        ImagingType imagingType = next.getKey();
+                        List<WellHasImagingType> wellHasImagingTypeList = next.getValue();
+                        
                         //**********************************************************************************************//
                         for (int i = imageTypeStartFolder; i < wellHasImagingTypeList.size() + imageTypeStartFolder; i++) {
                             WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i - imageTypeStartFolder);
@@ -135,20 +138,23 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
     /**
      * set file filters for CellMIA 
      */
-    private FilenameFilter sampleFilter = new FilenameFilter() {
+    private static FilenameFilter sampleFilter = new FilenameFilter() {
 
+        @Override
         public boolean accept(File dir, String name) {
             return name.startsWith("sample");
         }
     };
-    private FilenameFilter resultsFilter = new FilenameFilter() {
+    private static FilenameFilter resultsFilter = new FilenameFilter() {
 
+        @Override
         public boolean accept(File dir, String name) {
             return name.startsWith("results");
         }
     };
-    private FilenameFilter textfilesFilter = new FilenameFilter() {
+    private static FilenameFilter textfilesFilter = new FilenameFilter() {
 
+        @Override
         public boolean accept(File dir, String name) {
             return name.endsWith(".txt");
         }
@@ -175,7 +181,6 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
             }
             map.put(imagingType, wellHasImagingTypeList);
         }
-
         return map;
     }
 }

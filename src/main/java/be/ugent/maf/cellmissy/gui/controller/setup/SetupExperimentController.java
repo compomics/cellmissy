@@ -61,9 +61,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * SetupExperiment Panel Controller: set up a new experiment. 
- * Parent controller: CellMissy Controller (main controller)
- * Child controllers: Conditions Controller, Setup Plate Controller
+ * SetupExperiment Panel Controller: set up a new experiment. Parent controller: CellMissy Controller (main controller) Child controllers: Conditions Controller, Setup Plate Controller
+ *
  * @author Paola
  */
 @Controller("setupExperimentController")
@@ -125,8 +124,8 @@ public class SetupExperimentController {
 
     /**
      * setters and getters
-     *  
-     * @return 
+     *
+     * @return
      */
     public SetupExperimentPanel getSetupExperimentPanel() {
         return setupExperimentPanel;
@@ -152,8 +151,9 @@ public class SetupExperimentController {
      * public methods
      */
     /**
-     * 
+     *
      * if the user adds a new condition, add a new entry to the map: new condition-empty list of rectangles
+     *
      * @param conditionToAdd added to the list
      */
     public void onNewConditionAdded(PlateCondition conditionToAdd) {
@@ -162,7 +162,8 @@ public class SetupExperimentController {
 
     /**
      * if the user removes a condition from the list, wells conditions are set back to null, rectangles are removed from the map and repaint is called
-     * @param conditionToRemove 
+     *
+     * @param conditionToRemove
      */
     public void onConditionToRemove(PlateCondition conditionToRemove) {
         //set back to null the condition of the wells selected 
@@ -175,6 +176,7 @@ public class SetupExperimentController {
 
     /**
      * get the current condition from the child controller
+     *
      * @return the current condition
      */
     public PlateCondition getCurrentCondition() {
@@ -183,6 +185,7 @@ public class SetupExperimentController {
 
     /**
      * get the setup plate panel from the child controller
+     *
      * @return setup plate panel
      */
     public SetupPlatePanel getSetupPlatePanel() {
@@ -191,8 +194,9 @@ public class SetupExperimentController {
 
     /**
      * show a message through the main frame
+     *
      * @param message
-     * @param messageType  
+     * @param messageType
      */
     public void showMessage(String message, Integer messageType) {
         cellMissyController.showMessage(message, messageType);
@@ -200,8 +204,9 @@ public class SetupExperimentController {
 
     /**
      * Create a new Project
+     *
      * @param projectNumber
-     * @param projectDescription  
+     * @param projectDescription
      */
     public void createNewProject(int projectNumber, String projectDescription) {
         Project savedProject = projectService.setupProject(projectNumber, projectDescription, mainDirectory);
@@ -209,10 +214,10 @@ public class SetupExperimentController {
     }
 
     /**
-     * When the mouse is released and the rectangle has been drawn, this method is called:
-     * set well collection of the current condition and set the condition of the selected wells
-     * @param plateCondition 
-     * @param rectangle 
+     * When the mouse is released and the rectangle has been drawn, this method is called: set well collection of the current condition and set the condition of the selected wells
+     *
+     * @param plateCondition
+     * @param rectangle
      * @return true if the selection of wells is valid, else show a message
      */
     public boolean updateWellCollection(PlateCondition plateCondition, Rectangle rectangle) {
@@ -246,7 +251,8 @@ public class SetupExperimentController {
 
     /**
      * set back to null the condition of the wells selected (for a certain Condition)
-     * @param plateCondition 
+     *
+     * @param plateCondition
      */
     public void resetWellsCondition(PlateCondition plateCondition) {
         //set plate condition of wells again to null
@@ -273,7 +279,8 @@ public class SetupExperimentController {
 
     /**
      * this method checks experiment Info
-     * @return messages to show if validation was not successful 
+     *
+     * @return messages to show if validation was not successful
      */
     public List<String> validateExperimentInfo() {
         List<String> messages = new ArrayList<>();
@@ -299,12 +306,12 @@ public class SetupExperimentController {
 
     /**
      * validate PlateCondition, if PlateCondition is not valid, go back to the previous one
+     *
      * @param plateCondition
-     * @return 
+     * @return
      */
     public boolean validateCondition(PlateCondition plateCondition) {
         boolean isValid = false;
-
         if (setupConditionsController.validateCondition(plateCondition).isEmpty()) {
             isValid = true;
         } else {
@@ -368,7 +375,6 @@ public class SetupExperimentController {
          */
         //show experiments for the project selected
         overviewPanel.getProjectJList().addMouseListener(new MouseAdapter() {
-
             @Override
             public void mouseClicked(MouseEvent e) {
 
@@ -406,7 +412,6 @@ public class SetupExperimentController {
          * add action listeners
          */
         setupExperimentPanel.getNextButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -416,18 +421,16 @@ public class SetupExperimentController {
                 if (cellMissyController.validateExperimentInfo()) {
                     experiment.setExperimentStatus(ExperimentStatus.IN_PROGRESS);
                     //set the User of the experiment
-                    //@todo: need to set the user like this NOW, to be changed!!!=====================================================================================
+                    //@todo: need to set the user like this NOW, to be changed!
                     experiment.setUser(cellMissyController.getAUser());
                     experiment.setProject((Project) overviewPanel.getProjectJList().getSelectedValue());
                     experiment.setInstrument((Instrument) experimentInfoPanel.getInstrumentComboBox().getSelectedItem());
                     experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());
                     experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());
                     experiment.setPurpose(experimentInfoPanel.getPurposeTextArea().getText());
-
                     //create experiment's folder structure on the server
-                    // this method is not needed for generic input loading
+                    //@todo: this method is not needed for generic input loading
                     experimentService.createFolderStructure(experiment);
-
                     //show the setupPanel and hide the experimentInfoPanel
                     GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), setupPanel, experimentInfoPanel);
                     cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Add conditions and select wells for each condition. Conditions details can be chosen in the right panel.");
@@ -448,7 +451,6 @@ public class SetupExperimentController {
         });
 
         setupExperimentPanel.getPreviousButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), experimentInfoPanel, setupPanel);
@@ -462,35 +464,35 @@ public class SetupExperimentController {
             }
         });
 
-
-
         //create a pdf from the plate panel (ONLY if experiment set up is OK)
         setupExperimentPanel.getReportButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (validateCondition(setupConditionsController.getCurrentCondition())) {
                     //update last condition of the experiment
                     updateLastCondition();
                 }
-                //set the experiment for each plate condition in the List
-                for (PlateCondition plateCondition : setupConditionsController.getPlateConditionBindingList()) {
-                    plateCondition.setExperiment(experiment);
+                if (setupPlateController.validateWells()) {
+                    //set the experiment for each plate condition in the List
+                    for (PlateCondition plateCondition : setupConditionsController.getPlateConditionBindingList()) {
+                        plateCondition.setExperiment(experiment);
+                    }
+                    //set experiment plate format
+                    experiment.setPlateFormat((PlateFormat) setupPlateController.getPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
+                    //set the condition's collection of the experiment
+                    experiment.setPlateConditionCollection(setupConditionsController.getPlateConditionBindingList());
+                    //create PDF report, execute SwingWorker
+                    SetupReportWorker setupReportWorker = new SetupReportWorker();
+                    setupReportWorker.execute();
+                } else {
+                    showMessage("Some wells do not have a condition, please reset view.", JOptionPane.WARNING_MESSAGE);
                 }
-                //set experiment plate format
-                experiment.setPlateFormat((PlateFormat) setupPlateController.getPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
-                //set the condition's collection of the experiment
-                experiment.setPlateConditionCollection(setupConditionsController.getPlateConditionBindingList());
 
-                //create PDF report, execute SwingWorker
-                SetupReportWorker setupReportWorker = new SetupReportWorker();
-                setupReportWorker.execute();
             }
         });
 
         //click on Finish button: save the experiment
         setupExperimentPanel.getFinishButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 //save the new experiment to the DB
@@ -504,6 +506,7 @@ public class SetupExperimentController {
 
     /**
      * this method checks if a well already has a condition
+     *
      * @param wellGui
      * @return true if a well already has a condition assigned
      */
@@ -528,10 +531,9 @@ public class SetupExperimentController {
     }
 
     /**
-     * this class extends a document listener 
-     * on "next" button
+     * this class extends a document listener on "next" button
      */
-    private class ExperimentListener implements DocumentListener {
+    private static class ExperimentListener implements DocumentListener {
 
         private List<Document> documentList = new ArrayList<>();
         private JButton button;
@@ -574,9 +576,10 @@ public class SetupExperimentController {
 
     /**
      * this method checks if a project already has a certain experiment (checking for experiment number)
+     *
      * @param projectId
      * @param experimentNumber
-     * @return 
+     * @return
      */
     private boolean projectHasExperiment(Long projectId, Integer experimentNumber) {
         boolean hasExperiment = false;
@@ -617,13 +620,13 @@ public class SetupExperimentController {
             try {
                 file = get();
             } catch (InterruptedException | ExecutionException | CancellationException ex) {
-                ex.printStackTrace();
+                LOG.error(ex.getMessage(), ex);
             }
             try {
                 //if export to PDF was successfull, open the PDF file from the desktop
                 Desktop.getDesktop().open(file);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                LOG.error(ex.getMessage(), ex);
             }
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             setupExperimentPanel.getFinishButton().setEnabled(true);

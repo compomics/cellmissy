@@ -94,25 +94,20 @@
                               <Component id="serumConcentrationLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="serumConcentrationTextField" min="-2" pref="67" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Component id="serumComboBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="growthMediumComboBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="cellLineComboBox" min="-2" max="-2" attributes="0"/>
-                                      <Component id="seedingTimeTextField" alignment="0" max="32767" attributes="1"/>
-                                      <Component id="seedingDensityTextField" alignment="0" min="-2" pref="64" max="-2" attributes="1"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="growthMediumComboBox" alignment="0" max="32767" attributes="1"/>
+                              <Component id="seedingTimeTextField" alignment="0" max="32767" attributes="1"/>
+                              <Component id="seedingDensityTextField" alignment="0" pref="83" max="32767" attributes="1"/>
+                              <Component id="serumConcentrationTextField" alignment="0" max="32767" attributes="1"/>
+                              <Component id="cellLineComboBox" alignment="0" max="32767" attributes="1"/>
+                              <Component id="serumComboBox" alignment="0" max="32767" attributes="1"/>
                           </Group>
-                          <EmptySpace pref="191" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace pref="158" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -191,12 +186,7 @@
                 <Component class="javax.swing.JComboBox" name="growthMediumComboBox">
                   <Properties>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="4">
-                        <StringItem index="0" value="Item 1"/>
-                        <StringItem index="1" value="Item 2"/>
-                        <StringItem index="2" value="Item 3"/>
-                        <StringItem index="3" value="Item 4"/>
-                      </StringArray>
+                      <StringArray count="0"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -225,12 +215,7 @@
                 <Component class="javax.swing.JComboBox" name="serumComboBox">
                   <Properties>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="4">
-                        <StringItem index="0" value="Item 1"/>
-                        <StringItem index="1" value="Item 2"/>
-                        <StringItem index="2" value="Item 3"/>
-                        <StringItem index="3" value="Item 4"/>
-                      </StringArray>
+                      <StringArray count="0"/>
                     </Property>
                   </Properties>
                 </Component>

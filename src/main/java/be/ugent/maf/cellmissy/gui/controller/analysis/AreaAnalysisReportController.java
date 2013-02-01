@@ -22,7 +22,6 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,15 +59,9 @@ public class AreaAnalysisReportController {
     //services
 
     /**
-     * Initialize controller
-     */
-    public void init() {
-    }
-
-    /**
-     * 
-     * @param directory 
-     * @param reportName 
+     *
+     * @param directory
+     * @param reportName
      * @return the file created
      */
     public File createAnalysisReport(File directory, String reportName) {
@@ -89,8 +82,8 @@ public class AreaAnalysisReportController {
     }
 
     /**
-     * 
-     * @param pdfFile 
+     *
+     * @param pdfFile
      */
     private void tryToCreateFile(File pdfFile) {
         try {
@@ -102,10 +95,9 @@ public class AreaAnalysisReportController {
                 int showOptionDialog = JOptionPane.showOptionDialog(null, "File already exists. Do you want to replace it?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
                 // if YES, user wants to delete existing file and replace it
                 if (showOptionDialog == 0) {
-                    try {
-                        pdfFile.delete();
-                    } catch (Exception e) {
-                        areaAnalysisController.showMessage("Error deleting file.\nClose the file if it is open.", JOptionPane.ERROR_MESSAGE);
+                    boolean delete = pdfFile.delete();
+                    if (!delete) {
+                        return;
                     }
                     // if NO, returns already existing file
                 } else if (showOptionDialog == 1) {
@@ -113,19 +105,20 @@ public class AreaAnalysisReportController {
                 }
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            areaAnalysisController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
+            return;
         }
-        try {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(pdfFile)) {
             // actually create PDF file
-            createPdfFile(new FileOutputStream(pdfFile));
-        } catch (FileNotFoundException ex) {
+            createPdfFile(fileOutputStream);
+        } catch (IOException ex) {
             areaAnalysisController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     /**
-     * 
-     * @param outputStream 
+     *
+     * @param outputStream
      */
     private void createPdfFile(FileOutputStream outputStream) {
         document = null;
@@ -166,8 +159,7 @@ public class AreaAnalysisReportController {
     }
 
     /**
-     * Overview of Report
-     * experiment and project numbers + number of conditions
+     * Overview of Report experiment and project numbers + number of conditions
      */
     private void addOverview() {
         String title = "Analysis Report of Experiment " + experiment.getExperimentNumber() + " - " + "Project " + experiment.getProject().getProjectNumber();
@@ -200,8 +192,7 @@ public class AreaAnalysisReportController {
     }
 
     /**
-     * Add image with velocity chart
-     * Velocity Chart is created will all the conditions 
+     * Add image with velocity chart Velocity Chart is created will all the conditions
      */
     private void addGlobalVelocityChart() {
         List<PlateCondition> plateConditonsList = new ArrayList<>(experiment.getPlateConditionCollection());
@@ -217,7 +208,8 @@ public class AreaAnalysisReportController {
 
     /**
      * Create Image from a aJFreeChart and add it to document
-     * @param chart 
+     *
+     * @param chart
      */
     private void addImageFromChart(JFreeChart chart, int imageWidth, int imageHeight) {
         Image imageFromChart = PdfUtils.getImageFromChart(writer, chart, imageWidth, imageHeight);
@@ -279,6 +271,7 @@ public class AreaAnalysisReportController {
 
     /**
      * Get statistical summary table
+     *
      * @param analysisGroup
      * @return Table
      */
@@ -304,9 +297,10 @@ public class AreaAnalysisReportController {
 
     /**
      * Get P values table
+     *
      * @param analysisGroup
      * @param isAdjusted
-     * @return 
+     * @return
      */
     private PdfPTable createPValuesTable(AnalysisGroup analysisGroup, boolean isAdjusted) {
         // list of conditions that have been compared
@@ -328,8 +322,9 @@ public class AreaAnalysisReportController {
 
     /**
      * Copy data from a JTable to a PdfPTable
+     *
      * @param dataTable
-     * @param table 
+     * @param table
      */
     private void copyDataFromJTable(PdfPTable dataTable, JTable table) {
         for (int rowIndex = 0; rowIndex < table.getRowCount(); rowIndex++) {
@@ -366,7 +361,8 @@ public class AreaAnalysisReportController {
 
     /**
      * Add table with statistical summary for each analysis group
-     * @param analysisGroup 
+     *
+     * @param analysisGroup
      */
     private void addSummaryStatisticsTable(AnalysisGroup analysisGroup) {
         //add title before the table
@@ -377,10 +373,10 @@ public class AreaAnalysisReportController {
     }
 
     /**
-     * Add table with p-values
-     * if isAdjusted is false, not corrected P values are shown
+     * Add table with p-values if isAdjusted is false, not corrected P values are shown
+     *
      * @param analysisGroup
-     * @param isAdjusted 
+     * @param isAdjusted
      */
     private void addPValuesTable(AnalysisGroup analysisGroup, boolean isAdjusted) {
         PdfPTable pValuesTable = createPValuesTable(analysisGroup, isAdjusted);
@@ -389,7 +385,8 @@ public class AreaAnalysisReportController {
 
     /**
      * Add a PdfPTable to the document
-     * @param dataTable 
+     *
+     * @param dataTable
      */
     private void addTable(PdfPTable dataTable) {
         try {
@@ -416,7 +413,8 @@ public class AreaAnalysisReportController {
 
     /**
      * For each Analysis create a paragraph
-     * @param analysisGroup 
+     *
+     * @param analysisGroup
      */
     private void addAnalysisInfo(AnalysisGroup analysisGroup) {
         List<String> lines = new ArrayList<>();

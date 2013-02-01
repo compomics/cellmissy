@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,49 +26,43 @@ import org.springframework.stereotype.Service;
 @Service("positionListParser")
 public class PositionListParserImpl implements PositionListParser {
 
+    private static final Logger LOG = Logger.getLogger(PositionListParser.class);
+
     @Override
     public Map<ImagingType, List<WellHasImagingType>> parsePositionList(Map<ImagingType, String> imagingTypeToPosListMap, File setupFolder) {
 
         // this Map maps ImagingType (keys) to List of WellHasImagingType (values)
         Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = new HashMap<>();
-
         // in the microscope folder, look for the text files to parse
         for (ImagingType imagingType : imagingTypeToPosListMap.keySet()) {
             String positionList = imagingTypeToPosListMap.get(imagingType);
             List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
             File[] listFiles = setupFolder.listFiles();
             for (int j = 0; j < listFiles.length; j++) {
-
                 if (listFiles[j].getName().equals(positionList + ".txt")) {
-                    try {
-                        BufferedReader bufferedReader = new BufferedReader(new FileReader(listFiles[j]));
+                    try (BufferedReader bufferedReader = new BufferedReader(new FileReader(listFiles[j]))) {
                         String strRead;
                         while ((strRead = bufferedReader.readLine()) != null) {
 
                             // for each line of the position list create a new WellHasImagingType entity
                             WellHasImagingType wellHasImagingType = new WellHasImagingType();
-
                             String[] splitarray = strRead.split("\t");
-
                             // set wellHasImagingType class members
                             wellHasImagingType.setXCoordinate(Double.parseDouble(splitarray[0]));
                             wellHasImagingType.setYCoordinate(Double.parseDouble(splitarray[1]));
                             wellHasImagingType.setImagingType(imagingType);
-
                             // add wellHasImagingType to the list
                             wellHasImagingTypeList.add(wellHasImagingType);
-
                             // set wellHasImagingType sequence number
                             wellHasImagingType.setSequenceNumber(wellHasImagingTypeList.size());
-
                         }
                         // set the Collection of WellHasImagingTypes with the current List
                         imagingType.setWellHasImagingTypeCollection(wellHasImagingTypeList);
 
                     } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                        LOG.error(e.getMessage(), e);
                     } catch (IOException ex) {
-                        ex.printStackTrace();
+                        LOG.error(ex.getMessage(), ex);
                     }
                     // fill in the map
                     imagingTypeMap.put(imagingType, wellHasImagingTypeList);

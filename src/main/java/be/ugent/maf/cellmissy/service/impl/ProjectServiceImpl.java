@@ -26,7 +26,7 @@ public class ProjectServiceImpl implements ProjectService {
     private static final Logger LOG = Logger.getLogger(ProjectService.class);
     @Autowired
     private ProjectRepository projectRepository;
-    private String projectFolder;
+    private String projectFolderName;
 
     @Override
     public Project setupProject(int projectNumber, String description, File microscopeDirectory) {
@@ -41,15 +41,16 @@ public class ProjectServiceImpl implements ProjectService {
         //create project folder on the server
         DecimalFormat df = new DecimalFormat("000");
         if (newProject.getProjectDescription().length() == 0) {
-            projectFolder = "CM_P" + df.format(projectNumber);
+            projectFolderName = "CM_P" + df.format(projectNumber);
         } else {
-            projectFolder = "CM_P" + df.format(projectNumber) + "_" + newProject.getProjectDescription();
+            projectFolderName = "CM_P" + df.format(projectNumber) + "_" + newProject.getProjectDescription();
         }
 
-        File subDirectory = new File(microscopeDirectory, projectFolder);
-        if (!subDirectory.exists()) {
-            subDirectory.mkdir();
-            LOG.debug("Project Folder was created: " + projectFolder);
+        File subDirectory = new File(microscopeDirectory, projectFolderName);
+        // mkdir() returns true if and only if the directory was created; false otherwise
+        boolean mkdir = subDirectory.mkdir();
+        if (mkdir) {
+            LOG.debug("Project Folder was created: " + projectFolderName);
         }
         return newProject;
     }

@@ -24,6 +24,7 @@ import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -151,7 +152,7 @@ public class LoadExperimentFromCellMiaController {
                         // to select only (.obsep) files
                         @Override
                         public boolean accept(File f) {
-                            return f.getName().toLowerCase().endsWith(".obsep");
+                            return f.getName().toLowerCase(Locale.ENGLISH).endsWith(".obsep");
                         }
 
                         @Override

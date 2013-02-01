@@ -31,8 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * AssayEcm Controller: according to matrix dimension (2D/3D) set up assay/ECM details during experiment  design
- * Parent Controller: Setup Conditions Controller
+ * AssayEcm Controller: according to matrix dimension (2D/3D) set up assay/ECM details during experiment design Parent Controller: Setup Conditions Controller
+ *
  * @author Paola
  */
 @Controller("assayEcmController")
@@ -79,7 +79,8 @@ public class AssayEcmController {
 
     /**
      * getters and setters
-     * @return 
+     *
+     * @return
      */
     public ObservableList<MatrixDimension> getMatrixDimensionBindingList() {
         return matrixDimensionBindingList;
@@ -138,7 +139,8 @@ public class AssayEcmController {
      */
     /**
      * update assay/ECM fields for previous condition
-     * @param plateCondition 
+     *
+     * @param plateCondition
      */
     public void updateAssayEcmConditionFields(PlateCondition plateCondition) {
         MatrixDimension matrixDimension = (MatrixDimension) setupConditionsController.getSetupConditionsPanel().getEcmDimensionComboBox().getSelectedItem();
@@ -199,7 +201,8 @@ public class AssayEcmController {
                 }
                 // bottom matrix
                 plateCondition.getEcm().setBottomMatrix(bottomMatrixBindingList.get(assayEcm3DPanel.getBottomMatrixTypeComboBox().getSelectedIndex()));
-                switch (plateCondition.getEcm().getBottomMatrix().getType()) {
+                String type = plateCondition.getEcm().getBottomMatrix().getType();
+                switch (type) {
                     case "thin gel coating":
                         plateCondition.getEcm().setBottomMatrixVolume(null);
                         break;
@@ -261,7 +264,8 @@ public class AssayEcmController {
 
     /**
      * for a current selected condition, update input fields (components selected values and text fields)
-     * @param plateCondition 
+     *
+     * @param plateCondition
      */
     public void updateAssayEcmInputFields(PlateCondition plateCondition) {
         MatrixDimension matrixDimension = plateCondition.getAssay().getMatrixDimension();
@@ -300,8 +304,10 @@ public class AssayEcmController {
     }
 
     /**
-     * Reset fields for Assay and ECM parameters ********************************
-     * @param plateCondition 
+     * Reset fields for Assay and ECM parameters
+     *
+     ********************************
+     * @param plateCondition
      */
     public void resetAssayEcmInputFields(PlateCondition plateCondition) {
         switch (plateCondition.getAssay().getMatrixDimension().getDimension()) {
@@ -329,6 +335,7 @@ public class AssayEcmController {
 
     /**
      * validate user input for the ECM 2D panel
+     *
      * @return a list of string (messages to show to the user)
      */
     public List<String> validate2DEcm() {
@@ -350,6 +357,7 @@ public class AssayEcmController {
 
     /**
      * validate user input for the ECM 3D panel
+     *
      * @return a list of string (messages to show to the user)
      */
     public List<String> validate3DEcm() {
@@ -383,7 +391,6 @@ public class AssayEcmController {
          */
         //show different assay-ecm, 2D-3D panels
         setupConditionsController.getSetupConditionsPanel().getEcmDimensionComboBox().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 MatrixDimension dimension = matrixDimensionBindingList.get(setupConditionsController.getSetupConditionsPanel().getEcmDimensionComboBox().getSelectedIndex());
@@ -443,7 +450,6 @@ public class AssayEcmController {
          */
         //add new composition for 2D gel
         assayEcm2DPanel.getAddCompositionButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!assayEcm2DPanel.getCompositionTextField().getText().isEmpty()) {
@@ -507,7 +513,6 @@ public class AssayEcmController {
          * Add a new composition for 3D ECM
          */
         assayEcm3DPanel.getAddCompositionButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!assayEcm3DPanel.getCompositionTextField().getText().isEmpty()) {
@@ -525,11 +530,9 @@ public class AssayEcmController {
             }
         });
         /**
-         * If bottom matrix type is thin gel coating, the bottom volume must be left empty (and disabled)
-         * If bottom matrix type is gel, the bottom volume text field is enabled and set by default to 40
+         * If bottom matrix type is thin gel coating, the bottom volume must be left empty (and disabled) If bottom matrix type is gel, the bottom volume text field is enabled and set by default to 40
          */
         assayEcm3DPanel.getBottomMatrixTypeComboBox().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 BottomMatrix bottomMatrix = bottomMatrixBindingList.get(assayEcm3DPanel.getBottomMatrixTypeComboBox().getSelectedIndex());
@@ -587,7 +590,6 @@ public class AssayEcmController {
          * Add a new composition for 2.5D ECM
          */
         assayEcm25DPanel.getAddCompositionButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!assayEcm25DPanel.getCompositionTextField().getText().isEmpty()) {
@@ -605,11 +607,9 @@ public class AssayEcmController {
             }
         });
         /**
-         * If bottom matrix type is thin gel coating, the bottom volume must be left empty (and disabled)
-         * If bottom matrix type is gel, the bottom volume text field is enabled and set by default to 40
+         * If bottom matrix type is thin gel coating, the bottom volume must be left empty (and disabled) If bottom matrix type is gel, the bottom volume text field is enabled and set by default to 40
          */
         assayEcm25DPanel.getBottomMatrixTypeComboBox().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 BottomMatrix bottomMatrix = bottomMatrixBindingList.get(assayEcm25DPanel.getBottomMatrixTypeComboBox().getSelectedIndex());

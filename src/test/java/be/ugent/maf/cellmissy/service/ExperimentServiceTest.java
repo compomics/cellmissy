@@ -8,9 +8,7 @@ import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.Project;
 import java.io.File;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,8 +24,6 @@ public class ExperimentServiceTest {
 
     @Autowired
     private ExperimentService experimentService;
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     /**
      * Test Creation of Folder Structure for experiment Object
@@ -39,7 +35,7 @@ public class ExperimentServiceTest {
         File mainDirectoryTest = new File(PropertiesConfigurationHolder.getInstance().getString("mainDirectory"));
         experimentService.init(mainDirectoryTest);
         Project newProject = new Project();
-        newProject.setProjectDescription("");
+        newProject.setProjectDescription("Test");
         newProject.setProjectNumber(001);
         experiment.setProject(newProject);
         experiment.setExperimentNumber(1);

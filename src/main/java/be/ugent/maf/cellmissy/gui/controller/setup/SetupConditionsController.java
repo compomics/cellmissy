@@ -10,9 +10,9 @@ import be.ugent.maf.cellmissy.entity.BottomMatrix;
 import be.ugent.maf.cellmissy.entity.CellLine;
 import be.ugent.maf.cellmissy.entity.CellLineType;
 import be.ugent.maf.cellmissy.entity.Ecm;
-import be.ugent.maf.cellmissy.entity.EcmDensity;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
+import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
@@ -188,7 +188,6 @@ public class SetupConditionsController {
      * initialize cell Line panel
      */
     private void initCellLinePanel() {
-
         //init cellLineJCombo
         cellLineTypeBindingList = ObservableCollections.observableList(cellLineService.findAllCellLineTypes());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, cellLineTypeBindingList, setupConditionsPanel.getCellLineComboBox());
@@ -285,8 +284,9 @@ public class SetupConditionsController {
         bindingGroup.addBinding(binding);
         //autobind serum concentration
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.serumConcentration"), treatmentsController.getTreatmentsPanel().getSerumConcentrationTextField(), BeanProperty.create("text"), "assayserumconcentrationbinding");
+        bindingGroup.addBinding(binding);
         // autobind volume
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.volume"), treatmentsController.getTreatmentsPanel().getVolumeTextField(), BeanProperty.create("text"), "assayvolumebinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, conditionsPanel.getConditionsJList(), BeanProperty.create("selectedElement.assayMedium.volume"), treatmentsController.getTreatmentsPanel().getMediumVolumeTextField(), BeanProperty.create("text"), "assayvolumebinding");
         bindingGroup.addBinding(binding);
 
         //autobind matrix dimension
@@ -331,10 +331,8 @@ public class SetupConditionsController {
                         //update and reset fields for the assay-ecm panel
                         assayEcmController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
                         //assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                        //empty the treatments list and fill it in with other objects
-                        treatmentsController.initTreatmentList(plateConditionBindingList.get(previousConditionIndex));
                         //keep source and destination lists sync: show actual treatment collection
-                        treatmentsController.updateTreatmentLists(plateConditionBindingList.get(locationToIndex));
+                        treatmentsController.updateLists(plateConditionBindingList.get(locationToIndex));
                     }
                 }
                 previousConditionIndex = locationToIndex;
@@ -413,7 +411,7 @@ public class SetupConditionsController {
         AssayMedium assayMedium = new AssayMedium();
         assayMedium.setMedium(treatmentsController.getTreatmentsPanel().getAssayMediumComboBox().getItemAt(0).toString());
         assayMedium.setSerum(serumBindingList.get(0));
-        assayMedium.setSerumConcentration(10.0);
+        assayMedium.setSerumConcentration(1.0);
         assayMedium.setVolume(10.0);
         firstCondition.setAssayMedium(assayMedium);
         assayMedium.setPlateCondition(firstCondition);
@@ -448,16 +446,15 @@ public class SetupConditionsController {
         CellLine newCellLine = new CellLine(cellLine.getSeedingTime(), cellLine.getSeedingDensity(), cellLine.getGrowthMedium(), cellLine.getSerumConcentration(), cellLine.getCellLineType(), cellLine.getSerum());
         newCondition.setCellLine(newCellLine);
         newCellLine.setPlateCondition(newCondition);
-
-        //set assay as previous one
-        // newCondition.setAssay(previousCondition.getAssay());
-
-        //set assay medium (the same as the previous condition)
-        AssayMedium assayMedium = previousCondition.getAssayMedium();
-        AssayMedium newAssayMedium = new AssayMedium(assayMedium.getMedium(), assayMedium.getSerum(), assayMedium.getSerumConcentration(), assayMedium.getVolume());
-        newCondition.setAssayMedium(newAssayMedium);
-        newAssayMedium.setPlateCondition(newCondition);
-        //set assay and ecm (still default values)
+        //set assay medium (another object, but with the same parameters as previous condition)
+        String medium = treatmentsController.getTreatmentsPanel().getAssayMediumComboBox().getItemAt(0).toString();
+        String serum = serumBindingList.get(treatmentsController.getTreatmentsPanel().getSerumComboBox().getSelectedIndex());
+        Double serumConcentration = Double.parseDouble(treatmentsController.getTreatmentsPanel().getSerumConcentrationTextField().getText());
+        Double volume = Double.parseDouble(treatmentsController.getTreatmentsPanel().getMediumVolumeTextField().getText());
+        AssayMedium assayMedium = new AssayMedium(medium, serum, serumConcentration, volume);
+        newCondition.setAssayMedium(assayMedium);
+        assayMedium.setPlateCondition(newCondition);
+        //set assay and ecm (get the values according to the last selected ones)
         Ecm ecm = new Ecm();
         Assay assay = null;
         BottomMatrix bottomMatrix = null;
@@ -526,8 +523,20 @@ public class SetupConditionsController {
         }
         newCondition.setAssay(assay);
         newCondition.setEcm(ecm);
-        //set an empty collection of treatments (treatments are not recalled from previous condition)
+        // create new treatment with same parameters as ones from previous condition
         List<Treatment> treatmentList = new ArrayList<>();
+        ObservableList<Treatment> treatmentBindingList = treatmentsController.getTreatmentBindingList();
+        for (Treatment treatment : treatmentBindingList) {
+            Double concentration = treatment.getConcentration();
+            String concentrationUnit = treatment.getConcentrationUnit();
+            String timing = treatment.getTiming();
+            String drugSolvent = treatment.getDrugSolvent();
+            Double drugSolventConcentration = treatment.getDrugSolventConcentration();
+            TreatmentType treatmentType = treatment.getTreatmentType();
+            Treatment newTreatment = new Treatment(concentration, concentrationUnit, timing, drugSolvent, drugSolventConcentration, treatmentType);
+            newTreatment.setPlateCondition(newCondition);
+            treatmentList.add(newTreatment);
+        }
         newCondition.setTreatmentCollection(treatmentList);
         //set an empty collection of wells (wells are not recalled from previous condition)
         List<Well> wellList = new ArrayList<>();
