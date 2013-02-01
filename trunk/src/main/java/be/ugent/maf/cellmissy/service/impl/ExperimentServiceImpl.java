@@ -68,8 +68,8 @@ public class ExperimentServiceImpl implements ExperimentService {
                 experimentFolder = new File(file, experimentFolderName);
                 //set experiment folder for the experiment
                 newExperiment.setExperimentFolder(experimentFolder);
-                if (!experimentFolder.exists()) {
-                    experimentFolder.mkdir();
+                boolean mkdir = experimentFolder.mkdir();
+                if (mkdir) {
                     LOG.debug("Experiment Folder is created: " + experimentFolderName);
                 }
                 break;
@@ -78,43 +78,43 @@ public class ExperimentServiceImpl implements ExperimentService {
 
         //create subfolders
         miaFolder = new File(experimentFolder, experimentFolder.getName() + "_MIA");
-        if (!miaFolder.exists()) {
-            miaFolder.mkdir();
+        boolean mkdir = miaFolder.mkdir();
+        if (mkdir) {
             LOG.debug("Mia Folder is created: " + miaFolder.getName());
         }
         outputFolder = new File(experimentFolder, experimentFolder.getName() + "_output");
-        if (!outputFolder.exists()) {
-            outputFolder.mkdir();
+        boolean mkdir1 = outputFolder.mkdir();
+        if (mkdir1) {
             LOG.debug("Output folder is created: " + outputFolder.getName());
         }
+
         rawFolder = new File(experimentFolder, experimentFolder.getName() + "_raw");
-        if (!rawFolder.exists()) {
-            rawFolder.mkdir();
+        boolean mkdir2 = rawFolder.mkdir();
+        if (mkdir2) {
             LOG.debug("Raw folder is created: " + rawFolder.getName());
         }
 
         //create subfolders in the raw folder
         microscopeFolder = new File(rawFolder, experimentFolder.getName() + "_microscope");
-        if (!microscopeFolder.exists()) {
-            microscopeFolder.mkdir();
+        boolean mkdir3 = microscopeFolder.mkdir();
+        if (mkdir3) {
             LOG.debug("Microscope folder is created: " + microscopeFolder.getName());
         }
 
         setupFolder = new File(rawFolder, experimentFolder.getName() + "_set-up");
         //set the setupFolder
         newExperiment.setSetupFolder(setupFolder);
-        if (!setupFolder.exists()) {
-            setupFolder.mkdir();
+        boolean mkdir4 = setupFolder.mkdir();
+        if (mkdir4) {
             LOG.debug("Setup folder is created: " + setupFolder.getName());
         }
 
         //create algo-0 subfolder in the MIA folder
         algoNullFolder = new File(miaFolder, miaFolder.getName() + "_algo-0");
-        if (!algoNullFolder.exists()) {
-            algoNullFolder.mkdir();
+        boolean mkdir5 = algoNullFolder.mkdir();
+        if (mkdir5) {
             LOG.debug("AlgoNull folder is created: " + algoNullFolder.getName());
         }
-
     }
 
     @Override
@@ -162,10 +162,22 @@ public class ExperimentServiceImpl implements ExperimentService {
 
         //from microscope folder look for obsep folder(s)
         File docFiles = null;
-        for (File file : microscopeFolder.listFiles()) {
-            if (file.getName().endsWith("Files")) {
-                docFiles = file;
-                break;
+        File[] listFiles = microscopeFolder.listFiles();
+        // still need to list the folders if the lenght is equal to one
+        if (listFiles.length == 1) {
+            File[] subFiles = listFiles[0].listFiles();
+            for (File file : subFiles) {
+                if (file.getName().endsWith("Files")) {
+                    docFiles = file;
+                    break;
+                }
+            }
+        } else {
+            for (File file : listFiles) {
+                if (file.getName().endsWith("Files")) {
+                    docFiles = file;
+                    break;
+                }
             }
         }
 

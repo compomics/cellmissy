@@ -67,6 +67,15 @@ public class Treatment implements Serializable {
         this.treatmentType = treatmentType;
     }
 
+    public Treatment(Double concentration, String concentrationUnit, String timing, String drugSolvent, Double drugSolventConcentration, TreatmentType treatmentType) {
+        this.concentration = concentration;
+        this.concentrationUnit = concentrationUnit;
+        this.timing = timing;
+        this.drugSolvent = drugSolvent;
+        this.drugSolventConcentration = drugSolventConcentration;
+        this.treatmentType = treatmentType;
+    }
+
     public Treatment(Long treatmentid) {
         this.treatmentid = treatmentid;
     }

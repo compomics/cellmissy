@@ -95,7 +95,7 @@ public class BenjaminiCorrector implements MultipleComparisonsCorrector {
     /**
      * Class with pValue, index and ranking
      */
-    private class PValue {
+    private static class PValue {
 
         private int index;
         private double pValue;
@@ -135,7 +135,7 @@ public class BenjaminiCorrector implements MultipleComparisonsCorrector {
     /*
      * Comparator for Pvalue class (compare through ranking)
      */
-    private class PValueComparator implements Comparator<PValue> {
+    private static class PValueComparator implements Comparator<PValue> {
 
         @Override
         public int compare(PValue o1, PValue o2) {

@@ -31,9 +31,7 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
     public List<TimeStep> parseBulkCellFile(File bulkCellFile) {
         List<TimeStep> timeStepList = new ArrayList<>();
         long currentTimeMillis = System.currentTimeMillis();
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(bulkCellFile));
-
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(bulkCellFile))) {
             String strRead;
             while ((strRead = bufferedReader.readLine()) != null) {
                 //check if the line is the header
@@ -56,9 +54,9 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
                 timeStepList.add(timeStep);
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LOG.error(ex.getMessage(), ex);
         }
         long currentTimeMillis1 = System.currentTimeMillis();
         LOG.debug("Bulk cell File parsed in " + (currentTimeMillis1 - currentTimeMillis) + " ms");
@@ -69,9 +67,7 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
     public List<Track> parseTrackingFile(File trackingFile) {
         List<Track> trackList = new ArrayList<>();
         long currentTimeMillis = System.currentTimeMillis();
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(trackingFile));
-
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(trackingFile))) {
             Track currentTrack = null;
             List<TrackPoint> currentTrackPointList = new ArrayList<>();
             int currentTrackID = 0;
@@ -82,11 +78,8 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
                 if (strRead.startsWith("ID")) {
                     continue;
                 }
-
                 String[] splitarray = strRead.split("\t");
-
                 int currentPointID = Integer.parseInt(splitarray[0]);
-
                 //check if the currentPointID differs from the currentTrackID
                 if (currentPointID != currentTrackID) {
 
@@ -94,43 +87,37 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
                         trackList.add(currentTrack); //add the currentTrack to the track list
 
                     }
-
                     currentTrack = new Track();
                     currentTrack.setTrackNumber(Integer.parseInt(splitarray[0]));
                     currentTrack.setTrackLength(Integer.parseInt(splitarray[8]));
-
                     currentTrackID = currentPointID;
                     currentTrackPointList = new ArrayList<>();
                 }
 
                 // create trackpoint object and set class members
                 TrackPoint trackPoint = getTrackPoint(splitarray);
-
                 //set the currentTrack trackpoint collection
                 currentTrack.setTrackPointCollection(currentTrackPointList);
-
                 trackPoint.setTrack(currentTrack);
                 //add current track point to currentTrackPointList
                 currentTrackPointList.add(trackPoint);
-
-
             }
             // when all the file is read, add the last track to the list
             trackList.add(currentTrack);
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LOG.error(ex.getMessage(), ex);
         }
         long currentTimeMillis1 = System.currentTimeMillis();
         LOG.debug("Tracking File parsed in " + (currentTimeMillis1 - currentTimeMillis) + " ms");
-
         return trackList;
     }
 
     /**
      * this method creates a TrackPoint object and set its class members
+     *
      * @param splitarray
      * @return a TrackPoint object
      */
@@ -165,9 +152,7 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
         if (splitarray[10].length() > 0) {
             trackpoint.setCumulatedDistance(Double.parseDouble(splitarray[10]));
         }
-
         trackpoint.setDistance(Double.parseDouble(splitarray[11]));
-
         return trackpoint;
     }
 }

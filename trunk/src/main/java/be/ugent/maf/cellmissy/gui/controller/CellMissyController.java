@@ -26,6 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.ELProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Controller;
 @Controller("cellMissyController")
 public class CellMissyController {
 
+    private static final Logger LOG = Logger.getLogger(CellMissyController.class);
     //view
     //main frame
     CellMissyFrame cellMissyFrame;
@@ -67,9 +69,18 @@ public class CellMissyController {
     }
 
     /**
-     * initialize controller
+     * Initialize controller
      */
     public void init() {
+        
+        //set uncaught exception handler
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                LOG.error(e.getMessage(), e);
+                showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);               
+            }
+        });
 
         //workaround for betterbeansbinding logging issue
         org.jdesktop.beansbinding.util.logging.Logger.getLogger(ELProperty.class.getName()).setLevel(Level.SEVERE);

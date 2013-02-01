@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,6 +31,8 @@ import org.xml.sax.SAXException;
 @Service("obsepFileParser")
 public class ObsepFileParserImpl implements ObsepFileParser {
 
+    private static final Logger LOG = Logger.getLogger(ObsepFileParser.class);
+
     public enum CycleTimeUnit {
 
         HOURS(1), MINUTES(2), SECONDS(3), MILLISECONDS(4);
@@ -39,13 +42,13 @@ public class ObsepFileParserImpl implements ObsepFileParser {
             this.unitValue = unitValue;
         }
     }
-    
     private Node loopNode;
     private CycleTimeUnit unit;
 
     public ObsepFileParserImpl() {
     }
 
+    @Override
     public CycleTimeUnit getUnit() {
         return unit;
     }
@@ -60,9 +63,8 @@ public class ObsepFileParserImpl implements ObsepFileParser {
             DocumentBuilder db = dbf.newDocumentBuilder();
             // get the dom object
             doc = db.parse(obsepFile);
-
         } catch (ParserConfigurationException | SAXException | IOException pce) {
-            pce.printStackTrace();
+            LOG.error(pce.getMessage(), pce);
         }
         // get root element of xml
         Element element = doc.getDocumentElement();
@@ -132,6 +134,7 @@ public class ObsepFileParserImpl implements ObsepFileParser {
 
     /**
      * Getting Position List names used in the Experiment
+     *
      * @return a List of String (Position List names)
      */
     //@todo Position List Names by the User and names in Obsep File need to be the same
@@ -151,6 +154,7 @@ public class ObsepFileParserImpl implements ObsepFileParser {
 
     /**
      * Getting Imaging Types used in the Experiment
+     *
      * @return a List of Imaging Type entities
      */
     private List<ImagingType> getImagingInfo() {
@@ -207,6 +211,11 @@ public class ObsepFileParserImpl implements ObsepFileParser {
         return imagingTypeList;
     }
 
+    /**
+     * Find cycle time Unit by its value
+     * @param cycleTimeUnitValue
+     * @return 
+     */
     private CycleTimeUnit findCycleTimeUnitByValue(int cycleTimeUnitValue) {
         CycleTimeUnit foundUnit = null;
         for (CycleTimeUnit unit : CycleTimeUnit.values()) {

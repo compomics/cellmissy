@@ -103,7 +103,7 @@ public class ExperimentRepositoryTest {
         wells.add(well1);
         wells.add(well2);
         wells.add(well3);
-        List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
+        List<WellHasImagingType> wellHasImagingTypes;
         List<WellHasImagingType> globalWellHasImagingTypes = new ArrayList<>();
 
         for (Well well : wells) {

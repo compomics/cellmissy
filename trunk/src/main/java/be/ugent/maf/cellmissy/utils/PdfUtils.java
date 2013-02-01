@@ -23,21 +23,25 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import javax.swing.JPanel;
+import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 
 /**
  * A utilities class for PDF files design - creation
+ *
  * @author Paola Masuzzo
  */
 public class PdfUtils {
 
+    private static final Logger LOG = Logger.getLogger(PdfUtils.class);
+
     /**
      * Get an image to add to the document from a JFreeChart
-     * @param pdfWriter 
+     * @param pdfWriter
      * @param chart to be added
-     * @param imageWidth 
-     * @param imageHeight 
-     * @return  
+     * @param imageWidth
+     * @param imageHeight
+     * @return
      */
     public static Image getImageFromChart(PdfWriter pdfWriter, JFreeChart chart, int imageWidth, int imageHeight) {
         Image imageFromChart = null;
@@ -50,7 +54,7 @@ public class PdfUtils {
         try {
             imageFromChart = Image.getInstance(template);
         } catch (BadElementException ex) {
-            ex.printStackTrace();
+            LOG.error(ex.getMessage(), ex);
         }
         return imageFromChart;
     }
@@ -59,9 +63,9 @@ public class PdfUtils {
      * Get an image to add to the document from a JPanel
      * @param pdfWriter
      * @param panel
-     * @param imageWidth 
-     * @param imageHeight 
-     * @return 
+     * @param imageWidth
+     * @param imageHeight
+     * @return
      */
     public static Image getImageFromJPanel(PdfWriter pdfWriter, JPanel panel, int imageWidth, int imageHeight) {
         Image image = null;
@@ -71,12 +75,11 @@ public class PdfUtils {
         Graphics2D graphics = template.createGraphics(imageWidth, imageHeight);
         panel.paint(graphics);
         graphics.dispose();
-
         // wrap the pdfTemplate inside an image ensures better quality (pixels) 
         try {
             image = Image.getInstance(template);
         } catch (BadElementException ex) {
-            ex.printStackTrace();
+            LOG.error(ex.getMessage(), ex);
         }
         return image;
     }
@@ -91,18 +94,18 @@ public class PdfUtils {
             try {
                 document.add(new Paragraph(" "));
             } catch (DocumentException ex) {
-                ex.printStackTrace();
+                LOG.error(ex.getMessage(), ex);
             }
         }
     }
 
     /**
      * Add text to document
-     * @param document 
+     * @param document
      * @param text
-     * @param isIndented 
+     * @param isIndented
      * @param alignment
-     * @param font  
+     * @param font
      */
     public static void addText(Document document, List<String> text, boolean isIndented, int alignment, Font font) {
         for (String string : text) {
@@ -116,7 +119,7 @@ public class PdfUtils {
                 }
                 document.add(paragraph);
             } catch (DocumentException ex) {
-                ex.printStackTrace();
+                LOG.error(ex.getMessage(), ex);
             }
         }
     }
@@ -125,7 +128,7 @@ public class PdfUtils {
      * Add a cell to a table, with customized font to display
      * @param table
      * @param cellText
-     * @param font 
+     * @param font
      */
     public static void addCustomizedCell(PdfPTable table, String cellText, Font font) {
         Paragraph paragraph = new Paragraph(cellText, font);
@@ -134,7 +137,7 @@ public class PdfUtils {
 
     /**
      * Set up the look of a PdfPTable
-     * @param dataTable 
+     * @param dataTable
      */
     public static void setUpPdfPTable(PdfPTable dataTable) {
         dataTable.setWidthPercentage(100f);
@@ -147,9 +150,9 @@ public class PdfUtils {
 
     /**
      * Add a simple line with some text as Title
-     * @param document 
+     * @param document
      * @param title to add
-     * @param titleFont  
+     * @param titleFont
      */
     public static void addTitle(Document document, String title, Font titleFont) {
         try {
@@ -160,14 +163,14 @@ public class PdfUtils {
             paragraph.setSpacingAfter(1.5f);
             document.add(paragraph);
         } catch (DocumentException ex) {
-            ex.printStackTrace();
+            LOG.error(ex.getMessage(), ex);
         }
     }
 
     /**
      * Add a cell with colored border to a table
      * @param table
-     * @param color  
+     * @param color
      */
     public static void addColoredCell(PdfPTable table, Color color) {
         PdfPCell coloredCell = new PdfPCell();

@@ -6,9 +6,11 @@ package be.ugent.maf.cellmissy.gui.controller.setup;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
+import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.load.PlatePanelGui;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
+import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.PlateService;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -101,6 +103,25 @@ public class SetupPlateController {
     }
 
     /**
+     * Check that every well selected has a plate condition assigned!!
+     * @return 
+     */
+    public boolean validateWells() {
+        boolean isValid = true;
+        for (WellGui wellGui : setupPlatePanel.getWellGuiList()) {
+            if (wellGui.getRectangle() != null) {
+                Well well = wellGui.getWell();
+                if (well.getPlateCondition() == null) {
+                    isValid = false;
+                    break;
+                }
+            }
+
+        }
+        return isValid;
+    }
+
+    /**
      * add mouse listener
      */
     public void addMouseListener() {
@@ -118,11 +139,9 @@ public class SetupPlateController {
      * initialize view: set-up plate panel
      */
     private void initSetupPlatePanel() {
-
         //init set up plate panel and add it to the bottom panel of the plate panel gui
         setupPlatePanel = new SetupPlatePanel();
         platePanelGui.getBottomPanel().add(setupPlatePanel, gridBagConstraints);
-
         //init plateFormatJcombo
         plateFormatBindingList = ObservableCollections.observableList(plateService.findAll());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, plateFormatBindingList, platePanelGui.getPlateFormatComboBox());
@@ -178,7 +197,6 @@ public class SetupPlateController {
 
         //show 96 plate format as default
         platePanelGui.getPlateFormatComboBox().setSelectedIndex(0);
-
         setupExperimentController.getSetupPanel().getSetupPlateParentPanel().add(platePanelGui, gridBagConstraints);
     }
 
@@ -230,6 +248,12 @@ public class SetupPlateController {
                     //if the selection of wells is valid (wells do not already have a condition set), add the rectangle to the map
                     if (setupExperimentController.updateWellCollection(setupExperimentController.getCurrentCondition(), rectangle)) {
                         setupPlatePanel.getRectangles().get(setupExperimentController.getCurrentCondition()).add(rectangle);
+                        for (Well well : setupExperimentController.getCurrentCondition().getWellCollection()) {
+                            if (well.getPlateCondition() == null) {
+                                well.setPlateCondition(setupExperimentController.getCurrentCondition());
+                            }
+                        }
+
                     }
                 }
                 setupPlatePanel.setStartPoint(null);

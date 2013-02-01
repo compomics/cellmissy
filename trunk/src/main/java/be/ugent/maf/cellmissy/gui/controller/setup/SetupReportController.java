@@ -20,7 +20,6 @@ import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 @Component("setupReportController")
 public class SetupReportController {
 
+    private static final Logger LOG = Logger.getLogger(SetupReportController.class);
     // model
     private Experiment experiment;
     private Document document;
@@ -51,9 +52,9 @@ public class SetupReportController {
     //services
 
     /**
-     * 
+     *
      * @param directory
-     * @return  
+     * @return
      */
     public File createSetupReport(File directory) {
         this.experiment = setupExperimentController.getExperiment();
@@ -66,8 +67,8 @@ public class SetupReportController {
     }
 
     /**
-     * 
-     * @param pdfFile 
+     *
+     * @param pdfFile
      */
     private void tryToCreateFile(File pdfFile) {
         try {
@@ -79,10 +80,9 @@ public class SetupReportController {
                 int showOptionDialog = JOptionPane.showOptionDialog(null, "File already exists. Do you want to replace it?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
                 // if YES, user wants to delete existing file and replace it
                 if (showOptionDialog == 0) {
-                    try {
-                        pdfFile.delete();
-                    } catch (Exception e) {
-                        setupExperimentController.showMessage("Error deleting file.\nClose the file if it is open.", JOptionPane.ERROR_MESSAGE);
+                    boolean delete = pdfFile.delete();
+                    if (!delete) {
+                        return;
                     }
                     // if NO or CANCEL, returns already existing file
                 } else if (showOptionDialog == 1 || showOptionDialog == 2) {
@@ -90,18 +90,19 @@ public class SetupReportController {
                 }
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            setupExperimentController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
+            return;
         }
-        try {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(pdfFile)) {
             // actually create PDF file
-            createPdfFile(new FileOutputStream(pdfFile));
-        } catch (FileNotFoundException ex) {
+            createPdfFile(fileOutputStream);
+        } catch (IOException ex) {
             setupExperimentController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     /**
-     * 
+     *
      */
     private void createPdfFile(FileOutputStream outputStream) {
         document = null;
@@ -122,7 +123,7 @@ public class SetupReportController {
             writer.close();
             writer = null;
         } catch (DocumentException ex) {
-            ex.printStackTrace();
+            LOG.error(ex.getMessage(), ex);
         }
     }
 
@@ -155,8 +156,9 @@ public class SetupReportController {
     }
 
     /**
-     * 
-     * @return 
+     * Create panel view in the PDF file
+     *
+     * @return
      */
     private AnalysisPlatePanel createPanelView() {
         // what we need to show is actually an analysis plate panel
@@ -168,7 +170,8 @@ public class SetupReportController {
 
     /**
      * Create Image from a aJFreeChart and add it to document
-     * @param chart 
+     *
+     * @param chart
      */
     private void addImageFromJPanel(JPanel panel, int imageWidth, int imageHeight) {
         Image imageFromJPanel = PdfUtils.getImageFromJPanel(writer, panel, imageWidth, imageHeight);
@@ -177,7 +180,7 @@ public class SetupReportController {
         try {
             document.add(imageFromJPanel);
         } catch (DocumentException ex) {
-            ex.printStackTrace();
+            setupExperimentController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -191,7 +194,8 @@ public class SetupReportController {
 
     /**
      * Create Table with conditions overview
-     * @return 
+     *
+     * @return
      */
     private PdfPTable createConditionsTable() {
         // 7 columns
@@ -212,7 +216,7 @@ public class SetupReportController {
             PdfUtils.addColoredCell(dataTable, color);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getCellLine().toString(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssay().getMatrixDimension().getDimension(), bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssay().getAssayType().toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssay().getAssayType(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getEcm().toString(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getTreatmentCollection().toString(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssayMedium().toString(), bodyFont);
@@ -222,13 +226,14 @@ public class SetupReportController {
 
     /**
      * Add a PdfPTable to the document
-     * @param dataTable 
+     *
+     * @param dataTable
      */
     private void addTable(PdfPTable dataTable) {
         try {
             document.add(dataTable);
         } catch (DocumentException ex) {
-            ex.printStackTrace();
+            setupExperimentController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

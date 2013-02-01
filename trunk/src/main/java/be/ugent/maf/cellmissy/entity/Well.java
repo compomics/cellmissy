@@ -50,7 +50,7 @@ public class Well implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "well")
     private Collection<WellHasImagingType> wellHasImagingTypeCollection;
     @JoinColumn(name = "l_conditionid", referencedColumnName = "plate_conditionid")
-    @ManyToOne(optional = true)
+    @ManyToOne(optional = false)
     private PlateCondition plateCondition;
 
     public Well() {

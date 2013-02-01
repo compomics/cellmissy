@@ -114,8 +114,6 @@ public class AreaAnalysisController {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         analysisMap = new LinkedHashMap<>();
-        //init child controller
-        areaAnalysisReportController.init();
         //init views
         initLinearRegressionPanel();
     }
