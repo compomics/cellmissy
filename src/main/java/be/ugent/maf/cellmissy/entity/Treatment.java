@@ -186,6 +186,11 @@ public class Treatment implements Serializable {
     }
 
     public String toString() {
-        return concentration + " " + concentrationUnit + " " + treatmentType;
+        // if treatment type is control, show only Control (no concentration or concentration unit)
+        if (treatmentType.getName().equals("Control") || treatmentType.getName().equals("Control + Drug Solvent")) {
+            return "" + treatmentType;
+        } else {
+            return concentration + " " + concentrationUnit + " " + treatmentType;
+        }
     }
 }

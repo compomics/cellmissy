@@ -4,8 +4,14 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.setup;
 
+import be.ugent.maf.cellmissy.entity.Assay;
+import be.ugent.maf.cellmissy.entity.AssayMedium;
+import be.ugent.maf.cellmissy.entity.CellLine;
+import be.ugent.maf.cellmissy.entity.Ecm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Treatment;
+import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.PdfUtils;
@@ -15,6 +21,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Color;
@@ -22,6 +29,7 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -60,7 +68,7 @@ public class SetupReportController {
         this.experiment = setupExperimentController.getExperiment();
         int experimentNumber = experiment.getExperimentNumber();
         int projectNumber = experiment.getProject().getProjectNumber();
-        String reportName = "Setup Report " + experimentNumber + " - " + projectNumber + ".pdf";
+        String reportName = "Setup report " + experimentNumber + " - " + projectNumber + ".pdf";
         File pdfFile = new File(directory, reportName);
         tryToCreateFile(pdfFile);
         return pdfFile;
@@ -102,7 +110,7 @@ public class SetupReportController {
     }
 
     /**
-     *
+     * Create PDF File: create and open a new document, add content to it and close the document. Makes use of a PdfWriter with a given FileOutputStream
      */
     private void createPdfFile(FileOutputStream outputStream) {
         document = null;
@@ -131,20 +139,44 @@ public class SetupReportController {
      * Add content to PDF file
      */
     private void addContent() {
+        // main title of file + empty line
         addMainTitle();
-        PdfUtils.addEmptyLines(document, 1);
+        // add some general extra info
+        addGeneralInfo();
+        // plate panel view + another empty line
         addPlatePanel();
         PdfUtils.addEmptyLines(document, 1);
+        // table with summary of all conditions
         addConditionsTable();
+        // start from new page and add detailed info for each condition
+        document.newPage();
+        addParagraphPerCondition();
     }
 
     /**
      * Add general info on report
      */
     private void addMainTitle() {
-        String title = "Setup Report of Experiment " + experiment.getExperimentNumber() + " - " + "Project " + experiment.getProject().getProjectNumber();
+        DecimalFormat df = new DecimalFormat("000");
+        String expNumber = df.format(experiment.getExperimentNumber());
+        String projNumber = df.format(experiment.getProject().getProjectNumber());
+        String title = "Setup report of Experiment " + expNumber + " - " + "Project " + projNumber;
         PdfUtils.addTitle(document, title, titleFont);
         PdfUtils.addEmptyLines(document, 1);
+    }
+
+    /**
+     * Add some extra info to PDF file.
+     */
+    private void addGeneralInfo() {
+        List<String> lines = new ArrayList<>();
+        String line = "Experiment date: " + experiment.getExperimentDate();
+        lines.add(line);
+        line = "Experiment purpose: " + experiment.getPurpose();
+        lines.add(line);
+        line = "Instrument: " + experiment.getInstrument() + ", magnification: " + experiment.getMagnification();
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
     }
 
     /**
@@ -163,7 +195,7 @@ public class SetupReportController {
     private AnalysisPlatePanel createPanelView() {
         // what we need to show is actually an analysis plate panel
         AnalysisPlatePanel platePanel = new AnalysisPlatePanel();
-        platePanel.initPanel(setupExperimentController.getSelectedPlateFormat(), new Dimension(400, 500));
+        platePanel.initPanel(experiment.getPlateFormat(), new Dimension(400, 500));
         platePanel.setExperiment(experiment);
         return platePanel;
     }
@@ -190,6 +222,181 @@ public class SetupReportController {
     private void addConditionsTable() {
         PdfPTable conditionsTable = createConditionsTable();
         addTable(conditionsTable);
+    }
+
+    /**
+     * Add a paragraph for each condition
+     */
+    private void addParagraphPerCondition() {
+        // add main title for section
+        PdfUtils.addTitle(document, "BIOLOGICAL CONDITIONS", titleFont);
+        List<PlateCondition> plateConditions = new ArrayList(experiment.getPlateConditionCollection());
+        for (int i = 0; i < plateConditions.size(); i++) {
+            Paragraph paragraph = new Paragraph("" + plateConditions.get(i).getName(), titleFont);
+            //set font color to condition index
+            titleFont.setColor(GuiUtils.getAvailableColors()[i + 1]);
+            try {
+                document.add(paragraph);
+                addConditionInfo(plateConditions.get(i));
+                PdfUtils.addEmptyLines(document, 1);
+            } catch (DocumentException ex) {
+                LOG.error(ex.getMessage(), ex);
+            }
+        }
+    }
+
+    /**
+     * Add info for each condition set up
+     *
+     * @param plateCondition
+     */
+    private void addConditionInfo(PlateCondition plateCondition) {
+        // strings for text
+        List<String> lines = new ArrayList<>();
+        // set font color back to BLACK
+        titleFont.setColor(Color.black);
+        // technical replicates: how many, which ones on the plate
+        String line = "TECHNICAL REPLICATES";
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, titleFont);
+        lines.clear();
+        Collection<Well> wellCollection = plateCondition.getWellCollection();
+        line = "Number of wells: " + wellCollection.size();
+        lines.add(line);
+        line = "Wells (column, row): " + wellCollection;
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        lines.clear();
+        // cell line: name, seeding density, seeding time, growth medium, serum, serum concentration
+        line = "CELL LINE";
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, titleFont);
+        lines.clear();
+        CellLine cellLine = plateCondition.getCellLine();
+        line = "Cell line name: " + cellLine.getCellLineType();
+        lines.add(line);
+        line = "Seeding density: " + cellLine.getSeedingDensity() + " cells/well";
+        lines.add(line);
+        line = "Seeding time: " + cellLine.getSeedingTime();
+        lines.add(line);
+        line = "Growth medium: " + cellLine.getGrowthMedium();
+        lines.add(line);
+        line = "Growth medium serum: " + cellLine.getSerum();
+        lines.add(line);
+        line = "Serum concentration: " + cellLine.getSerumConcentration() + " %";
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        lines.clear();
+        // Assay
+        line = "ASSAY";
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, titleFont);
+        lines.clear();
+        Assay assay = plateCondition.getAssay();
+        line = "Assay: " + assay.getAssayType();
+        lines.add(line);
+        AssayMedium assayMedium = plateCondition.getAssayMedium();
+        line = "Assay medium: " + assayMedium.getMedium();
+        lines.add(line);
+        line = "Assay medium serum: " + assayMedium.getSerum();
+        lines.add(line);
+        line = "Serum concentration: " + assayMedium.getSerumConcentration() + " %";
+        lines.add(line);
+        line = "Medium volume: " + assayMedium.getVolume() + "  " + "\u00B5" + "l";
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        lines.clear();
+        // ECM
+        line = "ECM";
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, titleFont);
+        lines.clear();
+        Ecm ecm = plateCondition.getEcm();
+        line = "ECM dimension: " + assay.getMatrixDimension().getDimension();
+        lines.add(line);
+        line = "ECM composition: " + ecm.getEcmComposition();
+        lines.add(line);
+        switch (assay.getMatrixDimension().getDimension()) {
+            case "2D":
+                line = "ECM coating: monomeric coating";
+                lines.add(line);
+                line = "ECM coating temperature : " + ecm.getCoatingTemperature();
+                lines.add(line);
+                line = "ECM coating time: " + ecm.getCoatingTime();
+                lines.add(line);
+                line = "ECM concentration: " + ecm.getConcentration() + " " + ecm.getConcentrationUnit();
+                lines.add(line);
+                line = "ECM volume: " + ecm.getVolume() + " " + ecm.getVolumeUnit();
+                lines.add(line);
+                break;
+            case "2.5D":
+                line = "ECM density: " + ecm.getEcmDensity() + "mg/ml";
+                lines.add(line);
+                line = "Bottom matrix type: " + ecm.getBottomMatrix().getType();
+                lines.add(line);
+                switch (ecm.getBottomMatrix().getType()) {
+                    case "thin gel coating":
+                        break;
+                    case "gel":
+                        line = "Bottom matrix volume: " + ecm.getBottomMatrixVolume() + "\u00B5" + "l";
+                        lines.add(line);
+                        break;
+                }
+                line = "ECM polymerisation time (min): " + ecm.getPolymerisationTime();
+                lines.add(line);
+                line = "ECM polymerisation temperature: " + ecm.getPolymerisationTemperature();
+                lines.add(line);
+                line = "ECM polymerisation pH: " + ecm.getPolymerisationPh();
+                lines.add(line);
+                break;
+            case "3D":
+                line = "ECM density: " + ecm.getEcmDensity() + "mg/ml";
+                lines.add(line);
+                line = "Bottom matrix type: " + ecm.getBottomMatrix().getType();
+                lines.add(line);
+                switch (ecm.getBottomMatrix().getType()) {
+                    case "thin gel coating":
+                        break;
+                    case "gel":
+                        line = "Bottom matrix volume: " + ecm.getBottomMatrixVolume() + "\u00B5" + "l";
+                        lines.add(line);
+                        break;
+                }
+                line = "Top matrix volume: " + ecm.getTopMatrixVolume() + "\u00B5" + "l";
+                lines.add(line);
+                line = "ECM polymerisation time (min): " + ecm.getPolymerisationTime();
+                lines.add(line);
+                line = "ECM polymerisation temperature: " + ecm.getPolymerisationTemperature();
+                lines.add(line);
+                line = "ECM polymerisation pH: " + ecm.getPolymerisationPh();
+                lines.add(line);
+                break;
+
+        }
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        lines.clear();
+        // drugs/treatments
+        line = "DRUGS/TREATMENTS";
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, titleFont);
+        lines.clear();
+        List<Treatment> treatments = new ArrayList<>(plateCondition.getTreatmentCollection());
+        for (int i = 0; i < treatments.size(); i++) {
+            Treatment treatment = treatments.get(i);
+            line = "Treatment type: " + treatment.getTreatmentType();
+            lines.add(line);
+            line = "Treatment concentration: " + treatment.getConcentration() + " " + treatment.getConcentrationUnit();
+            lines.add(line);
+            line = "Time of addition: " + treatment.getTiming();
+            lines.add(line);
+            if (treatment.getDrugSolvent() != null) {
+                line = "Drug solvent: " + treatment.getDrugSolvent();
+                lines.add(line);
+                line = "Solvent final concentration: " + treatment.getDrugSolventConcentration() + " %";
+                lines.add(line);
+            }
+        }
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
     }
 
     /**

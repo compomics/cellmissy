@@ -171,6 +171,6 @@ public class CellLine implements Serializable {
     }
 
     public String toString() {
-        return cellLineType + ", " + seedingDensity;
+        return cellLineType + ", " + seedingDensity + " - " + growthMedium + ", " + serumConcentration + "% " + serum;
     }
 }

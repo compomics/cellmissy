@@ -78,10 +78,6 @@ public class SetupPlateController {
         return platePanelGui;
     }
 
-    public PlateFormat getSelectedPlateFormat() {
-        return (PlateFormat) platePanelGui.getPlateFormatComboBox().getSelectedItem();
-    }
-
     /**
      * public methods
      *  
