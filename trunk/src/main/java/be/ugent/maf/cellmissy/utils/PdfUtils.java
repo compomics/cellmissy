@@ -73,7 +73,7 @@ public class PdfUtils {
         //@todo: check here for this null pointer exception
         PdfTemplate template = contentByte.createTemplate(imageWidth, imageHeight);
         Graphics2D graphics = template.createGraphics(imageWidth, imageHeight);
-        panel.paint(graphics);
+        panel.printAll(graphics);
         graphics.dispose();
         // wrap the pdfTemplate inside an image ensures better quality (pixels) 
         try {

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jfree.chart.JFreeChart;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ import org.springframework.stereotype.Controller;
 @Controller("areaAnalysisReportController")
 public class AreaAnalysisReportController {
 
+    private static final Logger LOG = Logger.getLogger(AreaAnalysisReportController.class);
     //model
     private Experiment experiment;
     private Document document;
@@ -139,7 +141,7 @@ public class AreaAnalysisReportController {
             writer.close();
             writer = null;
         } catch (DocumentException ex) {
-            ex.printStackTrace();
+            LOG.error(ex.getMessage(), ex);
         }
     }
 
@@ -218,7 +220,7 @@ public class AreaAnalysisReportController {
         try {
             document.add(imageFromChart);
         } catch (DocumentException ex) {
-            ex.printStackTrace();
+            LOG.error(ex.getMessage(), ex);
         }
     }
 
@@ -236,7 +238,7 @@ public class AreaAnalysisReportController {
                 addAnalysisInfo(groupsList.get(i));
                 PdfUtils.addEmptyLines(document, 2);
             } catch (DocumentException ex) {
-                ex.printStackTrace();
+                LOG.error(ex.getMessage(), ex);
             }
         }
     }
@@ -392,7 +394,7 @@ public class AreaAnalysisReportController {
         try {
             document.add(dataTable);
         } catch (DocumentException ex) {
-            ex.printStackTrace();
+            LOG.error(ex.getMessage(), ex);
         }
     }
 
@@ -412,8 +414,7 @@ public class AreaAnalysisReportController {
     }
 
     /**
-     * For each Analysis create a paragraph
-     *
+     * Add info for each analysis group
      * @param analysisGroup
      */
     private void addAnalysisInfo(AnalysisGroup analysisGroup) {

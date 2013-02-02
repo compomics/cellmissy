@@ -143,10 +143,6 @@ public class SetupExperimentController {
         return overviewPanel;
     }
 
-    public PlateFormat getSelectedPlateFormat() {
-        return setupPlateController.getSelectedPlateFormat();
-    }
-
     /**
      * public methods
      */
