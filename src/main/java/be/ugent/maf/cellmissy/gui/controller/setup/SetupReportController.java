@@ -322,7 +322,7 @@ public class SetupReportController {
                 lines.add(line);
                 line = "ECM coating temperature : " + ecm.getCoatingTemperature();
                 lines.add(line);
-                line = "ECM coating time: " + ecm.getCoatingTime();
+                line = "ECM coating time (min): " + ecm.getCoatingTime();
                 lines.add(line);
                 line = "ECM concentration: " + ecm.getConcentration() + " " + ecm.getConcentrationUnit();
                 lines.add(line);

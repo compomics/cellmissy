@@ -78,7 +78,9 @@ public class CellMissyController {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 LOG.error(e.getMessage(), e);
-                showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);               
+                showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);          
+                // exit the application
+                System.exit(1);
             }
         });
 

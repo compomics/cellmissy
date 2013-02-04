@@ -31,7 +31,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
         UIManager.put("nimbusBase", Color.lightGray);      // Base color
         UIManager.put("nimbusBlueGrey", Color.lightGray);  // BlueGrey
         UIManager.put("control", Color.white);         // Control
-        UIManager.put("OptionPane.background", Color.white);
+        UIManager.put("OptionPane.background", Color.white); // Background for option pane
     }
 
     public JPanel getBackgroundPanel() {
@@ -199,6 +199,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
                 CellMissyController cellMissyController = (CellMissyController) context.getBean("cellMissyController");
