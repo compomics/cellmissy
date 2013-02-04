@@ -96,11 +96,11 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
 
                 // create trackpoint object and set class members
                 TrackPoint trackPoint = getTrackPoint(splitarray);
-                //set the currentTrack trackpoint collection
-                currentTrack.setTrackPointCollection(currentTrackPointList);
                 trackPoint.setTrack(currentTrack);
                 //add current track point to currentTrackPointList
                 currentTrackPointList.add(trackPoint);
+                //set the currentTrack trackpoint collection
+                currentTrack.setTrackPointCollection(currentTrackPointList);
             }
             // when all the file is read, add the last track to the list
             trackList.add(currentTrack);
