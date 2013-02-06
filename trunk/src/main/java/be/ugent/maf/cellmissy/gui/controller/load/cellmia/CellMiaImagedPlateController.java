@@ -304,7 +304,6 @@ public class CellMiaImagedPlateController {
 
         @Override
         protected Void doInBackground() throws Exception {
-
             //show progress bar
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getjProgressBar1().setVisible(true);
             //init wellService: init also CellMiaData Service and MicroscopeData Service
@@ -318,7 +317,6 @@ public class CellMiaImagedPlateController {
 
         @Override
         protected void done() {
-
             //set cursor back to normal
             loadExperimentFromCellMiaController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getjProgressBar1().setVisible(false);
@@ -334,10 +332,11 @@ public class CellMiaImagedPlateController {
             list.add(string);
             string = "Please select first well imaged with " + imagedPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (imagedPlatePanel.getImagingTypeList().indexOf(imagedPlatePanel.getCurrentImagingType()) + 1) + "/" + imagedPlatePanel.getImagingTypeList().size() + ")" + "\nExposure time: " + imagedPlatePanel.getCurrentImagingType().getExposureTime() + " " + imagedPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + imagedPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
             list.add(string);
+            
             for (String s : list) {
                 message += s + "\n";
             }
-            loadExperimentFromCellMiaController.showMessage(message, 1);
+            loadExperimentFromCellMiaController.showMessage(message, JOptionPane.INFORMATION_MESSAGE);
             message = "Select first well imaged.";
             loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), message);
         }

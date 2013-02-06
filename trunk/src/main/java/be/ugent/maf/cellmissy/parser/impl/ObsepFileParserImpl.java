@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -185,7 +186,7 @@ public class ObsepFileParserImpl implements ObsepFileParser {
             NamedNodeMap exposureTimeUnitAttr = imageChildNodes.item(1).getFirstChild().getAttributes();
             for (int j = 0; j < exposureTimeUnitAttr.getLength(); j++) {
                 String nodeValue = exposureTimeUnitAttr.item(j).getNodeValue();
-                String expTimeUnit = findCycleTimeUnitByValue(Integer.parseInt(nodeValue)).toString().toLowerCase();
+                String expTimeUnit = findCycleTimeUnitByValue(Integer.parseInt(nodeValue)).toString().toLowerCase(Locale.ENGLISH);
                 imagingType.setExposureTimeUnit(expTimeUnit);
             }
 

@@ -227,8 +227,6 @@ public class LoadExperimentFromGenericInputController {
                                 worker.execute();
                                 break;
                             case 1:
-                                // cancel: do nothing
-                                return;
                         }
                     }
                 } else {

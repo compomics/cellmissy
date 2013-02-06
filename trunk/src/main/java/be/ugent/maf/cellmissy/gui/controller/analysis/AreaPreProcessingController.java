@@ -48,6 +48,7 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -1225,6 +1226,7 @@ public class AreaPreProcessingController {
                     timeFramesSelectionPanel.getWarningLabel().setVisible(true);
                 } else if (selectedLastTimeFrame < timeInterval.getFirstTimeFrame()) {
                     // last time frame can not be smaller than first one: warn the user and ignore selection
+                    dataAnalysisController.showMessage("Last time frame cannot be smaller than first one!", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
