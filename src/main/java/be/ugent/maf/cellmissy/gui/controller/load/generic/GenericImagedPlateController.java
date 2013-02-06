@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -302,7 +303,7 @@ public class GenericImagedPlateController {
 
             @Override
             public boolean accept(File f) {
-                return f.getName().toLowerCase().endsWith(".txt");
+                return f.getName().toLowerCase(Locale.ENGLISH).endsWith(".txt");
             }
 
             @Override

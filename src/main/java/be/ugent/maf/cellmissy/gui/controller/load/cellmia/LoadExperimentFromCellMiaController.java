@@ -25,23 +25,27 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
  *
- * Parent Controller: CellMissy Controller (main controller)
- * Child Controllers: Imaged Plate Controller, Experiment Metadata Controller
+ * Parent Controller: CellMissy Controller (main controller) Child Controllers: Imaged Plate Controller, Experiment Metadata Controller
+ *
  * @author Paola Masuzzo
  */
 @Controller("loadExperimentFromCellMiaController")
 public class LoadExperimentFromCellMiaController {
 
+    private static final Logger LOG = Logger.getLogger(LoadExperimentFromCellMiaController.class);
     //model
     private Experiment experiment;
     //view
@@ -61,7 +65,7 @@ public class LoadExperimentFromCellMiaController {
     private ObsepFileParser obsepFileParser;
 
     /**
-     * initialize controller 
+     * initialize controller
      */
     public void init() {
         // init main view
@@ -136,7 +140,6 @@ public class LoadExperimentFromCellMiaController {
          */
         //parse obseo file from the microscope
         loadFromCellMiaPanel.getExpDataButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -148,7 +151,6 @@ public class LoadExperimentFromCellMiaController {
                     //choose file to parse form microscope folder
                     JFileChooser chooseObsepFile = new JFileChooser();
                     chooseObsepFile.setFileFilter(new FileFilter() {
-
                         // to select only (.obsep) files
                         @Override
                         public boolean accept(File f) {
@@ -178,7 +180,6 @@ public class LoadExperimentFromCellMiaController {
 
         //cancel the selection: reset Plate View
         loadFromCellMiaPanel.getCancelButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 for (WellGui wellGui : cellMiaImagedPlateController.getImagedPlatePanel().getWellGuiList()) {
@@ -209,7 +210,6 @@ public class LoadExperimentFromCellMiaController {
 
         //save the experiment once all data have been loaded
         loadFromCellMiaPanel.getFinishButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 //set CellMia Data
@@ -225,6 +225,7 @@ public class LoadExperimentFromCellMiaController {
 
     /**
      * set experiment data parsing the obsep file from microscope
+     *
      * @param obsepFile: this is loaded from the experiment or it is rather chosen by the user
      */
     private void setExperimentData(File obsepFile) {
@@ -274,7 +275,6 @@ public class LoadExperimentFromCellMiaController {
 
         @Override
         protected Void doInBackground() throws Exception {
-
             //disable the Finish button and show a waiting cursor
             loadFromCellMiaPanel.getFinishButton().setEnabled(false);
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -289,13 +289,22 @@ public class LoadExperimentFromCellMiaController {
 
         @Override
         protected void done() {
-
-            //show back default cursor and hide the progress bar
-            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            loadFromCellMiaPanel.getjProgressBar1().setVisible(false);
-            //update info for the user
-            showMessage("Experiment was successfully saved to DB.", 1);
-            updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Experiment was successfully saved to DB.");
+            try {
+                get();
+                //show back default cursor and hide the progress bar
+                cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                loadFromCellMiaPanel.getjProgressBar1().setVisible(false);
+                LOG.debug("Experiment was saved.");
+                //update info for the user
+                showMessage("Experiment was successfully saved to DB.", JOptionPane.INFORMATION_MESSAGE);
+                updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Experiment was successfully saved to DB.");
+            } catch (InterruptedException ex) {
+                LOG.error(ex.getMessage(), ex);
+            } catch (ExecutionException ex) {
+                showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", JOptionPane.ERROR_MESSAGE);
+            } catch (CancellationException ex) {
+                LOG.info("Loading data was cancelled.");
+            }
         }
     }
 }

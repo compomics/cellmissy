@@ -32,8 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Main Controller
- * Child Controllers: User Management, Setup Experiment, Load Experiment, Data Analysis - controllers
+ * Main Controller Child Controllers: User Management, Setup Experiment, Load Experiment, Data Analysis - controllers
+ *
  * @author Paola
  */
 @Controller("cellMissyController")
@@ -62,7 +62,8 @@ public class CellMissyController {
 
     /**
      * getter
-     * @return 
+     *
+     * @return
      */
     public CellMissyFrame getCellMissyFrame() {
         return cellMissyFrame;
@@ -72,13 +73,13 @@ public class CellMissyController {
      * Initialize controller
      */
     public void init() {
-        
+
         //set uncaught exception handler
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 LOG.error(e.getMessage(), e);
-                showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);          
+                showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
                 // exit the application
                 System.exit(1);
             }
@@ -108,12 +109,13 @@ public class CellMissyController {
     }
 
     /**
-     * public classes and methods 
+     * public classes and methods
      */
     /**
      * show message to the user through the main frame
+     *
      * @param message
-     * @param messageType 
+     * @param messageType
      */
     public void showMessage(String message, Integer messageType) {
         JOptionPane.showMessageDialog(cellMissyFrame, message, "", messageType);
@@ -121,8 +123,9 @@ public class CellMissyController {
 
     /**
      * update info message
+     *
      * @param infoLabel
-     * @param message 
+     * @param message
      */
     public void updateInfoLabel(JLabel infoLabel, String message) {
         infoLabel.setText(message);
@@ -130,7 +133,8 @@ public class CellMissyController {
 
     /**
      * set cursor type
-     * @param cursor 
+     *
+     * @param cursor
      */
     public void setCursor(Cursor cursor) {
         cellMissyFrame.setCursor(cursor);
@@ -138,7 +142,8 @@ public class CellMissyController {
 
     /**
      * validate User
-     * @return 
+     *
+     * @return
      */
     public boolean validateUser() {
         String message = "";
@@ -149,14 +154,15 @@ public class CellMissyController {
             for (String string : userManagementController.validateUser()) {
                 message += string + "\n";
             }
-            showMessage(message, 2);
+            showMessage(message, JOptionPane.WARNING_MESSAGE);
         }
         return isValid;
     }
 
     /**
      * temporary used to get user
-     * @return 
+     *
+     * @return
      */
     public User getAUser() {
         return userManagementController.getUserBindingList().get(0);
@@ -164,7 +170,8 @@ public class CellMissyController {
 
     /**
      * validate experiment info
-     * @return 
+     *
+     * @return
      */
     public boolean validateExperimentInfo() {
         String message = "";
@@ -175,7 +182,7 @@ public class CellMissyController {
             for (String string : setupExperimentController.validateExperimentInfo()) {
                 message += string + "\n";
             }
-            showMessage(message, 2);
+            showMessage(message, JOptionPane.WARNING_MESSAGE);
         }
         return isValid;
     }
@@ -213,7 +220,6 @@ public class CellMissyController {
         // create a new panel for project creation
         newProjectPanel = new NewProjectPanel();
         newProjectPanel.getCreateProjectButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 //create new project: save it to DB and create folder on the server

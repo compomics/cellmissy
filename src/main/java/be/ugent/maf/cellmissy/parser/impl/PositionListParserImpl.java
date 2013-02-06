@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -34,8 +35,12 @@ public class PositionListParserImpl implements PositionListParser {
         // this Map maps ImagingType (keys) to List of WellHasImagingType (values)
         Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = new HashMap<>();
         // in the microscope folder, look for the text files to parse
-        for (ImagingType imagingType : imagingTypeToPosListMap.keySet()) {
-            String positionList = imagingTypeToPosListMap.get(imagingType);
+        Iterator<Map.Entry<ImagingType, String>> iterator = imagingTypeToPosListMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<ImagingType, String> next = iterator.next();
+            ImagingType imagingType = next.getKey();
+            String positionList = next.getValue();
+
             List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
             File[] listFiles = setupFolder.listFiles();
             for (int j = 0; j < listFiles.length; j++) {

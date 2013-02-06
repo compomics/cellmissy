@@ -164,7 +164,7 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
         bottomPanel.setOpaque(false);
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        infolabel.setFont(new java.awt.Font("Tahoma", 2, 11));
+        infolabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
 
         forwardButton.setText("Forward");
 
@@ -181,9 +181,9 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(484, 484, 484)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(63, 63, 63)
+                .addGap(358, 358, 358)
+                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(114, 114, 114)
                 .addComponent(parseObsepFileButton)
                 .addGap(18, 18, 18)
                 .addComponent(cancelButton)
@@ -191,7 +191,7 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
                 .addComponent(forwardButton)
                 .addGap(18, 18, 18)
                 .addComponent(finishButton)
-                .addGap(26, 26, 26))
+                .addGap(62, 62, 62))
         );
 
         bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, finishButton, forwardButton, parseObsepFileButton});
@@ -201,14 +201,18 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
             .addGroup(bottomPanelLayout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bottomPanelLayout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(finishButton)
                             .addComponent(forwardButton)
                             .addComponent(cancelButton)
                             .addComponent(parseObsepFileButton))
-                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(bottomPanelLayout.createSequentialGroup()
+                            .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(3, 3, 3))))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
