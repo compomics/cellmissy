@@ -527,7 +527,7 @@ public class SetupExperimentController {
             }
         });
 
-        //click on Finish button: update the experiment
+        //click on Finish button: save the experiment
         setupExperimentPanel.getFinishButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

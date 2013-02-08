@@ -119,13 +119,11 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         projectMenu.setText("Project");
 
-        newProjectMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\ld-newprojecttoolbaricon.png")); // NOI18N
         newProjectMenuItem.setText("Create Project ...");
         newProjectMenuItem.setIconTextGap(2);
         projectMenu.add(newProjectMenuItem);
         projectMenu.add(jSeparator2);
 
-        allProjectsMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\SCOI0044-summary-icon-100x100 (2).png")); // NOI18N
         allProjectsMenuItem.setText("Overview Projects ...");
         allProjectsMenuItem.setIconTextGap(2);
         projectMenu.add(allProjectsMenuItem);
@@ -134,14 +132,12 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         experimentMenu.setText("Experiment");
 
-        newExperimentMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\ld-newprojecttoolbaricon.png")); // NOI18N
         newExperimentMenuItem.setText("Create Experiment...");
         newExperimentMenuItem.setToolTipText("");
         newExperimentMenuItem.setIconTextGap(2);
         experimentMenu.add(newExperimentMenuItem);
         experimentMenu.add(jSeparator3);
 
-        loadDataMenu.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\dataLoading.png")); // NOI18N
         loadDataMenu.setText("Load Motility Data...");
         loadDataMenu.setIconTextGap(2);
 
@@ -154,7 +150,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         experimentMenu.add(loadDataMenu);
         experimentMenu.add(jSeparator4);
 
-        dataAnalysisMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\icon_graph3.png")); // NOI18N
         dataAnalysisMenuItem.setText("Data Analysis");
         dataAnalysisMenuItem.setIconTextGap(2);
         dataAnalysisMenuItem.setInheritsPopupMenu(true);
@@ -164,18 +159,15 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         miscMenu.setText("Miscellaneous");
 
-        userMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\Lab Man-24x24.png")); // NOI18N
         userMenuItem.setText("User Management");
         userMenuItem.setIconTextGap(2);
         miscMenu.add(userMenuItem);
 
-        aboutMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\messagebox_info.png")); // NOI18N
         aboutMenuItem.setText("About...");
         aboutMenuItem.setIconTextGap(2);
         miscMenu.add(aboutMenuItem);
         miscMenu.add(jSeparator1);
 
-        exitMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\Gnome-Window-Close-32.png")); // NOI18N
         exitMenuItem.setText("Quit CellMissy...");
         exitMenuItem.setIconTextGap(2);
         miscMenu.add(exitMenuItem);
