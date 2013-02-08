@@ -132,8 +132,8 @@ public class ExperimentRepositoryTest {
         ecmService.saveEcmComposition(ecmComposition);
 
         Ecm ecm = new Ecm(1.0, 2.0, "12 h", "37 C", "", "", null, ecmComposition, null, "mg/ml", "");
-        Ecm save = ecmService.update(ecm);
-        firstPlateCondition.setEcm(save);
+        ecmService.save(ecm);
+        firstPlateCondition.setEcm(ecm);
         firstPlateCondition.setCellLine(cellLineRepository.findAll().get(0));
         //firstPlateCondition.setMatrixDimension(firstPlateCondition.getAssay().getMatrixDimension());
         firstPlateCondition.setExperiment(experiment);

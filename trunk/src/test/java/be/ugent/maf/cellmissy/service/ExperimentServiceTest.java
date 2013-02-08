@@ -15,7 +15,6 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -108,8 +107,8 @@ public class ExperimentServiceTest {
         }
 
         experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
-        Experiment save = experimentService.update(experiment);
-        Assert.assertEquals(ExperimentStatus.PERFORMED, save.getExperimentStatus());
-        Assert.assertNotNull(save.getExperimentid());
+        experimentService.savePerformedExperiment(experiment);
+        Assert.assertEquals(ExperimentStatus.PERFORMED, experiment.getExperimentStatus());
+        Assert.assertNotNull(experiment.getExperimentid());
     }
 }

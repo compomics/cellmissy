@@ -197,7 +197,7 @@ public class WellServiceImpl implements WellService {
      */
     @Override
     public void fetchTimeSteps(Well well, Long AlgorithmId, Long ImagingTpeId) {
-        //well = wellRepository.update(well);
+        //well = wellRepository.save(well);
         //for well, get the wellhasimagingtype for a certain algorithm and imaging type
         WellHasImagingType wellHasImagingType = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
         //fetch time step collection of that wellHasImagingType
