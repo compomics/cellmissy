@@ -132,7 +132,7 @@ public class ExperimentRepositoryTest {
         ecmService.saveEcmComposition(ecmComposition);
 
         Ecm ecm = new Ecm(1.0, 2.0, "12 h", "37 C", "", "", null, ecmComposition, null, "mg/ml", "");
-        Ecm save = ecmService.save(ecm);
+        Ecm save = ecmService.update(ecm);
         firstPlateCondition.setEcm(save);
         firstPlateCondition.setCellLine(cellLineRepository.findAll().get(0));
         //firstPlateCondition.setMatrixDimension(firstPlateCondition.getAssay().getMatrixDimension());
@@ -190,7 +190,7 @@ public class ExperimentRepositoryTest {
         experiment.setMagnification(magnificationRepository.findAll().get(0));
         experiment.setUser(userRepository.findByFirstName("user1"));
 
-        Experiment savedExperiment = experimentRepository.save(experiment);
+        Experiment savedExperiment = experimentRepository.update(experiment);
         Assert.assertNotNull(savedExperiment.getExperimentid());
         Assert.assertEquals(2, savedExperiment.getPlateConditionCollection().size());
         Collection<PlateCondition> plateConditionCollection = savedExperiment.getPlateConditionCollection();

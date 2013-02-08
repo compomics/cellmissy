@@ -8,9 +8,13 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.Instrument;
 import be.ugent.maf.cellmissy.entity.Magnification;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.repository.ExperimentRepository;
 import be.ugent.maf.cellmissy.repository.InstrumentRepository;
 import be.ugent.maf.cellmissy.repository.MagnificationRepository;
+import be.ugent.maf.cellmissy.repository.WellHasImagingTypeRepository;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import java.io.File;
 import java.util.ArrayList;
@@ -34,6 +38,8 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Autowired
     private InstrumentRepository instrumentRepository;
     @Autowired
+    private WellHasImagingTypeRepository wellHasImagingTypeRepository;
+    @Autowired
     private MagnificationRepository magnificationRepository;
     private File projectFolder;
     private File experimentFolder;
@@ -48,6 +54,7 @@ public class ExperimentServiceImpl implements ExperimentService {
 
     /**
      * create experiment obsepFolders from microscope directory
+     *
      * @param newExperiment
      */
     @Override
@@ -214,13 +221,13 @@ public class ExperimentServiceImpl implements ExperimentService {
     }
 
     @Override
-    public Experiment save(Experiment entity) {
-        return experimentRepository.save(entity);
+    public Experiment update(Experiment entity) {
+        return experimentRepository.update(entity);
     }
 
     @Override
     public void delete(Experiment entity) {
-        entity = experimentRepository.save(entity);
+        entity = experimentRepository.update(entity);
         experimentRepository.delete(entity);
     }
 
@@ -252,5 +259,22 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Override
     public List<Experiment> findExperimentsByProjectId(Long projectId) {
         return experimentRepository.findExperimentsByProjectId(projectId);
+    }
+
+    @Override
+    public void savePerformedExperiment(Experiment entity) {
+        for (PlateCondition plateCondition : entity.getPlateConditionCollection()) {
+            for (Well well : plateCondition.getWellCollection()) {
+                for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
+                    wellHasImagingTypeRepository.save(wellHasImagingType);
+                    wellHasImagingTypeRepository.flush();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void save(Experiment entity) {
+        experimentRepository.save(entity);
     }
 }

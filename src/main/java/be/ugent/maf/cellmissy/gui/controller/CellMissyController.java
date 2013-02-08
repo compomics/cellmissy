@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.MainPanel;
 import be.ugent.maf.cellmissy.gui.project.NewProjectPanel;
+import be.ugent.maf.cellmissy.gui.project.OverviewPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -19,15 +20,25 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.logging.Level;
 import javax.persistence.PersistenceException;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import org.apache.log4j.Logger;
+import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.ELProperty;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.swingbinding.JListBinding;
+import org.jdesktop.swingbinding.SwingBindings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -47,6 +58,7 @@ public class CellMissyController {
     private MainPanel mainPanel;
     private JDialog dialog;
     private NewProjectPanel newProjectPanel;
+    private OverviewPanel overviewPanel;
     //child controllers
     @Autowired
     private UserManagementController userManagementController;
@@ -59,6 +71,7 @@ public class CellMissyController {
     @Autowired
     private DataAnalysisController dataAnalysisController;
     private GridBagConstraints gridBagConstraints;
+    private BindingGroup bindingGroup;
 
     /**
      * getter
@@ -73,13 +86,13 @@ public class CellMissyController {
      * Initialize controller
      */
     public void init() {
-
+        bindingGroup = new BindingGroup();
         //set uncaught exception handler
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 LOG.error(e.getMessage(), e);
-                showMessage(e.getMessage(), JOptionPane.ERROR_MESSAGE);
+                showMessage("Fatal error " + e.getMessage() + ", application will exit", JOptionPane.ERROR_MESSAGE);
                 // exit the application
                 System.exit(1);
             }
@@ -219,6 +232,16 @@ public class CellMissyController {
         dialog.setLocationRelativeTo(null);
         // create a new panel for project creation
         newProjectPanel = new NewProjectPanel();
+        // set icon for info label
+        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        newProjectPanel.getInfoLabel().setIcon(scaledIcon);
+        // create a new panel for projects overview
+        overviewPanel = new OverviewPanel();
+        // set icon for info label
+        overviewPanel.getInfoLabel().setIcon(scaledIcon);
+
+        // create a new project
         newProjectPanel.getCreateProjectButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -248,6 +271,32 @@ public class CellMissyController {
             }
         });
 
+        // see overview
+        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, setupExperimentController.getProjectBindingList(), overviewPanel.getProjectJList());
+        bindingGroup.addBinding(jListBinding);
+        bindingGroup.bind();
+
+        //show experiments for the project selected
+        overviewPanel.getProjectJList().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                //init experimentJList
+                int locationToIndex = overviewPanel.getProjectJList().locationToIndex(e.getPoint());
+                if (setupExperimentController.findExperimentNumbersByProjectId(setupExperimentController.getProjectBindingList().get(locationToIndex).getProjectid()) != null) {
+                    setupExperimentController.setExperimentBindingList(ObservableCollections.observableList(setupExperimentController.findExperimentsByProjectId(setupExperimentController.getProjectBindingList().get(locationToIndex).getProjectid())));
+                    JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, setupExperimentController.getExperimentBindingList(), overviewPanel.getExperimentJList());
+                    bindingGroup.addBinding(jListBinding);
+                    bindingGroup.bind();
+                } else {
+                    showMessage("There are no experiments yet for this project!", JOptionPane.INFORMATION_MESSAGE);
+                    if (setupExperimentController.getExperimentBindingList() != null && !setupExperimentController.getExperimentBindingList().isEmpty()) {
+                        setupExperimentController.getExperimentBindingList().clear();
+                    }
+                }
+            }
+        });
+
         // fit to screen
         cellMissyFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         cellMissyFrame.setLocationRelativeTo(null);
@@ -269,7 +318,7 @@ public class CellMissyController {
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), userManagementController.getUserPanel(), dataAnalysisController.getDataAnalysisPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), userManagementController.getUserPanel(), mainPanel);
 
-            } else if (menuItemText.equalsIgnoreCase("new experiment")) {
+            } else if (menuItemText.equalsIgnoreCase("create experiment...")) {
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), userManagementController.getUserPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel());
@@ -325,9 +374,9 @@ public class CellMissyController {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            dialog.remove(setupExperimentController.getOverviewPanel());
+            dialog.remove(overviewPanel);
             // set title
-            dialog.setTitle("New Project");
+            dialog.setTitle("Create a new project");
             // add new panel
             dialog.getContentPane().add(newProjectPanel, gridBagConstraints);
             // show the dialog
@@ -345,9 +394,9 @@ public class CellMissyController {
         public void actionPerformed(ActionEvent e) {
             dialog.remove(newProjectPanel);
             // set title
-            dialog.setTitle("Overview: Projects/Experiments");
+            dialog.setTitle("Overview: projects/experiments");
             // add new panel
-            dialog.add(setupExperimentController.getOverviewPanel(), gridBagConstraints);
+            dialog.add(overviewPanel, gridBagConstraints);
             // show the dialog
             dialog.pack();
             dialog.setVisible(true);

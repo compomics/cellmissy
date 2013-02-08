@@ -87,12 +87,15 @@ public class CellMissyFrame extends javax.swing.JFrame {
         jMenuBar = new javax.swing.JMenuBar();
         projectMenu = new javax.swing.JMenu();
         newProjectMenuItem = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         allProjectsMenuItem = new javax.swing.JMenuItem();
         experimentMenu = new javax.swing.JMenu();
         newExperimentMenuItem = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
         loadDataMenu = new javax.swing.JMenu();
         cellMiaMenuItem = new javax.swing.JMenuItem();
         genericInputMenuItem = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
         dataAnalysisMenuItem = new javax.swing.JMenuItem();
         miscMenu = new javax.swing.JMenu();
         userMenuItem = new javax.swing.JMenuItem();
@@ -116,21 +119,31 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         projectMenu.setText("Project");
 
-        newProjectMenuItem.setText("New Project...");
+        newProjectMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\ld-newprojecttoolbaricon.png")); // NOI18N
+        newProjectMenuItem.setText("Create Project ...");
+        newProjectMenuItem.setIconTextGap(2);
         projectMenu.add(newProjectMenuItem);
+        projectMenu.add(jSeparator2);
 
-        allProjectsMenuItem.setText("View All Projects...");
+        allProjectsMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\SCOI0044-summary-icon-100x100 (2).png")); // NOI18N
+        allProjectsMenuItem.setText("Overview Projects ...");
+        allProjectsMenuItem.setIconTextGap(2);
         projectMenu.add(allProjectsMenuItem);
 
         jMenuBar.add(projectMenu);
 
         experimentMenu.setText("Experiment");
 
-        newExperimentMenuItem.setText("New Experiment");
+        newExperimentMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\ld-newprojecttoolbaricon.png")); // NOI18N
+        newExperimentMenuItem.setText("Create Experiment...");
         newExperimentMenuItem.setToolTipText("");
+        newExperimentMenuItem.setIconTextGap(2);
         experimentMenu.add(newExperimentMenuItem);
+        experimentMenu.add(jSeparator3);
 
+        loadDataMenu.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\dataLoading.png")); // NOI18N
         loadDataMenu.setText("Load Motility Data...");
+        loadDataMenu.setIconTextGap(2);
 
         cellMiaMenuItem.setText("... from CELLMIA");
         loadDataMenu.add(cellMiaMenuItem);
@@ -139,22 +152,32 @@ public class CellMissyFrame extends javax.swing.JFrame {
         loadDataMenu.add(genericInputMenuItem);
 
         experimentMenu.add(loadDataMenu);
+        experimentMenu.add(jSeparator4);
 
+        dataAnalysisMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\icon_graph3.png")); // NOI18N
         dataAnalysisMenuItem.setText("Data Analysis");
+        dataAnalysisMenuItem.setIconTextGap(2);
+        dataAnalysisMenuItem.setInheritsPopupMenu(true);
         experimentMenu.add(dataAnalysisMenuItem);
 
         jMenuBar.add(experimentMenu);
 
         miscMenu.setText("Miscellaneous");
 
+        userMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\Lab Man-24x24.png")); // NOI18N
         userMenuItem.setText("User Management");
+        userMenuItem.setIconTextGap(2);
         miscMenu.add(userMenuItem);
 
+        aboutMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\messagebox_info.png")); // NOI18N
         aboutMenuItem.setText("About...");
+        aboutMenuItem.setIconTextGap(2);
         miscMenu.add(aboutMenuItem);
         miscMenu.add(jSeparator1);
 
-        exitMenuItem.setText("Exit");
+        exitMenuItem.setIcon(new javax.swing.ImageIcon("C:\\Users\\Paola\\Desktop\\captures\\Gnome-Window-Close-32.png")); // NOI18N
+        exitMenuItem.setText("Quit CellMissy...");
+        exitMenuItem.setIconTextGap(2);
         miscMenu.add(exitMenuItem);
 
         jMenuBar.add(miscMenu);
@@ -219,6 +242,9 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem genericInputMenuItem;
     private javax.swing.JMenuBar jMenuBar;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JMenu loadDataMenu;
     private javax.swing.JMenu miscMenu;
     private javax.swing.JMenuItem newExperimentMenuItem;

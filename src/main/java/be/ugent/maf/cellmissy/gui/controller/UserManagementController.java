@@ -114,10 +114,10 @@ public class UserManagementController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                // if user validation was successful, save the new user to the db
+                // if user validation was successful, update the new user to the db
                 if (cellMissyController.validateUser()) {
                     try {
-                        User savedUser = userService.save(newUser);
+                        User savedUser = userService.update(newUser);
                         userBindingList.add(savedUser);
                         resetCreateUserTextFields();
                     } // handle ConstraintViolationException(UniqueConstraint)

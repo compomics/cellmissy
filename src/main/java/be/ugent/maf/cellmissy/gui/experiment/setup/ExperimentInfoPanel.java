@@ -11,9 +11,8 @@
 package be.ugent.maf.cellmissy.gui.experiment.setup;
 
 import com.toedter.calendar.JDateChooser;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JList;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -52,6 +51,10 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
     public JPanel getOverviewParentPanel() {
         return overviewParentPanel;
     }
+
+    public JLabel getInfoLabel() {
+        return infoLabel;
+    }
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -62,7 +65,8 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        overviewParentPanel = new javax.swing.JPanel();
+        experimentDataPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         purposeTextArea = new javax.swing.JTextArea();
         purposeLabel = new javax.swing.JLabel();
@@ -70,20 +74,26 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
         numberTextField = new javax.swing.JTextField();
         dateLabel = new javax.swing.JLabel();
         dateChooser = new com.toedter.calendar.JDateChooser();
-        jPanel2 = new javax.swing.JPanel();
+        infoLabel = new javax.swing.JLabel();
+        microscopeDataPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         magnificationComboBox = new javax.swing.JComboBox();
         instrumentComboBox = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
-        overviewParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(20, 20));
         setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment Data"));
-        jPanel1.setOpaque(false);
-        jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
+        overviewParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Overview"));
+        overviewParentPanel.setMinimumSize(new java.awt.Dimension(40, 40));
+        overviewParentPanel.setOpaque(false);
+        overviewParentPanel.setPreferredSize(new java.awt.Dimension(40, 40));
+        overviewParentPanel.setLayout(new java.awt.GridBagLayout());
+
+        experimentDataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment Data"));
+        experimentDataPanel.setOpaque(false);
+        experimentDataPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         purposeTextArea.setColumns(20);
         purposeTextArea.setRows(5);
@@ -96,51 +106,55 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
 
         dateLabel.setText("Date*");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        infoLabel.setText("Enter a significant experiment purpose (e.g.2D-3D comparison - ROCK inhibitor)");
+
+        javax.swing.GroupLayout experimentDataPanelLayout = new javax.swing.GroupLayout(experimentDataPanel);
+        experimentDataPanel.setLayout(experimentDataPanelLayout);
+        experimentDataPanelLayout.setHorizontalGroup(
+            experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(experimentDataPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
+                    .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
+                    .addGroup(experimentDataPanelLayout.createSequentialGroup()
+                        .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(purposeLabel)
+                            .addGroup(experimentDataPanelLayout.createSequentialGroup()
+                                .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(dateLabel)
                                     .addComponent(numberLabel))
                                 .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(dateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
-                                    .addComponent(numberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(purposeLabel))
-                        .addContainerGap(129, Short.MAX_VALUE))))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(numberLabel)
-                    .addComponent(numberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(dateLabel)
-                    .addComponent(dateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
-                .addComponent(purposeLabel)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(dateChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                                    .addComponent(numberTextField))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
+        experimentDataPanelLayout.setVerticalGroup(
+            experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(experimentDataPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(numberLabel)
+                    .addComponent(numberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(dateLabel)
+                    .addComponent(dateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(purposeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(infoLabel)
+                .addGap(12, 12, 12))
+        );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Microscope Data"));
-        jPanel2.setMinimumSize(new java.awt.Dimension(20, 20));
-        jPanel2.setOpaque(false);
-        jPanel2.setPreferredSize(new java.awt.Dimension(20, 20));
+        microscopeDataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Microscope Data"));
+        microscopeDataPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        microscopeDataPanel.setOpaque(false);
+        microscopeDataPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         jLabel2.setText("Select a magnification");
 
@@ -149,38 +163,33 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
 
         jLabel1.setText("Select an instrument");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout microscopeDataPanelLayout = new javax.swing.GroupLayout(microscopeDataPanel);
+        microscopeDataPanel.setLayout(microscopeDataPanelLayout);
+        microscopeDataPanelLayout.setHorizontalGroup(
+            microscopeDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(microscopeDataPanelLayout.createSequentialGroup()
+                .addGroup(microscopeDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2))
                 .addGap(32, 32, 32)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(microscopeDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(magnificationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(instrumentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(276, Short.MAX_VALUE))
+                .addContainerGap(185, Short.MAX_VALUE))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        microscopeDataPanelLayout.setVerticalGroup(
+            microscopeDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(microscopeDataPanelLayout.createSequentialGroup()
                 .addGap(22, 22, 22)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(microscopeDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(instrumentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(microscopeDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(magnificationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(57, Short.MAX_VALUE))
         );
-
-        overviewParentPanel.setMinimumSize(new java.awt.Dimension(40, 40));
-        overviewParentPanel.setOpaque(false);
-        overviewParentPanel.setPreferredSize(new java.awt.Dimension(40, 40));
-        overviewParentPanel.setLayout(new java.awt.GridBagLayout());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -189,36 +198,36 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
-                    .addComponent(overviewParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE))
-                .addGap(27, 27, 27)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(133, Short.MAX_VALUE))
+                    .addComponent(overviewParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(experimentDataPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(microscopeDataPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(114, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(overviewParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(overviewParentPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(72, Short.MAX_VALUE))
+                    .addComponent(microscopeDataPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(experimentDataPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(50, 50, 50))
         );
     }// </editor-fold>//GEN-END:initComponents
             
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.toedter.calendar.JDateChooser dateChooser;
     private javax.swing.JLabel dateLabel;
+    private javax.swing.JPanel experimentDataPanel;
+    private javax.swing.JLabel infoLabel;
     private javax.swing.JComboBox instrumentComboBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JComboBox magnificationComboBox;
+    private javax.swing.JPanel microscopeDataPanel;
     private javax.swing.JLabel numberLabel;
     private javax.swing.JTextField numberTextField;
     private javax.swing.JPanel overviewParentPanel;

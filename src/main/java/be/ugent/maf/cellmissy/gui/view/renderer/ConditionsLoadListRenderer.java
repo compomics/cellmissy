@@ -41,6 +41,7 @@ public class ConditionsLoadListRenderer extends DefaultListCellRenderer {
      * @param cellHasFocus
      * @return this class
      */
+    @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         super.getListCellRendererComponent(list, value, index, false, false);
         int conditionIndex = plateConditionList.indexOf((PlateCondition) value);

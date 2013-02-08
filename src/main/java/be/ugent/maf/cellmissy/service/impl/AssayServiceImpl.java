@@ -34,13 +34,13 @@ public class AssayServiceImpl implements AssayService {
     }
 
     @Override
-    public Assay save(Assay entity) {
-        return assayRepository.save(entity);
+    public Assay update(Assay entity) {
+        return assayRepository.update(entity);
     }
 
     @Override
     public void delete(Assay entity) {
-        entity = assayRepository.save(entity);
+        entity = assayRepository.update(entity);
         assayRepository.delete(entity);
     }
 
@@ -48,5 +48,10 @@ public class AssayServiceImpl implements AssayService {
     public List<Assay> findByMatrixDimensionName(String matrixDimensionName) {
         return assayRepository.findByMatrixDimensionName(matrixDimensionName);
     }    
+
+    @Override
+    public void save(Assay entity) {
+        assayRepository.save(entity);
+    }
     
 }

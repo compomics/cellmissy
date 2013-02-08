@@ -99,7 +99,7 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     private void drawRect(Graphics g) {
 
         Graphics2D g2d = (Graphics2D) g;
-        setGraphics(g2d);
+        GuiUtils.setGraphics(g2d);
         int x = Math.min(startPoint.x, endPoint.x);
         int y = Math.min(startPoint.y, endPoint.y);
         int width = Math.abs(startPoint.x - endPoint.x);
@@ -123,7 +123,7 @@ public class SetupPlatePanel extends AbstractPlatePanel {
      */
     private void drawRectangles(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        setGraphics(g2d);
+        GuiUtils.setGraphics(g2d);
         for (PlateCondition plateCondition : rectangles.keySet()) {
             g2d.setColor(GuiUtils.getAvailableColors()[plateCondition.getConditionIndex()]);
             for (Rectangle rectangle : rectangles.get(plateCondition)) {
@@ -157,7 +157,7 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     @Override
     protected void reDrawWells(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        setGraphics(g2d);
+        GuiUtils.setGraphics(g2d);
         for (WellGui wellGui : wellGuiList) {
             //get only the bigger default ellipse2D
             Ellipse2D defaultWell = wellGui.getEllipsi().get(0);

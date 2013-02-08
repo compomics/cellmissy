@@ -68,4 +68,6 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @return
      */
     List<Experiment> findExperimentsByProjectIdAndStatus(Long projectId, ExperimentStatus experimentStatus);
+    
+    void savePerformedExperiment(Experiment entity);
 }

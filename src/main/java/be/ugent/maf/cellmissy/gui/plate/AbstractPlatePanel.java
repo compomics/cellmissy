@@ -6,13 +6,11 @@ package be.ugent.maf.cellmissy.gui.plate;
 
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +82,7 @@ public abstract class AbstractPlatePanel extends JPanel {
      */
     public void drawWells(int wellSize, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        setGraphics(g2d);
+        GuiUtils.setGraphics(g2d);
 
         for (int i = 0; i < plateFormat.getNumberOfRows(); i++) {
             for (int j = 0; j < plateFormat.getNumberOfCols(); j++) {
@@ -115,17 +113,6 @@ public abstract class AbstractPlatePanel extends JPanel {
                 }
             }
         }
-    }
-
-    /**
-     * set graphics: implementing rendering process
-     * @param g2d 
-     */
-    public void setGraphics(Graphics2D g2d) {
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        BasicStroke stroke = new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
-        g2d.setStroke(stroke);
     }
 
     /**

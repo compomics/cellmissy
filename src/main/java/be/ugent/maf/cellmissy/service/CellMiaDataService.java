@@ -34,4 +34,10 @@ public interface CellMiaDataService {
      * @return a map from Algorithms to map (from ImagingType to WellHasImagingType entities)
      */
     Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processCellMiaData();
+    
+    /**
+     * Get number of samples to parse
+     * @return 
+     */
+    int getNumberOfSamples();
 }

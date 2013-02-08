@@ -24,7 +24,6 @@ public class CellLineServiceImpl implements CellLineService {
 
     @Autowired
     private CellLineRepository cellLineRepository;
-    
     @Autowired
     private CellLineTypeRepository cellLineTypeRepository;
 
@@ -39,13 +38,13 @@ public class CellLineServiceImpl implements CellLineService {
     }
 
     @Override
-    public CellLine save(CellLine entity) {
-        return cellLineRepository.save(entity);
+    public CellLine update(CellLine entity) {
+        return cellLineRepository.update(entity);
     }
 
     @Override
     public void delete(CellLine entity) {
-        entity = cellLineRepository.save(entity);
+        entity = cellLineRepository.update(entity);
         cellLineRepository.delete(entity);
     }
 
@@ -56,7 +55,7 @@ public class CellLineServiceImpl implements CellLineService {
 
     @Override
     public CellLineType saveCellLineType(CellLineType entity) {
-        return cellLineTypeRepository.save(entity);
+        return cellLineTypeRepository.update(entity);
     }
 
     @Override
@@ -68,5 +67,9 @@ public class CellLineServiceImpl implements CellLineService {
     public List<String> findAllSera() {
         return cellLineRepository.findAllSera();
     }
- 
+
+    @Override
+    public void save(CellLine entity) {
+        cellLineRepository.save(entity);
+    }
 }

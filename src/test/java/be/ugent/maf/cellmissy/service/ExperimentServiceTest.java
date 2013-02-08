@@ -108,7 +108,7 @@ public class ExperimentServiceTest {
         }
 
         experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
-        Experiment save = experimentService.save(experiment);
+        Experiment save = experimentService.update(experiment);
         Assert.assertEquals(ExperimentStatus.PERFORMED, save.getExperimentStatus());
         Assert.assertNotNull(save.getExperimentid());
     }

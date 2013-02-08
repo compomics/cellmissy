@@ -19,6 +19,8 @@ import org.hibernate.criterion.Projections;
 
 /**
  *
+ * @param <T>
+ * @param <ID>
  * @author niels
  */
 public class GenericJpaRepository<T, ID extends Serializable> implements GenericRepository<T, ID> {
@@ -119,6 +121,9 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
 
     /**
      * Use this inside subclasses as a convenience method.
+     *
+     * @param criterion
+     * @return
      */
     protected List<T> findByCriteria(final Criterion... criterion) {
         return findByCriteria(-1, -1, criterion);
@@ -126,6 +131,11 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
 
     /**
      * Use this inside subclasses as a convenience method.
+     *
+     * @param firstResult
+     * @param maxResults
+     * @param criterion
+     * @return  
      */
     @SuppressWarnings("unchecked")
     protected List<T> findByCriteria(final int firstResult,
@@ -167,8 +177,18 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
     }
 
     @Override
-    public T save(T entity) {
-        final T savedEntity = getEntityManager().merge(entity);
-        return savedEntity;
+    public T update(T entity) {
+        final T mergedEntity = getEntityManager().merge(entity);
+        return mergedEntity;
+    }
+
+    @Override
+    public void save(T entity) {
+        getEntityManager().persist(entity);
+    }
+
+    @Override
+    public void flush() {
+        getEntityManager().flush();
     }
 }

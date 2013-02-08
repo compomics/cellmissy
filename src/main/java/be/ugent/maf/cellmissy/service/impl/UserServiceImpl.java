@@ -18,11 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service("userService")
 @Transactional
-public class UserServiceImpl implements UserService{
-    
+public class UserServiceImpl implements UserService {
+
     @Autowired
     private UserRepository userRepository;
-    
+
     @Override
     public User findByFullName(String firstName, String lastName) {
         return userRepository.findByFullName(firstName, lastName);
@@ -32,12 +32,12 @@ public class UserServiceImpl implements UserService{
     public User findByFirstName(String firstName) {
         return userRepository.findByFirstName(firstName);
     }
-    
+
     @Override
     public User findByLastName(String lastName) {
         return userRepository.findByLastName(lastName);
     }
-    
+
     @Override
     public User findById(Long id) {
         return userRepository.findById(id);
@@ -49,14 +49,18 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User save(User entity) {
-        return userRepository.save(entity);
+    public User update(User entity) {
+        return userRepository.update(entity);
     }
 
     @Override
     public void delete(User entity) {
-        entity = userRepository.save(entity);
+        entity = userRepository.update(entity);
         userRepository.delete(entity);
     }
-    
+
+    @Override
+    public void save(User entity) {
+        userRepository.save(entity);
+    }
 }

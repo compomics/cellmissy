@@ -37,13 +37,13 @@ public class MainPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(20, 20));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
         jLabel1.setText("CellMissy");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 34));
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 34)); // NOI18N
         jLabel2.setText("Cell Migration Invasion");
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 34));
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 34)); // NOI18N
         jLabel3.setText("Storage System");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -51,29 +51,28 @@ public class MainPanel extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(231, 231, 231)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addComponent(jLabel3)
+                            .addGap(58, 58, 58)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(76, 76, 76)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(58, 58, 58))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(180, 180, 180)
+                        .addGap(104, 104, 104)
                         .addComponent(jLabel1)))
-                .addContainerGap(81, Short.MAX_VALUE))
+                .addContainerGap(285, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(77, 77, 77)
+                .addGap(162, 162, 162)
                 .addComponent(jLabel1)
                 .addGap(29, 29, 29)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
-                .addContainerGap(119, Short.MAX_VALUE))
+                .addContainerGap(211, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables

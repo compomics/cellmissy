@@ -146,7 +146,7 @@
                   <Component id="infolabel" max="32767" attributes="0"/>
                   <EmptySpace min="-2" pref="358" max="-2" attributes="0"/>
                   <Component id="jProgressBar1" min="-2" pref="185" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="114" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="parseObsepFileButton" linkSize="4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="cancelButton" linkSize="4" min="-2" max="-2" attributes="0"/>
@@ -154,7 +154,7 @@
                   <Component id="forwardButton" linkSize="4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="finishButton" linkSize="4" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="62" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="158" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

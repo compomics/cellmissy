@@ -75,7 +75,8 @@ public class LoadExperimentFromGenericInputController {
 
     /**
      * getters and setters
-     * @return 
+     *
+     * @return
      */
     public LoadFromGenericInputPanel getLoadFromGenericInputPanel() {
         return loadFromGenericInputPanel;
@@ -109,6 +110,11 @@ public class LoadExperimentFromGenericInputController {
         return cellMissyController.getCellMissyFrame();
     }
 
+    // reset everything
+    public void reset() {
+        genericImagedPlateController.reset();
+    }
+
     /**
      * Enable buttons once one experiment is loaded
      */
@@ -119,7 +125,7 @@ public class LoadExperimentFromGenericInputController {
     }
 
     /**
-     * 
+     *
      */
     private void initMainPanel() {
         //update info message
@@ -138,7 +144,6 @@ public class LoadExperimentFromGenericInputController {
 
         // listen to tree selection (imaging type)
         loadFromGenericInputPanel.getDataTree().addTreeSelectionListener(new TreeSelectionListener() {
-
             @Override
             public void valueChanged(TreeSelectionEvent e) {
                 DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) loadFromGenericInputPanel.getDataTree().getLastSelectedPathComponent();
@@ -172,7 +177,6 @@ public class LoadExperimentFromGenericInputController {
          * Reset view on plate (all raw data is deleted)
          */
         loadFromGenericInputPanel.getResetButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -182,11 +186,10 @@ public class LoadExperimentFromGenericInputController {
                 switch (showOptionDialog) {
                     case 0:
                         // reset
-                        genericImagedPlateController.reset();
+                        reset();
                         break;
                     case 1:
-                        // cancel: do nothing
-                        return;
+                        break;
                 }
             }
         });
@@ -195,21 +198,20 @@ public class LoadExperimentFromGenericInputController {
          * Save experiment
          */
         loadFromGenericInputPanel.getFinishButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 // validate experiment
-                // if everything is valid, save the experiment, else show a message
+                // if everything is valid, update the experiment, else show a message
                 List<String> messages = genericExperimentDataController.setExperimentMetadata();
                 if (messages.isEmpty()) {
                     // check if data loading is valid
                     if (genericImagedPlateController.validateDataLoading()) {
-                        // if data loading is valid, set motility data and save the experiment
+                        // if data loading is valid, set motility data and update the experiment
                         //set motility Data
                         setMotilityData();
-                        //set experiment status to "performed" and save it to DB
+                        //set experiment status to "performed" and update it to DB
                         experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
-                        //launch a swing worker to save the experiment in the background thread
+                        //launch a swing worker to update the experiment in the background thread
                         SaveExperimentWorker worker = new SaveExperimentWorker();
                         worker.execute();
                     } else {
@@ -220,9 +222,9 @@ public class LoadExperimentFromGenericInputController {
                             case 0: // set motility data and procede with storage
                                 //set motility Data
                                 setMotilityData();
-                                //set experiment status to "performed" and save it to DB
+                                //set experiment status to "performed" and update it to DB
                                 experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
-                                //launch a swing worker to save the experiment in the background thread
+                                //launch a swing worker to update the experiment in the background thread
                                 SaveExperimentWorker worker = new SaveExperimentWorker();
                                 worker.execute();
                                 break;
@@ -240,10 +242,9 @@ public class LoadExperimentFromGenericInputController {
         });
 
         /**
-         * If error occurred, remove dataset 
+         * If error occurred, remove dataset
          */
         loadFromGenericInputPanel.getRemoveButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 // jtree structure
@@ -297,7 +298,6 @@ public class LoadExperimentFromGenericInputController {
          * Add a dataset to DATA
          */
         loadFromGenericInputPanel.getAddDatasetButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 String datasetName = loadFromGenericInputPanel.getDatasetNameTextField().getText();
@@ -319,7 +319,6 @@ public class LoadExperimentFromGenericInputController {
          * Add an imaging type to DATA
          */
         loadFromGenericInputPanel.getAddImagingButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 String imagingName = loadFromGenericInputPanel.getImagingNameTextField().getText();
@@ -347,7 +346,8 @@ public class LoadExperimentFromGenericInputController {
 
     /**
      * Add a new dataset to list and to data tree
-     * @param datasetToAdd 
+     *
+     * @param datasetToAdd
      */
     private void addDataset(Algorithm datasetToAdd) {
         if (!genericImagedPlateController.getAlgorithmsBindingList().contains(datasetToAdd)) {
@@ -375,7 +375,8 @@ public class LoadExperimentFromGenericInputController {
 
     /**
      * Add a new imaging type to list and to data tree
-     * @param imagingToAdd 
+     *
+     * @param imagingToAdd
      */
     private void addImagingType(ImagingType imagingToAdd) {
         if (!genericImagedPlateController.getImagingTypesBindingList().contains(imagingToAdd)) {
@@ -400,8 +401,9 @@ public class LoadExperimentFromGenericInputController {
 
     /**
      * Given an imaging node, find the upper dataset
+     *
      * @param imagingNode
-     * @return 
+     * @return
      */
     private Algorithm findDataset(DefaultMutableTreeNode imagingNode) {
         Algorithm foundDataset = null;
@@ -415,7 +417,7 @@ public class LoadExperimentFromGenericInputController {
     }
 
     /**
-     * Swing Worker to save the Experiment
+     * Swing Worker to update the Experiment
      */
     private class SaveExperimentWorker extends SwingWorker<Void, Void> {
 
@@ -430,7 +432,7 @@ public class LoadExperimentFromGenericInputController {
             loadFromGenericInputPanel.getjProgressBar1().setIndeterminate(true);
 
             //INSERT experiment to DB
-            experimentService.save(experiment);
+            experimentService.update(experiment);
             return null;
         }
 

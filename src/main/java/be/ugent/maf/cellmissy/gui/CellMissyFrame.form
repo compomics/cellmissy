@@ -20,12 +20,22 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="newProjectMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="New Project..."/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="2" name="C:\Users\Paola\Desktop\captures\ld-newprojecttoolbaricon.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Create Project ..."/>
+                <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="allProjectsMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="View All Projects..."/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="2" name="C:\Users\Paola\Desktop\captures\SCOI0044-summary-icon-100x100 (2).png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Overview Projects ..."/>
+                <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
             </MenuItem>
           </SubComponents>
@@ -37,13 +47,23 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="newExperimentMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="New Experiment"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="2" name="C:\Users\Paola\Desktop\captures\ld-newprojecttoolbaricon.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Create Experiment..."/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
+                <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator3">
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="loadDataMenu">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="2" name="C:\Users\Paola\Desktop\captures\dataLoading.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Load Motility Data..."/>
+                <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="cellMiaMenuItem">
@@ -58,9 +78,16 @@
                 </MenuItem>
               </SubComponents>
             </Menu>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="dataAnalysisMenuItem">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="2" name="C:\Users\Paola\Desktop\captures\icon_graph3.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Data Analysis"/>
+                <Property name="iconTextGap" type="int" value="2"/>
+                <Property name="inheritsPopupMenu" type="boolean" value="true"/>
               </Properties>
             </MenuItem>
           </SubComponents>
@@ -72,19 +99,31 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="userMenuItem">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="2" name="C:\Users\Paola\Desktop\captures\Lab Man-24x24.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="User Management"/>
+                <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="aboutMenuItem">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="2" name="C:\Users\Paola\Desktop\captures\messagebox_info.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="About..."/>
+                <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exitMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Exit"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="2" name="C:\Users\Paola\Desktop\captures\Gnome-Window-Close-32.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Quit CellMissy..."/>
+                <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
             </MenuItem>
           </SubComponents>
