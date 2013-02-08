@@ -77,11 +77,11 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                     // make use of an iterator on a EntrySet is more efficient then iterating through the keys of the map
                     Set<Map.Entry<ImagingType, List<WellHasImagingType>>> entrySet = map.entrySet();
                     Iterator<Map.Entry<ImagingType, List<WellHasImagingType>>> iterator = entrySet.iterator();
-                    while(iterator.hasNext()){
+                    while (iterator.hasNext()) {
                         Map.Entry<ImagingType, List<WellHasImagingType>> next = iterator.next();
                         ImagingType imagingType = next.getKey();
                         List<WellHasImagingType> wellHasImagingTypeList = next.getValue();
-                        
+
                         //**********************************************************************************************//
                         for (int i = imageTypeStartFolder; i < wellHasImagingTypeList.size() + imageTypeStartFolder; i++) {
                             WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i - imageTypeStartFolder);
@@ -136,24 +136,21 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
         return algoMap;
     }
     /**
-     * set file filters for CellMIA 
+     * set file filters for CellMIA
      */
     private static FilenameFilter sampleFilter = new FilenameFilter() {
-
         @Override
         public boolean accept(File dir, String name) {
             return name.startsWith("sample");
         }
     };
     private static FilenameFilter resultsFilter = new FilenameFilter() {
-
         @Override
         public boolean accept(File dir, String name) {
             return name.startsWith("results");
         }
     };
     private static FilenameFilter textfilesFilter = new FilenameFilter() {
-
         @Override
         public boolean accept(File dir, String name) {
             return name.endsWith(".txt");
@@ -167,7 +164,8 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
 
     /**
      * copy the map with imaging types and well has imaging types properties
-     * @return 
+     *
+     * @return
      */
     private Map<ImagingType, List<WellHasImagingType>> copyMap() {
         Map<ImagingType, List<WellHasImagingType>> map = new HashMap<>();
@@ -182,5 +180,24 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
             map.put(imagingType, wellHasImagingTypeList);
         }
         return map;
+    }
+
+    @Override
+    public int getNumberOfSamples() {
+        int numberOfSamples = 0;
+        File[] algoFiles = experiment.getMiaFolder().listFiles();
+        for (File file : algoFiles) {
+            //default algo-0 folder does not contain data to store
+            if (!file.getName().endsWith("algo-0")) {
+                for (File batchFile : Arrays.asList(file.listFiles())) {
+                    // sample folders
+                    // the number of sampleFiles is equal to the number of WellHasImagingType entities for one algorithm
+                    //@todo need to check if position lists lenght and sample folders numbers are the same
+                    File[] sampleFiles = batchFile.listFiles(sampleFilter);
+                    numberOfSamples += sampleFiles.length;
+                }
+            }
+        }
+        return numberOfSamples;
     }
 }

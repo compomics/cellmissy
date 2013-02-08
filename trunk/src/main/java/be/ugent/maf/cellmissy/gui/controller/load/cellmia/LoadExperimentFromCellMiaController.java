@@ -140,7 +140,7 @@ public class LoadExperimentFromCellMiaController {
          */
         //parse obseo file from the microscope
         loadFromCellMiaPanel.getExpDataButton().addActionListener(new ActionListener() {
-            @Override
+            @Override   
             public void actionPerformed(ActionEvent e) {
 
                 if (experiment.getObsepFile() != null) {
@@ -214,9 +214,9 @@ public class LoadExperimentFromCellMiaController {
             public void actionPerformed(ActionEvent e) {
                 //set CellMia Data
                 setCellMiaData();
-                //set experiment status to "performed" and save it to DB
+                //set experiment status to "performed" and update it to DB
                 experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
-                //launch a swing worker to save the experiment in the background thread
+                //launch a swing worker to update the experiment in the background thread
                 SaveExperimentWorker worker = new SaveExperimentWorker();
                 worker.execute();
             }
@@ -229,12 +229,20 @@ public class LoadExperimentFromCellMiaController {
      * @param obsepFile: this is loaded from the experiment or it is rather chosen by the user
      */
     private void setExperimentData(File obsepFile) {
+        // parse .obsep file 
         obsepFileParser.parseObsepFile(obsepFile);
-        List<Double> experimentInfo = obsepFileParser.getExperimentInfo();
-        cellMiaExperimentDataController.getLoadExperimentInfoPanel().getTimeFramesTextField().setText(experimentInfo.get(0).toString());
-        cellMiaExperimentDataController.getLoadExperimentInfoPanel().getIntervalTextField().setText(experimentInfo.get(1).toString());
-        cellMiaExperimentDataController.getLoadExperimentInfoPanel().getIntervalUnitComboBox().setSelectedItem(obsepFileParser.getUnit());
-        cellMiaExperimentDataController.getLoadExperimentInfoPanel().getDurationTextField().setText(experimentInfo.get(2).toString());
+        // get experiment metadata
+        List<Double> experimentMetadata = obsepFileParser.getExperimentMetadata();
+        // set JtextFields
+        cellMiaExperimentDataController.getExperimentMetadataPanel().getTimeFramesTextField().setText(experimentMetadata.get(0).toString());
+        cellMiaExperimentDataController.getExperimentMetadataPanel().getIntervalTextField().setText(experimentMetadata.get(1).toString());
+        cellMiaExperimentDataController.getExperimentMetadataPanel().getIntervalUnitComboBox().setSelectedItem(obsepFileParser.getUnit());
+        cellMiaExperimentDataController.getExperimentMetadataPanel().getDurationTextField().setText(experimentMetadata.get(2).toString());
+        // set experiment fields
+        experiment.setTimeFrames(experimentMetadata.get(0).intValue());
+        experiment.setExperimentInterval(experimentMetadata.get(1));
+        experiment.setDuration(experimentMetadata.get(2));
+        cellMiaExperimentDataController.getExperimentMetadataPanel().getIntervalUnitComboBox().setSelectedItem(obsepFileParser.getUnit());
     }
 
     /**
@@ -269,7 +277,7 @@ public class LoadExperimentFromCellMiaController {
     }
 
     /**
-     * Swing Worker to save the Experiment
+     * Swing Worker to update the Experiment
      */
     private class SaveExperimentWorker extends SwingWorker<Void, Void> {
 
@@ -283,7 +291,7 @@ public class LoadExperimentFromCellMiaController {
             loadFromCellMiaPanel.getjProgressBar1().setIndeterminate(true);
 
             //INSERT experiment to DB
-            experimentService.save(experiment);
+            experimentService.savePerformedExperiment(experiment);
             return null;
         }
 

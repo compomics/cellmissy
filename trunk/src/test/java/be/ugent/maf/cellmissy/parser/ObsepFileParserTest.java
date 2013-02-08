@@ -31,7 +31,7 @@ public class ObsepFileParserTest {
         File obsepFile = new File(ObsepFileParserTest.class.getClassLoader().getResource("gffp.obsep").getPath());
         
         obsepFileParser.parseObsepFile(obsepFile);
-        List<Double> info = obsepFileParser.getExperimentInfo();
+        List<Double> info = obsepFileParser.getExperimentMetadata();
         Map<ImagingType, String> map = obsepFileParser.mapImagingTypetoPositionList();
         
         assertTrue(!map.isEmpty());

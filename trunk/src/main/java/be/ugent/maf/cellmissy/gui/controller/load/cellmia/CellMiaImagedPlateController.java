@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.load.cellmia;
 
+import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -23,14 +24,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Imaged Plate Controller: show conditions and highlight imaged wells on plate view
- * Parent Controller: Load Experiment Controller
+ * Imaged Plate Controller: show conditions and highlight imaged wells on plate view Parent Controller: Load Experiment Controller
+ *
  * @author Paola Masuzzo
  */
 @Controller("imagedPlateController")
@@ -69,7 +71,8 @@ public class CellMiaImagedPlateController {
 
     /**
      * getters and setters
-     * @return 
+     *
+     * @return
      */
     public ImagedPlatePanel getImagedPlatePanel() {
         return imagedPlatePanel;
@@ -95,7 +98,6 @@ public class CellMiaImagedPlateController {
          */
         //forward button
         loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getForwardButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 //add mouse listener to the plate
@@ -146,7 +148,6 @@ public class CellMiaImagedPlateController {
          * add mouse listeners
          */
         imagedPlatePanel.addMouseListener(new MouseAdapter() {
-
             // if the mouse has been pressed and released on a wellGui, set it as firstWellGui and show imaged wells
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -231,7 +232,8 @@ public class CellMiaImagedPlateController {
 
     /**
      * compute the concentric ellipsi to show all imaged wells according to imaging types found
-     * @param firstWellGui 
+     *
+     * @param firstWellGui
      */
     private void showImagedWells(WellGui firstWellGui) {
         //update WellGuiList and show imaged wells positions on the plate
@@ -264,6 +266,7 @@ public class CellMiaImagedPlateController {
 
     /**
      * this method validates the selection on the plate
+     *
      * @return true if the selection is valid
      */
     private boolean validateSelection() {
@@ -284,9 +287,10 @@ public class CellMiaImagedPlateController {
 
     /**
      * check if a wellHasImagingType contains a certain imaging type
+     *
      * @param wellHasImagingTypes
      * @param imagingType
-     * @return 
+     * @return
      */
     private boolean containsImagingType(Collection<WellHasImagingType> wellHasImagingTypes, ImagingType imagingType) {
         for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
@@ -298,7 +302,15 @@ public class CellMiaImagedPlateController {
     }
 
     /**
-     * swing worker
+     *
+     * @return
+     */
+    private int getNumberOfSamples() {
+        return wellService.getNumberOfSamples();
+    }
+
+    /**
+     * Swing worker to parse all samples files
      */
     private class PlateWorker extends SwingWorker<Void, Void> {
 
@@ -308,10 +320,14 @@ public class CellMiaImagedPlateController {
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getjProgressBar1().setVisible(true);
             //init wellService: init also CellMiaData Service and MicroscopeData Service
             wellService.init(loadExperimentFromCellMiaController.getExperiment());
+            int numberOfSamples = getNumberOfSamples();
+            String message =  numberOfSamples + " samples are being processed. Please wait.";
+            loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), message);
             // get the list of imaging types
             List<ImagingType> imagingTypes = wellService.getImagingTypes();
             imagedPlatePanel.setImagingTypeList(imagingTypes);
-            imagedPlatePanel.setAlgoMap(wellService.getMap());
+            Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> algoMap = wellService.getMap();
+            imagedPlatePanel.setAlgoMap(algoMap);
             return null;
         }
 
@@ -332,7 +348,7 @@ public class CellMiaImagedPlateController {
             list.add(string);
             string = "Please select first well imaged with " + imagedPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (imagedPlatePanel.getImagingTypeList().indexOf(imagedPlatePanel.getCurrentImagingType()) + 1) + "/" + imagedPlatePanel.getImagingTypeList().size() + ")" + "\nExposure time: " + imagedPlatePanel.getCurrentImagingType().getExposureTime() + " " + imagedPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + imagedPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
             list.add(string);
-            
+
             for (String s : list) {
                 message += s + "\n";
             }

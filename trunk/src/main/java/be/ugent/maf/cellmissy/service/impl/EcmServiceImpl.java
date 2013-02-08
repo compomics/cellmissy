@@ -50,13 +50,13 @@ public class EcmServiceImpl implements EcmService {
     }
 
     @Override
-    public Ecm save(Ecm entity) {
-        return ecmRepository.save(entity);
+    public Ecm update(Ecm entity) {
+        return ecmRepository.update(entity);
     }
 
     @Override
     public void delete(Ecm entity) {
-        entity = ecmRepository.save(entity);
+        entity = ecmRepository.update(entity);
         ecmRepository.delete(entity);
     }
 
@@ -88,5 +88,10 @@ public class EcmServiceImpl implements EcmService {
     @Override
     public List<String> findAllPolimerysationPh() {
         return ecmRepository.findAllPolimerysationPh();
+    }
+
+    @Override
+    public void save(Ecm entity) {
+        ecmRepository.save(entity);
     }
 }

@@ -4,14 +4,21 @@
  */
 package be.ugent.maf.cellmissy.utils;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 /**
  * Utility class for GUI
+ *
  * @author Paola
  */
 public class GuiUtils {
@@ -23,6 +30,7 @@ public class GuiUtils {
 
     /**
      * Get Default Grid Bag Constraints used for Grid Bag Layout GUI Structures
+     *
      * @return GridBagConstraints
      */
     public static GridBagConstraints getDefaultGridBagConstraints() {
@@ -43,6 +51,7 @@ public class GuiUtils {
 
     /**
      * Check if a parent component already contains a child component
+     *
      * @param parentContainer
      * @param childComponent
      * @return boolean
@@ -59,6 +68,7 @@ public class GuiUtils {
 
     /**
      * Switch between two different panels keeping the same view
+     *
      * @param parentPanel
      * @param panelToAdd
      * @param panelToRemove
@@ -70,5 +80,36 @@ public class GuiUtils {
         if (GuiUtils.containsComponent(parentPanel, panelToRemove)) {
             parentPanel.remove(panelToRemove);
         }
+    }
+
+    /**
+     *
+     * @param icon
+     * @return
+     */
+    public static ImageIcon getScaledIcon(Icon icon) {
+        int iconWidth = icon.getIconWidth();
+        int iconHeight = icon.getIconHeight();
+        int scale = 2;
+        BufferedImage bufferedImage = new BufferedImage(iconWidth / scale, iconHeight / scale, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics2D = bufferedImage.createGraphics();
+        setGraphics(graphics2D);
+        graphics2D.scale(0.5, 0.5);
+        icon.paintIcon(null, graphics2D, 0, 0);
+        graphics2D.dispose();
+        ImageIcon imageIcon = new ImageIcon(bufferedImage);
+        return imageIcon;
+    }
+
+    /**
+     * set graphics: implementing rendering process
+     *
+     * @param g2d
+     */
+    public static void setGraphics(Graphics2D g2d) {
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        BasicStroke stroke = new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
+        g2d.setStroke(stroke);
     }
 }

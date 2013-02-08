@@ -85,12 +85,12 @@ public interface GenericRepository<T, ID extends Serializable> {
 
 
     /**
-     * save an entity. This can be either a INSERT or UPDATE in the database.
+     * update an entity. This can be either a INSERT or UPDATE in the database.
      *
-     * @param entity the entity to save
+     * @param entity the entity to update
      * @return the saved entity
      */
-    T save(final T entity);
+    T update(final T entity);
 
     /**
      * delete an entity from the database.
@@ -99,5 +99,8 @@ public interface GenericRepository<T, ID extends Serializable> {
      */
     void delete(final T entity);
 
+    void save(final T entity);
+    
+    void flush();
 }
 

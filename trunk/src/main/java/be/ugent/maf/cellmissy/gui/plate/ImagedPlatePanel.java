@@ -80,7 +80,7 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
     private void showRect(Graphics g) {
 
         Graphics2D g2d = (Graphics2D) g;
-        setGraphics(g2d);
+        GuiUtils.setGraphics(g2d);
         List<PlateCondition> plateConditions = new ArrayList<>();
         plateConditions.addAll(experiment.getPlateConditionCollection());
 
@@ -115,7 +115,7 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
     @Override
     protected void reDrawWells(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        setGraphics(g2d);
+        GuiUtils.setGraphics(g2d);
         // a list of WellGui objects is present, iterate through it
         for (WellGui wellGui : wellGuiList) {
             List<Ellipse2D> ellipsi = wellGui.getEllipsi();

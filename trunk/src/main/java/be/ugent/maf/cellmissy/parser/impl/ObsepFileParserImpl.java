@@ -88,7 +88,7 @@ public class ObsepFileParserImpl implements ObsepFileParser {
     }
 
     @Override
-    public List<Double> getExperimentInfo() {
+    public List<Double> getExperimentMetadata() {
         // create new Experiment entity and set class members
         List<Double> experimentInfo = new ArrayList<>();
         NodeList loopChildNodes = loopNode.getChildNodes();

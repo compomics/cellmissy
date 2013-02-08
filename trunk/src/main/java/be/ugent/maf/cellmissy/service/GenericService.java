@@ -9,6 +9,8 @@ import java.util.List;
 
 /**
  *
+ * @param <T>
+ * @param <ID>
  * @author niels
  */
 public interface GenericService<T, ID extends Serializable> {
@@ -17,8 +19,9 @@ public interface GenericService<T, ID extends Serializable> {
 
     List<T> findAll();
 
-    T save(final T entity);
+    T update(final T entity);
 
     void delete(final T entity);
 
+    void save(final T entity);
 }

@@ -47,7 +47,8 @@ public class Well implements Serializable {
     private Integer columnNumber;
     @Column(name = "row_number")
     private Integer rowNumber;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "well")
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "well")
+    @OneToMany(mappedBy = "well")
     private Collection<WellHasImagingType> wellHasImagingTypeCollection;
     @JoinColumn(name = "l_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = false)

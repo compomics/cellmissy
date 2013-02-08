@@ -13,7 +13,6 @@ import be.ugent.maf.cellmissy.gui.experiment.setup.TreatmentsPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.TreatmentsRenderer;
 import be.ugent.maf.cellmissy.service.TreatmentService;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -23,9 +22,9 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javax.persistence.PersistenceException;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JDialog;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -287,6 +286,9 @@ public class TreatmentsController {
                         addDrugsTreatmentsPanel.getDrugTextField().setText("");
                         addDrugsTreatmentsPanel.getDrugTextField().requestFocusInWindow();
                     }
+                } else {
+                    setupConditionsController.showMessage("Insert a name for the drug!", JOptionPane.WARNING_MESSAGE);
+                    addDrugsTreatmentsPanel.getDrugTextField().requestFocusInWindow();
                 }
             }
         });
@@ -312,6 +314,9 @@ public class TreatmentsController {
                         addDrugsTreatmentsPanel.getTreatmentTextField().setText("");
                         addDrugsTreatmentsPanel.getTreatmentTextField().requestFocusInWindow();
                     }
+                } else {
+                    setupConditionsController.showMessage("Insert a name for the treatment!", JOptionPane.WARNING_MESSAGE);
+                    addDrugsTreatmentsPanel.getTreatmentTextField().requestFocusInWindow();
                 }
             }
         });

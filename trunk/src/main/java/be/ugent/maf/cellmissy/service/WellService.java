@@ -49,21 +49,21 @@ public interface WellService extends GenericService<Well, Long> {
     Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap();
 
     /**
-     * find all algorithms for one wellId
+     * Find all algorithms for one wellId
      * @param wellId
      * @return 
      */
     List<Algorithm> findAlgosByWellId(Long wellId);
 
     /**
-     * find all imaging types for one wellId
+     * Find all imaging types for one wellId
      * @param wellId
      * @return 
      */
     List<ImagingType> findImagingTypesByWellId(Long wellId);
 
     /**
-     * fetch time steps collection only for some wellHasImagingTypes
+     * Fetch time steps collection only for some wellHasImagingTypes
      * according to selected algorithm and imaging type 
      * @param well
      * @param AlgorithmId
@@ -72,7 +72,7 @@ public interface WellService extends GenericService<Well, Long> {
     void fetchTimeSteps(Well well, Long AlgorithmId, Long ImagingTpeId);
 
     /**
-     * fetch tracks collection only for some wellHasImagingTypes
+     * Fetch tracks collection only for some wellHasImagingTypes
      * according to selected algorithm and imaging type 
      * @param well
      * @param AlgorithmId
@@ -81,10 +81,16 @@ public interface WellService extends GenericService<Well, Long> {
     void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId);
 
     /**
-     * 
+     * Fetch track points only for some wellHasImagingTypes
      * @param well
      * @param AlgorithmId
      * @param ImagingTpeId
      */
     void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId);
+    
+    /**
+     * Get number of samples to parse
+     * @return 
+     */
+    int getNumberOfSamples();
 }

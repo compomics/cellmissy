@@ -37,5 +37,5 @@ public interface ObsepFileParser {
      * Retrieving Experiment Information from the ObsepFile(i.e. Experiment Time Frame, Interval and Duration)
      * @return a List of Double values
      */
-    List<Double> getExperimentInfo();
+    List<Double> getExperimentMetadata();
 }

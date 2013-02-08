@@ -183,7 +183,7 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
                 .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(358, 358, 358)
                 .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(114, 114, 114)
+                .addGap(18, 18, 18)
                 .addComponent(parseObsepFileButton)
                 .addGap(18, 18, 18)
                 .addComponent(cancelButton)
@@ -191,7 +191,7 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
                 .addComponent(forwardButton)
                 .addGap(18, 18, 18)
                 .addComponent(finishButton)
-                .addGap(62, 62, 62))
+                .addGap(158, 158, 158))
         );
 
         bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, finishButton, forwardButton, parseObsepFileButton});

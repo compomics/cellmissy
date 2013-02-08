@@ -55,7 +55,8 @@ public class WellHasImagingType implements Serializable {
     @Column(name = "y_coordinate")
     private Double yCoordinate;
     @JoinColumn(name = "l_wellid", referencedColumnName = "wellid")
-    @ManyToOne(cascade = CascadeType.ALL)
+//    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     private Well well;
     @JoinColumn(name = "l_imaging_typeid", referencedColumnName = "imaging_typeid")
     @ManyToOne(cascade = CascadeType.ALL, optional = true)

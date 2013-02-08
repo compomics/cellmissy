@@ -42,10 +42,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
@@ -139,8 +142,16 @@ public class SetupExperimentController {
         return experiment;
     }
 
-    public OverviewPanel getOverviewPanel() {
-        return overviewPanel;
+    public ObservableList<Project> getProjectBindingList() {
+        return projectBindingList;
+    }
+
+    public ObservableList<Experiment> getExperimentBindingList() {
+        return experimentBindingList;
+    }
+
+    public void setExperimentBindingList(ObservableList<Experiment> experimentBindingList) {
+        this.experimentBindingList = experimentBindingList;
     }
 
     /**
@@ -321,6 +332,24 @@ public class SetupExperimentController {
         return isValid;
     }
 
+    /**
+     *
+     * @param projectId
+     * @return
+     */
+    public List<Integer> findExperimentNumbersByProjectId(Long projectId) {
+        return experimentService.findExperimentNumbersByProjectId(projectId);
+    }
+
+    /**
+     *
+     * @param projectId
+     * @return
+     */
+    public List<Experiment> findExperimentsByProjectId(Long projectId) {
+        return experimentService.findExperimentsByProjectId(projectId);
+    }
+
     /*
      * private methods and classes
      */
@@ -329,8 +358,13 @@ public class SetupExperimentController {
      */
     private void initExperimentInfoPanel() {
         overviewPanel = new OverviewPanel();
+        // set icon for info label
+        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        overviewPanel.getInfoLabel().setIcon(scaledIcon);
         // add overview panel
         experimentInfoPanel.getOverviewParentPanel().add(overviewPanel, gridBagConstraints);
+        experimentInfoPanel.getInfoLabel().setIcon(scaledIcon);
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, overviewPanel.getProjectJList());
@@ -376,8 +410,8 @@ public class SetupExperimentController {
 
                 //init experimentJList
                 int locationToIndex = overviewPanel.getProjectJList().locationToIndex(e.getPoint());
-                if (experimentService.findExperimentNumbersByProjectId(projectBindingList.get(locationToIndex).getProjectid()) != null) {
-                    experimentBindingList = ObservableCollections.observableList(experimentService.findExperimentsByProjectId(projectBindingList.get(locationToIndex).getProjectid()));
+                if (findExperimentNumbersByProjectId(projectBindingList.get(locationToIndex).getProjectid()) != null) {
+                    experimentBindingList = ObservableCollections.observableList(findExperimentsByProjectId(projectBindingList.get(locationToIndex).getProjectid()));
                     JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, overviewPanel.getExperimentJList());
                     bindingGroup.addBinding(jListBinding);
                     bindingGroup.bind();
@@ -402,7 +436,7 @@ public class SetupExperimentController {
         setupExperimentPanel.getFinishButton().setVisible(false);
         setupExperimentPanel.getFinishButton().setEnabled(false);
         setupExperimentPanel.getReportButton().setVisible(false);
-        cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and fill in experiment data");
+        cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and fill in experiment/microscope metadata.");
 
         /**
          * add action listeners
@@ -442,10 +476,16 @@ public class SetupExperimentController {
                     setupExperimentPanel.getReportButton().setVisible(true);
                     setupExperimentPanel.getTopPanel().revalidate();
                     setupExperimentPanel.getTopPanel().repaint();
+
+                    // update labels with experiment metadata
+                    setupPanel.getProjNumberLabel().setText(experiment.getProject().toString());
+                    setupPanel.getExpNumberLabel().setText(experiment.toString());
+                    setupPanel.getExpPurposeLabel().setText(experiment.getPurpose());
                 }
             }
         });
 
+        // go back to previous view
         setupExperimentPanel.getPreviousButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -487,7 +527,7 @@ public class SetupExperimentController {
             }
         });
 
-        //click on Finish button: save the experiment
+        //click on Finish button: update the experiment
         setupExperimentPanel.getFinishButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
