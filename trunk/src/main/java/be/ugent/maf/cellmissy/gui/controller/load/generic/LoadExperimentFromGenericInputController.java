@@ -432,7 +432,7 @@ public class LoadExperimentFromGenericInputController {
             loadFromGenericInputPanel.getjProgressBar1().setIndeterminate(true);
 
             //INSERT experiment to DB
-            experimentService.update(experiment);
+            experimentService.savePerformedExperiment(experiment);
             return null;
         }
 

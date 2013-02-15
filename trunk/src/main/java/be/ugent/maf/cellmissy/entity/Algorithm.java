@@ -46,7 +46,8 @@ public class Algorithm implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "algorithm_name")
     private String algorithmName;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "algorithm")
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "algorithm")
+    @OneToMany(mappedBy = "algorithm")
     private Collection<WellHasImagingType> wellHasImagingTypeCollection;
 
     public Algorithm() {
