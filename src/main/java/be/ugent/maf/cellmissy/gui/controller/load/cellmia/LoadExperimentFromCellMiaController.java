@@ -292,6 +292,8 @@ public class LoadExperimentFromCellMiaController {
 
             //INSERT experiment to DB
             experimentService.savePerformedExperiment(experiment);
+            Experiment update = experimentService.update(experiment);
+            System.out.println("number");
             return null;
         }
 

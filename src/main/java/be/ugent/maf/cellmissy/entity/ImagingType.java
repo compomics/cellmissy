@@ -49,7 +49,8 @@ public class ImagingType implements Serializable {
     private Double lightIntensity;
     @Column(name = "exposure_time")
     private Double exposureTime;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "imagingType")
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "imagingType")
+    @OneToMany(mappedBy = "imagingType")
     private Collection<WellHasImagingType> wellHasImagingTypeCollection;
     @Transient
     private String exposureTimeUnit;

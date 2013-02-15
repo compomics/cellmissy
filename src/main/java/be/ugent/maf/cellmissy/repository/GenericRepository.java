@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.repository;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import javax.persistence.EntityManager;
 
 /**
  *
@@ -102,5 +103,7 @@ public interface GenericRepository<T, ID extends Serializable> {
     void save(final T entity);
     
     void flush();
+    
+    EntityManager getEntityManager();
 }
 

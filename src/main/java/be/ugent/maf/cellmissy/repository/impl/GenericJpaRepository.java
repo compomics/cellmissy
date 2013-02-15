@@ -115,6 +115,7 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
         this.entityManager = entityManager;
     }
 
+    @Override
     public EntityManager getEntityManager() {
         return entityManager;
     }
