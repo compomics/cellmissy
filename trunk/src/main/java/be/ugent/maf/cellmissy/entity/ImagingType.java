@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,7 +48,6 @@ public class ImagingType implements Serializable {
     private Double lightIntensity;
     @Column(name = "exposure_time")
     private Double exposureTime;
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "imagingType")
     @OneToMany(mappedBy = "imagingType")
     private Collection<WellHasImagingType> wellHasImagingTypeCollection;
     @Transient
@@ -111,6 +109,7 @@ public class ImagingType implements Serializable {
         this.exposureTimeUnit = exposureTimeUnit;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -131,6 +130,7 @@ public class ImagingType implements Serializable {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int hash = 7;
         hash = 97 * hash + Objects.hashCode(this.name);

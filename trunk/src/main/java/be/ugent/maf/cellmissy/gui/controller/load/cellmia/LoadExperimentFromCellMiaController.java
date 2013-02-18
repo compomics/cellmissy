@@ -108,10 +108,6 @@ public class LoadExperimentFromCellMiaController {
         return JOptionPane.showConfirmDialog(cellMissyController.getCellMissyFrame(), message, title, optionType);
     }
 
-    public void initPlatePanel(PlateFormat plateFormat, Dimension dimension) {
-        cellMiaImagedPlateController.getImagedPlatePanel().initPanel(plateFormat, dimension);
-    }
-
     public ImagedPlatePanel getImagedPlatePanel() {
         return cellMiaImagedPlateController.getImagedPlatePanel();
     }
@@ -130,7 +126,7 @@ public class LoadExperimentFromCellMiaController {
         loadFromCellMiaPanel.getForwardButton().setEnabled(false);
         loadFromCellMiaPanel.getCancelButton().setEnabled(false);
         //hide progress bar
-        loadFromCellMiaPanel.getjProgressBar1().setVisible(false);
+        loadFromCellMiaPanel.getSaveDataProgressBar().setVisible(false);
 
         //update info message
         cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Select a project and then an experiment in progress to load CELLMIA data.");
@@ -138,14 +134,14 @@ public class LoadExperimentFromCellMiaController {
         /**
          * add action listeners
          */
-        //parse obseo file from the microscope
+        //parse obsep file from the microscope
         loadFromCellMiaPanel.getExpDataButton().addActionListener(new ActionListener() {
-            @Override   
+            @Override
             public void actionPerformed(ActionEvent e) {
 
                 if (experiment.getObsepFile() != null) {
                     File obsepFile = experiment.getObsepFile();
-                    setExperimentData(obsepFile);
+                    setExperimentMetadata(obsepFile);
                 } else {
                     cellMissyController.showMessage("No valid microscope file was found or different files were found.\nPlease select a file.", 0);
                     //choose file to parse form microscope folder
@@ -167,7 +163,7 @@ public class LoadExperimentFromCellMiaController {
                     int returnVal = chooseObsepFile.showOpenDialog(cellMissyController.getCellMissyFrame());
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File obsepFile = chooseObsepFile.getSelectedFile();
-                        setExperimentData(obsepFile);
+                        setExperimentMetadata(obsepFile);
                     } else {
                         cellMissyController.showMessage("Open command cancelled by user", 1);
                     }
@@ -224,11 +220,11 @@ public class LoadExperimentFromCellMiaController {
     }
 
     /**
-     * set experiment data parsing the obsep file from microscope
+     * Set experiment metadata parsing the obsep file from microscope
      *
      * @param obsepFile: this is loaded from the experiment or it is rather chosen by the user
      */
-    private void setExperimentData(File obsepFile) {
+    private void setExperimentMetadata(File obsepFile) {
         // parse .obsep file 
         obsepFileParser.parseObsepFile(obsepFile);
         // get experiment metadata
@@ -246,18 +242,16 @@ public class LoadExperimentFromCellMiaController {
     }
 
     /**
-     * this method sets Migration data of wells, before the experiment is saved to DB
+     * This method sets CellMIA data of wells, before the experiment is saved to DB
      */
     private void setCellMiaData() {
-
+        // iterate through conditions
         for (PlateCondition plateCondition : experiment.getPlateConditionCollection()) {
             for (WellGui wellGui : cellMiaImagedPlateController.getImagedPlatePanel().getWellGuiList()) {
 
-                //if the wellGui has a well with a NOT empty collection of wellHasImagingTypes, the well has been imaged
+                //if the wellGui has a well with an empty collection of wellHasImagingTypes, the well has not been imaged: in this case, an empty collection is passed
                 //if the wellGui has a rectangle, the well belongs to a certain condition
-                //only if these two conditions are true, motility data must be set and stored to DB
-                if (!wellGui.getWell().getWellHasImagingTypeCollection().isEmpty() && wellGui.getRectangle() != null) {
-
+                if (wellGui.getRectangle() != null) {
                     for (Well well : plateCondition.getWellCollection()) {
                         //check for coordinates
                         if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
@@ -269,7 +263,6 @@ public class LoadExperimentFromCellMiaController {
                                 wellHasImagingType.setWell(well);
                             }
                         }
-
                     }
                 }
             }
@@ -283,17 +276,20 @@ public class LoadExperimentFromCellMiaController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            //disable the Finish button and show a waiting cursor
+            //disable the Finish and the Cancel buttons 
             loadFromCellMiaPanel.getFinishButton().setEnabled(false);
+            loadFromCellMiaPanel.getCancelButton().setEnabled(false);
+            //show progress bar (indeterminate)
+            loadFromCellMiaPanel.getSaveDataProgressBar().setVisible(true);
+            loadFromCellMiaPanel.getSaveDataProgressBar().setIndeterminate(true);
+            // update message
+            updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Please wait, data is being saved.");
+            // show a waiting cursor
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            //show a progress bar (indeterminate)
-            loadFromCellMiaPanel.getjProgressBar1().setVisible(true);
-            loadFromCellMiaPanel.getjProgressBar1().setIndeterminate(true);
-
-            //INSERT experiment to DB
-            experimentService.savePerformedExperiment(experiment);
-            Experiment update = experimentService.update(experiment);
-            System.out.println("number");
+            // save motility data
+            experimentService.saveMotilityDataForExperiment(experiment);
+            // update experiment
+            experiment = experimentService.update(experiment);
             return null;
         }
 
@@ -303,7 +299,7 @@ public class LoadExperimentFromCellMiaController {
                 get();
                 //show back default cursor and hide the progress bar
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                loadFromCellMiaPanel.getjProgressBar1().setVisible(false);
+                loadFromCellMiaPanel.getSaveDataProgressBar().setVisible(false);
                 LOG.debug("Experiment was saved.");
                 //update info for the user
                 showMessage("Experiment was successfully saved to DB.", JOptionPane.INFORMATION_MESSAGE);

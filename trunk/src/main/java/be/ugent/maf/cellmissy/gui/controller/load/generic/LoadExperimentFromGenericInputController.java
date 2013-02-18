@@ -24,6 +24,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
@@ -34,6 +36,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -44,6 +47,7 @@ import org.springframework.stereotype.Controller;
 @Controller("loadExperimentFromGenericInputController")
 public class LoadExperimentFromGenericInputController {
 
+    private static final Logger LOG = Logger.getLogger(LoadExperimentFromGenericInputController.class);
     //model
     private Experiment experiment;
     //view
@@ -138,7 +142,7 @@ public class LoadExperimentFromGenericInputController {
         loadFromGenericInputPanel.getAddImagingButton().setEnabled(false);
 
         // hide progress bar
-        loadFromGenericInputPanel.getjProgressBar1().setVisible(false);
+        loadFromGenericInputPanel.getSaveDataProgressBar().setVisible(false);
         // allow only one node to be selected
         loadFromGenericInputPanel.getDataTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -423,27 +427,39 @@ public class LoadExperimentFromGenericInputController {
 
         @Override
         protected Void doInBackground() throws Exception {
-
-            //disable the Finish button and show a waiting cursor
+            //disable the Finish button
             loadFromGenericInputPanel.getFinishButton().setEnabled(false);
-            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             //show a progress bar (indeterminate)
-            loadFromGenericInputPanel.getjProgressBar1().setVisible(true);
-            loadFromGenericInputPanel.getjProgressBar1().setIndeterminate(true);
-
-            //INSERT experiment to DB
-            experimentService.savePerformedExperiment(experiment);
+            loadFromGenericInputPanel.getSaveDataProgressBar().setVisible(true);
+            loadFromGenericInputPanel.getSaveDataProgressBar().setIndeterminate(true);
+            // update message
+            updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Please wait, data is being saved.");
+            // show a waiting cursor
+            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            // save motility data
+            experimentService.saveMotilityDataForExperiment(experiment);
+            // update experiment
+            experiment = experimentService.update(experiment);
             return null;
         }
 
         @Override
         protected void done() {
-            //show back default cursor and hide the progress bar
-            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            loadFromGenericInputPanel.getjProgressBar1().setVisible(false);
-            //update info for the user
-            showMessage("Experiment was successfully saved to DB.", JOptionPane.INFORMATION_MESSAGE);
-            updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Experiment was successfully saved to DB.");
+            try {
+                get();
+                //show back default cursor and hide the progress bar
+                cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                loadFromGenericInputPanel.getSaveDataProgressBar().setVisible(false);
+                //update info for the user
+                showMessage("Experiment was successfully saved to DB.", JOptionPane.INFORMATION_MESSAGE);
+                updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Experiment was successfully saved to DB.");
+            } catch (InterruptedException ex) {
+                LOG.error(ex.getMessage(), ex);
+            } catch (ExecutionException ex) {
+                showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", JOptionPane.ERROR_MESSAGE);
+            } catch (CancellationException ex) {
+                LOG.info("Loading data was cancelled.");
+            }
         }
     }
 

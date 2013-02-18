@@ -15,65 +15,71 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This interface uses CellMiaDataService and 
+ * This interface uses CellMiaDataService and
+ *
  * @author Paola
  */
 public interface WellService extends GenericService<Well, Long> {
 
     /**
-     * Initializes the service
-     * this method initializes also CellMiaDataService and MicroscopeDataService
-     * @param experiment 
+     * Initializes the service this method initializes also CellMiaDataService and MicroscopeDataService
+     *
+     * @param experiment
      */
     void init(Experiment experiment);
 
     /**
      * This method uses the plate format and the first WellGui selected by the user to update the wellGui List with the right ones
+     *
      * @param imagingType
      * @param plateFormat
      * @param firstWellGui
-     * @param wellGUIList  
+     * @param wellGUIList
      */
     void updateWellGuiListWithImagingType(ImagingType imagingType, PlateFormat plateFormat, WellGui firstWellGui, List<WellGui> wellGUIList);
 
     /**
      * This method gets a list of imaging types from the map in output from CellMiaDataService
+     *
      * @return a List of Imaging Types
      */
     List<ImagingType> getImagingTypes();
 
     /**
      * This method gets a map between algorithms and samples (indexed by imaging types)
+     *
      * @return a map Algorithm, map imaging type--wellHasImagingType
      */
     Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap();
 
     /**
      * Find all algorithms for one wellId
+     *
      * @param wellId
-     * @return 
+     * @return
      */
     List<Algorithm> findAlgosByWellId(Long wellId);
 
     /**
      * Find all imaging types for one wellId
+     *
      * @param wellId
-     * @return 
+     * @return
      */
     List<ImagingType> findImagingTypesByWellId(Long wellId);
 
     /**
-     * Fetch time steps collection only for some wellHasImagingTypes
-     * according to selected algorithm and imaging type 
+     * Fetch time steps collection only for some wellHasImagingTypes according to selected algorithm and imaging type
+     *
      * @param well
      * @param AlgorithmId
-     * @param ImagingTpeId  
+     * @param ImagingTpeId
      */
     void fetchTimeSteps(Well well, Long AlgorithmId, Long ImagingTpeId);
 
     /**
-     * Fetch tracks collection only for some wellHasImagingTypes
-     * according to selected algorithm and imaging type 
+     * Fetch tracks collection only for some wellHasImagingTypes according to selected algorithm and imaging type
+     *
      * @param well
      * @param AlgorithmId
      * @param ImagingTpeId
@@ -82,15 +88,17 @@ public interface WellService extends GenericService<Well, Long> {
 
     /**
      * Fetch track points only for some wellHasImagingTypes
+     *
      * @param well
      * @param AlgorithmId
      * @param ImagingTpeId
      */
     void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId);
-    
+
     /**
      * Get number of samples to parse
-     * @return 
+     *
+     * @return
      */
     int getNumberOfSamples();
 }

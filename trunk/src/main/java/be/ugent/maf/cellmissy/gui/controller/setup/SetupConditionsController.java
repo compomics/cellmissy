@@ -43,9 +43,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Set up Conditions Controller: set up conditions details during experiment design
- * Parent controller: Setup Experiment Controller
- * Child controllers: AssayEcm Controller, Treatment Controller
+ * Set up Conditions Controller: set up conditions details during experiment design Parent controller: Setup Experiment Controller Child controllers: AssayEcm Controller, Treatment Controller
+ *
  * @author Paola
  */
 @Controller("setupConditionsController")
@@ -95,8 +94,8 @@ public class SetupConditionsController {
 
     /**
      * setters and getters
-     * 
-     * @return 
+     *
+     * @return
      */
     public ConditionsPanel getConditionsPanel() {
         return conditionsPanel;
@@ -119,11 +118,12 @@ public class SetupConditionsController {
     }
 
     /**
-     * public  methods
-     * 
+     * public methods
+     *
      */
     /**
      * get the current plate condition
+     *
      * @return the selected value of the conditions List
      */
     public PlateCondition getCurrentCondition() {
@@ -136,8 +136,9 @@ public class SetupConditionsController {
 
     /**
      * show a message through the main frame (CellMissy frame)
+     *
      * @param message
-     * @param messageType  
+     * @param messageType
      */
     public void showMessage(String message, Integer messageType) {
         setupExperimentPanelController.showMessage(message, messageType);
@@ -145,7 +146,8 @@ public class SetupConditionsController {
 
     /**
      * this method updates fields of a condition (assay/ECM and treatments fields)
-     * @param conditionIndex 
+     *
+     * @param conditionIndex
      */
     public void updateCondition(Integer conditionIndex) {
         assayEcmController.updateAssayEcmConditionFields(plateConditionBindingList.get(conditionIndex));
@@ -154,9 +156,9 @@ public class SetupConditionsController {
 
     /**
      * validate a Plate Condition
+     *
      * @param plateCondition
-     * @return a list of strings
-     * to be concatenated in order to show message to the user
+     * @return a list of strings to be concatenated in order to show message to the user
      */
     public List<String> validateCondition(PlateCondition plateCondition) {
         List<String> messages = new ArrayList<>();
@@ -218,7 +220,6 @@ public class SetupConditionsController {
          * insert a new cell line Type in the DB if it's not present yet
          */
         setupConditionsPanel.getAddCellLineButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!setupConditionsPanel.getCellLineNameTextField().getText().isEmpty()) {
@@ -313,7 +314,6 @@ public class SetupConditionsController {
          */
         //if Condition validation is OK, update previous condition and user input fields
         conditionsPanel.getConditionsJList().addMouseListener(new MouseAdapter() {
-
             @Override
             public void mouseClicked(MouseEvent e) {
                 conditionsPanel.getAddButton().setEnabled(true);
@@ -344,13 +344,12 @@ public class SetupConditionsController {
         //disable the Remove Button
         conditionsPanel.getRemoveButton().setEnabled(false);
 
-        /** 
+        /**
          * add action listeners
          */
         //add a new Condition to the List
         //each new Condition is init through values selected from the previously created one!
         conditionsPanel.getAddButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 //create and init a new Condition
@@ -369,7 +368,6 @@ public class SetupConditionsController {
 
         //remove a Condition from the list
         conditionsPanel.getRemoveButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (conditionsPanel.getConditionsJList().getSelectedValue() != null) {
@@ -390,7 +388,8 @@ public class SetupConditionsController {
 
     /**
      * this method assigns default fields to the first Condition created and added to the List
-     * @param firstCondition 
+     *
+     * @param firstCondition
      */
     private void initFirstCondition(PlateCondition firstCondition) {
         //set the name
@@ -435,7 +434,8 @@ public class SetupConditionsController {
 
     /**
      * this method assigns values for each new condition, from the previously created 8and set-up) one
-     * @param newCondition 
+     *
+     * @param newCondition
      */
     private void initNewCondition(PlateCondition newCondition) {
         PlateCondition previousCondition = plateConditionBindingList.get(previousConditionIndex);
@@ -447,7 +447,7 @@ public class SetupConditionsController {
         newCondition.setCellLine(newCellLine);
         newCellLine.setPlateCondition(newCondition);
         //set assay medium (another object, but with the same parameters as previous condition)
-        String medium = treatmentsController.getTreatmentsPanel().getAssayMediumComboBox().getItemAt(0).toString();
+        String medium = mediumBindingList.get(treatmentsController.getTreatmentsPanel().getAssayMediumComboBox().getSelectedIndex());
         String serum = serumBindingList.get(treatmentsController.getTreatmentsPanel().getSerumComboBox().getSelectedIndex());
         Double serumConcentration = Double.parseDouble(treatmentsController.getTreatmentsPanel().getSerumConcentrationTextField().getText());
         Double volume = Double.parseDouble(treatmentsController.getTreatmentsPanel().getMediumVolumeTextField().getText());
@@ -545,8 +545,9 @@ public class SetupConditionsController {
 
     /**
      * validate Cell Line
+     *
      * @param cellLine
-     * @return 
+     * @return
      */
     private List<String> validateCellLine(CellLine cellLine) {
         return ValidationUtils.validateObject(cellLine);

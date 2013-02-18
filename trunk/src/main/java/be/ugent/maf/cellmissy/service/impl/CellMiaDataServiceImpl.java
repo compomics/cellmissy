@@ -191,8 +191,6 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
             if (!file.getName().endsWith("algo-0")) {
                 for (File batchFile : Arrays.asList(file.listFiles())) {
                     // sample folders
-                    // the number of sampleFiles is equal to the number of WellHasImagingType entities for one algorithm
-                    //@todo need to check if position lists lenght and sample folders numbers are the same
                     File[] sampleFiles = batchFile.listFiles(sampleFilter);
                     numberOfSamples += sampleFiles.length;
                 }

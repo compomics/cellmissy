@@ -166,7 +166,7 @@ public class AreaAnalysisController {
         int maximumNumberOfReplicates = AnalysisUtils.getMaximumNumberOfReplicates(dataAnalysisController.getPlateConditionList());
         Object[][] data = new Object[analysisMap.keySet().size()][maximumNumberOfReplicates + 3];
         for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-            for (int columnIndex = 1; columnIndex < maximumNumberOfReplicates + 1; columnIndex++) {
+            for (int columnIndex = 1; columnIndex < slopesList.get(rowIndex).length + 1; columnIndex++) {
                 if (slopesList.get(rowIndex)[columnIndex - 1] != null && coefficientsList.get(rowIndex)[columnIndex - 1] != null) {
                     // round to three decimals slopes and coefficients
                     double slope = AnalysisUtils.roundThreeDecimals(slopesList.get(rowIndex)[columnIndex - 1]);

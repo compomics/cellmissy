@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 public class WellHasImagingTypeJpaRepository extends GenericJpaRepository<WellHasImagingType, Long> implements WellHasImagingTypeRepository {
 
     @Override
-    public WellHasImagingType findByWellIdAlgoIdAndImagingTypeId(Long wellId, Long algorithmId, Long imagingTypeId) {
+    public List<WellHasImagingType> findByWellIdAlgoIdAndImagingTypeId(Long wellId, Long algorithmId, Long imagingTypeId) {
         //annotated query
         Query byNameQuery = getEntityManager().createNamedQuery("WellHasImagingType.findByWellIdAlgoIdAndImagingTypeId");
         byNameQuery.setParameter("wellid", wellId);
@@ -26,7 +26,7 @@ public class WellHasImagingTypeJpaRepository extends GenericJpaRepository<WellHa
         byNameQuery.setParameter("imagingTypeid", imagingTypeId);
         List<WellHasImagingType> resultList = byNameQuery.getResultList();
         if (!resultList.isEmpty()) {
-            return resultList.get(0);
+            return resultList;
         } else {
             return null;
         }

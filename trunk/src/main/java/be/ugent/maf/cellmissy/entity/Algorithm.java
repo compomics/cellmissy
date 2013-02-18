@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,7 +45,6 @@ public class Algorithm implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "algorithm_name")
     private String algorithmName;
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "algorithm")
     @OneToMany(mappedBy = "algorithm")
     private Collection<WellHasImagingType> wellHasImagingTypeCollection;
 
@@ -86,6 +84,7 @@ public class Algorithm implements Serializable {
         this.wellHasImagingTypeCollection = wellHasImagingTypeCollection;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -103,6 +102,7 @@ public class Algorithm implements Serializable {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int hash = 3;
         hash = 23 * hash + Objects.hashCode(this.algorithmid);

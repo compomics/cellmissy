@@ -10,8 +10,10 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 
 /**
- *
- * @author niels
+ * Generic Repository
+ * @author Paola Masuzzo
+ * @param <T>
+ * @param <ID> 
  */
 public interface GenericRepository<T, ID extends Serializable> {
 
@@ -49,25 +51,23 @@ public interface GenericRepository<T, ID extends Serializable> {
      * Find using a named query.
      *
      * @param queryName the name of the query
-     * @param params    the query parameters
+     * @param params the query parameters
      * @return the list of entities
      */
     List<T> findByNamedQuery(
             final String queryName,
-            Object... params
-    );
+            Object... params);
 
     /**
      * Find using a named query.
      *
      * @param queryName the name of the query
-     * @param params    the query parameters
+     * @param params the query parameters
      * @return the list of entities
      */
     List<T> findByNamedQueryAndNamedParams(
             final String queryName,
-            final Map<String, ? extends Object> params
-    );
+            final Map<String, ? extends Object> params);
 
     /**
      * Count all entities.
@@ -84,9 +84,8 @@ public interface GenericRepository<T, ID extends Serializable> {
      */
     int countByExample(final T exampleInstance);
 
-
     /**
-     * update an entity. This can be either a INSERT or UPDATE in the database.
+     * Update an entity.
      *
      * @param entity the entity to update
      * @return the saved entity
@@ -94,16 +93,23 @@ public interface GenericRepository<T, ID extends Serializable> {
     T update(final T entity);
 
     /**
-     * delete an entity from the database.
+     * Delete an entity from the database.
      *
      * @param entity the entity to delete
      */
     void delete(final T entity);
 
+    /**
+     * Persist an entity to DB
+     *
+     * @param entity
+     */
     void save(final T entity);
-    
-    void flush();
-    
+
+    /**
+     * Get entity manager
+     *
+     * @return
+     */
     EntityManager getEntityManager();
 }
-
