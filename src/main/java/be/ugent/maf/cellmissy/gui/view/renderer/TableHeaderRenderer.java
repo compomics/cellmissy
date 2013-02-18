@@ -16,10 +16,11 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class TableHeaderRenderer extends DefaultTableCellRenderer {
 
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
         super.getTableCellRendererComponent(table, value, false, false, row, column);
-        setHorizontalAlignment(SwingConstants.RIGHT);
+        setHorizontalAlignment(SwingConstants.LEFT);
         setBorder(BorderFactory.createEmptyBorder());
 
         return this;

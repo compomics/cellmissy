@@ -54,8 +54,8 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
         return finishButton;
     }
 
-    public JProgressBar getjProgressBar1() {
-        return jProgressBar1;
+    public JProgressBar getSaveDataProgressBar() {
+        return saveDataProgressBar;
     }
 
     public JButton getCancelButton() {
@@ -83,7 +83,7 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
         finishButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         parseObsepFileButton = new javax.swing.JButton();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        saveDataProgressBar = new javax.swing.JProgressBar();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -182,7 +182,7 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
                 .addGap(35, 35, 35)
                 .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(358, 358, 358)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(saveDataProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(parseObsepFileButton)
                 .addGap(18, 18, 18)
@@ -203,7 +203,7 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
                 .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(bottomPanelLayout.createSequentialGroup()
                         .addGap(9, 9, 9)
-                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(saveDataProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(finishButton)
@@ -233,10 +233,10 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
     private javax.swing.JButton finishButton;
     private javax.swing.JButton forwardButton;
     private javax.swing.JLabel infolabel;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JButton parseObsepFileButton;
     private javax.swing.JPanel plateViewParentPanel;
+    private javax.swing.JProgressBar saveDataProgressBar;
     private javax.swing.JPanel topPanel;
     // End of variables declaration//GEN-END:variables
 }

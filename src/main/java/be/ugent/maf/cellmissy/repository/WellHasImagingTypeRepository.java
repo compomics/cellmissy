@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.repository;
 
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import java.util.List;
 
 /**
  *
@@ -12,5 +13,5 @@ import be.ugent.maf.cellmissy.entity.WellHasImagingType;
  */
 public interface WellHasImagingTypeRepository extends GenericRepository<WellHasImagingType, Long> {
 
-    WellHasImagingType findByWellIdAlgoIdAndImagingTypeId(Long wellId, Long algorithmId, Long imagingTypeId);
+    List<WellHasImagingType> findByWellIdAlgoIdAndImagingTypeId(Long wellId, Long algorithmId, Long imagingTypeId);
 }

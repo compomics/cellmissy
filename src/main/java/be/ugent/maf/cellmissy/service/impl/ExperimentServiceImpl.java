@@ -4,10 +4,8 @@
  */
 package be.ugent.maf.cellmissy.service.impl;
 
-import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
-import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.Instrument;
 import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
@@ -22,7 +20,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -147,7 +144,6 @@ public class ExperimentServiceImpl implements ExperimentService {
             }
         }
 
-
         for (File file : experimentFolder.listFiles()) {
             if (file.getName().endsWith("raw")) {
                 //raw folder
@@ -265,15 +261,11 @@ public class ExperimentServiceImpl implements ExperimentService {
     }
 
     @Override
-    public void savePerformedExperiment(Experiment entity) {
+    public void saveMotilityDataForExperiment(Experiment entity) {
         for (PlateCondition plateCondition : entity.getPlateConditionCollection()) {
             for (Well well : plateCondition.getWellCollection()) {
-//                Well attachedWell = wellHasImagingTypeRepository.getEntityManager().getReference(Well.class, well.getWellid());
                 for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
-//                    wellHasImagingType.setWell(attachedWell);
                     wellHasImagingTypeRepository.save(wellHasImagingType);
-//                    wellHasImagingTypeRepository.flush();
-//                    wellHasImagingTypeRepository.getEntityManager().clear();
                 }
             }
         }

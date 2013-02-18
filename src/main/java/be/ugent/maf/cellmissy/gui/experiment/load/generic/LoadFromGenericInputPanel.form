@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.7" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
@@ -363,7 +363,7 @@
                   <EmptySpace min="-2" pref="97" max="-2" attributes="0"/>
                   <Component id="infolabel" pref="279" max="32767" attributes="0"/>
                   <EmptySpace min="-2" pref="274" max="-2" attributes="0"/>
-                  <Component id="jProgressBar1" min="-2" pref="245" max="-2" attributes="0"/>
+                  <Component id="saveDataProgressBar" min="-2" pref="245" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
                   <Component id="resetButton" linkSize="10" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -377,7 +377,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jProgressBar1" alignment="1" min="-2" max="-2" attributes="0"/>
+                      <Component id="saveDataProgressBar" alignment="1" min="-2" max="-2" attributes="0"/>
                       <Group type="103" alignment="1" groupAlignment="3" attributes="0">
                           <Component id="resetButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="finishButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -407,7 +407,7 @@
             <Property name="text" type="java.lang.String" value="Reset plate view"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JProgressBar" name="jProgressBar1">
+        <Component class="javax.swing.JProgressBar" name="saveDataProgressBar">
         </Component>
       </SubComponents>
     </Container>

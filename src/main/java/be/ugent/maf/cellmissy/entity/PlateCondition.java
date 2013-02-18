@@ -5,7 +5,9 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -182,5 +184,21 @@ public class PlateCondition implements Serializable {
     public Integer getConditionIndex() {
         Integer conditionIndex = Integer.parseInt(this.getName().substring(this.getName().length() - 1));
         return conditionIndex;
+    }
+
+    /**
+     * Given a plate condition, get back only the wells that were imaged
+     *
+     * @return
+     */
+    public List<Well> getImagedWells() {
+        List<Well> imagedWells = new ArrayList<>();
+        for (Well well : this.getWellCollection()) {
+            Collection<WellHasImagingType> wellHasImagingTypeCollection = well.getWellHasImagingTypeCollection();
+            if (!wellHasImagingTypeCollection.isEmpty()) {
+                imagedWells.add(well);
+            }
+        }
+        return imagedWells;
     }
 }

@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.utils;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Well;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -270,7 +271,8 @@ public class AnalysisUtils {
     public static int getMaximumNumberOfReplicates(List<PlateCondition> plateConditions) {
         int max = 0;
         for (PlateCondition plateCondition : plateConditions) {
-            int numberOfReplicates = plateCondition.getWellCollection().size();
+            List<Well> imagedWells = plateCondition.getImagedWells();
+            int numberOfReplicates = imagedWells.size();
             if (numberOfReplicates > max) {
                 max = numberOfReplicates;
             }

@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -47,7 +46,6 @@ public class Well implements Serializable {
     private Integer columnNumber;
     @Column(name = "row_number")
     private Integer rowNumber;
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "well")
     @OneToMany(mappedBy = "well")
     private Collection<WellHasImagingType> wellHasImagingTypeCollection;
     @JoinColumn(name = "l_conditionid", referencedColumnName = "plate_conditionid")
@@ -107,6 +105,7 @@ public class Well implements Serializable {
         this.plateCondition = plateCondition;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -127,6 +126,7 @@ public class Well implements Serializable {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int hash = 7;
         hash = 29 * hash + Objects.hashCode(this.wellid);

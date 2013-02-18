@@ -83,6 +83,14 @@ public class CellMiaImagedPlateController {
     }
 
     /**
+     * Compute number of samples that need to be stored
+     * @return
+     */
+    public int getNumberOfSamples() {
+        return wellService.getNumberOfSamples();
+    }
+
+    /**
      * private methods and classes
      */
     private void initLoadDataPlatePanel() {
@@ -106,7 +114,7 @@ public class CellMiaImagedPlateController {
                 // ImagingTypeList is null, create a new PlateWorker and execute it             
                 if (imagedPlatePanel.getImagingTypeList() == null) {
                     loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getForwardButton().setEnabled(false);
-                    loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getjProgressBar1().setIndeterminate(true);
+                    loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getSaveDataProgressBar().setIndeterminate(true);
                     PlateWorker plateWorker = new PlateWorker();
                     //set cursor to wait
                     loadExperimentFromCellMiaController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -302,14 +310,6 @@ public class CellMiaImagedPlateController {
     }
 
     /**
-     *
-     * @return
-     */
-    private int getNumberOfSamples() {
-        return wellService.getNumberOfSamples();
-    }
-
-    /**
      * Swing worker to parse all samples files
      */
     private class PlateWorker extends SwingWorker<Void, Void> {
@@ -317,11 +317,11 @@ public class CellMiaImagedPlateController {
         @Override
         protected Void doInBackground() throws Exception {
             //show progress bar
-            loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getjProgressBar1().setVisible(true);
+            loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getSaveDataProgressBar().setVisible(true);
             //init wellService: init also CellMiaData Service and MicroscopeData Service
             wellService.init(loadExperimentFromCellMiaController.getExperiment());
             int numberOfSamples = getNumberOfSamples();
-            String message =  numberOfSamples + " samples are being processed. Please wait.";
+            String message = numberOfSamples + " samples are being processed. Please wait.";
             loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), message);
             // get the list of imaging types
             List<ImagingType> imagingTypes = wellService.getImagingTypes();
@@ -335,7 +335,7 @@ public class CellMiaImagedPlateController {
         protected void done() {
             //set cursor back to normal
             loadExperimentFromCellMiaController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getjProgressBar1().setVisible(false);
+            loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getSaveDataProgressBar().setVisible(false);
             // get first Imaging Type
             imagedPlatePanel.setCurrentImagingType(imagedPlatePanel.getImagingTypeList().get(0));
             // ask the user to select first well for the imaging type

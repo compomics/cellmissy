@@ -47,8 +47,9 @@ public class WellServiceImpl implements WellService {
     @Autowired
     private CellMiaDataService cellMiaDataService;
     private static final double offset = 0.5;
-    // this Map maps ImagingType (keys) to list of WellHasImagingType (maps)
+    // this Map maps ImagingType (keys) to list of WellHasImagingType
     private Map<ImagingType, List<WellHasImagingType>> imagingTypeMap;
+    // this Map maps Algorithms (keys) to the previous map
     private Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> algoMap;
 
     /**
@@ -198,14 +199,19 @@ public class WellServiceImpl implements WellService {
     @Override
     public void fetchTimeSteps(Well well, Long AlgorithmId, Long ImagingTpeId) {
         //well = wellRepository.save(well);
-        //for well, get the wellhasimagingtype for a certain algorithm and imaging type
-        WellHasImagingType wellHasImagingType = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
-        //fetch time step collection of that wellHasImagingType
-        Hibernate.initialize(wellHasImagingType.getTimeStepCollection());
-        //assing the fetched wellHasImagingType to the well
-        List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
-        wellHasImagingTypes.add(wellHasImagingType);
-        well.setWellHasImagingTypeCollection(wellHasImagingTypes);
+        //for well, get the wellhasimagingtypes for a certain algorithm and imaging type
+        List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
+        List<WellHasImagingType> wellHasImagingTypeCollection = new ArrayList<>();
+        // if samples are not null, fetch time steps
+        if (wellHasImagingTypes != null) {
+            for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
+                //fetch time step collection of that wellHasImagingType
+                Hibernate.initialize(wellHasImagingType.getTimeStepCollection());
+                wellHasImagingTypeCollection.add(wellHasImagingType);
+            }
+        }
+        // else, set an empty collection
+        well.setWellHasImagingTypeCollection(wellHasImagingTypeCollection);
     }
 
     /**
@@ -217,13 +223,16 @@ public class WellServiceImpl implements WellService {
      */
     @Override
     public void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId) {
-        WellHasImagingType wellHasImagingType = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
-        //fetch time step collection of that wellHasImagingType
-        Hibernate.initialize(wellHasImagingType.getTrackCollection());
-        //assing the fetched wellHasImagingType to the well
-        List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
-        wellHasImagingTypes.add(wellHasImagingType);
-        well.setWellHasImagingTypeCollection(wellHasImagingTypes);
+        List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
+        if (wellHasImagingTypes != null) {
+            List<WellHasImagingType> wellHasImagingTypeCollection = new ArrayList<>();
+            for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
+                //fetch time step collection of that wellHasImagingType
+                Hibernate.initialize(wellHasImagingType.getTrackCollection());
+                wellHasImagingTypeCollection.add(wellHasImagingType);
+            }
+            well.setWellHasImagingTypeCollection(wellHasImagingTypeCollection);
+        }
     }
 
     /**
@@ -235,15 +244,19 @@ public class WellServiceImpl implements WellService {
      */
     @Override
     public void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId) {
-        WellHasImagingType wellHasImagingType = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
-        List<Track> tracks = new ArrayList<>(wellHasImagingType.getTrackCollection());
-        for (Track track : tracks) {
-            // fetch track points
-            fetchTrackPoints(track);
+        List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
+        if (wellHasImagingTypes != null) {
+            List<WellHasImagingType> wellHasImagingTypeCollection = new ArrayList<>();
+            for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
+                List<Track> tracks = new ArrayList<>(wellHasImagingType.getTrackCollection());
+                for (Track track : tracks) {
+                    // fetch track points
+                    fetchTrackPoints(track);
+                }
+                wellHasImagingTypeCollection.add(wellHasImagingType);
+            }
+            well.setWellHasImagingTypeCollection(wellHasImagingTypeCollection);
         }
-        List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
-        wellHasImagingTypes.add(wellHasImagingType);
-        well.setWellHasImagingTypeCollection(wellHasImagingTypes);
     }
 
     /**
@@ -254,7 +267,7 @@ public class WellServiceImpl implements WellService {
      * @param ImagingTpeId
      * @return a list of WellHasImagingType
      */
-    private WellHasImagingType findByWellIdAlgoIdAndImagingTypeId(Long wellId, Long AlgorithmId, Long ImagingTpeId) {
+    private List<WellHasImagingType> findByWellIdAlgoIdAndImagingTypeId(Long wellId, Long AlgorithmId, Long ImagingTpeId) {
         return wellHasImagingTypeRepository.findByWellIdAlgoIdAndImagingTypeId(wellId, AlgorithmId, ImagingTpeId);
     }
 

@@ -16,6 +16,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsLoadListRenderer;
 import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl.CycleTimeUnit;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -33,8 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Experiment Metadata Controller: get experiment metadata from microscope (as well conditions from DB)
- * Parent Controller: Load Experiment Controller
+ * Experiment Metadata Controller: get experiment metadata from microscope (as well conditions from DB) Parent Controller: Load Experiment Controller
  *
  * @author Paola Masuzzo
  */
@@ -164,9 +164,6 @@ public class CellMiaExperimentDataController {
                             experimentOverviewPanel.getExperimentJList().setSelectedIndex(experimentBindingList.indexOf(currentExperiment));
                             return;
                     }
-                } else if (loadExperimentFromCellMiaController.getExperiment() == selectedExperiment) {
-                    // click again on same experiment: ignore selection
-                    return;
                 }
                 //load experiment folders
                 experimentService.loadFolderStructure(selectedExperiment);
@@ -245,6 +242,8 @@ public class CellMiaExperimentDataController {
         // init a new list of plate conditions
         plateConditionList = new ArrayList<>();
         plateConditionList.addAll(selectedExperiment.getPlateConditionCollection());
+        Dimension parentDimension = loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getPlateViewParentPanel().getSize();
+        loadExperimentFromCellMiaController.getImagedPlatePanel().initPanel(selectedExperiment.getPlateFormat(), parentDimension);
         // repaint plate panel
         loadExperimentFromCellMiaController.getImagedPlatePanel().setExperiment(selectedExperiment);
         loadExperimentFromCellMiaController.getImagedPlatePanel().repaint();

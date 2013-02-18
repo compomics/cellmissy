@@ -55,7 +55,6 @@ public class WellHasImagingType implements Serializable {
     @Column(name = "y_coordinate")
     private Double yCoordinate;
     @JoinColumn(name = "l_wellid", referencedColumnName = "wellid")
-//    @ManyToOne(cascade = CascadeType.ALL)
     @ManyToOne()
     private Well well;
     @JoinColumn(name = "l_imaging_typeid", referencedColumnName = "imaging_typeid")
@@ -163,6 +162,7 @@ public class WellHasImagingType implements Serializable {
         this.algorithm = algorithm;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -183,6 +183,7 @@ public class WellHasImagingType implements Serializable {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int hash = 7;
         hash = 53 * hash + Objects.hashCode(this.well);

@@ -8,10 +8,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
+ * Generic Service
+ * @author Paola Masuzzo
  * @param <T>
- * @param <ID>
- * @author niels
+ * @param <ID> 
  */
 public interface GenericService<T, ID extends Serializable> {
 

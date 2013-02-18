@@ -18,10 +18,10 @@ import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Projections;
 
 /**
- *
+ * 
+ * @author Paola Masuzzo
  * @param <T>
- * @param <ID>
- * @author niels
+ * @param <ID> 
  */
 public class GenericJpaRepository<T, ID extends Serializable> implements GenericRepository<T, ID> {
 
@@ -186,10 +186,5 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
     @Override
     public void save(T entity) {
         getEntityManager().persist(entity);
-    }
-
-    @Override
-    public void flush() {
-        getEntityManager().flush();
     }
 }

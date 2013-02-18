@@ -330,7 +330,7 @@ public class SetupReportController {
                 lines.add(line);
                 break;
             case "2.5D":
-                line = "ECM density: " + ecm.getEcmDensity() + "mg/ml";
+                line = "ECM density: " + ecm.getEcmDensity();
                 lines.add(line);
                 line = "Bottom matrix type: " + ecm.getBottomMatrix().getType();
                 lines.add(line);
@@ -350,7 +350,7 @@ public class SetupReportController {
                 lines.add(line);
                 break;
             case "3D":
-                line = "ECM density: " + ecm.getEcmDensity() + "mg/ml";
+                line = "ECM density: " + ecm.getEcmDensity();
                 lines.add(line);
                 line = "Bottom matrix type: " + ecm.getBottomMatrix().getType();
                 lines.add(line);

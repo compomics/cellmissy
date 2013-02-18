@@ -57,8 +57,8 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
         return resetButton;
     }
 
-    public JProgressBar getjProgressBar1() {
-        return jProgressBar1;
+    public JProgressBar getSaveDataProgressBar() {
+        return saveDataProgressBar;
     }
 
     public JTree getDataTree() {
@@ -118,7 +118,7 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
         infolabel = new javax.swing.JLabel();
         finishButton = new javax.swing.JButton();
         resetButton = new javax.swing.JButton();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        saveDataProgressBar = new javax.swing.JProgressBar();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -194,12 +194,12 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
         dataTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jScrollPane2.setViewportView(dataTree);
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11));
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setText("Dataset");
 
         addDatasetButton.setText("Add dataset");
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11));
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel3.setText("Imaging Type");
 
         addImagingButton.setText("Add imaging type");
@@ -280,7 +280,7 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
         rawDataPanel.setOpaque(false);
         rawDataPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 2, 11));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel1.setText("Raw data");
 
         rawDataTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -342,7 +342,7 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
         bottomPanel.setOpaque(false);
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        infolabel.setFont(new java.awt.Font("Tahoma", 2, 11));
+        infolabel.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
 
         finishButton.setText("Finish");
 
@@ -356,7 +356,7 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
                 .addGap(97, 97, 97)
                 .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
                 .addGap(274, 274, 274)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(saveDataProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(54, 54, 54)
                 .addComponent(resetButton)
                 .addGap(18, 18, 18)
@@ -371,7 +371,7 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
             .addGroup(bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(saveDataProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(resetButton)
                         .addComponent(finishButton))
@@ -403,7 +403,6 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel leftPanel;
@@ -413,6 +412,7 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
     private javax.swing.JButton removeButton;
     private javax.swing.JButton resetButton;
     private javax.swing.JPanel rightPanel;
+    private javax.swing.JProgressBar saveDataProgressBar;
     private javax.swing.JPanel userInputPanel;
     // End of variables declaration//GEN-END:variables
 }
