@@ -6,7 +6,8 @@ package be.ugent.maf.cellmissy.gui.view.table.models;
 
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import java.util.ArrayList;
+import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
@@ -27,9 +28,10 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
 
     /**
      * Constructor (data to show in the table and boolean matrix for outliers detection)
+     *
      * @param dataToShow
      * @param outliers
-     * @param plateCondition  
+     * @param plateCondition
      */
     public DistanceMatrixTableModel(Double[][] dataToShow, boolean[][] outliers, PlateCondition plateCondition) {
         this.plateCondition = plateCondition;
@@ -92,34 +94,49 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
 
     /**
      * Fill in Table with Data
-     * @param dataToShow 
+     *
+     * @param dataToShow
      */
     private void initTable(Double[][] dataToShow) {
-        // List of wells
-        List wellList = new ArrayList(plateCondition.getWellCollection());
-        columnNames = new String[dataToShow.length + 1];
-        columnNames[0] = "";
-        for (int i = 1; i < columnNames.length; i++) {
-            columnNames[i] = "" + wellList.get(i - 1);
+        // List of imaged wells
+        List<Well> imagedWells = plateCondition.getImagedWells();
+        int numberOfSamplesPerCondition = AnalysisUtils.getNumberOfSamplesPerCondition(plateCondition);
+        //the table needs one column for the time frames + one column for each replicate (each well imaged)
+        columnNames = new String[numberOfSamplesPerCondition + 1];
+        //first column name: Time Frames
+        columnNames[0] = "time frame";
+        int counter = 1;
+        for (int j = 0; j < imagedWells.size(); j++) {
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(imagedWells.get(j));
+            for (int i = counter; i < numberOfSamplesPerWell + counter; i++) {
+                columnNames[i] = "" + imagedWells.get(j);
+            }
+            counter += numberOfSamplesPerWell;
         }
 
         checkboxOutliers = new boolean[dataToShow.length];
         data = new Object[dataToShow.length + 1][columnNames.length];
+        counter = 0;
+        for (int j = 0; j < imagedWells.size(); j++) {
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(imagedWells.get(j));
 
-        for (int columnIndex = 1; columnIndex < data.length; columnIndex++) {
-            for (int rowIndex = 0; rowIndex < data.length - 1; rowIndex++) {
-                data[rowIndex][0] = "" + wellList.get(rowIndex);
-                data[rowIndex][columnIndex] = dataToShow[rowIndex][columnIndex - 1];
+            for (int columnIndex = 1; columnIndex < data.length; columnIndex++) {
+                for (int rowIndex = counter; rowIndex < numberOfSamplesPerWell + counter; rowIndex++) {
+                    data[rowIndex][0] = "" + imagedWells.get(j);
+                    data[rowIndex][columnIndex] = dataToShow[rowIndex][columnIndex - 1];
+                }
+                // if the outliers ratio is bigger than RATIO, chechBox is selected (true)
+                if (getOutlierRatio(columnIndex - 1) >= OUTLIERS_DETECTION_RATIO) {
+                    checkboxOutliers[columnIndex - 1] = true;
+                }
             }
-            // if the outliers ratio is bigger than RATIO, chechBox is selected (true)
-            if (getOutlierRatio(columnIndex - 1) >= OUTLIERS_DETECTION_RATIO) {
-                checkboxOutliers[columnIndex - 1] = true;
-            }
+            counter += numberOfSamplesPerWell;
         }
     }
 
     /**
      * Get the outlier Ratio per column: number of outliers divided by number of replicates
+     *
      * @param columnIndex
      * @return a double value for the ratio
      */

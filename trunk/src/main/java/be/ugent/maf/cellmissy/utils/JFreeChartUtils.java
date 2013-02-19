@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.utils;
 
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -30,19 +31,22 @@ import org.jfree.ui.RectangleEdge;
 
 /**
  * This class contains some helpful JFreeChart utilities
+ *
  * @author Paola Masuzzo
  */
 public class JFreeChartUtils {
 
     /**
-     * This method is generating a chart for the density function given a certain index for the condition,
-     * a xYSeriesCollection made up of the density functions (x and y values) and a string for the main title.
+     * This method is generating a chart for the density function given a certain index for the condition, a xYSeriesCollection made up of the density functions (x and y values) and a string for the
+     * main title.
+     *
+     * @param plateCondition
      * @param conditionIndex
      * @param xYSeriesCollection
      * @param chartTitle
-     * @return 
+     * @return
      */
-    public static JFreeChart generateDensityFunctionChart(int conditionIndex, XYSeriesCollection xYSeriesCollection, String chartTitle) {
+    public static JFreeChart generateDensityFunctionChart(PlateCondition plateCondition, int conditionIndex, XYSeriesCollection xYSeriesCollection, String chartTitle) {
         String specificChartTitle = chartTitle + " Condition " + conditionIndex + " (replicates)";
         JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, "% increase (Area)", "Density", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         densityChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
@@ -58,15 +62,23 @@ public class JFreeChartUtils {
         //renderer for wide line
         XYItemRenderer renderer = xYPlot.getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);
-        for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
-            renderer.setSeriesStroke(i, wideLine);
-            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[i + 1]);
+        // get imaged wells and number of samples for each one
+        List<Well> imagedWells = plateCondition.getImagedWells();
+        int counter = 0;
+        for (Well well : imagedWells) {
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+            for (int i = counter; i < xYSeriesCollection.getSeriesCount(); i++) {
+                renderer.setSeriesStroke(i, wideLine);
+                renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[imagedWells.indexOf(well) + 1]);
+            }
+            counter += numberOfSamplesPerWell;
         }
         return densityChart;
     }
 
     /**
      * Control shadow of JFreeChart
+     *
      * @param chart
      * @param state
      */
@@ -95,9 +107,10 @@ public class JFreeChartUtils {
 
     /**
      * Generate Series for (x,y) Area plotting
+     *
      * @param xValues
      * @param yValues
-     * @return 
+     * @return
      */
     public static XYSeries generateXYSeries(double[] xValues, double[] yValues) {
         // autosort False
@@ -111,10 +124,11 @@ public class JFreeChartUtils {
     }
 
     /**
-     * Adjust font and title of chart, as well as  legend's position and background color.
+     * Adjust font and title of chart, as well as legend's position and background color.
+     *
      * @param chart
      * @param xYSeriesCollection
-     * @param wellList  
+     * @param wellList
      */
     public static void setupReplicatesAreaChart(JFreeChart chart, XYSeriesCollection xYSeriesCollection, List<Well> wellList) {
         // set title font 
@@ -137,9 +151,9 @@ public class JFreeChartUtils {
     }
 
     /**
-     * 
+     *
      * @param chart
-     * @param xYSeriesCollection 
+     * @param xYSeriesCollection
      */
     public static void setupGlobalAreaChart(JFreeChart chart, XYSeriesCollection xYSeriesCollection) {
         // set title font 
@@ -158,14 +172,15 @@ public class JFreeChartUtils {
             int conditionIndex = Integer.parseInt(subSequence.toString());
             renderer.setSeriesStroke(i, wideLine);
             renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[conditionIndex]);
-        }      
+        }
     }
 
     /**
      * Plot error bars in both directions
+     *
      * @param chart
      * @param values
-     * @param errors 
+     * @param errors
      */
     public static void plotErrorBars(JFreeChart chart, XYSeries values, XYSeries errors) {
         Stroke stroke = new BasicStroke();
@@ -185,9 +200,10 @@ public class JFreeChartUtils {
 
     /**
      * Plot Error bars only on vertical direction
+     *
      * @param chart
      * @param valuesCollection
-     * @param verticalErrors 
+     * @param verticalErrors
      */
     public static void plotVerticalErrorBars(JFreeChart chart, XYSeriesCollection valuesCollection, List<Double[]> verticalErrors) {
         Stroke stroke = new BasicStroke();
@@ -211,8 +227,9 @@ public class JFreeChartUtils {
 
     /**
      * Compute Max value of Y for density plot
+     *
      * @param xYSeriesCollection
-     * @return 
+     * @return
      */
     public static double computeMaxY(XYSeriesCollection xYSeriesCollection) {
         double maxY = 0;
@@ -227,9 +244,10 @@ public class JFreeChartUtils {
 
     /**
      * Given a list of wells and one well's coordinate, get the index of the well in the List
+     *
      * @param wellCoordinates
      * @param wellList
-     * @return 
+     * @return
      */
     private static int getWellIndex(String wellCoordinates, List<Well> wellList) {
         int wellIndex = 0;
