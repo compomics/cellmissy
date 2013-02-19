@@ -46,8 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
@@ -164,6 +162,8 @@ public class AreaPreProcessingController {
      */
     public void initMapWithConditions() {
         for (PlateCondition plateCondition : dataAnalysisController.getPlateConditionList()) {
+            // each condition is not loaded at the beginning
+            plateCondition.setLoaded(false);
             preProcessingMap.put(plateCondition, null);
         }
     }
@@ -336,14 +336,20 @@ public class AreaPreProcessingController {
         // Transpose Normalized Area
         Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedArea);
         List<Well> imagedWells = plateCondition.getImagedWells();
+
         XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
         // array for x axis
         double[] xValues = dataAnalysisController.getTimeFrames();
-        for (int i = 0; i < transposedArea.length; i++) {
-            double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
-            XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
-            xySeries.setKey("" + (imagedWells.get(i)));
-            xYSeriesCollection.addSeries(xySeries);
+        int counter = 0;
+        for (Well well : imagedWells) {
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+            for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
+                double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
+                XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                xySeries.setKey("" + (well));
+                xYSeriesCollection.addSeries(xySeries);
+            }
+            counter += numberOfSamplesPerWell;
         }
         // Plot Logic
         String chartTitle = "Raw Data Condition " + conditionIndex + " (replicates)";
@@ -375,18 +381,23 @@ public class AreaPreProcessingController {
         XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
         // array for x axis
         double[] xValues = dataAnalysisController.getTimeFrames();
-        for (int i = 0; i < excludeReplicates.length; i++) {
-            // if boolean is false, replicate has to be considered in the plot
-            if (!excludeReplicates[i]) {
-                // array for y axis
-                double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
-                XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
-                xySeries.setKey("" + (imagedWells.get(i)));
-                xYSeriesCollection.addSeries(xySeries);
-            } else {
-                // replicates excluded
-                excludedWells.add(imagedWells.get(i));
+        int counter = 0;
+        for (Well well : imagedWells) {
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+            for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
+                // if boolean is false, replicate has to be considered in the plot
+                if (!excludeReplicates[i]) {
+                    // array for y axis
+                    double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
+                    XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                    xySeries.setKey("" + (well));
+                    xYSeriesCollection.addSeries(xySeries);
+                } else {
+                    // replicates excluded
+                    excludedWells.add(well);
+                }
             }
+            counter += numberOfSamplesPerWell;
         }
         // Plot Logic
         String chartTitle = "Corrected Data Condition " + conditionIndex + " (replicates)";
@@ -467,20 +478,25 @@ public class AreaPreProcessingController {
             xValues[i] = timeFramesBindingList.get(index);
             index++;
         }
-        for (int i = 0; i < excludeReplicates.length; i++) {
-            index = timeInterval.getFirstTimeFrame();
-            // if boolean is false, replicate has to be considered in the plot
-            if (!excludeReplicates[i]) {
-                // array for y axis (no need to exclude null values)
-                double[] yValues = new double[xValues.length];
-                for (int j = 0; j < yValues.length; j++) {
-                    yValues[j] = transposedArea[i][index];
-                    index++;
+        int counter = 0;
+        for (Well well : imagedWells) {
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+            for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
+                index = timeInterval.getFirstTimeFrame();
+                // if boolean is false, replicate has to be considered in the plot
+                if (!excludeReplicates[i]) {
+                    // array for y axis (no need to exclude null values)
+                    double[] yValues = new double[xValues.length];
+                    for (int j = 0; j < yValues.length; j++) {
+                        yValues[j] = transposedArea[i][index];
+                        index++;
+                    }
+                    XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                    xySeries.setKey("" + (well));
+                    xySeriesCollection.addSeries(xySeries);
                 }
-                XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
-                xySeries.setKey("" + (imagedWells.get(i)));
-                xySeriesCollection.addSeries(xySeries);
             }
+            counter += numberOfSamplesPerWell;
         }
         // Plot Logic
         String chartTitle = "Corrected Data Condition " + conditionIndex + " (replicates)";
@@ -570,6 +586,7 @@ public class AreaPreProcessingController {
      */
     /**
      *
+     * @param plateConditionList
      * @param plotErrorBars
      */
     private void plotGlobalArea(List<PlateCondition> plateConditionList, boolean plotErrorBars) {
@@ -586,8 +603,8 @@ public class AreaPreProcessingController {
      * @return 2D array with area raw data
      */
     private Double[][] getAreaRawData(PlateCondition plateCondition) {
-        List<Well> imagedWells = plateCondition.getImagedWells();
-        Double[][] areaRawData = new Double[dataAnalysisController.getTimeFrames().length][imagedWells.size()];
+        int numberOfSamples = AnalysisUtils.getNumberOfSamplesPerCondition(plateCondition);
+        Double[][] areaRawData = new Double[dataAnalysisController.getTimeFrames().length][numberOfSamples];
         int counter = 0;
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
@@ -640,21 +657,24 @@ public class AreaPreProcessingController {
     private XYSeriesCollection generateDensityFunction(PlateCondition plateCondition, Map<DataCategory, List<List<double[]>>> densityFunctionsMap, DataCategory dataCategory) {
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
         List<Well> imagedWells = plateCondition.getImagedWells();
-        // get density functions only for raw data
         List<List<double[]>> densityFunctions = densityFunctionsMap.get(dataCategory);
-        for (int i = 0; i < densityFunctions.size(); i++) {
-            // x values
-            double[] xValues = densityFunctions.get(i).get(0);
-            // y values
-            double[] yValues = densityFunctions.get(i).get(1);
-            //XYSeries is by default ordered in ascending values, set second parameter of costructor to false
-            XYSeries series = new XYSeries("" + imagedWells.get(i), false);
-            for (int j = 0; j < xValues.length; j++) {
-                double x = xValues[j];
-                double y = yValues[j];
-                series.add(x, y);
+        int counter = 0;
+        for (Well well : imagedWells) {
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+            for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
+                // x values
+                double[] xValues = densityFunctions.get(i).get(0);
+                // y values
+                double[] yValues = densityFunctions.get(i).get(1);
+                XYSeries series = new XYSeries("" + well, false);
+                for (int j = 0; j < xValues.length; j++) {
+                    double x = xValues[j];
+                    double y = yValues[j];
+                    series.add(x, y);
+                }
+                xySeriesCollection.addSeries(series);
             }
-            xySeriesCollection.addSeries(series);
+            counter += numberOfSamplesPerWell;
         }
         return xySeriesCollection;
     }
@@ -878,7 +898,7 @@ public class AreaPreProcessingController {
                     // check if a swing worker with a progress bar is actually needed:
                     // only if the number of fetched conditions is not equal to the number of all conditions of experiment
                     if (getNumberOfFetchedCondition() != dataAnalysisController.getPlateConditionList().size()) {
-                        // create and execute a swinger
+                        // create and execute a swing worker
                         FetchAllConditionsSwingWorker fetchAllConditionsSwingWorker = new FetchAllConditionsSwingWorker();
                         fetchAllConditionsSwingWorker.execute();
                     } else {
@@ -890,21 +910,22 @@ public class AreaPreProcessingController {
                         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, areaAnalysisPanel.getConditionsList());
                         bindingGroup.addBinding(jListBinding);
                         bindingGroup.bind();
-                    }
-                    if (areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected()) {
-                        areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(dataAnalysisController.getPlateConditionList(), getNumberOfReplicates()));
-                        if (getSelectedConditions().isEmpty()) {
-                            plotGlobalArea(new ArrayList<>(preProcessingMap.keySet()), true);
+
+                        if (areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected()) {
+                            areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(dataAnalysisController.getPlateConditionList(), getNumberOfReplicates()));
+                            if (getSelectedConditions().isEmpty()) {
+                                plotGlobalArea(new ArrayList<>(preProcessingMap.keySet()), true);
+                            } else {
+                                plotGlobalArea(getSelectedConditions(), true);
+                            }
                         } else {
-                            plotGlobalArea(getSelectedConditions(), true);
-                        }
-                    } else {
-                        areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(dataAnalysisController.getPlateConditionList(), getNumberOfReplicates()));
-                        areaAnalysisPanel.getPlotErrorBarsCheckBox().setEnabled(true);
-                        if (getSelectedConditions().isEmpty()) {
-                            plotGlobalArea(new ArrayList<>(preProcessingMap.keySet()), false);
-                        } else {
-                            plotGlobalArea(getSelectedConditions(), false);
+                            areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(dataAnalysisController.getPlateConditionList(), getNumberOfReplicates()));
+                            areaAnalysisPanel.getPlotErrorBarsCheckBox().setEnabled(true);
+                            if (getSelectedConditions().isEmpty()) {
+                                plotGlobalArea(new ArrayList<>(preProcessingMap.keySet()), false);
+                            } else {
+                                plotGlobalArea(getSelectedConditions(), false);
+                            }
                         }
                     }
                 }
@@ -1014,8 +1035,8 @@ public class AreaPreProcessingController {
         protected void done() {
             // once xySeriesCollections are generated, generate also Charts and show results
             int conditionIndex = dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1;
-            plotRawDataDensityFunctions(JFreeChartUtils.generateDensityFunctionChart(conditionIndex, rawDataXYSeriesCollection, "KDE raw data"));
-            plotCorrectedDataDensityFunctions(JFreeChartUtils.generateDensityFunctionChart(conditionIndex, correctedDataXYSeriesCollection, "KDE corrected data"));
+            plotRawDataDensityFunctions(JFreeChartUtils.generateDensityFunctionChart(plateCondition, conditionIndex, rawDataXYSeriesCollection, "KDE raw data"));
+            plotCorrectedDataDensityFunctions(JFreeChartUtils.generateDensityFunctionChart(plateCondition, conditionIndex, correctedDataXYSeriesCollection, "KDE corrected data"));
             dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
         }
     }
@@ -1104,11 +1125,11 @@ public class AreaPreProcessingController {
         @Override
         public void itemStateChanged(ItemEvent e) {
             fireEditingStopped();
-            updateAreaImage();
+            updateAreaPlot();
         }
 
         // Determine with replicates need to be shown and update Area image on the right panel
-        private void updateAreaImage() {
+        private void updateAreaPlot() {
             AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
             // Get boolean from table model and pass it to the results holder
             areaPreProcessingResults.setExcludeReplicates(distanceMatrixTableModel.getCheckboxOutliers());
@@ -1191,7 +1212,7 @@ public class AreaPreProcessingController {
     }
 
     /**
-     * initialize Matrix Panel with action listeners and everything
+     * Initialize Matrix Panel
      */
     private void initCorrectedAreaPanel() {
         // set Border to empty one for text fields

@@ -279,4 +279,29 @@ public class AnalysisUtils {
         }
         return max;
     }
+    
+        /**
+     * Get number of sample points for each condition
+     *
+     * @param plateCondition
+     * @return
+     */
+    public static int getNumberOfSamplesPerCondition(PlateCondition plateCondition) {
+        int numberOfSamples = 0;
+        List<Well> imagedWells = plateCondition.getImagedWells();
+        for (Well well : imagedWells) {
+            numberOfSamples += getNumberOfSamplesPerWell(well);
+        }
+        return numberOfSamples;
+    }
+
+    /**
+     * Get number of sample points per each well
+     *
+     * @param well
+     * @return
+     */
+    public static int getNumberOfSamplesPerWell(Well well) {
+        return well.getWellHasImagingTypeCollection().size();
+    }
 }

@@ -71,6 +71,8 @@ public class PlateCondition implements Serializable {
     private AssayMedium assayMedium;
     @Transient
     private String name;
+    @Transient
+    private boolean loaded;
 
     public PlateCondition() {
     }
@@ -152,6 +154,15 @@ public class PlateCondition implements Serializable {
         this.name = name;
     }
 
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -169,6 +180,7 @@ public class PlateCondition implements Serializable {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int hash = 3;
         hash = 83 * hash + Objects.hashCode(this.plateConditionid);

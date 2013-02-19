@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -16,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Analysis Plate View: Show wells with rectangles around: each rectangle has it own color, according to condition color.
- * This class is used in the analysis step, to show conditions on the plate view
+ * Analysis Plate View: Show wells with rectangles around: each rectangle has it own color, according to condition color. This class is used in the analysis step, to show conditions on the plate view
+ *
  * @author Paola Masuzzo
  */
 public class AnalysisPlatePanel extends AbstractPlatePanel {
@@ -26,7 +27,8 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
 
     /**
      * set Experiment
-     * @param experiment 
+     *
+     * @param experiment
      */
     public void setExperiment(Experiment experiment) {
         this.experiment = experiment;
@@ -43,15 +45,14 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
 
     /**
      * Render rectangles
-     * @param g 
+     *
+     * @param g
      */
     private void showRect(Graphics g) {
 
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
-        List<PlateCondition> plateConditions = new ArrayList<>();
-        plateConditions.addAll(experiment.getPlateConditionCollection());
-
+        List<PlateCondition> plateConditions = new ArrayList<>(experiment.getPlateConditionCollection());
         for (PlateCondition plateCondition : plateConditions) {
             for (Well well : plateCondition.getWellCollection()) {
                 for (WellGui wellGui : wellGuiList) {
@@ -75,15 +76,16 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
     }
 
     /**
-     * Render wells
-     * Override method from Abstract Plate Panel:
-     * if wells have already been rendered, just redraw them
-     * @param g 
+     * Render wells Override method from Abstract Plate Panel: if wells have already been rendered, just redraw them
+     *
+     * @param g
      */
     @Override
     protected void reDrawWells(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
+
+        // draw all the wells
         for (WellGui wellGui : wellGuiList) {
             //get only the bigger default ellipse2D
             Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
@@ -91,6 +93,25 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
             // draw the labels on the plate
             if (wellGui.getRowNumber() == 1 || wellGui.getColumnNumber() == 1) {
                 drawPlateLabel(defaultWell, g2d, wellGui.getColumnNumber(), wellGui.getRowNumber());
+            }
+        }
+        // highlight the ones that were not imaged
+        List<PlateCondition> plateConditions = new ArrayList<>(experiment.getPlateConditionCollection());
+        for (PlateCondition plateCondition : plateConditions) {
+            if (plateCondition.isLoaded()) {
+                List<Well> wells = new ArrayList<>(plateCondition.getWellCollection());
+                for (Well well : wells) {
+                    if (well.getWellHasImagingTypeCollection().isEmpty()) {
+                        for (WellGui wellGui : wellGuiList) {
+                            if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
+                                //get only the bigger default ellipse2D
+                                Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
+                                g2d.setColor(Color.LIGHT_GRAY);
+                                g2d.fill(defaultWell);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

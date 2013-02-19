@@ -198,19 +198,17 @@ public class WellServiceImpl implements WellService {
      */
     @Override
     public void fetchTimeSteps(Well well, Long AlgorithmId, Long ImagingTpeId) {
-        //well = wellRepository.save(well);
         //for well, get the wellhasimagingtypes for a certain algorithm and imaging type
-        List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
         List<WellHasImagingType> wellHasImagingTypeCollection = new ArrayList<>();
-        // if samples are not null, fetch time steps
+        List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
+        // if samples are not null (the correspondent wells were actually  imaged), fetch their time steps
         if (wellHasImagingTypes != null) {
             for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
-                //fetch time step collection of that wellHasImagingType
                 Hibernate.initialize(wellHasImagingType.getTimeStepCollection());
                 wellHasImagingTypeCollection.add(wellHasImagingType);
             }
         }
-        // else, set an empty collection
+        // else, the collection stays empty
         well.setWellHasImagingTypeCollection(wellHasImagingTypeCollection);
     }
 

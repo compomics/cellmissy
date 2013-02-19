@@ -282,7 +282,7 @@ public class DataAnalysisController {
             @Override
             public void mouseClicked(MouseEvent e) {
                 // Execute Swing Worker to fetch Selected Condition: 
-                FetchConditionTimeStepsSwingWorker fetchSelectedConditionSW = new FetchConditionTimeStepsSwingWorker();
+                FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
                 fetchSelectedConditionSW.execute();
             }
         });
@@ -361,7 +361,7 @@ public class DataAnalysisController {
         analysisPlatePanel.initPanel(experiment.getPlateFormat(), parentDimension);
         // repaint plate panel
         analysisPlatePanel.setExperiment(experiment);
-        dataAnalysisPanel.getAnalysisPlateParentPanel().repaint();
+        //dataAnalysisPanel.getAnalysisPlateParentPanel().repaint();
         analysisPlatePanel.repaint();
         //show conditions JList
         showConditionsList();
@@ -437,7 +437,7 @@ public class DataAnalysisController {
      * Swing Worker to fetch one condition time steps at once: The user selects a condition, a waiting cursor is shown on the screen and time steps result are fetched from DB. List of time steps is
      * updated. In addition, map of child controller is updated: computations are performed here and then shown in the done method of the class.
      */
-    private class FetchConditionTimeStepsSwingWorker extends SwingWorker<Void, Void> {
+    private class FetchConditionSwingWorker extends SwingWorker<Void, Void> {
 
         @Override
         protected Void doInBackground() throws Exception {
@@ -447,7 +447,9 @@ public class DataAnalysisController {
             //fetch time steps for each well of condition 
             for (int i = 0; i < wellList.size(); i++) {
                 //fetch time step collection for the wellhasimagingtype of interest
-                wellService.fetchTimeSteps(wellList.get(i), algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
+                Algorithm algorithm = algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex());
+                ImagingType imagingType = imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex());
+                wellService.fetchTimeSteps(wellList.get(i), algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
             }
             // when all wells were fetched, update TimeStepList
             updateTimeStepsList(getSelectedCondition());
@@ -487,6 +489,9 @@ public class DataAnalysisController {
                 }
                 // set cursor back to default and show all computed results for selected condition
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                // the condition is loaded, and plate view is refreshed
+                getSelectedCondition().setLoaded(true);
+                analysisPlatePanel.repaint();
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {

@@ -13,7 +13,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
 /**
- *
+ * This is rendering a list of rectangular icons with number of replicates for each condition
  * @author Paola Masuzzo
  */
 public class RectIconListRenderer extends DefaultListCellRenderer {
@@ -33,6 +33,7 @@ public class RectIconListRenderer extends DefaultListCellRenderer {
         setIconTextGap(10);
     }
 
+    @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
