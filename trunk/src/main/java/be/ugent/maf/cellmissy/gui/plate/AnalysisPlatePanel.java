@@ -96,18 +96,20 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
             }
         }
         // highlight the ones that were not imaged
-        List<PlateCondition> plateConditions = new ArrayList<>(experiment.getPlateConditionCollection());
-        for (PlateCondition plateCondition : plateConditions) {
-            if (plateCondition.isLoaded()) {
-                List<Well> wells = new ArrayList<>(plateCondition.getWellCollection());
-                for (Well well : wells) {
-                    if (well.getWellHasImagingTypeCollection().isEmpty()) {
-                        for (WellGui wellGui : wellGuiList) {
-                            if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
-                                //get only the bigger default ellipse2D
-                                Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
-                                g2d.setColor(Color.LIGHT_GRAY);
-                                g2d.fill(defaultWell);
+        if (experiment != null) {
+            List<PlateCondition> plateConditions = new ArrayList<>(experiment.getPlateConditionCollection());
+            for (PlateCondition plateCondition : plateConditions) {
+                if (plateCondition.isLoaded()) {
+                    List<Well> wells = new ArrayList<>(plateCondition.getWellCollection());
+                    for (Well well : wells) {
+                        if (well.getWellHasImagingTypeCollection().isEmpty()) {
+                            for (WellGui wellGui : wellGuiList) {
+                                if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
+                                    //get only the bigger default ellipse2D
+                                    Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
+                                    g2d.setColor(Color.LIGHT_GRAY);
+                                    g2d.fill(defaultWell);
+                                }
                             }
                         }
                     }
