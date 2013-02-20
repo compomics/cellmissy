@@ -15,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * This class implements the Area PreProcessor interface.
- * It takes care of all the pre-processing operations required before handling area values and proceed with real analysis
+ * This class implements the Area PreProcessor interface. It takes care of all the pre-processing operations required before handling area values and proceed with real analysis
+ *
  * @author Paola Masuzzo
  */
 @Component("areaPreProcessor")
@@ -31,7 +31,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         Double[][] normalizedArea = new Double[areaRawData.length][areaRawData[0].length];
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
-                if (areaRawData[rowIndex][columnIndex] != null && areaRawData[rowIndex][columnIndex] - areaRawData[0][columnIndex] >= 0) {
+                if (areaRawData[rowIndex][columnIndex] != null && areaRawData[0][columnIndex] != null && areaRawData[rowIndex][columnIndex] - areaRawData[0][columnIndex] >= 0) {
                     normalizedArea[rowIndex][columnIndex] = areaRawData[rowIndex][columnIndex] - areaRawData[0][columnIndex];
                 }
             }
@@ -45,7 +45,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         Double[][] deltaArea = new Double[areaRawData.length][areaRawData[0].length];
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 1; rowIndex < areaRawData.length; rowIndex++) {
-                if (areaRawData[rowIndex][columnIndex] != null) {
+                if (areaRawData[rowIndex][columnIndex] != null && areaRawData[rowIndex - 1][columnIndex] != null) {
                     deltaArea[rowIndex][columnIndex] = areaRawData[rowIndex][columnIndex] - areaRawData[rowIndex - 1][columnIndex];
                 }
             }
@@ -74,7 +74,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         Double[][] normalizedCorrectedArea = new Double[correctedArea.length][correctedArea[0].length];
         for (int columnIndex = 0; columnIndex < correctedArea[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < correctedArea.length; rowIndex++) {
-                if (correctedArea[rowIndex][columnIndex] != null) {
+                if (correctedArea[rowIndex][columnIndex] != null && correctedArea[0][columnIndex] != null) {
                     normalizedCorrectedArea[rowIndex][columnIndex] = correctedArea[rowIndex][columnIndex] - correctedArea[0][columnIndex];
                 }
             }
@@ -112,6 +112,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
 
     /**
      * Correct Area
+     *
      * @param areaPreProcessingResults
      * @return 2D array with corrected area values (still need to be normalized)
      */
@@ -123,14 +124,14 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         boolean[][] outliers = detectOutliers(percentageAreaIncrease);
         for (int rowIndex = 0; rowIndex < outliers.length; rowIndex++) {
             for (int columnIndex = 0; columnIndex < outliers[0].length; columnIndex++) {
-                if (rowIndex == 0) {
+                if (rowIndex == 0 && areaRawData[rowIndex][columnIndex] != null) {
                     correctedArea[rowIndex][columnIndex] = areaRawData[rowIndex][columnIndex];
                     continue;
                 }
-                if (outliers[rowIndex][columnIndex]) {
+                if (outliers[rowIndex][columnIndex] && correctedArea[rowIndex - 1][columnIndex] != null) {
                     correctedArea[rowIndex][columnIndex] = correctedArea[rowIndex - 1][columnIndex];
                 } else {
-                    if (deltaArea[rowIndex][columnIndex] != null) {
+                    if (deltaArea[rowIndex][columnIndex] != null && correctedArea[rowIndex - 1][columnIndex] != null) {
                         correctedArea[rowIndex][columnIndex] = correctedArea[rowIndex - 1][columnIndex] + deltaArea[rowIndex][columnIndex];
                     }
                 }
@@ -141,6 +142,7 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
 
     /**
      * Exclude Technical replicates (wells) from analysis
+     *
      * @param areaPreProcessingResults
      * @param plateCondition
      */
@@ -155,8 +157,8 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
     }
 
     /**
-     * 
-     * @param areaPreProcessingResults 
+     *
+     * @param areaPreProcessingResults
      */
     @Override
     public void setTimeInterval(AreaPreProcessingResults areaPreProcessingResults) {

@@ -77,7 +77,7 @@ public class AreaAnalysisReportController {
             try {
                 areaAnalysisController.createPdfReport();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                LOG.error(ex.getMessage(), ex);
             }
         }
         return pdfFile;
@@ -415,6 +415,7 @@ public class AreaAnalysisReportController {
 
     /**
      * Add info for each analysis group
+     *
      * @param analysisGroup
      */
     private void addAnalysisInfo(AnalysisGroup analysisGroup) {
@@ -428,7 +429,7 @@ public class AreaAnalysisReportController {
             // add statistical summary table
             addSummaryStatisticsTable(analysisGroup);
             PdfUtils.addEmptyLines(document, 1);
-            PdfUtils.addTitle(document, "PAIRWISE COMPARISONS", titleFont);
+            PdfUtils.addTitle(document, "PAIRWISE COMPARISONS (p-values)", titleFont);
             PdfUtils.addTitle(document, "Multiple comparisons correction: NONE", titleFont);
             // add not corrected p values
             addPValuesTable(analysisGroup, false);

@@ -1178,6 +1178,8 @@ public class AreaPreProcessingController {
                     dataAnalysisController.fetchConditionTimeSteps(plateCondition);
                     // ipdate map (this is actually doing all the computations)
                     updateMapWithCondition(plateCondition);
+                    // the condition is loaded, and plate view is refreshed
+                    dataAnalysisController.showNotImagedWells(plateCondition);
                 }
             }
             return null;

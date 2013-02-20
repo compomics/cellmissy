@@ -49,7 +49,10 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
                 }
                 double[][] tempArray = tempList.toArray(new double[tempList.size()][]);
                 double slope = computeSlope(tempArray);
-                double coefficient = computeRCoefficient(tempArray);
+                double coefficient = 0;
+                if (slope != 0) {
+                    coefficient = computeRCoefficient(tempArray);
+                }
                 slopes[columnIndex] = slope;
                 goodnessOfFit[columnIndex] = coefficient;
             } else {
@@ -61,15 +64,16 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
         areaAnalysisResults.setSlopes(slopes);
         areaAnalysisResults.setGoodnessOfFit(goodnessOfFit);
         // set mean slope
-        areaAnalysisResults.setMeanSlope(AnalysisUtils.computeMean(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(slopes))));
+        areaAnalysisResults.setMeanSlope(AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(slopes))));
         // set MAD for mean slope
         areaAnalysisResults.setMadSlope(AnalysisUtils.scaleMAD(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(slopes))));
     }
 
     /**
      * Given 2D array of double compute Slope through a Linear Regression
+     *
      * @param data
-     * @return 
+     * @return
      */
     private double computeSlope(double[][] data) {
         return linearRegressor.estimateLinearModel(data).get(0);
@@ -77,8 +81,9 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
 
     /**
      * Get R2 Coefficient out of the Linear Regression Model
+     *
      * @param data
-     * @return 
+     * @return
      */
     private double computeRCoefficient(double[][] data) {
         return linearRegressor.estimateLinearModel(data).get(1);

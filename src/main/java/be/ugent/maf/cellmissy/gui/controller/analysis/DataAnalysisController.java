@@ -200,6 +200,16 @@ public class DataAnalysisController {
     }
 
     /**
+     * The condition is loaded and plate view is refreshed with not imaged wells highlighted in gray
+     *
+     * @param plateCondition
+     */
+    public void showNotImagedWells(PlateCondition plateCondition) {
+        plateCondition.setLoaded(true);
+        analysisPlatePanel.repaint();
+    }
+
+    /**
      * private methods and classes
      */
     /**
@@ -490,8 +500,7 @@ public class DataAnalysisController {
                 // set cursor back to default and show all computed results for selected condition
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 // the condition is loaded, and plate view is refreshed
-                getSelectedCondition().setLoaded(true);
-                analysisPlatePanel.repaint();
+                showNotImagedWells(getSelectedCondition());
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {

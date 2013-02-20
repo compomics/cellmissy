@@ -56,6 +56,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -84,6 +85,7 @@ import org.springframework.stereotype.Controller;
 @Controller("areaAnalysisController")
 public class AreaAnalysisController {
 
+    private static final Logger LOG = Logger.getLogger(AreaAnalysisController.class);
     // model
     private BindingGroup bindingGroup;
     private Map<PlateCondition, AreaAnalysisResults> analysisMap;
@@ -206,8 +208,9 @@ public class AreaAnalysisController {
 
     /**
      * create velocity chart
-     * @param conditionsToShow 
-     * @return 
+     *
+     * @param conditionsToShow
+     * @return
      */
     public JFreeChart createVelocityChart(int[] conditionsToShow) {
         DefaultStatisticalCategoryDataset velocityDataset = getVelocityDataset(conditionsToShow);
@@ -233,7 +236,8 @@ public class AreaAnalysisController {
 
     /**
      * Ask user to choose for a directory and invoke swing worker for creating PDF report
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void createPdfReport() throws IOException {
         Experiment experiment = dataAnalysisController.getExperiment();
@@ -257,9 +261,9 @@ public class AreaAnalysisController {
     }
 
     /**
-     * 
-     * @param conditionsToShow 
-     * @return 
+     *
+     * @param conditionsToShow
+     * @return
      */
     private DefaultStatisticalCategoryDataset getVelocityDataset(int[] conditionsToShow) {
         // dataset for chart
@@ -290,7 +294,8 @@ public class AreaAnalysisController {
 
     /**
      * Estimate Linear Regression Model
-     * @param plateCondition 
+     *
+     * @param plateCondition
      */
     private void estimateLinearModel(PlateCondition plateCondition) {
         // get the pre-processing results from main controller
@@ -350,11 +355,9 @@ public class AreaAnalysisController {
         statisticsPanel.getSignificanceLevelComboBox().setSelectedIndex(1);
 
         /**
-         * List selection Listener for linear model results Table
-         * show bar charts according to user selection in model
+         * List selection Listener for linear model results Table show bar charts according to user selection in model
          */
         linearRegressionPanel.getSlopesTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 // show velocity chart according to selected rows
@@ -366,7 +369,6 @@ public class AreaAnalysisController {
          * Add a group to analysis
          */
         linearRegressionPanel.getAddGroupButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 // from selected conditions make a new group and add it to the list
@@ -378,7 +380,6 @@ public class AreaAnalysisController {
          * remove a Group from analysis
          */
         linearRegressionPanel.getRemoveGroupButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 // remove the selected group from list
@@ -390,7 +391,6 @@ public class AreaAnalysisController {
          * Create report from Analysis
          */
         linearRegressionPanel.getCreateReportButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 // if every group has been analyzed
@@ -399,7 +399,7 @@ public class AreaAnalysisController {
                     try {
                         createPdfReport();
                     } catch (IOException ex) {
-                        ex.printStackTrace();
+                        LOG.error(ex.getMessage(), ex);
                     }
                 } else {
                     // else, show a message warning the user
@@ -410,7 +410,7 @@ public class AreaAnalysisController {
                             // if OK, create report
                             createPdfReport();
                         } catch (IOException ex) {
-                            ex.printStackTrace();
+                            LOG.error(ex.getMessage(), ex);
                         }
                     }
                 }
@@ -421,7 +421,6 @@ public class AreaAnalysisController {
          * Execute a Mann Whitney Test on selected Analysis Group
          */
         linearRegressionPanel.getStatisticsButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
@@ -457,7 +456,6 @@ public class AreaAnalysisController {
          * Update button text if analysis was already done
          */
         linearRegressionPanel.getGroupsList().addMouseListener(new MouseAdapter() {
-
             @Override
             public void mouseClicked(MouseEvent e) {
                 int locationToIndex = linearRegressionPanel.getGroupsList().locationToIndex(e.getPoint());
@@ -475,7 +473,6 @@ public class AreaAnalysisController {
          * Refresh p value table with current selected significance of level
          */
         statisticsPanel.getSignificanceLevelComboBox().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (statisticsPanel.getSignificanceLevelComboBox().getSelectedIndex() != -1) {
@@ -501,7 +498,6 @@ public class AreaAnalysisController {
          * Apply correction for multiple comparisons
          */
         statisticsPanel.getCorrectionMethodsComboBox().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
@@ -531,7 +527,6 @@ public class AreaAnalysisController {
          * Save analysis
          */
         statisticsPanel.getSaveAnalysisButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 // analysis group
@@ -553,7 +548,8 @@ public class AreaAnalysisController {
 
     /**
      * Update text pane with description of statistical test
-     * @param correctionMethod 
+     *
+     * @param correctionMethod
      */
     private void updateTestDescriptionPane(CorrectionMethod correctionMethod) {
         String testDescription = "";
@@ -573,7 +569,8 @@ public class AreaAnalysisController {
 
     /**
      * Compute Statistics for the selected Group
-     * @param analysisGroup 
+     *
+     * @param analysisGroup
      */
     private void computeStatistics(AnalysisGroup analysisGroup) {
         // generate summary statistics
@@ -584,7 +581,8 @@ public class AreaAnalysisController {
 
     /**
      * Show Summary Statistics in correspondent table
-     * @param analysisGroup 
+     *
+     * @param analysisGroup
      */
     private void showSummary(AnalysisGroup analysisGroup) {
         statisticsPanel.getGroupNameLabel().setText(analysisGroup.getGroupName());
@@ -598,7 +596,8 @@ public class AreaAnalysisController {
 
     /**
      * Show p-values in correspondent table
-     * @param analysisGroup 
+     *
+     * @param analysisGroup
      */
     private void showPValues(AnalysisGroup analysisGroup, boolean isAdjusted) {
         // set model and cell renderer for p-values table
@@ -614,9 +613,7 @@ public class AreaAnalysisController {
     }
 
     /**
-     * Add Annotations on velocity Chart
-     * A line is added horizontally between two conditions that were detected to be statistically different.
-     * If lines from previous analysis are present, delete them. 
+     * Add Annotations on velocity Chart A line is added horizontally between two conditions that were detected to be statistically different. If lines from previous analysis are present, delete them.
      */
     private void addAnnotationsOnVelocityChart(AnalysisGroup analysisGroup) {
         Stroke stroke = new BasicStroke(0.5f);
@@ -716,6 +713,7 @@ public class AreaAnalysisController {
 
     /**
      * Validate analysis
+     *
      * @return true if analysis was performed for each group created
      */
     private boolean validateAnalysis() {

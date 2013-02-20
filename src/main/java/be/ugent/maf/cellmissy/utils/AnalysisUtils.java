@@ -14,13 +14,15 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 /**
  * Utility class for Analysis -- basic math and statistics methods
+ *
  * @author Paola Masuzzo
  */
 public class AnalysisUtils {
 
     /**
      * Exclude null values from an array of Double
-     * @param data 
+     *
+     * @param data
      * @return another Double array with no longer null values
      */
     public static Double[] excludeNullValues(Double[] data) {
@@ -36,6 +38,7 @@ public class AnalysisUtils {
 
     /**
      * Transpose a 2D array of double
+     *
      * @param data
      * @return the same 2D array but transposed
      */
@@ -53,8 +56,9 @@ public class AnalysisUtils {
 
     /**
      * Transpose a 2D array of boolean
+     *
      * @param matrix
-     * @return 
+     * @return
      */
     public static boolean[][] transposeBooleanMatrix(boolean[][] matrix) {
         boolean[][] transposed = new boolean[matrix.length][matrix[0].length];
@@ -69,9 +73,9 @@ public class AnalysisUtils {
     }
 
     /**
-     * 
+     *
      * @param matrix
-     * @return 
+     * @return
      */
     public static Double[][] formatSymmetricMatrix(Double[][] matrix) {
 
@@ -97,8 +101,9 @@ public class AnalysisUtils {
 
     /**
      * Round up to two decimals
+     *
      * @param d
-     * @return  
+     * @return
      */
     public static Double roundThreeDecimals(Double d) {
         DecimalFormat twoDForm = new DecimalFormat("###.###");
@@ -107,6 +112,7 @@ public class AnalysisUtils {
 
     /**
      * Compute mean value of an array of double
+     *
      * @param data
      * @return mean
      */
@@ -121,6 +127,7 @@ public class AnalysisUtils {
 
     /**
      * Compute median value of an array of double
+     *
      * @param data
      * @return median
      */
@@ -140,6 +147,7 @@ public class AnalysisUtils {
 
     /**
      * Compute Standard Deviation of an array of double
+     *
      * @param data
      * @return sd
      */
@@ -154,6 +162,7 @@ public class AnalysisUtils {
 
     /**
      * Compute Standard Error of the Mean
+     *
      * @param data
      * @return SEM
      */
@@ -163,6 +172,7 @@ public class AnalysisUtils {
 
     /**
      * Compute Median Absolute Deviation (MAD) of an array of double
+     *
      * @param data
      * @return MAD
      */
@@ -177,6 +187,7 @@ public class AnalysisUtils {
 
     /**
      * Scale MAD in order to use it as a consistent estimator for the estimation of the sd
+     *
      * @param data
      * @return sd (related to MAD)
      */
@@ -187,8 +198,8 @@ public class AnalysisUtils {
     }
 
     /**
-     * This method is using the Descriptive Statistics Class from org.apache.commons.math to estimate sample quantiles
-     * Cfr algorithm type 6 in R, EXCEL, Minitab and SPSS.
+     * This method is using the Descriptive Statistics Class from org.apache.commons.math to estimate sample quantiles Cfr algorithm type 6 in R, EXCEL, Minitab and SPSS.
+     *
      * @param data
      * @param p
      * @return
@@ -202,10 +213,10 @@ public class AnalysisUtils {
     }
 
     /**
-     * This method is estimating quantiles making use of algorithm type 7 in R
-     * This implementation is more sensitive, especially with small datasets (less than 15 data points)
+     * This method is estimating quantiles making use of algorithm type 7 in R This implementation is more sensitive, especially with small datasets (less than 15 data points)
+     *
      * @param data -- array of double (distribution)
-     * @param p -- percentile 
+     * @param p -- percentile
      * @return a double
      */
     public static double estimateQuantile(double[] data, double p) {
@@ -231,6 +242,7 @@ public class AnalysisUtils {
 
     /**
      * Given two vectors A and B, this method is computing the Euclidean Distance between them
+     *
      * @param firstVector
      * @param secondVector
      * @return a double value for the distance
@@ -248,8 +260,9 @@ public class AnalysisUtils {
 
     /**
      * Get the maximum double of a list of array of doubles
+     *
      * @param list
-     * @return maximum double 
+     * @return maximum double
      */
     public static double getMaxOfAList(List<Double[]> list) {
         double max = 0;
@@ -265,22 +278,22 @@ public class AnalysisUtils {
 
     /**
      * Compute maximum number of Replicates overall the experiment
-     * @param plateConditions 
-     * @return 
+     *
+     * @param plateConditions
+     * @return
      */
     public static int getMaximumNumberOfReplicates(List<PlateCondition> plateConditions) {
         int max = 0;
         for (PlateCondition plateCondition : plateConditions) {
-            List<Well> imagedWells = plateCondition.getImagedWells();
-            int numberOfReplicates = imagedWells.size();
-            if (numberOfReplicates > max) {
-                max = numberOfReplicates;
+            int numberOfSamplesPerCondition = getNumberOfSamplesPerCondition(plateCondition);
+            if (numberOfSamplesPerCondition > max) {
+                max = numberOfSamplesPerCondition;
             }
         }
         return max;
     }
-    
-        /**
+
+    /**
      * Get number of sample points for each condition
      *
      * @param plateCondition

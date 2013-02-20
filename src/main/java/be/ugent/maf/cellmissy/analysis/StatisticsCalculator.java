@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.analysis;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 
 /**
- *
+ * Class for statistics calculations
  * @author Paola Masuzzo
  */
 public interface StatisticsCalculator {

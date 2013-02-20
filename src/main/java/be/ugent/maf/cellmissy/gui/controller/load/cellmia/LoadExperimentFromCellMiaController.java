@@ -143,7 +143,7 @@ public class LoadExperimentFromCellMiaController {
                     File obsepFile = experiment.getObsepFile();
                     setExperimentMetadata(obsepFile);
                 } else {
-                    cellMissyController.showMessage("No valid microscope file was found or different files were found.\nPlease select a file.", 0);
+                    cellMissyController.showMessage("No valid microscope file was found or different files were found.\nPlease select a file.", JOptionPane.WARNING_MESSAGE);
                     //choose file to parse form microscope folder
                     JFileChooser chooseObsepFile = new JFileChooser();
                     chooseObsepFile.setFileFilter(new FileFilter() {
@@ -163,6 +163,9 @@ public class LoadExperimentFromCellMiaController {
                     int returnVal = chooseObsepFile.showOpenDialog(cellMissyController.getCellMissyFrame());
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File obsepFile = chooseObsepFile.getSelectedFile();
+                        // set file for current experiment
+                        experiment.setObsepFile(obsepFile);
+                        // set experiment metadata
                         setExperimentMetadata(obsepFile);
                     } else {
                         cellMissyController.showMessage("Open command cancelled by user", 1);
