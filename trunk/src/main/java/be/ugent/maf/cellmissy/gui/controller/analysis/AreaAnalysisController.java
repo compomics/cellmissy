@@ -154,9 +154,10 @@ public class AreaAnalysisController {
         List<Double[]> coefficientsList = new ArrayList();
         List<Double> meanSlopesList = new ArrayList();
         List<Double> madSlopesList = new ArrayList();
+        List<PlateCondition> processedConditions = dataAnalysisController.getProcessedConditions();
 
         // go through all conditions in map and estimate linear model for each of them
-        for (PlateCondition plateCondition : analysisMap.keySet()) {
+        for (PlateCondition plateCondition : processedConditions) {
             estimateLinearModel(plateCondition);
             slopesList.add((analysisMap.get(plateCondition).getSlopes()));
             coefficientsList.add((analysisMap.get(plateCondition).getGoodnessOfFit()));
@@ -165,18 +166,22 @@ public class AreaAnalysisController {
         }
         // data for table model: number of rows equal to number of conditions, number of columns equal to maximum number of replicates + 3
         // first column with conditions, last two with mean and mad values
-        int maximumNumberOfReplicates = AnalysisUtils.getMaximumNumberOfReplicates(dataAnalysisController.getPlateConditionList());
-        Object[][] data = new Object[analysisMap.keySet().size()][maximumNumberOfReplicates + 3];
+        int maximumNumberOfReplicates = AnalysisUtils.getMaximumNumberOfReplicates(processedConditions);
+        Object[][] data = new Object[processedConditions.size()][maximumNumberOfReplicates + 3];
         for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
             for (int columnIndex = 1; columnIndex < slopesList.get(rowIndex).length + 1; columnIndex++) {
-                if (slopesList.get(rowIndex)[columnIndex - 1] != null && coefficientsList.get(rowIndex)[columnIndex - 1] != null) {
+                Double slope = slopesList.get(rowIndex)[columnIndex - 1];
+                Double coefficient = coefficientsList.get(rowIndex)[columnIndex - 1];
+                if (slope != null && coefficient != null && !slope.isNaN() && !coefficient.isNaN()) {
                     // round to three decimals slopes and coefficients
-                    double slope = AnalysisUtils.roundThreeDecimals(slopesList.get(rowIndex)[columnIndex - 1]);
-                    double coefficient = AnalysisUtils.roundThreeDecimals(coefficientsList.get(rowIndex)[columnIndex - 1]);
+                    slope = AnalysisUtils.roundThreeDecimals(slopesList.get(rowIndex)[columnIndex - 1]);
+                    coefficient = AnalysisUtils.roundThreeDecimals(coefficientsList.get(rowIndex)[columnIndex - 1]);
                     // show in table slope + (coefficient)
                     data[rowIndex][columnIndex] = slope + " (" + coefficient + ")";
-                } else {
+                } else if (slope == null && coefficient == null) {
                     data[rowIndex][columnIndex] = "excluded";
+                } else if (slope.isNaN() || coefficient.isNaN()) {
+                    data[rowIndex][columnIndex] = "NaN";
                 }
             }
             // first column contains conditions names

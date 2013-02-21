@@ -66,6 +66,7 @@ public class DataAnalysisController {
     private static final String DATA_FORMAT = PropertiesConfigurationHolder.getInstance().getString("dataFormat");
     //model
     private Experiment experiment;
+    private PlateCondition currentCondition;
     private ObservableList<Algorithm> algorithmBindingList;
     private ObservableList<ImagingType> imagingTypeBindingList;
     private ObservableList<Project> projectBindingList;
@@ -128,8 +129,8 @@ public class DataAnalysisController {
         return experiment;
     }
 
-    public PlateCondition getSelectedCondition() {
-        return (PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue();
+    public PlateCondition getCurrentCondition() {
+        return currentCondition;
     }
 
     public List<PlateCondition> getPlateConditionList() {
@@ -154,6 +155,10 @@ public class DataAnalysisController {
 
     public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean plotErrorBars) {
         return areaPreProcessingController.createGlobalAreaChart(plateConditionList, plotErrorBars);
+    }
+
+    public List<PlateCondition> getProcessedConditions() {
+        return areaPreProcessingController.getProcessedConditions();
     }
 
     /**
@@ -291,9 +296,20 @@ public class DataAnalysisController {
         dataAnalysisPanel.getConditionsList().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Execute Swing Worker to fetch Selected Condition: 
-                FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
-                fetchSelectedConditionSW.execute();
+                int locationToIndex = dataAnalysisPanel.getConditionsList().locationToIndex(e.getPoint());
+                PlateCondition selectedCondition = plateConditionList.get(locationToIndex);
+                if (currentCondition != null) {
+                    if (currentCondition != selectedCondition) {
+                        // Execute Swing Worker to fetch Selected Condition: 
+                        FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
+                        fetchSelectedConditionSW.execute();
+                    }
+                } else {
+                    // Execute Swing Worker to fetch Selected Condition: 
+                    FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
+                    fetchSelectedConditionSW.execute();
+                }
+                currentCondition = selectedCondition;
             }
         });
 
@@ -305,6 +321,11 @@ public class DataAnalysisController {
             public void actionPerformed(ActionEvent e) {
                 areaPreProcessingController.initMapWithConditions();
                 areaPreProcessingController.emptyDensityFunctionCache();
+                if (currentCondition != null) {
+                    // Execute Swing Worker to fetch Selected Condition: 
+                    FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
+                    fetchSelectedConditionSW.execute();
+                }
             }
         });
 
@@ -315,6 +336,11 @@ public class DataAnalysisController {
             public void actionPerformed(ActionEvent e) {
                 areaPreProcessingController.initMapWithConditions();
                 areaPreProcessingController.emptyDensityFunctionCache();
+                if (currentCondition != null) {
+                    // Execute Swing Worker to fetch Selected Condition: 
+                    FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
+                    fetchSelectedConditionSW.execute();
+                }
             }
         });
 
@@ -453,7 +479,7 @@ public class DataAnalysisController {
         protected Void doInBackground() throws Exception {
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             List<Well> wellList = new ArrayList<>();
-            wellList.addAll(getSelectedCondition().getWellCollection());
+            wellList.addAll(currentCondition.getWellCollection());
             //fetch time steps for each well of condition 
             for (int i = 0; i < wellList.size(); i++) {
                 //fetch time step collection for the wellhasimagingtype of interest
@@ -462,9 +488,12 @@ public class DataAnalysisController {
                 wellService.fetchTimeSteps(wellList.get(i), algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
             }
             // when all wells were fetched, update TimeStepList
-            updateTimeStepsList(getSelectedCondition());
-            //put the plate condition together with a pre-processing results holder in the map
-            areaPreProcessingController.updateMapWithCondition(getSelectedCondition());
+            updateTimeStepsList(currentCondition);
+            // if time steps were actually fetched from DB, update map
+            if (!areaPreProcessingController.getTimeStepsBindingList().isEmpty()) {
+                //put the plate condition together with a pre-processing results holder in the map
+                areaPreProcessingController.updateMapWithCondition(currentCondition);
+            }
             return null;
         }
 
@@ -472,35 +501,41 @@ public class DataAnalysisController {
         protected void done() {
             try {
                 get();
-                //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO look at motility track RESULTS
-                areaPreProcessingController.showTimeStepsInTable();
-                //check which button is selected for analysis:
-                if (areaPreProcessingController.getAreaAnalysisPanel().getNormalizeAreaButton().isSelected()) {
-                    //for current selected condition show normalized area values together with time frames
-                    areaPreProcessingController.showNormalizedAreaInTable(getSelectedCondition());
-                    // show raw data plot (all replicates)
-                    areaPreProcessingController.plotRawDataReplicates(getSelectedCondition());
-                }
-                if (areaPreProcessingController.getAreaAnalysisPanel().getDeltaAreaButton().isSelected()) {
-                    //for current selected condition show delta area values 
-                    areaPreProcessingController.showDeltaAreaInTable(getSelectedCondition());
-                }
-                if (areaPreProcessingController.getAreaAnalysisPanel().getPercentageAreaIncreaseButton().isSelected()) {
-                    //for current selected condition show %increments (for outliers detection)
-                    areaPreProcessingController.showAreaIncreaseInTable(getSelectedCondition());
-                    //show density function for selected condition (Raw Data)
-                    areaPreProcessingController.plotDensityFunctions(getSelectedCondition());
-                }
-                if (areaPreProcessingController.getAreaAnalysisPanel().getCorrectedAreaButton().isSelected()) {
-                    //for current selected condition show corrected area values (outliers have been deleted from distribution)
-                    areaPreProcessingController.showCorrectedAreaInTable(getSelectedCondition());
-                    //show Area increases with time frames
-                    areaPreProcessingController.plotCorrectedDataReplicates(getSelectedCondition());
+                if (!areaPreProcessingController.getTimeStepsBindingList().isEmpty()) {
+                    //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO look at motility track RESULTS
+                    areaPreProcessingController.showTimeStepsInTable();
+                    //check which button is selected for analysis:
+                    if (areaPreProcessingController.getAreaAnalysisPanel().getNormalizeAreaButton().isSelected()) {
+                        //for current selected condition show normalized area values together with time frames
+                        areaPreProcessingController.showNormalizedAreaInTable(currentCondition);
+                        // show raw data plot (all replicates)
+                        areaPreProcessingController.plotRawDataReplicates(currentCondition);
+                    }
+                    if (areaPreProcessingController.getAreaAnalysisPanel().getDeltaAreaButton().isSelected()) {
+                        //for current selected condition show delta area values 
+                        areaPreProcessingController.showDeltaAreaInTable(currentCondition);
+                    }
+                    if (areaPreProcessingController.getAreaAnalysisPanel().getPercentageAreaIncreaseButton().isSelected()) {
+                        //for current selected condition show %increments (for outliers detection)
+                        areaPreProcessingController.showAreaIncreaseInTable(currentCondition);
+                        //show density function for selected condition (Raw Data)
+                        areaPreProcessingController.plotDensityFunctions(currentCondition);
+                    }
+                    if (areaPreProcessingController.getAreaAnalysisPanel().getCorrectedAreaButton().isSelected()) {
+                        //for current selected condition show corrected area values (outliers have been deleted from distribution)
+                        areaPreProcessingController.showCorrectedAreaInTable(currentCondition);
+                        //show Area increases with time frames
+                        areaPreProcessingController.plotCorrectedDataReplicates(currentCondition);
+                    }
+                } else {
+                    // the entire condition was not imaged/analyzed: inform the user
+                    showMessage("This condition was not imaged at all!", JOptionPane.INFORMATION_MESSAGE);
+                    areaPreProcessingController.resetViews();
                 }
                 // set cursor back to default and show all computed results for selected condition
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 // the condition is loaded, and plate view is refreshed
-                showNotImagedWells(getSelectedCondition());
+                showNotImagedWells(currentCondition);
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
