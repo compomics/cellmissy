@@ -31,8 +31,13 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         Double[][] normalizedArea = new Double[areaRawData.length][areaRawData[0].length];
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
-                if (areaRawData[rowIndex][columnIndex] != null && areaRawData[0][columnIndex] != null && areaRawData[rowIndex][columnIndex] - areaRawData[0][columnIndex] >= 0) {
-                    normalizedArea[rowIndex][columnIndex] = areaRawData[rowIndex][columnIndex] - areaRawData[0][columnIndex];
+                // check if area raw data at first time frame is already zero
+                if (areaRawData[0][columnIndex] != 0) {
+                    if (areaRawData[rowIndex][columnIndex] != null && areaRawData[0][columnIndex] != null && areaRawData[rowIndex][columnIndex] - areaRawData[0][columnIndex] >= 0) {
+                        normalizedArea[rowIndex][columnIndex] = areaRawData[rowIndex][columnIndex] - areaRawData[0][columnIndex];
+                    }
+                } else {
+                    normalizedArea[rowIndex][columnIndex] = areaRawData[rowIndex][columnIndex];
                 }
             }
         }
