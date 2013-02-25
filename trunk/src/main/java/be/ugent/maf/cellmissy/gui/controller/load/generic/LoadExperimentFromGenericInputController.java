@@ -129,7 +129,7 @@ public class LoadExperimentFromGenericInputController {
     }
 
     /**
-     *
+     * Initialize main panel
      */
     private void initMainPanel() {
         //update info message
@@ -145,6 +145,8 @@ public class LoadExperimentFromGenericInputController {
         loadFromGenericInputPanel.getSaveDataProgressBar().setVisible(false);
         // allow only one node to be selected
         loadFromGenericInputPanel.getDataTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        loadFromGenericInputPanel.getDataTree().setRootVisible(true);
+        loadFromGenericInputPanel.getDataTree().setShowsRootHandles(true);
 
         // listen to tree selection (imaging type)
         loadFromGenericInputPanel.getDataTree().addTreeSelectionListener(new TreeSelectionListener() {
@@ -183,13 +185,12 @@ public class LoadExperimentFromGenericInputController {
         loadFromGenericInputPanel.getResetButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                // warn the user that data was already loaded for the selected combination of well/dataset/imaging type
+                // warn the user that data are going to be lost
                 Object[] options = {"Continue", "Cancel"};
                 int showOptionDialog = JOptionPane.showOptionDialog(null, "Do you really want to reset everything?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                 switch (showOptionDialog) {
                     case 0:
-                        // reset
+                        // keep on resetting the view
                         reset();
                         break;
                     case 1:
@@ -253,8 +254,10 @@ public class LoadExperimentFromGenericInputController {
             public void actionPerformed(ActionEvent e) {
                 // jtree structure
                 JTree dataTree = loadFromGenericInputPanel.getDataTree();
+                // model of JTree
+                DefaultTreeModel model = (DefaultTreeModel) dataTree.getModel();
                 // root (Data) node
-                DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) dataTree.getModel().getRoot();
+                DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) model.getRoot();
                 // last selected node
                 DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) dataTree.getLastSelectedPathComponent();
                 // dataset and imaging type to remove
@@ -282,7 +285,7 @@ public class LoadExperimentFromGenericInputController {
                     selectedNode.removeFromParent();
                     // if an imaging node is deleted in one dataset, it has to be deleted as well in the other(s)
                     for (int n = 0; n < dataTree.getModel().getChildCount(rootNode); n++) {
-                        DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) dataTree.getModel().getChild(rootNode, n);
+                        DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) model.getChild(rootNode, n);
                         for (int m = 0; m < childNode.getChildCount(); m++) {
                             DefaultMutableTreeNode imagingNode = (DefaultMutableTreeNode) childNode.getChildAt(m);
                             if (selectedNode.toString().equals(imagingNode.toString())) {
@@ -290,7 +293,6 @@ public class LoadExperimentFromGenericInputController {
                             }
                         }
                     }
-                    DefaultTreeModel model = (DefaultTreeModel) dataTree.getModel();
                     model.reload();
                 } else {
                     showMessage("Select a dataset / imaging type you want to remove!", JOptionPane.INFORMATION_MESSAGE);
@@ -357,8 +359,10 @@ public class LoadExperimentFromGenericInputController {
         if (!genericImagedPlateController.getAlgorithmsBindingList().contains(datasetToAdd)) {
             // add dataset to list
             genericImagedPlateController.getAlgorithmsBindingList().add(datasetToAdd);
+            // model of JTree
+            DefaultTreeModel model = (DefaultTreeModel) loadFromGenericInputPanel.getDataTree().getModel();
             // add dataset node to data tree
-            DefaultMutableTreeNode rootNote = (DefaultMutableTreeNode) loadFromGenericInputPanel.getDataTree().getModel().getRoot();
+            DefaultMutableTreeNode rootNote = (DefaultMutableTreeNode) model.getRoot();
             DefaultMutableTreeNode datasetNode = new DefaultMutableTreeNode(datasetToAdd.getAlgorithmName());
             rootNote.add(datasetNode);
             // add also imaging types node if present
@@ -369,7 +373,6 @@ public class LoadExperimentFromGenericInputController {
                 }
             }
             // reload the model
-            DefaultTreeModel model = (DefaultTreeModel) loadFromGenericInputPanel.getDataTree().getModel();
             model.reload();
             loadFromGenericInputPanel.getDataTree().scrollPathToVisible(new TreePath(datasetNode.getPath()));
         } else {
@@ -386,15 +389,16 @@ public class LoadExperimentFromGenericInputController {
         if (!genericImagedPlateController.getImagingTypesBindingList().contains(imagingToAdd)) {
             // add imaging type to list
             genericImagedPlateController.getImagingTypesBindingList().add(imagingToAdd);
+            // model of JTree
+            DefaultTreeModel model = (DefaultTreeModel) loadFromGenericInputPanel.getDataTree().getModel();
             // add imaging type node to data tree
-            DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) loadFromGenericInputPanel.getDataTree().getModel().getRoot();
+            DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) model.getRoot();
             // imaging type node is added for each dataset node
             for (int i = 0; i < genericImagedPlateController.getAlgorithmsBindingList().size(); i++) {
-                DefaultMutableTreeNode datasetNode = (DefaultMutableTreeNode) loadFromGenericInputPanel.getDataTree().getModel().getChild(rootNode, i);
+                DefaultMutableTreeNode datasetNode = (DefaultMutableTreeNode) model.getChild(rootNode, i);
                 DefaultMutableTreeNode imagingNode = new DefaultMutableTreeNode(imagingToAdd.getName());
                 datasetNode.add(imagingNode);
                 // reload the model
-                DefaultTreeModel model = (DefaultTreeModel) loadFromGenericInputPanel.getDataTree().getModel();
                 model.reload();
                 loadFromGenericInputPanel.getDataTree().scrollPathToVisible(new TreePath(imagingNode.getPath()));
             }

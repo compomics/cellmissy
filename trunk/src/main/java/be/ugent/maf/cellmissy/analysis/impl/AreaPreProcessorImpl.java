@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * This class implements the Area PreProcessor interface. It takes care of all the pre-processing operations required before handling area values and proceed with real analysis
+ * This class implements the Area PreProcessor interface. It takes care of all the pre-processing operations required before handling area values and proceed with real analysis.
  *
  * @author Paola Masuzzo
  */
@@ -65,8 +65,10 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
         Double[][] percentageAreaIncrease = new Double[deltaArea.length][deltaArea[0].length];
         for (int columnIndex = 0; columnIndex < deltaArea[0].length; columnIndex++) {
             for (int rowIndex = 1; rowIndex < deltaArea.length; rowIndex++) {
-                if (deltaArea[rowIndex][columnIndex] != null && areaRawData[rowIndex - 1][columnIndex] != null) {
+                if (deltaArea[rowIndex][columnIndex] != null && deltaArea[rowIndex][columnIndex] != 0 && areaRawData[rowIndex - 1][columnIndex] != null && areaRawData[rowIndex - 1][columnIndex] != 0) {
                     percentageAreaIncrease[rowIndex][columnIndex] = (deltaArea[rowIndex][columnIndex] / areaRawData[rowIndex - 1][columnIndex]) * 100;
+                } else if (deltaArea[rowIndex][columnIndex] == 0 || areaRawData[rowIndex - 1][columnIndex] == 0) {
+                    percentageAreaIncrease[rowIndex][columnIndex] = 0.0;
                 }
             }
         }

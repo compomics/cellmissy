@@ -136,8 +136,8 @@ public class AreaAnalysisController {
         return dataAnalysisController.getPreProcessingMap();
     }
 
-    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean plotErrorBars) {
-        return dataAnalysisController.createGlobalAreaChart(plateConditionList, plotErrorBars);
+    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars) {
+        return dataAnalysisController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars);
     }
 
     public void showMessage(String message, Integer messageType) {
@@ -146,8 +146,9 @@ public class AreaAnalysisController {
 
     /**
      * Show Results from Linear Regression Model in a table
+     * @param useCorrectedData 
      */
-    public void showLinearModelInTable() {
+    public void showLinearModelInTable(boolean useCorrectedData) {
         // initialize map for keeping the results
         initMap();
         List<Double[]> slopesList = new ArrayList();
@@ -158,7 +159,7 @@ public class AreaAnalysisController {
 
         // go through all conditions in map and estimate linear model for each of them
         for (PlateCondition plateCondition : processedConditions) {
-            estimateLinearModel(plateCondition);
+            estimateLinearModel(plateCondition, useCorrectedData);
             slopesList.add((analysisMap.get(plateCondition).getSlopes()));
             coefficientsList.add((analysisMap.get(plateCondition).getGoodnessOfFit()));
             meanSlopesList.add(analysisMap.get(plateCondition).getMeanSlope());
@@ -302,12 +303,12 @@ public class AreaAnalysisController {
      *
      * @param plateCondition
      */
-    private void estimateLinearModel(PlateCondition plateCondition) {
+    private void estimateLinearModel(PlateCondition plateCondition, boolean useCorrectedData) {
         // get the pre-processing results from main controller
         Map<PlateCondition, AreaPreProcessingResults> preProcessingMap = dataAnalysisController.getPreProcessingMap();
         AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
         AreaAnalysisResults areaAnalysisResults = analysisMap.get(plateCondition);
-        areaAnalyzer.estimateLinearModel(areaPreProcessingResults, areaAnalysisResults, dataAnalysisController.getTimeFrames());
+        areaAnalyzer.estimateLinearModel(areaPreProcessingResults, areaAnalysisResults, useCorrectedData, dataAnalysisController.getTimeFrames());
     }
 
     /**
@@ -452,7 +453,7 @@ public class AreaAnalysisController {
                     dialog.setVisible(true);
                 } else {
                     // ask user to select a group
-                    dataAnalysisController.showMessage("Please select a group to perform analysis on.", 1);
+                    dataAnalysisController.showMessage("Please select a group to perform analysis on.", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -541,7 +542,7 @@ public class AreaAnalysisController {
                     // set correction method (summary statistics, p-values and adjusted p-values are already set)
                     selectedGroup.setCorrectionMethod((CorrectionMethod) statisticsPanel.getCorrectionMethodsComboBox().getSelectedItem());
                     //show message to the user
-                    dataAnalysisController.showMessage("Analysis saved!", 1);
+                    dataAnalysisController.showMessage("Analysis saved!", JOptionPane.INFORMATION_MESSAGE);
                     addAnnotationsOnVelocityChart(selectedGroup);
                 }
             }
@@ -751,6 +752,8 @@ public class AreaAnalysisController {
             linearRegressionPanel.getCreateReportButton().setEnabled(false);
             //set cursor to waiting one
             dataAnalysisController.setCursor(Cursor.WAIT_CURSOR);
+            boolean useCorrectedData = dataAnalysisController.useCorrectedData();
+            areaAnalysisReportController.setUseCorrectedData(useCorrectedData);
             //call the child controller to create report
             File analysisReport = areaAnalysisReportController.createAnalysisReport(directory, reportName);
             try {

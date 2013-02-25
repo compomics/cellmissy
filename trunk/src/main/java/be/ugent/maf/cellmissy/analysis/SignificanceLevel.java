@@ -10,7 +10,7 @@ package be.ugent.maf.cellmissy.analysis;
  */
 public enum SignificanceLevel {
     
-    CRUCIAL(0.005), HIGH(0.05), LOW(0.01);
+    LOWER(0.01), STANDARD(0.05), HIGHER(0.1);
     
     private Double value;
 

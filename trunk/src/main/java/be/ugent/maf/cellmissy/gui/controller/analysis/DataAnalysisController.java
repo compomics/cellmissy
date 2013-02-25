@@ -153,8 +153,8 @@ public class DataAnalysisController {
         return areaPreProcessingController.getPreProcessingMap();
     }
 
-    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean plotErrorBars) {
-        return areaPreProcessingController.createGlobalAreaChart(plateConditionList, plotErrorBars);
+    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars) {
+        return areaPreProcessingController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars);
     }
 
     public List<PlateCondition> getProcessedConditions() {
@@ -189,9 +189,10 @@ public class DataAnalysisController {
 
     /**
      * Show Linear regression results from child controller
+     * @param useCorrectedData 
      */
-    public void showLinearModelInTable() {
-        areaAnalysisController.showLinearModelInTable();
+    public void showLinearModelInTable(boolean useCorrectedData) {
+        areaAnalysisController.showLinearModelInTable(useCorrectedData);
     }
 
     /**
@@ -212,6 +213,14 @@ public class DataAnalysisController {
     public void showNotImagedWells(PlateCondition plateCondition) {
         plateCondition.setLoaded(true);
         analysisPlatePanel.repaint();
+    }
+
+    /**
+     * The user has decided or not to work with corrected data?
+     * @return 
+     */
+    public boolean useCorrectedData() {
+        return areaPreProcessingController.getAreaAnalysisPanel().getUseCorrectedDataCheckBox().isSelected();
     }
 
     /**
@@ -321,6 +330,7 @@ public class DataAnalysisController {
             public void actionPerformed(ActionEvent e) {
                 areaPreProcessingController.initMapWithConditions();
                 areaPreProcessingController.emptyDensityFunctionCache();
+                areaPreProcessingController.setGlobalPlotForFirstTime(true);
                 if (currentCondition != null) {
                     // Execute Swing Worker to fetch Selected Condition: 
                     FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
@@ -336,6 +346,7 @@ public class DataAnalysisController {
             public void actionPerformed(ActionEvent e) {
                 areaPreProcessingController.initMapWithConditions();
                 areaPreProcessingController.emptyDensityFunctionCache();
+                areaPreProcessingController.setGlobalPlotForFirstTime(true);
                 if (currentCondition != null) {
                     // Execute Swing Worker to fetch Selected Condition: 
                     FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
@@ -352,8 +363,8 @@ public class DataAnalysisController {
     /**
      * Compute time frames from time steps list This method only needs to be called one, since time frames is set for the entire experiment Time frames are then equal for both types of analysis
      */
-    private void computeTimeFrames() {
-        double[] timeFrames = new double[experiment.getTimeFrames()];
+    private void computeTimeFrames(int numberOfFrames) {
+        double[] timeFrames = new double[numberOfFrames];
         for (int i = 0; i < timeFrames.length; i++) {
             double timeFrame = i * experiment.getExperimentInterval();
             timeFrames[i] = timeFrame;
@@ -389,7 +400,7 @@ public class DataAnalysisController {
         // set experiment
         experiment = selectedExperiment;
         //compute time frames array
-        computeTimeFrames();
+        computeTimeFrames(experiment.getTimeFrames());
         // init a new list of plate conditions
         plateConditionList = new ArrayList<>();
         plateConditionList.addAll(experiment.getPlateConditionCollection());
@@ -447,6 +458,23 @@ public class DataAnalysisController {
     }
 
     /**
+     *
+     * @param plateCondition
+     * @return
+     */
+    private int getTimeStepsNumber(PlateCondition plateCondition) {
+        int number = 0;
+        for (Well well : plateCondition.getWellCollection()) {
+            List<WellHasImagingType> list = new ArrayList<>(well.getWellHasImagingTypeCollection());
+            if (!list.isEmpty()) {
+                number = list.get(0).getTimeStepCollection().size();
+            }
+        }
+
+        return number;
+    }
+
+    /**
      * Update time steps list with objects from actual selected condition
      *
      * @param plateCondition
@@ -487,6 +515,17 @@ public class DataAnalysisController {
                 ImagingType imagingType = imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex());
                 wellService.fetchTimeSteps(wellList.get(i), algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
             }
+            // check for time frames
+            int timeStepsNumber = getTimeStepsNumber(currentCondition);
+            int timeFramesNumber = timeFrames.length;
+            if (timeFramesNumber != timeStepsNumber) {
+                // warn the user and set time frames to timesteps number
+                showMessage("Exp time frames number: " + timeFramesNumber + " is bigger than images number!\nNew time frames will be set to: " + timeStepsNumber, JOptionPane.WARNING_MESSAGE);
+                computeTimeFrames(timeStepsNumber);
+                experiment.setTimeFrames(timeStepsNumber);
+                experimentService.update(experiment);
+            }
+
             // when all wells were fetched, update TimeStepList
             updateTimeStepsList(currentCondition);
             // if time steps were actually fetched from DB, update map
@@ -529,7 +568,7 @@ public class DataAnalysisController {
                     }
                 } else {
                     // the entire condition was not imaged/analyzed: inform the user
-                    showMessage("This condition was not imaged at all!", JOptionPane.INFORMATION_MESSAGE);
+                    showMessage("This condition was not imaged!", JOptionPane.INFORMATION_MESSAGE);
                     areaPreProcessingController.resetViews();
                 }
                 // set cursor back to default and show all computed results for selected condition

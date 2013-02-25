@@ -217,22 +217,15 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(88, 88, 88)
                         .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(userInputPanelLayout.createSequentialGroup()
-                                .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(datasetNameTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
-                                    .addComponent(addDatasetButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
-                                    .addComponent(imagingNameTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(addImagingButton, javax.swing.GroupLayout.Alignment.TRAILING))
-                                .addGap(10, 10, 10))
-                            .addGroup(userInputPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addContainerGap())
-                            .addGroup(userInputPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addContainerGap(40, Short.MAX_VALUE))))
-                    .addGroup(userInputPanelLayout.createSequentialGroup()
-                        .addComponent(removeButton)
-                        .addContainerGap(206, Short.MAX_VALUE))))
+                            .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(datasetNameTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                                .addComponent(addDatasetButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                                .addComponent(imagingNameTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(addImagingButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)))
+                    .addComponent(removeButton))
+                .addContainerGap(3, Short.MAX_VALUE))
         );
 
         userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addDatasetButton, addImagingButton, datasetNameTextField, imagingNameTextField});
@@ -250,7 +243,7 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
                         .addComponent(datasetNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(addDatasetButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(imagingNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -281,7 +274,7 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
         rawDataPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        jLabel1.setText("Raw data");
+        jLabel1.setText("Data imported (for selected well)");
 
         rawDataTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

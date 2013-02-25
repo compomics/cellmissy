@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
+import be.ugent.maf.cellmissy.gui.view.renderer.DataTreeCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.RightAlignmentRenderer;
 import be.ugent.maf.cellmissy.parser.GenericInputFileParser;
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -90,7 +90,8 @@ public class GenericImagedPlateController {
 
     /**
      * getters and setters
-     * @return 
+     *
+     * @return
      */
     public ImagedPlatePanel getImagedPlatePanel() {
         return imagedPlatePanel;
@@ -122,7 +123,8 @@ public class GenericImagedPlateController {
 
     /**
      * This is checking that each well on the plate that has a condition, contains a collection of WellhasImagingType not empty, i.e. with some data loaded
-     * @return 
+     *
+     * @return
      */
     public boolean validateDataLoading() {
         boolean isDataLoadingValid = true;
@@ -148,8 +150,10 @@ public class GenericImagedPlateController {
         // empty wellhasimagingtype collection of each well
         List<WellGui> wellGuiList = imagedPlatePanel.getWellGuiList();
         for (WellGui wellGui : wellGuiList) {
+
             wellGui.getWell().getWellHasImagingTypeCollection().clear();
             onCancel(wellGui);
+
         }
         // repain the plate view
         imagedPlatePanel.repaint();
@@ -173,7 +177,6 @@ public class GenericImagedPlateController {
          * Mouse Listener for imaged plate panel
          */
         imagedPlatePanel.addMouseListener(new MouseAdapter() {
-
             // if the mouse has been pressed and released on a wellGui, show a dialog to choose file to parse
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -218,8 +221,8 @@ public class GenericImagedPlateController {
                                 }
                             } else {
                                 // warn the user that data was already loaded for the selected combination of well/dataset/imaging type
-                                Object[] options = {"Overwrite", "Clear data", "Cancel"};
-                                int showOptionDialog = JOptionPane.showOptionDialog(null, "Data already loaded for this well / dataset / imaging type.\nWhat do you want to do now?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+                                Object[] options = {"Overwrite", "Clear data", "Add location on same well", "Cancel"};
+                                int showOptionDialog = JOptionPane.showOptionDialog(null, "Data already loaded for this well / dataset / imaging type.\nWhat do you want to do now?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[3]);
                                 switch (showOptionDialog) {
                                     case 0: // overwrite loaded data:      
                                         // choose another file to parse (another dataset to load)
@@ -238,9 +241,9 @@ public class GenericImagedPlateController {
                                         break;
                                     case 1: // clear data for current algorithm/imaging type
                                         if (!isNotLast(selectedWellGui)) {
-                                            removeOldDataFromList(newWellHasImagingType);
+                                            List<WellHasImagingType> oldSamples = removeOldDataFromList(newWellHasImagingType);
                                             // remove the data from the well
-                                            selectedWellGui.getWell().getWellHasImagingTypeCollection().remove(newWellHasImagingType);
+                                            selectedWellGui.getWell().getWellHasImagingTypeCollection().removeAll(oldSamples);
                                             // update relation with algorithm and imaging type
                                             currentAlgorithm.getWellHasImagingTypeCollection().remove(newWellHasImagingType);
                                             currentImagingType.getWellHasImagingTypeCollection().remove(newWellHasImagingType);
@@ -251,8 +254,15 @@ public class GenericImagedPlateController {
                                             loadExperimentFromGenericInputController.showMessage("Please remove first last added imaging type " + "(" + lastImagingType.getName() + ")", JOptionPane.WARNING_MESSAGE);
                                         }
                                         break;
-                                    case 2: // cancel: do nothing
-                                        return;
+                                    case 2: // select another file to parse, adding location on the same well
+                                        // choose another file to parse (another dataset to load)
+                                        newFile = chooseData();
+                                        if (newFile != null) {
+                                            // load new data
+                                            loadData(newFile, newWellHasImagingType, selectedWellGui);
+                                        }
+                                        break;
+                                    // cancel: do nothing
                                 }
                             }
                         } else {
@@ -268,9 +278,10 @@ public class GenericImagedPlateController {
 
     /**
      * This is parsing a certain file, for a certain selected well and a wellHasImagingType (i.e. dataset and imaging type are chosen)
+     *
      * @param bulkCellFile
      * @param newWellHasImagingType
-     * @param selectedWellGui 
+     * @param selectedWellGui
      */
     private void loadData(File bulkCellFile, WellHasImagingType newWellHasImagingType, WellGui selectedWellGui) {
         Collection<WellHasImagingType> wellHasImagingTypeCollection = selectedWellGui.getWell().getWellHasImagingTypeCollection();
@@ -291,31 +302,40 @@ public class GenericImagedPlateController {
 
     /**
      * Opening a dialog to select file to parse and load data parsing the selected file
+     *
      * @param rawDataChooser
      * @param newWellHasImagingType
-     * @param selectedWellGui 
+     * @param selectedWellGui
      */
     private File chooseData() {
         File bulkCellFile = null;
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser fileChooser = new JFileChooser();
         // to select only txt files
-        chooser.setFileFilter(new FileFilter() {
-
+        fileChooser.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File f) {
-                return f.getName().toLowerCase(Locale.ENGLISH).endsWith(".txt");
+                if (f.isDirectory()) {
+                    return true;
+                }
+                int index = f.getName().lastIndexOf(".");
+                String extension = f.getName().substring(index + 1);
+                if (extension.equals("txt")) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
 
             @Override
             public String getDescription() {
-                return ("(.txt)");
+                return ("text files only");
             }
         });
-        int returnVal = chooser.showOpenDialog(loadExperimentFromGenericInputController.getCellMissyFrame());
+        int returnVal = fileChooser.showOpenDialog(loadExperimentFromGenericInputController.getCellMissyFrame());
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             // load selected data
             // file to parse 
-            bulkCellFile = chooser.getSelectedFile();
+            bulkCellFile = fileChooser.getSelectedFile();
         } else {
             loadExperimentFromGenericInputController.showMessage("Open command cancelled by user", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -324,7 +344,8 @@ public class GenericImagedPlateController {
 
     /**
      * Reload data already parsed for a selected well
-     * @param selectedWellGui 
+     *
+     * @param selectedWellGui
      */
     private void reloadData(WellGui selectedWellGui) {
         // empty the list
@@ -339,21 +360,27 @@ public class GenericImagedPlateController {
 
     /**
      * remove timeSteps from List: this is called when the user wants to overwrite data or to clear data.
-     * @param wellHasImagingTypeToOverwrite 
+     *
+     * @param wellHasImagingTypeToOverwrite
      */
-    private void removeOldDataFromList(WellHasImagingType wellHasImagingTypeToOverwrite) {
+    private List<WellHasImagingType> removeOldDataFromList(WellHasImagingType wellHasImagingTypeToOverwrite) {
+        List<WellHasImagingType> list = new ArrayList<>();
         Iterator<TimeStep> iterator = timeStepsBindingList.iterator();
         while (iterator.hasNext()) {
-            if (iterator.next().getWellHasImagingType().equals(wellHasImagingTypeToOverwrite)) {
+            WellHasImagingType wellHasImagingType = iterator.next().getWellHasImagingType();
+            if (wellHasImagingType.equals(wellHasImagingTypeToOverwrite)) {
+                list.add(wellHasImagingType);
                 iterator.remove();
             }
         }
+        return list;
     }
 
     /**
      * Check if the TimeStepsList contains the selected well
+     *
      * @param selectedWellGui
-     * @return 
+     * @return
      */
     private boolean containsWell(WellGui selectedWellGui) {
         boolean containsWell = false;
@@ -368,8 +395,8 @@ public class GenericImagedPlateController {
     }
 
     /**
-     * 
-     * @param selectedWellGui 
+     *
+     * @param selectedWellGui
      */
     private void highlightImagedWell(WellGui selectedWellGui) {
         List<Ellipse2D> ellipsi = selectedWellGui.getEllipsi();
@@ -397,7 +424,8 @@ public class GenericImagedPlateController {
 
     /**
      * On cancel: delete data and, if necessary, repaint the plate view
-     * @param wellGui 
+     *
+     * @param wellGui
      */
     private void onCancel(WellGui wellGui) {
         Collection<WellHasImagingType> wellHasImagingTypeCollection = wellGui.getWell().getWellHasImagingTypeCollection();
@@ -422,7 +450,8 @@ public class GenericImagedPlateController {
 
     /**
      * Check if the imaging type the user is attempting to delete is the first one
-     * @return 
+     *
+     * @return
      */
     private boolean isNotLast(WellGui wellGui) {
         Collection<WellHasImagingType> wellHasImagingTypeCollection = wellGui.getWell().getWellHasImagingTypeCollection();
@@ -438,9 +467,10 @@ public class GenericImagedPlateController {
 
     /**
      * Check if a collection of wellhasImagingTypes contains a certain imaging type
+     *
      * @param wellHasImagingTypes
      * @param imagingType
-     * @return 
+     * @return
      */
     private boolean containsImagingType(Collection<WellHasImagingType> wellHasImagingTypes, ImagingType imagingType) {
         for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
@@ -463,10 +493,13 @@ public class GenericImagedPlateController {
         imagingTypesBindingList = ObservableCollections.observableList(new ArrayList<ImagingType>());
         // set imaging type list for plate
         imagedPlatePanel.setImagingTypeList(imagingTypesBindingList);
+        // set cell renderer for the JTree
+        loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getDataTree().setCellRenderer(new DataTreeCellRenderer(imagingTypesBindingList));
     }
 
     /**
      * This method validates the selection of a well on the plate
+     *
      * @return true if the selection is valid
      */
     private boolean validateSelection(WellGui selectedWellGui) {
