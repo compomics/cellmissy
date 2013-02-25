@@ -17,7 +17,8 @@ public interface AreaAnalyzer {
      * Estimate Linear Regression Model: compute slopes and R squared coefficients
      * @param areaPreProcessingResults
      * @param areaAnalysisResults
+     * @param useCorrectedData 
      * @param timeFrames 
      */
-    public void estimateLinearModel(AreaPreProcessingResults areaPreProcessingResults, AreaAnalysisResults areaAnalysisResults, double[] timeFrames);
+    public void estimateLinearModel(AreaPreProcessingResults areaPreProcessingResults, AreaAnalysisResults areaAnalysisResults, boolean useCorrectedData, double[] timeFrames);
 }

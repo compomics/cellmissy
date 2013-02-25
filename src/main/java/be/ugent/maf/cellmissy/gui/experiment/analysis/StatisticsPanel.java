@@ -120,10 +120,10 @@ public class StatisticsPanel extends javax.swing.JPanel {
         infoTextPane.setPreferredSize(new java.awt.Dimension(600, 150));
         infoScrollPane.setViewportView(infoTextPane);
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 12));
+        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         jLabel3.setText("ANALYISIS OF GROUP: ");
 
-        groupNameLabel.setFont(new java.awt.Font("Tahoma", 1, 12));
+        groupNameLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         groupNameLabel.setForeground(new java.awt.Color(255, 0, 0));
         groupNameLabel.setMaximumSize(new java.awt.Dimension(20, 20));
         groupNameLabel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -153,7 +153,7 @@ public class StatisticsPanel extends javax.swing.JPanel {
             .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(infoPanelLayout.createSequentialGroup()
                     .addComponent(infoScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(38, Short.MAX_VALUE)))
+                    .addContainerGap(235, Short.MAX_VALUE)))
         );
 
         infoPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {groupNameLabel, jLabel3});
@@ -254,7 +254,7 @@ public class StatisticsPanel extends javax.swing.JPanel {
         jPanel1.setOpaque(false);
         jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setText("Multiple Comparisons Correction");
 
         significanceLevelComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -267,10 +267,10 @@ public class StatisticsPanel extends javax.swing.JPanel {
         testDescriptionTextPane.setFocusable(false);
         jScrollPane1.setViewportView(testDescriptionTextPane);
 
-        saveAnalysisButton.setFont(new java.awt.Font("Tahoma", 1, 11));
+        saveAnalysisButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         saveAnalysisButton.setText("Save Analysis");
 
-        groupNameLabel1.setFont(new java.awt.Font("Tahoma", 2, 12));
+        groupNameLabel1.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         groupNameLabel1.setText("*p values smaller than significance level are shown in green");
         groupNameLabel1.setMaximumSize(new java.awt.Dimension(20, 20));
         groupNameLabel1.setMinimumSize(new java.awt.Dimension(20, 20));

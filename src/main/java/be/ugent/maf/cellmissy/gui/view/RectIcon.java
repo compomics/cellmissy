@@ -11,7 +11,7 @@ import java.awt.Graphics2D;
 import javax.swing.Icon;
 
 /**
- *
+ * Rectangular icon to show conditions in a list
  * @author Paola Masuzzo
  */
 public class RectIcon implements Icon {
@@ -21,8 +21,9 @@ public class RectIcon implements Icon {
     private Color color;
 
     /**
-     * constructor
-     * @param color 
+     * Constructor with a color
+     *
+     * @param color
      */
     public RectIcon(Color color) {
         this.color = color;

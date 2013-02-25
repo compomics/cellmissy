@@ -26,9 +26,14 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
     private LinearRegressor linearRegressor;
 
     @Override
-    public void estimateLinearModel(AreaPreProcessingResults areaPreProcessingResults, AreaAnalysisResults areaAnalysisResults, double[] timeFrames) {
-        Double[][] normalizedCorrectedArea = areaPreProcessingResults.getNormalizedCorrectedArea();
-        Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
+    public void estimateLinearModel(AreaPreProcessingResults areaPreProcessingResults, AreaAnalysisResults areaAnalysisResults, boolean useCorrectedData, double[] timeFrames) {
+        Double[][] dataToUse;
+        if (useCorrectedData) {
+            dataToUse = areaPreProcessingResults.getNormalizedCorrectedArea();
+        } else {
+            dataToUse = areaPreProcessingResults.getNormalizedArea();
+        }
+        Double[][] transposedArea = AnalysisUtils.transpose2DArray(dataToUse);
         // check if some replicates need to be excluded
         boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
         // Double arrays for slopes and R2 coefficients

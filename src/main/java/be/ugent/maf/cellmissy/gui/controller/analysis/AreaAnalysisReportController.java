@@ -47,6 +47,7 @@ public class AreaAnalysisReportController {
     private Experiment experiment;
     private Document document;
     private PdfWriter writer;
+    private boolean useCorrectedData;
     private static Font bodyFont = new Font(Font.TIMES_ROMAN, 8);
     private static Font titleFont = new Font(Font.TIMES_ROMAN, 10, Font.BOLD);
     private static int chartWidth = 500;
@@ -59,6 +60,13 @@ public class AreaAnalysisReportController {
     private AreaAnalysisController areaAnalysisController;
     //child controllers
     //services
+
+    /**
+     * getters and setters
+     */
+    public void setUseCorrectedData(boolean useCorrectedData) {
+        this.useCorrectedData = useCorrectedData;
+    }
 
     /**
      *
@@ -188,7 +196,7 @@ public class AreaAnalysisReportController {
     private void addGlobalAreaChart() {
         List<PlateCondition> plateConditonsList = new ArrayList<>(experiment.getPlateConditionCollection());
         // create chart (for all conditions, no error bars on top)
-        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, false);
+        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, useCorrectedData, false);
         // add chart as image
         addImageFromChart(globalAreaChart, chartWidth, chartHeight);
     }

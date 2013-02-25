@@ -99,6 +99,7 @@ public class AreaPreProcessingController {
     private JTableBinding timeStepsTableBinding;
     private JTable dataTable;
     private Map<PlateCondition, AreaPreProcessingResults> preProcessingMap;
+    private boolean globalPlotForFirstTime;
     //view
     private AreaAnalysisPanel areaAnalysisPanel;
     private CorrectedAreaPanel correctedAreaPanel;
@@ -153,6 +154,10 @@ public class AreaPreProcessingController {
 
     public ChartPanel getGlobalAreaChartPanel() {
         return globalAreaChartPanel;
+    }
+
+    public void setGlobalPlotForFirstTime(boolean globalPlotForFirstTime) {
+        this.globalPlotForFirstTime = globalPlotForFirstTime;
     }
 
     /**
@@ -253,36 +258,6 @@ public class AreaPreProcessingController {
 
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${area}"));
         columnBinding.setColumnName("Area " + "(\u00B5" + "m" + "\u00B2)");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new FormatRenderer(dataAnalysisController.getFormat()));
-
-        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${centroidX}"));
-        columnBinding.setColumnName("Centroid_x (pixels)");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new FormatRenderer(dataAnalysisController.getFormat()));
-
-        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${centroidY}"));
-        columnBinding.setColumnName("Centroid_y (pixels)");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new FormatRenderer(dataAnalysisController.getFormat()));
-
-        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${eccentricity}"));
-        columnBinding.setColumnName("Eccentricity");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new FormatRenderer(dataAnalysisController.getFormat()));
-
-        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${majorAxis}"));
-        columnBinding.setColumnName("Major Axis " + "(\u00B5" + "m)");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new FormatRenderer(dataAnalysisController.getFormat()));
-
-        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${minorAxis}"));
-        columnBinding.setColumnName("Minor Axis " + "(\u00B5" + "m)");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
         columnBinding.setRenderer(new FormatRenderer(dataAnalysisController.getFormat()));
@@ -574,18 +549,25 @@ public class AreaPreProcessingController {
     }
 
     /**
+     * Create chart with global view (all biological conditions, with area evolution in time)
      *
      * @param plateConditionList
+     * @param useCorrectedData
      * @param plotErrorBars
      * @return
      */
-    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean plotErrorBars) {
+    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars) {
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
         List<Double[]> yErrorsList = new ArrayList<>();
+        Double[][] dataToShow;
         for (PlateCondition plateCondition : plateConditionList) {
             AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
             if (areaPreProcessingResults != null) {
-                Double[][] normalizedCorrectedArea = areaPreProcessingResults.getNormalizedCorrectedArea();
+                if (useCorrectedData) {
+                    dataToShow = areaPreProcessingResults.getNormalizedCorrectedArea();
+                } else {
+                    dataToShow = areaPreProcessingResults.getNormalizedArea();
+                }
                 // Boolean (Exclude Replicates from dataset)
                 boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
                 // time interval to use
@@ -604,7 +586,7 @@ public class AreaPreProcessingController {
                 //time frames direction
                 index = timeInterval.getFirstTimeFrame();
                 for (int i = 0; i < yValues.length; i++) {
-                    double[] allReplicateValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(normalizedCorrectedArea[index]));
+                    double[] allReplicateValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(dataToShow[index]));
                     List<Double> replicatesToIncludeList = new ArrayList();
                     for (int j = 0; j < allReplicateValues.length; j++) {
                         // check if replicate has to be excluded from dataset
@@ -624,6 +606,7 @@ public class AreaPreProcessingController {
                 values.setKey("Cond " + (dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1));
                 xySeriesCollection.addSeries(values);
 
+
             }
         }
         JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
@@ -639,12 +622,14 @@ public class AreaPreProcessingController {
      * private methods and classes
      */
     /**
+     * Plot global area for a list of certain biological conditions, using or not corrected data and plotting or not error bars on top
      *
      * @param plateConditionList
+     * @param useCorrectedData
      * @param plotErrorBars
      */
-    private void plotGlobalArea(List<PlateCondition> plateConditionList, boolean plotErrorBars) {
-        JFreeChart globalAreaChart = createGlobalAreaChart(plateConditionList, plotErrorBars);
+    private void plotGlobalArea(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars) {
+        JFreeChart globalAreaChart = createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars);
         globalAreaChartPanel.setChart(globalAreaChart);
         areaAnalysisPanel.getGlobalViewPanel().add(globalAreaChartPanel, gridBagConstraints);
         areaAnalysisPanel.getGlobalViewPanel().repaint();
@@ -658,6 +643,7 @@ public class AreaPreProcessingController {
      */
     private Double[][] getAreaRawData(PlateCondition plateCondition) {
         int numberOfSamples = AnalysisUtils.getNumberOfSamplesPerCondition(plateCondition);
+        boolean firstAreaIsZero = false;
         Double[][] areaRawData = new Double[dataAnalysisController.getTimeFrames().length][numberOfSamples];
         int counter = 0;
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
@@ -666,11 +652,16 @@ public class AreaPreProcessingController {
                 if (rowIndex != 0) {
                     if (timeStepsBindingList.get(counter).getArea() != 0) {
                         areaRawData[rowIndex][columnIndex] = timeStepsBindingList.get(counter).getArea();
+                    } else if (timeStepsBindingList.get(counter).getArea() == 0 && firstAreaIsZero) {
+                        areaRawData[rowIndex][columnIndex] = 0.0;
                     } else {
                         areaRawData[rowIndex][columnIndex] = null;
                     }
                 } else {
                     areaRawData[rowIndex][columnIndex] = timeStepsBindingList.get(counter).getArea();
+                    if (areaRawData[rowIndex][columnIndex] == 0) {
+                        firstAreaIsZero = true;
+                    }
                 }
                 counter++;
             }
@@ -779,8 +770,8 @@ public class AreaPreProcessingController {
         // init main view and add it to parent panel
         areaAnalysisPanel = new AreaAnalysisPanel();
 
-        // time steps table is not focusable, nor the user can select rows
-        areaAnalysisPanel.getTimeStepsTable().setFocusable(false);
+        // time steps table can not be edit, but it can be selected through columns
+        areaAnalysisPanel.getTimeStepsTable().setColumnSelectionAllowed(true);
         areaAnalysisPanel.getTimeStepsTable().setRowSelectionAllowed(false);
         // set background to white 
         areaAnalysisPanel.getTimeStepsTableScrollPane().getViewport().setBackground(Color.white);
@@ -798,6 +789,7 @@ public class AreaPreProcessingController {
         //init timeStepsBindingList
         timeStepsBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
 
+        globalPlotForFirstTime = true;
         //init subview
         correctedAreaPanel = new CorrectedAreaPanel();
         //init chart panels
@@ -837,6 +829,7 @@ public class AreaPreProcessingController {
         timeFramesSelectionPanel.getWarningLabel().setVisible(false);
         preProcessingMap = new LinkedHashMap<>();
         areaAnalysisPanel.getPlotErrorBarsCheckBox().setEnabled(false);
+        areaAnalysisPanel.getUseCorrectedDataCheckBox().setSelected(true);
 
         // add action listeners
 
@@ -956,43 +949,39 @@ public class AreaPreProcessingController {
                 if (areaAnalysisPanel.getBulkTabbedPane().getSelectedIndex() == 2) {
                     // check if a swing worker with a progress bar is actually needed:
                     // only if the number of fetched conditions is not equal to the number of all conditions of experiment
-                    if (getNumberOfFetchedCondition() != dataAnalysisController.getPlateConditionList().size()) {
+                    if (globalPlotForFirstTime) {
                         // create and execute a swing worker
                         FetchAllConditionsSwingWorker fetchAllConditionsSwingWorker = new FetchAllConditionsSwingWorker();
                         fetchAllConditionsSwingWorker.execute();
                     } else {
+                        List<PlateCondition> processedConditions = getProcessedConditions();
+                        List<PlateCondition> selectedConditions = getSelectedConditions();
+                        List<Integer> numberOfReplicates = getNumberOfReplicates();
                         // enable now tab for analysis
                         areaAnalysisPanel.getBulkTabbedPane().setEnabledAt(3, true);
                         // enable check box to show error bars
                         areaAnalysisPanel.getPlotErrorBarsCheckBox().setEnabled(true);
-                        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(getProcessedConditions());
+                        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
                         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, areaAnalysisPanel.getConditionsList());
                         bindingGroup.addBinding(jListBinding);
                         bindingGroup.bind();
+                        areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, numberOfReplicates));
 
-                        if (areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected()) {
-                            areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(getProcessedConditions(), getNumberOfReplicates()));
-                            if (getSelectedConditions().isEmpty()) {
-                                plotGlobalArea(getProcessedConditions(), true);
-                            } else {
-                                plotGlobalArea(getSelectedConditions(), true);
-                            }
+                        boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
+                        boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
+                        if (selectedConditions.isEmpty()) {
+                            plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars);
                         } else {
-                            areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(getProcessedConditions(), getNumberOfReplicates()));
-                            areaAnalysisPanel.getPlotErrorBarsCheckBox().setEnabled(true);
-                            if (getSelectedConditions().isEmpty()) {
-                                plotGlobalArea(getProcessedConditions(), false);
-                            } else {
-                                plotGlobalArea(getSelectedConditions(), false);
-                            }
+                            plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars);
                         }
                     }
                 }
 
                 // click on "Analysis" tab, show Linear Model Results
                 if (areaAnalysisPanel.getBulkTabbedPane().getSelectedIndex() == 3) {
+                    boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
                     // show Linear Model Results from the other child controller
-                    dataAnalysisController.showLinearModelInTable();
+                    dataAnalysisController.showLinearModelInTable(useCorrectedData);
                 }
             }
         });
@@ -1003,18 +992,47 @@ public class AreaPreProcessingController {
         areaAnalysisPanel.getPlotErrorBarsCheckBox().addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
+                List<PlateCondition> selectedConditions = getSelectedConditions();
+                List<PlateCondition> processedConditions = getProcessedConditions();
+                boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     // check if conditions are selected, if not plot entire dataset
-                    if (getSelectedConditions().isEmpty()) {
-                        plotGlobalArea(getProcessedConditions(), true);
+                    if (selectedConditions.isEmpty()) {
+                        plotGlobalArea(processedConditions, useCorrectedData, true);
                     } else {
-                        plotGlobalArea(getSelectedConditions(), true);
+                        plotGlobalArea(selectedConditions, useCorrectedData, true);
                     }
                 } else {
-                    if (getSelectedConditions().isEmpty()) {
-                        plotGlobalArea(getProcessedConditions(), false);
+                    if (selectedConditions.isEmpty()) {
+                        plotGlobalArea(processedConditions, useCorrectedData, false);
                     } else {
-                        plotGlobalArea(getSelectedConditions(), false);
+                        plotGlobalArea(selectedConditions, useCorrectedData, false);
+                    }
+                }
+            }
+        });
+
+
+        /**
+         * Add item listener to use corrected data check box: use or not corrected data for global plot and linear model?
+         */
+        areaAnalysisPanel.getUseCorrectedDataCheckBox().addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                List<PlateCondition> selectedConditions = getSelectedConditions();
+                List<PlateCondition> processedConditions = getProcessedConditions();
+                boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    if (selectedConditions.isEmpty()) {
+                        plotGlobalArea(processedConditions, true, plotErrorBars);
+                    } else {
+                        plotGlobalArea(selectedConditions, true, plotErrorBars);
+                    }
+                } else {
+                    if (selectedConditions.isEmpty()) {
+                        plotGlobalArea(processedConditions, false, plotErrorBars);
+                    } else {
+                        plotGlobalArea(selectedConditions, false, plotErrorBars);
                     }
                 }
             }
@@ -1027,12 +1045,11 @@ public class AreaPreProcessingController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // plot global area only for selected conditions
-                // make a distinction if error bars needed to be plot or not
-                if (areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected()) {
-                    plotGlobalArea(getSelectedConditions(), true);
-                } else {
-                    plotGlobalArea(getSelectedConditions(), false);
-                }
+                // make a distinction if error bars needed to be plot or not, and if the user wants to plot raw data or corrected data
+                List<PlateCondition> selectedConditions = getSelectedConditions();
+                boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
+                boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
+                plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars);
             }
         });
 
@@ -1042,14 +1059,13 @@ public class AreaPreProcessingController {
         areaAnalysisPanel.getPlotAllConditionsButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                List<PlateCondition> processedConditions = getProcessedConditions();
                 // clear selection from list
                 areaAnalysisPanel.getConditionsList().clearSelection();
-                // plot global area for all conditions, checking if error bars need to be shown or not
-                if (areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected()) {
-                    plotGlobalArea(getSelectedConditions(), true);
-                } else {
-                    plotGlobalArea(getSelectedConditions(), false);
-                }
+                // plot global area for all conditions, checking if error bars need to be shown or not, and if raw data or corrected data 
+                boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
+                boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
+                plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars);
             }
         });
 
@@ -1227,6 +1243,7 @@ public class AreaPreProcessingController {
             });
             // show waiting cursor
             dataAnalysisController.setCursor(Cursor.WAIT_CURSOR);
+            List<PlateCondition> processedConditions = getProcessedConditions();
             for (PlateCondition plateCondition : dataAnalysisController.getPlateConditionList()) {
                 // if for current condition computations were not performed yet
                 if (preProcessingMap.get(plateCondition) == null) {
@@ -1250,20 +1267,26 @@ public class AreaPreProcessingController {
         protected void done() {
             try {
                 get();
+                globalPlotForFirstTime = false;
+                List<PlateCondition> processedConditions = getProcessedConditions();
                 // when the thread is done, hide progress bar again
                 dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setVisible(false);
                 dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
                 // show all conditions in one plot (Global Area View)
-                plotGlobalArea(getProcessedConditions(), false);
+                plotGlobalArea(processedConditions, true, false);
                 // enable now tab for analysis
                 areaAnalysisPanel.getBulkTabbedPane().setEnabledAt(3, true);
                 // enable check box to show error bars
                 areaAnalysisPanel.getPlotErrorBarsCheckBox().setEnabled(true);
-                ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(getProcessedConditions());
+                ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
                 JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, areaAnalysisPanel.getConditionsList());
                 bindingGroup.addBinding(jListBinding);
                 bindingGroup.bind();
-                areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(getProcessedConditions(), getNumberOfReplicates()));
+                areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, getNumberOfReplicates()));
+                if (processedConditions.size() != dataAnalysisController.getPlateConditionList().size()) {
+                    // inform the user that not all conditions were imaged
+                    dataAnalysisController.showMessage("Note that not every condition was imaged!", JOptionPane.INFORMATION_MESSAGE);
+                }
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
