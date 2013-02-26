@@ -10,6 +10,8 @@ import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.FileParserException;
+import be.ugent.maf.cellmissy.exception.PositionListMismatchException;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +27,10 @@ public interface WellService extends GenericService<Well, Long> {
      * Initializes the service this method initializes also CellMiaDataService and MicroscopeDataService
      *
      * @param experiment
+     * @throws FileParserException
+     * @throws PositionListMismatchException  
      */
-    void init(Experiment experiment);
+    void init(Experiment experiment) throws FileParserException, PositionListMismatchException;
 
     /**
      * This method uses the plate format and the first WellGui selected by the user to update the wellGui List with the right ones
@@ -49,8 +53,10 @@ public interface WellService extends GenericService<Well, Long> {
      * This method gets a map between algorithms and samples (indexed by imaging types)
      *
      * @return a map Algorithm, map imaging type--wellHasImagingType
+     * @throws FileParserException
+     * @throws PositionListMismatchException  
      */
-    Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap();
+    Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException;
 
     /**
      * Find all algorithms for one wellId

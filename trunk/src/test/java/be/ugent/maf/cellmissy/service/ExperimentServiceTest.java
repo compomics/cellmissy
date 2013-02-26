@@ -64,9 +64,9 @@ public class ExperimentServiceTest {
         // initialize service
         experimentService.init(mainDirectoryTest);
         List<Experiment> experimentsFound = experimentService.findExperimentsByProjectIdAndStatus(1L, ExperimentStatus.IN_PROGRESS);
-        Assert.assertEquals(1, experimentsFound.size());
+        Assert.assertEquals(2, experimentsFound.size());
         // get the service
-        Experiment experiment = experimentsFound.get(0);
+        Experiment experiment = experimentsFound.get(1);
         // load folders
         experimentService.loadFolderStructure(experiment);
         // get microscope file

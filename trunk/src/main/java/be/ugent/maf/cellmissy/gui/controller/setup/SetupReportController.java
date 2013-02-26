@@ -82,7 +82,7 @@ public class SetupReportController {
         try {
             boolean success = pdfFile.createNewFile();
             if (success) {
-                setupExperimentController.showMessage("Pdf Report successfully created!", JOptionPane.INFORMATION_MESSAGE);
+                setupExperimentController.showMessage("Pdf Report successfully created!", "Report created", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 Object[] options = {"Yes", "No", "Cancel"};
                 int showOptionDialog = JOptionPane.showOptionDialog(null, "File already exists. Do you want to replace it?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
@@ -98,14 +98,14 @@ public class SetupReportController {
                 }
             }
         } catch (IOException ex) {
-            setupExperimentController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
+            setupExperimentController.showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         try (FileOutputStream fileOutputStream = new FileOutputStream(pdfFile)) {
             // actually create PDF file
             createPdfFile(fileOutputStream);
         } catch (IOException ex) {
-            setupExperimentController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
+            setupExperimentController.showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -212,7 +212,7 @@ public class SetupReportController {
         try {
             document.add(imageFromJPanel);
         } catch (DocumentException ex) {
-            setupExperimentController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
+            setupExperimentController.showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -440,7 +440,7 @@ public class SetupReportController {
         try {
             document.add(dataTable);
         } catch (DocumentException ex) {
-            setupExperimentController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
+            setupExperimentController.showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

@@ -8,6 +8,8 @@ import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.FileParserException;
+import be.ugent.maf.cellmissy.exception.PositionListMismatchException;
 import java.util.List;
 import java.util.Map;
 
@@ -32,8 +34,10 @@ public interface CellMiaDataService {
     /**
      * this method sets Tracks and TimeSteps of the WellHasImagingType entities (for each algorithm detected)
      * @return a map from Algorithms to map (from ImagingType to WellHasImagingType entities)
+     * @throws FileParserException
+     * @throws PositionListMismatchException  
      */
-    Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processCellMiaData();
+    Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processCellMiaData() throws FileParserException, PositionListMismatchException;
     
     /**
      * Get number of samples to parse

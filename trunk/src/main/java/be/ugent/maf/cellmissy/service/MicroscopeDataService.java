@@ -3,6 +3,8 @@ package be.ugent.maf.cellmissy.service;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.FileParserException;
+import be.ugent.maf.cellmissy.exception.PositionListMismatchException;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,8 @@ public interface MicroscopeDataService {
     /**
      * this method uses both ObsepFileParser and PositionListParser classes to process data from the microscope
      * @return a map from ImagingType to WellHasImagingType entities
+     * @throws FileParserException
+     * @throws PositionListMismatchException  
      */
-    Map<ImagingType, List<WellHasImagingType>> processMicroscopeData();
+    Map<ImagingType, List<WellHasImagingType>> processMicroscopeData() throws FileParserException, PositionListMismatchException;
 }

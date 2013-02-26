@@ -203,10 +203,11 @@ public class SetupExperimentController {
      * show a message through the main frame
      *
      * @param message
+     * @param title
      * @param messageType
      */
-    public void showMessage(String message, Integer messageType) {
-        cellMissyController.showMessage(message, messageType);
+    public void showMessage(String message, String title, Integer messageType) {
+        cellMissyController.showMessage(message, title, messageType);
     }
 
     /**
@@ -246,7 +247,7 @@ public class SetupExperimentController {
                         //if the wells do have a condition already, the selection is not valid
                         isSelectionValid = false;
                         //in this case, show a message through the main controller
-                        cellMissyController.showMessage("Some wells already have a condition\nPlease make another selection", JOptionPane.WARNING_MESSAGE);
+                        cellMissyController.showMessage("Some wells already have a condition\nPlease make another selection", "Wells' selection error", JOptionPane.WARNING_MESSAGE);
                         //exit from the outer loop
                         break outerloop;
                     }
@@ -326,7 +327,7 @@ public class SetupExperimentController {
             for (String string : setupConditionsController.validateCondition(plateCondition)) {
                 message += string + "\n";
             }
-            cellMissyController.showMessage(message, JOptionPane.WARNING_MESSAGE);
+            cellMissyController.showMessage(message, "Condition validation problem", JOptionPane.WARNING_MESSAGE);
             setupConditionsController.getConditionsPanel().getConditionsJList().setSelectedIndex(setupConditionsController.getPreviousConditionIndex());
         }
         return isValid;
@@ -416,7 +417,7 @@ public class SetupExperimentController {
                     bindingGroup.addBinding(jListBinding);
                     bindingGroup.bind();
                 } else {
-                    cellMissyController.showMessage("There are no experiments yet for this project!", JOptionPane.INFORMATION_MESSAGE);
+                    cellMissyController.showMessage("There are no experiments yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
                     if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                         experimentBindingList.clear();
                     }
@@ -521,7 +522,7 @@ public class SetupExperimentController {
                     SetupReportWorker setupReportWorker = new SetupReportWorker();
                     setupReportWorker.execute();
                 } else {
-                    showMessage("Some wells do not have a condition, please reset view.", JOptionPane.WARNING_MESSAGE);
+                    showMessage("Some wells do not have a condition, please reset view.", "Wells' selection error", JOptionPane.WARNING_MESSAGE);
                 }
 
             }
@@ -535,7 +536,7 @@ public class SetupExperimentController {
                 experimentService.save(experiment);
                 //disable button
                 setupExperimentPanel.getFinishButton().setEnabled(false);
-                showMessage("Experiment was successfully saved to DB.", JOptionPane.INFORMATION_MESSAGE);
+                showMessage("Experiment was successfully saved to DB.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
             }
         });
     }

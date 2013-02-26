@@ -80,12 +80,13 @@ public class AreaAnalysisReportController {
         if (reportName.endsWith(".pdf")) {
             tryToCreateFile(pdfFile);
         } else {
-            areaAnalysisController.showMessage("Please use .pdf extension for the file.", JOptionPane.WARNING_MESSAGE);
+            areaAnalysisController.showMessage("Please use .pdf extension for the file.", "Extension file problem", JOptionPane.WARNING_MESSAGE);
             // retry to create pdf file
             try {
                 areaAnalysisController.createPdfReport();
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);
+                areaAnalysisController.showMessage("An error occurred: " + ex.getMessage(), "Unexpected error", JOptionPane.ERROR_MESSAGE);
             }
         }
         return pdfFile;
@@ -99,7 +100,7 @@ public class AreaAnalysisReportController {
         try {
             boolean success = pdfFile.createNewFile();
             if (success) {
-                areaAnalysisController.showMessage("Pdf Report successfully created!", JOptionPane.INFORMATION_MESSAGE);
+                areaAnalysisController.showMessage("Pdf Report successfully created!", "Report created", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 Object[] options = {"Yes", "No", "Cancel"};
                 int showOptionDialog = JOptionPane.showOptionDialog(null, "File already exists. Do you want to replace it?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
@@ -115,14 +116,14 @@ public class AreaAnalysisReportController {
                 }
             }
         } catch (IOException ex) {
-            areaAnalysisController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
+            areaAnalysisController.showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         try (FileOutputStream fileOutputStream = new FileOutputStream(pdfFile)) {
             // actually create PDF file
             createPdfFile(fileOutputStream);
         } catch (IOException ex) {
-            areaAnalysisController.showMessage("Unexpected error: " + ex.getMessage() + ".", JOptionPane.ERROR_MESSAGE);
+            areaAnalysisController.showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

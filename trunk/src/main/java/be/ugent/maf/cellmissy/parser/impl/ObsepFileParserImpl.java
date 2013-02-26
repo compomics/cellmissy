@@ -79,10 +79,10 @@ public class ObsepFileParserImpl implements ObsepFileParser {
     public Map<ImagingType, String> mapImagingTypetoPositionList() {
         // this Map maps ImagingType (keys) to String (names of PositionList files, values)
         Map<ImagingType, String> imagingTypeToPosListMap = new HashMap<>();
-        List<String> posListNames = this.getPosListNames();
-        List<ImagingType> imagingInfo = this.getImagingInfo();
-        for (int i = 0; i < imagingInfo.size(); i++) {
-            imagingTypeToPosListMap.put(imagingInfo.get(i), posListNames.get(i));
+        List<String> posListNames = getPosListNames();
+        List<ImagingType> imagingTypes = getImagingTypes();
+        for (int i = 0; i < imagingTypes.size(); i++) {
+            imagingTypeToPosListMap.put(imagingTypes.get(i), posListNames.get(i));
         }
         return imagingTypeToPosListMap;
     }
@@ -158,7 +158,7 @@ public class ObsepFileParserImpl implements ObsepFileParser {
      *
      * @return a List of Imaging Type entities
      */
-    private List<ImagingType> getImagingInfo() {
+    private List<ImagingType> getImagingTypes() {
         List<ImagingType> imagingTypeList = new ArrayList<>();
 
         // get "Stage loop" nodes

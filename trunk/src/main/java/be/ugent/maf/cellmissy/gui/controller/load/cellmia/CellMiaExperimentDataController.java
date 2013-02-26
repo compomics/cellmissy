@@ -264,7 +264,7 @@ public class CellMiaExperimentDataController {
             bindingGroup.addBinding(jListBinding);
             bindingGroup.bind();
         } else {
-            loadExperimentFromCellMiaController.showMessage("There are no experiments in progress for this project!", 1);
+            loadExperimentFromCellMiaController.showMessage("There are no experiments in progress for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
             if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                 experimentBindingList.clear();
             }

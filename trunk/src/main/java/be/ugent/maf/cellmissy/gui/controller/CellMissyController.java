@@ -92,7 +92,7 @@ public class CellMissyController {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 LOG.error(e.getMessage(), e);
-                showMessage("Fatal error " + e.getMessage() + ", application will exit", JOptionPane.ERROR_MESSAGE);
+                showMessage("Fatal error " + e.getMessage() + ", application will exit", "Fatal error", JOptionPane.ERROR_MESSAGE);
                 // exit the application
                 System.exit(1);
             }
@@ -125,13 +125,14 @@ public class CellMissyController {
      * public classes and methods
      */
     /**
-     * show message to the user through the main frame
+     * Show message to the user through the main frame
      *
      * @param message
+     * @param title
      * @param messageType
      */
-    public void showMessage(String message, Integer messageType) {
-        JOptionPane.showMessageDialog(cellMissyFrame, message, "", messageType);
+    public void showMessage(String message, String title, Integer messageType) {
+        JOptionPane.showMessageDialog(cellMissyFrame, message, title, messageType);
     }
 
     /**
@@ -167,7 +168,7 @@ public class CellMissyController {
             for (String string : userManagementController.validateUser()) {
                 message += string + "\n";
             }
-            showMessage(message, JOptionPane.WARNING_MESSAGE);
+            showMessage(message, "Error in user validation", JOptionPane.WARNING_MESSAGE);
         }
         return isValid;
     }
@@ -195,7 +196,7 @@ public class CellMissyController {
             for (String string : setupExperimentController.validateExperimentInfo()) {
                 message += string + "\n";
             }
-            showMessage(message, JOptionPane.WARNING_MESSAGE);
+            showMessage(message, "Error in experiment validation", JOptionPane.WARNING_MESSAGE);
         }
         return isValid;
     }
@@ -253,19 +254,19 @@ public class CellMissyController {
                         String projectDescription = newProjectPanel.getDescriptionTextArea().getText();
                         setupExperimentController.createNewProject(projectNumber, projectDescription);
                         // creation of new project was successfull
-                        showMessage("Project was created!", JOptionPane.INFORMATION_MESSAGE);
+                        showMessage("Project was created!", "Project created", JOptionPane.INFORMATION_MESSAGE);
                         newProjectPanel.getProjectNumberTextField().setText("");
                     } catch (PersistenceException exception) {
-                        showMessage("Project already present in the DB", JOptionPane.WARNING_MESSAGE);
+                        showMessage("Project already present in the DB", "Error in persisting project", JOptionPane.WARNING_MESSAGE);
                         newProjectPanel.getProjectNumberTextField().setText("");
                         newProjectPanel.getProjectNumberTextField().requestFocusInWindow();
                     } catch (NumberFormatException exception) {
-                        showMessage("Please insert a valid number", JOptionPane.WARNING_MESSAGE);
+                        showMessage("Please insert a valid number", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
                         newProjectPanel.getProjectNumberTextField().setText("");
                         newProjectPanel.getProjectNumberTextField().requestFocusInWindow();
                     }
                 } else {
-                    showMessage("Please insert a number for the project you want to create", JOptionPane.WARNING_MESSAGE);
+                    showMessage("Please insert a number for the project you want to create", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
                     newProjectPanel.getProjectNumberTextField().requestFocusInWindow();
                 }
             }
@@ -289,7 +290,7 @@ public class CellMissyController {
                     bindingGroup.addBinding(jListBinding);
                     bindingGroup.bind();
                 } else {
-                    showMessage("There are no experiments yet for this project!", JOptionPane.INFORMATION_MESSAGE);
+                    showMessage("There are no experiments yet for this project!", "", JOptionPane.INFORMATION_MESSAGE);
                     if (setupExperimentController.getExperimentBindingList() != null && !setupExperimentController.getExperimentBindingList().isEmpty()) {
                         setupExperimentController.getExperimentBindingList().clear();
                     }
