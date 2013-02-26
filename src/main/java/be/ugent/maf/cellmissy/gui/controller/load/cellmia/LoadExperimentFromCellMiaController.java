@@ -22,7 +22,6 @@ import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
@@ -63,7 +62,7 @@ public class LoadExperimentFromCellMiaController {
     private ObsepFileParser obsepFileParser;
 
     /**
-     * initialize controller
+     * Initialize controller
      */
     public void init() {
         // init main view
@@ -98,8 +97,8 @@ public class LoadExperimentFromCellMiaController {
         cellMissyController.setCursor(cursor);
     }
 
-    public void showMessage(String message, Integer messageType) {
-        cellMissyController.showMessage(message, messageType);
+    public void showMessage(String message, String title, Integer messageType) {
+        cellMissyController.showMessage(message, title, messageType);
     }
 
     public int showConfirmDialog(String message, String title, Integer optionType) {
@@ -114,7 +113,7 @@ public class LoadExperimentFromCellMiaController {
      * private methods and classes
      */
     /**
-     * initializes the loading data panel
+     * Initializes the loading data panel
      */
     private void initMainPanel() {
 
@@ -132,7 +131,9 @@ public class LoadExperimentFromCellMiaController {
         /**
          * add action listeners
          */
-        //parse obsep file from the microscope
+        /**
+         * Parse .obsep file from microscope directory
+         */
         loadFromCellMiaPanel.getExpDataButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -141,32 +142,43 @@ public class LoadExperimentFromCellMiaController {
                     File obsepFile = experiment.getObsepFile();
                     setExperimentMetadata(obsepFile);
                 } else {
-                    cellMissyController.showMessage("No valid microscope file was found or different files were found.\nPlease select a file.", JOptionPane.WARNING_MESSAGE);
+                    cellMissyController.showMessage("No valid microscope file was found or different files were found.\nPlease select a file.", "Microscope file not valid", JOptionPane.WARNING_MESSAGE);
                     //choose file to parse form microscope folder
-                    JFileChooser chooseObsepFile = new JFileChooser();
-                    chooseObsepFile.setFileFilter(new FileFilter() {
-                        // to select only (.obsep) files
+                    JFileChooser fileChooser = new JFileChooser();
+                    // to select only txt files
+                    fileChooser.setFileFilter(new FileFilter() {
                         @Override
                         public boolean accept(File f) {
-                            return f.getName().toLowerCase(Locale.ENGLISH).endsWith(".obsep");
+                            if (f.isDirectory()) {
+                                return true;
+                            }
+                            int index = f.getName().lastIndexOf(".");
+                            String extension = f.getName().substring(index + 1);
+                            if (extension.equals("obsep")) {
+                                return true;
+                            } else {
+                                return false;
+                            }
                         }
 
                         @Override
                         public String getDescription() {
-                            return ("(.obsep)");
+                            return ("obsep (Olympus CellR/APL) files only");
                         }
                     });
+                    // Removing "All Files" option from FileType 
+                    fileChooser.setAcceptAllFileFilterUsed(false);
 
                     // in response to the button click, show open dialog
-                    int returnVal = chooseObsepFile.showOpenDialog(cellMissyController.getCellMissyFrame());
+                    int returnVal = fileChooser.showOpenDialog(cellMissyController.getCellMissyFrame());
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
-                        File obsepFile = chooseObsepFile.getSelectedFile();
+                        File obsepFile = fileChooser.getSelectedFile();
                         // set file for current experiment
                         experiment.setObsepFile(obsepFile);
                         // set experiment metadata
                         setExperimentMetadata(obsepFile);
                     } else {
-                        cellMissyController.showMessage("Open command cancelled by user", 1);
+                        cellMissyController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
                 cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click <<Forward>> to process imaging data for the experiment.");
@@ -175,7 +187,9 @@ public class LoadExperimentFromCellMiaController {
             }
         });
 
-        //cancel the selection: reset Plate View
+        /**
+         * Cancel the selection: reset Plate View
+         */
         loadFromCellMiaPanel.getCancelButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -205,7 +219,9 @@ public class LoadExperimentFromCellMiaController {
             }
         });
 
-        //save the experiment once all data have been loaded
+        /**
+         * Once data have been loaded, save the experiment with a swing worker
+         */
         loadFromCellMiaPanel.getFinishButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -214,8 +230,8 @@ public class LoadExperimentFromCellMiaController {
                 //set experiment status to "performed" and update it to DB
                 experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
                 //launch a swing worker to update the experiment in the background thread
-                SaveExperimentWorker worker = new SaveExperimentWorker();
-                worker.execute();
+                SaveExpSwingWorker saveExpSwingWorker = new SaveExpSwingWorker();
+                saveExpSwingWorker.execute();
             }
         });
     }
@@ -273,7 +289,7 @@ public class LoadExperimentFromCellMiaController {
     /**
      * Swing Worker to update the Experiment
      */
-    private class SaveExperimentWorker extends SwingWorker<Void, Void> {
+    private class SaveExpSwingWorker extends SwingWorker<Void, Void> {
 
         @Override
         protected Void doInBackground() throws Exception {
@@ -303,14 +319,15 @@ public class LoadExperimentFromCellMiaController {
                 loadFromCellMiaPanel.getSaveDataProgressBar().setVisible(false);
                 LOG.debug("Experiment was saved.");
                 //update info for the user
-                showMessage("Experiment was successfully saved to DB.", JOptionPane.INFORMATION_MESSAGE);
+                showMessage("Experiment was successfully saved to DB.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
                 updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Experiment was successfully saved to DB.");
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
-                showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", JOptionPane.ERROR_MESSAGE);
+                showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
             } catch (CancellationException ex) {
                 LOG.info("Loading data was cancelled.");
+                showMessage("Loading data was cancelled.", "Cancellation error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

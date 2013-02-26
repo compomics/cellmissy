@@ -29,8 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * User Panel Controller: user management (create, search and delete users from DB)
- * Parent Controller: CellMissy Controller (main controller)
+ * User Panel Controller: user management (create, search and delete users from DB) Parent Controller: CellMissy Controller (main controller)
+ *
  * @author Paola
  */
 @Controller("userManagementController")
@@ -61,8 +61,9 @@ public class UserManagementController {
     }
 
     /**
-     * getters and setters 
-     * @return 
+     * getters and setters
+     *
+     * @return
      */
     public UserPanel getUserPanel() {
         return userPanel;
@@ -74,6 +75,7 @@ public class UserManagementController {
 
     /**
      * validate User
+     *
      * @return List of Messages to show to the user
      */
     public List<String> validateUser() {
@@ -111,7 +113,6 @@ public class UserManagementController {
         //add actionlisteners
         //"create user" action
         userPanel.getCreateUserButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 // if user validation was successful, save the new user to the db
@@ -123,7 +124,7 @@ public class UserManagementController {
                     } // handle ConstraintViolationException(UniqueConstraint)
                     catch (PersistenceException persistenceException) {
                         String message = "User already present in the db";
-                        cellMissyController.showMessage(message, JOptionPane.INFORMATION_MESSAGE);
+                        cellMissyController.showMessage(message, "Error in persisting user", JOptionPane.INFORMATION_MESSAGE);
                         resetCreateUserTextFields();
                     }
                 } else {
@@ -134,19 +135,18 @@ public class UserManagementController {
 
         //"search user" action
         userPanel.getSearchUserButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!userPanel.getSearchUserFirstNameTextField().getText().isEmpty() && !userPanel.getSearchUserLastNameTextField().getText().isEmpty()) {
                     User user = userService.findByFullName(userPanel.getSearchUserFirstNameTextField().getText(), userPanel.getSearchUserLastNameTextField().getText());
                     if (user != null) {
                         String message = "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.";
-                        cellMissyController.showMessage(message, JOptionPane.INFORMATION_MESSAGE);
+                        cellMissyController.showMessage(message, "User found", JOptionPane.INFORMATION_MESSAGE);
                         userPanel.getSearchUserFirstNameTextField().setText("");
                         userPanel.getSearchUserLastNameTextField().setText("");
                     } else {
                         String message = "No user found";
-                        cellMissyController.showMessage(message, JOptionPane.INFORMATION_MESSAGE);
+                        cellMissyController.showMessage(message, "No user found", JOptionPane.INFORMATION_MESSAGE);
                         userPanel.getSearchUserFirstNameTextField().setText("");
                         userPanel.getSearchUserLastNameTextField().setText("");
                     }
@@ -155,11 +155,11 @@ public class UserManagementController {
                         User user = userService.findByFirstName(userPanel.getSearchUserFirstNameTextField().getText());
                         if (user != null) {
                             String message = "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.";
-                            cellMissyController.showMessage(message, JOptionPane.INFORMATION_MESSAGE);
+                            cellMissyController.showMessage(message, "User found", JOptionPane.INFORMATION_MESSAGE);
                             userPanel.getSearchUserFirstNameTextField().setText("");
                         } else {
                             String message = "No user found";
-                            cellMissyController.showMessage(message, 1);
+                            cellMissyController.showMessage(message, "No user found", JOptionPane.INFORMATION_MESSAGE);
                             userPanel.getSearchUserFirstNameTextField().setText("");
                         }
                     } else {
@@ -167,16 +167,16 @@ public class UserManagementController {
                             User user = userService.findByLastName(userPanel.getSearchUserLastNameTextField().getText());
                             if (user != null) {
                                 String message = "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.";
-                                cellMissyController.showMessage(message, 1);
+                                cellMissyController.showMessage(message, "User found", JOptionPane.INFORMATION_MESSAGE);
                                 userPanel.getSearchUserLastNameTextField().setText("");
                             } else {
                                 String message = "No user found";
-                                cellMissyController.showMessage(message, 1);
+                                cellMissyController.showMessage(message, "No user found", JOptionPane.INFORMATION_MESSAGE);
                                 userPanel.getSearchUserLastNameTextField().setText("");
                             }
                         } else {
                             String message = "Please fill in first and/or last name";
-                            cellMissyController.showMessage(message, 1);
+                            cellMissyController.showMessage(message, "Error in searching", JOptionPane.INFORMATION_MESSAGE);
                         }
                     }
                 }
@@ -185,7 +185,6 @@ public class UserManagementController {
 
         //"delete user" action
         userPanel.getDeleteUserButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (userPanel.getUserJList().getSelectedValue() != null) {
@@ -196,7 +195,7 @@ public class UserManagementController {
                     userPanel.getDeleteUserEmailTextField().setText("");
                 } else {
                     String message = "Please select a user to delete";
-                    cellMissyController.showMessage(message, 1);
+                    cellMissyController.showMessage(message, "", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });

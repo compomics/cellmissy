@@ -126,7 +126,7 @@ public class AreaPreProcessingController {
     private GridBagConstraints gridBagConstraints;
 
     /**
-     * initialize controller
+     * Initialize controller
      */
     public void init() {
         bindingGroup = new BindingGroup();
@@ -1229,8 +1229,9 @@ public class AreaPreProcessingController {
         protected Void doInBackground() throws Exception {
             // show progress bar
             dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setVisible(true);
+            List<PlateCondition> plateConditionList = dataAnalysisController.getPlateConditionList();
             // set max value of progress bar to size of conditions' list
-            dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setMaximum(dataAnalysisController.getPlateConditionList().size());
+            dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setMaximum(plateConditionList.size());
             // add property change listener to progress bar
             dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().addPropertyChangeListener(new PropertyChangeListener() {
                 @Override
@@ -1243,13 +1244,13 @@ public class AreaPreProcessingController {
             });
             // show waiting cursor
             dataAnalysisController.setCursor(Cursor.WAIT_CURSOR);
-            List<PlateCondition> processedConditions = getProcessedConditions();
-            for (PlateCondition plateCondition : dataAnalysisController.getPlateConditionList()) {
+            int numberOfFetchedCondition = getNumberOfFetchedCondition();
+            for (PlateCondition plateCondition : plateConditionList) {
                 // if for current condition computations were not performed yet
                 if (preProcessingMap.get(plateCondition) == null) {
                     // update status of progress bar with the current number of fetched conditions
-                    dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setValue(getNumberOfFetchedCondition());
-                    dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setString("Condition " + getNumberOfFetchedCondition() + "/" + dataAnalysisController.getPlateConditionList().size());
+                    dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setValue(numberOfFetchedCondition);
+                    dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setString("Condition " + numberOfFetchedCondition + "/" + plateConditionList.size());
                     // fetch current condition
                     dataAnalysisController.fetchConditionTimeSteps(plateCondition);
                     if (!timeStepsBindingList.isEmpty()) {
@@ -1285,12 +1286,12 @@ public class AreaPreProcessingController {
                 areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, getNumberOfReplicates()));
                 if (processedConditions.size() != dataAnalysisController.getPlateConditionList().size()) {
                     // inform the user that not all conditions were imaged
-                    dataAnalysisController.showMessage("Note that not every condition was imaged!", JOptionPane.INFORMATION_MESSAGE);
+                    dataAnalysisController.showMessage("Note that not every condition was imaged!", "", JOptionPane.INFORMATION_MESSAGE);
                 }
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
-                dataAnalysisController.showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", JOptionPane.ERROR_MESSAGE);
+                dataAnalysisController.showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
             } catch (CancellationException ex) {
                 LOG.info("Data fetching/computation was cancelled.");
             }
@@ -1352,7 +1353,7 @@ public class AreaPreProcessingController {
                     timeFramesSelectionPanel.getWarningLabel().setVisible(true);
                 } else if (selectedLastTimeFrame < timeInterval.getFirstTimeFrame()) {
                     // last time frame can not be smaller than first one: warn the user and ignore selection
-                    dataAnalysisController.showMessage("Last time frame cannot be smaller than first one!", JOptionPane.INFORMATION_MESSAGE);
+                    dataAnalysisController.showMessage("Last time frame cannot be smaller than first one!", "Error in chosing time frames", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -1374,6 +1375,7 @@ public class AreaPreProcessingController {
                     plotCorrectedDataInTimeInterval(dataAnalysisController.getCurrentCondition());
                 } else {
                     // first time frame can not be greater than last one: warn the user and ignore selection
+                    dataAnalysisController.showMessage("First time frame cannot be greater than last one!", "Error in chosing time frames", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });

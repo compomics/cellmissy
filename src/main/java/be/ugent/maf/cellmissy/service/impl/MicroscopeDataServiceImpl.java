@@ -3,6 +3,8 @@ package be.ugent.maf.cellmissy.service.impl;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.FileParserException;
+import be.ugent.maf.cellmissy.exception.PositionListMismatchException;
 import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.parser.PositionListParser;
 import be.ugent.maf.cellmissy.service.MicroscopeDataService;
@@ -35,7 +37,7 @@ public class MicroscopeDataServiceImpl implements MicroscopeDataService {
     }
 
     @Override
-    public Map<ImagingType, List<WellHasImagingType>> processMicroscopeData() {
+    public Map<ImagingType, List<WellHasImagingType>> processMicroscopeData() throws FileParserException, PositionListMismatchException{
 
         Map<ImagingType, String> imagingTypeToPosListMap = obsepFileParser.mapImagingTypetoPositionList();
 

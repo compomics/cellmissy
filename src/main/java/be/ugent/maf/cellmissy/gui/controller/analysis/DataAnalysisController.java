@@ -189,7 +189,8 @@ public class DataAnalysisController {
 
     /**
      * Show Linear regression results from child controller
-     * @param useCorrectedData 
+     *
+     * @param useCorrectedData
      */
     public void showLinearModelInTable(boolean useCorrectedData) {
         areaAnalysisController.showLinearModelInTable(useCorrectedData);
@@ -199,10 +200,11 @@ public class DataAnalysisController {
      * Show message through the main controller
      *
      * @param message
+     * @param title
      * @param messageType
      */
-    public void showMessage(String message, Integer messageType) {
-        cellMissyController.showMessage(message, messageType);
+    public void showMessage(String message, String title, Integer messageType) {
+        cellMissyController.showMessage(message, title, messageType);
     }
 
     /**
@@ -217,7 +219,8 @@ public class DataAnalysisController {
 
     /**
      * The user has decided or not to work with corrected data?
-     * @return 
+     *
+     * @return
      */
     public boolean useCorrectedData() {
         return areaPreProcessingController.getAreaAnalysisPanel().getUseCorrectedDataCheckBox().isSelected();
@@ -273,7 +276,7 @@ public class DataAnalysisController {
                     // project is being selected for the first time
                     onSelectedProject(selectedProject);
                 } else if (experiment.getProject() != selectedProject) {
-                    showMessage("If you want to analyse data from another experiment,\nplease exit and restart the application.", JOptionPane.INFORMATION_MESSAGE);
+                    showMessage("If you want to analyse data from another experiment,\nplease exit and restart the application.", "", JOptionPane.INFORMATION_MESSAGE);
                     // ignore selection and select previous (current) prject
                     Project currentProject = experiment.getProject();
                     dataAnalysisPanel.getProjectJList().setSelectedIndex(projectBindingList.indexOf(currentProject));
@@ -293,7 +296,7 @@ public class DataAnalysisController {
                 if (experiment == null) {
                     onSelectedExperiment(selectedExperiment);
                 } else if (experiment != selectedExperiment) {
-                    showMessage("If you want to analyse data from another experiment,\nplease exit and restart the application.", JOptionPane.INFORMATION_MESSAGE);
+                    showMessage("If you want to analyse data from another experiment,\nplease exit and restart the application.", "", JOptionPane.INFORMATION_MESSAGE);
                     // ignore selection and select previous experiment
                     dataAnalysisPanel.getExperimentJList().setSelectedIndex(experimentBindingList.indexOf(experiment));
                 }
@@ -384,7 +387,7 @@ public class DataAnalysisController {
             bindingGroup.addBinding(jListBinding);
             bindingGroup.bind();
         } else {
-            cellMissyController.showMessage("There are no experiments performed yet for this project!", 1);
+            cellMissyController.showMessage("There are no experiments performed yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
             if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                 experimentBindingList.clear();
             }
@@ -520,7 +523,7 @@ public class DataAnalysisController {
             int timeFramesNumber = timeFrames.length;
             if (timeFramesNumber != timeStepsNumber) {
                 // warn the user and set time frames to timesteps number
-                showMessage("Exp time frames number: " + timeFramesNumber + " is bigger than images number!\nNew time frames will be set to: " + timeStepsNumber, JOptionPane.WARNING_MESSAGE);
+                showMessage("Exp time frames number: " + timeFramesNumber + " is bigger than images number!\nNew time frames will be set to: " + timeStepsNumber, "Time frames mismatching", JOptionPane.WARNING_MESSAGE);
                 computeTimeFrames(timeStepsNumber);
                 experiment.setTimeFrames(timeStepsNumber);
                 experimentService.update(experiment);
@@ -568,7 +571,7 @@ public class DataAnalysisController {
                     }
                 } else {
                     // the entire condition was not imaged/analyzed: inform the user
-                    showMessage("This condition was not imaged!", JOptionPane.INFORMATION_MESSAGE);
+                    showMessage("This condition was not imaged!", "Condition not imaged", JOptionPane.INFORMATION_MESSAGE);
                     areaPreProcessingController.resetViews();
                 }
                 // set cursor back to default and show all computed results for selected condition
@@ -578,7 +581,7 @@ public class DataAnalysisController {
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
-                showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", JOptionPane.ERROR_MESSAGE);
+                showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
             } catch (CancellationException ex) {
                 LOG.info("Data fetching/computation was cancelled.");
             }

@@ -10,6 +10,8 @@ import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.FileParserException;
+import be.ugent.maf.cellmissy.exception.PositionListMismatchException;
 import be.ugent.maf.cellmissy.parser.CellMiaFileParser;
 import be.ugent.maf.cellmissy.service.CellMiaDataService;
 import java.io.File;
@@ -48,7 +50,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
     }
 
     @Override
-    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processCellMiaData() {
+    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processCellMiaData() throws FileParserException, PositionListMismatchException{
         long currentTimeMillis = System.currentTimeMillis();
         imagingTypeMap = microscopeDataService.processMicroscopeData();
         algoMap = new HashMap<>();

@@ -138,10 +138,11 @@ public class SetupConditionsController {
      * show a message through the main frame (CellMissy frame)
      *
      * @param message
+     * @param title 
      * @param messageType
      */
-    public void showMessage(String message, Integer messageType) {
-        setupExperimentPanelController.showMessage(message, messageType);
+    public void showMessage(String message, String title, Integer messageType) {
+        setupExperimentPanelController.showMessage(message, title, messageType);
     }
 
     /**
@@ -232,7 +233,7 @@ public class SetupConditionsController {
                         cellLineTypeBindingList.add(newCellLineType);
                         setupConditionsPanel.getCellLineNameTextField().setText("");
                     } catch (PersistenceException exception) {
-                        showMessage("Cell Line already present in DB.", JOptionPane.INFORMATION_MESSAGE);
+                        showMessage("Cell Line already present in DB.", "", JOptionPane.INFORMATION_MESSAGE);
                         setupConditionsPanel.getCellLineNameTextField().setText("");
                         setupConditionsPanel.getCellLineNameTextField().requestFocusInWindow();
                     }

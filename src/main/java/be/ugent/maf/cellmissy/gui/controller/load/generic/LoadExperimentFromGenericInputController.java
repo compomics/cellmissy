@@ -86,8 +86,8 @@ public class LoadExperimentFromGenericInputController {
         return loadFromGenericInputPanel;
     }
 
-    public void showMessage(String message, Integer messageType) {
-        cellMissyController.showMessage(message, messageType);
+    public void showMessage(String message, String title, Integer messageType) {
+        cellMissyController.showMessage(message, title, messageType);
     }
 
     public void updateInfoLabel(JLabel label, String message) {
@@ -126,6 +126,34 @@ public class LoadExperimentFromGenericInputController {
         loadFromGenericInputPanel.getRemoveButton().setEnabled(true);
         loadFromGenericInputPanel.getAddDatasetButton().setEnabled(true);
         loadFromGenericInputPanel.getAddImagingButton().setEnabled(true);
+    }
+
+    /**
+     * Select a specific imaging type on the JTree, according to a certain algorithm
+     *
+     * @param imagingType
+     * @param algorithm
+     */
+    public void selectImagingTypeOnTree(ImagingType imagingType, Algorithm algorithm) {
+        // jtree structure
+        JTree dataTree = loadFromGenericInputPanel.getDataTree();
+        // model of JTree
+        DefaultTreeModel model = (DefaultTreeModel) dataTree.getModel();
+        // root (Data) node
+        DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) model.getRoot();
+        // iterate through dataset nodes
+        for (int n = 0; n < model.getChildCount(rootNode); n++) {
+            DefaultMutableTreeNode datasetNode = (DefaultMutableTreeNode) model.getChild(rootNode, n);
+            if (datasetNode.toString().equals(algorithm.toString())) {
+                // iterate through imaging type node
+                for (int m = 0; m < datasetNode.getChildCount(); m++) {
+                    DefaultMutableTreeNode imagingNode = (DefaultMutableTreeNode) datasetNode.getChildAt(m);
+                    if (imagingNode.toString().equals(imagingType.toString())) {
+                        dataTree.setSelectionPath(new TreePath(imagingNode.getPath()));
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -241,7 +269,7 @@ public class LoadExperimentFromGenericInputController {
                     for (String string : messages) {
                         message += string + "\n";
                     }
-                    showMessage(message, JOptionPane.WARNING_MESSAGE);
+                    showMessage(message, "Experiment validation problem", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
@@ -284,7 +312,7 @@ public class LoadExperimentFromGenericInputController {
                     // remove selected node from tree & update model
                     selectedNode.removeFromParent();
                     // if an imaging node is deleted in one dataset, it has to be deleted as well in the other(s)
-                    for (int n = 0; n < dataTree.getModel().getChildCount(rootNode); n++) {
+                    for (int n = 0; n < model.getChildCount(rootNode); n++) {
                         DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) model.getChild(rootNode, n);
                         for (int m = 0; m < childNode.getChildCount(); m++) {
                             DefaultMutableTreeNode imagingNode = (DefaultMutableTreeNode) childNode.getChildAt(m);
@@ -295,7 +323,7 @@ public class LoadExperimentFromGenericInputController {
                     }
                     model.reload();
                 } else {
-                    showMessage("Select a dataset / imaging type you want to remove!", JOptionPane.INFORMATION_MESSAGE);
+                    showMessage("Select a dataset / imaging type you want to remove!", "", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -315,7 +343,7 @@ public class LoadExperimentFromGenericInputController {
                     addDataset(newAlgorithm);
                     loadFromGenericInputPanel.getDatasetNameTextField().setText("");
                 } else {
-                    showMessage("Please insert a name for the dataset.", JOptionPane.INFORMATION_MESSAGE);
+                    showMessage("Please insert a name for the dataset.", "", JOptionPane.INFORMATION_MESSAGE);
                     loadFromGenericInputPanel.getDatasetNameTextField().requestFocusInWindow();
                 }
             }
@@ -339,11 +367,11 @@ public class LoadExperimentFromGenericInputController {
                         addImagingType(newImagingType);
                         loadFromGenericInputPanel.getImagingNameTextField().setText("");
                     } else {
-                        showMessage("Please insert a name for the imaging type.", JOptionPane.INFORMATION_MESSAGE);
+                        showMessage("Please insert a name for the imaging type.", "", JOptionPane.INFORMATION_MESSAGE);
                         loadFromGenericInputPanel.getImagingNameTextField().requestFocusInWindow();
                     }
                 } else {
-                    showMessage("Please insert first a dataset.", JOptionPane.INFORMATION_MESSAGE);
+                    showMessage("Please insert first a dataset.", "", JOptionPane.INFORMATION_MESSAGE);
                     loadFromGenericInputPanel.getDatasetNameTextField().requestFocusInWindow();
                 }
             }
@@ -376,7 +404,7 @@ public class LoadExperimentFromGenericInputController {
             model.reload();
             loadFromGenericInputPanel.getDataTree().scrollPathToVisible(new TreePath(datasetNode.getPath()));
         } else {
-            showMessage("This dataset was already added!", JOptionPane.INFORMATION_MESSAGE);
+            showMessage("This dataset was already added!", "", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -403,7 +431,7 @@ public class LoadExperimentFromGenericInputController {
                 loadFromGenericInputPanel.getDataTree().scrollPathToVisible(new TreePath(imagingNode.getPath()));
             }
         } else {
-            showMessage("This imaging type was already added!", JOptionPane.INFORMATION_MESSAGE);
+            showMessage("This imaging type was already added!", "", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -455,12 +483,12 @@ public class LoadExperimentFromGenericInputController {
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 loadFromGenericInputPanel.getSaveDataProgressBar().setVisible(false);
                 //update info for the user
-                showMessage("Experiment was successfully saved to DB.", JOptionPane.INFORMATION_MESSAGE);
+                showMessage("Experiment was successfully saved to DB.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
                 updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Experiment was successfully saved to DB.");
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
-                showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", JOptionPane.ERROR_MESSAGE);
+                showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
             } catch (CancellationException ex) {
                 LOG.info("Loading data was cancelled.");
             }

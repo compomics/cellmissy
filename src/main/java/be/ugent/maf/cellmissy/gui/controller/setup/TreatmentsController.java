@@ -151,7 +151,7 @@ public class TreatmentsController {
         dialog.setLocationRelativeTo(null);
         dialog.setTitle("Add drugs or treatments");
         addDrugsTreatmentsPanel = new AddDrugsTreatmentsPanel();
-        
+
         //set volume unit of measure (of assay medium)
         treatmentsPanel.getVolumeUnitLabel().setText("\u00B5" + "l");
         //init drug and general treatment binding lists
@@ -279,15 +279,15 @@ public class TreatmentsController {
                         drugBindingList.add(newDrug);
                         //save drug to DB
                         treatmentService.saveTreatmentType(newDrug);
-                        setupConditionsController.showMessage("Drug was inserted into DB.", 1);
+                        setupConditionsController.showMessage("Drug was inserted into DB.", "Drug added", JOptionPane.INFORMATION_MESSAGE);
                         addDrugsTreatmentsPanel.getDrugTextField().setText("");
                     } catch (PersistenceException exception) {
-                        setupConditionsController.showMessage("Drug already present in DB.", 1);
+                        setupConditionsController.showMessage("Drug already present in DB.", "Error in adding drug", JOptionPane.WARNING_MESSAGE);
                         addDrugsTreatmentsPanel.getDrugTextField().setText("");
                         addDrugsTreatmentsPanel.getDrugTextField().requestFocusInWindow();
                     }
                 } else {
-                    setupConditionsController.showMessage("Insert a name for the drug!", JOptionPane.WARNING_MESSAGE);
+                    setupConditionsController.showMessage("Insert a name for the drug!", "", JOptionPane.WARNING_MESSAGE);
                     addDrugsTreatmentsPanel.getDrugTextField().requestFocusInWindow();
                 }
             }
@@ -307,15 +307,15 @@ public class TreatmentsController {
                         generalTreatmentBindingList.add(newTreatment);
                         //save treatment to DB
                         treatmentService.saveTreatmentType(newTreatment);
-                        setupConditionsController.showMessage("Treatment was inserted into DB.", 1);
+                        setupConditionsController.showMessage("Treatment was inserted into DB.", "Treatment added", JOptionPane.INFORMATION_MESSAGE);
                         addDrugsTreatmentsPanel.getTreatmentTextField().setText("");
                     } catch (PersistenceException exception) {
-                        setupConditionsController.showMessage("Treatment already present in DB.", 1);
+                        setupConditionsController.showMessage("Treatment already present in DB.", "Error in adding treatment", JOptionPane.WARNING_MESSAGE);
                         addDrugsTreatmentsPanel.getTreatmentTextField().setText("");
                         addDrugsTreatmentsPanel.getTreatmentTextField().requestFocusInWindow();
                     }
                 } else {
-                    setupConditionsController.showMessage("Insert a name for the treatment!", JOptionPane.WARNING_MESSAGE);
+                    setupConditionsController.showMessage("Insert a name for the treatment!", "", JOptionPane.WARNING_MESSAGE);
                     addDrugsTreatmentsPanel.getTreatmentTextField().requestFocusInWindow();
                 }
             }
@@ -406,5 +406,5 @@ public class TreatmentsController {
      */
     private void initMainPanel() {
         setupConditionsController.getSetupConditionsPanel().getTreatmentParentPanel().add(treatmentsPanel, gridBagConstraints);
-    }    
+    }
 }

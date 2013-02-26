@@ -140,13 +140,14 @@ public class AreaAnalysisController {
         return dataAnalysisController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars);
     }
 
-    public void showMessage(String message, Integer messageType) {
-        dataAnalysisController.showMessage(message, messageType);
+    public void showMessage(String message, String title, Integer messageType) {
+        dataAnalysisController.showMessage(message, title, messageType);
     }
 
     /**
      * Show Results from Linear Regression Model in a table
-     * @param useCorrectedData 
+     *
+     * @param useCorrectedData
      */
     public void showLinearModelInTable(boolean useCorrectedData) {
         // initialize map for keeping the results
@@ -262,7 +263,7 @@ public class AreaAnalysisController {
             AnalysisReportSwingWorker analysisReportSwingWorker = new AnalysisReportSwingWorker(directory, chooseDirectory.getSelectedFile().getName());
             analysisReportSwingWorker.execute();
         } else {
-            dataAnalysisController.showMessage("Open command cancelled by user", 1);
+            dataAnalysisController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -453,7 +454,7 @@ public class AreaAnalysisController {
                     dialog.setVisible(true);
                 } else {
                     // ask user to select a group
-                    dataAnalysisController.showMessage("Please select a group to perform analysis on.", JOptionPane.INFORMATION_MESSAGE);
+                    dataAnalysisController.showMessage("Please select a group to perform analysis on.", "You must select a group first", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -542,7 +543,7 @@ public class AreaAnalysisController {
                     // set correction method (summary statistics, p-values and adjusted p-values are already set)
                     selectedGroup.setCorrectionMethod((CorrectionMethod) statisticsPanel.getCorrectionMethodsComboBox().getSelectedItem());
                     //show message to the user
-                    dataAnalysisController.showMessage("Analysis saved!", JOptionPane.INFORMATION_MESSAGE);
+                    dataAnalysisController.showMessage("Analysis saved!", "Analysis saved", JOptionPane.INFORMATION_MESSAGE);
                     addAnnotationsOnVelocityChart(selectedGroup);
                 }
             }
@@ -701,7 +702,7 @@ public class AreaAnalysisController {
             }
         } else {
             // ask the user to type a name for the group
-            dataAnalysisController.showMessage("Please choose a name for the analysis group.", 1);
+            dataAnalysisController.showMessage("Please choose a name for the analysis group.", "", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -760,7 +761,7 @@ public class AreaAnalysisController {
                 // open the created pdf file
                 Desktop.getDesktop().open(analysisReport);
             } catch (IOException ex) {
-                dataAnalysisController.showMessage(ex.getMessage(), 1);
+                dataAnalysisController.showMessage(ex.getMessage(), "Error while opening file", JOptionPane.ERROR_MESSAGE);
             }
             return null;
         }
@@ -772,9 +773,8 @@ public class AreaAnalysisController {
             } catch (InterruptedException | CancellationException ex) {
                 ex.printStackTrace();
             } catch (ExecutionException ex) {
-                dataAnalysisController.showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", JOptionPane.ERROR_MESSAGE);
+                dataAnalysisController.showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error",JOptionPane.ERROR_MESSAGE);
             }
-
             //set cursor back to default
             dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
             // enable button

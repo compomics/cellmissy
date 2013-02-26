@@ -11,6 +11,8 @@ import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.FileParserException;
+import be.ugent.maf.cellmissy.exception.PositionListMismatchException;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.repository.AlgorithmRepository;
 import be.ugent.maf.cellmissy.repository.ImagingTypeRepository;
@@ -113,7 +115,7 @@ public class WellServiceImpl implements WellService {
      * @param experiment
      */
     @Override
-    public void init(Experiment experiment) {
+    public void init(Experiment experiment) throws FileParserException, PositionListMismatchException {
         cellMiaDataService.init(experiment);
         cellMiaDataService.getMicroscopeDataService().init(experiment);
         imagingTypeMap = cellMiaDataService.getMicroscopeDataService().processMicroscopeData();
@@ -160,9 +162,11 @@ public class WellServiceImpl implements WellService {
      * Get the global algorithm map from CellMia data service
      *
      * @return
+     * @throws FileParserException
+     * @throws PositionListMismatchException  
      */
     @Override
-    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() {
+    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException{
         algoMap = cellMiaDataService.processCellMiaData();
         return algoMap;
     }

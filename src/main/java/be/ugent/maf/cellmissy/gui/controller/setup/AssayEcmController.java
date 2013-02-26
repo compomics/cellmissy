@@ -160,7 +160,7 @@ public class AssayEcmController {
                     plateCondition.getEcm().setConcentration(Double.parseDouble(assayEcm2DPanel.getConcentrationTextField().getText()));
                 } catch (NumberFormatException e) {
                     String message = "Please insert a valid Concentration";
-                    setupConditionsController.showMessage(message, 2);
+                    setupConditionsController.showMessage(message, "", JOptionPane.WARNING_MESSAGE);
                     setupConditionsController.getConditionsPanel().getConditionsJList().setSelectedIndex(setupConditionsController.getPreviousConditionIndex());
                     assayEcm2DPanel.getConcentrationTextField().requestFocusInWindow();
                 }
@@ -171,7 +171,7 @@ public class AssayEcmController {
                     plateCondition.getEcm().setVolume(Double.parseDouble(assayEcm2DPanel.getVolumeTextField().getText()));
                 } catch (NumberFormatException e) {
                     String message = "Please insert a valid Volume";
-                    setupConditionsController.showMessage(message, 2);
+                    setupConditionsController.showMessage(message, "", JOptionPane.WARNING_MESSAGE);
                     setupConditionsController.getConditionsPanel().getConditionsJList().setSelectedIndex(setupConditionsController.getPreviousConditionIndex());
                     assayEcm2DPanel.getVolumeTextField().requestFocusInWindow();
                 }
@@ -195,7 +195,7 @@ public class AssayEcmController {
                     plateCondition.getEcm().setTopMatrixVolume(Double.parseDouble(assayEcm3DPanel.getTopMatrixVolumeTextField().getText()));
                 } catch (NumberFormatException e) {
                     String message = "Please insert a valid Volume";
-                    setupConditionsController.showMessage(message, 2);
+                    setupConditionsController.showMessage(message, "", JOptionPane.WARNING_MESSAGE);
                     setupConditionsController.getConditionsPanel().getConditionsJList().setSelectedIndex(setupConditionsController.getPreviousConditionIndex());
                     assayEcm3DPanel.getTopMatrixVolumeTextField().requestFocusInWindow();
                 }
@@ -211,7 +211,7 @@ public class AssayEcmController {
                             plateCondition.getEcm().setBottomMatrixVolume(Double.parseDouble(assayEcm3DPanel.getBottomMatrixVolumeTextField().getText()));
                         } catch (NumberFormatException e) {
                             String message = "Please insert a valid Volume";
-                            setupConditionsController.showMessage(message, 2);
+                            setupConditionsController.showMessage(message, "", JOptionPane.WARNING_MESSAGE);
                             setupConditionsController.getConditionsPanel().getConditionsJList().setSelectedIndex(setupConditionsController.getPreviousConditionIndex());
                             assayEcm3DPanel.getBottomMatrixVolumeTextField().requestFocusInWindow();
                         }
@@ -246,7 +246,7 @@ public class AssayEcmController {
                             plateCondition.getEcm().setBottomMatrixVolume(Double.parseDouble(assayEcm25DPanel.getBottomMatrixVolumeTextField().getText()));
                         } catch (NumberFormatException e) {
                             String message = "Please insert a valid Volume";
-                            setupConditionsController.showMessage(message, 2);
+                            setupConditionsController.showMessage(message, "", JOptionPane.WARNING_MESSAGE);
                             setupConditionsController.getConditionsPanel().getConditionsJList().setSelectedIndex(setupConditionsController.getPreviousConditionIndex());
                             assayEcm25DPanel.getBottomMatrixVolumeTextField().requestFocusInWindow();
                         }
@@ -524,7 +524,7 @@ public class AssayEcmController {
                     assayEcm3DPanel.getCompositionTextField().setText("");
                 } else {
                     String message = "Please insert a name for the new ECM composition!";
-                    setupConditionsController.showMessage(message, JOptionPane.WARNING_MESSAGE);
+                    setupConditionsController.showMessage(message, "", JOptionPane.WARNING_MESSAGE);
                     assayEcm3DPanel.getCompositionTextField().requestFocus();
                 }
             }
@@ -601,7 +601,7 @@ public class AssayEcmController {
                     assayEcm25DPanel.getCompositionTextField().setText("");
                 } else {
                     String message = "Please insert a name for the new ECM composition!";
-                    setupConditionsController.showMessage(message, JOptionPane.WARNING_MESSAGE);
+                    setupConditionsController.showMessage(message, "", JOptionPane.WARNING_MESSAGE);
                     assayEcm25DPanel.getCompositionTextField().requestFocus();
                 }
             }
