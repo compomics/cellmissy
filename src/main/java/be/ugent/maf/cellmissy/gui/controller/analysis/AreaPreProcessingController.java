@@ -44,7 +44,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ButtonGroup;
@@ -1291,10 +1290,8 @@ public class AreaPreProcessingController {
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
-                dataAnalysisController.showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
-            } catch (CancellationException ex) {
-                LOG.info("Data fetching/computation was cancelled.");
-            }
+                dataAnalysisController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+            } 
         }
     }
 

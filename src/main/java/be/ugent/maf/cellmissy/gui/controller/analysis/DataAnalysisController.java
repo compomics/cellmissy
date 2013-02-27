@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -581,10 +580,8 @@ public class DataAnalysisController {
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
-                showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
-            } catch (CancellationException ex) {
-                LOG.info("Data fetching/computation was cancelled.");
-            }
+                showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+            } 
         }
     }
 }

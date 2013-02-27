@@ -74,7 +74,7 @@ public class CellMissyController {
     private BindingGroup bindingGroup;
 
     /**
-     * getter
+     * Get main frame
      *
      * @return
      */

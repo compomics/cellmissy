@@ -7,8 +7,11 @@ package be.ugent.maf.cellmissy.service;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.FileParserException;
+import be.ugent.maf.cellmissy.exception.PositionListMismatchException;
 import be.ugent.maf.cellmissy.parser.ObsepFileParserTest;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static junit.framework.Assert.*;
@@ -26,6 +29,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration("classpath:mySpringXMLConfig.xml")
 public class MicroscopeDataServiceTest {
 
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(MicroscopeDataServiceTest.class);
     @Autowired
     private MicroscopeDataService microscopeDataService;
 
@@ -40,11 +44,15 @@ public class MicroscopeDataServiceTest {
         Experiment experiment = new Experiment();
         experiment.setObsepFile(obsepFile);
         experiment.setSetupFolder(setupFolder);
-        
-        microscopeDataService.init(experiment);
-        Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = microscopeDataService.processMicroscopeData();
 
-        //two position lists are parsed, map needs to contain 2 keys
-        assertTrue(imagingTypeMap.size()==2);
+        microscopeDataService.init(experiment);
+        Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = new HashMap<>();
+        try {
+            imagingTypeMap = microscopeDataService.processMicroscopeData();
+            //two position lists are parsed, map needs to contain 2 keys
+            assertTrue(imagingTypeMap.size() == 2);
+        } catch (FileParserException | PositionListMismatchException ex) {
+            LOG.debug(ex.getMessage());
+        }
     }
 }

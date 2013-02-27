@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.CellMiaDataLoadingException;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import be.ugent.maf.cellmissy.exception.PositionListMismatchException;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
@@ -54,9 +55,10 @@ public interface WellService extends GenericService<Well, Long> {
      *
      * @return a map Algorithm, map imaging type--wellHasImagingType
      * @throws FileParserException
-     * @throws PositionListMismatchException  
+     * @throws PositionListMismatchException
+     * @throws CellMiaDataLoadingException  
      */
-    Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException;
+    Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException, CellMiaDataLoadingException;
 
     /**
      * Find all algorithms for one wellId
@@ -106,5 +108,5 @@ public interface WellService extends GenericService<Well, Long> {
      *
      * @return
      */
-    int getNumberOfSamples();
+    int getNumberOfSamples() throws CellMiaDataLoadingException;
 }

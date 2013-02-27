@@ -24,7 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -488,9 +487,7 @@ public class LoadExperimentFromGenericInputController {
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
-                showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
-            } catch (CancellationException ex) {
-                LOG.info("Loading data was cancelled.");
+                showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

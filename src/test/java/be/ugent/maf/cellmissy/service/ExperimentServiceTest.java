@@ -13,8 +13,13 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.CellMiaDataLoadingException;
+import be.ugent.maf.cellmissy.exception.FileParserException;
+import be.ugent.maf.cellmissy.exception.FolderStructureException;
+import be.ugent.maf.cellmissy.exception.PositionListMismatchException;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +39,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration("classpath:mySpringXMLConfig.xml")
 public class ExperimentServiceTest {
 
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ExperimentServiceTest.class);
     @Autowired
     private ExperimentService experimentService;
     @Autowired
@@ -67,48 +73,61 @@ public class ExperimentServiceTest {
         Assert.assertEquals(2, experimentsFound.size());
         // get the service
         Experiment experiment = experimentsFound.get(1);
-        // load folders
-        experimentService.loadFolderStructure(experiment);
-        // get microscope file
-        File obsepFile = experiment.getObsepFile();
-        Assert.assertNotNull(obsepFile);
-        // initialize service and get imaging types
-        wellService.init(experiment);
-        List<ImagingType> imagingTypes = wellService.getImagingTypes();
-        Assert.assertEquals(1, imagingTypes.size());
-        // get global map
-        Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> map = wellService.getMap();
-        Set<Map.Entry<Algorithm, Map<ImagingType, List<WellHasImagingType>>>> entrySet = map.entrySet();
-        Assert.assertEquals(1, entrySet.size());
-        // set motility data
-        Iterator<Map.Entry<Algorithm, Map<ImagingType, List<WellHasImagingType>>>> iterator = entrySet.iterator();
-        List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
-        while (iterator.hasNext()) {
-            Map.Entry<Algorithm, Map<ImagingType, List<WellHasImagingType>>> next = iterator.next();
-            Map<ImagingType, List<WellHasImagingType>> submMap = next.getValue();
-            for (ImagingType imagingType : submMap.keySet()) {
-                List<WellHasImagingType> get = submMap.get(imagingType);
-                wellHasImagingTypes.addAll(get);
+        try {
+            // load folders
+            experimentService.loadFolderStructure(experiment);
+            // get microscope file
+            File obsepFile = experiment.getObsepFile();
+            Assert.assertNotNull(obsepFile);
+            try {
+                // initialize service and get imaging types
+                wellService.init(experiment);
+                List<ImagingType> imagingTypes = wellService.getImagingTypes();
+                Assert.assertEquals(1, imagingTypes.size());
+                // get global map
+                Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> map = new HashMap<>();
+                try {
+                    map = wellService.getMap();
+                } catch (FileParserException | PositionListMismatchException | CellMiaDataLoadingException ex) {
+                    LOG.error(ex.getMessage());
+                }
+                Set<Map.Entry<Algorithm, Map<ImagingType, List<WellHasImagingType>>>> entrySet = map.entrySet();
+                Assert.assertEquals(1, entrySet.size());
+                // set motility data
+                Iterator<Map.Entry<Algorithm, Map<ImagingType, List<WellHasImagingType>>>> iterator = entrySet.iterator();
+                List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
+                while (iterator.hasNext()) {
+                    Map.Entry<Algorithm, Map<ImagingType, List<WellHasImagingType>>> next = iterator.next();
+                    Map<ImagingType, List<WellHasImagingType>> submMap = next.getValue();
+                    for (ImagingType imagingType : submMap.keySet()) {
+                        List<WellHasImagingType> get = submMap.get(imagingType);
+                        wellHasImagingTypes.addAll(get);
+                    }
+                }
+
+                List<Well> wells = new ArrayList<>();
+                for (PlateCondition plateCondition : experiment.getPlateConditionCollection()) {
+                    wells.addAll(plateCondition.getWellCollection());
+                }
+
+                for (int i = 0; i < wells.size(); i++) {
+                    List<WellHasImagingType> wellHasImagingTypesList = new ArrayList();
+                    Well well = wells.get(i);
+                    WellHasImagingType wellHasImagingType = wellHasImagingTypes.get(i);
+                    wellHasImagingType.setWell(well);
+                    wellHasImagingTypesList.add(wellHasImagingType);
+                    well.setWellHasImagingTypeCollection(wellHasImagingTypesList);
+                }
+
+                experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
+                experimentService.saveMotilityDataForExperiment(experiment);
+                Assert.assertEquals(ExperimentStatus.PERFORMED, experiment.getExperimentStatus());
+                Assert.assertNotNull(experiment.getExperimentid());
+            } catch (FileParserException | PositionListMismatchException ex) {
+                LOG.error(ex.getMessage());
             }
+        } catch (FolderStructureException ex) {
+            LOG.error(ex.getMessage());
         }
-
-        List<Well> wells = new ArrayList<>();
-        for (PlateCondition plateCondition : experiment.getPlateConditionCollection()) {
-            wells.addAll(plateCondition.getWellCollection());
-        }
-
-        for (int i = 0; i < wells.size(); i++) {
-            List<WellHasImagingType> wellHasImagingTypesList = new ArrayList();
-            Well well = wells.get(i);
-            WellHasImagingType wellHasImagingType = wellHasImagingTypes.get(i);
-            wellHasImagingType.setWell(well);
-            wellHasImagingTypesList.add(wellHasImagingType);
-            well.setWellHasImagingTypeCollection(wellHasImagingTypesList);
-        }
-
-        experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
-        experimentService.saveMotilityDataForExperiment(experiment);
-        Assert.assertEquals(ExperimentStatus.PERFORMED, experiment.getExperimentStatus());
-        Assert.assertNotNull(experiment.getExperimentid());
     }
 }

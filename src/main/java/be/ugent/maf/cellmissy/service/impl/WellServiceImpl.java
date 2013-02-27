@@ -11,6 +11,7 @@ import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.CellMiaDataLoadingException;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import be.ugent.maf.cellmissy.exception.PositionListMismatchException;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
@@ -158,15 +159,15 @@ public class WellServiceImpl implements WellService {
         wellRepository.delete(entity);
     }
 
-    /**
-     * Get the global algorithm map from CellMia data service
-     *
-     * @return
-     * @throws FileParserException
-     * @throws PositionListMismatchException  
-     */
+   /**
+    * Get the global algorithm map from CellMia data service
+    * @return
+    * @throws FileParserException
+    * @throws PositionListMismatchException
+    * @throws CellMiaDataLoadingException 
+    */
     @Override
-    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException{
+    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException, CellMiaDataLoadingException{
         algoMap = cellMiaDataService.processCellMiaData();
         return algoMap;
     }
@@ -285,7 +286,7 @@ public class WellServiceImpl implements WellService {
     }
 
     @Override
-    public int getNumberOfSamples() {
+    public int getNumberOfSamples() throws CellMiaDataLoadingException{
         return cellMiaDataService.getNumberOfSamples();
     }
 
