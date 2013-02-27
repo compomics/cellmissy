@@ -11,6 +11,7 @@ import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.FolderStructureException;
 import be.ugent.maf.cellmissy.repository.ExperimentRepository;
 import be.ugent.maf.cellmissy.repository.InstrumentRepository;
 import be.ugent.maf.cellmissy.repository.MagnificationRepository;
@@ -125,7 +126,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     }
 
     @Override
-    public void loadFolderStructure(Experiment experiment) {
+    public void loadFolderStructure(Experiment experiment) throws FolderStructureException {
         for (File file : mainDirectory.listFiles()) {
             if (file.getName().contains(experiment.getProject().toString())) {
                 //project folder
@@ -134,79 +135,131 @@ public class ExperimentServiceImpl implements ExperimentService {
             }
         }
 
-        for (File file : projectFolder.listFiles()) {
-            if (file.getName().contains(experiment.toString())) {
-                //experiment folder
-                experimentFolder = file;
-                //set experiment folde
-                experiment.setExperimentFolder(experimentFolder);
-                break;
-            }
-        }
-
-        for (File file : experimentFolder.listFiles()) {
-            if (file.getName().endsWith("raw")) {
-                //raw folder
-                rawFolder = file;
-            } else if (file.getName().endsWith("MIA")) {
-                //Mia folder
-                miaFolder = file;
-                //set experiment mia folder
-                experiment.setMiaFolder(miaFolder);
-            }
-        }
-
-        for (File file : rawFolder.listFiles()) {
-            if (file.getName().endsWith("set-up")) {
-                setupFolder = file;
-                //set setup folder of the experiment
-                experiment.setSetupFolder(setupFolder);
-            } else if (file.getName().endsWith("microscope")) {
-                microscopeFolder = file;
-            }
-        }
-
-        //from microscope folder look for obsep folder(s)
-        File docFiles = null;
-        File[] listFiles = microscopeFolder.listFiles();
-        // still need to list the folders if the lenght is equal to one
-        if (listFiles.length == 1) {
-            File[] subFiles = listFiles[0].listFiles();
-            for (File file : subFiles) {
-                if (file.getName().endsWith("Files")) {
-                    docFiles = file;
+        // check for project folder
+        if (projectFolder != null) {
+            for (File file : projectFolder.listFiles()) {
+                if (file.getName().contains(experiment.toString())) {
+                    //experiment folder
+                    experimentFolder = file;
                     break;
                 }
             }
         } else {
-            for (File file : listFiles) {
-                if (file.getName().endsWith("Files")) {
-                    docFiles = file;
-                    break;
+            throw new FolderStructureException("No project folder found.\nPlease check folder structure!");
+        }
+
+        // check for experiment folder
+        if (experimentFolder != null) {
+            //set experiment folde
+            experiment.setExperimentFolder(experimentFolder);
+            for (File file : experimentFolder.listFiles()) {
+                if (file.getName().endsWith("raw")) {
+                    //raw folder
+                    rawFolder = file;
+                } else if (file.getName().endsWith("MIA")) {
+                    //Mia folder
+                    miaFolder = file;
+                    if (miaFolder != null) {
+                        //set experiment mia folder
+                        experiment.setMiaFolder(miaFolder);
+                    } else {
+                        throw new FolderStructureException("No MIA folder found.\nPlease check folder structure!");
+                    }
                 }
             }
+        } else {
+            throw new FolderStructureException("No experiment folder found.\nPlease check folder structure!");
         }
 
-        List<File> obsepFolders = new ArrayList<>();
-        for (int i = 0; i < docFiles.listFiles().length; i++) {
-            if (docFiles.listFiles()[i].getName().startsWith("D")) {
-                obsepFolders.add(docFiles.listFiles()[i]);
-            }
-        }
-
-        //obsep file
-        File obsepFile = null;
-
-        if (obsepFolders.size() == 1) {
-            File aFile = obsepFolders.get(0);
-            for (File file : aFile.listFiles()) {
-                if (file.getName().endsWith(".obsep")) {
-                    obsepFile = file;
+        // check for raw folder
+        if (rawFolder != null) {
+            for (File file : rawFolder.listFiles()) {
+                if (file.getName().endsWith("set-up")) {
+                    setupFolder = file;
+                } else if (file.getName().endsWith("microscope")) {
+                    microscopeFolder = file;
                 }
             }
+        } else {
+            throw new FolderStructureException("No raw folder found.\nPlease check folder structure!");
         }
-        //set experiment obsep file
-        experiment.setObsepFile(obsepFile);
+
+        // check for set-up folder
+        if (setupFolder != null) {
+            //set setup folder of the experiment
+            experiment.setSetupFolder(setupFolder);
+        } else {
+            throw new FolderStructureException("No set-up folder found.\nPlease check folder structure!");
+        }
+
+        // check for microscope folder
+        if (microscopeFolder != null) {
+            //from microscope folder look for obsep folder(s)
+            File docFiles = null;
+            File[] microscopeFiles = microscopeFolder.listFiles();
+            // check if microscope folder is empty
+            if (microscopeFiles.length == 0) {
+                throw new FolderStructureException("Folder: " + microscopeFolder.getName() + " seems to be empty!\nPlease check folder structure!");
+            }
+            // still need to list the folders if the lenght is equal to one
+            if (microscopeFiles.length == 1) {
+                File[] subFiles = microscopeFiles[0].listFiles();
+                for (File file : subFiles) {
+                    if (file.getName().endsWith("Files")) {
+                        docFiles = file;
+                        break;
+                    }
+                }
+            } else {
+                for (File file : microscopeFiles) {
+                    if (file.getName().endsWith("Files")) {
+                        docFiles = file;
+                        break;
+                    }
+                }
+            }
+
+            // check for folder containg obsep file
+            if (docFiles != null) {
+                List<File> obsepFolders = new ArrayList<>();
+                File[] listFiles = docFiles.listFiles();
+                for (int i = 0; i < listFiles.length; i++) {
+                    if (listFiles[i].getName().startsWith("D")) {
+                        obsepFolders.add(listFiles[i]);
+                    }
+                }
+                //obsep file
+                File obsepFile = null;
+
+                if (obsepFolders.isEmpty()) {
+                    throw new FolderStructureException("Wrong structure in folder: " + docFiles.getName() + "\nNo folders containing obsep files found.");
+                }
+
+                if (obsepFolders.size() == 1) {
+                    File aFile = obsepFolders.get(0);
+                    for (File file : aFile.listFiles()) {
+                        if (file.getName().endsWith(".obsep")) {
+                            obsepFile = file;
+                        }
+                    }
+                }
+
+                //set experiment obsep file (the check for this null is done after, in the controller)
+                experiment.setObsepFile(obsepFile);
+            } else {
+                throw new FolderStructureException("Wrong structure in folder: " + microscopeFolder.getName());
+            }
+        } else {
+            throw new FolderStructureException("No microscope folder found.\nPlease check folder structure!");
+        }
+    }
+
+    @Override
+    public void resetFolders() {
+        // set folders back to null
+        experimentFolder = null;
+        setupFolder = null;
+        miaFolder = null;
     }
 
     @Override

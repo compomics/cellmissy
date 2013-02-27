@@ -8,7 +8,7 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.Instrument;
 import be.ugent.maf.cellmissy.entity.Magnification;
-import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.FolderStructureException;
 import java.io.File;
 import java.util.List;
 
@@ -36,9 +36,14 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * Load existing folders for a certain experiment
      *
      * @param experiment
+     * @throws FolderStructureException  if directory structure is not OK.
      */
-    void loadFolderStructure(Experiment experiment);
+    void loadFolderStructure(Experiment experiment) throws FolderStructureException;
 
+    /**
+     * Reset folders to null
+     */
+    void resetFolders();
     /**
      * Find all instruments
      *

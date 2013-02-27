@@ -22,7 +22,6 @@ import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -137,12 +136,15 @@ public class LoadExperimentFromCellMiaController {
         loadFromCellMiaPanel.getExpDataButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                // if obsep file was not automatically detectable, let the user choose a file to parse
                 if (experiment.getObsepFile() != null) {
                     File obsepFile = experiment.getObsepFile();
                     setExperimentMetadata(obsepFile);
+                    cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click <<Forward>> to process imaging data for the experiment.");
+                    loadFromCellMiaPanel.getForwardButton().setEnabled(true);
+                    loadFromCellMiaPanel.getExpDataButton().setEnabled(false);
                 } else {
-                    cellMissyController.showMessage("No valid microscope file was found or different files were found.\nPlease select a file.", "Microscope file not valid", JOptionPane.WARNING_MESSAGE);
+                    cellMissyController.showMessage("No valid microscope file was found or different files were found.\nPlease select a file.", ".obsep file not valid", JOptionPane.WARNING_MESSAGE);
                     //choose file to parse form microscope folder
                     JFileChooser fileChooser = new JFileChooser();
                     // to select only txt files
@@ -177,13 +179,13 @@ public class LoadExperimentFromCellMiaController {
                         experiment.setObsepFile(obsepFile);
                         // set experiment metadata
                         setExperimentMetadata(obsepFile);
+                        cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click <<Forward>> to process imaging data for the experiment.");
+                        loadFromCellMiaPanel.getForwardButton().setEnabled(true);
+                        loadFromCellMiaPanel.getExpDataButton().setEnabled(false);
                     } else {
                         cellMissyController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
-                cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click <<Forward>> to process imaging data for the experiment.");
-                loadFromCellMiaPanel.getForwardButton().setEnabled(true);
-                loadFromCellMiaPanel.getExpDataButton().setEnabled(false);
             }
         });
 
@@ -324,10 +326,7 @@ public class LoadExperimentFromCellMiaController {
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
-                showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
-            } catch (CancellationException ex) {
-                LOG.info("Loading data was cancelled.");
-                showMessage("Loading data was cancelled.", "Cancellation error", JOptionPane.ERROR_MESSAGE);
+                showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

@@ -9,6 +9,9 @@ import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.CellMiaDataLoadingException;
+import be.ugent.maf.cellmissy.exception.FileParserException;
+import be.ugent.maf.cellmissy.exception.PositionListMismatchException;
 import be.ugent.maf.cellmissy.parser.ObsepFileParserTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static junit.framework.Assert.*;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +32,7 @@ import java.util.Map;
 @ContextConfiguration("classpath:mySpringXMLConfig.xml")
 public class CellMiaDataServiceTest {
 
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CellMiaDataServiceTest.class);
     @Autowired
     private CellMiaDataService cellMiaDataService;
 
@@ -54,12 +59,14 @@ public class CellMiaDataServiceTest {
         cellMiaDataService.getMicroscopeDataService().init(experiment);
 
         // get the map
-        Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processCellMiaData = cellMiaDataService.processCellMiaData();
-        // iterate through the algorithms found
-        for (Algorithm algorithm : processCellMiaData.keySet()) {
-            // get each map for each algorithm found
-            Map<ImagingType, List<WellHasImagingType>> rawDataMap = processCellMiaData.get(algorithm);
-            // iterate through the imaging types
+        Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processCellMiaData = new HashMap<>();
+        try {
+            processCellMiaData = cellMiaDataService.processCellMiaData();
+            // iterate through the algorithms found
+            for (Algorithm algorithm : processCellMiaData.keySet()) {
+                // get each map for each algorithm found
+                Map<ImagingType, List<WellHasImagingType>> rawDataMap = processCellMiaData.get(algorithm);
+                // iterate through the imaging types
 //            for (ImagingType imagingType : rawDataMap.keySet()) {
 //                List<WellHasImagingType> list = rawDataMap.get(imagingType);
 //                for (WellHasImagingType wellHasImagingType : list) {
@@ -69,7 +76,11 @@ public class CellMiaDataServiceTest {
 //                    System.out.println("size steps: " + wellHasImagingType.getTimeStepCollection().size());
 //                }
 //            }
-            assertEquals(2, rawDataMap.size());
+                assertEquals(2, rawDataMap.size());
+            }
+        } catch (FileParserException | PositionListMismatchException | CellMiaDataLoadingException ex) {
+            LOG.error(ex.getMessage());
         }
+
     }
 }

@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.CellMiaDataLoadingException;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import be.ugent.maf.cellmissy.exception.PositionListMismatchException;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -15,6 +16,7 @@ import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.WellService;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -28,7 +30,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -93,8 +94,9 @@ public class CellMiaImagedPlateController {
      * Compute number of samples that need to be stored
      *
      * @return
+     * @throws CellMiaDataLoadingException  
      */
-    public int getNumberOfSamples() {
+    public int getNumberOfSamples() throws CellMiaDataLoadingException {
         return wellService.getNumberOfSamples();
     }
 
@@ -139,6 +141,7 @@ public class CellMiaImagedPlateController {
                             String message = "Please select first well imaged with " + imagingType.getName() + " (imaging type " + (imagingTypeList.indexOf(imagingType) + 1) + "/" + imagingTypeList.size() + ")" + "\nExposure time: " + imagingType.getExposureTime() + " " + imagingType.getExposureTimeUnit() + ", Light intensity: " + imagingType.getLightIntensity() + " V";
                             loadExperimentFromCellMiaController.showMessage(message, "Select first well", JOptionPane.INFORMATION_MESSAGE);
                             message = "Select first well imaged.";
+                            loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.black);
                             loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), message);
                             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getForwardButton().setEnabled(false);
                         }
@@ -150,6 +153,7 @@ public class CellMiaImagedPlateController {
                         String message = "Please select first well imaged with " + imagedPlatePanel.getCurrentImagingType().getName() + " (imaging type " + (imagingTypeList.indexOf(imagedPlatePanel.getCurrentImagingType()) + 1) + "/" + imagingTypeList.size() + ")" + "\nExposure time: " + imagedPlatePanel.getCurrentImagingType().getExposureTime() + " " + imagedPlatePanel.getCurrentImagingType().getExposureTimeUnit() + ", Light intensity: " + imagedPlatePanel.getCurrentImagingType().getLightIntensity() + " V";
                         loadExperimentFromCellMiaController.showMessage(message, "Select first well", JOptionPane.INFORMATION_MESSAGE);
                         message = "Select first well imaged.";
+                        loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.black);
                         loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), message);
                         isFirtTime = true;
                     }
@@ -210,6 +214,7 @@ public class CellMiaImagedPlateController {
         //check if there are more imaging types to process
         if (imagedPlatePanel.getImagingTypeList().indexOf(imagedPlatePanel.getCurrentImagingType()) == imagedPlatePanel.getImagingTypeList().size() - 1) {
             // there are no more imaging types to process, the experiment can be saved to DB
+            loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.black);
             loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), "Click <<Cancel>> to reset plate view or <<Finish>> to save the experiment");
             //disable Forward button
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getForwardButton().setEnabled(false);
@@ -218,6 +223,7 @@ public class CellMiaImagedPlateController {
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getFinishButton().setEnabled(true);
         } else {
             // ask the user to click on Forward button to proceed with next imaging type
+            loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.black);
             loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), "Click <<Forward>> to proceed with next imaging type.");
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getForwardButton().setEnabled(true);
         }
@@ -340,6 +346,7 @@ public class CellMiaImagedPlateController {
             wellService.init(loadExperimentFromCellMiaController.getExperiment());
             int numberOfSamples = getNumberOfSamples();
             String message = numberOfSamples + " samples are being processed. Please wait.";
+            loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.black);
             loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), message);
             // get the list of imaging types
             List<ImagingType> imagingTypes = wellService.getImagingTypes();
@@ -351,11 +358,11 @@ public class CellMiaImagedPlateController {
 
         @Override
         protected void done() {
+            //set cursor back to normal
+            loadExperimentFromCellMiaController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getSaveDataProgressBar().setVisible(false);
             try {
                 get();
-                //set cursor back to normal
-                loadExperimentFromCellMiaController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getSaveDataProgressBar().setVisible(false);
                 // get first Imaging Type
                 imagedPlatePanel.setCurrentImagingType(imagedPlatePanel.getImagingTypeList().get(0));
                 // ask the user to select first well for the imaging type
@@ -372,18 +379,24 @@ public class CellMiaImagedPlateController {
                 }
                 loadExperimentFromCellMiaController.showMessage(message, "Select first well", JOptionPane.INFORMATION_MESSAGE);
                 message = "Select first well imaged.";
+                loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.black);
                 loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), message);
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
-                loadExperimentFromCellMiaController.showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
-            } catch (CancellationException ex) {
-                LOG.info("Data fetching/computation was cancelled.");
-                loadExperimentFromCellMiaController.showMessage("Data loading was cancelled.", "Data loading cancelled", JOptionPane.ERROR_MESSAGE);
-            } catch (Exception ex) {
-                if (ex instanceof FileParserException || ex instanceof PositionListMismatchException) {
-                    LOG.error(ex.getMessage());
-                    loadExperimentFromCellMiaController.showMessage(ex.getMessage(), "Position list file error", JOptionPane.ERROR_MESSAGE);
+                LOG.error(ex.getMessage());
+                if (ex.getCause() instanceof FileParserException || ex.getCause() instanceof PositionListMismatchException) {
+                    String message = "Error in parsing position list(s) !";
+                    loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.red);
+                    loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), message);
+                    loadExperimentFromCellMiaController.showMessage(ex.getMessage(), "ERROR in parsing position list(s)", JOptionPane.ERROR_MESSAGE);
+                } else if (ex.getCause() instanceof CellMiaDataLoadingException) {
+                    String message = "Error in loading data !";
+                    loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.red);
+                    loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), message);
+                    loadExperimentFromCellMiaController.showMessage(ex.getMessage(), "ERROR in loading data", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    loadExperimentFromCellMiaController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }

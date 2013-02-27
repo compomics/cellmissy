@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.exception.FolderStructureException;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.load.ExperimentMetadataPanel;
 import be.ugent.maf.cellmissy.gui.experiment.load.ExperimentOverviewPanel;
@@ -16,6 +17,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsLoadListRenderer;
 import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl.CycleTimeUnit;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.MouseAdapter;
@@ -34,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Experiment Metadata Controller: get experiment metadata from microscope (as well conditions from DB) Parent Controller: Load Experiment Controller
+ * Experiment Data Controller: get experiment metadata from microscope (as well conditions from DB) Parent Controller: Load Experiment Controller
  *
  * @author Paola Masuzzo
  */
@@ -162,14 +164,8 @@ public class CellMiaExperimentDataController {
                             // ignore selection and select previous experiment
                             Experiment currentExperiment = loadExperimentFromCellMiaController.getExperiment();
                             experimentOverviewPanel.getExperimentJList().setSelectedIndex(experimentBindingList.indexOf(currentExperiment));
-                            return;
                     }
                 }
-                //load experiment folders
-                experimentService.loadFolderStructure(selectedExperiment);
-                LOG.debug("Folders for experiment " + selectedExperiment.getExperimentNumber() + " have been loaded");
-                loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), "Click <<Exp Data>> to get experiment data from microscope.");
-                loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getExpDataButton().setEnabled(true);
             }
         });
 
@@ -217,6 +213,7 @@ public class CellMiaExperimentDataController {
         experimentMetadataPanel.getTimeFramesTextField().setText("");
         experimentMetadataPanel.getIntervalTextField().setText("");
         experimentMetadataPanel.getDurationTextField().setText("");
+        experimentService.resetFolders();
     }
 
     /**
@@ -249,6 +246,23 @@ public class CellMiaExperimentDataController {
         loadExperimentFromCellMiaController.getImagedPlatePanel().repaint();
         // show Conditions JList
         showConditionsList();
+        String info;
+        try {
+            //load experiment folders
+            experimentService.loadFolderStructure(selectedExperiment);
+            LOG.debug("Folders for experiment " + selectedExperiment.getExperimentNumber() + " have been loaded");
+            info = "Folders have been loaded. Click <<Exp Data>> to get data from microscope.";
+            loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.black);
+            loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), info);
+            // enable button to look for experiment data
+            loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getExpDataButton().setEnabled(true);
+        } catch (FolderStructureException ex) {
+            LOG.error(ex.getMessage());
+            info = "ERROR: please check folder structure for current experiment!";
+            loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.red);
+            loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), info);
+            loadExperimentFromCellMiaController.showMessage(ex.getMessage(), "Error in loading folder structure", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**

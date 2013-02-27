@@ -45,23 +45,27 @@ public class PositionListParserImpl implements PositionListParser {
 
             List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
             File[] setupFiles = setupFolder.listFiles();
+            File positionListFile = null;
             // iterate through files inside the folder and look for position lists file(s)
             for (int j = 0; j < setupFiles.length; j++) {
-                File positionListFile = null;
                 if (setupFiles[j].getName().equals(positionListName + ".txt")) {
                     positionListFile = setupFiles[j];
                     try (BufferedReader bufferedReader = new BufferedReader(new FileReader(positionListFile))) {
                         String strRead;
+                        // check if file actually contains line to read, otherwise throw ann exception
+                        if (bufferedReader.read() == -1) {
+                            throw new FileParserException("Seems like your position list file is empty!\nPlease check your file.");
+                        }
+
+                        // create a new wellHasImagingType object for each line to be parsed
                         while ((strRead = bufferedReader.readLine()) != null) {
-
-                            // for each line of the position list create a new WellHasImagingType entity
                             WellHasImagingType wellHasImagingType = new WellHasImagingType();
+                            // tab separated text file!
                             String[] splitarray = strRead.split("\t");
-
-                            // check for number of columns in position list file
+                            // check for number of columns in position list file: needs to be equal to 2, otherwise throw an exception
                             if (splitarray.length == 2) {
                                 try {
-                                    // set wellHasImagingType class members
+                                    // set wellHasImagingType class members: (x, y) coordinates and imaging type
                                     wellHasImagingType.setXCoordinate(Double.parseDouble(splitarray[0]));
                                     wellHasImagingType.setYCoordinate(Double.parseDouble(splitarray[1]));
                                     wellHasImagingType.setImagingType(imagingType);
@@ -74,7 +78,7 @@ public class PositionListParserImpl implements PositionListParser {
                                     throw new FileParserException("Please make sure each line of position list contains (x, y) coordinates in numbers!");
                                 }
                             } else {
-                                throw new FileParserException("Please make sure position list contains 2 columns!");
+                                throw new FileParserException("Please make sure position list contains 2 columns: (x, y) coordinates!");
                             }
                         }
                         // set the Collection of WellHasImagingTypes with the current List
@@ -90,10 +94,11 @@ public class PositionListParserImpl implements PositionListParser {
                     // fill in the map
                     imagingTypeMap.put(imagingType, wellHasImagingTypeList);
                 }
-                // if no files were found, throw an exception
-                if (positionListFile == null) {
-                    throw new PositionListMismatchException("No valid position list was found.\nPlease check name of your file(s) in the setup folder.");
-                }
+                // if no valid files were found, throw an exception
+                // this can mean two things: no file at all was found in the folder, or files with mismatching names, i.e. different from names parsed from obsep file
+            }
+            if (positionListFile == null) {
+                throw new PositionListMismatchException("No valid position list was found.\nPlease check name of your text file(s) in the setup folder.");
             }
         }
         return imagingTypeMap;

@@ -773,7 +773,7 @@ public class AreaAnalysisController {
             } catch (InterruptedException | CancellationException ex) {
                 ex.printStackTrace();
             } catch (ExecutionException ex) {
-                dataAnalysisController.showMessage("An expected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error",JOptionPane.ERROR_MESSAGE);
+                dataAnalysisController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error",JOptionPane.ERROR_MESSAGE);
             }
             //set cursor back to default
             dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
