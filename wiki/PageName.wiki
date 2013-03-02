@@ -14,8 +14,9 @@ The main unit around which these three modules are built is the experiment: clic
 === Create a new experiment ===
 This module guides you through the design of a cell migration/invasion experiment. After having chosen a project to which the experiment is going to belong, and having provided a number and a short description for the experiment, you can define its set-up on a multi-well plate view. Common multi-well plate formats are rendered on the view, namely 96 (8 columns x 12 rows), 48 (6 x 8), 24 (4 x 6), 12 (3 x  4), 6 (2 x 3). Here, groups of wells (or individual wells) can be selected to define biological conditions. Please note that wells within such a group are taken to be technical replicates in further data loading/analysis. A list keeps track of how many biological conditions are being defined for the current experiment and, once a condition is added to the list, a color is automatically assigned to it. Different informative metadata variables can be chosen for each biological condition in the right panel of the GUI. Here, three tabs show different views according to the variables to be chosen:
  * _Cell Line_: here the cell line used in the experiment can be chosen; you can define and customize parameters such as seeding density (number of cells _per_ well), growth medium and serum.
- * _Assay_ECM_:
- * _Treatments_:
+ * _Assay_ECM_: here you can characterize the Extra Cellular Matrix (ECM), in terms of dimensionality (are you designing a _migration_ or an _invasion_ experiment?), coating type, coating temperature and so on. 
+ * _Treatments_: the last tab gives you the possibility to add any kind of treatment or compound to your biological condition, specifying for example the concentration and the presence of any drug solvent.
+Once the experimental set-up is finalized, you can export the design as a PDF document that can be used as a reference in the lab while conducting the experiment. Then, the plate lay-out, well assignments and related metadata are all stored in the database. 
 === Load motility data ===
 
 === Data Analysis ===
