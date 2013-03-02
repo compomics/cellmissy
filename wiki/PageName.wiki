@@ -1,0 +1,21 @@
+#summary Everything you need to know to use CellMissy
+
+= Manual =
+
+== In a nutshell ==
+Developed to follow the steps typically encountered in a cell migration experiment, *CellMissy* is composed of three modules:
+
+ * _Experiment manager_: set-up a new cell migration/invasion experiment
+ * _Data Loader_: import and store motility data
+ * _Data Analyzer_: explore and analyze motility data
+
+The main unit around which these three modules are built is the experiment: clicking on the *_Experiment_* menu, three items are shown. Each of these items corresponds to a module and is described in more detail below.
+
+=== Create a new experiment ===
+This module guides you through the design of a cell migration/invasion experiment. After having chosen a project to which the experiment is going to belong, and having provided a number and a short description for the experiment, you can define its set-up on a multi-well plate view. Common multi-well plate formats are rendered on the view, namely 96 (8 columns x 12 rows), 48 (6 x 8), 24 (4 x 6), 12 (3 x  4), 6 (2 x 3). Here, groups of wells (or individual wells) can be selected to define biological conditions. Please note that wells within such a group are taken to be technical replicates in further data loading/analysis. A list keeps track of how many biological conditions are being defined for the current experiment and, once a condition is added to the list, a color is automatically assigned to it. Different informative metadata variables can be chosen for each biological condition in the right panel of the GUI. Here, three tabs show different views according to the variables to be chosen:
+ * _Cell Line_: here the cell line used in the experiment can be chosen; you can define and customize parameters such as seeding density (number of cells _per_ well), growth medium and serum.
+ * _Assay_ECM_:
+ * _Treatments_:
+=== Load motility data ===
+
+=== Data Analysis ===
