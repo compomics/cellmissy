@@ -1,4 +1,5 @@
 #summary Everything you need to know to use CellMissy
+#labels Featured
 
 = Manual =
 
