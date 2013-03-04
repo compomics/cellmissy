@@ -316,34 +316,34 @@ public class CellMissyController {
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), userManagementController.getUserPanel(), setupExperimentController.getSetupExperimentPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), userManagementController.getUserPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), userManagementController.getUserPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), userManagementController.getUserPanel(), dataAnalysisController.getDataAnalysisPanel());
+                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), userManagementController.getUserPanel(), dataAnalysisController.getAnalysisExperimentPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), userManagementController.getUserPanel(), mainPanel);
 
             } else if (menuItemText.equalsIgnoreCase("create experiment...")) {
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), userManagementController.getUserPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), dataAnalysisController.getDataAnalysisPanel());
+                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), dataAnalysisController.getAnalysisExperimentPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), mainPanel);
 
             } else if (menuItemText.equalsIgnoreCase("data analysis")) {
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getDataAnalysisPanel(), setupExperimentController.getSetupExperimentPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getDataAnalysisPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getDataAnalysisPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getDataAnalysisPanel(), userManagementController.getUserPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getDataAnalysisPanel(), mainPanel);
+                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getAnalysisExperimentPanel(), setupExperimentController.getSetupExperimentPanel());
+                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getAnalysisExperimentPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel());
+                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getAnalysisExperimentPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel());
+                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getAnalysisExperimentPanel(), userManagementController.getUserPanel());
+                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getAnalysisExperimentPanel(), mainPanel);
 
             } else if (menuItemText.equalsIgnoreCase("... from CELLMIA")) {
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel(), setupExperimentController.getSetupExperimentPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel(), dataAnalysisController.getDataAnalysisPanel());
+                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel(), dataAnalysisController.getAnalysisExperimentPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel(), userManagementController.getUserPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel(), mainPanel);
 
             } else if (menuItemText.equalsIgnoreCase("... from generic input")) {
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel(), setupExperimentController.getSetupExperimentPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel(), dataAnalysisController.getDataAnalysisPanel());
+                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel(), dataAnalysisController.getAnalysisExperimentPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel(), userManagementController.getUserPanel());
                 GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel(), mainPanel);
             }

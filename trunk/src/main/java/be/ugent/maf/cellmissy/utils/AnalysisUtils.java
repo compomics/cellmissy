@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.utils;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -301,8 +302,8 @@ public class AnalysisUtils {
      */
     public static int getNumberOfSamplesPerCondition(PlateCondition plateCondition) {
         int numberOfSamples = 0;
-        List<Well> imagedWells = plateCondition.getImagedWells();
-        for (Well well : imagedWells) {
+        List<Well> processedWells = plateCondition.getProcessedWells();
+        for (Well well : processedWells) {
             numberOfSamples += getNumberOfSamplesPerWell(well);
         }
         return numberOfSamples;
@@ -315,6 +316,12 @@ public class AnalysisUtils {
      * @return
      */
     public static int getNumberOfSamplesPerWell(Well well) {
-        return well.getWellHasImagingTypeCollection().size();
+        int numberOfSamplesPerWell = 0;
+        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
+            if (!wellHasImagingType.getTimeStepCollection().isEmpty()) {
+                numberOfSamplesPerWell++;
+            }
+        }
+        return numberOfSamplesPerWell;
     }
 }

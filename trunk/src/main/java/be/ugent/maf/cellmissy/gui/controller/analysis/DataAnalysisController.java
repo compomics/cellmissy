@@ -16,9 +16,11 @@ import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AreaAnalysisPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.MetaDataAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsAnalysisListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
@@ -39,10 +41,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Binding;
 import org.jdesktop.beansbinding.BindingGroup;
+import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
@@ -76,6 +83,8 @@ public class DataAnalysisController {
     //array with time frames
     private double[] timeFrames;
     //view
+    private AnalysisExperimentPanel analysisExperimentPanel;
+    private MetaDataAnalysisPanel metaDataAnalysisPanel;
     private DataAnalysisPanel dataAnalysisPanel;
     private AnalysisPlatePanel analysisPlatePanel;
     //parent controller
@@ -102,6 +111,8 @@ public class DataAnalysisController {
      */
     public void init() {
         //init view
+        analysisExperimentPanel = new AnalysisExperimentPanel();
+        metaDataAnalysisPanel = new MetaDataAnalysisPanel();
         dataAnalysisPanel = new DataAnalysisPanel();
         analysisPlatePanel = new AnalysisPlatePanel();
         bindingGroup = new BindingGroup();
@@ -112,7 +123,9 @@ public class DataAnalysisController {
         areaAnalysisController.init();
         // init other view
         initPlatePanel();
-        initExperimentDataPanel();
+        initMainPanel();
+        initMetadataAnalysisPanel();
+        initDataAnalysisPanel();
     }
 
     /**
@@ -122,6 +135,10 @@ public class DataAnalysisController {
      */
     public DataAnalysisPanel getDataAnalysisPanel() {
         return dataAnalysisPanel;
+    }
+
+    public AnalysisExperimentPanel getAnalysisExperimentPanel() {
+        return analysisExperimentPanel;
     }
 
     public Experiment getExperiment() {
@@ -171,7 +188,7 @@ public class DataAnalysisController {
         //fetch time steps for each well
         for (int i = 0; i < wellList.size(); i++) {
             //fetch time step collection for the wellhasimagingtype of interest
-            wellService.fetchTimeSteps(wellList.get(i), algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
+            wellService.fetchTimeSteps(wellList.get(i), algorithmBindingList.get(metaDataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmid(), imagingTypeBindingList.get(metaDataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getImagingTypeid());
         }
         //update timeStep List for current selected condition
         updateTimeStepsList(plateCondition);
@@ -240,23 +257,58 @@ public class DataAnalysisController {
     }
 
     /**
-     * initialize left panel: projectList, experimentList, Algorithm and imaging type Combo box, plateConditions list
+     * Initialize main panel
      */
-    private void initExperimentDataPanel() {
+    private void initMainPanel() {
+        // by default next button is disabled
+        // this is enabled when an experiment is chosen
+        analysisExperimentPanel.getNextButton().setEnabled(false);
+        analysisExperimentPanel.getPreviousButton().setEnabled(false);
+        //hide progress bar at first time
+        analysisExperimentPanel.getFetchAllConditionsProgressBar().setVisible(false);
+        analysisExperimentPanel.getFetchAllConditionsProgressBar().setStringPainted(true);
+        cellMissyController.updateInfoLabel(analysisExperimentPanel.getInfoLabel(), "Please select a project and an experiment to analyse motility data.");
 
+        // action listener on next button
+        analysisExperimentPanel.getNextButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                analysisExperimentPanel.getNextButton().setEnabled(false);
+                // switch between the two panels
+                GuiUtils.switchChildPanels(analysisExperimentPanel.getTopPanel(), dataAnalysisPanel, metaDataAnalysisPanel);
+                analysisExperimentPanel.getTopPanel().repaint();
+                analysisExperimentPanel.getTopPanel().revalidate();
+                // update experiment info
+                dataAnalysisPanel.getExperimentNumberTextField().setText(experiment.toString());
+                dataAnalysisPanel.getDatasetTextField().setText(algorithmBindingList.get(metaDataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmName());
+                dataAnalysisPanel.getImagingTypeTextField().setText(imagingTypeBindingList.get(metaDataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getName());
+            }
+        });
+
+        analysisExperimentPanel.getPreviousButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+    }
+
+    /**
+     * Initialize metadata analysis panel
+     */
+    private void initMetadataAnalysisPanel() {
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
-        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, dataAnalysisPanel.getProjectJList());
+        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, metaDataAnalysisPanel.getProjectJList());
         bindingGroup.addBinding(jListBinding);
 
         //init algorithms combobox
         algorithmBindingList = ObservableCollections.observableList(new ArrayList<Algorithm>());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, algorithmBindingList, dataAnalysisPanel.getAlgorithmComboBox());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, algorithmBindingList, metaDataAnalysisPanel.getAlgorithmComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
 
         //init imagingtypes combo box
         imagingTypeBindingList = ObservableCollections.observableList(new ArrayList<ImagingType>());
-        jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, imagingTypeBindingList, dataAnalysisPanel.getImagingTypeComboBox());
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, imagingTypeBindingList, metaDataAnalysisPanel.getImagingTypeComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         //do the binding
         bindingGroup.bind();
@@ -265,11 +317,11 @@ public class DataAnalysisController {
          * add mouse listeners
          */
         //when a project from the list is selected, show all experiments performed for that project        
-        dataAnalysisPanel.getProjectJList().addMouseListener(new MouseAdapter() {
+        metaDataAnalysisPanel.getProjectJList().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 // retrieve selected project
-                int locationToIndex = dataAnalysisPanel.getProjectJList().locationToIndex(e.getPoint());
+                int locationToIndex = metaDataAnalysisPanel.getProjectJList().locationToIndex(e.getPoint());
                 Project selectedProject = projectBindingList.get(locationToIndex);
                 if (experiment == null) {
                     // project is being selected for the first time
@@ -278,18 +330,20 @@ public class DataAnalysisController {
                     showMessage("If you want to analyse data from another experiment,\nplease exit and restart the application.", "", JOptionPane.INFORMATION_MESSAGE);
                     // ignore selection and select previous (current) prject
                     Project currentProject = experiment.getProject();
-                    dataAnalysisPanel.getProjectJList().setSelectedIndex(projectBindingList.indexOf(currentProject));
+                    metaDataAnalysisPanel.getProjectJList().setSelectedIndex(projectBindingList.indexOf(currentProject));
                 }
             }
         });
 
         //when an experiment is selected, show algorithms and imaging types used for that experiment
         //show also conditions in the Jlist behind and plate view according to the conditions setup
-        dataAnalysisPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
+        metaDataAnalysisPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                // enable next button
+                analysisExperimentPanel.getNextButton().setEnabled(true);
                 // retrieve selected experiment
-                int locationToIndex = dataAnalysisPanel.getExperimentJList().locationToIndex(e.getPoint());
+                int locationToIndex = metaDataAnalysisPanel.getExperimentJList().locationToIndex(e.getPoint());
                 Experiment selectedExperiment = experimentBindingList.get(locationToIndex);
                 // check if experiment is still null, then set it, otherwise warn the user, because an experiment was already chosen and data analysis was started
                 if (experiment == null) {
@@ -297,12 +351,66 @@ public class DataAnalysisController {
                 } else if (experiment != selectedExperiment) {
                     showMessage("If you want to analyse data from another experiment,\nplease exit and restart the application.", "", JOptionPane.INFORMATION_MESSAGE);
                     // ignore selection and select previous experiment
-                    dataAnalysisPanel.getExperimentJList().setSelectedIndex(experimentBindingList.indexOf(experiment));
+                    metaDataAnalysisPanel.getExperimentJList().setSelectedIndex(experimentBindingList.indexOf(experiment));
                 }
-
             }
         });
 
+        // bind information fields
+        // exp user
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, metaDataAnalysisPanel.getExperimentJList(), BeanProperty.create("selectedElement.user.firstName"), metaDataAnalysisPanel.getUserTextField(), BeanProperty.create("text"), "experimentuserbinding");
+        bindingGroup.addBinding(binding);
+        // exp purpose
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, metaDataAnalysisPanel.getExperimentJList(), BeanProperty.create("selectedElement.purpose"), metaDataAnalysisPanel.getPurposeTextArea(), BeanProperty.create("text"), "experimentpurposebinding");
+        bindingGroup.addBinding(binding);
+        // exp time frames
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, metaDataAnalysisPanel.getExperimentJList(), BeanProperty.create("selectedElement.timeFrames"), metaDataAnalysisPanel.getTimeFramesTextField(), BeanProperty.create("text"), "experimentimeframesbinding");
+        bindingGroup.addBinding(binding);
+        bindingGroup.bind();
+
+//        // when an algorithm is selected, map needs to be init again and then filled in with new results
+//        // cache needs to be cleaned
+//        metaDataAnalysisPanel.getAlgorithmComboBox().addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                areaPreProcessingController.initMapWithConditions();
+//                areaPreProcessingController.emptyDensityFunctionCache();
+//                areaPreProcessingController.setGlobalPlotForFirstTime(true);
+//                if (currentCondition != null) {
+//                    // Execute Swing Worker to fetch Selected Condition: 
+//                    FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
+//                    fetchSelectedConditionSW.execute();
+//                }
+//            }
+//        });
+//
+//        // same for imaging type: map needs to be initialized again and fill in with new results
+//        // cache needs to be cleaned
+//        metaDataAnalysisPanel.getImagingTypeComboBox().addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                areaPreProcessingController.initMapWithConditions();
+//                areaPreProcessingController.emptyDensityFunctionCache();
+//                areaPreProcessingController.setGlobalPlotForFirstTime(true);
+//                if (currentCondition != null) {
+//                    // Execute Swing Worker to fetch Selected Condition: 
+//                    FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
+//                    fetchSelectedConditionSW.execute();
+//                }
+//            }
+//        });
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(metaDataAnalysisPanel.getCellCoveredAreaRadioButton());
+        buttonGroup.add(metaDataAnalysisPanel.getWoundAreaRadioButton());
+        // select cell covered area as default
+        metaDataAnalysisPanel.getCellCoveredAreaRadioButton().setSelected(true);
+        analysisExperimentPanel.getTopPanel().add(metaDataAnalysisPanel, gridBagConstraints);
+    }
+
+    /**
+     * Initialize data analysis panel
+     */
+    private void initDataAnalysisPanel() {
         //when a certain condition is selected, fetch time steps for each well of the condition
         dataAnalysisPanel.getConditionsList().addMouseListener(new MouseAdapter() {
             @Override
@@ -323,43 +431,6 @@ public class DataAnalysisController {
                 currentCondition = selectedCondition;
             }
         });
-
-
-        // when an algorithm is selected, map needs to be init again and then filled in with new results
-        // cache needs to be cleaned
-        dataAnalysisPanel.getAlgorithmComboBox().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                areaPreProcessingController.initMapWithConditions();
-                areaPreProcessingController.emptyDensityFunctionCache();
-                areaPreProcessingController.setGlobalPlotForFirstTime(true);
-                if (currentCondition != null) {
-                    // Execute Swing Worker to fetch Selected Condition: 
-                    FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
-                    fetchSelectedConditionSW.execute();
-                }
-            }
-        });
-
-        // same for imaging type: map needs to be initialized again and fill in with new results
-        // cache needs to be cleaned
-        dataAnalysisPanel.getImagingTypeComboBox().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                areaPreProcessingController.initMapWithConditions();
-                areaPreProcessingController.emptyDensityFunctionCache();
-                areaPreProcessingController.setGlobalPlotForFirstTime(true);
-                if (currentCondition != null) {
-                    // Execute Swing Worker to fetch Selected Condition: 
-                    FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
-                    fetchSelectedConditionSW.execute();
-                }
-            }
-        });
-
-        //hide progress bar at first time
-        dataAnalysisPanel.getFetchAllConditionsProgressBar().setVisible(false);
-        dataAnalysisPanel.getFetchAllConditionsProgressBar().setStringPainted(true);
     }
 
     /**
@@ -382,7 +453,7 @@ public class DataAnalysisController {
     private void onSelectedProject(Project selectedProject) {
         if (experimentService.findExperimentsByProjectIdAndStatus(selectedProject.getProjectid(), ExperimentStatus.PERFORMED) != null) {
             experimentBindingList = ObservableCollections.observableList(experimentService.findExperimentsByProjectIdAndStatus(selectedProject.getProjectid(), ExperimentStatus.PERFORMED));
-            JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, dataAnalysisPanel.getExperimentJList());
+            JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, metaDataAnalysisPanel.getExperimentJList());
             bindingGroup.addBinding(jListBinding);
             bindingGroup.bind();
         } else {
@@ -442,9 +513,9 @@ public class DataAnalysisController {
         // init timeframes binding list with an empty one
         areaPreProcessingController.initTimeFramesList();
         //set selected algorithm to the first of the list
-        dataAnalysisPanel.getAlgorithmComboBox().setSelectedIndex(0);
+        metaDataAnalysisPanel.getAlgorithmComboBox().setSelectedIndex(0);
         //set selected imaging types to the first of the list
-        dataAnalysisPanel.getImagingTypeComboBox().setSelectedIndex(0);
+        metaDataAnalysisPanel.getImagingTypeComboBox().setSelectedIndex(0);
     }
 
     /**
@@ -513,8 +584,8 @@ public class DataAnalysisController {
             //fetch time steps for each well of condition 
             for (int i = 0; i < wellList.size(); i++) {
                 //fetch time step collection for the wellhasimagingtype of interest
-                Algorithm algorithm = algorithmBindingList.get(dataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex());
-                ImagingType imagingType = imagingTypeBindingList.get(dataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex());
+                Algorithm algorithm = algorithmBindingList.get(metaDataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex());
+                ImagingType imagingType = imagingTypeBindingList.get(metaDataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex());
                 wellService.fetchTimeSteps(wellList.get(i), algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
             }
             // check for time frames
@@ -581,7 +652,7 @@ public class DataAnalysisController {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
                 showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
-            } 
+            }
         }
     }
 }

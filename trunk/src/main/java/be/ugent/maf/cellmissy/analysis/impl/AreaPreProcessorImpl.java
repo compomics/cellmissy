@@ -67,6 +67,8 @@ public class AreaPreProcessorImpl implements AreaPreProcessor {
             for (int rowIndex = 1; rowIndex < deltaArea.length; rowIndex++) {
                 if (deltaArea[rowIndex][columnIndex] != null && deltaArea[rowIndex][columnIndex] != 0 && areaRawData[rowIndex - 1][columnIndex] != null && areaRawData[rowIndex - 1][columnIndex] != 0) {
                     percentageAreaIncrease[rowIndex][columnIndex] = (deltaArea[rowIndex][columnIndex] / areaRawData[rowIndex - 1][columnIndex]) * 100;
+                } else if (deltaArea[rowIndex][columnIndex] == null || areaRawData[rowIndex - 1][columnIndex] == null) {
+                    percentageAreaIncrease[rowIndex][columnIndex] = 0.0;
                 } else if (deltaArea[rowIndex][columnIndex] == 0 || areaRawData[rowIndex - 1][columnIndex] == 0) {
                     percentageAreaIncrease[rowIndex][columnIndex] = 0.0;
                 }
