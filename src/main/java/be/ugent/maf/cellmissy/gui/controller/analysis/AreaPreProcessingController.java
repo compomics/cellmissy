@@ -351,13 +351,14 @@ public class AreaPreProcessingController {
             Double[][] normalizedArea = areaPreProcessingResults.getNormalizedArea();
             // Transpose Normalized Area
             Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedArea);
-            List<Well> imagedWells = plateCondition.getImagedWells();
+//            List<Well> imagedWells = plateCondition.getImagedWells();
+            List<Well> processedWells = plateCondition.getProcessedWells();
 
             XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
             // array for x axis
             double[] xValues = dataAnalysisController.getTimeFrames();
             int counter = 0;
-            for (Well well : imagedWells) {
+            for (Well well : processedWells) {
                 int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
                 for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                     double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
@@ -370,7 +371,7 @@ public class AreaPreProcessingController {
             // Plot Logic
             String chartTitle = "Raw Data Condition " + conditionIndex + " (replicates)";
             JFreeChart rawDataAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
-            JFreeChartUtils.setupReplicatesAreaChart(rawDataAreaChart, xYSeriesCollection, imagedWells);
+            JFreeChartUtils.setupReplicatesAreaChart(rawDataAreaChart, xYSeriesCollection, processedWells);
             rawDataChartPanel.setChart(rawDataAreaChart);
             areaAnalysisPanel.getGraphicsParentPanel().remove(densityChartPanel);
             areaAnalysisPanel.getGraphicsParentPanel().remove(correctedDensityChartPanel);
@@ -392,7 +393,7 @@ public class AreaPreProcessingController {
             Double[][] normalizedCorrectedArea = areaPreProcessingResults.getNormalizedCorrectedArea();
             // Transpose Normalized Corrected Area
             Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
-            List<Well> imagedWells = plateCondition.getImagedWells();
+            List<Well> processedWells = plateCondition.getProcessedWells();
             // check if some replicates need to be hidden from plot (this means these replicates are outliers)
             boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
             List excludedWells = new ArrayList();
@@ -400,7 +401,7 @@ public class AreaPreProcessingController {
             // array for x axis
             double[] xValues = dataAnalysisController.getTimeFrames();
             int counter = 0;
-            for (Well well : imagedWells) {
+            for (Well well : processedWells) {
                 int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
                 for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                     // if boolean is false, replicate has to be considered in the plot
@@ -420,7 +421,7 @@ public class AreaPreProcessingController {
             // Plot Logic
             String chartTitle = "Corrected Data Condition " + conditionIndex + " (replicates)";
             JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
-            JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, xYSeriesCollection, imagedWells);
+            JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, xYSeriesCollection, processedWells);
             correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
             correctedAreaChartPanel.setChart(correctedAreaChart);
             correctedAreaPanel.getReplicatesAreaChartParentPanel().add(correctedAreaChartPanel, gridBagConstraints);
@@ -487,7 +488,7 @@ public class AreaPreProcessingController {
             Double[][] normalizedCorrectedArea = areaPreProcessingResults.getNormalizedCorrectedArea();
             // Transpose Normalized Corrected Area
             Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
-            List<Well> imagedWells = plateCondition.getImagedWells();
+            List<Well> processedWells = plateCondition.getProcessedWells();
             // check if some replicates need to be hidden from plot (this means these replicates are outliers)
             boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
             // check for time frames interval
@@ -501,7 +502,7 @@ public class AreaPreProcessingController {
                 index++;
             }
             int counter = 0;
-            for (Well well : imagedWells) {
+            for (Well well : processedWells) {
                 int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
                 for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                     index = timeInterval.getFirstTimeFrame();
@@ -523,7 +524,7 @@ public class AreaPreProcessingController {
             // Plot Logic
             String chartTitle = "Corrected Data Condition " + conditionIndex + " (replicates)";
             JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
-            JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, xySeriesCollection, imagedWells);
+            JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, xySeriesCollection, processedWells);
             correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
             correctedAreaChartPanel.setChart(correctedAreaChart);
             correctedAreaPanel.getReplicatesAreaChartParentPanel().add(correctedAreaChartPanel, gridBagConstraints);
@@ -641,9 +642,10 @@ public class AreaPreProcessingController {
      * @return 2D array with area raw data
      */
     private Double[][] getAreaRawData(PlateCondition plateCondition) {
-        int numberOfSamples = AnalysisUtils.getNumberOfSamplesPerCondition(plateCondition);
+        List<Well> processedWells = plateCondition.getProcessedWells();
+//        int numberOfSamples = AnalysisUtils.getNumberOfSamplesPerCondition(plateCondition);
         boolean firstAreaIsZero = false;
-        Double[][] areaRawData = new Double[dataAnalysisController.getTimeFrames().length][numberOfSamples];
+        Double[][] areaRawData = new Double[dataAnalysisController.getTimeFrames().length][processedWells.size()];
         int counter = 0;
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
@@ -833,12 +835,12 @@ public class AreaPreProcessingController {
         // add action listeners
 
         //create a ButtonGroup for the radioButtons used for analysis
-        ButtonGroup buttonGroup = new ButtonGroup();
+        ButtonGroup radioButtonGroup = new ButtonGroup();
         //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
-        buttonGroup.add(areaAnalysisPanel.getNormalizeAreaButton());
-        buttonGroup.add(areaAnalysisPanel.getDeltaAreaButton());
-        buttonGroup.add(areaAnalysisPanel.getPercentageAreaIncreaseButton());
-        buttonGroup.add(areaAnalysisPanel.getCorrectedAreaButton());
+        radioButtonGroup.add(areaAnalysisPanel.getNormalizeAreaButton());
+        radioButtonGroup.add(areaAnalysisPanel.getDeltaAreaButton());
+        radioButtonGroup.add(areaAnalysisPanel.getPercentageAreaIncreaseButton());
+        radioButtonGroup.add(areaAnalysisPanel.getCorrectedAreaButton());
         //select as default first button (Delta Area values Computation)
         areaAnalysisPanel.getNormalizeAreaButton().setSelected(true);
         // global view can not be shown before the correction has been applied
@@ -951,6 +953,16 @@ public class AreaPreProcessingController {
                     if (globalPlotForFirstTime) {
                         // create and execute a swing worker
                         FetchAllConditionsSwingWorker fetchAllConditionsSwingWorker = new FetchAllConditionsSwingWorker();
+                        // add property change listener to worker
+                        fetchAllConditionsSwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
+                            @Override
+                            public void propertyChange(PropertyChangeEvent evt) {
+                                if ("progress".equals(evt.getPropertyName())) {
+                                    int progress = (Integer) evt.getNewValue();
+                                    dataAnalysisController.getAnalysisExperimentPanel().getFetchAllConditionsProgressBar().setValue(progress);
+                                }
+                            }
+                        });
                         fetchAllConditionsSwingWorker.execute();
                     } else {
                         List<PlateCondition> processedConditions = getProcessedConditions();
@@ -1224,32 +1236,22 @@ public class AreaPreProcessingController {
      */
     private class FetchAllConditionsSwingWorker extends SwingWorker<Void, Void> {
 
+        List<PlateCondition> plateConditionList = dataAnalysisController.getPlateConditionList();
+
         @Override
         protected Void doInBackground() throws Exception {
+            int progress = getNumberOfFetchedCondition();
+            // initialize progress property.
+            setProgress(progress);
             // show progress bar
-            dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setVisible(true);
-            List<PlateCondition> plateConditionList = dataAnalysisController.getPlateConditionList();
-            // set max value of progress bar to size of conditions' list
-            dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setMaximum(plateConditionList.size());
-            // add property change listener to progress bar
-            dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().addPropertyChangeListener(new PropertyChangeListener() {
-                @Override
-                public void propertyChange(PropertyChangeEvent evt) {
-                    if ("progress".equals(evt.getPropertyName())) {
-                        int progress = (Integer) evt.getNewValue();
-                        dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setValue(progress);
-                    }
-                }
-            });
+            dataAnalysisController.getAnalysisExperimentPanel().getFetchAllConditionsProgressBar().setVisible(true);
+//            // set max value of progress bar to size of conditions' list
+            dataAnalysisController.getAnalysisExperimentPanel().getFetchAllConditionsProgressBar().setMaximum(plateConditionList.size());
             // show waiting cursor
             dataAnalysisController.setCursor(Cursor.WAIT_CURSOR);
-            int numberOfFetchedCondition = getNumberOfFetchedCondition();
             for (PlateCondition plateCondition : plateConditionList) {
                 // if for current condition computations were not performed yet
                 if (preProcessingMap.get(plateCondition) == null) {
-                    // update status of progress bar with the current number of fetched conditions
-                    dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setValue(numberOfFetchedCondition);
-                    dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setString("Condition " + numberOfFetchedCondition + "/" + plateConditionList.size());
                     // fetch current condition
                     dataAnalysisController.fetchConditionTimeSteps(plateCondition);
                     if (!timeStepsBindingList.isEmpty()) {
@@ -1258,6 +1260,8 @@ public class AreaPreProcessingController {
                     }
                     // the condition is loaded, and plate view is refreshed
                     dataAnalysisController.showNotImagedWells(plateCondition);
+                    progress++;
+                    setProgress(Math.min(progress, plateConditionList.size()));
                 }
             }
             return null;
@@ -1270,7 +1274,7 @@ public class AreaPreProcessingController {
                 globalPlotForFirstTime = false;
                 List<PlateCondition> processedConditions = getProcessedConditions();
                 // when the thread is done, hide progress bar again
-                dataAnalysisController.getDataAnalysisPanel().getFetchAllConditionsProgressBar().setVisible(false);
+                dataAnalysisController.getAnalysisExperimentPanel().getFetchAllConditionsProgressBar().setVisible(false);
                 dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
                 // show all conditions in one plot (Global Area View)
                 plotGlobalArea(processedConditions, true, false);
@@ -1283,7 +1287,7 @@ public class AreaPreProcessingController {
                 bindingGroup.addBinding(jListBinding);
                 bindingGroup.bind();
                 areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, getNumberOfReplicates()));
-                if (processedConditions.size() != dataAnalysisController.getPlateConditionList().size()) {
+                if (processedConditions.size() != plateConditionList.size()) {
                     // inform the user that not all conditions were imaged
                     dataAnalysisController.showMessage("Note that not every condition was imaged!", "", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -1291,7 +1295,7 @@ public class AreaPreProcessingController {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
                 dataAnalysisController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
-            } 
+            }
         }
     }
 

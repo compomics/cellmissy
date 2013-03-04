@@ -213,6 +213,8 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         correctedAreaButton.setOpaque(false);
 
         tableInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
+        tableInfoLabel.setMinimumSize(new java.awt.Dimension(20, 20));
+        tableInfoLabel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         javax.swing.GroupLayout radioButtonsPanelLayout = new javax.swing.GroupLayout(radioButtonsPanel);
         radioButtonsPanel.setLayout(radioButtonsPanelLayout);
@@ -220,9 +222,9 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(radioButtonsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(tableInfoLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, radioButtonsPanelLayout.createSequentialGroup()
+                .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(radioButtonsPanelLayout.createSequentialGroup()
                         .addComponent(normalizeAreaButton)
                         .addGap(18, 18, 18)
                         .addComponent(deltaAreaButton)
@@ -241,9 +243,9 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(deltaAreaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(percentageAreaIncreaseButton)
                     .addComponent(correctedAreaButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
-                .addComponent(tableInfoLabel)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tableInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(48, 48, 48))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();

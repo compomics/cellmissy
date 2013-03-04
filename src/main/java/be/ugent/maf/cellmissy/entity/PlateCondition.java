@@ -213,4 +213,23 @@ public class PlateCondition implements Serializable {
         }
         return imagedWells;
     }
+
+    /**
+     * Given a plate condition, get back only the wells that have some area values processed
+     *
+     * @return
+     */
+    public List<Well> getProcessedWells() {
+        List<Well> processedWells = new ArrayList<>();
+        // look only in the imaged wells
+        for (Well well : this.getImagedWells()) {
+            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
+                // if image analysis was OK... the well was processed
+                if (!wellHasImagingType.getTimeStepCollection().isEmpty()) {
+                    processedWells.add(well);
+                }
+            }
+        }
+        return processedWells;
+    }
 }
