@@ -106,6 +106,7 @@ public class AnalysisGroup {
         this.significances = significances;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -126,6 +127,7 @@ public class AnalysisGroup {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int hash = 7;
         hash = 89 * hash + Objects.hashCode(this.plateConditions);
@@ -134,6 +136,7 @@ public class AnalysisGroup {
         return hash;
     }
 
+    @Override
     public String toString() {
         return groupName;
     }

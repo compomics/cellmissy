@@ -4,8 +4,8 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis;
 
+import be.ugent.maf.cellmissy.analysis.AreaUnitOfMeasurement;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
-import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
 import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache.DataCategory;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeInterval;
@@ -13,6 +13,9 @@ import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.view.table.models.ComputedDataTableModel;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
+import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
+import be.ugent.maf.cellmissy.analysis.impl.CellCoveredAreaPreProcessor;
+import be.ugent.maf.cellmissy.analysis.impl.OpenAreaPreProcessor;
 import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -73,8 +76,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import javax.swing.SwingWorker;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -99,6 +100,7 @@ public class AreaPreProcessingController {
     private JTable dataTable;
     private Map<PlateCondition, AreaPreProcessingResults> preProcessingMap;
     private boolean globalPlotForFirstTime;
+    private boolean proceedToAnalysis;
     //view
     private AreaAnalysisPanel areaAnalysisPanel;
     private CorrectedAreaPanel correctedAreaPanel;
@@ -106,6 +108,7 @@ public class AreaPreProcessingController {
     private TimeFramesSelectionPanel timeFramesSelectionPanel;
     private DistanceMatrixPanel distanceMatrixPanel;
     private ChartPanel rawDataChartPanel;
+    private ChartPanel transformedAreaChartPanel;
     private ChartPanel densityChartPanel;
     private ChartPanel correctedDensityChartPanel;
     private ChartPanel correctedAreaChartPanel;
@@ -121,7 +124,9 @@ public class AreaPreProcessingController {
     @Autowired
     private DensityFunctionHolderCache densityFunctionHolderCache;
     @Autowired
-    private AreaPreProcessor areaPreProcessor;
+    private CellCoveredAreaPreProcessor cellCoveredAreaPreProcessor;
+    @Autowired
+    private OpenAreaPreProcessor openAreaPreProcessor;
     private GridBagConstraints gridBagConstraints;
 
     /**
@@ -157,6 +162,10 @@ public class AreaPreProcessingController {
 
     public void setGlobalPlotForFirstTime(boolean globalPlotForFirstTime) {
         this.globalPlotForFirstTime = globalPlotForFirstTime;
+    }
+
+    public boolean isProceedToAnalysis() {
+        return proceedToAnalysis;
     }
 
     /**
@@ -198,16 +207,48 @@ public class AreaPreProcessingController {
             AreaPreProcessingResults areaPreProcessingResults = new AreaPreProcessingResults();
             // based on area raw data, do computations for pre-processig step
             areaPreProcessingResults.setAreaRawData(getAreaRawData(plateCondition));
-            areaPreProcessor.computeNormalizedArea(areaPreProcessingResults);
-            areaPreProcessor.computeDeltaArea(areaPreProcessingResults);
-            areaPreProcessor.computeAreaIncrease(areaPreProcessingResults);
-            areaPreProcessor.normalizeCorrectedArea(areaPreProcessingResults);
-            // compute distance matrix
-            areaPreProcessor.computeDistanceMatrix(areaPreProcessingResults);
-            // exclude replicates
-            areaPreProcessor.excludeReplicates(areaPreProcessingResults, plateCondition);
-            // set time interval for analysis
-            areaPreProcessor.setTimeInterval(areaPreProcessingResults);
+            // normalization depends on type of measured area
+            MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
+            // call the pre-processors according to measured area type
+            switch (measuredAreaType) {
+                case CELL_COVERED_AREA:
+                    // normalize area
+                    cellCoveredAreaPreProcessor.computeNormalizedArea(areaPreProcessingResults);
+                    // delta area
+                    cellCoveredAreaPreProcessor.computeDeltaArea(areaPreProcessingResults);
+                    // % area increase
+                    cellCoveredAreaPreProcessor.computeAreaIncrease(areaPreProcessingResults);
+                    // correct and normalize area
+                    cellCoveredAreaPreProcessor.normalizeCorrectedArea(areaPreProcessingResults);
+                    // compute distance matrix
+                    cellCoveredAreaPreProcessor.computeDistanceMatrix(areaPreProcessingResults);
+                    // exclude replicates
+                    cellCoveredAreaPreProcessor.excludeReplicates(areaPreProcessingResults, plateCondition);
+                    // set time interval for analysis
+                    cellCoveredAreaPreProcessor.setTimeInterval(areaPreProcessingResults);
+                    break;
+                case OPEN_AREA:
+                    dataAnalysisController.getAreaAnalysisHolder().setAreaUnitOfMeasurement(AreaUnitOfMeasurement.PERCENTAGE);
+                    // normalize area
+                    openAreaPreProcessor.computeNormalizedArea(areaPreProcessingResults);
+                    // transform data to cell covered area
+                    openAreaPreProcessor.transformAreaData(areaPreProcessingResults);
+                    // delta area
+                    openAreaPreProcessor.computeDeltaArea(areaPreProcessingResults);
+                    // % area increase
+                    openAreaPreProcessor.computeAreaIncrease(areaPreProcessingResults);
+                    // correct and normalize area
+                    openAreaPreProcessor.normalizeCorrectedArea(areaPreProcessingResults);
+                    // compute distance matrix
+                    openAreaPreProcessor.computeDistanceMatrix(areaPreProcessingResults);
+                    // exclude replicates
+                    openAreaPreProcessor.excludeReplicates(areaPreProcessingResults, plateCondition);
+                    // set time interval for analysis
+                    openAreaPreProcessor.setTimeInterval(areaPreProcessingResults);
+                    break;
+            }
+
+
             // fill in map
             preProcessingMap.put(plateCondition, areaPreProcessingResults);
         }
@@ -226,11 +267,26 @@ public class AreaPreProcessingController {
     public void resetViews() {
         dataTable.setModel(new DefaultTableModel());
         rawDataChartPanel.setChart(null);
+        transformedAreaChartPanel.setChart(null);
         densityChartPanel.setChart(null);
         correctedDensityChartPanel.setChart(null);
         correctedAreaChartPanel.setChart(null);
         globalAreaChartPanel.setChart(null);
         areaAnalysisPanel.getGraphicsParentPanel().remove(distanceMatrixScrollPane);
+        
+    }
+    
+    public void resetOnCancel(){
+        resetViews();
+        areaAnalysisPanel.getGraphicsParentPanel().remove(transformedAreaChartPanel);
+        areaAnalysisPanel.getGraphicsParentPanel().remove(densityChartPanel);
+        areaAnalysisPanel.getGraphicsParentPanel().remove(correctedDensityChartPanel);
+        areaAnalysisPanel.getGraphicsParentPanel().remove(correctedAreaChartPanel);
+        areaAnalysisPanel.getGraphicsParentPanel().remove(correctedAreaPanel);
+        areaAnalysisPanel.getGraphicsParentPanel().revalidate();
+        areaAnalysisPanel.getGraphicsParentPanel().repaint();
+        dialog.getContentPane().remove(timeFramesSelectionPanel);
+        dialog.getContentPane().remove(distanceMatrixPanel);
     }
 
     /**
@@ -256,7 +312,8 @@ public class AreaPreProcessingController {
         columnBinding.setColumnClass(Integer.class);
 
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${area}"));
-        columnBinding.setColumnName("Area " + "(\u00B5" + "m" + "\u00B2)");
+        String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+        columnBinding.setColumnName("Area " + "(" + areaUnitOfMeasurement + ")");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
         columnBinding.setRenderer(new FormatRenderer(dataAnalysisController.getFormat()));
@@ -294,7 +351,7 @@ public class AreaPreProcessingController {
             dataTable.setModel(new ComputedDataTableModel(plateCondition, percentageAreaIncrease, dataAnalysisController.getTimeFrames()));
             //format first column
             dataTable.getColumnModel().getColumn(0).setCellRenderer(new FormatRenderer(dataAnalysisController.getFormat()));
-            boolean[][] outliers = areaPreProcessor.detectOutliers(percentageAreaIncrease);
+            boolean[][] outliers = cellCoveredAreaPreProcessor.detectOutliers(percentageAreaIncrease);
             //show outliers in red from second column on
             OutliersRenderer outliersRenderer = new OutliersRenderer(outliers, dataAnalysisController.getFormat());
             for (int i = 1; i < dataTable.getColumnCount(); i++) {
@@ -318,7 +375,24 @@ public class AreaPreProcessingController {
             dataTable.setDefaultRenderer(Object.class, new FormatRenderer(dataAnalysisController.getFormat()));
             dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         }
-        areaAnalysisPanel.getTableInfoLabel().setText("Area @time frame zero is set to 0.00");
+        areaAnalysisPanel.getTableInfoLabel().setText("Area is normalized in terms of starting location at time zero");
+        areaAnalysisPanel.getGraphicsParentPanel().remove(distanceMatrixScrollPane);
+    }
+
+    /**
+     * for each replicate (well) of a certain selected condition, show transformed data from open area to cell covered area
+     *
+     * @param plateCondition
+     */
+    public void showTransformedDataInTable(PlateCondition plateCondition) {
+        AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
+        if (areaPreProcessingResults != null) {
+            Double[][] transformedData = areaPreProcessingResults.getTransformedData();
+            dataTable.setModel(new ComputedDataTableModel(plateCondition, transformedData, dataAnalysisController.getTimeFrames()));
+            dataTable.setDefaultRenderer(Object.class, new FormatRenderer(dataAnalysisController.getFormat()));
+            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
+        }
+        areaAnalysisPanel.getTableInfoLabel().setText("Open area is converted to (complementary) cell covered area");
         areaAnalysisPanel.getGraphicsParentPanel().remove(distanceMatrixScrollPane);
     }
 
@@ -344,6 +418,7 @@ public class AreaPreProcessingController {
      * @param plateCondition
      */
     public void plotRawDataReplicates(PlateCondition plateCondition) {
+        String measuredAreaTypeString = getMeasuredAreaTypeString();
         int conditionIndex = dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1;
         AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
         if (areaPreProcessingResults != null) {
@@ -351,7 +426,6 @@ public class AreaPreProcessingController {
             Double[][] normalizedArea = areaPreProcessingResults.getNormalizedArea();
             // Transpose Normalized Area
             Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedArea);
-//            List<Well> imagedWells = plateCondition.getImagedWells();
             List<Well> processedWells = plateCondition.getProcessedWells();
 
             XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
@@ -369,8 +443,9 @@ public class AreaPreProcessingController {
                 counter += numberOfSamplesPerWell;
             }
             // Plot Logic
-            String chartTitle = "Raw Data Condition " + conditionIndex + " (replicates)";
-            JFreeChart rawDataAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+            String chartTitle = measuredAreaTypeString + "  - Condition " + conditionIndex + " (replicates)";
+            String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+            JFreeChart rawDataAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(rawDataAreaChart, xYSeriesCollection, processedWells);
             rawDataChartPanel.setChart(rawDataAreaChart);
             areaAnalysisPanel.getGraphicsParentPanel().remove(densityChartPanel);
@@ -378,6 +453,49 @@ public class AreaPreProcessingController {
             areaAnalysisPanel.getGraphicsParentPanel().revalidate();
             areaAnalysisPanel.getGraphicsParentPanel().repaint();
             areaAnalysisPanel.getGraphicsParentPanel().add(rawDataChartPanel, gridBagConstraints);
+        }
+    }
+
+    /**
+     * Plot cell covered area form open area for a certain selected condition
+     *
+     * @param plateCondition
+     */
+    public void plotTransformedDataReplicates(PlateCondition plateCondition) {
+        int conditionIndex = dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1;
+        AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
+        if (areaPreProcessingResults != null) {
+            // get raw data, not corrected yet but only normalized
+            Double[][] transformedData = areaPreProcessingResults.getTransformedData();
+            // Transpose Normalized Area
+            Double[][] transposedArea = AnalysisUtils.transpose2DArray(transformedData);
+            List<Well> processedWells = plateCondition.getProcessedWells();
+
+            XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
+            // array for x axis
+            double[] xValues = dataAnalysisController.getTimeFrames();
+            int counter = 0;
+            for (Well well : processedWells) {
+                int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+                for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
+                    double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
+                    XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                    xySeries.setKey("" + (well));
+                    xYSeriesCollection.addSeries(xySeries);
+                }
+                counter += numberOfSamplesPerWell;
+            }
+            // Plot Logic
+            String chartTitle = "Cell covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
+            String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+            JFreeChart transformedDataAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+            JFreeChartUtils.setupReplicatesAreaChart(transformedDataAreaChart, xYSeriesCollection, processedWells);
+            transformedAreaChartPanel.setChart(transformedDataAreaChart);
+            areaAnalysisPanel.getGraphicsParentPanel().remove(densityChartPanel);
+            areaAnalysisPanel.getGraphicsParentPanel().remove(correctedDensityChartPanel);
+            areaAnalysisPanel.getGraphicsParentPanel().revalidate();
+            areaAnalysisPanel.getGraphicsParentPanel().repaint();
+            areaAnalysisPanel.getGraphicsParentPanel().add(transformedAreaChartPanel, gridBagConstraints);
         }
     }
 
@@ -419,8 +537,9 @@ public class AreaPreProcessingController {
                 counter += numberOfSamplesPerWell;
             }
             // Plot Logic
-            String chartTitle = "Corrected Data Condition " + conditionIndex + " (replicates)";
-            JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+            String chartTitle = "Cell covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
+            String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+            JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, xYSeriesCollection, processedWells);
             correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
             correctedAreaChartPanel.setChart(correctedAreaChart);
@@ -442,6 +561,169 @@ public class AreaPreProcessingController {
     }
 
     /**
+     * Plot Density Functions for both raw and corrected area data. A Swing Worker is used, and a cache to hold density functions values.
+     *
+     * @param plateCondition
+     */
+    public void plotDensityFunctions(PlateCondition plateCondition) {
+        AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
+        if (areaPreProcessingResults != null) {
+            PlotDensityFunctionSwingWorker plotDensityFunctionSwingWorker = new PlotDensityFunctionSwingWorker(plateCondition);
+            plotDensityFunctionSwingWorker.execute();
+        }
+    }
+
+    /**
+     * Create chart with global view (all biological conditions, with area evolution in time)
+     *
+     * @param plateConditionList
+     * @param useCorrectedData
+     * @param plotErrorBars
+     * @param measuredAreaType
+     * @return
+     */
+    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, MeasuredAreaType measuredAreaType) {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        List<Double[]> yErrorsList = new ArrayList<>();
+        Double[][] dataToShow = null;
+        for (PlateCondition plateCondition : plateConditionList) {
+            AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
+            if (areaPreProcessingResults != null) {
+                switch (measuredAreaType) {
+                    case CELL_COVERED_AREA:
+                        if (useCorrectedData) {
+                            dataToShow = areaPreProcessingResults.getNormalizedCorrectedArea();
+                        } else {
+                            dataToShow = areaPreProcessingResults.getNormalizedArea();
+                        }
+                        break;
+                    case OPEN_AREA:
+                        if (useCorrectedData) {
+                            dataToShow = areaPreProcessingResults.getNormalizedCorrectedArea();
+                        } else {
+                            dataToShow = areaPreProcessingResults.getTransformedData();
+                        }
+                        break;
+                }
+                // Boolean (Exclude Replicates from dataset)
+                boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
+                // time interval to use
+                TimeInterval timeInterval = areaPreProcessingResults.getTimeInterval();
+                // array for x axis: sub selection of time frames
+                double[] xValues = new double[timeInterval.getLastTimeFrame() - timeInterval.getFirstTimeFrame() + 1];
+                // array for y axis: same length of x axis
+                double[] yValues = new double[xValues.length];
+                Double[] yErrors = new Double[xValues.length];
+
+                int index = timeInterval.getFirstTimeFrame();
+                for (int i = 0; i < xValues.length; i++) {
+                    xValues[i] = timeFramesBindingList.get(index);
+                    index++;
+                }
+                //time frames direction
+                index = timeInterval.getFirstTimeFrame();
+                for (int i = 0; i < yValues.length; i++) {
+                    double[] allReplicateValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(dataToShow[index]));
+                    List<Double> replicatesToIncludeList = new ArrayList();
+                    for (int j = 0; j < allReplicateValues.length; j++) {
+                        // check if replicate has to be excluded from dataset
+                        if (!excludeReplicates[j]) {
+                            replicatesToIncludeList.add(allReplicateValues[j]);
+                        }
+                    }
+                    Double[] replicatesToIncludeArray = replicatesToIncludeList.toArray(new Double[replicatesToIncludeList.size()]);
+                    double median = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(replicatesToIncludeArray));
+                    yValues[i] = median;
+                    double mad = AnalysisUtils.computeSEM(ArrayUtils.toPrimitive(replicatesToIncludeArray));
+                    yErrors[i] = mad;
+                    index++;
+                }
+                yErrorsList.add(yErrors);
+                XYSeries values = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                values.setKey("Cond " + (dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1));
+                xySeriesCollection.addSeries(values);
+
+
+            }
+        }
+        String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+        JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "Time Frame", "Area " + "(" + areaUnitOfMeasurement + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        if (plotErrorBars) {
+            JFreeChartUtils.plotVerticalErrorBars(globalAreaChart, xySeriesCollection, yErrorsList);
+            globalAreaChart.getXYPlot().getRangeAxis().setUpperBound(JFreeChartUtils.computeMaxY(xySeriesCollection) + AnalysisUtils.getMaxOfAList(yErrorsList));
+        }
+        JFreeChartUtils.setupGlobalAreaChart(globalAreaChart, xySeriesCollection);
+        return globalAreaChart;
+    }
+
+    /**
+     * Called by parent controller, show global view
+     */
+    public void onGlobalView() {
+        // check if global area is for the first time
+        if (globalPlotForFirstTime) {
+            // create and execute a swing worker
+            FetchAllConditionsSwingWorker fetchAllConditionsSwingWorker = new FetchAllConditionsSwingWorker();
+            // add property change listener to worker
+            fetchAllConditionsSwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
+                @Override
+                public void propertyChange(PropertyChangeEvent evt) {
+                    if ("progress".equals(evt.getPropertyName())) {
+                        int progress = (Integer) evt.getNewValue();
+                        dataAnalysisController.getAnalysisExperimentPanel().getFetchAllConditionsProgressBar().setValue(progress);
+                    }
+                }
+            });
+            fetchAllConditionsSwingWorker.execute();
+        } else {
+            List<PlateCondition> processedConditions = getProcessedConditions();
+            List<PlateCondition> selectedConditions = getSelectedConditions();
+            List<Integer> numberOfReplicates = getNumberOfReplicates();
+            // enable now tab for analysis
+            // enable check box to show error bars
+            areaAnalysisPanel.getPlotErrorBarsCheckBox().setEnabled(true);
+            ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
+            JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, areaAnalysisPanel.getConditionsList());
+            bindingGroup.addBinding(jListBinding);
+            bindingGroup.bind();
+            areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, numberOfReplicates));
+            boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
+            boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
+            MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
+            if (selectedConditions.isEmpty()) {
+                plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, measuredAreaType);
+            } else {
+                plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, measuredAreaType);
+            }
+        }
+    }
+
+    /**
+     * Called by parent controller, show linear regression model results
+     */
+    public void onLinearRegressionModel() {
+        boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
+        // show Linear Model Results from the other child controller
+        dataAnalysisController.showLinearModelInTable(useCorrectedData);
+    }
+
+    /**
+     * private methods and classes
+     */
+    /**
+     * Get area unit of measurement
+     *
+     * @return
+     */
+    private String getAreaUnitOfMeasurementString() {
+        return dataAnalysisController.getAreaUnitOfMeasurement();
+    }
+
+    private String getMeasuredAreaTypeString() {
+        return dataAnalysisController.getMeasuredAreaType();
+    }
+
+    /**
      * Show Table with Euclidean Distances between all replicates for a certain selected condition
      *
      * @param plateCondition
@@ -450,7 +732,7 @@ public class AreaPreProcessingController {
         AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
         if (areaPreProcessingResults != null) {
             Double[][] distanceMatrix = areaPreProcessingResults.getDistanceMatrix();
-            boolean[][] outliersMatrix = areaPreProcessor.detectOutliers(distanceMatrix);
+            boolean[][] outliersMatrix = cellCoveredAreaPreProcessor.detectOutliers(distanceMatrix);
             boolean[][] transposedOutliersMatrix = AnalysisUtils.transposeBooleanMatrix(outliersMatrix);
             DistanceMatrixTableModel distanceMatrixTableModel = new DistanceMatrixTableModel(distanceMatrix, outliersMatrix, plateCondition);
             // if user already had interaction through check boxes overwrite distance matrix table behavior 
@@ -522,8 +804,9 @@ public class AreaPreProcessingController {
                 counter += numberOfSamplesPerWell;
             }
             // Plot Logic
-            String chartTitle = "Corrected Data Condition " + conditionIndex + " (replicates)";
-            JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+            String chartTitle = "Cell covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
+            String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+            JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(" + areaUnitOfMeasurement + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, xySeriesCollection, processedWells);
             correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
             correctedAreaChartPanel.setChart(correctedAreaChart);
@@ -536,103 +819,17 @@ public class AreaPreProcessingController {
     }
 
     /**
-     * Plot Density Functions for both raw and corrected area data. A Swing Worker is used, and a cache to hold density functions values.
-     *
-     * @param plateCondition
-     */
-    public void plotDensityFunctions(PlateCondition plateCondition) {
-        AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
-        if (areaPreProcessingResults != null) {
-            PlotDensityFunctionSwingWorker plotDensityFunctionSwingWorker = new PlotDensityFunctionSwingWorker(plateCondition);
-            plotDensityFunctionSwingWorker.execute();
-        }
-    }
-
-    /**
-     * Create chart with global view (all biological conditions, with area evolution in time)
-     *
-     * @param plateConditionList
-     * @param useCorrectedData
-     * @param plotErrorBars
-     * @return
-     */
-    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars) {
-        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
-        List<Double[]> yErrorsList = new ArrayList<>();
-        Double[][] dataToShow;
-        for (PlateCondition plateCondition : plateConditionList) {
-            AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
-            if (areaPreProcessingResults != null) {
-                if (useCorrectedData) {
-                    dataToShow = areaPreProcessingResults.getNormalizedCorrectedArea();
-                } else {
-                    dataToShow = areaPreProcessingResults.getNormalizedArea();
-                }
-                // Boolean (Exclude Replicates from dataset)
-                boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
-                // time interval to use
-                TimeInterval timeInterval = areaPreProcessingResults.getTimeInterval();
-                // array for x axis: sub selection of time frames
-                double[] xValues = new double[timeInterval.getLastTimeFrame() - timeInterval.getFirstTimeFrame() + 1];
-                // array for y axis: same length of x axis
-                double[] yValues = new double[xValues.length];
-                Double[] yErrors = new Double[xValues.length];
-
-                int index = timeInterval.getFirstTimeFrame();
-                for (int i = 0; i < xValues.length; i++) {
-                    xValues[i] = timeFramesBindingList.get(index);
-                    index++;
-                }
-                //time frames direction
-                index = timeInterval.getFirstTimeFrame();
-                for (int i = 0; i < yValues.length; i++) {
-                    double[] allReplicateValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(dataToShow[index]));
-                    List<Double> replicatesToIncludeList = new ArrayList();
-                    for (int j = 0; j < allReplicateValues.length; j++) {
-                        // check if replicate has to be excluded from dataset
-                        if (!excludeReplicates[j]) {
-                            replicatesToIncludeList.add(allReplicateValues[j]);
-                        }
-                    }
-                    Double[] replicatesToIncludeArray = replicatesToIncludeList.toArray(new Double[replicatesToIncludeList.size()]);
-                    double median = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(replicatesToIncludeArray));
-                    yValues[i] = median;
-                    double mad = AnalysisUtils.computeSEM(ArrayUtils.toPrimitive(replicatesToIncludeArray));
-                    yErrors[i] = mad;
-                    index++;
-                }
-                yErrorsList.add(yErrors);
-                XYSeries values = JFreeChartUtils.generateXYSeries(xValues, yValues);
-                values.setKey("Cond " + (dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1));
-                xySeriesCollection.addSeries(values);
-
-
-            }
-        }
-        JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "Time Frame", "Area " + "(\u00B5" + "m" + "\u00B2)", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
-        if (plotErrorBars) {
-            JFreeChartUtils.plotVerticalErrorBars(globalAreaChart, xySeriesCollection, yErrorsList);
-            globalAreaChart.getXYPlot().getRangeAxis().setUpperBound(JFreeChartUtils.computeMaxY(xySeriesCollection) + AnalysisUtils.getMaxOfAList(yErrorsList));
-        }
-        JFreeChartUtils.setupGlobalAreaChart(globalAreaChart, xySeriesCollection);
-        return globalAreaChart;
-    }
-
-    /**
-     * private methods and classes
-     */
-    /**
      * Plot global area for a list of certain biological conditions, using or not corrected data and plotting or not error bars on top
      *
      * @param plateConditionList
      * @param useCorrectedData
      * @param plotErrorBars
      */
-    private void plotGlobalArea(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars) {
-        JFreeChart globalAreaChart = createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars);
+    private void plotGlobalArea(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, MeasuredAreaType measuredAreaType) {
+        JFreeChart globalAreaChart = createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, measuredAreaType);
         globalAreaChartPanel.setChart(globalAreaChart);
-        areaAnalysisPanel.getGlobalViewPanel().add(globalAreaChartPanel, gridBagConstraints);
-        areaAnalysisPanel.getGlobalViewPanel().repaint();
+        areaAnalysisPanel.getGlobalAreaPanel().add(globalAreaChartPanel, gridBagConstraints);
+        areaAnalysisPanel.getGlobalAreaPanel().repaint();
     }
 
     /**
@@ -643,7 +840,6 @@ public class AreaPreProcessingController {
      */
     private Double[][] getAreaRawData(PlateCondition plateCondition) {
         List<Well> processedWells = plateCondition.getProcessedWells();
-//        int numberOfSamples = AnalysisUtils.getNumberOfSamplesPerCondition(plateCondition);
         boolean firstAreaIsZero = false;
         Double[][] areaRawData = new Double[dataAnalysisController.getTimeFrames().length][processedWells.size()];
         int counter = 0;
@@ -745,7 +941,7 @@ public class AreaPreProcessingController {
         Double[][] percentageAreaIncrease = areaPreProcessingResults.getPercentageAreaIncrease();
         Double[][] transposedRawData = AnalysisUtils.transpose2DArray(percentageAreaIncrease);
         // corrected data (after outliers detection)
-        Double[][] correctedArea = areaPreProcessor.correctForOutliers(percentageAreaIncrease);
+        Double[][] correctedArea = cellCoveredAreaPreProcessor.correctForOutliers(percentageAreaIncrease);
         Double[][] transposedCorrectedData = AnalysisUtils.transpose2DArray(correctedArea);
         for (int i = 0; i < transposedRawData.length; i++) {
             // compute density function for each replicate of the raw data
@@ -791,11 +987,14 @@ public class AreaPreProcessingController {
         timeStepsBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
 
         globalPlotForFirstTime = true;
+        proceedToAnalysis = false;
         //init subview
         correctedAreaPanel = new CorrectedAreaPanel();
         //init chart panels
         rawDataChartPanel = new ChartPanel(null);
         rawDataChartPanel.setOpaque(false);
+        transformedAreaChartPanel = new ChartPanel(null);
+        transformedAreaChartPanel.setOpaque(false);
         densityChartPanel = new ChartPanel(null);
         densityChartPanel.setOpaque(false);
         correctedDensityChartPanel = new ChartPanel(null);
@@ -832,8 +1031,6 @@ public class AreaPreProcessingController {
         areaAnalysisPanel.getPlotErrorBarsCheckBox().setEnabled(false);
         areaAnalysisPanel.getUseCorrectedDataCheckBox().setSelected(true);
 
-        // add action listeners
-
         //create a ButtonGroup for the radioButtons used for analysis
         ButtonGroup radioButtonGroup = new ButtonGroup();
         //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
@@ -841,12 +1038,10 @@ public class AreaPreProcessingController {
         radioButtonGroup.add(areaAnalysisPanel.getDeltaAreaButton());
         radioButtonGroup.add(areaAnalysisPanel.getPercentageAreaIncreaseButton());
         radioButtonGroup.add(areaAnalysisPanel.getCorrectedAreaButton());
+        radioButtonGroup.add(areaAnalysisPanel.getCellCoveredAreaRadioButton());
+
         //select as default first button (Delta Area values Computation)
         areaAnalysisPanel.getNormalizeAreaButton().setSelected(true);
-        // global view can not be shown before the correction has been applied
-        areaAnalysisPanel.getBulkTabbedPane().setEnabledAt(2, false);
-        // linear model results can not been shown before going to step: global view  plot
-        areaAnalysisPanel.getBulkTabbedPane().setEnabledAt(3, false);
 
         /**
          * Calculate Normalized Area (with corrected values for Jumps)
@@ -862,10 +1057,34 @@ public class AreaPreProcessingController {
                     densityChartPanel.setChart(null);
                     correctedAreaChartPanel.setChart(null);
                     rawDataChartPanel.setChart(null);
+                    transformedAreaChartPanel.setChart(null);
+                    areaAnalysisPanel.getGraphicsParentPanel().remove(transformedAreaChartPanel);
                     areaAnalysisPanel.getGraphicsParentPanel().remove(correctedAreaPanel);
                     areaAnalysisPanel.getGraphicsParentPanel().repaint();
                     // show raw data plot (replicates)
                     plotRawDataReplicates(dataAnalysisController.getCurrentCondition());
+                }
+            }
+        });
+
+        /**
+         *
+         */
+        areaAnalysisPanel.getCellCoveredAreaRadioButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //check that a condition is selected
+                if (dataAnalysisController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != - 1) {
+                    showTransformedDataInTable(dataAnalysisController.getCurrentCondition());
+                    //set charts panel to null
+                    densityChartPanel.setChart(null);
+                    correctedAreaChartPanel.setChart(null);
+                    rawDataChartPanel.setChart(null);
+                    areaAnalysisPanel.getGraphicsParentPanel().remove(rawDataChartPanel);
+                    areaAnalysisPanel.getGraphicsParentPanel().remove(correctedAreaPanel);
+                    areaAnalysisPanel.getGraphicsParentPanel().repaint();
+                    // show transformed data plot (replicates)
+                    plotTransformedDataReplicates(dataAnalysisController.getCurrentCondition());
                 }
             }
         });
@@ -882,6 +1101,7 @@ public class AreaPreProcessingController {
                     showDeltaAreaInTable(dataAnalysisController.getCurrentCondition());
                     // remove other panels
                     rawDataChartPanel.setChart(null);
+                    transformedAreaChartPanel.setChart(null);
                     densityChartPanel.setChart(null);
                     correctedDensityChartPanel.setChart(null);
                     correctedAreaChartPanel.setChart(null);
@@ -903,6 +1123,7 @@ public class AreaPreProcessingController {
                     showAreaIncreaseInTable(dataAnalysisController.getCurrentCondition());
                     // remove other panels
                     rawDataChartPanel.setChart(null);
+                    transformedAreaChartPanel.setChart(null);
                     areaAnalysisPanel.getGraphicsParentPanel().remove(correctedAreaPanel);
                     areaAnalysisPanel.getGraphicsParentPanel().repaint();
                     //show density function for selected condition
@@ -922,6 +1143,7 @@ public class AreaPreProcessingController {
                     showCorrectedAreaInTable(dataAnalysisController.getCurrentCondition());
                     // remove other panels
                     areaAnalysisPanel.getGraphicsParentPanel().remove(rawDataChartPanel);
+                    areaAnalysisPanel.getGraphicsParentPanel().remove(transformedAreaChartPanel);
                     areaAnalysisPanel.getGraphicsParentPanel().remove(densityChartPanel);
                     areaAnalysisPanel.getGraphicsParentPanel().remove(correctedDensityChartPanel);
                     areaAnalysisPanel.getGraphicsParentPanel().remove(correctedAreaChartPanel);
@@ -933,66 +1155,10 @@ public class AreaPreProcessingController {
                     }
                     // plot corrected area (all replicates for selected condition)
                     plotCorrectedDataReplicates(dataAnalysisController.getCurrentCondition());
-                    // enable global view tab
-                    areaAnalysisPanel.getBulkTabbedPane().setEnabledAt(2, true);
-                }
-            }
-        });
+                    // enable global view and analysis
+                    proceedToAnalysis = true;
+                    dataAnalysisController.getAnalysisExperimentPanel().getNextButton().setEnabled(proceedToAnalysis);
 
-        /**
-         * Add a Change Listener to Bulk Tabbed Pane: Actions are triggered when a tab is being clicked
-         */
-        areaAnalysisPanel.getBulkTabbedPane().addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                //click on Global View Panel and show Global Area increase among ALL conditions.
-                //If some conditions still need to be analyzed, a swing worker is needed.
-                if (areaAnalysisPanel.getBulkTabbedPane().getSelectedIndex() == 2) {
-                    // check if a swing worker with a progress bar is actually needed:
-                    // only if the number of fetched conditions is not equal to the number of all conditions of experiment
-                    if (globalPlotForFirstTime) {
-                        // create and execute a swing worker
-                        FetchAllConditionsSwingWorker fetchAllConditionsSwingWorker = new FetchAllConditionsSwingWorker();
-                        // add property change listener to worker
-                        fetchAllConditionsSwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
-                            @Override
-                            public void propertyChange(PropertyChangeEvent evt) {
-                                if ("progress".equals(evt.getPropertyName())) {
-                                    int progress = (Integer) evt.getNewValue();
-                                    dataAnalysisController.getAnalysisExperimentPanel().getFetchAllConditionsProgressBar().setValue(progress);
-                                }
-                            }
-                        });
-                        fetchAllConditionsSwingWorker.execute();
-                    } else {
-                        List<PlateCondition> processedConditions = getProcessedConditions();
-                        List<PlateCondition> selectedConditions = getSelectedConditions();
-                        List<Integer> numberOfReplicates = getNumberOfReplicates();
-                        // enable now tab for analysis
-                        areaAnalysisPanel.getBulkTabbedPane().setEnabledAt(3, true);
-                        // enable check box to show error bars
-                        areaAnalysisPanel.getPlotErrorBarsCheckBox().setEnabled(true);
-                        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
-                        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, areaAnalysisPanel.getConditionsList());
-                        bindingGroup.addBinding(jListBinding);
-                        bindingGroup.bind();
-                        areaAnalysisPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, numberOfReplicates));
-
-                        boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
-                        boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
-                        if (selectedConditions.isEmpty()) {
-                            plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars);
-                        } else {
-                            plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars);
-                        }
-                    }
-                }
-
-                // click on "Analysis" tab, show Linear Model Results
-                if (areaAnalysisPanel.getBulkTabbedPane().getSelectedIndex() == 3) {
-                    boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
-                    // show Linear Model Results from the other child controller
-                    dataAnalysisController.showLinearModelInTable(useCorrectedData);
                 }
             }
         });
@@ -1006,18 +1172,19 @@ public class AreaPreProcessingController {
                 List<PlateCondition> selectedConditions = getSelectedConditions();
                 List<PlateCondition> processedConditions = getProcessedConditions();
                 boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
+                MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     // check if conditions are selected, if not plot entire dataset
                     if (selectedConditions.isEmpty()) {
-                        plotGlobalArea(processedConditions, useCorrectedData, true);
+                        plotGlobalArea(processedConditions, useCorrectedData, true, measuredAreaType);
                     } else {
-                        plotGlobalArea(selectedConditions, useCorrectedData, true);
+                        plotGlobalArea(selectedConditions, useCorrectedData, true, measuredAreaType);
                     }
                 } else {
                     if (selectedConditions.isEmpty()) {
-                        plotGlobalArea(processedConditions, useCorrectedData, false);
+                        plotGlobalArea(processedConditions, useCorrectedData, false, measuredAreaType);
                     } else {
-                        plotGlobalArea(selectedConditions, useCorrectedData, false);
+                        plotGlobalArea(selectedConditions, useCorrectedData, false, measuredAreaType);
                     }
                 }
             }
@@ -1033,17 +1200,18 @@ public class AreaPreProcessingController {
                 List<PlateCondition> selectedConditions = getSelectedConditions();
                 List<PlateCondition> processedConditions = getProcessedConditions();
                 boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
+                MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     if (selectedConditions.isEmpty()) {
-                        plotGlobalArea(processedConditions, true, plotErrorBars);
+                        plotGlobalArea(processedConditions, true, plotErrorBars, measuredAreaType);
                     } else {
-                        plotGlobalArea(selectedConditions, true, plotErrorBars);
+                        plotGlobalArea(selectedConditions, true, plotErrorBars, measuredAreaType);
                     }
                 } else {
                     if (selectedConditions.isEmpty()) {
-                        plotGlobalArea(processedConditions, false, plotErrorBars);
+                        plotGlobalArea(processedConditions, false, plotErrorBars, measuredAreaType);
                     } else {
-                        plotGlobalArea(selectedConditions, false, plotErrorBars);
+                        plotGlobalArea(selectedConditions, false, plotErrorBars, measuredAreaType);
                     }
                 }
             }
@@ -1060,7 +1228,8 @@ public class AreaPreProcessingController {
                 List<PlateCondition> selectedConditions = getSelectedConditions();
                 boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
                 boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
-                plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars);
+                MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
+                plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, measuredAreaType);
             }
         });
 
@@ -1076,12 +1245,13 @@ public class AreaPreProcessingController {
                 // plot global area for all conditions, checking if error bars need to be shown or not, and if raw data or corrected data 
                 boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
                 boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
-                plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars);
+                MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
+                plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, measuredAreaType);
             }
         });
 
         // add view to parent panel
-        dataAnalysisController.getDataAnalysisPanel().getBulkCellAnalysisParentPanel().add(areaAnalysisPanel, gridBagConstraints);
+        dataAnalysisController.getDataAnalysisPanel().getAreaAnalysisParentPanel().add(areaAnalysisPanel, gridBagConstraints);
     }
 
     /**
@@ -1224,7 +1394,7 @@ public class AreaPreProcessingController {
             // keep note of the fact that the user had interaction with check boxes
             preProcessingMap.get(plateCondition).setUserSelectedReplicates(true);
             // recompute time interval for selected condition
-            areaPreProcessor.setTimeInterval(areaPreProcessingResults);
+            cellCoveredAreaPreProcessor.setTimeInterval(areaPreProcessingResults);
             int lastTimeFrame = areaPreProcessingResults.getTimeInterval().getLastTimeFrame();
             correctedAreaPanel.getCutOffTextField().setText(timeFramesBindingList.get(lastTimeFrame).toString());
         }
@@ -1245,7 +1415,7 @@ public class AreaPreProcessingController {
             setProgress(progress);
             // show progress bar
             dataAnalysisController.getAnalysisExperimentPanel().getFetchAllConditionsProgressBar().setVisible(true);
-//            // set max value of progress bar to size of conditions' list
+            // set max value of progress bar to size of conditions' list
             dataAnalysisController.getAnalysisExperimentPanel().getFetchAllConditionsProgressBar().setMaximum(plateConditionList.size());
             // show waiting cursor
             dataAnalysisController.setCursor(Cursor.WAIT_CURSOR);
@@ -1277,9 +1447,8 @@ public class AreaPreProcessingController {
                 dataAnalysisController.getAnalysisExperimentPanel().getFetchAllConditionsProgressBar().setVisible(false);
                 dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
                 // show all conditions in one plot (Global Area View)
-                plotGlobalArea(processedConditions, true, false);
-                // enable now tab for analysis
-                areaAnalysisPanel.getBulkTabbedPane().setEnabledAt(3, true);
+                MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
+                plotGlobalArea(processedConditions, true, false, measuredAreaType);
                 // enable check box to show error bars
                 areaAnalysisPanel.getPlotErrorBarsCheckBox().setEnabled(true);
                 ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
@@ -1342,19 +1511,21 @@ public class AreaPreProcessingController {
                 AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(dataAnalysisController.getCurrentCondition());
                 TimeInterval timeInterval = areaPreProcessingResults.getTimeInterval();
                 // get last time frame selected
-                int selectedLastTimeFrame = timeFramesBindingList.indexOf(timeFramesSelectionPanel.getCutOffTimeFrameComboBox().getSelectedItem());
-
-                // if last time frame provided by the user is equal or smaller than cut off time frame (and greater than first time frame): No problem
-                if (selectedLastTimeFrame <= timeInterval.getProposedCutOff() && selectedLastTimeFrame > timeInterval.getFirstTimeFrame()) {
-                    timeInterval.setLastTimeFrame(selectedLastTimeFrame);
-                    // update plot
-                    plotCorrectedDataInTimeInterval(dataAnalysisController.getCurrentCondition());
-                } else if (selectedLastTimeFrame > timeInterval.getProposedCutOff()) {
-                    // if last time frame provided by the user is greater than cut off time frame: Warn the user!
-                    timeFramesSelectionPanel.getWarningLabel().setVisible(true);
-                } else if (selectedLastTimeFrame < timeInterval.getFirstTimeFrame()) {
-                    // last time frame can not be smaller than first one: warn the user and ignore selection
-                    dataAnalysisController.showMessage("Last time frame cannot be smaller than first one!", "Error in chosing time frames", JOptionPane.INFORMATION_MESSAGE);
+                Double selected = (Double) timeFramesSelectionPanel.getCutOffTimeFrameComboBox().getSelectedItem();
+                if (selected != null) {
+                    int selectedLastTimeFrame = timeFramesBindingList.indexOf(selected);
+                    // if last time frame provided by the user is equal or smaller than cut off time frame (and greater than first time frame): No problem
+                    if (selectedLastTimeFrame <= timeInterval.getProposedCutOff() && selectedLastTimeFrame > timeInterval.getFirstTimeFrame()) {
+                        timeInterval.setLastTimeFrame(selectedLastTimeFrame);
+                        // update plot
+                        plotCorrectedDataInTimeInterval(dataAnalysisController.getCurrentCondition());
+                    } else if (selectedLastTimeFrame > timeInterval.getProposedCutOff()) {
+                        // if last time frame provided by the user is greater than cut off time frame: Warn the user!
+                        timeFramesSelectionPanel.getWarningLabel().setVisible(true);
+                    } else if (selectedLastTimeFrame < timeInterval.getFirstTimeFrame()) {
+                        // last time frame can not be smaller than first one: warn the user and ignore selection
+                        dataAnalysisController.showMessage("Last time frame cannot be smaller than first one!", "Error in chosing time frames", JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
             }
         });
@@ -1369,14 +1540,17 @@ public class AreaPreProcessingController {
                 AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(dataAnalysisController.getCurrentCondition());
                 TimeInterval timeInterval = areaPreProcessingResults.getTimeInterval();
                 // get first time frame selected
-                int selectedFirstTimeFrame = timeFramesBindingList.indexOf(timeFramesSelectionPanel.getFirstTimeFrameComboBox().getSelectedItem());
-                if (selectedFirstTimeFrame <= timeInterval.getLastTimeFrame()) {
-                    timeInterval.setFirstTimeFrame(selectedFirstTimeFrame);
-                    // update plot
-                    plotCorrectedDataInTimeInterval(dataAnalysisController.getCurrentCondition());
-                } else {
-                    // first time frame can not be greater than last one: warn the user and ignore selection
-                    dataAnalysisController.showMessage("First time frame cannot be greater than last one!", "Error in chosing time frames", JOptionPane.INFORMATION_MESSAGE);
+                Double selected = (Double) timeFramesSelectionPanel.getFirstTimeFrameComboBox().getSelectedItem();
+                if (selected != null) {
+                    int selectedFirstTimeFrame = timeFramesBindingList.indexOf(selected);
+                    if (selectedFirstTimeFrame <= timeInterval.getLastTimeFrame()) {
+                        timeInterval.setFirstTimeFrame(selectedFirstTimeFrame);
+                        // update plot
+                        plotCorrectedDataInTimeInterval(dataAnalysisController.getCurrentCondition());
+                    } else {
+                        // first time frame can not be greater than last one: warn the user and ignore selection
+                        dataAnalysisController.showMessage("First time frame cannot be greater than last one!", "Error in chosing time frames", JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
             }
         });
@@ -1391,7 +1565,7 @@ public class AreaPreProcessingController {
                 // replot everything
                 plotCorrectedDataReplicates(selectedCondition);
                 // recompute time interval
-                areaPreProcessor.setTimeInterval(preProcessingMap.get(selectedCondition));
+                cellCoveredAreaPreProcessor.setTimeInterval(preProcessingMap.get(selectedCondition));
                 // refresh info label
                 correctedAreaPanel.getCutOffTextField().setText(timeFramesBindingList.get(preProcessingMap.get(selectedCondition).getTimeInterval().getLastTimeFrame()).toString());
             }

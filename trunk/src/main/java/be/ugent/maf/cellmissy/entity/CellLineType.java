@@ -84,6 +84,7 @@ public class CellLineType implements Serializable {
         this.cellLineCollection = cellLineCollection;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -101,6 +102,7 @@ public class CellLineType implements Serializable {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int hash = 5;
         hash = 97 * hash + Objects.hashCode(this.cellLineTypeid);

@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.analysis;
 
 /**
- *
+ * Level for statistical significance
  * @author Paola Masuzzo
  */
 public enum SignificanceLevel {

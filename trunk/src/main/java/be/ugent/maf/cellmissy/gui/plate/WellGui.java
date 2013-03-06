@@ -21,6 +21,11 @@ public class WellGui {
     private List<Ellipse2D> ellipsi;
     private Rectangle rectangle;
 
+    /**
+     * Constructor with (row number, column number)
+     * @param rowNumber
+     * @param columnNumber 
+     */
     public WellGui(int rowNumber, int columnNumber) {
         well = new Well();
         well.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
@@ -60,6 +65,7 @@ public class WellGui {
         this.rectangle = rectangle;
     }
 
+    @Override
     public String toString() {
         return "row: " + well.getRowNumber() + ", column: " + well.getColumnNumber() + ", number of wellHasImagingTypes: " + well.getWellHasImagingTypeCollection().size();
     }

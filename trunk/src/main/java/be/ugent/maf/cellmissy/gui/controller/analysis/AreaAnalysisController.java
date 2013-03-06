@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis;
 
 import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
+import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
 import be.ugent.maf.cellmissy.analysis.SignificanceLevel;
 import be.ugent.maf.cellmissy.analysis.StatisticsAnalyzer;
@@ -136,12 +137,16 @@ public class AreaAnalysisController {
         return dataAnalysisController.getPreProcessingMap();
     }
 
-    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars) {
-        return dataAnalysisController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars);
+    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, MeasuredAreaType measuredAreaType) {
+        return dataAnalysisController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, measuredAreaType);
     }
 
     public void showMessage(String message, String title, Integer messageType) {
         dataAnalysisController.showMessage(message, title, messageType);
+    }
+    
+    public MeasuredAreaType getMeasuredAreaType(){
+        return dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
     }
 
     /**
@@ -221,7 +226,8 @@ public class AreaAnalysisController {
      */
     public JFreeChart createVelocityChart(int[] conditionsToShow) {
         DefaultStatisticalCategoryDataset velocityDataset = getVelocityDataset(conditionsToShow);
-        JFreeChart velocityChart = ChartFactory.createLineChart("Median Velocity", "", "Velocity " + "(\u00B5" + "m" + "\u00B2" + "\\min)", velocityDataset, PlotOrientation.VERTICAL, false, false, false);
+        String areaUnitOfMeasurement = getAreaUnitOfMeasurement();
+        JFreeChart velocityChart = ChartFactory.createLineChart("Median Velocity", "", "Velocity " + "(" + areaUnitOfMeasurement + "\\min)", velocityDataset, PlotOrientation.VERTICAL, false, false, false);
         velocityChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
         CategoryPlot velocityPlot = velocityChart.getCategoryPlot();
         velocityPlot.setBackgroundPaint(Color.white);
@@ -268,6 +274,18 @@ public class AreaAnalysisController {
     }
 
     /**
+     * private methods
+     */
+    /**
+     * Get area unit of measurement
+     *
+     * @return
+     */
+    private String getAreaUnitOfMeasurement() {
+        return dataAnalysisController.getAreaUnitOfMeasurement();
+    }
+
+    /**
      *
      * @param conditionsToShow
      * @return
@@ -309,7 +327,8 @@ public class AreaAnalysisController {
         Map<PlateCondition, AreaPreProcessingResults> preProcessingMap = dataAnalysisController.getPreProcessingMap();
         AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
         AreaAnalysisResults areaAnalysisResults = analysisMap.get(plateCondition);
-        areaAnalyzer.estimateLinearModel(areaPreProcessingResults, areaAnalysisResults, useCorrectedData, dataAnalysisController.getTimeFrames());
+        MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
+        areaAnalyzer.estimateLinearModel(areaPreProcessingResults, areaAnalysisResults, useCorrectedData, measuredAreaType, dataAnalysisController.getTimeFrames());
     }
 
     /**
@@ -773,7 +792,7 @@ public class AreaAnalysisController {
             } catch (InterruptedException | CancellationException ex) {
                 ex.printStackTrace();
             } catch (ExecutionException ex) {
-                dataAnalysisController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error",JOptionPane.ERROR_MESSAGE);
+                dataAnalysisController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
             }
             //set cursor back to default
             dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);

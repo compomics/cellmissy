@@ -4,8 +4,11 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis;
 
+import be.ugent.maf.cellmissy.analysis.AreaUnitOfMeasurement;
+import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Algorithm;
+import be.ugent.maf.cellmissy.entity.AreaAnalysisHolder;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
@@ -22,16 +25,22 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.MetaDataAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.AreaUnitOfMeasurementComboBoxRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsAnalysisListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
+import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
@@ -42,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -72,6 +82,7 @@ public class DataAnalysisController {
     private static final String DATA_FORMAT = PropertiesConfigurationHolder.getInstance().getString("dataFormat");
     //model
     private Experiment experiment;
+    private AreaAnalysisHolder areaAnalysisHolder;
     private PlateCondition currentCondition;
     private ObservableList<Algorithm> algorithmBindingList;
     private ObservableList<ImagingType> imagingTypeBindingList;
@@ -107,7 +118,7 @@ public class DataAnalysisController {
     private GridBagConstraints gridBagConstraints;
 
     /**
-     * initialize controller
+     * Initialize controller
      */
     public void init() {
         //init view
@@ -118,6 +129,8 @@ public class DataAnalysisController {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         format = new DecimalFormat(DATA_FORMAT);
+
+        areaAnalysisHolder = new AreaAnalysisHolder();
         //init child controllers
         areaPreProcessingController.init();
         areaAnalysisController.init();
@@ -145,6 +158,14 @@ public class DataAnalysisController {
         return experiment;
     }
 
+    public String getAreaUnitOfMeasurement() {
+        return areaAnalysisHolder.getAreaUnitOfMeasurement().getUnitOfMeasurementString();
+    }
+
+    public String getMeasuredAreaType() {
+        return areaAnalysisHolder.getMeasuredAreaType().getStringForType();
+    }
+
     public PlateCondition getCurrentCondition() {
         return currentCondition;
     }
@@ -169,12 +190,16 @@ public class DataAnalysisController {
         return areaPreProcessingController.getPreProcessingMap();
     }
 
-    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars) {
-        return areaPreProcessingController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars);
+    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, MeasuredAreaType measuredAreaType) {
+        return areaPreProcessingController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, measuredAreaType);
     }
 
     public List<PlateCondition> getProcessedConditions() {
         return areaPreProcessingController.getProcessedConditions();
+    }
+
+    public AreaAnalysisHolder getAreaAnalysisHolder() {
+        return areaAnalysisHolder;
     }
 
     /**
@@ -257,39 +282,204 @@ public class DataAnalysisController {
     }
 
     /**
+     * update information message in the bottom panel
+     *
+     * @param messageToShow
+     */
+    private void showInfoMessage(String messageToShow) {
+        cellMissyController.updateInfoLabel(analysisExperimentPanel.getInfoLabel(), messageToShow);
+    }
+
+    /**
+     * get Card Layout
+     *
+     * @return
+     */
+    private CardLayout getCardLayout() {
+        return (CardLayout) areaPreProcessingController.getAreaAnalysisPanel().getBottomPanel().getLayout();
+    }
+
+    /**
+     *
+     * @param label
+     */
+    private void highlightLabelInfo(JLabel label) {
+        label.setFont(new Font("Tahoma", Font.BOLD, 14));
+        label.setForeground(Color.BLUE);
+    }
+
+    /**
+     *
+     * @param label
+     */
+    private void resetLabel(JLabel label) {
+        label.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        label.setForeground(Color.BLACK);
+    }
+
+    /**
+     * Check for card name when switching
+     */
+    private void onCardSwitch() {
+        String currentCardName = GuiUtils.getCurrentCardName(areaPreProcessingController.getAreaAnalysisPanel().getBottomPanel());
+        switch (currentCardName) {
+            case "resultsImporterPanel":
+                // disable previous button
+                analysisExperimentPanel.getPreviousButton().setEnabled(false);
+                // enable next button
+                analysisExperimentPanel.getNextButton().setEnabled(true);
+                highlightLabelInfo(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
+                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
+                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
+                showInfoMessage("Area values are shown for each well, together with (column, row) coordinates");
+                break;
+            case "preprocessingPanel":
+                boolean proceedToAnalysis = areaPreProcessingController.isProceedToAnalysis();
+                analysisExperimentPanel.getNextButton().setEnabled(proceedToAnalysis);
+                // cell covered area radio button is not visible if area is already a cell covered one
+                if (areaAnalysisHolder.getMeasuredAreaType().equals(MeasuredAreaType.CELL_COVERED_AREA)) {
+                    areaPreProcessingController.getAreaAnalysisPanel().getCellCoveredAreaRadioButton().setVisible(false);
+                }
+                highlightLabelInfo(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
+                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
+                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
+                showInfoMessage("Data are normalized and outliers correction is performed");
+                break;
+            case "globalViewPanel":
+                areaPreProcessingController.onGlobalView();
+                // enable next button
+                analysisExperimentPanel.getNextButton().setEnabled(true);
+                highlightLabelInfo(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
+                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
+                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
+                showInfoMessage("Temporal evolution of the area is plotted for each condition");
+                break;
+            case "linearModelPanel":
+                // disable next button
+                analysisExperimentPanel.getNextButton().setEnabled(false);
+                areaPreProcessingController.onLinearRegressionModel();
+                highlightLabelInfo(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
+                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
+                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                showInfoMessage("The slope of this linear regression model is the median velocity of cells");
+                break;
+        }
+    }
+
+    /**
      * Initialize main panel
      */
     private void initMainPanel() {
-        // by default next button is disabled
-        // this is enabled when an experiment is chosen
+        // be sure buttons are disabled at the beginning
+        analysisExperimentPanel.getStartButton().setEnabled(false);
         analysisExperimentPanel.getNextButton().setEnabled(false);
         analysisExperimentPanel.getPreviousButton().setEnabled(false);
+        analysisExperimentPanel.getCancelButton().setEnabled(false);
         //hide progress bar at first time
         analysisExperimentPanel.getFetchAllConditionsProgressBar().setVisible(false);
         analysisExperimentPanel.getFetchAllConditionsProgressBar().setStringPainted(true);
-        cellMissyController.updateInfoLabel(analysisExperimentPanel.getInfoLabel(), "Please select a project and an experiment to analyse motility data.");
+        String message = "Please select a project and an experiment to analyse motility data.";
+        showInfoMessage(message);
+        // action listener on start button: this is switching the views in order to start the analysis
+        analysisExperimentPanel.getStartButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                analysisExperimentPanel.getStartButton().setEnabled(false);
+                analysisExperimentPanel.getCancelButton().setEnabled(true);
+                // switch between the two panels
+                GuiUtils.switchChildPanels(analysisExperimentPanel.getTopPanel(), dataAnalysisPanel, metaDataAnalysisPanel);
+                analysisExperimentPanel.getTopPanel().repaint();
+                analysisExperimentPanel.getTopPanel().revalidate();
+                getCardLayout().first(areaPreProcessingController.getAreaAnalysisPanel().getBottomPanel());
+                onCardSwitch();
+                // update experiment info
+                dataAnalysisPanel.getExperimentNumberTextField().setText(experiment.toString());
+                dataAnalysisPanel.getDatasetTextField().setText(algorithmBindingList.get(metaDataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmName());
+                dataAnalysisPanel.getImagingTypeTextField().setText(imagingTypeBindingList.get(metaDataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getName());
+                showInfoMessage("Select a condition to start with analysis");
+            }
+        });
+
+        // action listener on previous button
+        analysisExperimentPanel.getPreviousButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // go back of one step
+                getCardLayout().previous(areaPreProcessingController.getAreaAnalysisPanel().getBottomPanel());
+                onCardSwitch();
+            }
+        });
 
         // action listener on next button
         analysisExperimentPanel.getNextButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                analysisExperimentPanel.getNextButton().setEnabled(false);
-                // switch between the two panels
-                GuiUtils.switchChildPanels(analysisExperimentPanel.getTopPanel(), dataAnalysisPanel, metaDataAnalysisPanel);
-                analysisExperimentPanel.getTopPanel().repaint();
-                analysisExperimentPanel.getTopPanel().revalidate();
-                // update experiment info
-                dataAnalysisPanel.getExperimentNumberTextField().setText(experiment.toString());
-                dataAnalysisPanel.getDatasetTextField().setText(algorithmBindingList.get(metaDataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmName());
-                dataAnalysisPanel.getImagingTypeTextField().setText(imagingTypeBindingList.get(metaDataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getName());
+                // go forward of one step
+                getCardLayout().next(areaPreProcessingController.getAreaAnalysisPanel().getBottomPanel());
+                onCardSwitch();
+                if (!analysisExperimentPanel.getPreviousButton().isEnabled()) {
+                    analysisExperimentPanel.getPreviousButton().setEnabled(true);
+                }
             }
         });
 
-        analysisExperimentPanel.getPreviousButton().addActionListener(new ActionListener() {
+        // action listener on cancel button
+        analysisExperimentPanel.getCancelButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // warn the user and reset everything
+                Object[] options = {"Yes", "No"};
+                int showOptionDialog = JOptionPane.showOptionDialog(null, "Current analysis won't be saved. Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                if (showOptionDialog == 0) {
+                    // reset everything
+                    onCancel();
+                }
             }
         });
+    }
+
+    /**
+     * On cancel: reset views
+     */
+    private void onCancel() {
+        String message = "Please select a project and an experiment to analyse motility data.";
+        showInfoMessage(message);
+        algorithmBindingList.clear();
+        imagingTypeBindingList.clear();
+        plateConditionList.clear();
+        areaPreProcessingController.getPreProcessingMap().clear();
+        areaPreProcessingController.initTimeFramesList();
+        currentCondition = null;
+        experiment = null;
+        areaPreProcessingController.getAreaAnalysisPanel().getNormalizeAreaButton().setSelected(true);
+        GuiUtils.switchChildPanels(analysisExperimentPanel.getTopPanel(), metaDataAnalysisPanel, dataAnalysisPanel);
+        analysisExperimentPanel.getTopPanel().repaint();
+        analysisExperimentPanel.getTopPanel().revalidate();
+        resetExperimentMetadataFields();
+        analysisExperimentPanel.getStartButton().setEnabled(true);
+        analysisExperimentPanel.getNextButton().setEnabled(false);
+        analysisExperimentPanel.getCancelButton().setEnabled(false);
+        analysisExperimentPanel.getPreviousButton().setEnabled(false);
+        experimentBindingList.clear();
+        if (!areaPreProcessingController.getTimeStepsBindingList().isEmpty()) {
+            areaPreProcessingController.getTimeStepsBindingList().clear();
+        }
+        areaPreProcessingController.resetOnCancel();
+    }
+
+    /**
+     * Reset text of experiment metadata fields
+     */
+    private void resetExperimentMetadataFields() {
+        metaDataAnalysisPanel.getUserTextField().setText("");
+        metaDataAnalysisPanel.getInstrumentTextField().setText("");
+        metaDataAnalysisPanel.getMagnificationTextField().setText("");
+        metaDataAnalysisPanel.getPurposeTextArea().setText("");
+        metaDataAnalysisPanel.getTimeFramesTextField().setText("");
     }
 
     /**
@@ -313,6 +503,24 @@ public class DataAnalysisController {
         //do the binding
         bindingGroup.bind();
 
+        // add area unit of measure to combo box
+        for (AreaUnitOfMeasurement areaUnitOfMeasurement : AreaUnitOfMeasurement.values()) {
+            metaDataAnalysisPanel.getAreaUnitOfMeasurementComboBox().addItem(areaUnitOfMeasurement);
+        }
+
+        // choose area unit of measurement
+        metaDataAnalysisPanel.getAreaUnitOfMeasurementComboBox().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AreaUnitOfMeasurement areaUnitOfMeasurement = (AreaUnitOfMeasurement) metaDataAnalysisPanel.getAreaUnitOfMeasurementComboBox().getSelectedItem();
+                areaAnalysisHolder.setAreaUnitOfMeasurement(areaUnitOfMeasurement);
+            }
+        });
+
+        metaDataAnalysisPanel.getAreaUnitOfMeasurementComboBox().setRenderer(new AreaUnitOfMeasurementComboBoxRenderer());
+        // set default unit of measurement: micro meters
+        metaDataAnalysisPanel.getAreaUnitOfMeasurementComboBox().setSelectedItem(AreaUnitOfMeasurement.MICRO_METERS);
+
         /**
          * add mouse listeners
          */
@@ -323,14 +531,9 @@ public class DataAnalysisController {
                 // retrieve selected project
                 int locationToIndex = metaDataAnalysisPanel.getProjectJList().locationToIndex(e.getPoint());
                 Project selectedProject = projectBindingList.get(locationToIndex);
-                if (experiment == null) {
+                if (experiment == null || !selectedProject.equals(experiment.getProject()) || experimentBindingList.isEmpty()) {
                     // project is being selected for the first time
                     onSelectedProject(selectedProject);
-                } else if (experiment.getProject() != selectedProject) {
-                    showMessage("If you want to analyse data from another experiment,\nplease exit and restart the application.", "", JOptionPane.INFORMATION_MESSAGE);
-                    // ignore selection and select previous (current) prject
-                    Project currentProject = experiment.getProject();
-                    metaDataAnalysisPanel.getProjectJList().setSelectedIndex(projectBindingList.indexOf(currentProject));
                 }
             }
         });
@@ -340,68 +543,67 @@ public class DataAnalysisController {
         metaDataAnalysisPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // enable next button
-                analysisExperimentPanel.getNextButton().setEnabled(true);
+                // enable start button
+                analysisExperimentPanel.getStartButton().setEnabled(true);
                 // retrieve selected experiment
                 int locationToIndex = metaDataAnalysisPanel.getExperimentJList().locationToIndex(e.getPoint());
                 Experiment selectedExperiment = experimentBindingList.get(locationToIndex);
-                // check if experiment is still null, then set it, otherwise warn the user, because an experiment was already chosen and data analysis was started
-                if (experiment == null) {
+                if (experiment == null || !selectedExperiment.equals(experiment)) {
                     onSelectedExperiment(selectedExperiment);
-                } else if (experiment != selectedExperiment) {
-                    showMessage("If you want to analyse data from another experiment,\nplease exit and restart the application.", "", JOptionPane.INFORMATION_MESSAGE);
-                    // ignore selection and select previous experiment
-                    metaDataAnalysisPanel.getExperimentJList().setSelectedIndex(experimentBindingList.indexOf(experiment));
                 }
             }
         });
 
         // bind information fields
         // exp user
-        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, metaDataAnalysisPanel.getExperimentJList(), BeanProperty.create("selectedElement.user.firstName"), metaDataAnalysisPanel.getUserTextField(), BeanProperty.create("text"), "experimentuserbinding");
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentJList(), BeanProperty.create("selectedElement.user.firstName"), metaDataAnalysisPanel.getUserTextField(), BeanProperty.create("text"), "experimentuserbinding");
         bindingGroup.addBinding(binding);
         // exp purpose
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, metaDataAnalysisPanel.getExperimentJList(), BeanProperty.create("selectedElement.purpose"), metaDataAnalysisPanel.getPurposeTextArea(), BeanProperty.create("text"), "experimentpurposebinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentJList(), BeanProperty.create("selectedElement.purpose"), metaDataAnalysisPanel.getPurposeTextArea(), BeanProperty.create("text"), "experimentpurposebinding");
+        bindingGroup.addBinding(binding);
+        // instrument
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentJList(), BeanProperty.create("selectedElement.instrument.name"), metaDataAnalysisPanel.getInstrumentTextField(), BeanProperty.create("text"), "instrumentbinding");
+        bindingGroup.addBinding(binding);
+        // resolution
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentJList(), BeanProperty.create("selectedElement.magnification.magnificationNumber"), metaDataAnalysisPanel.getMagnificationTextField(), BeanProperty.create("text"), "magnificationbinding");
         bindingGroup.addBinding(binding);
         // exp time frames
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, metaDataAnalysisPanel.getExperimentJList(), BeanProperty.create("selectedElement.timeFrames"), metaDataAnalysisPanel.getTimeFramesTextField(), BeanProperty.create("text"), "experimentimeframesbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentJList(), BeanProperty.create("selectedElement.timeFrames"), metaDataAnalysisPanel.getTimeFramesTextField(), BeanProperty.create("text"), "experimentimeframesbinding");
         bindingGroup.addBinding(binding);
+        // do the binding       
         bindingGroup.bind();
 
-//        // when an algorithm is selected, map needs to be init again and then filled in with new results
-//        // cache needs to be cleaned
-//        metaDataAnalysisPanel.getAlgorithmComboBox().addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                areaPreProcessingController.initMapWithConditions();
-//                areaPreProcessingController.emptyDensityFunctionCache();
-//                areaPreProcessingController.setGlobalPlotForFirstTime(true);
-//                if (currentCondition != null) {
-//                    // Execute Swing Worker to fetch Selected Condition: 
-//                    FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
-//                    fetchSelectedConditionSW.execute();
-//                }
-//            }
-//        });
-//
-//        // same for imaging type: map needs to be initialized again and fill in with new results
-//        // cache needs to be cleaned
-//        metaDataAnalysisPanel.getImagingTypeComboBox().addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                areaPreProcessingController.initMapWithConditions();
-//                areaPreProcessingController.emptyDensityFunctionCache();
-//                areaPreProcessingController.setGlobalPlotForFirstTime(true);
-//                if (currentCondition != null) {
-//                    // Execute Swing Worker to fetch Selected Condition: 
-//                    FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
-//                    fetchSelectedConditionSW.execute();
-//                }
-//            }
-//        });
+
+        // button group for radio buttons
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(metaDataAnalysisPanel.getCellCoveredAreaRadioButton());
-        buttonGroup.add(metaDataAnalysisPanel.getWoundAreaRadioButton());
+        buttonGroup.add(metaDataAnalysisPanel.getOpenAreaRadioButton());
+
+        /**
+         * item listeners to the radio buttons
+         */
+        metaDataAnalysisPanel.getCellCoveredAreaRadioButton().addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    areaAnalysisHolder.setMeasuredAreaType(MeasuredAreaType.CELL_COVERED_AREA);
+                } else {
+                    areaAnalysisHolder.setMeasuredAreaType(MeasuredAreaType.OPEN_AREA);
+                }
+            }
+        });
+
+        metaDataAnalysisPanel.getOpenAreaRadioButton().addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    areaAnalysisHolder.setMeasuredAreaType(MeasuredAreaType.OPEN_AREA);
+                } else {
+                    areaAnalysisHolder.setMeasuredAreaType(MeasuredAreaType.CELL_COVERED_AREA);
+                }
+            }
+        });
+
         // select cell covered area as default
         metaDataAnalysisPanel.getCellCoveredAreaRadioButton().setSelected(true);
         analysisExperimentPanel.getTopPanel().add(metaDataAnalysisPanel, gridBagConstraints);
@@ -417,13 +619,7 @@ public class DataAnalysisController {
             public void mouseClicked(MouseEvent e) {
                 int locationToIndex = dataAnalysisPanel.getConditionsList().locationToIndex(e.getPoint());
                 PlateCondition selectedCondition = plateConditionList.get(locationToIndex);
-                if (currentCondition != null) {
-                    if (currentCondition != selectedCondition) {
-                        // Execute Swing Worker to fetch Selected Condition: 
-                        FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
-                        fetchSelectedConditionSW.execute();
-                    }
-                } else {
+                if (currentCondition == null || !currentCondition.equals(selectedCondition)) {
                     // Execute Swing Worker to fetch Selected Condition: 
                     FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
                     fetchSelectedConditionSW.execute();
@@ -489,6 +685,9 @@ public class DataAnalysisController {
         for (PlateCondition plateCondition : plateConditionList) {
             for (Well well : plateCondition.getWellCollection()) {
                 List<Algorithm> algorithms = wellService.findAlgosByWellId(well.getWellid());
+                if (!algorithmBindingList.isEmpty()) {
+                    algorithmBindingList.clear();
+                }
                 if (algorithms != null) {
                     for (Algorithm algorithm : algorithms) {
                         if (!algorithmBindingList.contains(algorithm)) {
@@ -498,6 +697,9 @@ public class DataAnalysisController {
                 }
 
                 List<ImagingType> imagingTypes = wellService.findImagingTypesByWellId(well.getWellid());
+                if (!imagingTypeBindingList.isEmpty()) {
+                    imagingTypeBindingList.clear();
+                }
                 if (imagingTypes != null) {
                     for (ImagingType imagingType : imagingTypes) {
                         if (imagingType != null && !imagingTypeBindingList.contains(imagingType)) {
@@ -507,7 +709,6 @@ public class DataAnalysisController {
                 }
             }
         }
-
         //init map with conditions and results holders
         areaPreProcessingController.initMapWithConditions();
         // init timeframes binding list with an empty one
@@ -616,12 +817,19 @@ public class DataAnalysisController {
                 if (!areaPreProcessingController.getTimeStepsBindingList().isEmpty()) {
                     //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO look at motility track RESULTS
                     areaPreProcessingController.showTimeStepsInTable();
+                    onCardSwitch();
                     //check which button is selected for analysis:
                     if (areaPreProcessingController.getAreaAnalysisPanel().getNormalizeAreaButton().isSelected()) {
                         //for current selected condition show normalized area values together with time frames
                         areaPreProcessingController.showNormalizedAreaInTable(currentCondition);
                         // show raw data plot (all replicates)
                         areaPreProcessingController.plotRawDataReplicates(currentCondition);
+                    }
+                    if (areaPreProcessingController.getAreaAnalysisPanel().getCellCoveredAreaRadioButton().isSelected()) {
+                        //for current selected condition show transformed area values together with time frames
+                        areaPreProcessingController.showTransformedDataInTable(currentCondition);
+                        // show raw data plot (all replicates)
+                        areaPreProcessingController.plotTransformedDataReplicates(currentCondition);
                     }
                     if (areaPreProcessingController.getAreaAnalysisPanel().getDeltaAreaButton().isSelected()) {
                         //for current selected condition show delta area values 

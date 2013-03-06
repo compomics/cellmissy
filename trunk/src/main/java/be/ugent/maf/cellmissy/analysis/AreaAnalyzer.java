@@ -18,7 +18,8 @@ public interface AreaAnalyzer {
      * @param areaPreProcessingResults
      * @param areaAnalysisResults
      * @param useCorrectedData 
+     * @param measuredAreaType 
      * @param timeFrames 
      */
-    public void estimateLinearModel(AreaPreProcessingResults areaPreProcessingResults, AreaAnalysisResults areaAnalysisResults, boolean useCorrectedData, double[] timeFrames);
+    public void estimateLinearModel(AreaPreProcessingResults areaPreProcessingResults, AreaAnalysisResults areaAnalysisResults, boolean useCorrectedData, MeasuredAreaType measuredAreaType, double[] timeFrames);
 }

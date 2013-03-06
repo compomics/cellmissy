@@ -39,6 +39,15 @@ public class AnalysisExperimentPanel extends javax.swing.JPanel {
         return previousButton;
     }
 
+    public JButton getCancelButton() {
+        return cancelButton;
+    }
+
+    public JButton getStartButton() {
+        return startButton;
+    }
+    
+
     /**
      * Creates new form AnalysisExperimentPanel
      */
@@ -60,6 +69,8 @@ public class AnalysisExperimentPanel extends javax.swing.JPanel {
         infoLabel = new javax.swing.JLabel();
         previousButton = new javax.swing.JButton();
         fetchAllConditionsProgressBar = new javax.swing.JProgressBar();
+        startButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -86,19 +97,28 @@ public class AnalysisExperimentPanel extends javax.swing.JPanel {
 
         previousButton.setText("Previous");
 
+        startButton.setText("Start");
+
+        cancelButton.setText("Cancel");
+
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 94, Short.MAX_VALUE)
-                .addComponent(fetchAllConditionsProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
+                .addContainerGap()
+                .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(fetchAllConditionsProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(previousButton)
                 .addGap(18, 18, 18)
                 .addComponent(nextButton)
-                .addGap(23, 23, 23))
+                .addGap(18, 18, 18)
+                .addComponent(cancelButton)
+                .addGap(18, 18, 18)
+                .addComponent(startButton)
+                .addContainerGap())
         );
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -106,11 +126,14 @@ public class AnalysisExperimentPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(fetchAllConditionsProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(nextButton)
-                        .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(previousButton)))
-                .addContainerGap(19, Short.MAX_VALUE))
+                    .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(infoLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(nextButton)
+                            .addComponent(previousButton)
+                            .addComponent(startButton)
+                            .addComponent(cancelButton))))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -124,10 +147,12 @@ public class AnalysisExperimentPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
+    private javax.swing.JButton cancelButton;
     private javax.swing.JProgressBar fetchAllConditionsProgressBar;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JButton nextButton;
     private javax.swing.JButton previousButton;
+    private javax.swing.JButton startButton;
     private javax.swing.JPanel topPanel;
     // End of variables declaration//GEN-END:variables
 }

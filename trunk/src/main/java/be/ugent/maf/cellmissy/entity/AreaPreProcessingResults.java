@@ -5,20 +5,19 @@
 package be.ugent.maf.cellmissy.entity;
 
 /**
- * This class is holding the results from the area-data pre-processing step.
- * Normalized Area, Corrected Normalized Area, Delta Area, Percentage of Area Increase,
- * Area corrected for outliers, Euclidean distances between all replicates,
- * Boolean to exclude replicates, information about the eventual interaction of the user for replicates selection
- * and time time frames interval used for analysis.
- * 
+ * This class is holding the results from the area-data pre-processing step. Normalized Area, Corrected Normalized Area, Delta Area, Percentage of Area Increase, Area corrected for outliers, Euclidean
+ * distances between all replicates, Boolean to exclude replicates, information about the eventual interaction of the user for replicates selection and time time frames interval used for analysis.
+ *
  * @author Paola Masuzzo
  */
 public class AreaPreProcessingResults {
 
     // Area Raw Data (from DB)
     private Double[][] areaRawData;
-    // Normalized Area - Area at Time Frame 0 is set to 0
+    // Normalized Area - Area at Time Frame 0 is set to the same value
     private Double[][] normalizedArea;
+    // Transformed Data - from Open Area to Cell Covered Area
+    private Double[][] transformedData;
     // Delta Area between two Time Frames
     private Double[][] deltaArea;
     // % Area Increase between two Time Frames
@@ -36,7 +35,8 @@ public class AreaPreProcessingResults {
 
     /**
      * Getters and setters
-     * @return 
+     *
+     * @return
      */
     public Double[][] getAreaRawData() {
         return areaRawData;
@@ -76,6 +76,14 @@ public class AreaPreProcessingResults {
 
     public void setNormalizedCorrectedArea(Double[][] normalizedCorrectedArea) {
         this.normalizedCorrectedArea = normalizedCorrectedArea;
+    }
+
+    public Double[][] getTransformedData() {
+        return transformedData;
+    }
+
+    public void setTransformedData(Double[][] transformedData) {
+        this.transformedData = transformedData;
     }
 
     public Double[][] getPercentageAreaIncrease() {

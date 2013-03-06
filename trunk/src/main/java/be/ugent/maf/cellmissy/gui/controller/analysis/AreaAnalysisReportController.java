@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis;
 
+import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
@@ -63,6 +64,7 @@ public class AreaAnalysisReportController {
 
     /**
      * getters and setters
+     * @param useCorrectedData 
      */
     public void setUseCorrectedData(boolean useCorrectedData) {
         this.useCorrectedData = useCorrectedData;
@@ -196,8 +198,9 @@ public class AreaAnalysisReportController {
      */
     private void addGlobalAreaChart() {
         List<PlateCondition> plateConditonsList = new ArrayList<>(experiment.getPlateConditionCollection());
+        MeasuredAreaType measuredAreaType = areaAnalysisController.getMeasuredAreaType();
         // create chart (for all conditions, no error bars on top)
-        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, useCorrectedData, false);
+        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, useCorrectedData, false, measuredAreaType);
         // add chart as image
         addImageFromChart(globalAreaChart, chartWidth, chartHeight);
     }
