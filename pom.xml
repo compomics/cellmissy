@@ -17,6 +17,15 @@
     </properties>
             
     <build>
+        
+        <extensions> 
+            <extension> 
+                <groupId>org.apache.maven.wagon</groupId> 
+                <artifactId>wagon-ssh</artifactId> 
+                <version>2.2</version> 
+            </extension> 
+        </extensions>
+        
         <plugins>
             <!-- Compiler plugin -->
             <plugin>
@@ -133,12 +142,6 @@
         </plugins>
     </build>
     <repositories>
-        <!--        <repository>
-            <url>http://ftp.ing.umu.se/mirror/eclipse/rt/eclipselink/maven.repo/</url>
-            <id>eclipselink</id>
-            <layout>default</layout>
-            <name>Repository for library Library[eclipselink]</name>
-        </repository>-->
         <repository>
             <id>genesis-maven2-repository</id>
             <name>Genesis maven2 repository</name>
@@ -148,12 +151,6 @@
             <id>genesis-maven2-repo</id>
             <name>Genesis maven2 repository</name>
             <url>http://genesis.UGent.be/maven2</url>
-            <layout>default</layout>
-        </repository>
-        <repository>
-            <id>genesis-maven-repo</id>
-            <name>Genesis maven repository</name>
-            <url>http://genesis.UGent.be/maven</url>
             <layout>default</layout>
         </repository>
     </repositories>
@@ -292,23 +289,7 @@
             <artifactId>itextpdf</artifactId>
             <version>5.2.0</version>
         </dependency> 
-               
-        <dependency>
-            <groupId>com.compomics</groupId>
-            <artifactId>utilities</artifactId>
-            <version>3.4.20</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>lennart</artifactId>
-                    <groupId>lmjunit</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>xercesImpl</artifactId>
-                    <groupId>xerces</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        
+                       
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math</artifactId>
@@ -370,5 +351,13 @@
             <version>1.4.3</version>
         </dependency>
     </dependencies>  
+    
+    <distributionManagement>        
+        <repository>
+            <id>genesis-maven2-repo</id>
+            <name>Genesis Maven Repository</name>
+            <url>scp://genesis.ugent.be/home/maven/public_html/maven2</url>
+        </repository>
+    </distributionManagement>
    
 </project>

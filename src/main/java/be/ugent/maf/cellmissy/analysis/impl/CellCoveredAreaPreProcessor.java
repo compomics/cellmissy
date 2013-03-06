@@ -19,8 +19,8 @@ import org.springframework.stereotype.Component;
  *
  * @author Paola Masuzzo
  */
-@Component("areaPreProcessor")
-public class AreaPreProcessorImpl implements AreaPreProcessor {
+@Component("cellCoveredAreaPreProcessor")
+public class CellCoveredAreaPreProcessor implements AreaPreProcessor {
 
     @Autowired
     private OutliersHandler outliersHandler;

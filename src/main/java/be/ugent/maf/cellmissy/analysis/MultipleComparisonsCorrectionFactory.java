@@ -8,7 +8,7 @@ import be.ugent.maf.cellmissy.analysis.impl.BenjaminiCorrector;
 import be.ugent.maf.cellmissy.analysis.impl.BonferroniCorrector;
 
 /**
- *
+ * Factory for multiple test correction 
  * @author Paola Masuzzo
  */
 public class MultipleComparisonsCorrectionFactory {
@@ -17,6 +17,9 @@ public class MultipleComparisonsCorrectionFactory {
     private static BonferroniCorrector bonferroniCorrector = new BonferroniCorrector();
     private static BenjaminiCorrector benjaminiCorrector = new BenjaminiCorrector();
 
+    /**
+     * Correction method
+     */
     public enum CorrectionMethod {
 
         BONFERRONI, BENJAMINI, NONE;

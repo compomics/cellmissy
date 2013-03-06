@@ -36,8 +36,8 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
         return projectJList;
     }
 
-    public JRadioButton getWoundAreaRadioButton() {
-        return woundAreaRadioButton;
+    public JRadioButton getOpenAreaRadioButton() {
+        return openAreaRadioButton;
     }
 
     public JTextArea getPurposeTextArea() {
@@ -50,6 +50,18 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
 
     public JTextField getUserTextField() {
         return userTextField;
+    }
+
+    public JComboBox getAreaUnitOfMeasurementComboBox() {
+        return areaUnitOfMeasurementComboBox;
+    }
+
+    public JTextField getInstrumentTextField() {
+        return instrumentTextField;
+    }
+
+    public JTextField getMagnificationTextField() {
+        return magnificationTextField;
     }
 
     /**
@@ -83,6 +95,10 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
         purposeTextArea = new javax.swing.JTextArea();
         userTextField = new javax.swing.JTextField();
         timeFramesTextField = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        instrumentTextField = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        magnificationTextField = new javax.swing.JTextField();
         userSelectionPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         algorithmComboBox = new javax.swing.JComboBox();
@@ -90,7 +106,9 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
         imagingTypeComboBox = new javax.swing.JComboBox();
         jLabel5 = new javax.swing.JLabel();
         cellCoveredAreaRadioButton = new javax.swing.JRadioButton();
-        woundAreaRadioButton = new javax.swing.JRadioButton();
+        openAreaRadioButton = new javax.swing.JRadioButton();
+        jLabel9 = new javax.swing.JLabel();
+        areaUnitOfMeasurementComboBox = new javax.swing.JComboBox();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -99,6 +117,7 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
         generalPanel.setOpaque(false);
         generalPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel3.setText("Select a project");
 
         jScrollPane1.setBorder(null);
@@ -106,11 +125,13 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
 
         jScrollPane1.setViewportView(projectJList);
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel4.setText("Select an experiment");
 
         jScrollPane2.setBorder(null);
         jScrollPane2.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
+        experimentJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(experimentJList);
 
         javax.swing.GroupLayout generalPanelLayout = new javax.swing.GroupLayout(generalPanel);
@@ -118,45 +139,44 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
         generalPanelLayout.setHorizontalGroup(
             generalPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(generalPanelLayout.createSequentialGroup()
-                .addGap(40, 40, 40)
+                .addGap(48, 48, 48)
                 .addGroup(generalPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(68, 68, 68)
+                .addGap(18, 18, 18)
                 .addGroup(generalPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
         generalPanelLayout.setVerticalGroup(
             generalPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, generalPanelLayout.createSequentialGroup()
-                .addGap(23, 23, 23)
+                .addContainerGap()
                 .addGroup(generalPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4))
                 .addGap(18, 18, 18)
-                .addGroup(generalPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
-                .addGap(35, 35, 35))
+                .addGroup(generalPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 0.6;
-        gridBagConstraints.insets = new java.awt.Insets(100, 50, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(80, 80, 0, 0);
         add(generalPanel, gridBagConstraints);
 
         detailsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         detailsPanel.setOpaque(false);
         detailsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jLabel6.setText("Number of time frames:");
+        jLabel6.setText("Time frames");
 
         jLabel7.setText("Purpose:");
 
@@ -180,57 +200,81 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
         timeFramesTextField.setEditable(false);
         timeFramesTextField.setOpaque(false);
 
+        jLabel11.setText("Instrument");
+
+        instrumentTextField.setEditable(false);
+        instrumentTextField.setOpaque(false);
+
+        jLabel12.setText("Magnification");
+
+        magnificationTextField.setEditable(false);
+        magnificationTextField.setOpaque(false);
+
         javax.swing.GroupLayout detailsPanelLayout = new javax.swing.GroupLayout(detailsPanel);
         detailsPanel.setLayout(detailsPanelLayout);
         detailsPanelLayout.setHorizontalGroup(
             detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(detailsPanelLayout.createSequentialGroup()
-                .addGap(25, 25, 25)
+                .addGap(23, 23, 23)
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8)
-                    .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(detailsPanelLayout.createSequentialGroup()
-                            .addComponent(jLabel6)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(timeFramesTextField))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, detailsPanelLayout.createSequentialGroup()
-                            .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel7)
-                                .addComponent(jLabel10))
-                            .addGap(18, 18, 18)
-                            .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(userTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(21, Short.MAX_VALUE))
+                    .addGroup(detailsPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(userTextField)
+                            .addComponent(jScrollPane3)
+                            .addComponent(instrumentTextField)
+                            .addComponent(magnificationTextField)
+                            .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel8))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
+
+        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel11, jLabel12, jLabel6});
+
+        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {instrumentTextField, magnificationTextField, timeFramesTextField, userTextField});
+
         detailsPanelLayout.setVerticalGroup(
             detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(detailsPanelLayout.createSequentialGroup()
-                .addContainerGap(50, Short.MAX_VALUE)
+                .addContainerGap()
                 .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(22, 22, 22)
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(userTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(32, 32, 32)
+                    .addComponent(userTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10))
+                .addGap(18, 18, 18)
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
+                .addGap(18, 18, 18)
+                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(instrumentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(magnificationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(28, 28, 28))
+                .addGap(23, 23, 23))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 0.6;
-        gridBagConstraints.insets = new java.awt.Insets(100, 0, 0, 50);
+        gridBagConstraints.insets = new java.awt.Insets(80, 0, 0, 80);
         add(detailsPanel, gridBagConstraints);
 
         userSelectionPanel.setMaximumSize(new java.awt.Dimension(20, 20));
@@ -242,54 +286,69 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
         jLabel2.setText("Select an imaging type");
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel5.setText("ANALYSIS TYPE");
+        jLabel5.setText("Measured area is");
 
-        cellCoveredAreaRadioButton.setText("cell covered area");
+        cellCoveredAreaRadioButton.setText("cell covered area (wound closure)");
 
-        woundAreaRadioButton.setText("wound area");
+        openAreaRadioButton.setText("open area (wound area)");
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel9.setText("Area unit of measurement");
 
         javax.swing.GroupLayout userSelectionPanelLayout = new javax.swing.GroupLayout(userSelectionPanel);
         userSelectionPanel.setLayout(userSelectionPanelLayout);
         userSelectionPanelLayout.setHorizontalGroup(
             userSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(userSelectionPanelLayout.createSequentialGroup()
-                .addGap(50, 50, 50)
                 .addGroup(userSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel5))
-                .addGap(75, 75, 75)
-                .addGroup(userSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(userSelectionPanelLayout.createSequentialGroup()
+                        .addGap(50, 50, 50)
+                        .addGroup(userSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel5))
+                        .addGap(29, 29, 29))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, userSelectionPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel9)
+                        .addGap(18, 18, 18)))
+                .addGroup(userSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(imagingTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(algorithmComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cellCoveredAreaRadioButton)
-                    .addComponent(woundAreaRadioButton))
-                .addContainerGap(337, Short.MAX_VALUE))
+                    .addComponent(cellCoveredAreaRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(openAreaRadioButton)
+                    .addComponent(areaUnitOfMeasurementComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(314, Short.MAX_VALUE))
         );
         userSelectionPanelLayout.setVerticalGroup(
             userSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(userSelectionPanelLayout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addGroup(userSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addContainerGap()
+                .addGroup(userSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(userSelectionPanelLayout.createSequentialGroup()
-                        .addGroup(userSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(userSelectionPanelLayout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(jLabel1)
-                                .addGap(12, 12, 12)
-                                .addComponent(jLabel2))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, userSelectionPanelLayout.createSequentialGroup()
-                                .addComponent(algorithmComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(imagingTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(algorithmComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(imagingTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(cellCoveredAreaRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(woundAreaRadioButton))
+                        .addComponent(openAreaRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                        .addGroup(userSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(areaUnitOfMeasurementComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9)))
                     .addGroup(userSelectionPanelLayout.createSequentialGroup()
-                        .addGap(73, 73, 73)
-                        .addComponent(jLabel5)))
-                .addContainerGap(40, Short.MAX_VALUE))
+                        .addGroup(userSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(userSelectionPanelLayout.createSequentialGroup()
+                                .addGap(11, 11, 11)
+                                .addComponent(jLabel1)
+                                .addGap(12, 12, 12)
+                                .addComponent(jLabel2))
+                            .addGroup(userSelectionPanelLayout.createSequentialGroup()
+                                .addGap(78, 78, 78)
+                                .addComponent(jLabel5)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(15, 15, 15))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -300,18 +359,22 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 50, 100, 50);
+        gridBagConstraints.insets = new java.awt.Insets(0, 80, 80, 80);
         add(userSelectionPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox algorithmComboBox;
+    private javax.swing.JComboBox areaUnitOfMeasurementComboBox;
     private javax.swing.JRadioButton cellCoveredAreaRadioButton;
     private javax.swing.JPanel detailsPanel;
     private javax.swing.JList experimentJList;
     private javax.swing.JPanel generalPanel;
     private javax.swing.JComboBox imagingTypeComboBox;
+    private javax.swing.JTextField instrumentTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -319,14 +382,16 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextField magnificationTextField;
+    private javax.swing.JRadioButton openAreaRadioButton;
     private javax.swing.JList projectJList;
     private javax.swing.JTextArea purposeTextArea;
     private javax.swing.JTextField timeFramesTextField;
     private javax.swing.JPanel userSelectionPanel;
     private javax.swing.JTextField userTextField;
-    private javax.swing.JRadioButton woundAreaRadioButton;
     // End of variables declaration//GEN-END:variables
 }

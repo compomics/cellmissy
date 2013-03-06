@@ -35,8 +35,8 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return analysisPlateParentPanel;
     }
 
-    public JPanel getBulkCellAnalysisParentPanel() {
-        return bulkCellAnalysisParentPanel;
+    public JPanel getAreaAnalysisParentPanel() {
+        return areaAnalysisParentPanel;
     }
 
     public JTextField getDatasetTextField() {
@@ -61,7 +61,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
-        bulkCellAnalysisParentPanel = new javax.swing.JPanel();
+        areaAnalysisParentPanel = new javax.swing.JPanel();
         leftPanel = new javax.swing.JPanel();
         experimentDataPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -79,11 +79,11 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
 
-        bulkCellAnalysisParentPanel.setEnabled(false);
-        bulkCellAnalysisParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        bulkCellAnalysisParentPanel.setOpaque(false);
-        bulkCellAnalysisParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        bulkCellAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
+        areaAnalysisParentPanel.setEnabled(false);
+        areaAnalysisParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        areaAnalysisParentPanel.setOpaque(false);
+        areaAnalysisParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        areaAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -91,7 +91,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.7;
         gridBagConstraints.weighty = 0.97;
-        add(bulkCellAnalysisParentPanel, gridBagConstraints);
+        add(areaAnalysisParentPanel, gridBagConstraints);
 
         leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         leftPanel.setOpaque(false);
@@ -109,6 +109,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         jLabel3.setText("Imaging type");
 
         experimentNumberTextField.setEditable(false);
+        experimentNumberTextField.setOpaque(false);
 
         datasetTextField.setEditable(false);
         datasetTextField.setBackground(new java.awt.Color(255, 255, 255));
@@ -117,14 +118,14 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         imagingTypeTextField.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel4.setText("Experiment details");
+        jLabel4.setText("Data analysis details");
 
         javax.swing.GroupLayout experimentDataPanelLayout = new javax.swing.GroupLayout(experimentDataPanel);
         experimentDataPanel.setLayout(experimentDataPanelLayout);
         experimentDataPanelLayout.setHorizontalGroup(
             experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(experimentDataPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(33, 33, 33)
                 .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(experimentDataPanelLayout.createSequentialGroup()
                         .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -137,7 +138,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                             .addComponent(datasetTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(experimentNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel4))
-                .addContainerGap(136, Short.MAX_VALUE))
+                .addContainerGap(113, Short.MAX_VALUE))
         );
         experimentDataPanelLayout.setVerticalGroup(
             experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -156,7 +157,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                 .addGroup(experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(imagingTypeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addContainerGap(67, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -199,7 +200,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         );
         conditionsPanelLayout.setVerticalGroup(
             conditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -219,12 +220,11 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.3;
         gridBagConstraints.weighty = 0.95;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 40, 0);
         add(leftPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel analysisPlateParentPanel;
-    private javax.swing.JPanel bulkCellAnalysisParentPanel;
+    private javax.swing.JPanel areaAnalysisParentPanel;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JList conditionsList;

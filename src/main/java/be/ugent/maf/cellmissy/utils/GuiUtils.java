@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.utils;
 
 import java.awt.BasicStroke;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -80,6 +81,27 @@ public class GuiUtils {
         if (GuiUtils.containsComponent(parentPanel, panelToRemove)) {
             parentPanel.remove(panelToRemove);
         }
+    }
+
+    /**
+     * Gets the name of the component currently visible in the card layout.
+     *
+     * @param parentContainer the parent container
+     * @return the component name
+     */
+    public static String getCurrentCardName(Container parentContainer) {
+        CardLayout cardLayout = (CardLayout) parentContainer.getLayout();
+        if (cardLayout == null) {
+            throw new IllegalArgumentException("The layout of the parent container is no card layout.");
+        }
+        JPanel card = null;
+        for (Component component : parentContainer.getComponents()) {
+            if (component.isVisible()) {
+                card = (JPanel) component;
+                break;
+            }
+        }
+        return card.getName();
     }
 
     /**

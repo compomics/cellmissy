@@ -109,7 +109,7 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
         slopesTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         slopesTableScrollPane.setViewportView(slopesTable);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 2, 12));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         jLabel1.setText("This table contains slopes together with goodness of fit coefficients for each replicate and each condition.");
 
         javax.swing.GroupLayout linearRegressionTablePanelLayout = new javax.swing.GroupLayout(linearRegressionTablePanel);
@@ -155,7 +155,6 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.4;
         add(chartParentPanel, gridBagConstraints);
 
-        testPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         testPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         testPanel.setOpaque(false);
         testPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -175,7 +174,7 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
 
         removeGroupButton.setText("Remove Group");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11));
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setText("Name for the Analysis Group");
 
         createReportButton.setText("Create & Save Report");
@@ -193,28 +192,24 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
                     .addComponent(jLabel2))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(testPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(testPanelLayout.createSequentialGroup()
-                        .addGap(64, 64, 64)
-                        .addComponent(statisticsButton)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, testPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 251, Short.MAX_VALUE)
-                        .addComponent(createReportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                .addGap(64, 64, 64)
+                .addGroup(testPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(statisticsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(createReportButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(186, Short.MAX_VALUE))
         );
         testPanelLayout.setVerticalGroup(
             testPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(testPanelLayout.createSequentialGroup()
-                .addGap(22, 22, 22)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(statisticsButton)
-                .addGap(71, 71, 71)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(createReportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addGap(32, 32, 32))
             .addGroup(testPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(testPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
                     .addGroup(testPanelLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
@@ -223,7 +218,7 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
                         .addComponent(addGroupButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(removeGroupButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 2, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 4, Short.MAX_VALUE)))
                 .addGap(23, 23, 23))
         );
 

@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
 import be.ugent.maf.cellmissy.analysis.LinearRegressor;
+import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
 import be.ugent.maf.cellmissy.entity.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -26,13 +27,25 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
     private LinearRegressor linearRegressor;
 
     @Override
-    public void estimateLinearModel(AreaPreProcessingResults areaPreProcessingResults, AreaAnalysisResults areaAnalysisResults, boolean useCorrectedData, double[] timeFrames) {
-        Double[][] dataToUse;
-        if (useCorrectedData) {
-            dataToUse = areaPreProcessingResults.getNormalizedCorrectedArea();
-        } else {
-            dataToUse = areaPreProcessingResults.getNormalizedArea();
+    public void estimateLinearModel(AreaPreProcessingResults areaPreProcessingResults, AreaAnalysisResults areaAnalysisResults, boolean useCorrectedData, MeasuredAreaType measuredAreaTypes, double[] timeFrames) {
+        Double[][] dataToUse = null;
+        switch (measuredAreaTypes) {
+            case CELL_COVERED_AREA:
+                if (useCorrectedData) {
+                    dataToUse = areaPreProcessingResults.getNormalizedCorrectedArea();
+                } else {
+                    dataToUse = areaPreProcessingResults.getNormalizedArea();
+                }
+                break;
+            case OPEN_AREA:
+                if (useCorrectedData) {
+                    dataToUse = areaPreProcessingResults.getNormalizedCorrectedArea();
+                } else {
+                    dataToUse = areaPreProcessingResults.getTransformedData();
+                }
+                break;
         }
+
         Double[][] transposedArea = AnalysisUtils.transpose2DArray(dataToUse);
         // check if some replicates need to be excluded
         boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
