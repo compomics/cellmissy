@@ -45,7 +45,6 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
                 }
                 break;
         }
-
         Double[][] transposedArea = AnalysisUtils.transpose2DArray(dataToUse);
         // check if some replicates need to be excluded
         boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
@@ -81,10 +80,13 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
         }
         areaAnalysisResults.setSlopes(slopes);
         areaAnalysisResults.setGoodnessOfFit(goodnessOfFit);
-        // set mean slope
-        areaAnalysisResults.setMeanSlope(AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(slopes))));
-        // set MAD for mean slope
-        areaAnalysisResults.setMadSlope(AnalysisUtils.scaleMAD(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(slopes))));
+        Double[] excludeNullValues = AnalysisUtils.excludeNullValues(slopes);
+        if (excludeNullValues.length != 0) {
+            // set mean slope
+            areaAnalysisResults.setMeanSlope(AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues)));
+            // set MAD for mean slope
+            areaAnalysisResults.setMadSlope(AnalysisUtils.scaleMAD(ArrayUtils.toPrimitive(excludeNullValues)));
+        }
     }
 
     /**

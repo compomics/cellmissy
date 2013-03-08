@@ -63,13 +63,15 @@ public class JFreeChartUtils {
         XYItemRenderer renderer = xYPlot.getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);
         // get imaged wells and number of samples for each one
-        List<Well> imagedWells = plateCondition.getImagedWells();
+        List<Well> processedWells = plateCondition.getProcessedWells();
         int counter = 0;
-        for (Well well : imagedWells) {
+        for (Well well : processedWells) {
             int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
             for (int i = counter; i < xYSeriesCollection.getSeriesCount(); i++) {
+                String wellCoordinates = getWellCoordinates(xYSeriesCollection, i);
+                int wellIndex = getWellIndex(wellCoordinates, processedWells);
                 renderer.setSeriesStroke(i, wideLine);
-                renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[imagedWells.indexOf(well) + 1]);
+                renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[wellIndex + 1]);
             }
             counter += numberOfSamplesPerWell;
         }
@@ -143,7 +145,7 @@ public class JFreeChartUtils {
         BasicStroke wideLine = new BasicStroke(1.3f);
         for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
             // plot lines with colors according to well (replicate) index
-            String wellCoordinates = xYSeriesCollection.getSeriesKey(i).toString();
+            String wellCoordinates = getWellCoordinates(xYSeriesCollection, i);
             int wellIndex = getWellIndex(wellCoordinates, wellList);
             renderer.setSeriesStroke(i, wideLine);
             renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[wellIndex + 1]);
@@ -257,5 +259,17 @@ public class JFreeChartUtils {
             }
         }
         return wellIndex;
+    }
+
+    /**
+     * Get well coordinates from series in oder to render the lines color
+     * @param xYSeriesCollection
+     * @param indexOfSeries
+     * @return
+     */
+    private static String getWellCoordinates(XYSeriesCollection xYSeriesCollection, int indexOfSeries) {
+        String toString = xYSeriesCollection.getSeriesKey(indexOfSeries).toString();
+        int lastIndexOf = toString.lastIndexOf(")");
+        return toString.substring(0, lastIndexOf + 1);
     }
 }

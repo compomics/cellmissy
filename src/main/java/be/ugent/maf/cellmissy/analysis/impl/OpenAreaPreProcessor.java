@@ -29,10 +29,9 @@ public class OpenAreaPreProcessor implements AreaPreProcessor {
         Double[][] areaRawData = areaPreProcessingResults.getAreaRawData();
         Double[][] normalizedArea = new Double[areaRawData.length][areaRawData[0].length];
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
-            double shift = 100 - areaRawData[0][columnIndex];
             for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
                 if (areaRawData[rowIndex][columnIndex] != null) {
-                    normalizedArea[rowIndex][columnIndex] = areaRawData[rowIndex][columnIndex] + shift;
+                    normalizedArea[rowIndex][columnIndex] = areaRawData[rowIndex][columnIndex] / areaRawData[0][columnIndex] * 100;
                 }
             }
         }
@@ -61,7 +60,7 @@ public class OpenAreaPreProcessor implements AreaPreProcessor {
         for (int columnIndex = 0; columnIndex < deltaArea[0].length; columnIndex++) {
             for (int rowIndex = 1; rowIndex < deltaArea.length; rowIndex++) {
                 if (deltaArea[rowIndex][columnIndex] != null && deltaArea[rowIndex][columnIndex] != 0 && transformedData[rowIndex - 1][columnIndex] != null && transformedData[rowIndex - 1][columnIndex] != 0) {
-                    percentageAreaIncrease[rowIndex][columnIndex] = (deltaArea[rowIndex][columnIndex] / transformedData[rowIndex - 1][columnIndex]) * 100;
+                    percentageAreaIncrease[rowIndex][columnIndex] = (deltaArea[rowIndex][columnIndex] / transformedData[rowIndex - 1][columnIndex]);
                 } else if (deltaArea[rowIndex][columnIndex] == null || transformedData[rowIndex - 1][columnIndex] == null) {
                     percentageAreaIncrease[rowIndex][columnIndex] = 0.0;
                 } else if (deltaArea[rowIndex][columnIndex] == 0 || transformedData[rowIndex - 1][columnIndex] == 0) {

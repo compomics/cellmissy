@@ -226,7 +226,9 @@ public class PlateCondition implements Serializable {
             for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
                 // if image analysis was OK... the well was processed
                 if (!wellHasImagingType.getTimeStepCollection().isEmpty()) {
-                    processedWells.add(well);
+                    if (!processedWells.contains(well)) {
+                        processedWells.add(well);
+                    }
                 }
             }
         }
