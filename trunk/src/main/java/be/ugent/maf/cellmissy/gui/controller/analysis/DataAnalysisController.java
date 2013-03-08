@@ -18,6 +18,7 @@ import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AreaAnalysisPanel;
@@ -200,6 +201,10 @@ public class DataAnalysisController {
 
     public AreaAnalysisHolder getAreaAnalysisHolder() {
         return areaAnalysisHolder;
+    }
+
+    public CellMissyFrame getMainFrame() {
+        return cellMissyController.getCellMissyFrame();
     }
 
     /**
@@ -446,13 +451,15 @@ public class DataAnalysisController {
      * On cancel: reset views
      */
     private void onCancel() {
+        areaPreProcessingController.resetOnCancel();
+
         String message = "Please select a project and an experiment to analyse motility data.";
         showInfoMessage(message);
         algorithmBindingList.clear();
         imagingTypeBindingList.clear();
         plateConditionList.clear();
         areaPreProcessingController.getPreProcessingMap().clear();
-        areaPreProcessingController.initTimeFramesList();
+//        areaPreProcessingController.initTimeFramesList();
         currentCondition = null;
         experiment = null;
         areaPreProcessingController.getAreaAnalysisPanel().getNormalizeAreaButton().setSelected(true);
@@ -468,7 +475,6 @@ public class DataAnalysisController {
         if (!areaPreProcessingController.getTimeStepsBindingList().isEmpty()) {
             areaPreProcessingController.getTimeStepsBindingList().clear();
         }
-        areaPreProcessingController.resetOnCancel();
     }
 
     /**
@@ -647,6 +653,14 @@ public class DataAnalysisController {
      * @param selectedProject
      */
     private void onSelectedProject(Project selectedProject) {
+        if (!imagingTypeBindingList.isEmpty()) {
+            imagingTypeBindingList.clear();
+        }
+
+        if (!algorithmBindingList.isEmpty()) {
+            algorithmBindingList.clear();
+        }
+
         if (experimentService.findExperimentsByProjectIdAndStatus(selectedProject.getProjectid(), ExperimentStatus.PERFORMED) != null) {
             experimentBindingList = ObservableCollections.observableList(experimentService.findExperimentsByProjectIdAndStatus(selectedProject.getProjectid(), ExperimentStatus.PERFORMED));
             JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, metaDataAnalysisPanel.getExperimentJList());
@@ -666,6 +680,13 @@ public class DataAnalysisController {
      * @param selectedExperiment
      */
     private void onSelectedExperiment(Experiment selectedExperiment) {
+        if (!imagingTypeBindingList.isEmpty()) {
+            imagingTypeBindingList.clear();
+        }
+
+        if (!algorithmBindingList.isEmpty()) {
+            algorithmBindingList.clear();
+        }
         // set experiment
         experiment = selectedExperiment;
         //compute time frames array
@@ -685,9 +706,6 @@ public class DataAnalysisController {
         for (PlateCondition plateCondition : plateConditionList) {
             for (Well well : plateCondition.getWellCollection()) {
                 List<Algorithm> algorithms = wellService.findAlgosByWellId(well.getWellid());
-                if (!algorithmBindingList.isEmpty()) {
-                    algorithmBindingList.clear();
-                }
                 if (algorithms != null) {
                     for (Algorithm algorithm : algorithms) {
                         if (!algorithmBindingList.contains(algorithm)) {
@@ -697,9 +715,6 @@ public class DataAnalysisController {
                 }
 
                 List<ImagingType> imagingTypes = wellService.findImagingTypesByWellId(well.getWellid());
-                if (!imagingTypeBindingList.isEmpty()) {
-                    imagingTypeBindingList.clear();
-                }
                 if (imagingTypes != null) {
                     for (ImagingType imagingType : imagingTypes) {
                         if (imagingType != null && !imagingTypeBindingList.contains(imagingType)) {
@@ -712,7 +727,7 @@ public class DataAnalysisController {
         //init map with conditions and results holders
         areaPreProcessingController.initMapWithConditions();
         // init timeframes binding list with an empty one
-        areaPreProcessingController.initTimeFramesList();
+        updateTimeFramesList();        
         //set selected algorithm to the first of the list
         metaDataAnalysisPanel.getAlgorithmComboBox().setSelectedIndex(0);
         //set selected imaging types to the first of the list
@@ -768,6 +783,18 @@ public class DataAnalysisController {
                     areaPreProcessingController.getTimeStepsBindingList().add(timeStep);
                 }
             }
+        }
+    }
+
+    /**
+     *
+     */
+    private void updateTimeFramesList() {
+        if (!areaPreProcessingController.getTimeFramesBindingList().isEmpty()) {
+            areaPreProcessingController.getTimeFramesBindingList().clear();
+        }
+        for (double timeFrame : timeFrames) {
+            areaPreProcessingController.getTimeFramesBindingList().add(timeFrame);
         }
     }
 

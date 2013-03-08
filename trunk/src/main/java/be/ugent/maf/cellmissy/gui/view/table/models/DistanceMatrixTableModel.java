@@ -98,7 +98,6 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
      * @param dataToShow
      */
     private void initTable(Double[][] dataToShow) {
-//        List<Well> processedWells = plateCondition.getProcessedWells();
         // List of imaged wells
         List<Well> processedWells = plateCondition.getProcessedWells();
         int numberOfSamplesPerCondition = AnalysisUtils.getNumberOfSamplesPerCondition(plateCondition);
