@@ -63,4 +63,15 @@ public class UserServiceImpl implements UserService {
     public void save(User entity) {
         userRepository.save(entity);
     }
+
+    @Override
+    public User findByLoginCredentials(String userName, String password) {
+        User user = userRepository.findByFirstName(userName);
+        if (user != null) {
+            if (user.getPassword().equals(password)) {
+                return user;
+            }
+        }
+        return null;
+    }
 }

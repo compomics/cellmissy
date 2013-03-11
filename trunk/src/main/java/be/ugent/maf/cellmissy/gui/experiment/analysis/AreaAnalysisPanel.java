@@ -180,7 +180,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         topPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         resultsImportingLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        resultsImportingLabel.setText("1. Results Importing");
+        resultsImportingLabel.setText("1. Data Importing");
 
         linearRegressionModelLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         linearRegressionModelLabel.setText("4. Linear Regression Model");
@@ -204,7 +204,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
                 .addComponent(globalViewLabel)
                 .addGap(18, 18, 18)
                 .addComponent(linearRegressionModelLabel)
-                .addContainerGap(497, Short.MAX_VALUE))
+                .addContainerGap(510, Short.MAX_VALUE))
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

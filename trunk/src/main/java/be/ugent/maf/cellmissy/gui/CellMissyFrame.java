@@ -99,7 +99,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         dataAnalysisMenuItem = new javax.swing.JMenuItem();
         miscMenu = new javax.swing.JMenu();
         userMenuItem = new javax.swing.JMenuItem();
-        aboutMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
 
@@ -162,10 +161,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         userMenuItem.setText("User Management");
         userMenuItem.setIconTextGap(2);
         miscMenu.add(userMenuItem);
-
-        aboutMenuItem.setText("About...");
-        aboutMenuItem.setIconTextGap(2);
-        miscMenu.add(aboutMenuItem);
         miscMenu.add(jSeparator1);
 
         exitMenuItem.setText("Quit CellMissy...");
@@ -224,7 +219,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuItem allProjectsMenuItem;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JMenuItem cellMiaMenuItem;
