@@ -14,6 +14,7 @@ public interface UserService extends GenericService<User, Long> {
 
     /**
      * find an User by firstName + lastName
+     *
      * @param firstName
      * @param lastName
      * @return found User, if any
@@ -22,6 +23,7 @@ public interface UserService extends GenericService<User, Long> {
 
     /**
      * find an User by firstName
+     *
      * @param firstName
      * @return found User, if any
      */
@@ -29,8 +31,18 @@ public interface UserService extends GenericService<User, Long> {
 
     /**
      * find an User by lastName
+     *
      * @param lastName
      * @return found User, if any
      */
     User findByLastName(String lastName);
+
+    /**
+     * Find the user by login credentials.
+     *
+     * @param userName the user name
+     * @param password the user password
+     * @return the found user
+     */
+    User findByLoginCredentials(String userName, String password);
 }

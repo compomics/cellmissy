@@ -452,8 +452,7 @@ public class SetupExperimentController {
                 if (cellMissyController.validateExperimentInfo()) {
                     experiment.setExperimentStatus(ExperimentStatus.IN_PROGRESS);
                     //set the User of the experiment
-                    //@todo: need to set the user like this NOW, to be changed!
-                    experiment.setUser(cellMissyController.getAUser());
+                    experiment.setUser(cellMissyController.getCurrentUser());
                     experiment.setProject((Project) overviewPanel.getProjectJList().getSelectedValue());
                     experiment.setInstrument((Instrument) experimentInfoPanel.getInstrumentComboBox().getSelectedItem());
                     experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());

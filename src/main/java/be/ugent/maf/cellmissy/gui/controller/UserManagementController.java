@@ -121,6 +121,7 @@ public class UserManagementController {
                         userService.save(newUser);
                         userBindingList.add(newUser);
                         resetCreateUserTextFields();
+                        cellMissyController.showMessage("User inserted!", "user inserted into DB", JOptionPane.INFORMATION_MESSAGE);
                     } // handle ConstraintViolationException(UniqueConstraint)
                     catch (PersistenceException persistenceException) {
                         String message = "User already present in the db";
