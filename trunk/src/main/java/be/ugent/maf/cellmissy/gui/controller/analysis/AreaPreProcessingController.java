@@ -1349,11 +1349,20 @@ public class AreaPreProcessingController {
 
         @Override
         protected void done() {
-            // once xySeriesCollections are generated, generate also Charts and show results
-            int conditionIndex = dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1;
-            plotRawDataDensityFunctions(JFreeChartUtils.generateDensityFunctionChart(plateCondition, conditionIndex, rawDataXYSeriesCollection, "KDE raw data"));
-            plotCorrectedDataDensityFunctions(JFreeChartUtils.generateDensityFunctionChart(plateCondition, conditionIndex, correctedDataXYSeriesCollection, "KDE corrected data"));
-            dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
+            try {
+                get();
+                // once xySeriesCollections are generated, generate also Charts and show results
+                int conditionIndex = dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1;
+                JFreeChart rawDensityChart = JFreeChartUtils.generateDensityFunctionChart(plateCondition, conditionIndex, rawDataXYSeriesCollection, "KDE raw data");
+                plotRawDataDensityFunctions(rawDensityChart);
+                JFreeChart correctedDensityChart = JFreeChartUtils.generateDensityFunctionChart(plateCondition, conditionIndex, correctedDataXYSeriesCollection, "KDE corrected data");
+                plotCorrectedDataDensityFunctions(correctedDensityChart);
+                dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
+            } catch (InterruptedException ex) {
+                LOG.error(ex.getMessage(), ex);
+            } catch (ExecutionException ex) {
+                dataAnalysisController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

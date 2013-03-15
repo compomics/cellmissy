@@ -42,7 +42,7 @@ public class CellMiaDataServiceTest {
     @Test
     public void testCellMiaDataService() {
 
-        //cellmia folder -- lims.properties file
+        //cellmia folder -- cell_missy.properties file
         File miaFolder = new File(PropertiesConfigurationHolder.getInstance().getString("cellMiaFolder"));
         //obsep file and setup folder -- test resources
         File obsepFile = new File(ObsepFileParserTest.class.getClassLoader().getResource("gffp.obsep").getPath());

@@ -10,7 +10,7 @@
     
     <!-- Property placeholder-->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="lims.properties"/>
+        <property name="location" value="cell_missy.properties"/>
     </bean>
     
     <!-- transaction beans -->
