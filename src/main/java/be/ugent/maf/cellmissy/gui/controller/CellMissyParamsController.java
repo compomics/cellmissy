@@ -103,7 +103,7 @@ public class CellMissyParamsController {
     }
 
     /**
-     * 
+     * Initialize list
      */
     private void initPropertyGuiWrappersBindingList() {
         Iterator<String> iterator = PropertiesConfigurationHolder.getInstance().getKeys();

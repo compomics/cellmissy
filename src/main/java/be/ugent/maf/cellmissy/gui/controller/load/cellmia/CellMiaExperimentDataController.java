@@ -9,9 +9,8 @@ import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.exception.FolderStructureException;
+import be.ugent.maf.cellmissy.gui.experiment.load.cellmia.LoadFromCellMiaMetadataPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import be.ugent.maf.cellmissy.gui.experiment.load.ExperimentMetadataPanel;
-import be.ugent.maf.cellmissy.gui.experiment.load.ExperimentOverviewPanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsLoadListRenderer;
 import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl.CycleTimeUnit;
@@ -24,6 +23,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -50,8 +50,7 @@ public class CellMiaExperimentDataController {
     private List<PlateCondition> plateConditionList;
     private BindingGroup bindingGroup;
     //view
-    private ExperimentOverviewPanel experimentOverviewPanel;
-    private ExperimentMetadataPanel experimentMetadataPanel;
+    private LoadFromCellMiaMetadataPanel loadFromCellMiaMetadataPanel;
     //parent controller
     @Autowired
     private LoadExperimentFromCellMiaController loadExperimentFromCellMiaController;
@@ -70,8 +69,7 @@ public class CellMiaExperimentDataController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         bindingGroup = new BindingGroup();
         //create main panel
-        experimentMetadataPanel = new ExperimentMetadataPanel();
-        experimentOverviewPanel = new ExperimentOverviewPanel();
+        loadFromCellMiaMetadataPanel = new LoadFromCellMiaMetadataPanel();
         //init main view
         initExperimentMetadataPanel();
     }
@@ -81,8 +79,8 @@ public class CellMiaExperimentDataController {
      *
      * @return
      */
-    public ExperimentMetadataPanel getExperimentMetadataPanel() {
-        return experimentMetadataPanel;
+    public LoadFromCellMiaMetadataPanel getLoadFromCellMiaMetadataPanel() {
+        return loadFromCellMiaMetadataPanel;
     }
 
     /**
@@ -90,31 +88,31 @@ public class CellMiaExperimentDataController {
      */
     private void initExperimentMetadataPanel() {
         // disable experiment metadata text fields
-        experimentMetadataPanel.getDurationTextField().setEnabled(false);
-        experimentMetadataPanel.getIntervalTextField().setEnabled(false);
-        experimentMetadataPanel.getTimeFramesTextField().setEnabled(false);
+        loadFromCellMiaMetadataPanel.getDurationTextField().setEnabled(false);
+        loadFromCellMiaMetadataPanel.getIntervalTextField().setEnabled(false);
+        loadFromCellMiaMetadataPanel.getTimeFramesTextField().setEnabled(false);
 
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
-        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentOverviewPanel.getProjectJList());
+        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, loadFromCellMiaMetadataPanel.getProjectJList());
         bindingGroup.addBinding(jListBinding);
         //do the binding
         bindingGroup.bind();
 
         // fill in combobox with units
         for (CycleTimeUnit unit : CycleTimeUnit.values()) {
-            experimentMetadataPanel.getIntervalUnitComboBox().addItem(unit);
+            loadFromCellMiaMetadataPanel.getIntervalUnitComboBox().addItem(unit);
         }
 
         /**
          * add mouse listeners
          */
         //when a project from the list is selected, show all experiments in progress for that project
-        experimentOverviewPanel.getProjectJList().addMouseListener(new MouseAdapter() {
+        loadFromCellMiaMetadataPanel.getProjectJList().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 // retrieve selected project
-                int locationToIndex = experimentOverviewPanel.getProjectJList().locationToIndex(e.getPoint());
+                int locationToIndex = loadFromCellMiaMetadataPanel.getProjectJList().locationToIndex(e.getPoint());
                 Project selectedProject = projectBindingList.get(locationToIndex);
                 if (loadExperimentFromCellMiaController.getExperiment() == null) {
                     // project is being selected for the first time
@@ -132,7 +130,7 @@ public class CellMiaExperimentDataController {
                         case 1:
                             // ignore selection and select previous (current) prject
                             Project currentProject = loadExperimentFromCellMiaController.getExperiment().getProject();
-                            experimentOverviewPanel.getProjectJList().setSelectedIndex(projectBindingList.indexOf(currentProject));
+                            loadFromCellMiaMetadataPanel.getProjectJList().setSelectedIndex(projectBindingList.indexOf(currentProject));
                             break;
                     }
                 }
@@ -140,11 +138,11 @@ public class CellMiaExperimentDataController {
         });
 
         //when an experiment from the list is selected, show the right plate format with the wells sorrounded by rectangles if conditions were selected
-        experimentOverviewPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
+        loadFromCellMiaMetadataPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 // retrieve selected experiment
-                int locationToIndex = experimentOverviewPanel.getExperimentJList().locationToIndex(e.getPoint());
+                int locationToIndex = loadFromCellMiaMetadataPanel.getExperimentJList().locationToIndex(e.getPoint());
                 Experiment selectedExperiment = experimentBindingList.get(locationToIndex);
                 // check if experiment is still null, then set it, otherwise warn the user, because an experiment was already chosen and import was started
                 if (loadExperimentFromCellMiaController.getExperiment() == null) {
@@ -163,15 +161,14 @@ public class CellMiaExperimentDataController {
                         case 1:
                             // ignore selection and select previous experiment
                             Experiment currentExperiment = loadExperimentFromCellMiaController.getExperiment();
-                            experimentOverviewPanel.getExperimentJList().setSelectedIndex(experimentBindingList.indexOf(currentExperiment));
+                            loadFromCellMiaMetadataPanel.getExperimentJList().setSelectedIndex(experimentBindingList.indexOf(currentExperiment));
                     }
                 }
             }
         });
 
         //add view to parent panel
-        loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getExpOverviewParentPanel().add(experimentOverviewPanel, gridBagConstraints);
-        loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getExpMetadataParentPanel().add(experimentMetadataPanel, gridBagConstraints);
+        loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getTopPanel().add(loadFromCellMiaMetadataPanel, gridBagConstraints);
     }
 
     /**
@@ -180,7 +177,7 @@ public class CellMiaExperimentDataController {
     private void resetOnANewProject() {
         // reset conditions list and plate view
         loadExperimentFromCellMiaController.setExperiment(null);
-        experimentOverviewPanel.getConditionsList().setCellRenderer(null);
+        loadExperimentFromCellMiaController.getLoadFromCellMiaPlatePanel().getConditionsList().setCellRenderer(null);
         loadExperimentFromCellMiaController.getImagedPlatePanel().setExperiment(null);
         resetAfterUserInteraction();
     }
@@ -209,10 +206,11 @@ public class CellMiaExperimentDataController {
         loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getForwardButton().setEnabled(false);
         loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getFinishButton().setEnabled(false);
         loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getCancelButton().setEnabled(false);
+        loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getStartButton().setEnabled(false);
         // reset text fields
-        experimentMetadataPanel.getTimeFramesTextField().setText("");
-        experimentMetadataPanel.getIntervalTextField().setText("");
-        experimentMetadataPanel.getDurationTextField().setText("");
+        loadFromCellMiaMetadataPanel.getTimeFramesTextField().setText("");
+        loadFromCellMiaMetadataPanel.getIntervalTextField().setText("");
+        loadFromCellMiaMetadataPanel.getDurationTextField().setText("");
         experimentService.resetFolders();
     }
 
@@ -220,10 +218,11 @@ public class CellMiaExperimentDataController {
      * this method shows a list of conditions once an experiment is selected
      */
     private void showConditionsList() {
+        JList conditionsList = loadExperimentFromCellMiaController.getLoadFromCellMiaPlatePanel().getConditionsList();
         //set Cell Renderer for Condition List
-        experimentOverviewPanel.getConditionsList().setCellRenderer(new ConditionsLoadListRenderer(plateConditionList));
+        conditionsList.setCellRenderer(new ConditionsLoadListRenderer(plateConditionList));
         ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(plateConditionList);
-        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, plateConditionBindingList, experimentOverviewPanel.getConditionsList());
+        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, plateConditionBindingList, conditionsList);
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
     }
@@ -239,7 +238,7 @@ public class CellMiaExperimentDataController {
         // init a new list of plate conditions
         plateConditionList = new ArrayList<>();
         plateConditionList.addAll(selectedExperiment.getPlateConditionCollection());
-        Dimension parentDimension = loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getPlateViewParentPanel().getSize();
+        Dimension parentDimension = loadExperimentFromCellMiaController.getLoadFromCellMiaPlatePanel().getPlateParentPanel().getSize();
         loadExperimentFromCellMiaController.getImagedPlatePanel().initPanel(selectedExperiment.getPlateFormat(), parentDimension);
         // repaint plate panel
         loadExperimentFromCellMiaController.getImagedPlatePanel().setExperiment(selectedExperiment);
@@ -251,7 +250,7 @@ public class CellMiaExperimentDataController {
             //load experiment folders
             experimentService.loadFolderStructure(selectedExperiment);
             LOG.debug("Folders for experiment " + selectedExperiment.getExperimentNumber() + " have been loaded");
-            info = "Folders have been loaded. Click <<Exp Data>> to get data from microscope.";
+            info = "Folders have been loaded. Click on Exp Data to get data from microscope.";
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.black);
             loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), info);
             // enable button to look for experiment data
@@ -274,7 +273,7 @@ public class CellMiaExperimentDataController {
         //init experimentJList
         if (experimentService.findExperimentsByProjectIdAndStatus(selectedProject.getProjectid(), ExperimentStatus.IN_PROGRESS) != null) {
             experimentBindingList = ObservableCollections.observableList(experimentService.findExperimentsByProjectIdAndStatus(selectedProject.getProjectid(), ExperimentStatus.IN_PROGRESS));
-            JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, experimentOverviewPanel.getExperimentJList());
+            JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, loadFromCellMiaMetadataPanel.getExperimentJList());
             bindingGroup.addBinding(jListBinding);
             bindingGroup.bind();
         } else {

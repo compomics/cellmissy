@@ -10,6 +10,7 @@ import org.jfree.chart.renderer.category.StatisticalBarRenderer;
 
 /**
  * Statistical Bar Renderer for Velocity Bar Charts
+ *
  * @author Paola Masuzzo
  */
 public class VelocityBarRenderer extends StatisticalBarRenderer {
@@ -21,5 +22,10 @@ public class VelocityBarRenderer extends StatisticalBarRenderer {
         CharSequence subSequence = conditionName.subSequence(10, length);
         int conditionIndex = Integer.parseInt(subSequence.toString());
         return GuiUtils.getAvailableColors()[conditionIndex];
+    }
+
+    @Override
+    public double getMaximumBarWidth() {
+        return 0.05;
     }
 }

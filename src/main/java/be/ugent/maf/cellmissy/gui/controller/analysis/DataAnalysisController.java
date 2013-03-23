@@ -52,9 +52,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -125,6 +128,11 @@ public class DataAnalysisController {
         //init view
         analysisExperimentPanel = new AnalysisExperimentPanel();
         metaDataAnalysisPanel = new MetaDataAnalysisPanel();
+        // set icon for info label
+        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        metaDataAnalysisPanel.getInfoLabel().setIcon(scaledIcon);
+        metaDataAnalysisPanel.getInfoLabel1().setIcon(scaledIcon);
         dataAnalysisPanel = new DataAnalysisPanel();
         analysisPlatePanel = new AnalysisPlatePanel();
         bindingGroup = new BindingGroup();
@@ -205,6 +213,12 @@ public class DataAnalysisController {
 
     public CellMissyFrame getMainFrame() {
         return cellMissyController.getCellMissyFrame();
+    }
+
+    public void onButtonsState(boolean isEnable) {
+        analysisExperimentPanel.getPreviousButton().setEnabled(isEnable);
+        analysisExperimentPanel.getNextButton().setEnabled(isEnable);
+        analysisExperimentPanel.getCancelButton().setEnabled(isEnable);
     }
 
     /**
@@ -727,7 +741,7 @@ public class DataAnalysisController {
         //init map with conditions and results holders
         areaPreProcessingController.initMapWithConditions();
         // init timeframes binding list with an empty one
-        updateTimeFramesList();        
+        updateTimeFramesList();
         //set selected algorithm to the first of the list
         metaDataAnalysisPanel.getAlgorithmComboBox().setSelectedIndex(0);
         //set selected imaging types to the first of the list

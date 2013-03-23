@@ -1479,6 +1479,8 @@ public class AreaPreProcessingController {
 
         @Override
         protected Void doInBackground() throws Exception {
+            // disable buttons
+            dataAnalysisController.onButtonsState(false);
             int progress = getNumberOfFetchedCondition();
             // initialize progress property.
             setProgress(progress);
@@ -1510,6 +1512,8 @@ public class AreaPreProcessingController {
         protected void done() {
             try {
                 get();
+                // enable buttons
+                dataAnalysisController.onButtonsState(true);
                 globalPlotForFirstTime = false;
                 List<PlateCondition> processedConditions = getProcessedConditions();
                 // when the thread is done, hide progress bar again

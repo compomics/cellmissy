@@ -139,7 +139,8 @@ public class JFreeChartUtils {
         chart.getLegend().setPosition(RectangleEdge.RIGHT);
         // set background to white and grid color to black
         chart.getXYPlot().setBackgroundPaint(Color.white);
-//        chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        chart.getXYPlot().setOutlinePaint(Color.white);
         // get renderer
         XYItemRenderer renderer = chart.getXYPlot().getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);
@@ -162,7 +163,8 @@ public class JFreeChartUtils {
         chart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
         // set background to white and grid color to black
         chart.getXYPlot().setBackgroundPaint(Color.white);
-//        chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
+        chart.getXYPlot().setOutlinePaint(Color.white);
         // get renderer
         XYItemRenderer renderer = chart.getXYPlot().getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);

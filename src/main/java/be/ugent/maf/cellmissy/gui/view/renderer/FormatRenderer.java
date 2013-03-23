@@ -22,6 +22,7 @@ public class FormatRenderer extends DefaultTableCellRenderer {
         this.formatter = formatter;
     }
 
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (value != null) {
             if (value instanceof Number) {
