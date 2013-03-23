@@ -11,11 +11,14 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.load.cellmia.LoadFromCellMiaPanel;
+import be.ugent.maf.cellmissy.gui.experiment.load.cellmia.LoadFromCellMiaPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Cursor;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
@@ -59,18 +62,22 @@ public class LoadExperimentFromCellMiaController {
     private ExperimentService experimentService;
     @Autowired
     private ObsepFileParser obsepFileParser;
+    private GridBagConstraints gridBagConstraints;
 
     /**
      * Initialize controller
      */
     public void init() {
+        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         // init main view
         loadFromCellMiaPanel = new LoadFromCellMiaPanel();
-        //init main view
-        initMainPanel();
+//        //init main view
+//        initMainPanel();
         //init child controllers
         cellMiaImagedPlateController.init();
         cellMiaExperimentDataController.init();
+        //init main view
+        initMainPanel();
     }
 
     /*
@@ -78,6 +85,10 @@ public class LoadExperimentFromCellMiaController {
      */
     public LoadFromCellMiaPanel getLoadFromCellMiaPanel() {
         return loadFromCellMiaPanel;
+    }
+
+    public LoadFromCellMiaPlatePanel getLoadFromCellMiaPlatePanel() {
+        return cellMiaImagedPlateController.getLoadFromCellMiaPlatePanel();
     }
 
     public Experiment getExperiment() {
@@ -121,6 +132,7 @@ public class LoadExperimentFromCellMiaController {
         loadFromCellMiaPanel.getExpDataButton().setEnabled(false);
         loadFromCellMiaPanel.getForwardButton().setEnabled(false);
         loadFromCellMiaPanel.getCancelButton().setEnabled(false);
+        loadFromCellMiaPanel.getStartButton().setEnabled(false);
         //hide progress bar
         loadFromCellMiaPanel.getSaveDataProgressBar().setVisible(false);
 
@@ -140,9 +152,10 @@ public class LoadExperimentFromCellMiaController {
                 if (experiment.getObsepFile() != null) {
                     File obsepFile = experiment.getObsepFile();
                     setExperimentMetadata(obsepFile);
-                    cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click <<Forward>> to process imaging data for the experiment.");
-                    loadFromCellMiaPanel.getForwardButton().setEnabled(true);
                     loadFromCellMiaPanel.getExpDataButton().setEnabled(false);
+                    // enable start button: swap views
+                    loadFromCellMiaPanel.getStartButton().setEnabled(true);
+                    cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click on Start to start with the loading.");
                 } else {
                     cellMissyController.showMessage("No valid microscope file was found or different files were found.\nPlease select a file.", ".obsep file not valid", JOptionPane.WARNING_MESSAGE);
                     //choose file to parse form microscope folder
@@ -179,13 +192,31 @@ public class LoadExperimentFromCellMiaController {
                         experiment.setObsepFile(obsepFile);
                         // set experiment metadata
                         setExperimentMetadata(obsepFile);
-                        cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click <<Forward>> to process imaging data for the experiment.");
-                        loadFromCellMiaPanel.getForwardButton().setEnabled(true);
                         loadFromCellMiaPanel.getExpDataButton().setEnabled(false);
+                        // enable start button: swap views
+                        loadFromCellMiaPanel.getStartButton().setEnabled(true);
+                        cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click on Start to start with the loading.");
                     } else {
                         cellMissyController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
+            }
+        });
+
+        /**
+         * Start the loading: Swap views and enable the Forward button
+         */
+        loadFromCellMiaPanel.getStartButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click on Forward to process imaging data for the experiment.");
+                LoadFromCellMiaPlatePanel loadFromCellMiaPlatePanel = cellMiaImagedPlateController.getLoadFromCellMiaPlatePanel(); // update labels with experiment metadata
+                loadFromCellMiaPlatePanel.getProjNumberLabel().setText(experiment.getProject().toString());
+                loadFromCellMiaPlatePanel.getExpNumberLabel().setText(experiment.toString());
+                loadFromCellMiaPlatePanel.getExpPurposeLabel().setText(experiment.getPurpose());
+                GuiUtils.switchChildPanels(loadFromCellMiaPanel.getTopPanel(), loadFromCellMiaPlatePanel, cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel());
+                loadFromCellMiaPanel.getForwardButton().setEnabled(true);
+                loadFromCellMiaPanel.getStartButton().setEnabled(false);
             }
         });
 
@@ -211,7 +242,7 @@ public class LoadExperimentFromCellMiaController {
                     cellMiaImagedPlateController.getImagedPlatePanel().repaint();
                 }
                 //update info message (the user needs to click again on forward)
-                updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click again <<Forward>> to process imaging data.");
+                updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click again on Forward to process imaging data.");
                 //set boolean isFirtTime to false
                 cellMiaImagedPlateController.setIsFirtTime(false);
                 //disable and enable buttons
@@ -236,6 +267,8 @@ public class LoadExperimentFromCellMiaController {
                 saveExpSwingWorker.execute();
             }
         });
+
+        loadFromCellMiaPanel.getTopPanel().add(cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel(), gridBagConstraints);
     }
 
     /**
@@ -249,15 +282,15 @@ public class LoadExperimentFromCellMiaController {
         // get experiment metadata
         List<Double> experimentMetadata = obsepFileParser.getExperimentMetadata();
         // set JtextFields
-        cellMiaExperimentDataController.getExperimentMetadataPanel().getTimeFramesTextField().setText(experimentMetadata.get(0).toString());
-        cellMiaExperimentDataController.getExperimentMetadataPanel().getIntervalTextField().setText(experimentMetadata.get(1).toString());
-        cellMiaExperimentDataController.getExperimentMetadataPanel().getIntervalUnitComboBox().setSelectedItem(obsepFileParser.getUnit());
-        cellMiaExperimentDataController.getExperimentMetadataPanel().getDurationTextField().setText(experimentMetadata.get(2).toString());
+        cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel().getTimeFramesTextField().setText(experimentMetadata.get(0).toString());
+        cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel().getIntervalTextField().setText(experimentMetadata.get(1).toString());
+        cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel().getIntervalUnitComboBox().setSelectedItem(obsepFileParser.getUnit());
+        cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel().getDurationTextField().setText(experimentMetadata.get(2).toString());
         // set experiment fields
         experiment.setTimeFrames(experimentMetadata.get(0).intValue());
         experiment.setExperimentInterval(experimentMetadata.get(1));
         experiment.setDuration(experimentMetadata.get(2));
-        cellMiaExperimentDataController.getExperimentMetadataPanel().getIntervalUnitComboBox().setSelectedItem(obsepFileParser.getUnit());
+        cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel().getIntervalUnitComboBox().setSelectedItem(obsepFileParser.getUnit());
     }
 
     /**

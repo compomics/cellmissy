@@ -19,6 +19,7 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.StatisticsPanel;
 import be.ugent.maf.cellmissy.gui.view.table.models.PValuesTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.models.StatisticalSummaryTableModel;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.LinearRegressionTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.PValuesTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.VelocityBarRenderer;
@@ -71,6 +72,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.CategoryAnnotation;
 import org.jfree.chart.annotations.CategoryLineAnnotation;
 import org.jfree.chart.annotations.CategoryTextAnnotation;
+import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
@@ -144,8 +146,8 @@ public class AreaAnalysisController {
     public void showMessage(String message, String title, Integer messageType) {
         dataAnalysisController.showMessage(message, title, messageType);
     }
-    
-    public MeasuredAreaType getMeasuredAreaType(){
+
+    public MeasuredAreaType getMeasuredAreaType() {
         return dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
     }
 
@@ -199,7 +201,7 @@ public class AreaAnalysisController {
         }
         // array of column names for table model
         String[] columnNames = new String[data[0].length];
-        columnNames[0] = "COND";
+        columnNames[0] = "Cond";
         for (int i = 1; i < columnNames.length - 2; i++) {
             columnNames[i] = "Repl " + i;
         }
@@ -207,6 +209,11 @@ public class AreaAnalysisController {
         columnNames[columnNames.length - 1] = "MAD";
         // set model of table
         linearRegressionPanel.getSlopesTable().setModel(new DefaultTableModel(data, columnNames));
+
+        for (int columnIndex = 1; columnIndex < linearRegressionPanel.getSlopesTable().getColumnCount() - 2; columnIndex++) {
+            linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new LinearRegressionTableRenderer());
+        }
+
         //set format renderer only for last two columns together with less width
         for (int columnIndex = columnNames.length - 2; columnIndex < linearRegressionPanel.getSlopesTable().getColumnCount(); columnIndex++) {
             linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(dataAnalysisController.getFormat()));
@@ -231,17 +238,16 @@ public class AreaAnalysisController {
         velocityChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
         CategoryPlot velocityPlot = velocityChart.getCategoryPlot();
         velocityPlot.setBackgroundPaint(Color.white);
+        velocityPlot.setOutlinePaint(Color.white);
         VelocityBarRenderer velocityBarRenderer = new VelocityBarRenderer();
         velocityBarRenderer.setErrorIndicatorPaint(Color.black);
         velocityPlot.setRenderer(velocityBarRenderer);
-
         // set CategoryTextAnnotation to show number of replicates on top of bars
         for (int i = 0; i < velocityDataset.getColumnCount(); i++) {
             Double[] numberOfReplicates = AnalysisUtils.excludeNullValues(analysisMap.get(dataAnalysisController.getPlateConditionList().get(i)).getSlopes());
             CategoryAnnotation annotation = new CategoryTextAnnotation("N " + numberOfReplicates.length, velocityDataset.getColumnKey(i), 10);
             velocityPlot.addAnnotation(annotation);
         }
-
         velocityPlot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
         JFreeChartUtils.setShadowVisible(velocityChart, false);
         return velocityChart;
@@ -563,7 +569,6 @@ public class AreaAnalysisController {
                     selectedGroup.setCorrectionMethod((CorrectionMethod) statisticsPanel.getCorrectionMethodsComboBox().getSelectedItem());
                     //show message to the user
                     dataAnalysisController.showMessage("Analysis saved!", "Analysis saved", JOptionPane.INFORMATION_MESSAGE);
-                    addAnnotationsOnVelocityChart(selectedGroup);
                 }
             }
         });

@@ -12,9 +12,12 @@ import be.ugent.maf.cellmissy.gui.LoginDialog;
 import be.ugent.maf.cellmissy.service.UserService;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -83,6 +86,7 @@ public class LoginController {
      * Initialize main view
      */
     private void initLoginPanel() {
+
         // login button: validate user credentials and attempt the login
         loginDialog.getLoginButton().addActionListener(new ActionListener() {
             @Override
@@ -102,7 +106,7 @@ public class LoginController {
                 System.exit(0);
             }
         });
-
+        
         // edit button: view CellMissy properties and edit them
         loginDialog.getEditButton().addActionListener(new ActionListener() {
             @Override

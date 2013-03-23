@@ -26,20 +26,16 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
         initComponents();
     }
 
-    public JPanel getPlateViewParentPanel() {
-        return plateViewParentPanel;
-    }
-
-    public JPanel getExpOverviewParentPanel() {
-        return expOverviewParentPanel;
-    }
-
-    public JPanel getExpMetadataParentPanel() {
-        return expMetadataParentPanel;
+    public JPanel getTopPanel() {
+        return topPanel;
     }
 
     public JLabel getInfolabel() {
         return infolabel;
+    }
+
+    public JButton getStartButton() {
+        return startButton;
     }
 
     public JButton getExpDataButton() {
@@ -73,10 +69,6 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         topPanel = new javax.swing.JPanel();
-        leftPanel = new javax.swing.JPanel();
-        expOverviewParentPanel = new javax.swing.JPanel();
-        expMetadataParentPanel = new javax.swing.JPanel();
-        plateViewParentPanel = new javax.swing.JPanel();
         bottomPanel = new javax.swing.JPanel();
         infolabel = new javax.swing.JLabel();
         forwardButton = new javax.swing.JButton();
@@ -84,6 +76,7 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
         cancelButton = new javax.swing.JButton();
         parseObsepFileButton = new javax.swing.JButton();
         saveDataProgressBar = new javax.swing.JProgressBar();
+        startButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -92,64 +85,6 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
         topPanel.setOpaque(false);
         topPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         topPanel.setLayout(new java.awt.GridBagLayout());
-
-        leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        leftPanel.setOpaque(false);
-        leftPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        leftPanel.setLayout(new java.awt.GridBagLayout());
-
-        expOverviewParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        expOverviewParentPanel.setOpaque(false);
-        expOverviewParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        expOverviewParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.7;
-        gridBagConstraints.insets = new java.awt.Insets(20, 10, 0, 0);
-        leftPanel.add(expOverviewParentPanel, gridBagConstraints);
-
-        expMetadataParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        expMetadataParentPanel.setOpaque(false);
-        expMetadataParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        expMetadataParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.8;
-        gridBagConstraints.weighty = 0.3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 20, 0);
-        leftPanel.add(expMetadataParentPanel, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 1.0;
-        topPanel.add(leftPanel, gridBagConstraints);
-
-        plateViewParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        plateViewParentPanel.setOpaque(false);
-        plateViewParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        plateViewParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.8;
-        gridBagConstraints.insets = new java.awt.Insets(100, 100, 100, 100);
-        topPanel.add(plateViewParentPanel, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -163,8 +98,6 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
         bottomPanel.setOpaque(false);
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        infolabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
-
         forwardButton.setText("Forward");
 
         finishButton.setText("Finish");
@@ -173,46 +106,49 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
 
         parseObsepFileButton.setText("Exp Data");
 
+        startButton.setText("Start");
+
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(saveDataProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                .addGap(87, 87, 87)
+                .addComponent(saveDataProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(parseObsepFileButton)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(startButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cancelButton)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(forwardButton)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(finishButton)
                 .addGap(69, 69, 69))
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, finishButton, forwardButton, parseObsepFileButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, finishButton, forwardButton, parseObsepFileButton, startButton});
 
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bottomPanelLayout.createSequentialGroup()
                 .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(bottomPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, bottomPanelLayout.createSequentialGroup()
                         .addGap(14, 14, 14)
+                        .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(finishButton)
+                            .addComponent(forwardButton)
+                            .addComponent(cancelButton)
+                            .addComponent(startButton)
+                            .addComponent(parseObsepFileButton)))
+                    .addGroup(bottomPanelLayout.createSequentialGroup()
+                        .addGap(14, 14, 14)
                         .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(bottomPanelLayout.createSequentialGroup()
-                                .addGap(9, 9, 9)
-                                .addComponent(saveDataProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(finishButton)
-                                .addComponent(forwardButton)
-                                .addComponent(cancelButton)
-                                .addComponent(parseObsepFileButton)))))
+                            .addComponent(saveDataProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(infolabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
@@ -228,15 +164,12 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JPanel expMetadataParentPanel;
-    private javax.swing.JPanel expOverviewParentPanel;
     private javax.swing.JButton finishButton;
     private javax.swing.JButton forwardButton;
     private javax.swing.JLabel infolabel;
-    private javax.swing.JPanel leftPanel;
     private javax.swing.JButton parseObsepFileButton;
-    private javax.swing.JPanel plateViewParentPanel;
     private javax.swing.JProgressBar saveDataProgressBar;
+    private javax.swing.JButton startButton;
     private javax.swing.JPanel topPanel;
     // End of variables declaration//GEN-END:variables
 }

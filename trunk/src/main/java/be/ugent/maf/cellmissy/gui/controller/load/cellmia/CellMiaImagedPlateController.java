@@ -11,6 +11,7 @@ import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.exception.CellMiaDataLoadingException;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import be.ugent.maf.cellmissy.exception.PositionListMismatchException;
+import be.ugent.maf.cellmissy.gui.experiment.load.cellmia.LoadFromCellMiaPlatePanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,7 @@ public class CellMiaImagedPlateController {
     //model
     //view
     private ImagedPlatePanel imagedPlatePanel;
+    private LoadFromCellMiaPlatePanel loadFromCellMiaPlatePanel;
     //parent controller
     @Autowired
     private LoadExperimentFromCellMiaController loadExperimentFromCellMiaController;
@@ -69,6 +72,7 @@ public class CellMiaImagedPlateController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         //create panels
         imagedPlatePanel = new ImagedPlatePanel();
+        loadFromCellMiaPlatePanel = new LoadFromCellMiaPlatePanel();
         //first time that data are processed
         isFirtTime = true;
         //disable mouse Listener
@@ -86,6 +90,10 @@ public class CellMiaImagedPlateController {
         return imagedPlatePanel;
     }
 
+    public LoadFromCellMiaPlatePanel getLoadFromCellMiaPlatePanel() {
+        return loadFromCellMiaPlatePanel;
+    }
+
     public void setIsFirtTime(boolean isFirtTime) {
         this.isFirtTime = isFirtTime;
     }
@@ -94,7 +102,7 @@ public class CellMiaImagedPlateController {
      * Compute number of samples that need to be stored
      *
      * @return
-     * @throws CellMiaDataLoadingException  
+     * @throws CellMiaDataLoadingException
      */
     public int getNumberOfSamples() throws CellMiaDataLoadingException {
         return wellService.getNumberOfSamples();
@@ -104,12 +112,12 @@ public class CellMiaImagedPlateController {
      * private methods and classes
      */
     private void initLoadDataPlatePanel() {
-
+        JPanel plateParentPanel = loadFromCellMiaPlatePanel.getPlateParentPanel();
         //show as default a 96 plate format
-        Dimension parentDimension = loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getPlateViewParentPanel().getSize();
+        Dimension parentDimension = plateParentPanel.getSize();
         imagedPlatePanel.initPanel(plateService.findByFormat(96), parentDimension);
-        loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getPlateViewParentPanel().add(imagedPlatePanel, gridBagConstraints);
-        loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getPlateViewParentPanel().repaint();
+        plateParentPanel.add(imagedPlatePanel, gridBagConstraints);
+        plateParentPanel.repaint();
 
         /**
          * add action listeners
@@ -215,7 +223,7 @@ public class CellMiaImagedPlateController {
         if (imagedPlatePanel.getImagingTypeList().indexOf(imagedPlatePanel.getCurrentImagingType()) == imagedPlatePanel.getImagingTypeList().size() - 1) {
             // there are no more imaging types to process, the experiment can be saved to DB
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.black);
-            loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), "Click <<Cancel>> to reset plate view or <<Finish>> to save the experiment");
+            loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), "Click on Cancel to reset plate view or <<Finish>> to save the experiment");
             //disable Forward button
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getForwardButton().setEnabled(false);
             // enable Cancel and Finish buttons
@@ -224,7 +232,7 @@ public class CellMiaImagedPlateController {
         } else {
             // ask the user to click on Forward button to proceed with next imaging type
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.black);
-            loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), "Click <<Forward>> to proceed with next imaging type.");
+            loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), "Click on Forward to proceed with next imaging type.");
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getForwardButton().setEnabled(true);
         }
         isEnable = false;
