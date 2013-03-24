@@ -71,8 +71,6 @@ public class LoadExperimentFromCellMiaController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         // init main view
         loadFromCellMiaPanel = new LoadFromCellMiaPanel();
-//        //init main view
-//        initMainPanel();
         //init child controllers
         cellMiaImagedPlateController.init();
         cellMiaExperimentDataController.init();
@@ -213,7 +211,7 @@ public class LoadExperimentFromCellMiaController {
                 LoadFromCellMiaPlatePanel loadFromCellMiaPlatePanel = cellMiaImagedPlateController.getLoadFromCellMiaPlatePanel(); // update labels with experiment metadata
                 loadFromCellMiaPlatePanel.getProjNumberLabel().setText(experiment.getProject().toString());
                 loadFromCellMiaPlatePanel.getExpNumberLabel().setText(experiment.toString());
-                loadFromCellMiaPlatePanel.getExpPurposeLabel().setText(experiment.getPurpose());
+                loadFromCellMiaPlatePanel.getPurposeTextArea().setText(experiment.getPurpose());
                 GuiUtils.switchChildPanels(loadFromCellMiaPanel.getTopPanel(), loadFromCellMiaPlatePanel, cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel());
                 loadFromCellMiaPanel.getForwardButton().setEnabled(true);
                 loadFromCellMiaPanel.getStartButton().setEnabled(false);
@@ -267,7 +265,7 @@ public class LoadExperimentFromCellMiaController {
                 saveExpSwingWorker.execute();
             }
         });
-
+        // add main view to top panel
         loadFromCellMiaPanel.getTopPanel().add(cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel(), gridBagConstraints);
     }
 

@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.experiment.load.cellmia;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -26,8 +27,8 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
         return expNumberLabel;
     }
 
-    public JLabel getExpPurposeLabel() {
-        return expPurposeLabel;
+    public JTextArea getPurposeTextArea() {
+        return purposeTextArea;
     }
 
     public JLabel getProjNumberLabel() {
@@ -55,7 +56,8 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         projNumberLabel = new javax.swing.JLabel();
         expNumberLabel = new javax.swing.JLabel();
-        expPurposeLabel = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        purposeTextArea = new javax.swing.JTextArea();
         conditionsOverviewPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         conditionsList = new javax.swing.JList();
@@ -82,29 +84,37 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
 
         expNumberLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
-        expPurposeLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jScrollPane1.setBorder(null);
+
+        purposeTextArea.setColumns(20);
+        purposeTextArea.setRows(5);
+        jScrollPane1.setViewportView(purposeTextArea);
 
         javax.swing.GroupLayout experimentMetadataPanelLayout = new javax.swing.GroupLayout(experimentMetadataPanel);
         experimentMetadataPanel.setLayout(experimentMetadataPanelLayout);
         experimentMetadataPanelLayout.setHorizontalGroup(
             experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(experimentMetadataPanelLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(experimentMetadataPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(23, 23, 23)
-                        .addComponent(projNumberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(experimentMetadataPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addContainerGap()
+                        .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
                         .addGap(18, 18, 18)
-                        .addComponent(expNumberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(projNumberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(expNumberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(experimentMetadataPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
                         .addComponent(jLabel3)
                         .addGap(18, 18, 18)
-                        .addComponent(expPurposeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
+
+        experimentMetadataPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {expNumberLabel, jScrollPane1, projNumberLabel});
+
         experimentMetadataPanelLayout.setVerticalGroup(
             experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(experimentMetadataPanelLayout.createSequentialGroup()
@@ -112,15 +122,17 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
                 .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(projNumberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
                 .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(expNumberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel3)
-                    .addComponent(expPurposeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(81, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(experimentMetadataPanelLayout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel3)))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -193,13 +205,14 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
     private javax.swing.JList conditionsList;
     private javax.swing.JPanel conditionsOverviewPanel;
     private javax.swing.JLabel expNumberLabel;
-    private javax.swing.JLabel expPurposeLabel;
     private javax.swing.JPanel experimentMetadataPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel plateParentPanel;
     private javax.swing.JLabel projNumberLabel;
+    private javax.swing.JTextArea purposeTextArea;
     // End of variables declaration//GEN-END:variables
 }

@@ -11,6 +11,7 @@ import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.exception.FileParserException;
+import be.ugent.maf.cellmissy.gui.experiment.load.generic.LoadFromGenericInputPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.gui.view.renderer.DataTreeCellRenderer;
@@ -21,6 +22,8 @@ import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
@@ -33,7 +36,15 @@ import java.util.Iterator;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -66,6 +77,7 @@ public class GenericImagedPlateController {
     private Algorithm currentAlgorithm;
     //view
     private ImagedPlatePanel imagedPlatePanel;
+    private LoadFromGenericInputPlatePanel loadFromGenericInputPlatePanel;
     // parent controller
     @Autowired
     private LoadExperimentFromGenericInputController loadExperimentFromGenericInputController;
@@ -84,6 +96,7 @@ public class GenericImagedPlateController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         bindingGroup = new BindingGroup();
         imagedPlatePanel = new ImagedPlatePanel();
+        loadFromGenericInputPlatePanel = new LoadFromGenericInputPlatePanel();
         //disable mouse Listener
         mouseListenerEnabled = false;
         format = new DecimalFormat(DATA_FORMAT);
@@ -101,28 +114,8 @@ public class GenericImagedPlateController {
         return imagedPlatePanel;
     }
 
-    public ObservableList<Algorithm> getAlgorithmsBindingList() {
-        return algorithmsBindingList;
-    }
-
-    public ObservableList<ImagingType> getImagingTypesBindingList() {
-        return imagingTypesBindingList;
-    }
-
-    public void setCurrentAlgorithm(Algorithm currentAlgorithm) {
-        this.currentAlgorithm = currentAlgorithm;
-    }
-
-    public void setCurrentImagingType(ImagingType currentImagingType) {
-        this.currentImagingType = currentImagingType;
-    }
-
-    public boolean isMouseListenerEnabled() {
-        return mouseListenerEnabled;
-    }
-
-    public void setMouseListenerEnabled(boolean mouseListenerEnabled) {
-        this.mouseListenerEnabled = mouseListenerEnabled;
+    public LoadFromGenericInputPlatePanel getLoadFromGenericInputPlatePanel() {
+        return loadFromGenericInputPlatePanel;
     }
 
     /**
@@ -173,11 +166,12 @@ public class GenericImagedPlateController {
      * Initialize plate view
      */
     private void initLoadDataPlatePanel() {
+        JPanel plateParentPanel = loadFromGenericInputPlatePanel.getPlateParentPanel();
         //show as default a 96 plate format
-        Dimension parentDimension = loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getPlateViewParentPanel().getSize();
+        Dimension parentDimension = plateParentPanel.getSize();
         imagedPlatePanel.initPanel(plateService.findByFormat(96), parentDimension);
-        loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getPlateViewParentPanel().add(imagedPlatePanel, gridBagConstraints);
-        loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getPlateViewParentPanel().repaint();
+        plateParentPanel.add(imagedPlatePanel, gridBagConstraints);
+        plateParentPanel.repaint();
         List<WellGui> wellGuiList = imagedPlatePanel.getWellGuiList();
         // set empty list of wellhasimagingtype to the plate
         for (WellGui wellGui : wellGuiList) {
@@ -262,7 +256,7 @@ public class GenericImagedPlateController {
                                             loadExperimentFromGenericInputController.showMessage("Please remove first last added imaging type " + "(" + lastImagingType.getName() + ")", "", JOptionPane.WARNING_MESSAGE);
                                             List<Algorithm> uniqueAlgorithms = getUniqueAlgorithms(wellHasImagingTypeCollection);
                                             Algorithm lastAlgorithm = uniqueAlgorithms.get(uniqueAlgorithms.size() - 1);
-                                            loadExperimentFromGenericInputController.selectImagingTypeOnTree(lastImagingType, lastAlgorithm);
+                                            selectImagingTypeOnTree(lastImagingType, lastAlgorithm);
                                         }
                                         break;
                                     case 2: // select another file to parse, adding location on the same well
@@ -302,6 +296,34 @@ public class GenericImagedPlateController {
             }
         }
         return algorithms;
+    }
+
+    /**
+     * Select a specific imaging type on the JTree, according to a certain algorithm
+     *
+     * @param imagingType
+     * @param algorithm
+     */
+    private void selectImagingTypeOnTree(ImagingType imagingType, Algorithm algorithm) {
+        // jtree structure
+        JTree dataTree = loadFromGenericInputPlatePanel.getDataTree();
+        // model of JTree
+        DefaultTreeModel model = (DefaultTreeModel) dataTree.getModel();
+        // root (Data) node
+        DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) model.getRoot();
+        // iterate through dataset nodes
+        for (int n = 0; n < model.getChildCount(rootNode); n++) {
+            DefaultMutableTreeNode datasetNode = (DefaultMutableTreeNode) model.getChild(rootNode, n);
+            if (datasetNode.toString().equals(algorithm.toString())) {
+                // iterate through imaging type node
+                for (int m = 0; m < datasetNode.getChildCount(); m++) {
+                    DefaultMutableTreeNode imagingNode = (DefaultMutableTreeNode) datasetNode.getChildAt(m);
+                    if (imagingNode.toString().equals(imagingType.toString())) {
+                        dataTree.setSelectionPath(new TreePath(imagingNode.getPath()));
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -529,7 +551,146 @@ public class GenericImagedPlateController {
         // set imaging type list for plate
         imagedPlatePanel.setImagingTypeList(imagingTypesBindingList);
         // set cell renderer for the JTree
-        loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getDataTree().setCellRenderer(new DataTreeCellRenderer(imagingTypesBindingList));
+        loadFromGenericInputPlatePanel.getDataTree().setCellRenderer(new DataTreeCellRenderer(imagingTypesBindingList));
+
+        // allow only one node to be selected
+        loadFromGenericInputPlatePanel.getDataTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        loadFromGenericInputPlatePanel.getDataTree().setRootVisible(true);
+        loadFromGenericInputPlatePanel.getDataTree().setShowsRootHandles(true);
+
+        // listen to tree selection (imaging type)
+        loadFromGenericInputPlatePanel.getDataTree().addTreeSelectionListener(new TreeSelectionListener() {
+            @Override
+            public void valueChanged(TreeSelectionEvent e) {
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) loadFromGenericInputPlatePanel.getDataTree().getLastSelectedPathComponent();
+                if (selectedNode == null) {
+                    // nothing is selected, return
+                    return;
+                }
+                // look for imaging type selected
+                for (int i = 0; i < imagingTypesBindingList.size(); i++) {
+                    if (imagingTypesBindingList.get(i).getName().equals(selectedNode.toString())) {
+                        // imaging type that was selected
+                        ImagingType selectedImagingType = imagingTypesBindingList.get(i);
+                        currentImagingType = selectedImagingType;
+                        // look for associated dataset
+                        Algorithm associatedDataset = findDataset(selectedNode);
+                        currentAlgorithm = associatedDataset;
+                        // if mouse listener was still not enabled, enable it, together with main panel buttons
+                        if (!mouseListenerEnabled) {
+                            mouseListenerEnabled = true;
+                            loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getResetButton().setEnabled(true);
+                            loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getFinishButton().setEnabled(true);
+                        }
+                    }
+                }
+            }
+        });
+
+        /**
+         * If error occurred, remove dataset
+         */
+        loadFromGenericInputPlatePanel.getRemoveButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // jtree structure
+                JTree dataTree = loadFromGenericInputPlatePanel.getDataTree();
+                // model of JTree
+                DefaultTreeModel model = (DefaultTreeModel) dataTree.getModel();
+                // root (Data) node
+                DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) model.getRoot();
+                // last selected node
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) dataTree.getLastSelectedPathComponent();
+                // dataset and imaging type to remove
+                Algorithm algoToRemove = null;
+                ImagingType imagingToRemove = null;
+
+                // check that a node is actually selected
+                if (selectedNode != null) {
+                    // iterate through the algorithms 
+                    for (int i = 0; i < algorithmsBindingList.size(); i++) {
+                        if (selectedNode.toString().equals(algorithmsBindingList.get(i).getAlgorithmName())) {
+                            algoToRemove = algorithmsBindingList.get(i);
+                            algorithmsBindingList.remove(algoToRemove);
+                        }
+                    }
+                    // iterate through the imaging types
+                    for (int j = 0; j < imagingTypesBindingList.size(); j++) {
+                        if (selectedNode.toString().equals(imagingTypesBindingList.get(j).getName())) {
+                            imagingToRemove = imagingTypesBindingList.get(j);
+                            imagingTypesBindingList.remove(imagingToRemove);
+                        }
+                    }
+
+                    // remove selected node from tree & update model
+                    selectedNode.removeFromParent();
+                    // if an imaging node is deleted in one dataset, it has to be deleted as well in the other(s)
+                    for (int n = 0; n < model.getChildCount(rootNode); n++) {
+                        DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) model.getChild(rootNode, n);
+                        for (int m = 0; m < childNode.getChildCount(); m++) {
+                            DefaultMutableTreeNode imagingNode = (DefaultMutableTreeNode) childNode.getChildAt(m);
+                            if (selectedNode.toString().equals(imagingNode.toString())) {
+                                imagingNode.removeFromParent();
+                            }
+                        }
+                    }
+                    model.reload();
+                } else {
+                    loadExperimentFromGenericInputController.showMessage("Select a dataset / imaging type you want to remove!", "", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
+
+        /**
+         * Add a dataset to DATA
+         */
+        loadFromGenericInputPlatePanel.getAddDatasetButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String datasetName = loadFromGenericInputPlatePanel.getDatasetNameTextField().getText();
+                if (!datasetName.isEmpty()) {
+                    Algorithm newAlgorithm = new Algorithm();
+                    newAlgorithm.setAlgorithmName(datasetName);
+                    newAlgorithm.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
+                    // add algo to list and to data tree
+                    addDataset(newAlgorithm);
+                    loadFromGenericInputPlatePanel.getDatasetNameTextField().setText("");
+                } else {
+                    loadExperimentFromGenericInputController.showMessage("Please insert a name for the dataset.", "", JOptionPane.INFORMATION_MESSAGE);
+                    loadFromGenericInputPlatePanel.getDatasetNameTextField().requestFocusInWindow();
+                }
+            }
+        });
+
+        /**
+         * Add an imaging type to DATA
+         */
+        loadFromGenericInputPlatePanel.getAddImagingButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String imagingName = loadFromGenericInputPlatePanel.getImagingNameTextField().getText();
+                // check that at least one dataset is present
+                if (!algorithmsBindingList.isEmpty()) {
+                    if (!imagingName.isEmpty()) {
+                        ImagingType newImagingType = new ImagingType();
+                        newImagingType.setName(imagingName);
+                        newImagingType.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
+                        // exposure time and light intensity are not set
+                        // add imaging type to list and to data tree
+                        addImagingType(newImagingType);
+                        loadFromGenericInputPlatePanel.getImagingNameTextField().setText("");
+                    } else {
+                        loadExperimentFromGenericInputController.showMessage("Please insert a name for the imaging type.", "", JOptionPane.INFORMATION_MESSAGE);
+                        loadFromGenericInputPlatePanel.getImagingNameTextField().requestFocusInWindow();
+                    }
+                } else {
+                    loadExperimentFromGenericInputController.showMessage("Please insert first a dataset.", "", JOptionPane.INFORMATION_MESSAGE);
+                    loadFromGenericInputPlatePanel.getDatasetNameTextField().requestFocusInWindow();
+                }
+            }
+        });
+
+
     }
 
     /**
@@ -547,11 +708,85 @@ public class GenericImagedPlateController {
     }
 
     /**
+     * Add a new dataset to list and to data tree
+     *
+     * @param datasetToAdd
+     */
+    private void addDataset(Algorithm datasetToAdd) {
+        if (!algorithmsBindingList.contains(datasetToAdd)) {
+            // add dataset to list
+            algorithmsBindingList.add(datasetToAdd);
+            // model of JTree
+            DefaultTreeModel model = (DefaultTreeModel) loadFromGenericInputPlatePanel.getDataTree().getModel();
+            // add dataset node to data tree
+            DefaultMutableTreeNode rootNote = (DefaultMutableTreeNode) model.getRoot();
+            DefaultMutableTreeNode datasetNode = new DefaultMutableTreeNode(datasetToAdd.getAlgorithmName());
+            rootNote.add(datasetNode);
+            // add also imaging types node if present
+            if (!imagingTypesBindingList.isEmpty()) {
+                for (ImagingType imagingType : imagingTypesBindingList) {
+                    DefaultMutableTreeNode imagingNode = new DefaultMutableTreeNode(imagingType.getName());
+                    datasetNode.add(imagingNode);
+                }
+            }
+            // reload the model
+            model.reload();
+            loadFromGenericInputPlatePanel.getDataTree().scrollPathToVisible(new TreePath(datasetNode.getPath()));
+        } else {
+            loadExperimentFromGenericInputController.showMessage("This dataset was already added!", "", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    /**
+     * Add a new imaging type to list and to data tree
+     *
+     * @param imagingToAdd
+     */
+    private void addImagingType(ImagingType imagingToAdd) {
+        if (!imagingTypesBindingList.contains(imagingToAdd)) {
+            // add imaging type to list
+            imagingTypesBindingList.add(imagingToAdd);
+            // model of JTree
+            DefaultTreeModel model = (DefaultTreeModel) loadFromGenericInputPlatePanel.getDataTree().getModel();
+            // add imaging type node to data tree
+            DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) model.getRoot();
+            // imaging type node is added for each dataset node
+            for (int i = 0; i < algorithmsBindingList.size(); i++) {
+                DefaultMutableTreeNode datasetNode = (DefaultMutableTreeNode) model.getChild(rootNode, i);
+                DefaultMutableTreeNode imagingNode = new DefaultMutableTreeNode(imagingToAdd.getName());
+                datasetNode.add(imagingNode);
+                // reload the model
+                model.reload();
+                loadFromGenericInputPlatePanel.getDataTree().scrollPathToVisible(new TreePath(imagingNode.getPath()));
+            }
+        } else {
+            loadExperimentFromGenericInputController.showMessage("This imaging type was already added!", "", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    /**
+     * Given an imaging node, find the upper dataset
+     *
+     * @param imagingNode
+     * @return
+     */
+    private Algorithm findDataset(DefaultMutableTreeNode imagingNode) {
+        Algorithm foundDataset = null;
+        DefaultMutableTreeNode datasetNode = (DefaultMutableTreeNode) imagingNode.getParent();
+        for (Algorithm algorithm : algorithmsBindingList) {
+            if (algorithm.getAlgorithmName().equals(datasetNode.toString())) {
+                foundDataset = algorithm;
+            }
+        }
+        return foundDataset;
+    }
+
+    /**
      * Show Area values in table
      */
     private void showRawDataInTable() {
         //table binding
-        timeStepsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, timeStepsBindingList, loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getRawDataTable());
+        timeStepsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, timeStepsBindingList, loadFromGenericInputPlatePanel.getRawDataTable());
         //add column bindings
         JTableBinding.ColumnBinding columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.well.columnNumber}"));
         columnBinding.setColumnName("Column");

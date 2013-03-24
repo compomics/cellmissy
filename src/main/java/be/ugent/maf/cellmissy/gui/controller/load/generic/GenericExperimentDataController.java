@@ -15,12 +15,15 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -53,13 +56,11 @@ public class GenericExperimentDataController {
     private ExperimentService experimentService;
     @Autowired
     private ProjectService projectService;
-    private GridBagConstraints gridBagConstraints;
 
     /**
      * initialize controller
      */
     public void init() {
-        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         bindingGroup = new BindingGroup();
         //create main panels
         loadFromGenericInputMetadataPanel = new LoadFromGenericInputMetadataPanel();
@@ -68,50 +69,23 @@ public class GenericExperimentDataController {
     }
 
     /**
-     * this method checks experiment Info
+     * getters and setters
      *
      * @return
      */
-    public List<String> setExperimentMetadata() {
-        Experiment experiment = loadExperimentFromGenericInputController.getExperiment();
-        List<String> messages = validateExperimentMetadata();
-        // check that info is not left blank
-        if (messages.isEmpty()) {
-            try {
-                // time frames
-                experiment.setTimeFrames(Integer.parseInt(loadFromGenericInputMetadataPanel.getTimeFramesTextField().getText()));
-                // interval
-                experiment.setExperimentInterval(Double.parseDouble(loadFromGenericInputMetadataPanel.getIntervalTextField().getText()));
-                // duration
-                experiment.setDuration(Double.parseDouble(loadFromGenericInputMetadataPanel.getDurationTextField().getText()));
-            } catch (NumberFormatException e) {
-                messages.add("Please insert valid experiment metadata");
-            }
-        }
-        return messages;
-    }
-
-    /**
-     * Validate Experiment Metadata
-     *
-     * @return a list of string to show to the user if validation was not OK.
-     */
-    private List<String> validateExperimentMetadata() {
-        List<String> messages = new ArrayList<>();
-        String durationInfo = loadFromGenericInputMetadataPanel.getDurationTextField().getText();
-        String intervalInfo = loadFromGenericInputMetadataPanel.getIntervalTextField().getText();
-        String timeFramesInfo = loadFromGenericInputMetadataPanel.getTimeFramesTextField().getText();
-        // if one of these fields is empty, set boolean to false
-        if (durationInfo.equals("") || intervalInfo.equals("") || timeFramesInfo.equals("")) {
-            messages.add("Please insert all experiment metadata.");
-        }
-        return messages;
+    public LoadFromGenericInputMetadataPanel getLoadFromGenericInputMetadataPanel() {
+        return loadFromGenericInputMetadataPanel;
     }
 
     /**
      * Initialize Experiment metadata panel
      */
     private void initExperimentMetadataPanel() {
+        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        loadFromGenericInputMetadataPanel.getInfoLabel().setIcon(scaledIcon);
+        loadFromGenericInputMetadataPanel.getInfoLabel1().setIcon(scaledIcon);
+
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, loadFromGenericInputMetadataPanel.getProjectJList());
@@ -140,14 +114,14 @@ public class GenericExperimentDataController {
                 if (loadExperimentFromGenericInputController.getExperiment() == null) {
                     // project is being selected for the first time
                     onSelectedProject(selectedProject);
-                } else if (loadExperimentFromGenericInputController.getExperiment().getProject() != selectedProject) {
+                } else if (!loadExperimentFromGenericInputController.getExperiment().getProject().equals(selectedProject)) {
                     // another project has been selected, different from current one: warn the user!
                     Object[] options = {"Yes", "No"};
                     int showOptionDialog = JOptionPane.showOptionDialog(null, "Current data will not be saved.\nContinue with another project?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                     switch (showOptionDialog) {
                         case 0:
                             // another project is selected, reset objects and move on new project
-//                            resetOnANewProject();
+                            resetOnANewProject();
                             onSelectedProject(selectedProject);
                             break;
                         case 1:
@@ -187,49 +161,53 @@ public class GenericExperimentDataController {
                             // ignore selection and select previous experiment
                             Experiment currentExperiment = loadExperimentFromGenericInputController.getExperiment();
                             loadFromGenericInputMetadataPanel.getExperimentJList().setSelectedIndex(experimentBindingList.indexOf(currentExperiment));
-                            return;
                     }
-                } else if (loadExperimentFromGenericInputController.getExperiment() == selectedExperiment) {
-                    // click again on same experiment: ignore selection
-                    return;
-                }
-                loadExperimentFromGenericInputController.updateInfoLabel(loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getInfolabel(), "Add datasets and imaging types you want to import. Then select an imaging type to start importing data.");
-                loadExperimentFromGenericInputController.enableButtons();
+                } 
             }
         });
-
-        //add view to parent panel
     }
 
     /**
      * Reset after having chosen a new project
      */
-//    private void resetOnANewProject() {
-//        // reset conditions list and plate view
-//        loadExperimentFromGenericInputController.setExperiment(null);
-//        experimentOverviewPanel.getConditionsList().setCellRenderer(null);
-//        loadExperimentFromGenericInputController.getImagedPlatePanel().setExperiment(null);
-//        loadExperimentFromGenericInputController.reset();
-//    }
+    private void resetOnANewProject() {
+        // reset conditions list and plate view
+        loadExperimentFromGenericInputController.setExperiment(null);
+        loadExperimentFromGenericInputController.getLoadFromGenericInputPlatePanel().getConditionsList().setCellRenderer(null);
+        loadExperimentFromGenericInputController.getImagedPlatePanel().setExperiment(null);
+        loadExperimentFromGenericInputController.reset();
+        resetExperimentMetadataFields();
+    }
 
     /**
      * Reset after having chosen a new experiment
      */
     private void resetOnANewExperiment() {
         loadExperimentFromGenericInputController.reset();
+        resetExperimentMetadataFields();
+    }
+    
+    /**
+     * Reset text fields of experiment after user has selected a different experiment
+     */
+    private void resetExperimentMetadataFields(){
+        loadFromGenericInputMetadataPanel.getTimeFramesTextField().setText("");
+        loadFromGenericInputMetadataPanel.getIntervalTextField().setText("");
+        loadFromGenericInputMetadataPanel.getDurationTextField().setText("");
     }
 
     /**
      * this method shows a list of conditions once an experiment is selected
      */
-//    private void showConditionsList() {
-//        //set Cell Renderer for Condition List
-//        experimentOverviewPanel.getConditionsList().setCellRenderer(new ConditionsLoadListRenderer(plateConditionList));
-//        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(plateConditionList);
-//        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, plateConditionBindingList, experimentOverviewPanel.getConditionsList());
-//        bindingGroup.addBinding(jListBinding);
-//        bindingGroup.bind();
-//    }
+    private void showConditionsList() {
+        JList conditionsList = loadExperimentFromGenericInputController.getLoadFromGenericInputPlatePanel().getConditionsList();
+        //set Cell Renderer for Condition List
+        conditionsList.setCellRenderer(new ConditionsLoadListRenderer(plateConditionList));
+        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(plateConditionList);
+        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, plateConditionBindingList, conditionsList);
+        bindingGroup.addBinding(jListBinding);
+        bindingGroup.bind();
+    }
 
     /**
      * Action on experiment selected, retrieve plate conditions and repaint plate panel
@@ -244,11 +222,11 @@ public class GenericExperimentDataController {
         plateConditionList.addAll(loadExperimentFromGenericInputController.getExperiment().getPlateConditionCollection());
         // repaint plate panel
         loadExperimentFromGenericInputController.getImagedPlatePanel().setExperiment(selectedExperiment);
-        Dimension parentDimension = loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getPlateViewParentPanel().getSize();
+        Dimension parentDimension = loadExperimentFromGenericInputController.getLoadFromGenericInputPlatePanel().getPlateParentPanel().getSize();
         loadExperimentFromGenericInputController.getImagedPlatePanel().initPanel(selectedExperiment.getPlateFormat(), parentDimension);
         loadExperimentFromGenericInputController.getImagedPlatePanel().repaint();
         // show Conditions JList
-//        showConditionsList();
+        showConditionsList();
     }
 
     /**
