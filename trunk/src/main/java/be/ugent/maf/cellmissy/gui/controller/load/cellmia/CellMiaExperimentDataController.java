@@ -23,8 +23,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -91,6 +94,11 @@ public class CellMiaExperimentDataController {
         loadFromCellMiaMetadataPanel.getDurationTextField().setEnabled(false);
         loadFromCellMiaMetadataPanel.getIntervalTextField().setEnabled(false);
         loadFromCellMiaMetadataPanel.getTimeFramesTextField().setEnabled(false);
+
+        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        loadFromCellMiaMetadataPanel.getInfoLabel().setIcon(scaledIcon);
+        loadFromCellMiaMetadataPanel.getInfoLabel1().setIcon(scaledIcon);
 
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
@@ -166,9 +174,6 @@ public class CellMiaExperimentDataController {
                 }
             }
         });
-
-        //add view to parent panel
-        loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getTopPanel().add(loadFromCellMiaMetadataPanel, gridBagConstraints);
     }
 
     /**

@@ -27,6 +27,10 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
         return infoLabel;
     }
 
+    public JLabel getInfoLabel1() {
+        return infoLabel1;
+    }
+
     public JTextField getIntervalTextField() {
         return intervalTextField;
     }
@@ -74,6 +78,7 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
         timeFramesTextField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         intervalUnitComboBox = new javax.swing.JComboBox();
+        infoLabel1 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -105,7 +110,7 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
         overviewPanelLayout.setHorizontalGroup(
             overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(overviewPanelLayout.createSequentialGroup()
-                .addContainerGap(27, Short.MAX_VALUE)
+                .addContainerGap(13, Short.MAX_VALUE)
                 .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(overviewPanelLayout.createSequentialGroup()
@@ -116,7 +121,7 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
                         .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         overviewPanelLayout.setVerticalGroup(
             overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -128,7 +133,7 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(infoLabel)
                 .addContainerGap())
@@ -154,6 +159,8 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
 
         intervalUnitComboBox.setOpaque(false);
 
+        infoLabel1.setText("These data are automatically parsed from a microscope file.");
+
         javax.swing.GroupLayout metadataPanelLayout = new javax.swing.GroupLayout(metadataPanel);
         metadataPanel.setLayout(metadataPanelLayout);
         metadataPanelLayout.setHorizontalGroup(
@@ -161,19 +168,24 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
             .addGroup(metadataPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(metadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(intervalLabel)
-                    .addComponent(durationLabel)
-                    .addComponent(timeFramesLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(metadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(intervalTextField)
-                    .addComponent(timeFramesTextField)
-                    .addComponent(durationTextField))
-                .addGap(18, 18, 18)
-                .addGroup(metadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(intervalUnitComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addGap(41, 41, 41))
+                    .addGroup(metadataPanelLayout.createSequentialGroup()
+                        .addGroup(metadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(intervalLabel)
+                            .addComponent(durationLabel)
+                            .addComponent(timeFramesLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(metadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(intervalTextField)
+                            .addComponent(timeFramesTextField)
+                            .addComponent(durationTextField))
+                        .addGap(18, 18, 18)
+                        .addGroup(metadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(intervalUnitComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1))
+                        .addGap(41, 41, 41))
+                    .addGroup(metadataPanelLayout.createSequentialGroup()
+                        .addComponent(infoLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         metadataPanelLayout.setVerticalGroup(
             metadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -192,7 +204,9 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
                     .addComponent(durationLabel)
                     .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                .addComponent(infoLabel1)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -201,18 +215,19 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(overviewPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(metadataPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(overviewPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(metadataPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(overviewPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(metadataPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(overviewPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(metadataPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -220,6 +235,7 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
     private javax.swing.JTextField durationTextField;
     private javax.swing.JList experimentJList;
     private javax.swing.JLabel infoLabel;
+    private javax.swing.JLabel infoLabel1;
     private javax.swing.JLabel intervalLabel;
     private javax.swing.JTextField intervalTextField;
     private javax.swing.JComboBox intervalUnitComboBox;

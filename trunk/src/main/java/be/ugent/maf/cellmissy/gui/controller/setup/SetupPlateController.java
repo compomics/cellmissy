@@ -8,7 +8,7 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import be.ugent.maf.cellmissy.gui.experiment.load.PlatePanelGui;
+import be.ugent.maf.cellmissy.gui.plate.PlatePanelGui;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.PlateService;
