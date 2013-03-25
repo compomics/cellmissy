@@ -18,7 +18,7 @@ import static junit.framework.Assert.*;
  * @author Paola Masuzzo
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:mySpringXMLConfig.xml")
+@ContextConfiguration(locations = {"classpath:mySpringXMLConfig.xml", "classpath:myTestSpringXMLConfig.xml"})
 public class AreaAnalyzerTest {
 
     @Autowired

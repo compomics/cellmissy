@@ -10,13 +10,11 @@
  */
 package be.ugent.maf.cellmissy.gui;
 
-import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
-import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+import be.ugent.maf.cellmissy.gui.controller.CellMissyStarter;
 import java.awt.Color;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
-import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -219,10 +217,9 @@ public class CellMissyFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
-                CellMissyController cellMissyController = (CellMissyController) context.getBean("cellMissyController");
-
-                cellMissyController.init();
+                CellMissyStarter cellMissyStarter = new CellMissyStarter();
+                cellMissyStarter.init();
+                cellMissyStarter.getApplicationContext();
             }
         });
     }

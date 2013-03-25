@@ -1,6 +1,5 @@
 package be.ugent.maf.cellmissy.config;
 
-import be.ugent.maf.cellmissy.exception.ResourceNotFoundException;
 import be.ugent.maf.cellmissy.utils.ResourceUtils;
 import java.io.IOException;
 import org.apache.commons.configuration.ConfigurationException;
@@ -9,7 +8,8 @@ import org.apache.log4j.Logger;
 import org.springframework.core.io.Resource;
 
 /**
- * Created by IntelliJ IDEA. User: niels Date: 9/02/12 Time: 14:41 To change this template use File | Settings | File Templates.
+ * Properties Configuration Holder
+ * @author Paola Masuzzo
  */
 public class PropertiesConfigurationHolder extends PropertiesConfiguration {
 
@@ -25,6 +25,10 @@ public class PropertiesConfigurationHolder extends PropertiesConfiguration {
         }
     }
 
+    /**
+     * get instance of the Properties Configuration Holder
+     * @return 
+     */
     public static PropertiesConfigurationHolder getInstance() {
         return ourInstance;
     }

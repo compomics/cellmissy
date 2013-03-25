@@ -12,12 +12,9 @@ import be.ugent.maf.cellmissy.gui.LoginDialog;
 import be.ugent.maf.cellmissy.service.UserService;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -100,14 +97,15 @@ public class LoginController {
             }
         });
 
+        // closing the login dialog causes the application to shut down
         loginDialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
                 System.exit(0);
             }
         });
-        
-        // edit button: view CellMissy properties and edit them
+
+        // edit button: view CellMissy properties; the user is able to edit them
         loginDialog.getEditButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -122,7 +120,7 @@ public class LoginController {
     }
 
     /**
-     * On login
+     * On login: attempt to connect
      */
     private void onLogin() {
         //check if a user with given user name and password is found in the db    
@@ -130,6 +128,7 @@ public class LoginController {
         User currentUser = userService.findByLoginCredentials(loginDialog.getUserNameTextField().getText(), String.valueOf(loginDialog.getPasswordTextField().getPassword()));
         if (currentUser != null) {
             LOG.info("User " + loginDialog.getUserNameTextField().getText() + " successfully logged in.");
+            // hide login dialog
             loginDialog.setVisible(false);
 
             //check if the current user has Role.ADMIN.
@@ -137,12 +136,15 @@ public class LoginController {
             if (currentUser.getRole().equals(Role.ADMIN_USER)) {
                 cellMissyController.initAdminSection();
             } else {
+                // if the user has a Role.STANDARD, disable admin section
                 cellMissyController.disableAdminSection();
             }
             //set current user in authentication bean    
             authenticationBean.setCurrentUser(currentUser);
+            // enter CellMissy: show main frame
             cellMissyController.enterTheApplication();
         } else {
+            // inform the user that not no valid user was found with the provided credentials
             LOG.error("Login validation failed");
             JOptionPane.showMessageDialog(loginDialog, "No user with the given credentials could be found, please try again.", "login fail", JOptionPane.ERROR_MESSAGE);
             loginDialog.getUserNameTextField().setText("");

@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.spring;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
  *
@@ -19,6 +20,7 @@ public class ApplicationContextProvider {
     private ApplicationContextProvider() throws ExceptionInInitializerError {
         try {
             this.applicationContext = new ClassPathXmlApplicationContext("mySpringXMLConfig.xml");
+            //this.applicationContext = new FileSystemXmlApplicationContext("mySpringXMLConfig.xml");
         } catch (Throwable ex) {
             throw new ExceptionInInitializerError(ex);
         }

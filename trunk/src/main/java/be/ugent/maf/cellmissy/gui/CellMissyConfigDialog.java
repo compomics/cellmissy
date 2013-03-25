@@ -21,6 +21,10 @@ public class CellMissyConfigDialog extends javax.swing.JDialog {
         return saveButton;
     }
 
+    public JButton getResetButton() {
+        return resetButton;
+    }
+
     /**
      * Creates new form CellMissyConfigDialog
      * @param parent
@@ -44,6 +48,7 @@ public class CellMissyConfigDialog extends javax.swing.JDialog {
         paramsTable = new javax.swing.JTable();
         buttonsPanel = new javax.swing.JPanel();
         saveButton = new javax.swing.JButton();
+        resetButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("CellMissy properties");
@@ -77,11 +82,11 @@ public class CellMissyConfigDialog extends javax.swing.JDialog {
         );
         tablePanelLayout.setVerticalGroup(
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 299, Short.MAX_VALUE)
+            .addGap(0, 239, Short.MAX_VALUE)
             .addGroup(tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(tablePanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -91,29 +96,38 @@ public class CellMissyConfigDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.9;
+        gridBagConstraints.weighty = 0.8;
         getContentPane().add(tablePanel, gridBagConstraints);
 
         buttonsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         buttonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        saveButton.setText("save");
+        saveButton.setText("save properties");
+
+        resetButton.setText("reset properties");
 
         javax.swing.GroupLayout buttonsPanelLayout = new javax.swing.GroupLayout(buttonsPanel);
         buttonsPanel.setLayout(buttonsPanelLayout);
         buttonsPanelLayout.setHorizontalGroup(
             buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, buttonsPanelLayout.createSequentialGroup()
-                .addContainerGap(442, Short.MAX_VALUE)
-                .addComponent(saveButton)
+            .addGroup(buttonsPanelLayout.createSequentialGroup()
+                .addContainerGap(388, Short.MAX_VALUE)
+                .addGroup(buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(resetButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(saveButton, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
+
+        buttonsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {resetButton, saveButton});
+
         buttonsPanelLayout.setVerticalGroup(
             buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(buttonsPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(saveButton)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(resetButton)
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -121,7 +135,7 @@ public class CellMissyConfigDialog extends javax.swing.JDialog {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weighty = 0.2;
         getContentPane().add(buttonsPanel, gridBagConstraints);
 
         pack();
@@ -172,6 +186,7 @@ public class CellMissyConfigDialog extends javax.swing.JDialog {
     private javax.swing.JPanel buttonsPanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable paramsTable;
+    private javax.swing.JButton resetButton;
     private javax.swing.JButton saveButton;
     private javax.swing.JPanel tablePanel;
     // End of variables declaration//GEN-END:variables

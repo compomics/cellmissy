@@ -102,7 +102,7 @@ public class CellMissyController {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 LOG.error(e.getMessage(), e);
-                showMessage("Fatal error " + e.getMessage() + ", application will exit", "Fatal error", JOptionPane.ERROR_MESSAGE);
+                showMessage("Unexpected error: " + e.getMessage() + ", application will exit", "unexpected error", JOptionPane.ERROR_MESSAGE);
                 // exit the application
                 System.exit(1);
             }
@@ -225,7 +225,7 @@ public class CellMissyController {
     }
 
     /**
-     * Make the frame visible and enter the application
+     * Make the frame visible and enter the application after user has logged in
      */
     public void enterTheApplication() {
         cellMissyFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
