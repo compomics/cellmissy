@@ -131,7 +131,7 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
 
         expNumberLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
-        jScrollPane1.setBorder(null);
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         purposeTextArea.setEditable(false);
         purposeTextArea.setColumns(20);
@@ -278,9 +278,7 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
                 .addGap(24, 24, 24)
                 .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(removeButton)
-                    .addGroup(userInputPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(16, 16, 16)))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
                 .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

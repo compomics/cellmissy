@@ -84,7 +84,7 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
 
         expNumberLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
-        jScrollPane1.setBorder(null);
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         purposeTextArea.setColumns(20);
         purposeTextArea.setRows(5);

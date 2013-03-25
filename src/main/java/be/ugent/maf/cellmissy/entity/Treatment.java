@@ -174,6 +174,7 @@ public class Treatment implements Serializable {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int hash = 7;
         hash = 97 * hash + Objects.hashCode(this.concentration);
@@ -185,6 +186,7 @@ public class Treatment implements Serializable {
         return hash;
     }
 
+    @Override
     public String toString() {
         // if treatment type is control, show only Control (no concentration or concentration unit)
         if (treatmentType.getName().equals("Control") || treatmentType.getName().equals("Control + Drug Solvent")) {
