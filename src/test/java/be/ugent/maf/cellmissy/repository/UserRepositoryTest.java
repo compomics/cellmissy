@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Paola Masuzzo
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:mySpringXMLConfig.xml", "classpath:myTestSpringXMLConfig.xml"})
+@ContextConfiguration("classpath:myTestSpringXMLConfig.xml")
 @Transactional
 @TransactionConfiguration(defaultRollback = true)
 public class UserRepositoryTest {

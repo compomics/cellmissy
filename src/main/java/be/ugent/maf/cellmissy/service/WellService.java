@@ -107,6 +107,7 @@ public interface WellService extends GenericService<Well, Long> {
      * Get number of samples to parse
      *
      * @return
+     * @throws CellMiaDataLoadingException  
      */
     int getNumberOfSamples() throws CellMiaDataLoadingException;
 }

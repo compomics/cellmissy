@@ -85,8 +85,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                         List<WellHasImagingType> wellHasImagingTypeList = next.getValue();
 
                         // number of sample files need to be same as number of samples that need to be processed, otherwise, throw an exception
-                        if (sampleFiles.length == wellHasImagingTypeList.size()) {
-
+                        if (sampleFiles.length == getExpectedNumberOfSamples()) {
                             //**********************************************************************************************//
                             for (int i = imageTypeStartFolder; i < wellHasImagingTypeList.size() + imageTypeStartFolder; i++) {
                                 WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i - imageTypeStartFolder);
@@ -178,10 +177,9 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
      */
     private Map<ImagingType, List<WellHasImagingType>> copyMap() {
         Map<ImagingType, List<WellHasImagingType>> map = new HashMap<>();
-
-        for (ImagingType imagingType : imagingTypeMap.keySet()) {
+        for (Iterator<ImagingType> it = imagingTypeMap.keySet().iterator(); it.hasNext();) {
+            ImagingType imagingType = it.next();
             List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
-
             for (WellHasImagingType wellHasImagingType : imagingTypeMap.get(imagingType)) {
                 WellHasImagingType newWellHasImagingType = new WellHasImagingType(wellHasImagingType.getSequenceNumber(), wellHasImagingType.getXCoordinate(), wellHasImagingType.getYCoordinate(), wellHasImagingType.getImagingType());
                 wellHasImagingTypeList.add(newWellHasImagingType);
@@ -210,6 +208,16 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
         } else {
             throw new CellMiaDataLoadingException("No data to be imported were found.\nPlease make sure there's at least one algorithm folder with raw data to be imported.");
         }
+    }
 
+    @Override
+    public int getExpectedNumberOfSamples() {
+        int total = 0;
+        for (Iterator<ImagingType> it = imagingTypeMap.keySet().iterator(); it.hasNext();) {
+            ImagingType imagingType = it.next();
+            List<WellHasImagingType> list = imagingTypeMap.get(imagingType);
+            total += list.size();
+        }
+        return total;
     }
 }

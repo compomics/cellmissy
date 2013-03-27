@@ -47,4 +47,10 @@ public interface CellMiaDataService {
      * @throws CellMiaDataLoadingException  
      */
     int getNumberOfSamples() throws CellMiaDataLoadingException;
+    
+    /**
+     * Get the expected number of samples
+     * @return 
+     */
+    int getExpectedNumberOfSamples();
 }

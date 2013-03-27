@@ -14,7 +14,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static junit.framework.Assert.*;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.core.io.ClassPathResource;
@@ -25,7 +24,7 @@ import org.springframework.core.io.Resource;
  * @author Paola
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:mySpringXMLConfig.xml", "classpath:myTestSpringXMLConfig.xml"})
+@ContextConfiguration("classpath:myTestSpringXMLConfig.xml")
 public class PositionListParserTest {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(PositionListParserTest.class);

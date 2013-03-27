@@ -10,7 +10,15 @@
     
     <!-- Property placeholder-->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="cell_missy.properties"/>
+        <property name="locations">
+            <list>
+                <value>${property_file.source}:cell_missy.properties
+                </value>
+            </list>
+        </property>
+        <property name="ignoreUnresolvablePlaceholders">
+            <value>true</value>
+        </property>       
     </bean>
     
     <!-- transaction beans -->
@@ -72,7 +80,7 @@
                                 expression="org.springframework.stereotype.Service"/>
     </context:component-scan> 
     
-        <!-- controller beans -->
+    <!-- controller beans -->
     <context:component-scan base-package="be.ugent.maf.cellmissy">
         <context:include-filter type="annotation"
                                 expression="org.springframework.stereotype.Controller"/>
