@@ -12,7 +12,15 @@
 
     <!-- Property placeholder-->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="cell_missy.properties"/>
+        <property name="locations">
+            <list>
+                <value>classpath:cell_missy.properties
+                </value>
+            </list>
+        </property>
+        <property name="ignoreUnresolvablePlaceholders">
+            <value>true</value>
+        </property>       
     </bean>
     
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -39,5 +47,41 @@
     <jdbc:initialize-database data-source="dataSource" enabled="true">
         <jdbc:script location="classpath:import.sql"/>
     </jdbc:initialize-database>
+    
+    <context:annotation-config/>
+    
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <!-- jasypt encryption beans -->
+    <bean id="stringEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor" lazy-init="false">
+        <property name="algorithm" value="PBEWithMD5AndDES"/>
+        <property name="password" value="${jasypt.password}"/>
+    </bean>
+
+    <bean id="hibernateEncryptor" class="org.jasypt.hibernate.encryptor.HibernatePBEStringEncryptor" lazy-init="false">
+        <!-- This property value must match "encryptorRegisteredName" used when defining hibernate user types -->
+        <property name="registeredName" value="jasyptHibernateEncryptor"/>
+        <property name="encryptor" ref="stringEncryptor"/>
+    </bean>
+    
+    <!-- repository beans -->
+    <context:component-scan base-package="be.ugent.maf.cellmissy.repository">
+        <context:include-filter type="annotation"
+                                expression="org.springframework.stereotype.Repository"/>
+    </context:component-scan>
+    
+    <!-- service beans -->
+    <context:component-scan base-package="be.ugent.maf.cellmissy">
+        <context:include-filter type="annotation"
+                                expression="org.springframework.stereotype.Service"/>
+    </context:component-scan> 
+    
+    <!-- controller beans -->
+    <context:component-scan base-package="be.ugent.maf.cellmissy">
+        <context:include-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan> 
     
 </beans>

@@ -20,7 +20,7 @@ import static junit.framework.Assert.*;
  * @author Paola
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:mySpringXMLConfig.xml", "classpath:myTestSpringXMLConfig.xml"})
+@ContextConfiguration("classpath:myTestSpringXMLConfig.xml")
 public class CellMiaFileParserTest {
 
     @Autowired

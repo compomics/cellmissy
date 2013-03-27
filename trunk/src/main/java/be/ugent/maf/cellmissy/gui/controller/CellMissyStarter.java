@@ -54,6 +54,7 @@ public class CellMissyStarter {
      * Initialize
      */
     public void init() {
+
         // init views
         mainFrame = new JFrame();
         cellMissyConfigDialog = new CellMissyConfigDialog(mainFrame, false);
@@ -124,8 +125,12 @@ public class CellMissyStarter {
                     //reset binding list
                     propertyGuiWrapperBindingList.clear();
                     initPropertyGuiWrappersBindingList();
+                    showMessage("Properties have been reset.\nYou will now exit the application.\nPlease restart CellMissy in order to use the settings.", "new properties saved", JOptionPane.INFORMATION_MESSAGE);
+                    // exit the application
+                    System.exit(0);
                 } catch (ConfigurationException | IOException ex) {
                     LOG.error(ex.getMessage());
+                    showMessage("Default settings cannot be loaded." + "\n" + "Please check if a \"cell_missy.properties\" file exists.", "properties could not be loaded", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
@@ -142,6 +147,10 @@ public class CellMissyStarter {
         try {
             ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
             CellMissyController cellMissyController = (CellMissyController) context.getBean("cellMissyController");
+
+         
+
+
             cellMissyController.init();
         } catch (TransactionException ex) {
             String message = "";

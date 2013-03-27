@@ -18,6 +18,24 @@
             
     <build>
         
+        <!-- Copy the resources required during building -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>mySpringXMLConfig.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>mySpringXMLConfig.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        
         <extensions> 
             <extension> 
                 <groupId>org.apache.maven.wagon</groupId> 
@@ -378,5 +396,19 @@
             <url>scp://genesis.ugent.be/home/maven/public_html/maven2</url>
         </repository>
     </distributionManagement>
+    <profiles>
+        <profile>
+            <id>development</id>
+            <properties>
+                <property_file.source>classpath</property_file.source>    
+            </properties>
+        </profile>
+        <profile>
+            <id>production</id>
+            <properties>
+                <property_file.source>file</property_file.source> 
+            </properties>   
+        </profile>
+    </profiles>
    
 </project>

@@ -120,8 +120,12 @@ public class CellMissyParamsController {
                     //reset binding list
                     propertyGuiWrapperBindingList.clear();
                     initPropertyGuiWrappersBindingList();
+                    JOptionPane.showMessageDialog(loginController.getLoginDialog(), "Properties have been reset.\nYou will now exit the application.\nPlease restart CellMissy in order to use the settings.", "new properties saved", JOptionPane.INFORMATION_MESSAGE);
+                    // exit the application
+                    System.exit(0);
                 } catch (ConfigurationException | IOException ex) {
                     LOG.error(ex.getMessage());
+                    JOptionPane.showMessageDialog(loginController.getLoginDialog(), "Default settings cannot be loaded." + "\n" + "Please check if a \"cell_missy.properties\" file exists.", "properties could not be loaded", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
@@ -135,7 +139,7 @@ public class CellMissyParamsController {
     private boolean isValid() {
         boolean isValid = true;
         for (int i = 0; i < cellMissyConfigDialog.getParamsTable().getRowCount(); i++) {
-            String value = (String)cellMissyConfigDialog.getParamsTable().getValueAt(i, 1);
+            String value = (String) cellMissyConfigDialog.getParamsTable().getValueAt(i, 1);
             if (value.isEmpty()) {
                 isValid = false;
                 break;
