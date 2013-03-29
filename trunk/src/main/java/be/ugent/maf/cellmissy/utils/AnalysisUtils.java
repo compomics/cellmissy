@@ -135,7 +135,7 @@ public class AnalysisUtils {
     public static double computeMedian(double[] data) {
         // sort the input data
         Arrays.sort(data);
-        //make a distinction between odd and even data points
+        //make a distinction between odd and even dataset sizes
         if (data.length % 2 == 1) {
             return data[(data.length + 1) / 2 - 1];
         } else {

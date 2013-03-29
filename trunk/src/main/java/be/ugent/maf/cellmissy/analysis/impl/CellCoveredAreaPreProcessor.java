@@ -10,7 +10,7 @@ import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeInterval;
-import be.ugent.maf.cellmissy.gui.view.table.models.DistanceMatrixTableModel;
+import be.ugent.maf.cellmissy.gui.view.table.model.DistanceMatrixTableModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

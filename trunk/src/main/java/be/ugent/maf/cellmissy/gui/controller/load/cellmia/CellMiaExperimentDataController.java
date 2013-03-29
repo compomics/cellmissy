@@ -8,7 +8,7 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
-import be.ugent.maf.cellmissy.exception.FolderStructureException;
+import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
 import be.ugent.maf.cellmissy.gui.experiment.load.cellmia.LoadFromCellMiaMetadataPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
@@ -153,7 +153,7 @@ public class CellMiaExperimentDataController {
                 int locationToIndex = loadFromCellMiaMetadataPanel.getExperimentJList().locationToIndex(e.getPoint());
                 Experiment selectedExperiment = experimentBindingList.get(locationToIndex);
                 // check if experiment is still null, then set it, otherwise warn the user, because an experiment was already chosen and import was started
-                if (loadExperimentFromCellMiaController.getExperiment() == null) {
+                if (selectedExperiment != null && loadExperimentFromCellMiaController.getExperiment() == null) {
                     // experiment is being selected for the first time
                     onSelectedExperiment(selectedExperiment);
                 } else if (loadExperimentFromCellMiaController.getExperiment() != selectedExperiment) {
@@ -260,7 +260,7 @@ public class CellMiaExperimentDataController {
             loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), info);
             // enable button to look for experiment data
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getExpDataButton().setEnabled(true);
-        } catch (FolderStructureException ex) {
+        } catch (CellMiaFoldersException ex) {
             LOG.error(ex.getMessage());
             info = "ERROR: please check folder structure for current experiment!";
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.red);

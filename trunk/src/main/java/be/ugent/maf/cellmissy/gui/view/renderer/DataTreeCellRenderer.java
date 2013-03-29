@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.gui.view.renderer;
 
 import be.ugent.maf.cellmissy.entity.ImagingType;
-import be.ugent.maf.cellmissy.gui.view.CircleIcon;
+import be.ugent.maf.cellmissy.gui.view.icon.CircleIcon;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Color;
 import java.awt.Component;

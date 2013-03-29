@@ -9,24 +9,24 @@ package be.ugent.maf.cellmissy.exception;
  *
  * @author Paola Masuzzo
  */
-public class FolderStructureException extends Exception {
+public class CellMiaFoldersException extends Exception {
 
-    public FolderStructureException() {
+    public CellMiaFoldersException() {
     }
 
-    public FolderStructureException(String message) {
+    public CellMiaFoldersException(String message) {
         super(message);
     }
 
-    public FolderStructureException(String message, Throwable cause) {
+    public CellMiaFoldersException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public FolderStructureException(Throwable cause) {
+    public CellMiaFoldersException(Throwable cause) {
         super(cause);
     }
 
-    public FolderStructureException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public CellMiaFoldersException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

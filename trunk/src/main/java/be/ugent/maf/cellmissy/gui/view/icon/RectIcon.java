@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.view;
+package be.ugent.maf.cellmissy.gui.view.icon;
 
 import java.awt.Color;
 import java.awt.Component;

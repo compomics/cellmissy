@@ -10,10 +10,13 @@ import javax.swing.event.SwingPropertyChangeSupport;
 
 /**
  * GUI wrapper to modify CellMissy properties
+ *
  * @author Paola Masuzzo
  */
-public class PropertyGuiWrapper  {
-     /**
+public class PropertyGuiWrapper {
+
+    private static boolean transactionPropertyChanged = false;
+    /**
      * The property key
      */
     private String key;
@@ -26,6 +29,14 @@ public class PropertyGuiWrapper  {
     public PropertyGuiWrapper(String key, Object value) {
         this.key = key;
         this.value = value;
+    }
+
+    public static boolean isTransactionPropertyChanged() {
+        return transactionPropertyChanged;
+    }
+
+    public static void setTransactionPropertyChanged(boolean transactionPropertyChanged) {
+        PropertyGuiWrapper.transactionPropertyChanged = transactionPropertyChanged;
     }
 
     public String getKey() {
@@ -41,8 +52,7 @@ public class PropertyGuiWrapper  {
     }
 
     /**
-     * Sets the value of the property. Sets the new value in the properties
-     * configuration holder.
+     * Sets the value of the property. Sets the new value in the properties configuration holder.
      *
      * @param value the new property value
      */
@@ -51,6 +61,9 @@ public class PropertyGuiWrapper  {
         this.value = value;
         propertyChangeSupport.firePropertyChange("value", oldValue, value);
         PropertiesConfigurationHolder.getInstance().setProperty(key, value);
+        if (key.startsWith("db") && !transactionPropertyChanged) {
+            transactionPropertyChanged = true;
+        }
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -60,5 +73,4 @@ public class PropertyGuiWrapper  {
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
-    
 }

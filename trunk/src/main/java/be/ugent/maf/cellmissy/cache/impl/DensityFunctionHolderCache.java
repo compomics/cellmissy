@@ -20,9 +20,6 @@ import org.springframework.stereotype.Component;
 @Component("densityFunctionHolderCache")
 public class DensityFunctionHolderCache extends LinkedHashMap<PlateCondition, Map<DensityFunctionHolderCache.DataCategory, List<List<double[]>>>> implements Cache<PlateCondition, Map<DensityFunctionHolderCache.DataCategory, List<List<double[]>>>> {
 
-    //set maximum cache size from properties file
-    private static final int MAXIMUM_CACHE_SIZE = PropertiesConfigurationHolder.getInstance().getInt("densityFunctionCache.maximumCacheSize");
-
     /**
      * enum for data category: is it raw data or already corrected data?
      */
@@ -60,7 +57,8 @@ public class DensityFunctionHolderCache extends LinkedHashMap<PlateCondition, Ma
      */
     @Override
     protected boolean removeEldestEntry(Entry<PlateCondition, Map<DensityFunctionHolderCache.DataCategory, List<List<double[]>>>> eldest) {
-        return this.size() > MAXIMUM_CACHE_SIZE;
+        int maximumCacheSize = PropertiesConfigurationHolder.getInstance().getInt("densityFunctionCache.maximumCacheSize");
+        return this.size() > maximumCacheSize;
     }
 
     @Override

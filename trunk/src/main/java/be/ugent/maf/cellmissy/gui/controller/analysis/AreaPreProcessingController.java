@@ -11,7 +11,7 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeInterval;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import be.ugent.maf.cellmissy.gui.view.table.models.ComputedDataTableModel;
+import be.ugent.maf.cellmissy.gui.view.table.model.ComputedDataTableModel;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
 import be.ugent.maf.cellmissy.analysis.impl.CellCoveredAreaPreProcessor;
@@ -25,7 +25,7 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.ReplicatesSelectionDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.TimeFramesSelectionDialog;
 import be.ugent.maf.cellmissy.gui.view.renderer.CheckBoxOutliersRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.OutliersRenderer;
-import be.ugent.maf.cellmissy.gui.view.table.models.DistanceMatrixTableModel;
+import be.ugent.maf.cellmissy.gui.view.table.model.DistanceMatrixTableModel;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.RectIconListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
@@ -451,7 +451,7 @@ public class AreaPreProcessingController {
             // Plot Logic
             String chartTitle = measuredAreaTypeString + "  - Condition " + conditionIndex + " (replicates)";
             String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-            JFreeChart rawDataAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+            JFreeChart rawDataAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(rawDataAreaChart, xYSeriesCollection, processedWells);
             rawDataChartPanel.setChart(rawDataAreaChart);
             areaAnalysisPanel.getGraphicsParentPanel().remove(densityChartPanel);
@@ -505,7 +505,7 @@ public class AreaPreProcessingController {
             // Plot Logic
             String chartTitle = "Cell covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
             String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-            JFreeChart transformedDataAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+            JFreeChart transformedDataAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(transformedDataAreaChart, xYSeriesCollection, processedWells);
             transformedAreaChartPanel.setChart(transformedDataAreaChart);
             areaAnalysisPanel.getGraphicsParentPanel().remove(densityChartPanel);
@@ -574,7 +574,7 @@ public class AreaPreProcessingController {
             // Plot Logic
             String chartTitle = "Cell covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
             String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-            JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+            JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, xYSeriesCollection, processedWells);
             correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
             correctedAreaChartPanel.setChart(correctedAreaChart);
@@ -675,7 +675,7 @@ public class AreaPreProcessingController {
             }
         }
         String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-        JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "Time Frame", "Area " + "(" + areaUnitOfMeasurement + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         if (plotErrorBars) {
             JFreeChartUtils.plotVerticalErrorBars(globalAreaChart, xySeriesCollection, yErrorsList);
             globalAreaChart.getXYPlot().getRangeAxis().setUpperBound(JFreeChartUtils.computeMaxY(xySeriesCollection) + AnalysisUtils.getMaxOfAList(yErrorsList));
@@ -855,7 +855,7 @@ public class AreaPreProcessingController {
             // Plot Logic
             String chartTitle = "Cell covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
             String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-            JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "Time Frame", "Area " + "(" + areaUnitOfMeasurement + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+            JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, xySeriesCollection, processedWells);
             correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
             correctedAreaChartPanel.setChart(correctedAreaChart);
@@ -1663,7 +1663,11 @@ public class AreaPreProcessingController {
                 PlateCondition currentCondition = dataAnalysisController.getCurrentCondition();
                 if (currentCondition != null) {
                     showDistanceMatrix(currentCondition);
+                    // pack the dialog
                     replicatesSelectionDialog.pack();
+                    // center the dialog on main frame
+                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getMainFrame(), replicatesSelectionDialog);
+                    // show the dialog
                     replicatesSelectionDialog.setVisible(true);
                 }
             }
@@ -1680,7 +1684,11 @@ public class AreaPreProcessingController {
                     // (re)set to invisible the warning message
                     timeFramesSelectionDialog.getWarningLabel().setVisible(false);
                     timeFramesSelectionDialog.getDefaultCutOffTextField().setText(timeFramesBindingList.get(preProcessingMap.get(currentCondition).getTimeInterval().getProposedCutOff()).toString());
+                    // pack the dialog
                     timeFramesSelectionDialog.pack();
+                    // center dialog on the main frame
+                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getMainFrame(), replicatesSelectionDialog);
+                    // show the dialog
                     timeFramesSelectionDialog.setVisible(true);
                 }
             }

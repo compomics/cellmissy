@@ -54,7 +54,6 @@ public class CellMissyStarter {
      * Initialize
      */
     public void init() {
-
         // init views
         mainFrame = new JFrame();
         cellMissyConfigDialog = new CellMissyConfigDialog(mainFrame, false);
@@ -100,9 +99,13 @@ public class CellMissyStarter {
                     try {
                         // save new properties
                         PropertiesConfigurationHolder.getInstance().save();
-                        showMessage("New properties have been saved.\nYou will now exit the application.\nPlease restart CellMissy in order to use the new settings.", "new properties saved", JOptionPane.INFORMATION_MESSAGE);
-                        // exit the application
-                        System.exit(0);
+                        if (PropertyGuiWrapper.isTransactionPropertyChanged()) {
+                            showMessage("New DB properties have been saved.\nYou will now exit the application.\nPlease restart CellMissy in order to use the new settings.", "new properties saved", JOptionPane.INFORMATION_MESSAGE);
+                            // exit the application
+                            System.exit(0);
+                        } else {
+                            showMessage("New properties have been saved to file.", "new properties saved", JOptionPane.INFORMATION_MESSAGE);
+                        }
                     } catch (ConfigurationException ex) {
                         LOG.error(ex.getMessage());
                         showMessage("New properties could not be saved to file." + "\n" + "Please check if a \"cell_missy.properties\" file exists.", "properties could not be saved", JOptionPane.WARNING_MESSAGE);
@@ -147,10 +150,6 @@ public class CellMissyStarter {
         try {
             ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
             CellMissyController cellMissyController = (CellMissyController) context.getBean("cellMissyController");
-
-         
-
-
             cellMissyController.init();
         } catch (TransactionException ex) {
             String message = "";
@@ -196,7 +195,9 @@ public class CellMissyStarter {
      * show a dialog to edit parameters
      */
     private void editCellMissyParams() {
+        // pack dialog
         cellMissyConfigDialog.pack();
+        // show dialog
         cellMissyConfigDialog.setVisible(true);
     }
 

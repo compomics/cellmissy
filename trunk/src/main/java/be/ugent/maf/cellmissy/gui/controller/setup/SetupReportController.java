@@ -73,7 +73,7 @@ public class SetupReportController {
         tryToCreateFile(pdfFile);
         return pdfFile;
     }
-
+    
     /**
      *
      * @param pdfFile
