@@ -16,8 +16,8 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.LinearRegressionPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.StatisticsPanel;
-import be.ugent.maf.cellmissy.gui.view.table.models.PValuesTableModel;
-import be.ugent.maf.cellmissy.gui.view.table.models.StatisticalSummaryTableModel;
+import be.ugent.maf.cellmissy.gui.view.table.model.PValuesTableModel;
+import be.ugent.maf.cellmissy.gui.view.table.model.StatisticalSummaryTableModel;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.LinearRegressionTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.PValuesTableRenderer;
@@ -72,7 +72,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.CategoryAnnotation;
 import org.jfree.chart.annotations.CategoryLineAnnotation;
 import org.jfree.chart.annotations.CategoryTextAnnotation;
-import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
@@ -474,8 +473,11 @@ public class AreaAnalysisController {
                     }
                     // add new panel 
                     dialog.getContentPane().add(statisticsPanel, gridBagConstraints);
-                    // show the dialog
+                    // pack the dialog
                     dialog.pack();
+                    // center the dialog on the main frame
+                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getMainFrame(), dialog);
+                    // show the dialog
                     dialog.setVisible(true);
                 } else {
                     // ask user to select a group

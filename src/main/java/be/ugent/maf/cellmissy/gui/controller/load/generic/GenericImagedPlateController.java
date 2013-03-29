@@ -64,8 +64,6 @@ import org.springframework.stereotype.Component;
 public class GenericImagedPlateController {
 
     private static final Logger LOG = Logger.getLogger(GenericImagedPlateController.class);
-    // format to show data
-    private static final String DATA_FORMAT = PropertiesConfigurationHolder.getInstance().getString("dataFormat");
     //model
     private ObservableList<Algorithm> algorithmsBindingList;
     private ObservableList<ImagingType> imagingTypesBindingList;
@@ -99,7 +97,7 @@ public class GenericImagedPlateController {
         loadFromGenericInputPlatePanel = new LoadFromGenericInputPlatePanel();
         //disable mouse Listener
         mouseListenerEnabled = false;
-        format = new DecimalFormat(DATA_FORMAT);
+        format = new DecimalFormat(PropertiesConfigurationHolder.getInstance().getString("dataFormat"));
         // init views
         initLoadDataPlatePanel();
         initAlgoImagingPanel();

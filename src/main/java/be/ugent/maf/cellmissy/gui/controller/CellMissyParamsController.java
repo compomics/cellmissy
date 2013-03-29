@@ -87,6 +87,7 @@ public class CellMissyParamsController {
         /**
          * action listeners
          */
+        // save new properties to file
         cellMissyConfigDialog.getSaveButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -95,9 +96,13 @@ public class CellMissyParamsController {
                     try {
                         // save new properties
                         PropertiesConfigurationHolder.getInstance().save();
-                        JOptionPane.showMessageDialog(loginController.getLoginDialog(), "New properties have been saved.\nYou will now exit the application.\nPlease restart CellMissy in order to use the new settings.", "new properties saved", JOptionPane.INFORMATION_MESSAGE);
-                        // exit the application
-                        System.exit(0);
+                        if (PropertyGuiWrapper.isTransactionPropertyChanged()) {
+                            JOptionPane.showMessageDialog(loginController.getLoginDialog(), "New DB properties have been saved.\nYou will now exit the application.\nPlease restart CellMissy in order to use the new settings.", "new properties saved", JOptionPane.INFORMATION_MESSAGE);
+                            // exit the application
+                            System.exit(0);
+                        } else {
+                            JOptionPane.showMessageDialog(loginController.getLoginDialog(), "New properties have been saved to file.", "new properties saved", JOptionPane.INFORMATION_MESSAGE);
+                        }
                     } catch (ConfigurationException ex) {
                         LOG.error(ex.getMessage());
                         JOptionPane.showMessageDialog(loginController.getLoginDialog(), "New properties could not be saved to file." + "\n" + "Please check if a \"cell_missy.properties\" file exists.", "properties could not be saved", JOptionPane.WARNING_MESSAGE);
@@ -110,6 +115,7 @@ public class CellMissyParamsController {
             }
         });
 
+        // reset properties as they were before, default properties
         cellMissyConfigDialog.getResetButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

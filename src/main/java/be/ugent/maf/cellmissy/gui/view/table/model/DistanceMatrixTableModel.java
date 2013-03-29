@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.view.table.models;
+package be.ugent.maf.cellmissy.gui.view.table.model;
 
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
@@ -22,9 +22,6 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
     private String columnNames[];
     private boolean[][] outliers;
     private PlateCondition plateCondition;
-    // set ratio for outliers detection
-    // if number of outliers is equal or greater than this ratio, technical replicate is marked as OUTLIER
-    private static final double OUTLIERS_DETECTION_RATIO = PropertiesConfigurationHolder.getInstance().getDouble("outliersDetectionRatio");
 
     /**
      * Constructor (data to show in the table and boolean matrix for outliers detection)
@@ -98,6 +95,7 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
      * @param dataToShow
      */
     private void initTable(Double[][] dataToShow) {
+        double outliersDetectionRatio = PropertiesConfigurationHolder.getInstance().getDouble("outliersDetectionRatio");
         // List of imaged wells
         List<Well> processedWells = plateCondition.getProcessedWells();
         int numberOfSamplesPerCondition = AnalysisUtils.getNumberOfSamplesPerCondition(plateCondition);
@@ -125,7 +123,7 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
                     data[rowIndex][columnIndex] = dataToShow[rowIndex][columnIndex - 1];
                 }
                 // if the outliers ratio is bigger than RATIO, chechBox is selected (true)
-                if (getOutlierRatio(columnIndex - 1) >= OUTLIERS_DETECTION_RATIO) {
+                if (getOutlierRatio(columnIndex - 1) >= outliersDetectionRatio) {
                     checkboxOutliers[columnIndex - 1] = true;
                 }
             }

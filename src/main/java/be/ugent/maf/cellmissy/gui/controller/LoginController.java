@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.LoginDialog;
 import be.ugent.maf.cellmissy.service.UserService;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -109,7 +110,9 @@ public class LoginController {
         loginDialog.getEditButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // pack dialog
                 cellMissyParamsController.getCellMissyConfigDialog().pack();
+                // show dialog
                 cellMissyParamsController.getCellMissyConfigDialog().setVisible(true);
             }
         });

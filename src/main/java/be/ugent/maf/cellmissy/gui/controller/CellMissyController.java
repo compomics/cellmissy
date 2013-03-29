@@ -284,10 +284,12 @@ public class CellMissyController {
                         newProjectDialog.getProjectNumberTextField().setText("");
                     } catch (PersistenceException exception) {
                         showMessage("Project already present in the DB", "Error in persisting project", JOptionPane.WARNING_MESSAGE);
+                        LOG.error(exception.getMessage());
                         newProjectDialog.getProjectNumberTextField().setText("");
                         newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
                     } catch (NumberFormatException exception) {
                         showMessage("Please insert a valid number", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
+                        LOG.error(exception.getMessage());
                         newProjectDialog.getProjectNumberTextField().setText("");
                         newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
                     }

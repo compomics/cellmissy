@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.gui.view.renderer;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.gui.view.RectIcon;
+import be.ugent.maf.cellmissy.gui.view.icon.RectIcon;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Component;
 import java.util.List;

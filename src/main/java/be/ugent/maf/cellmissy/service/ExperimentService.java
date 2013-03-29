@@ -8,7 +8,7 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.Instrument;
 import be.ugent.maf.cellmissy.entity.Magnification;
-import be.ugent.maf.cellmissy.exception.FolderStructureException;
+import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
 import java.io.File;
 import java.util.List;
 
@@ -29,16 +29,17 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * Create Folder Structure (if folders do not exist) for a new Experiment
      *
      * @param newExperiment
+     * @throws CellMiaFoldersException  
      */
-    void createFolderStructure(Experiment newExperiment);
+    void createFolderStructure(Experiment newExperiment) throws CellMiaFoldersException;
 
     /**
      * Load existing folders for a certain experiment
      *
      * @param experiment
-     * @throws FolderStructureException  if directory structure is not OK.
+     * @throws CellMiaFoldersException  if directory structure is not OK.
      */
-    void loadFolderStructure(Experiment experiment) throws FolderStructureException;
+    void loadFolderStructure(Experiment experiment) throws CellMiaFoldersException;
 
     /**
      * Reset folders to null

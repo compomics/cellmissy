@@ -13,6 +13,7 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
@@ -42,9 +43,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -351,6 +354,13 @@ public class SetupExperimentController {
         return experimentService.findExperimentsByProjectId(projectId);
     }
 
+    /**
+     * add mouse listener to setup plate panel (Only when a condition is selected)
+     */
+    public void addMouseListener() {
+        setupPlateController.addMouseListener();
+    }
+
     /*
      * private methods and classes
      */
@@ -391,11 +401,18 @@ public class SetupExperimentController {
 
         //date cannot be modified manually
         experimentInfoPanel.getDateChooser().getDateEditor().setEnabled(false);
-
         //get current date with Date()
         Date date = new Date();
         experimentInfoPanel.getDateChooser().setDate(date);
 
+        // button group for radio buttons
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(experimentInfoPanel.getCellMiaRadioButton());
+        buttonGroup.add(experimentInfoPanel.getGenericRadioButton());
+        // select by default the CELLMIA button
+        experimentInfoPanel.getCellMiaRadioButton().setSelected(true);
+
+        // document listener for the Next button
         ExperimentListener experimentListener = new ExperimentListener(setupExperimentPanel.getNextButton());
         experimentListener.registerDoc(experimentInfoPanel.getNumberTextField().getDocument());
         experimentListener.registerDoc(experimentInfoPanel.getPurposeTextArea().getDocument());
@@ -458,29 +475,19 @@ public class SetupExperimentController {
                     experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());
                     experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());
                     experiment.setPurpose(experimentInfoPanel.getPurposeTextArea().getText());
-                    //create experiment's folder structure on the server
-                    //@todo: this method is not needed for generic input loading
-                    experimentService.createFolderStructure(experiment);
-                    //show the setupPanel and hide the experimentInfoPanel
-                    GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), setupPanel, experimentInfoPanel);
-                    cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Add conditions and select wells for each condition. Conditions details can be chosen in the right panel.");
-                    //enable the Previous Button
-                    setupExperimentPanel.getPreviousButton().setEnabled(true);
-                    setupExperimentPanel.getNextButton().setEnabled(false);
-                    setupExperimentPanel.getFinishButton().setVisible(true);
-                    if (setupExperimentPanel.getFinishButton().isEnabled()) {
-                        setupExperimentPanel.getFinishButton().setEnabled(true);
+                    // check if image analysis is going to be performed with cellmia
+                    // in this case only, create folder structure
+                    if (experimentInfoPanel.getCellMiaRadioButton().isSelected()) {
+                        try {
+                            experimentService.createFolderStructure(experiment);
+                            onNext();
+                        } catch (CellMiaFoldersException ex) {
+                            LOG.error(ex.getMessage());
+                            showMessage(ex.getMessage(), "no connection to server error", JOptionPane.ERROR_MESSAGE);
+                        }
                     } else {
-                        setupExperimentPanel.getFinishButton().setEnabled(false);
+                        onNext();
                     }
-                    setupExperimentPanel.getReportButton().setVisible(true);
-                    setupExperimentPanel.getTopPanel().revalidate();
-                    setupExperimentPanel.getTopPanel().repaint();
-
-                    // update labels with experiment metadata
-                    setupPanel.getProjNumberLabel().setText(experiment.getProject().toString());
-                    setupPanel.getExpNumberLabel().setText(experiment.toString());
-                    setupPanel.getExpPurposeLabel().setText(experiment.getPurpose());
                 }
             }
         });
@@ -518,7 +525,29 @@ public class SetupExperimentController {
                     //set the condition's collection of the experiment
                     experiment.setPlateConditionCollection(setupConditionsController.getPlateConditionBindingList());
                     //create PDF report, execute SwingWorker
-                    SetupReportWorker setupReportWorker = new SetupReportWorker();
+                    // check for cellmia or other software
+                    SetupReportWorker setupReportWorker = null;
+                    if (experimentInfoPanel.getCellMiaRadioButton().isSelected()) {
+                        setupReportWorker = new SetupReportWorker(experiment.getSetupFolder());
+                    } else if (experimentInfoPanel.getGenericRadioButton().isSelected()) {
+                        // show a jfile chooser to decide where to save the file
+                        JFileChooser chooseDirectory = new JFileChooser();
+                        chooseDirectory.setDialogTitle("Choose a directory to save the report");
+                        chooseDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                        int experimentNumber = experiment.getExperimentNumber();
+                        int projectNumber = experiment.getProject().getProjectNumber();
+                        String reportName = "Setup report " + experimentNumber + " - " + projectNumber + ".pdf";
+                        chooseDirectory.setSelectedFile(new File(reportName));
+
+                        // in response to the button click, show open dialog
+                        int returnVal = chooseDirectory.showSaveDialog(setupExperimentPanel);
+                        if (returnVal == JFileChooser.APPROVE_OPTION) {
+                            File currentDirectory = chooseDirectory.getCurrentDirectory();
+                            setupReportWorker = new SetupReportWorker(currentDirectory);
+                        } else {
+                            showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
                     setupReportWorker.execute();
                 } else {
                     showMessage("Some wells do not have a condition, please reset view.", "Wells' selection error", JOptionPane.WARNING_MESSAGE);
@@ -560,10 +589,29 @@ public class SetupExperimentController {
     }
 
     /**
-     * add mouse listener to setup plate panel (Only when a condition is selected)
+     * On next action
      */
-    public void addMouseListener() {
-        setupPlateController.addMouseListener();
+    private void onNext() {
+        //show the setupPanel and hide the experimentInfoPanel
+        GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), setupPanel, experimentInfoPanel);
+        cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Add conditions and select wells for each condition. Conditions details can be chosen in the right panel.");
+        //enable the Previous Button
+        setupExperimentPanel.getPreviousButton().setEnabled(true);
+        setupExperimentPanel.getNextButton().setEnabled(false);
+        setupExperimentPanel.getFinishButton().setVisible(true);
+        if (setupExperimentPanel.getFinishButton().isEnabled()) {
+            setupExperimentPanel.getFinishButton().setEnabled(true);
+        } else {
+            setupExperimentPanel.getFinishButton().setEnabled(false);
+        }
+        setupExperimentPanel.getReportButton().setVisible(true);
+        setupExperimentPanel.getTopPanel().revalidate();
+        setupExperimentPanel.getTopPanel().repaint();
+
+        // update labels with experiment metadata
+        setupPanel.getProjNumberLabel().setText(experiment.getProject().toString());
+        setupPanel.getExpNumberLabel().setText(experiment.toString());
+        setupPanel.getExpPurposeLabel().setText(experiment.getPurpose());
     }
 
     /**
@@ -641,12 +689,18 @@ public class SetupExperimentController {
      */
     private class SetupReportWorker extends SwingWorker<File, Void> {
 
+        private File directory;
+
+        public SetupReportWorker(File directory) {
+            this.directory = directory;
+        }
+
         @Override
         protected File doInBackground() throws Exception {
             //disable the pdf report button and show a waiting cursor
             setupExperimentPanel.getReportButton().setEnabled(false);
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            File file = setupReportController.createSetupReport(experiment.getSetupFolder());
+            File file = setupReportController.createSetupReport(directory);
             return file;
         }
 

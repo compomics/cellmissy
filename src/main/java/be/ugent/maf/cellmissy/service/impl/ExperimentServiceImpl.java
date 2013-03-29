@@ -11,7 +11,7 @@ import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
-import be.ugent.maf.cellmissy.exception.FolderStructureException;
+import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
 import be.ugent.maf.cellmissy.repository.ExperimentRepository;
 import be.ugent.maf.cellmissy.repository.InstrumentRepository;
 import be.ugent.maf.cellmissy.repository.MagnificationRepository;
@@ -59,9 +59,8 @@ public class ExperimentServiceImpl implements ExperimentService {
      * @param newExperiment
      */
     @Override
-    public void createFolderStructure(Experiment newExperiment) {
-
-        //create main folder
+    public void createFolderStructure(Experiment newExperiment) throws CellMiaFoldersException {
+        //create main folder for experiment
         experimentFolder = null;
         if (newExperiment.getProject().getProjectDescription().length() == 0) {
             projectFolderName = "CM_" + newExperiment.getProject().toString();
@@ -69,64 +68,72 @@ public class ExperimentServiceImpl implements ExperimentService {
             projectFolderName = "CM_" + newExperiment.getProject().toString() + "_" + newExperiment.getProject().getProjectDescription();
         }
         File[] listFiles = mainDirectory.listFiles();
-        for (File file : listFiles) {
-            if (file.getName().equals(projectFolderName)) {
-                String substring = file.getName().substring(0, 7);
-                String experimentFolderName = substring + "_" + newExperiment.toString();
-                experimentFolder = new File(file, experimentFolderName);
-                //set experiment folder for the experiment
-                newExperiment.setExperimentFolder(experimentFolder);
-                boolean mkdir = experimentFolder.mkdir();
-                if (mkdir) {
-                    LOG.debug("Experiment Folder is created: " + experimentFolderName);
+        if (listFiles != null) {
+            for (File file : listFiles) {
+                if (file.getName().equals(projectFolderName)) {
+                    String substring = file.getName().substring(0, 7);
+                    String experimentFolderName = substring + "_" + newExperiment.toString();
+                    experimentFolder = new File(file, experimentFolderName);
+                    //set experiment folder for the experiment
+                    newExperiment.setExperimentFolder(experimentFolder);
+                    boolean mkdir = experimentFolder.mkdir();
+                    if (mkdir) {
+                        LOG.debug("Experiment Folder is created: " + experimentFolderName);
+                    }
+                    break;
                 }
-                break;
             }
+        } else {
+            throw new CellMiaFoldersException("No folders found in main directory (M:\\CM)\nBe sure you are connected to the server!");
         }
 
-        //create subfolders
-        miaFolder = new File(experimentFolder, experimentFolder.getName() + "_MIA");
-        boolean mkdir = miaFolder.mkdir();
-        if (mkdir) {
-            LOG.debug("Mia Folder is created: " + miaFolder.getName());
-        }
-        outputFolder = new File(experimentFolder, experimentFolder.getName() + "_output");
-        boolean mkdir1 = outputFolder.mkdir();
-        if (mkdir1) {
-            LOG.debug("Output folder is created: " + outputFolder.getName());
-        }
+        // if experiment folder was successfully created, procede with the inner folders
+        if (experimentFolder != null) {
+            //create subfolders
+            miaFolder = new File(experimentFolder, experimentFolder.getName() + "_MIA");
+            boolean mkdir = miaFolder.mkdir();
+            if (mkdir) {
+                LOG.debug("Mia Folder is created: " + miaFolder.getName());
+            }
+            outputFolder = new File(experimentFolder, experimentFolder.getName() + "_output");
+            boolean mkdir1 = outputFolder.mkdir();
+            if (mkdir1) {
+                LOG.debug("Output folder is created: " + outputFolder.getName());
+            }
 
-        rawFolder = new File(experimentFolder, experimentFolder.getName() + "_raw");
-        boolean mkdir2 = rawFolder.mkdir();
-        if (mkdir2) {
-            LOG.debug("Raw folder is created: " + rawFolder.getName());
-        }
+            rawFolder = new File(experimentFolder, experimentFolder.getName() + "_raw");
+            boolean mkdir2 = rawFolder.mkdir();
+            if (mkdir2) {
+                LOG.debug("Raw folder is created: " + rawFolder.getName());
+            }
 
-        //create subfolders in the raw folder
-        microscopeFolder = new File(rawFolder, experimentFolder.getName() + "_microscope");
-        boolean mkdir3 = microscopeFolder.mkdir();
-        if (mkdir3) {
-            LOG.debug("Microscope folder is created: " + microscopeFolder.getName());
-        }
+            //create subfolders in the raw folder
+            microscopeFolder = new File(rawFolder, experimentFolder.getName() + "_microscope");
+            boolean mkdir3 = microscopeFolder.mkdir();
+            if (mkdir3) {
+                LOG.debug("Microscope folder is created: " + microscopeFolder.getName());
+            }
 
-        setupFolder = new File(rawFolder, experimentFolder.getName() + "_set-up");
-        //set the setupFolder
-        newExperiment.setSetupFolder(setupFolder);
-        boolean mkdir4 = setupFolder.mkdir();
-        if (mkdir4) {
-            LOG.debug("Setup folder is created: " + setupFolder.getName());
-        }
+            setupFolder = new File(rawFolder, experimentFolder.getName() + "_set-up");
+            //set the setupFolder
+            newExperiment.setSetupFolder(setupFolder);
+            boolean mkdir4 = setupFolder.mkdir();
+            if (mkdir4) {
+                LOG.debug("Setup folder is created: " + setupFolder.getName());
+            }
 
-        //create algo-0 subfolder in the MIA folder
-        algoNullFolder = new File(miaFolder, miaFolder.getName() + "_algo-0");
-        boolean mkdir5 = algoNullFolder.mkdir();
-        if (mkdir5) {
-            LOG.debug("AlgoNull folder is created: " + algoNullFolder.getName());
-        }
+            //create algo-0 subfolder in the MIA folder
+            algoNullFolder = new File(miaFolder, miaFolder.getName() + "_algo-0");
+            boolean mkdir5 = algoNullFolder.mkdir();
+            if (mkdir5) {
+                LOG.debug("AlgoNull folder is created: " + algoNullFolder.getName());
+            }
+        } else throw new CellMiaFoldersException("Experiment folder could not be created.\nPlease check folder structure!");
+
     }
 
     @Override
-    public void loadFolderStructure(Experiment experiment) throws FolderStructureException {
+    public void loadFolderStructure(Experiment experiment) throws CellMiaFoldersException {
         for (File file : mainDirectory.listFiles()) {
             if (file.getName().contains(experiment.getProject().toString())) {
                 //project folder
@@ -145,7 +152,7 @@ public class ExperimentServiceImpl implements ExperimentService {
                 }
             }
         } else {
-            throw new FolderStructureException("No project folder found.\nPlease check folder structure!");
+            throw new CellMiaFoldersException("No project folder found.\nPlease check folder structure!");
         }
 
         // check for experiment folder
@@ -163,12 +170,12 @@ public class ExperimentServiceImpl implements ExperimentService {
                         //set experiment mia folder
                         experiment.setMiaFolder(miaFolder);
                     } else {
-                        throw new FolderStructureException("No MIA folder found.\nPlease check folder structure!");
+                        throw new CellMiaFoldersException("No MIA folder found.\nPlease check folder structure!");
                     }
                 }
             }
         } else {
-            throw new FolderStructureException("No experiment folder found.\nPlease check folder structure!");
+            throw new CellMiaFoldersException("No experiment folder found.\nPlease check folder structure!");
         }
 
         // check for raw folder
@@ -181,7 +188,7 @@ public class ExperimentServiceImpl implements ExperimentService {
                 }
             }
         } else {
-            throw new FolderStructureException("No raw folder found.\nPlease check folder structure!");
+            throw new CellMiaFoldersException("No raw folder found.\nPlease check folder structure!");
         }
 
         // check for set-up folder
@@ -189,7 +196,7 @@ public class ExperimentServiceImpl implements ExperimentService {
             //set setup folder of the experiment
             experiment.setSetupFolder(setupFolder);
         } else {
-            throw new FolderStructureException("No set-up folder found.\nPlease check folder structure!");
+            throw new CellMiaFoldersException("No set-up folder found.\nPlease check folder structure!");
         }
 
         // check for microscope folder
@@ -199,7 +206,7 @@ public class ExperimentServiceImpl implements ExperimentService {
             File[] microscopeFiles = microscopeFolder.listFiles();
             // check if microscope folder is empty
             if (microscopeFiles.length == 0) {
-                throw new FolderStructureException("Folder: " + microscopeFolder.getName() + " seems to be empty!\nPlease check folder structure!");
+                throw new CellMiaFoldersException("Folder: " + microscopeFolder.getName() + " seems to be empty!\nPlease check folder structure!");
             }
             // still need to list the folders if the lenght is equal to one
             if (microscopeFiles.length == 1) {
@@ -232,7 +239,7 @@ public class ExperimentServiceImpl implements ExperimentService {
                 File obsepFile = null;
 
                 if (obsepFolders.isEmpty()) {
-                    throw new FolderStructureException("Wrong structure in folder: " + docFiles.getName() + "\nNo folders containing obsep files found.");
+                    throw new CellMiaFoldersException("Wrong structure in folder: " + docFiles.getName() + "\nNo folders containing obsep files found.");
                 }
 
                 if (obsepFolders.size() == 1) {
@@ -247,10 +254,10 @@ public class ExperimentServiceImpl implements ExperimentService {
                 //set experiment obsep file (the check for this null is done after, in the controller)
                 experiment.setObsepFile(obsepFile);
             } else {
-                throw new FolderStructureException("Wrong structure in folder: " + microscopeFolder.getName());
+                throw new CellMiaFoldersException("Wrong structure in folder: " + microscopeFolder.getName());
             }
         } else {
-            throw new FolderStructureException("No microscope folder found.\nPlease check folder structure!");
+            throw new CellMiaFoldersException("No microscope folder found.\nPlease check folder structure!");
         }
     }
 

@@ -82,8 +82,6 @@ import org.springframework.stereotype.Controller;
 public class DataAnalysisController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DataAnalysisController.class);
-    // format to show data
-    private static final String DATA_FORMAT = PropertiesConfigurationHolder.getInstance().getString("dataFormat");
     //model
     private Experiment experiment;
     private AreaAnalysisHolder areaAnalysisHolder;
@@ -137,7 +135,7 @@ public class DataAnalysisController {
         analysisPlatePanel = new AnalysisPlatePanel();
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        format = new DecimalFormat(DATA_FORMAT);
+        format = new DecimalFormat(PropertiesConfigurationHolder.getInstance().getString("dataFormat"));
 
         areaAnalysisHolder = new AreaAnalysisHolder();
         //init child controllers
@@ -473,7 +471,6 @@ public class DataAnalysisController {
         imagingTypeBindingList.clear();
         plateConditionList.clear();
         areaPreProcessingController.getPreProcessingMap().clear();
-//        areaPreProcessingController.initTimeFramesList();
         currentCondition = null;
         experiment = null;
         areaPreProcessingController.getAreaAnalysisPanel().getNormalizeAreaButton().setSelected(true);

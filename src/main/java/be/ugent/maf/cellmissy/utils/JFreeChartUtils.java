@@ -55,6 +55,7 @@ public class JFreeChartUtils {
         //disable autorange for the axes
         xYPlot.getDomainAxis().setAutoRange(false);
         xYPlot.getRangeAxis().setAutoRange(false);
+        setupPlot(xYPlot);
         //set ranges for x and y axes
         xYPlot.getDomainAxis().setRange(xYSeriesCollection.getDomainLowerBound(true) - 0.05, xYSeriesCollection.getDomainUpperBound(true) + 0.05);
         xYPlot.getRangeAxis().setUpperBound(computeMaxY(xYSeriesCollection) + 0.05);
@@ -137,12 +138,10 @@ public class JFreeChartUtils {
         chart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
         // put legend on the right edge
         chart.getLegend().setPosition(RectangleEdge.RIGHT);
-        // set background to white and grid color to black
-        chart.getXYPlot().setBackgroundPaint(Color.white);
-        chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
-        chart.getXYPlot().setOutlinePaint(Color.white);
-        // get renderer
-        XYItemRenderer renderer = chart.getXYPlot().getRenderer();
+        XYPlot xYPlot = chart.getXYPlot();
+        setupPlot(xYPlot);
+        // modify renderer
+        XYItemRenderer renderer = xYPlot.getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);
         for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
             // plot lines with colors according to well (replicate) index
@@ -161,12 +160,11 @@ public class JFreeChartUtils {
     public static void setupGlobalAreaChart(JFreeChart chart, XYSeriesCollection xYSeriesCollection) {
         // set title font 
         chart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
-        // set background to white and grid color to black
-        chart.getXYPlot().setBackgroundPaint(Color.white);
-        chart.getXYPlot().setRangeGridlinePaint(Color.BLACK);
-        chart.getXYPlot().setOutlinePaint(Color.white);
-        // get renderer
-        XYItemRenderer renderer = chart.getXYPlot().getRenderer();
+        // get xyplot from the chart
+        XYPlot xYPlot = chart.getXYPlot();
+        setupPlot(xYPlot);
+        // modify renderer
+        XYItemRenderer renderer = xYPlot.getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);
         for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
             // plot lines according to conditions indexes
@@ -227,6 +225,22 @@ public class JFreeChartUtils {
                 plot.addAnnotation(vertical);
             }
         }
+    }
+
+    /**
+     * Define some parameters for the xyPlot
+     *
+     * @param xYPlot
+     */
+    private static void setupPlot(XYPlot xYPlot) {
+        // set background to white and grid color to black
+        xYPlot.setBackgroundPaint(Color.white);
+        xYPlot.setRangeGridlinePaint(Color.BLACK);
+        // hide the border of the sorrounding box
+        xYPlot.setOutlinePaint(Color.white);
+        // set label paint for axes to black
+        xYPlot.getDomainAxis().setLabelPaint(Color.black);
+        xYPlot.getRangeAxis().setLabelPaint(Color.black);
     }
 
     /**

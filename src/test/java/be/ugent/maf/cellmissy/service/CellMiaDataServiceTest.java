@@ -43,7 +43,7 @@ public class CellMiaDataServiceTest {
     public void testCellMiaDataService() {
 
         //cellmia folder -- cell_missy.properties file
-        File miaFolder = new File(PropertiesConfigurationHolder.getInstance().getString("cellMiaFolder"));
+//        File miaFolder = new File(PropertiesConfigurationHolder.getInstance().getString("cellMiaFolder"));
         //obsep file and setup folder -- test resources
         File obsepFile = new File(ObsepFileParserTest.class.getClassLoader().getResource("gffp.obsep").getPath());
         File setupFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
@@ -51,7 +51,7 @@ public class CellMiaDataServiceTest {
         Experiment experiment = new Experiment();
         experiment.setObsepFile(obsepFile);
         experiment.setSetupFolder(setupFolder);
-        experiment.setMiaFolder(miaFolder);
+//        experiment.setMiaFolder(miaFolder);
 
         // init the service: set the experiment
         cellMiaDataService.init(experiment);
