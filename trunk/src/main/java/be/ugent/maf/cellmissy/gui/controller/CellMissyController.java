@@ -10,13 +10,12 @@ import be.ugent.maf.cellmissy.gui.controller.load.cellmia.LoadExperimentFromCell
 import be.ugent.maf.cellmissy.gui.controller.analysis.DataAnalysisController;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
-import be.ugent.maf.cellmissy.gui.HomePanel;
 import be.ugent.maf.cellmissy.gui.project.NewProjectDialog;
 import be.ugent.maf.cellmissy.gui.project.OverviewProjectsDialog;
 import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.CardLayout;
 import java.awt.Cursor;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -50,11 +49,14 @@ public class CellMissyController {
 
     private static final Logger LOG = Logger.getLogger(CellMissyController.class);
     // model
+    private boolean firstSetup;
+    private boolean firstDataAnalysis;
+    private boolean firstLoadingFromCellMia;
+    private boolean firstLoadingFromGenericInput;
     //view
     //main frame
     CellMissyFrame cellMissyFrame;
     // subviews
-    private HomePanel homePanel;
     private NewProjectDialog newProjectDialog;
     private OverviewProjectsDialog overviewProjectsDialog;
     //child controllers
@@ -70,7 +72,6 @@ public class CellMissyController {
     private LoadExperimentFromGenericInputController loadExperimentFromGenericInputController;
     @Autowired
     private DataAnalysisController dataAnalysisController;
-    private GridBagConstraints gridBagConstraints;
     private BindingGroup bindingGroup;
     // services
 
@@ -110,16 +111,17 @@ public class CellMissyController {
 
         //workaround for betterbeansbinding logging issue
         org.jdesktop.beansbinding.util.logging.Logger.getLogger(ELProperty.class.getName()).setLevel(Level.SEVERE);
-        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
 
         //create main frame and set its title
         cellMissyFrame = new CellMissyFrame();
         cellMissyFrame.setTitle("CellMissy");
-
-        // add main panel with background
-        homePanel = new HomePanel();
-        cellMissyFrame.getBackgroundPanel().add(homePanel, gridBagConstraints);
-
+        // at starter, show main panel with logo
+        getCardLayout().first(cellMissyFrame.getBackgroundPanel());
+        // init booleans to true
+        firstSetup = true;
+        firstDataAnalysis = true;
+        firstLoadingFromCellMia = true;
+        firstLoadingFromGenericInput = true;
         //init child controllers
         setupExperimentController.init();
         loadExperimentFromCellMiaController.init();
@@ -335,42 +337,95 @@ public class CellMissyController {
         @Override
         public void actionPerformed(ActionEvent e) {
             String menuItemText = ((JMenuItem) e.getSource()).getText();
-            if (menuItemText.equalsIgnoreCase("user management")) {
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), userManagementController.getUserPanel(), setupExperimentController.getSetupExperimentPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), userManagementController.getUserPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), userManagementController.getUserPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), userManagementController.getUserPanel(), dataAnalysisController.getAnalysisExperimentPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), userManagementController.getUserPanel(), homePanel);
-
-            } else if (menuItemText.equalsIgnoreCase("create experiment...")) {
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), userManagementController.getUserPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), dataAnalysisController.getAnalysisExperimentPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), setupExperimentController.getSetupExperimentPanel(), homePanel);
-
-            } else if (menuItemText.equalsIgnoreCase("data analysis")) {
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getAnalysisExperimentPanel(), setupExperimentController.getSetupExperimentPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getAnalysisExperimentPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getAnalysisExperimentPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getAnalysisExperimentPanel(), userManagementController.getUserPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), dataAnalysisController.getAnalysisExperimentPanel(), homePanel);
-
-            } else if (menuItemText.equalsIgnoreCase("... from CELLMIA")) {
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel(), setupExperimentController.getSetupExperimentPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel(), dataAnalysisController.getAnalysisExperimentPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel(), userManagementController.getUserPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel(), homePanel);
-
-            } else if (menuItemText.equalsIgnoreCase("... from generic input")) {
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel(), loadExperimentFromCellMiaController.getLoadFromCellMiaPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel(), setupExperimentController.getSetupExperimentPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel(), dataAnalysisController.getAnalysisExperimentPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel(), userManagementController.getUserPanel());
-                GuiUtils.switchChildPanels(cellMissyFrame.getBackgroundPanel(), loadExperimentFromGenericInputController.getLoadFromGenericInputPanel(), homePanel);
+            if (menuItemText.equalsIgnoreCase("user management") && switchCard(menuItemText)) {
+                userManagementController.resetAfterCardSwitch();
+                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getUserParentPanel().getName());
+            } else if (menuItemText.equalsIgnoreCase("create experiment...") && switchCard(menuItemText)) {
+                if (!firstSetup) {
+                    setupExperimentController.resetAfterCardSwitch();
+                }
+                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getSetupExperimentParentPanel().getName());
+                firstSetup = false;
+            } else if (menuItemText.equalsIgnoreCase("data analysis") && switchCard(menuItemText)) {
+                if (!firstDataAnalysis) {
+                    dataAnalysisController.resetAfterCardSwitch();
+                }
+                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAnalysisExperimentParentPanel().getName());
+                firstDataAnalysis = false;
+            } else if (menuItemText.equalsIgnoreCase("... from CELLMIA") && switchCard(menuItemText)) {
+                if (!firstLoadingFromCellMia) {
+                    loadExperimentFromCellMiaController.resetAfterCardSwitch();
+                }
+                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromCellMiaParentPanel().getName());
+                firstLoadingFromCellMia = false;
+            } else if (menuItemText.equalsIgnoreCase("... from generic input") && switchCard(menuItemText)) {
+                if (!firstLoadingFromGenericInput) {
+                    loadExperimentFromGenericInputController.resetAfterCardSwitch();
+                }
+                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromGenericInputParentPanel().getName());
+                firstLoadingFromGenericInput = false;
             }
-            cellMissyFrame.getBackgroundPanel().repaint();
+        }
+    }
+
+    /**
+     * On card switch: if current data is not saved, ask the user if he wants to change the view
+     */
+    private boolean switchCard(String menuItemText) {
+        int showOptionDialog = 0;
+        Object[] options = {"Yes", "No"};
+        String currentCardName = GuiUtils.getCurrentCardName(cellMissyFrame.getBackgroundPanel());
+        switch (currentCardName) {
+            case "userParentPanel":
+                if (menuItemText.equalsIgnoreCase("user management")) {
+                    return false;
+                } else if (userManagementController.userInfoIsSaved()) {
+                    return true;
+                } else {
+                    showOptionDialog = JOptionPane.showOptionDialog(null, "Current changes won't be saved! Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                }
+                break;
+            case "setupExperimentParentPanel":
+                if (menuItemText.equalsIgnoreCase("create experiment...")) {
+                    return false;
+                } else if (!setupExperimentController.setupWasSaved()) {
+                    showOptionDialog = JOptionPane.showOptionDialog(null, "Do you really want to leave this experimental set up?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                } else {
+                    return true;
+                }
+                break;
+            case "loadFromCellMiaParentPanel":
+                if (menuItemText.equalsIgnoreCase("... from CELLMIA")) {
+                    return false;
+                } else if (!loadExperimentFromCellMiaController.loadingWasSaved()) {
+                    showOptionDialog = JOptionPane.showOptionDialog(null, "Data won't be saved! Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                } else {
+                    return true;
+                }
+                break;
+            case "loadFromGenericInputParentPanel":
+                if (menuItemText.equalsIgnoreCase("... from generic input")) {
+                    return false;
+                } else if (!loadExperimentFromGenericInputController.loadingWasSaved()) {
+                    showOptionDialog = JOptionPane.showOptionDialog(null, "Data won't be saved! Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                } else {
+                    return true;
+                }
+                break;
+            case "analysisExperimentParentPanel":
+                if (menuItemText.equalsIgnoreCase("data analysis")) {
+                    return false;
+                } else if (dataAnalysisController.analysisWasStarted()) {
+                    showOptionDialog = JOptionPane.showOptionDialog(null, "Do you really want to end this data analysis session?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                } else {
+                    return true;
+                }
+                break;
+        }
+        if (showOptionDialog == 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -389,6 +444,14 @@ public class CellMissyController {
                     break;
             }
         }
+    }
+
+    /**
+     *
+     * @return
+     */
+    private CardLayout getCardLayout() {
+        return (CardLayout) cellMissyFrame.getBackgroundPanel().getLayout();
     }
 
     /**

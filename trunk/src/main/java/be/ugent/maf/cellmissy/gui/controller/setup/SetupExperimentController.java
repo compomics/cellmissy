@@ -83,6 +83,7 @@ public class SetupExperimentController {
     private ObservableList<Magnification> magnificationBindingList;
     private BindingGroup bindingGroup;
     private File mainDirectory;
+    private boolean experimentalSetupHasBeenSaved;
     //view
     private SetupExperimentPanel setupExperimentPanel;
     private ExperimentInfoPanel experimentInfoPanel;
@@ -113,7 +114,7 @@ public class SetupExperimentController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         mainDirectory = new File(PropertiesConfigurationHolder.getInstance().getString("mainDirectory"));
         experimentService.init(mainDirectory);
-
+        experimentalSetupHasBeenSaved = false;
         //create panels
         experimentInfoPanel = new ExperimentInfoPanel();
         setupExperimentPanel = new SetupExperimentPanel();
@@ -222,6 +223,64 @@ public class SetupExperimentController {
     public void createNewProject(int projectNumber, String projectDescription) {
         Project savedProject = projectService.setupProject(projectNumber, projectDescription, mainDirectory);
         projectBindingList.add(savedProject);
+    }
+
+    public ObservableList<PlateCondition> getPlateConditionBindingList() {
+        return setupConditionsController.getPlateConditionBindingList();
+    }
+
+    /**
+     * Check if current set up has being saved
+     *
+     * @return
+     */
+    public boolean setupWasSaved() {
+        boolean saved = true;
+        String numberText = experimentInfoPanel.getNumberTextField().getText();
+        String purposeText = experimentInfoPanel.getPurposeTextArea().getText();
+        if (experiment == null && (!numberText.isEmpty() | !purposeText.isEmpty())) {
+            saved = false;
+        } else if (experiment != null && !experimentalSetupHasBeenSaved) {
+            saved = false;
+        }
+        return saved;
+    }
+
+    /**
+     * Called in the main controller, reset views and models if another view has being shown
+     */
+    public void resetAfterCardSwitch() {
+        // set experiment back to null
+        experiment = null;
+        experimentalSetupHasBeenSaved = false;
+        // disable finish button
+        setupExperimentPanel.getFinishButton().setEnabled(false);
+        // reset experiment info text fields
+        experimentInfoPanel.getNumberTextField().setText("");
+        experimentInfoPanel.getPurposeTextArea().setText("");
+        // clear selection on both project and experiment lists
+        overviewPanel.getProjectJList().clearSelection();
+        overviewPanel.getExperimentJList().clearSelection();
+        // clear also experiments list, if not null
+        if (experimentBindingList != null) {
+            experimentBindingList.clear();
+        }
+        // clear plate
+        setupPlateController.onClearPlate();
+        setupPlateController.removeAllRectangleEntries();
+
+        // and then empty plate condition list
+        setupConditionsController.getPlateConditionBindingList().clear();
+        // reset condition indexes
+        setupConditionsController.resetConditionIndexes();
+        // create first, default condition and add it to the list
+        PlateCondition firstCondition = setupConditionsController.createFirstCondition();
+        setupConditionsController.getPlateConditionBindingList().add(firstCondition);
+        onNewConditionAdded(firstCondition);
+        // empty treatment list
+        setupConditionsController.getTreatmentBindingList().clear();
+        // show again metadata (first) panel
+        onPrevious();
     }
 
     /**
@@ -496,14 +555,7 @@ public class SetupExperimentController {
         setupExperimentPanel.getPreviousButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), experimentInfoPanel, setupPanel);
-                cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and provide microscope/experiment data");
-                setupExperimentPanel.getPreviousButton().setEnabled(false);
-                setupExperimentPanel.getNextButton().setEnabled(true);
-                setupExperimentPanel.getFinishButton().setVisible(false);
-                setupExperimentPanel.getReportButton().setVisible(false);
-                setupExperimentPanel.getTopPanel().revalidate();
-                setupExperimentPanel.getTopPanel().repaint();
+                onPrevious();
             }
         });
 
@@ -562,11 +614,14 @@ public class SetupExperimentController {
             public void actionPerformed(ActionEvent e) {
                 //save the new experiment to the DB
                 experimentService.save(experiment);
+                experimentalSetupHasBeenSaved = true;
                 //disable button
                 setupExperimentPanel.getFinishButton().setEnabled(false);
                 showMessage("Experiment was successfully saved to DB.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
             }
         });
+
+        cellMissyController.getCellMissyFrame().getSetupExperimentParentPanel().add(setupExperimentPanel, gridBagConstraints);
     }
 
     /**
@@ -612,6 +667,20 @@ public class SetupExperimentController {
         setupPanel.getProjNumberLabel().setText(experiment.getProject().toString());
         setupPanel.getExpNumberLabel().setText(experiment.toString());
         setupPanel.getExpPurposeLabel().setText(experiment.getPurpose());
+    }
+
+    /**
+     * On previous action
+     */
+    private void onPrevious() {
+        GuiUtils.switchChildPanels(setupExperimentPanel.getTopPanel(), experimentInfoPanel, setupPanel);
+        cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and provide microscope/experiment data");
+        setupExperimentPanel.getPreviousButton().setEnabled(false);
+        setupExperimentPanel.getNextButton().setEnabled(true);
+        setupExperimentPanel.getFinishButton().setVisible(false);
+        setupExperimentPanel.getReportButton().setVisible(false);
+        setupExperimentPanel.getTopPanel().revalidate();
+        setupExperimentPanel.getTopPanel().repaint();
     }
 
     /**

@@ -77,6 +77,10 @@ public class GenericExperimentDataController {
         return loadFromGenericInputMetadataPanel;
     }
 
+    public ObservableList<Experiment> getExperimentBindingList() {
+        return experimentBindingList;
+    }
+
     /**
      * Initialize Experiment metadata panel
      */
@@ -112,24 +116,12 @@ public class GenericExperimentDataController {
                 int locationToIndex = loadFromGenericInputMetadataPanel.getProjectJList().locationToIndex(e.getPoint());
                 Project selectedProject = projectBindingList.get(locationToIndex);
                 if (loadExperimentFromGenericInputController.getExperiment() == null) {
-                    // project is being selected for the first time
+                    // if experiment is still null, project is being selected for the first time
                     onSelectedProject(selectedProject);
-                } else if (!loadExperimentFromGenericInputController.getExperiment().getProject().equals(selectedProject)) {
-                    // another project has been selected, different from current one: warn the user!
-                    Object[] options = {"Yes", "No"};
-                    int showOptionDialog = JOptionPane.showOptionDialog(null, "Current data will not be saved.\nContinue with another project?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-                    switch (showOptionDialog) {
-                        case 0:
-                            // another project is selected, reset objects and move on new project
-                            resetOnANewProject();
-                            onSelectedProject(selectedProject);
-                            break;
-                        case 1:
-                            // ignore selection and select previous (current) prject
-                            Project currentProject = loadExperimentFromGenericInputController.getExperiment().getProject();
-                            loadFromGenericInputMetadataPanel.getProjectJList().setSelectedIndex(projectBindingList.indexOf(currentProject));
-                            break;
-                    }
+                    // if experiment is not null and a different project is selected, reset redo on selected project
+                } else if (loadExperimentFromGenericInputController.getExperiment() != null && !loadExperimentFromGenericInputController.getExperiment().getProject().equals(selectedProject)) {
+                    resetOnANewProject();
+                    onSelectedProject(selectedProject);
                 }
 
             }
@@ -142,27 +134,14 @@ public class GenericExperimentDataController {
                 // retrieve selected experiment
                 int locationToIndex = loadFromGenericInputMetadataPanel.getExperimentJList().locationToIndex(e.getPoint());
                 Experiment selectedExperiment = experimentBindingList.get(locationToIndex);
-                // check if experiment is still null, then set it, otherwise warn the user, because an experiment was already chosen and import was started
-                if (loadExperimentFromGenericInputController.getExperiment() == null) {
-                    // experiment is being selected for the first time
+                if (selectedExperiment != null && loadExperimentFromGenericInputController.getExperiment() == null) {
+                    // if the experiment is still null, it is being selected for the first time
                     onSelectedExperiment(selectedExperiment);
-                } else if (loadExperimentFromGenericInputController.getExperiment() != selectedExperiment) {
-                    // another experiment has been selected, different from current one: warn the user!
-                    Object[] options = {"Yes", "No"};
-                    int showOptionDialog = JOptionPane.showOptionDialog(null, "Current data will not be saved.\nContinue with another experiment?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-                    // if YES, user wants to delete existing file and replace it
-                    switch (showOptionDialog) {
-                        case 0:
-                            // another experiment will be processed (previously data not stored)
-                            resetOnANewExperiment();
-                            onSelectedExperiment(selectedExperiment);
-                            break;
-                        case 1:
-                            // ignore selection and select previous experiment
-                            Experiment currentExperiment = loadExperimentFromGenericInputController.getExperiment();
-                            loadFromGenericInputMetadataPanel.getExperimentJList().setSelectedIndex(experimentBindingList.indexOf(currentExperiment));
-                    }
-                } 
+                    // otherwise, if a different experiment has being selected, reset and recall the onselected experiment
+                } else if (selectedExperiment != null && loadExperimentFromGenericInputController.getExperiment().equals(selectedExperiment)) {
+                    resetOnANewExperiment();
+                    onSelectedExperiment(selectedExperiment);
+                }
             }
         });
     }
@@ -171,11 +150,11 @@ public class GenericExperimentDataController {
      * Reset after having chosen a new project
      */
     private void resetOnANewProject() {
-        // reset conditions list and plate view
+        // resetData conditions list and plate view
         loadExperimentFromGenericInputController.setExperiment(null);
         loadExperimentFromGenericInputController.getLoadFromGenericInputPlatePanel().getConditionsList().setCellRenderer(null);
         loadExperimentFromGenericInputController.getImagedPlatePanel().setExperiment(null);
-        loadExperimentFromGenericInputController.reset();
+        loadExperimentFromGenericInputController.resetData();
         resetExperimentMetadataFields();
     }
 
@@ -183,14 +162,14 @@ public class GenericExperimentDataController {
      * Reset after having chosen a new experiment
      */
     private void resetOnANewExperiment() {
-        loadExperimentFromGenericInputController.reset();
+        loadExperimentFromGenericInputController.resetData();
         resetExperimentMetadataFields();
     }
-    
+
     /**
      * Reset text fields of experiment after user has selected a different experiment
      */
-    private void resetExperimentMetadataFields(){
+    private void resetExperimentMetadataFields() {
         loadFromGenericInputMetadataPanel.getTimeFramesTextField().setText("");
         loadFromGenericInputMetadataPanel.getIntervalTextField().setText("");
         loadFromGenericInputMetadataPanel.getDurationTextField().setText("");

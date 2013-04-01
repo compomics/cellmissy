@@ -86,6 +86,7 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
+        purposeTextArea.setEditable(false);
         purposeTextArea.setColumns(20);
         purposeTextArea.setRows(5);
         jScrollPane1.setViewportView(purposeTextArea);

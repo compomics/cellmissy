@@ -69,6 +69,7 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         this.startPoint = startPoint;
     }
 
+    @Override
     public List<WellGui> getWellGuiList() {
         return wellGuiList;
     }

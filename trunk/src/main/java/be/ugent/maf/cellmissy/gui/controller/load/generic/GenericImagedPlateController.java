@@ -138,10 +138,10 @@ public class GenericImagedPlateController {
     /**
      * Reset data loading and plate view (e.g. if user was importing data from a wrong folder and so on..) The user is warned first, this should be used carefully!!
      */
-    public void reset() {
+    public void resetData() {
         // empty timesteps list
         timeStepsBindingList.clear();
-        // reset view on the plate
+        // resetData view on the plate
         // empty wellhasimagingtype collection of each well
         List<WellGui> wellGuiList = imagedPlatePanel.getWellGuiList();
         for (WellGui wellGui : wellGuiList) {
