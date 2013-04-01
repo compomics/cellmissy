@@ -220,6 +220,26 @@ public class DataAnalysisController {
     }
 
     /**
+     * Check if current analysis has been saved before leaving the view
+     *
+     * @return
+     */
+    public boolean analysisWasStarted() {
+        if (experiment != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Called in the main controller, reset views and models if another view has being shown
+     */
+    public void resetAfterCardSwitch() {
+        onCancel();
+    }
+
+    /**
      * Fetch time steps objects from DB, update TimeStepList according to Plate Condition
      *
      * @param plateCondition
@@ -457,6 +477,8 @@ public class DataAnalysisController {
                 }
             }
         });
+
+        cellMissyController.getCellMissyFrame().getAnalysisExperimentParentPanel().add(analysisExperimentPanel, gridBagConstraints);
     }
 
     /**
@@ -464,12 +486,18 @@ public class DataAnalysisController {
      */
     private void onCancel() {
         areaPreProcessingController.resetOnCancel();
-
         String message = "Please select a project and an experiment to analyse motility data.";
         showInfoMessage(message);
         algorithmBindingList.clear();
         imagingTypeBindingList.clear();
-        plateConditionList.clear();
+        // clear plate conditions list, if not null
+        if (plateConditionList != null) {
+            plateConditionList.clear();
+        }
+        areaAnalysisController.getGroupsBindingList().clear();
+        // clear selection on lists
+        metaDataAnalysisPanel.getProjectJList().clearSelection();
+        metaDataAnalysisPanel.getExperimentJList().clearSelection();        
         areaPreProcessingController.getPreProcessingMap().clear();
         currentCondition = null;
         experiment = null;

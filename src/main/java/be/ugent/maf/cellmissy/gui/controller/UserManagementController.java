@@ -8,12 +8,16 @@ import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.user.UserPanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.UsersListRenderer;
 import be.ugent.maf.cellmissy.service.UserService;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import javax.persistence.PersistenceException;
 import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -36,6 +40,7 @@ import org.springframework.stereotype.Controller;
 @Controller("userManagementController")
 public class UserManagementController {
 
+    private static final Logger LOG = Logger.getLogger(UserManagementController.class);
     //model
     private User newUser;
     private ObservableList<User> userBindingList;
@@ -48,6 +53,7 @@ public class UserManagementController {
     //services
     @Autowired
     private UserService userService;
+    private GridBagConstraints gridBagConstraints;
 
     /**
      * initialize controller
@@ -57,6 +63,7 @@ public class UserManagementController {
         //create a new user panel and init view
         userPanel = new UserPanel();
         newUser = new User();
+        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         initUserPanel();
     }
 
@@ -83,6 +90,32 @@ public class UserManagementController {
     }
 
     /**
+     *
+     * @return
+     */
+    public boolean userInfoIsSaved() {
+        String userEmailText = userPanel.getCreateUserEmailTextField().getText();
+        String userFirstNameText = userPanel.getCreateUserFirstNameTextField().getText();
+        String userLastNameText = userPanel.getCreateUserLastNameTextField().getText();
+        char[] password = userPanel.getPasswordField().getPassword();
+        // check if some of these text fields contain information that have not been stored yet
+        if (((userEmailText.isEmpty() && userFirstNameText.isEmpty()) && userLastNameText.isEmpty()) && password.length == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Called in the main controller, reset fields if another view is being shown
+     */
+    public void resetAfterCardSwitch() {
+        resetCreateUserTextFields();
+        userPanel.getSearchUserFirstNameTextField().setText("");
+        userPanel.getSearchUserLastNameTextField().setText("");
+    }
+
+    /**
      * initialize User Panel
      */
     private void initUserPanel() {
@@ -90,6 +123,8 @@ public class UserManagementController {
         userBindingList = ObservableCollections.observableList(userService.findAll());
         JListBinding userListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, userBindingList, userPanel.getUserJList());
         bindingGroup.addBinding(userListBinding);
+
+        userPanel.getUserJList().setCellRenderer(new UsersListRenderer());
 
         //init user binding
         //bind email
@@ -123,7 +158,8 @@ public class UserManagementController {
                         resetCreateUserTextFields();
                         cellMissyController.showMessage("User inserted!", "user inserted into DB", JOptionPane.INFORMATION_MESSAGE);
                     } // handle ConstraintViolationException(UniqueConstraint)
-                    catch (PersistenceException persistenceException) {
+                    catch (PersistenceException ex) {
+                        LOG.error(ex.getMessage());
                         String message = "User already present in the db";
                         cellMissyController.showMessage(message, "Error in persisting user", JOptionPane.INFORMATION_MESSAGE);
                         resetCreateUserTextFields();
@@ -191,9 +227,6 @@ public class UserManagementController {
                 if (userPanel.getUserJList().getSelectedValue() != null) {
                     userService.delete((User) userPanel.getUserJList().getSelectedValue());
                     userBindingList.remove((User) userPanel.getUserJList().getSelectedValue());
-                    userPanel.getDeleteUserFirstNameTextField().setText("");
-                    userPanel.getDeleteUserLastNameTextField().setText("");
-                    userPanel.getDeleteUserEmailTextField().setText("");
                 } else {
                     String message = "Please select a user to delete";
                     cellMissyController.showMessage(message, "", JOptionPane.INFORMATION_MESSAGE);
@@ -207,6 +240,8 @@ public class UserManagementController {
         }
         //show standard user
         userPanel.getRoleComboBox().setSelectedIndex(1);
+
+        cellMissyController.getCellMissyFrame().getUserParentPanel().add(userPanel, gridBagConstraints);
     }
 
     /**

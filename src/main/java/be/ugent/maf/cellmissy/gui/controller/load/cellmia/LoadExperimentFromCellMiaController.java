@@ -47,6 +47,7 @@ public class LoadExperimentFromCellMiaController {
     private static final Logger LOG = Logger.getLogger(LoadExperimentFromCellMiaController.class);
     //model
     private Experiment experiment;
+    private boolean dataLoadingHasBeenSaved;
     //view
     private LoadFromCellMiaPanel loadFromCellMiaPanel;
     //parent controller
@@ -71,6 +72,7 @@ public class LoadExperimentFromCellMiaController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         // init main view
         loadFromCellMiaPanel = new LoadFromCellMiaPanel();
+        dataLoadingHasBeenSaved = false;
         //init child controllers
         cellMiaImagedPlateController.init();
         cellMiaExperimentDataController.init();
@@ -115,6 +117,34 @@ public class LoadExperimentFromCellMiaController {
 
     public ImagedPlatePanel getImagedPlatePanel() {
         return cellMiaImagedPlateController.getImagedPlatePanel();
+    }
+
+    /**
+     * Check if current analysis has been saved before leaving the view
+     *
+     * @return
+     */
+    public boolean loadingWasSaved() {
+        boolean saved = true;
+        if (experiment != null && !dataLoadingHasBeenSaved) {
+            saved = false;
+        }
+        return saved;
+    }
+
+    /**
+     * Called in the main controller, reset views and models if another view has being shown
+     */
+    public void resetAfterCardSwitch() {
+        experiment = null;
+        dataLoadingHasBeenSaved = false;
+        // clear selection on project list
+        cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel().getProjectJList().clearSelection();
+        cellMiaExperimentDataController.getExperimentBindingList().clear();
+        cellMiaExperimentDataController.resetAfterUserInteraction();
+        // swap views
+        GuiUtils.switchChildPanels(loadFromCellMiaPanel.getTopPanel(), cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel(), cellMiaImagedPlateController.getLoadFromCellMiaPlatePanel());
+        cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Select a project and then an experiment in progress to load CELLMIA data.");
     }
 
     /*
@@ -213,6 +243,7 @@ public class LoadExperimentFromCellMiaController {
                 loadFromCellMiaPlatePanel.getExpNumberLabel().setText(experiment.toString());
                 loadFromCellMiaPlatePanel.getPurposeTextArea().setText(experiment.getPurpose());
                 GuiUtils.switchChildPanels(loadFromCellMiaPanel.getTopPanel(), loadFromCellMiaPlatePanel, cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel());
+                loadFromCellMiaPanel.getTopPanel().repaint();
                 loadFromCellMiaPanel.getForwardButton().setEnabled(true);
                 loadFromCellMiaPanel.getStartButton().setEnabled(false);
             }
@@ -267,6 +298,7 @@ public class LoadExperimentFromCellMiaController {
         });
         // add main view to top panel
         loadFromCellMiaPanel.getTopPanel().add(cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel(), gridBagConstraints);
+        cellMissyController.getCellMissyFrame().getLoadFromCellMiaParentPanel().add(loadFromCellMiaPanel, gridBagConstraints);
     }
 
     /**
@@ -347,6 +379,7 @@ public class LoadExperimentFromCellMiaController {
         protected void done() {
             try {
                 get();
+                dataLoadingHasBeenSaved = true;
                 //show back default cursor and hide the progress bar
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 loadFromCellMiaPanel.getSaveDataProgressBar().setVisible(false);

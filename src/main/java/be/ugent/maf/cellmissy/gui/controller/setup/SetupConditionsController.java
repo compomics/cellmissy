@@ -117,6 +117,15 @@ public class SetupConditionsController {
         return previousConditionIndex;
     }
 
+    public ObservableList<Treatment> getTreatmentBindingList() {
+        return treatmentsController.getTreatmentBindingList();
+    }
+
+    public void resetConditionIndexes() {
+        conditionIndex = 0;
+        previousConditionIndex = -1;
+    }
+
     /**
      * public methods
      *
@@ -138,7 +147,7 @@ public class SetupConditionsController {
      * show a message through the main frame (CellMissy frame)
      *
      * @param message
-     * @param title 
+     * @param title
      * @param messageType
      */
     public void showMessage(String message, String title, Integer messageType) {
@@ -182,6 +191,17 @@ public class SetupConditionsController {
             }
         }
         return messages;
+    }
+
+    /**
+     * Create and initialize the first condition
+     *
+     * @return
+     */
+    public PlateCondition createFirstCondition() {
+        PlateCondition firstCondition = new PlateCondition();
+        initFirstCondition(firstCondition);
+        return firstCondition;
     }
 
     /**
@@ -302,8 +322,7 @@ public class SetupConditionsController {
         bindingGroup.bind();
 
         //create and init the first condition (Condition 1)
-        PlateCondition firstCondition = new PlateCondition();
-        initFirstCondition(firstCondition);
+        PlateCondition firstCondition = createFirstCondition();
         //add Condition 1 to the list
         plateConditionBindingList.add(firstCondition);
 

@@ -47,6 +47,7 @@ public class LoadExperimentFromGenericInputController {
     private static final Logger LOG = Logger.getLogger(LoadExperimentFromGenericInputController.class);
     //model
     private Experiment experiment;
+    private boolean dataLoadingHasBeenSaved;
     //view
     private LoadFromGenericInputPanel loadFromGenericInputPanel;
     //parent controller
@@ -69,6 +70,7 @@ public class LoadExperimentFromGenericInputController {
     public void init() {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         loadFromGenericInputPanel = new LoadFromGenericInputPanel();
+        dataLoadingHasBeenSaved = false;
         //init child controllers
         genericExperimentDataController.init();
         genericImagedPlateController.init();
@@ -117,9 +119,46 @@ public class LoadExperimentFromGenericInputController {
         return cellMissyController.getCellMissyFrame();
     }
 
-    // reset everything
-    public void reset() {
-        genericImagedPlateController.reset();
+    // resetData everything
+    public void resetData() {
+        genericImagedPlateController.resetData();
+    }
+
+    /**
+     * Check if current analysis has been saved before leaving the view
+     *
+     * @return
+     */
+    public boolean loadingWasSaved() {
+        boolean saved = true;
+        if (experiment != null && !dataLoadingHasBeenSaved) {
+            saved = false;
+        }
+        return saved;
+    }
+
+    /**
+     * Called in the main controller, resetData views and models if another view has being shown
+     */
+    public void resetAfterCardSwitch() {
+        experiment = null;
+        dataLoadingHasBeenSaved = false;
+        // clear selection on project list
+        genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getProjectJList().clearSelection();
+        // clear experiment list
+        if (genericExperimentDataController.getExperimentBindingList() != null) {
+            genericExperimentDataController.getExperimentBindingList().clear();
+        }
+        resetData();
+        // reset text fields
+        genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getDurationTextField().setText("");
+        genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getIntervalTextField().setText("");
+        genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getTimeFramesTextField().setText("");
+        // swap views
+        GuiUtils.switchChildPanels(loadFromGenericInputPanel.getTopPanel(), genericExperimentDataController.getLoadFromGenericInputMetadataPanel(), genericImagedPlateController.getLoadFromGenericInputPlatePanel());
+        loadFromGenericInputPanel.getTopPanel().repaint();
+        loadFromGenericInputPanel.getTopPanel().revalidate();
+        loadFromGenericInputPanel.getStartButton().setEnabled(false);
     }
 
     /**
@@ -160,6 +199,8 @@ public class LoadExperimentFromGenericInputController {
                     loadFromGenericInputPlatePanel.getExpNumberLabel().setText(experiment.toString());
                     loadFromGenericInputPlatePanel.getPurposeTextArea().setText(experiment.getPurpose());
                     GuiUtils.switchChildPanels(loadFromGenericInputPanel.getTopPanel(), loadFromGenericInputPlatePanel, genericExperimentDataController.getLoadFromGenericInputMetadataPanel());
+                    loadFromGenericInputPanel.getTopPanel().repaint();
+                    loadFromGenericInputPanel.getTopPanel().revalidate();
                     loadFromGenericInputPanel.getStartButton().setEnabled(false);
                 } else {
                     String message = "";
@@ -184,7 +225,7 @@ public class LoadExperimentFromGenericInputController {
                 switch (showOptionDialog) {
                     case 0:
                         // keep on resetting the view
-                        reset();
+                        resetData();
                         break;
                     case 1:
                         break;
@@ -229,6 +270,7 @@ public class LoadExperimentFromGenericInputController {
         });
         // add main view on top panel
         loadFromGenericInputPanel.getTopPanel().add(genericExperimentDataController.getLoadFromGenericInputMetadataPanel(), gridBagConstraints);
+        cellMissyController.getCellMissyFrame().getLoadFromGenericInputParentPanel().add(loadFromGenericInputPanel, gridBagConstraints);
     }
 
     /**
@@ -278,6 +320,7 @@ public class LoadExperimentFromGenericInputController {
         protected void done() {
             try {
                 get();
+                dataLoadingHasBeenSaved = true;
                 //show back default cursor and hide the progress bar
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 loadFromGenericInputPanel.getSaveDataProgressBar().setVisible(false);

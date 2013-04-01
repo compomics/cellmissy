@@ -31,8 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Setup Plate Panel Controller: set up plate view during experiment design
- * Parent Controller: Setup Experiment Panel Controller
+ * Setup Plate Panel Controller: set up plate view during experiment design Parent Controller: Setup Experiment Panel Controller
+ *
  * @author Paola
  */
 @Controller("setupPlateController")
@@ -67,8 +67,8 @@ public class SetupPlateController {
 
     /**
      * setters and getters
-     * 
-     * @return 
+     *
+     * @return
      */
     public SetupPlatePanel getSetupPlatePanel() {
         return setupPlatePanel;
@@ -80,10 +80,11 @@ public class SetupPlateController {
 
     /**
      * public methods
-     *  
+     *
      */
     /**
      * add to the map a new entry: new condition-empty list of rectangles
+     *
      * @param conditionToAdd added to the list
      */
     public void addNewRectangleEntry(PlateCondition conditionToAdd) {
@@ -92,6 +93,7 @@ public class SetupPlateController {
 
     /**
      * remove from the map the list of rectangles of a condition that the user wants to delete
+     *
      * @param conditionToRemove from the list
      */
     public void removeRectangleEntry(PlateCondition conditionToRemove) {
@@ -99,8 +101,18 @@ public class SetupPlateController {
     }
 
     /**
+     * remove from the map the list of rectangles of all conditions
+     */
+    public void removeAllRectangleEntries() {
+        for (PlateCondition plateCondition : setupExperimentController.getPlateConditionBindingList()) {
+            removeRectangleEntry(plateCondition);
+        }
+    }
+
+    /**
      * Check that every well selected has a plate condition assigned!!
-     * @return 
+     *
+     * @return
      */
     public boolean validateWells() {
         boolean isValid = true;
@@ -129,6 +141,23 @@ public class SetupPlateController {
     }
 
     /**
+     * On clear the entire plate selections
+     */
+    public void onClearPlate() {
+        //reset to null the conditions of all the wells
+        setupExperimentController.resetAllWellsCondition();
+        //remove all the rectangles from the map and call the repaint
+        for (List<Rectangle> rectangleList : setupPlatePanel.getRectangles().values()) {
+            rectangleList.clear();
+        }
+        setupPlatePanel.repaint();
+        // set to null the rectangles of the wellguis
+        for (WellGui wellGui : setupPlatePanel.getWellGuiList()) {
+            wellGui.setRectangle(null);
+        }
+    }
+
+    /**
      * private methods and classes
      */
     /**
@@ -149,7 +178,6 @@ public class SetupPlateController {
          */
         //plate format combo box
         platePanelGui.getPlateFormatComboBox().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 PlateFormat selectedPlateFormat = plateFormatBindingList.get(platePanelGui.getPlateFormatComboBox().getSelectedIndex());
@@ -165,7 +193,6 @@ public class SetupPlateController {
 
         //clear last selection: clear rectangles of the last condition (condition is not removed)
         setupExperimentController.getSetupPanel().getClearLastButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 //reset to null the condition of the selected wells
@@ -178,16 +205,9 @@ public class SetupPlateController {
 
         //clear all selections: clear rectangles of all conditions (conditions are not removed)
         setupExperimentController.getSetupPanel().getClearAllButton().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
-                //reset to null the conditions of all the wells
-                setupExperimentController.resetAllWellsCondition();
-                //remove all the rectangles from the map and call the repaint
-                for (List<Rectangle> rectangleList : setupPlatePanel.getRectangles().values()) {
-                    rectangleList.clear();
-                }
-                setupPlatePanel.repaint();
+                onClearPlate();
             }
         });
 
