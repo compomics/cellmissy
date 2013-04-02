@@ -62,6 +62,7 @@ public class CellMissyParamsController {
      */
     public void init() {
         cellMissyConfigDialog = new CellMissyConfigDialog(loginController.getCellMissyFrame(), true);
+        cellMissyConfigDialog.setLocationRelativeTo(null);
         //init bindings
         bindingGroup = new BindingGroup();
         //table binding 
@@ -73,7 +74,7 @@ public class CellMissyParamsController {
         //Add column bindings
         JTableBinding.ColumnBinding columnBinding = tableBinding.addColumnBinding(ELProperty.create("${key}"));
         columnBinding.setColumnName("Parameter");
-        columnBinding.setEditable(Boolean.FALSE);
+        columnBinding.setEditable(false);
         columnBinding.setColumnClass(String.class);
 
         columnBinding = tableBinding.addColumnBinding(ELProperty.create("${value}"));
@@ -93,11 +94,12 @@ public class CellMissyParamsController {
             public void actionPerformed(ActionEvent e) {
                 //  check that properties are not left blank first
                 if (isValid()) {
+                    cellMissyConfigDialog.getParamsTable().getCellEditor().stopCellEditing();
                     try {
                         // save new properties
                         PropertiesConfigurationHolder.getInstance().save();
                         if (PropertyGuiWrapper.isTransactionPropertyChanged()) {
-                            JOptionPane.showMessageDialog(loginController.getLoginDialog(), "New DB properties have been saved.\nYou will now exit the application.\nPlease restart CellMissy in order to use the new settings.", "new properties saved", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(loginController.getLoginDialog(), "New (DB) properties have been saved.\nYou will now exit the application.\nPlease restart CellMissy in order to use the new settings.", "new properties saved", JOptionPane.INFORMATION_MESSAGE);
                             // exit the application
                             System.exit(0);
                         } else {

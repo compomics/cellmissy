@@ -11,9 +11,6 @@
 package be.ugent.maf.cellmissy.gui;
 
 import be.ugent.maf.cellmissy.gui.controller.CellMissyStarter;
-import be.ugent.maf.cellmissy.gui.experiment.load.cellmia.LoadFromCellMiaPanel;
-import be.ugent.maf.cellmissy.gui.experiment.load.generic.LoadFromGenericInputPanel;
-import be.ugent.maf.cellmissy.gui.experiment.setup.SetupExperimentPanel;
 import java.awt.Color;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -77,10 +74,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         return genericInputMenuItem;
     }
 
-    public JPanel getUserParentPanel() {
-        return userParentPanel;
-    }
-
     public JPanel getAnalysisExperimentParentPanel() {
         return analysisExperimentParentPanel;
     }
@@ -113,7 +106,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        userParentPanel = new javax.swing.JPanel();
         setupExperimentParentPanel = new javax.swing.JPanel();
         loadFromCellMiaParentPanel = new javax.swing.JPanel();
         loadFromGenericInputParentPanel = new javax.swing.JPanel();
@@ -189,13 +181,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         backgroundPanel.add(homePanel, "homePanel");
         homePanel.getAccessibleContext().setAccessibleName("homePanel");
-
-        userParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        userParentPanel.setName("userParentPanel"); // NOI18N
-        userParentPanel.setOpaque(false);
-        userParentPanel.setLayout(new java.awt.GridBagLayout());
-        backgroundPanel.add(userParentPanel, "userParentPanel");
-        userParentPanel.getAccessibleContext().setAccessibleName("userParentPanel");
 
         setupExperimentParentPanel.setBackground(new java.awt.Color(255, 255, 255));
         setupExperimentParentPanel.setName("setupExperimentParentPanel"); // NOI18N
@@ -365,6 +350,5 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JMenu projectMenu;
     private javax.swing.JPanel setupExperimentParentPanel;
     private javax.swing.JMenuItem userMenuItem;
-    private javax.swing.JPanel userParentPanel;
     // End of variables declaration//GEN-END:variables
 }
