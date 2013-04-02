@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Iterator;
 import java.util.logging.Level;
 import javax.persistence.PersistenceException;
 import javax.swing.Icon;
@@ -170,15 +171,17 @@ public class CellMissyController {
     /**
      * validate User
      *
+     * @param userToValidate
      * @return
      */
-    public boolean validateUser() {
+    public boolean validateUser(User userToValidate) {
         String message = "";
         boolean isValid = false;
-        if (userManagementController.validateUser().isEmpty()) {
+        if (userManagementController.validateUser(userToValidate).isEmpty()) {
             isValid = true;
         } else {
-            for (String string : userManagementController.validateUser()) {
+            for (Iterator<String> it = userManagementController.validateUser(userToValidate).iterator(); it.hasNext();) {
+                String string = it.next();
                 message += string + "\n";
             }
             showMessage(message, "Error in user validation", JOptionPane.WARNING_MESSAGE);
@@ -213,9 +216,23 @@ public class CellMissyController {
         cellMissyFrame.getUserMenuItem().setEnabled(true);
         cellMissyFrame.getNewProjectMenuItem().setEnabled(true);
         // user management
-        cellMissyFrame.getUserMenuItem().addActionListener(new ItemActionListener());
+        cellMissyFrame.getUserMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                userManagementController.showUserManagementDialog();
+            }
+        });
         // create a new  project
-        cellMissyFrame.getNewProjectMenuItem().addActionListener(new NewProjectActionListener());
+        cellMissyFrame.getNewProjectMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                newProjectDialog.getProjectNumberTextField().setText("");
+                newProjectDialog.getDescriptionTextArea().setText("");
+                // show a newProjectDialog
+                newProjectDialog.pack();
+                newProjectDialog.setVisible(true);
+            }
+        });
     }
 
     /**
@@ -241,7 +258,6 @@ public class CellMissyController {
     private void initMainFrame() {
         // add action listeners to MenuBar
         ItemActionListener itemActionListener = new ItemActionListener();
-
         // experiment manager (set up)
         cellMissyFrame.getNewExperimentMenuItem().addActionListener(itemActionListener);
         // import data from cell mia
@@ -251,9 +267,29 @@ public class CellMissyController {
         // data analysis
         cellMissyFrame.getDataAnalysisMenuItem().addActionListener(itemActionListener);
         // exit the application
-        cellMissyFrame.getExitMenuItem().addActionListener(new ExitActionListener());
+        cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int option = JOptionPane.showConfirmDialog(cellMissyFrame, "Exit from application?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                switch (option) {
+                    case JOptionPane.YES_OPTION:
+                        System.exit(0);
+                    case JOptionPane.NO_OPTION:
+                        break;
+                }
+            }
+        });
+
         // view all projects/experiments
-        cellMissyFrame.getAllProjectsMenuItem().addActionListener(new OverviewActionListener());
+        cellMissyFrame.getAllProjectsMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // show a overviewProjectsDialog
+                overviewProjectsDialog.pack();
+                overviewProjectsDialog.setVisible(true);
+            }
+        });
+
         // customize dialog
         newProjectDialog = new NewProjectDialog(cellMissyFrame, true);
         overviewProjectsDialog = new OverviewProjectsDialog(cellMissyFrame, true);
@@ -281,9 +317,11 @@ public class CellMissyController {
                         //project description is not mandatory
                         String projectDescription = newProjectDialog.getDescriptionTextArea().getText();
                         setupExperimentController.createNewProject(projectNumber, projectDescription);
+                        LOG.info("project " + projectNumber + " (" + projectDescription + ") " + "was created");
                         // creation of new project was successfull
                         showMessage("Project was created!", "Project created", JOptionPane.INFORMATION_MESSAGE);
                         newProjectDialog.getProjectNumberTextField().setText("");
+                        newProjectDialog.getDescriptionTextArea().setText("");
                     } catch (PersistenceException exception) {
                         showMessage("Project already present in the DB", "Error in persisting project", JOptionPane.WARNING_MESSAGE);
                         LOG.error(exception.getMessage());
@@ -337,10 +375,7 @@ public class CellMissyController {
         @Override
         public void actionPerformed(ActionEvent e) {
             String menuItemText = ((JMenuItem) e.getSource()).getText();
-            if (menuItemText.equalsIgnoreCase("user management") && switchCard(menuItemText)) {
-                userManagementController.resetAfterCardSwitch();
-                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getUserParentPanel().getName());
-            } else if (menuItemText.equalsIgnoreCase("create experiment...") && switchCard(menuItemText)) {
+            if (menuItemText.equalsIgnoreCase("create experiment...") && switchCard(menuItemText)) {
                 if (!firstSetup) {
                     setupExperimentController.resetAfterCardSwitch();
                 }
@@ -376,15 +411,6 @@ public class CellMissyController {
         Object[] options = {"Yes", "No"};
         String currentCardName = GuiUtils.getCurrentCardName(cellMissyFrame.getBackgroundPanel());
         switch (currentCardName) {
-            case "userParentPanel":
-                if (menuItemText.equalsIgnoreCase("user management")) {
-                    return false;
-                } else if (userManagementController.userInfoIsSaved()) {
-                    return true;
-                } else {
-                    showOptionDialog = JOptionPane.showOptionDialog(null, "Current changes won't be saved! Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-                }
-                break;
             case "setupExperimentParentPanel":
                 if (menuItemText.equalsIgnoreCase("create experiment...")) {
                     return false;
@@ -430,53 +456,10 @@ public class CellMissyController {
     }
 
     /**
-     * Action Listener for Exit MenuItem
-     */
-    private class ExitActionListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            int option = JOptionPane.showConfirmDialog(cellMissyFrame, "Exit from application?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            switch (option) {
-                case JOptionPane.YES_OPTION:
-                    System.exit(0);
-                case JOptionPane.NO_OPTION:
-                    break;
-            }
-        }
-    }
-
-    /**
      *
      * @return
      */
     private CardLayout getCardLayout() {
         return (CardLayout) cellMissyFrame.getBackgroundPanel().getLayout();
-    }
-
-    /**
-     * Show a Dialog to create a new project
-     */
-    private class NewProjectActionListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // show a newProjectDialog
-            newProjectDialog.pack();
-            newProjectDialog.setVisible(true);
-        }
-    }
-
-    /**
-     * Show Overview: projects/experiments
-     */
-    private class OverviewActionListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // show a overviewProjectsDialog
-            overviewProjectsDialog.pack();
-            overviewProjectsDialog.setVisible(true);
-        }
     }
 }

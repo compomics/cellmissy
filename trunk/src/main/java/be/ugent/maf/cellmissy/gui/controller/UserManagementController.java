@@ -6,16 +6,17 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.User;
+import be.ugent.maf.cellmissy.gui.user.UserManagementDialog;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
-import be.ugent.maf.cellmissy.gui.user.UserPanel;
-import be.ugent.maf.cellmissy.gui.view.renderer.UsersListRenderer;
 import be.ugent.maf.cellmissy.service.UserService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.persistence.PersistenceException;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -24,7 +25,6 @@ import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Binding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.ELProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JListBinding;
@@ -42,18 +42,16 @@ public class UserManagementController {
 
     private static final Logger LOG = Logger.getLogger(UserManagementController.class);
     //model
-    private User newUser;
     private ObservableList<User> userBindingList;
     private BindingGroup bindingGroup;
     //view
-    private UserPanel userPanel;
+    private UserManagementDialog userManagementDialog;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
     //services
     @Autowired
     private UserService userService;
-    private GridBagConstraints gridBagConstraints;
 
     /**
      * initialize controller
@@ -61,197 +59,189 @@ public class UserManagementController {
     public void init() {
         bindingGroup = new BindingGroup();
         //create a new user panel and init view
-        userPanel = new UserPanel();
-        newUser = new User();
-        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        initUserPanel();
-    }
-
-    /**
-     * getters and setters
-     *
-     * @return
-     */
-    public UserPanel getUserPanel() {
-        return userPanel;
-    }
-
-    public ObservableList<User> getUserBindingList() {
-        return userBindingList;
+        userManagementDialog = new UserManagementDialog(cellMissyController.cellMissyFrame, true);
+        // init main view
+        initUserManagementDialog();
     }
 
     /**
      * validate User
      *
+     * @param userToValidate
      * @return List of Messages to show to the user
      */
-    public List<String> validateUser() {
-        return ValidationUtils.validateObject(newUser);
+    public List<String> validateUser(User userToValidate) {
+        return ValidationUtils.validateObject(userToValidate);
     }
 
     /**
-     *
-     * @return
+     * Show user management dialog
      */
-    public boolean userInfoIsSaved() {
-        String userEmailText = userPanel.getCreateUserEmailTextField().getText();
-        String userFirstNameText = userPanel.getCreateUserFirstNameTextField().getText();
-        String userLastNameText = userPanel.getCreateUserLastNameTextField().getText();
-        char[] password = userPanel.getPasswordField().getPassword();
-        // check if some of these text fields contain information that have not been stored yet
-        if (((userEmailText.isEmpty() && userFirstNameText.isEmpty()) && userLastNameText.isEmpty()) && password.length == 0) {
-            return true;
-        } else {
-            return false;
-        }
+    public void showUserManagementDialog() {
+        userManagementDialog.pack();
+        GuiUtils.centerDialogOnFrame(cellMissyController.cellMissyFrame, userManagementDialog);
+        userManagementDialog.setVisible(true);
     }
 
     /**
      * Called in the main controller, reset fields if another view is being shown
      */
     public void resetAfterCardSwitch() {
-        resetCreateUserTextFields();
-        userPanel.getSearchUserFirstNameTextField().setText("");
-        userPanel.getSearchUserLastNameTextField().setText("");
+        // clear selection on users list
+        userManagementDialog.getUsersList().clearSelection();
     }
 
     /**
      * initialize User Panel
      */
-    private void initUserPanel() {
-        //init userJList
+    private void initUserManagementDialog() {
+        // init userJList
         userBindingList = ObservableCollections.observableList(userService.findAll());
-        JListBinding userListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, userBindingList, userPanel.getUserJList());
+        JListBinding userListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, userBindingList, userManagementDialog.getUsersList());
         bindingGroup.addBinding(userListBinding);
 
-        userPanel.getUserJList().setCellRenderer(new UsersListRenderer());
-
-        //init user binding
-        //bind email
-        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, userPanel.getCreateUserEmailTextField(), ELProperty.create("${text}"), newUser, BeanProperty.create("email"), "emailbinding");
+        // init user binding
+        // autobind first name
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, userManagementDialog.getUsersList(), BeanProperty.create("selectedElement.firstName"), userManagementDialog.getFirstNameTextField(), BeanProperty.create("text"), "firstnamebinding");
         bindingGroup.addBinding(binding);
-        //bind first name
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, userPanel.getCreateUserFirstNameTextField(), ELProperty.create("${text}"), newUser, BeanProperty.create("firstName"), "firstnamebinding");
+        // autobind last name
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, userManagementDialog.getUsersList(), BeanProperty.create("selectedElement.lastName"), userManagementDialog.getLastNameTextField(), BeanProperty.create("text"), "lastnamebinding");
         bindingGroup.addBinding(binding);
-        //bind last name
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, userPanel.getCreateUserLastNameTextField(), ELProperty.create("${text}"), newUser, BeanProperty.create("lastName"), "lastnamebinding");
+        // autobind email address
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, userManagementDialog.getUsersList(), BeanProperty.create("selectedElement.email"), userManagementDialog.getEmailTextField(), BeanProperty.create("text"), "emailbinding");
         bindingGroup.addBinding(binding);
-        //bind role
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, userPanel.getRoleComboBox(), ELProperty.create("${selectedItem}"), newUser, BeanProperty.create("role"), "rolebinding");
+        // autobind role 
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, userManagementDialog.getUsersList(), BeanProperty.create("selectedElement.role"), userManagementDialog.getRoleComboBox(), BeanProperty.create("selectedItem"), "rolebinding");
         bindingGroup.addBinding(binding);
-        //bind password
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, userPanel.getPasswordField(), ELProperty.create("${text}"), newUser, BeanProperty.create("password"), "passwordbinding");
+        // autobind password
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, userManagementDialog.getUsersList(), BeanProperty.create("selectedElement.password"), userManagementDialog.getPasswordField(), BeanProperty.create("text"), "passwordbinding");
         bindingGroup.addBinding(binding);
-
+        // do the binding
         bindingGroup.bind();
+        // do nothing on close the dialog
+        userManagementDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
-        //add actionlisteners
+        /**
+         * Add action listeners
+         */
         //"create user" action
-        userPanel.getCreateUserButton().addActionListener(new ActionListener() {
+        userManagementDialog.getAddUserButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // if user validation was successful, save the new user to the db
-                if (cellMissyController.validateUser()) {
-                    try {
-                        userService.save(newUser);
-                        userBindingList.add(newUser);
-                        resetCreateUserTextFields();
-                        cellMissyController.showMessage("User inserted!", "user inserted into DB", JOptionPane.INFORMATION_MESSAGE);
-                    } // handle ConstraintViolationException(UniqueConstraint)
-                    catch (PersistenceException ex) {
-                        LOG.error(ex.getMessage());
-                        String message = "User already present in the db";
-                        cellMissyController.showMessage(message, "Error in persisting user", JOptionPane.INFORMATION_MESSAGE);
-                        resetCreateUserTextFields();
-                    }
-                } else {
-                    resetCreateUserTextFields();
-                }
+                // create a new user
+                User newUser = new User();
+                // set default nonsense values for it
+                newUser.setFirstName("first name");
+                newUser.setLastName("last name");
+                newUser.setEmail("email@email.com");
+                newUser.setRole(Role.STANDARD_USER);
+                newUser.setPassword("password");
+                // add the user to the current list
+                userBindingList.add(newUser);
+                // select the user in the list
+                userManagementDialog.getUsersList().setSelectedIndex(userBindingList.indexOf(newUser));
+                // the user still has to be saved to DB!
+                cellMissyController.showMessage("The new user has been added to the list." + "\n" + "You can now edit its properties and save it to DB.", "user added, not saved yet", JOptionPane.INFORMATION_MESSAGE);
+                userManagementDialog.getFirstNameTextField().requestFocusInWindow();
             }
         });
 
         //"search user" action
-        userPanel.getSearchUserButton().addActionListener(new ActionListener() {
+        userManagementDialog.getSaveUserButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!userPanel.getSearchUserFirstNameTextField().getText().isEmpty() && !userPanel.getSearchUserLastNameTextField().getText().isEmpty()) {
-                    User user = userService.findByFullName(userPanel.getSearchUserFirstNameTextField().getText(), userPanel.getSearchUserLastNameTextField().getText());
-                    if (user != null) {
-                        String message = "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.";
-                        cellMissyController.showMessage(message, "User found", JOptionPane.INFORMATION_MESSAGE);
-                        userPanel.getSearchUserFirstNameTextField().setText("");
-                        userPanel.getSearchUserLastNameTextField().setText("");
-                    } else {
-                        String message = "No user found";
-                        cellMissyController.showMessage(message, "No user found", JOptionPane.INFORMATION_MESSAGE);
-                        userPanel.getSearchUserFirstNameTextField().setText("");
-                        userPanel.getSearchUserLastNameTextField().setText("");
-                    }
-                } else {
-                    if (!userPanel.getSearchUserFirstNameTextField().getText().isEmpty() && userPanel.getSearchUserLastNameTextField().getText().isEmpty()) {
-                        User user = userService.findByFirstName(userPanel.getSearchUserFirstNameTextField().getText());
-                        if (user != null) {
-                            String message = "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.";
-                            cellMissyController.showMessage(message, "User found", JOptionPane.INFORMATION_MESSAGE);
-                            userPanel.getSearchUserFirstNameTextField().setText("");
-                        } else {
-                            String message = "No user found";
-                            cellMissyController.showMessage(message, "No user found", JOptionPane.INFORMATION_MESSAGE);
-                            userPanel.getSearchUserFirstNameTextField().setText("");
-                        }
-                    } else {
-                        if (userPanel.getSearchUserFirstNameTextField().getText().isEmpty() && !userPanel.getSearchUserLastNameTextField().getText().isEmpty()) {
-                            User user = userService.findByLastName(userPanel.getSearchUserLastNameTextField().getText());
-                            if (user != null) {
-                                String message = "User: " + user.getFirstName() + " " + user.getLastName() + ", email: " + user.getEmail() + " was found in the database.";
-                                cellMissyController.showMessage(message, "User found", JOptionPane.INFORMATION_MESSAGE);
-                                userPanel.getSearchUserLastNameTextField().setText("");
-                            } else {
-                                String message = "No user found";
-                                cellMissyController.showMessage(message, "No user found", JOptionPane.INFORMATION_MESSAGE);
-                                userPanel.getSearchUserLastNameTextField().setText("");
+                if (userManagementDialog.getUsersList().getSelectedValue() != null) {
+                    User userToSave = (User) userManagementDialog.getUsersList().getSelectedValue();
+                    // if user validation was successful, save the new user to the db
+                    if (cellMissyController.validateUser(userToSave)) {
+                        // if user id is null, persist new object to DB
+                        if (userToSave.getUserid() == null) {
+                            try {
+                                userService.save(userToSave);
+                                cellMissyController.showMessage("User was saved to DB!", "user inserted into DB", JOptionPane.INFORMATION_MESSAGE);
+                            } // handle ConstraintViolationException(UniqueConstraint)
+                            catch (PersistenceException ex) {
+                                LOG.error(ex.getMessage());
+                                String message = "User already present in the db!";
+                                cellMissyController.showMessage(message, "Error in persisting user", JOptionPane.WARNING_MESSAGE);
                             }
                         } else {
-                            String message = "Please fill in first and/or last name";
-                            cellMissyController.showMessage(message, "Error in searching", JOptionPane.INFORMATION_MESSAGE);
+                            userService.update(userToSave);
+                            cellMissyController.showMessage("User was updated!", "user updated", JOptionPane.INFORMATION_MESSAGE);
                         }
                     }
+                } else {
+                    String message = "Please select a user to save or update!";
+                    cellMissyController.showMessage(message, "", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
 
         //"delete user" action
-        userPanel.getDeleteUserButton().addActionListener(new ActionListener() {
+        userManagementDialog.getDeleteUserButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (userPanel.getUserJList().getSelectedValue() != null) {
-                    userService.delete((User) userPanel.getUserJList().getSelectedValue());
-                    userBindingList.remove((User) userPanel.getUserJList().getSelectedValue());
+                // check that a user has been selected first
+                if (userManagementDialog.getUsersList().getSelectedValue() != null) {
+                    User userToDelete = (User) userManagementDialog.getUsersList().getSelectedValue();
+                    // delete user from DB
+                    userService.delete(userToDelete);
+                    // remove user from users list
+                    userBindingList.remove(userToDelete);
+                    cellMissyController.showMessage("User (" + userToDelete + ")" + " was deleted from DB!", "user deleted", JOptionPane.INFORMATION_MESSAGE);
+                    resetUserFields();
                 } else {
-                    String message = "Please select a user to delete";
+                    String message = "Please select a user to delete!";
                     cellMissyController.showMessage(message, "", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
+        
+        // window listener: check if changes are still pending
+        userManagementDialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                // if user changes are pending, warn the user
+                if (userNotSaved()) {
+                    cellMissyController.showMessage("An user added to the list has not been saved!", "user not saved", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    userManagementDialog.setVisible(false);
                 }
             }
         });
 
         //add items to the "role" ComboBox
         for (Role role : Role.values()) {
-            userPanel.getRoleComboBox().addItem(role);
+            userManagementDialog.getRoleComboBox().addItem(role);
         }
         //show standard user
-        userPanel.getRoleComboBox().setSelectedIndex(1);
-
-        cellMissyController.getCellMissyFrame().getUserParentPanel().add(userPanel, gridBagConstraints);
+        userManagementDialog.getRoleComboBox().setSelectedIndex(1);
     }
 
     /**
      * reset text fields of panel
      */
-    private void resetCreateUserTextFields() {
-        // reset create user text fields
-        userPanel.getCreateUserFirstNameTextField().setText("");
-        userPanel.getCreateUserLastNameTextField().setText("");
-        userPanel.getCreateUserEmailTextField().setText("");
-        userPanel.getPasswordField().setText("");
+    private void resetUserFields() {
+        userManagementDialog.getFirstNameTextField().setText("");
+        userManagementDialog.getLastNameTextField().setText("");
+        userManagementDialog.getEmailTextField().setText("");
+        userManagementDialog.getPasswordField().setText("");
+        userManagementDialog.getRoleComboBox().setSelectedIndex(1);
+    }
+
+    /**
+     * Check if user changes are still pending This is called when you try to close the user management dialog
+     *
+     * @return
+     */
+    private boolean userNotSaved() {
+        boolean userNotSaved = false;
+        for (User user : userBindingList) {
+            if (user.getUserid() == null) {
+                userNotSaved = true;
+                break;
+            }
+        }
+        return userNotSaved;
     }
 }
