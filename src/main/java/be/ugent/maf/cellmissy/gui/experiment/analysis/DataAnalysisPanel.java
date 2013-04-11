@@ -102,7 +102,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         experimentDataPanel.setOpaque(false);
         experimentDataPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jLabel1.setText("Experiment");
+        jLabel1.setText("Experiment Nr");
 
         jLabel2.setText("Dataset");
 
@@ -138,8 +138,13 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                             .addComponent(datasetTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(experimentNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel4))
-                .addContainerGap(113, Short.MAX_VALUE))
+                .addContainerGap(108, Short.MAX_VALUE))
         );
+
+        experimentDataPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel2, jLabel3});
+
+        experimentDataPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {datasetTextField, experimentNumberTextField, imagingTypeTextField});
+
         experimentDataPanelLayout.setVerticalGroup(
             experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(experimentDataPanelLayout.createSequentialGroup()

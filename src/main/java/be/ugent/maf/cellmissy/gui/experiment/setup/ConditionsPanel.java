@@ -58,9 +58,9 @@ public class ConditionsPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(30, 30));
 
-        addButton.setText("Add New Condition");
+        addButton.setText("Add condition");
 
-        removeButton.setText("Remove Condition");
+        removeButton.setText("Remove condition");
 
         jScrollPane1.setBorder(null);
         jScrollPane1.setAutoscrolls(true);
@@ -86,10 +86,13 @@ public class ConditionsPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(addButton)
                     .addComponent(removeButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addButton, removeButton});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()

@@ -140,7 +140,9 @@ public class LoadExperimentFromCellMiaController {
         dataLoadingHasBeenSaved = false;
         // clear selection on project list
         cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel().getProjectJList().clearSelection();
-        cellMiaExperimentDataController.getExperimentBindingList().clear();
+        if (cellMiaExperimentDataController.getExperimentBindingList() != null) {
+            cellMiaExperimentDataController.getExperimentBindingList().clear();
+        }
         cellMiaExperimentDataController.resetAfterUserInteraction();
         // swap views
         GuiUtils.switchChildPanels(loadFromCellMiaPanel.getTopPanel(), cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel(), cellMiaImagedPlateController.getLoadFromCellMiaPlatePanel());

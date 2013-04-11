@@ -365,6 +365,8 @@ public class AreaAnalysisController {
         StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
         StyledDocument styledDocument = statisticsPanel.getInfoTextPane().getStyledDocument();
         styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
+        styledDocument = linearRegressionPanel.getInfoTextPane().getStyledDocument();
+        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
 
         groupsBindingList = ObservableCollections.observableList(new ArrayList<AnalysisGroup>());
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, groupsBindingList, linearRegressionPanel.getGroupsList());
@@ -476,7 +478,7 @@ public class AreaAnalysisController {
                     // pack the dialog
                     dialog.pack();
                     // center the dialog on the main frame
-                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getMainFrame(), dialog);
+                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getCellMissyFrame(), dialog);
                     // show the dialog
                     dialog.setVisible(true);
                 } else {
@@ -741,6 +743,8 @@ public class AreaAnalysisController {
         // check if an element is selected first
         if (selectedIndex != -1) {
             groupsBindingList.remove(selectedIndex);
+        } else {
+            showMessage("Select a group to remove from current analysis!", "remove group error", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

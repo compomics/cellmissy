@@ -41,12 +41,9 @@ public class CellMissyConfigDialog extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
-        tablePanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         paramsTable = new javax.swing.JTable();
-        buttonsPanel = new javax.swing.JPanel();
         saveButton = new javax.swing.JButton();
         resetButton = new javax.swing.JButton();
 
@@ -54,10 +51,6 @@ public class CellMissyConfigDialog extends javax.swing.JDialog {
         setTitle("CellMissy properties");
         setAlwaysOnTop(true);
         setPreferredSize(new java.awt.Dimension(500, 400));
-        getContentPane().setLayout(new java.awt.GridBagLayout());
-
-        tablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        tablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         paramsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -72,71 +65,36 @@ public class CellMissyConfigDialog extends javax.swing.JDialog {
         ));
         jScrollPane1.setViewportView(paramsTable);
 
-        javax.swing.GroupLayout tablePanelLayout = new javax.swing.GroupLayout(tablePanel);
-        tablePanel.setLayout(tablePanelLayout);
-        tablePanelLayout.setHorizontalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 507, Short.MAX_VALUE)
-            .addGroup(tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 507, Short.MAX_VALUE))
-        );
-        tablePanelLayout.setVerticalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 239, Short.MAX_VALUE)
-            .addGroup(tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(tablePanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.8;
-        getContentPane().add(tablePanel, gridBagConstraints);
-
-        buttonsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        buttonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
         saveButton.setText("save properties");
 
         resetButton.setText("reset properties");
 
-        javax.swing.GroupLayout buttonsPanelLayout = new javax.swing.GroupLayout(buttonsPanel);
-        buttonsPanel.setLayout(buttonsPanelLayout);
-        buttonsPanelLayout.setHorizontalGroup(
-            buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(buttonsPanelLayout.createSequentialGroup()
-                .addContainerGap(388, Short.MAX_VALUE)
-                .addGroup(buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
                     .addComponent(resetButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(saveButton, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
 
-        buttonsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {resetButton, saveButton});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {resetButton, saveButton});
 
-        buttonsPanelLayout.setVerticalGroup(
-            buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(buttonsPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(saveButton)
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(saveButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(resetButton)
                 .addContainerGap())
         );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.2;
-        getContentPane().add(buttonsPanel, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -183,11 +141,9 @@ public class CellMissyConfigDialog extends javax.swing.JDialog {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel buttonsPanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable paramsTable;
     private javax.swing.JButton resetButton;
     private javax.swing.JButton saveButton;
-    private javax.swing.JPanel tablePanel;
     // End of variables declaration//GEN-END:variables
 }

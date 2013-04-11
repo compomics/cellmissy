@@ -14,6 +14,7 @@ import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
+import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
@@ -156,6 +157,10 @@ public class SetupExperimentController {
 
     public void setExperimentBindingList(ObservableList<Experiment> experimentBindingList) {
         this.experimentBindingList = experimentBindingList;
+    }
+
+    public CellMissyFrame getCellMissyFrame() {
+        return cellMissyController.getCellMissyFrame();
     }
 
     /**
@@ -567,44 +572,52 @@ public class SetupExperimentController {
                     //update last condition of the experiment
                     updateLastCondition();
                 }
-                if (setupPlateController.validateWells()) {
-                    //set the experiment for each plate condition in the List
-                    for (PlateCondition plateCondition : setupConditionsController.getPlateConditionBindingList()) {
-                        plateCondition.setExperiment(experiment);
-                    }
-                    //set experiment plate format
-                    experiment.setPlateFormat((PlateFormat) setupPlateController.getPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
-                    //set the condition's collection of the experiment
-                    experiment.setPlateConditionCollection(setupConditionsController.getPlateConditionBindingList());
-                    //create PDF report, execute SwingWorker
-                    // check for cellmia or other software
-                    SetupReportWorker setupReportWorker = null;
-                    if (experimentInfoPanel.getCellMiaRadioButton().isSelected()) {
-                        setupReportWorker = new SetupReportWorker(experiment.getSetupFolder());
-                    } else if (experimentInfoPanel.getGenericRadioButton().isSelected()) {
-                        // show a jfile chooser to decide where to save the file
-                        JFileChooser chooseDirectory = new JFileChooser();
-                        chooseDirectory.setDialogTitle("Choose a directory to save the report");
-                        chooseDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                        int experimentNumber = experiment.getExperimentNumber();
-                        int projectNumber = experiment.getProject().getProjectNumber();
-                        String reportName = "Setup report " + experimentNumber + " - " + projectNumber + ".pdf";
-                        chooseDirectory.setSelectedFile(new File(reportName));
-
-                        // in response to the button click, show open dialog
-                        int returnVal = chooseDirectory.showSaveDialog(setupExperimentPanel);
-                        if (returnVal == JFileChooser.APPROVE_OPTION) {
-                            File currentDirectory = chooseDirectory.getCurrentDirectory();
-                            setupReportWorker = new SetupReportWorker(currentDirectory);
-                        } else {
-                            showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+                // validate all conditions
+                if (validateAllConditions()) {
+                    // validate selection on plate
+                    if (setupPlateController.validateWells()) {
+                        //set the experiment for each plate condition in the List
+                        for (PlateCondition plateCondition : setupConditionsController.getPlateConditionBindingList()) {
+                            plateCondition.setExperiment(experiment);
                         }
-                    }
-                    setupReportWorker.execute();
-                } else {
-                    showMessage("Some wells do not have a condition, please reset view.", "Wells' selection error", JOptionPane.WARNING_MESSAGE);
-                }
+                        //set experiment plate format
+                        experiment.setPlateFormat((PlateFormat) setupPlateController.getPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
+                        //set the condition's collection of the experiment
+                        experiment.setPlateConditionCollection(setupConditionsController.getPlateConditionBindingList());
+                        //create PDF report, execute SwingWorker
+                        // check for cellmia or other software
+                        SetupReportWorker setupReportWorker = null;
+                        if (experimentInfoPanel.getCellMiaRadioButton().isSelected()) {
+                            setupReportWorker = new SetupReportWorker(experiment.getSetupFolder());
+                        } else if (experimentInfoPanel.getGenericRadioButton().isSelected()) {
+                            // show a jfile chooser to decide where to save the file
+                            JFileChooser chooseDirectory = new JFileChooser();
+                            chooseDirectory.setDialogTitle("Choose a directory to save the report");
+                            chooseDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                            int experimentNumber = experiment.getExperimentNumber();
+                            int projectNumber = experiment.getProject().getProjectNumber();
+                            String reportName = "Setup report " + experimentNumber + " - " + projectNumber + ".pdf";
+                            chooseDirectory.setSelectedFile(new File(reportName));
 
+                            // in response to the button click, show open dialog
+                            int returnVal = chooseDirectory.showSaveDialog(setupExperimentPanel);
+                            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                                File currentDirectory = chooseDirectory.getCurrentDirectory();
+                                setupReportWorker = new SetupReportWorker(currentDirectory);
+                            } else {
+                                showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+                            }
+                        }
+                        // check for the worker instance and execute it
+                        if (setupReportWorker != null) {
+                            setupReportWorker.execute();
+                        }
+                    } else {
+                        showMessage("Some wells do not have a condition, please reset view.", "Wells' selection error", JOptionPane.WARNING_MESSAGE);
+                    }
+                } else {
+                    showMessage("Validation problem." + "\n" + "Check your setup and try again to create the report.", "report not created", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         });
 
@@ -641,6 +654,22 @@ public class SetupExperimentController {
             }
         }
         return hasCondition;
+    }
+
+    /**
+     * Call a validation method on all conditions
+     *
+     * @return
+     */
+    private boolean validateAllConditions() {
+        boolean valid = true;
+        for (PlateCondition condition : setupConditionsController.getPlateConditionBindingList()) {
+            if (!validateCondition(condition)) {
+                valid = false;
+                break;
+            }
+        }
+        return valid;
     }
 
     /**

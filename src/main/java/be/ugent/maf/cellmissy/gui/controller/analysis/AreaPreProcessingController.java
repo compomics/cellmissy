@@ -583,7 +583,7 @@ public class AreaPreProcessingController {
             // time frame info
             int lastTimeFrame = areaPreProcessingResults.getTimeInterval().getLastTimeFrame();
             correctedAreaPanel.getCutOffTextField().setText(timeFramesBindingList.get(lastTimeFrame).toString());
-            correctedAreaPanel.getExcludedReplicatesTextField().setText(excludedWells.toString());
+            correctedAreaPanel.getExcludedReplicatesTextArea().setText(excludedWells.toString());
             areaAnalysisPanel.getGraphicsParentPanel().add(correctedAreaPanel, gridBagConstraints);
         }
     }
@@ -1073,11 +1073,11 @@ public class AreaPreProcessingController {
         globalAreaChartPanel.setOpaque(false);
 
         distanceMatrixScrollPane = new JScrollPane();
-        replicatesSelectionDialog = new ReplicatesSelectionDialog(dataAnalysisController.getMainFrame(), true);
-        timeFramesSelectionDialog = new TimeFramesSelectionDialog(dataAnalysisController.getMainFrame(), true);
+        replicatesSelectionDialog = new ReplicatesSelectionDialog(dataAnalysisController.getCellMissyFrame(), true);
+        timeFramesSelectionDialog = new TimeFramesSelectionDialog(dataAnalysisController.getCellMissyFrame(), true);
         //center the dialogs on the main screen
-        replicatesSelectionDialog.setLocationRelativeTo(dataAnalysisController.getMainFrame());
-        timeFramesSelectionDialog.setLocationRelativeTo(dataAnalysisController.getMainFrame());
+        replicatesSelectionDialog.setLocationRelativeTo(dataAnalysisController.getCellMissyFrame());
+        timeFramesSelectionDialog.setLocationRelativeTo(dataAnalysisController.getCellMissyFrame());
 
         timeFramesSelectionDialog.getDefaultCutOffTextField().setBorder(javax.swing.BorderFactory.createEmptyBorder());
         // justify text info 
@@ -1547,7 +1547,7 @@ public class AreaPreProcessingController {
     private void initCorrectedAreaPanel() {
         // set Border to empty one for text fields
         correctedAreaPanel.getCutOffTextField().setBorder(javax.swing.BorderFactory.createEmptyBorder());
-        correctedAreaPanel.getExcludedReplicatesTextField().setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        correctedAreaPanel.getExcludedReplicatesTextArea().setBorder(javax.swing.BorderFactory.createEmptyBorder());
         // initialize Binding List for time frames (2 combo boxes binded)
         timeFramesBindingList = ObservableCollections.observableList(new ArrayList<Double>());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, timeFramesSelectionDialog.getCutOffTimeFrameComboBox());
@@ -1666,7 +1666,7 @@ public class AreaPreProcessingController {
                     // pack the dialog
                     replicatesSelectionDialog.pack();
                     // center the dialog on main frame
-                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getMainFrame(), replicatesSelectionDialog);
+                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getCellMissyFrame(), replicatesSelectionDialog);
                     // show the dialog
                     replicatesSelectionDialog.setVisible(true);
                 }
@@ -1687,7 +1687,7 @@ public class AreaPreProcessingController {
                     // pack the dialog
                     timeFramesSelectionDialog.pack();
                     // center dialog on the main frame
-                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getMainFrame(), replicatesSelectionDialog);
+                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getCellMissyFrame(), replicatesSelectionDialog);
                     // show the dialog
                     timeFramesSelectionDialog.setVisible(true);
                 }

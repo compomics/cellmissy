@@ -459,6 +459,10 @@ public class AssayEcmController {
                     ecm2DCompositionBindingList.add(ecmComposition);
                     ecmService.saveEcmComposition(ecmComposition);
                     assayEcm2DPanel.getCompositionTextField().setText("");
+                } else {
+                    String message = "Please insert a name for the new ECM composition!";
+                    setupConditionsController.showMessage(message, "", JOptionPane.WARNING_MESSAGE);
+                    assayEcm3DPanel.getCompositionTextField().requestFocus();
                 }
             }
         });

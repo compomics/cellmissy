@@ -24,8 +24,6 @@ public class AreaPreProcessorTest {
 
     @Autowired
     private KernelDensityEstimator kernelDensityEstimator;
-    @Autowired
-    private OutliersHandler outliersHandler;
     private static Double[] data;
 
     /**

@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
@@ -22,7 +22,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,-19,0,0,1,-47"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,-25,0,0,1,-58"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
@@ -66,22 +66,19 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                      <Group type="102" alignment="1" attributes="1">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane3" max="32767" attributes="1"/>
-                      </Group>
+                      <Component id="jScrollPane3" alignment="1" max="32767" attributes="1"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="96" pref="96" max="96" attributes="0"/>
-                          <Component id="addButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="removeButton" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane2" linkSize="13" min="-2" pref="81" max="-2" attributes="1"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="addButton" min="-2" max="-2" attributes="0"/>
+                              <Component id="jScrollPane2" linkSize="13" min="-2" pref="81" max="-2" attributes="1"/>
+                          </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="jScrollPane4" linkSize="13" min="-2" pref="70" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jScrollPane4" linkSize="13" min="-2" pref="70" max="-2" attributes="0"/>
+                              <Component id="removeButton" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -230,24 +227,22 @@
                                       </Group>
                                       <Group type="102" alignment="1" attributes="0">
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="drugSolventComboBox" alignment="1" min="-2" pref="74" max="-2" attributes="0"/>
-                                              <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                                  <Component id="timingTextField" alignment="0" max="32767" attributes="1"/>
-                                                  <Component id="concentrationTextField" alignment="0" min="-2" pref="74" max="-2" attributes="1"/>
-                                              </Group>
+                                              <Component id="drugSolventComboBox" linkSize="12" alignment="1" min="-2" pref="74" max="-2" attributes="0"/>
+                                              <Component id="timingTextField" linkSize="12" alignment="0" max="32767" attributes="1"/>
+                                              <Component id="concentrationTextField" linkSize="12" alignment="0" min="-2" pref="74" max="-2" attributes="1"/>
                                           </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Group type="102" attributes="0">
-                                                  <EmptySpace pref="124" max="32767" attributes="0"/>
+                                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                                   <Component id="fCSolventLabel" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace max="-2" attributes="0"/>
                                               </Group>
                                               <Group type="102" alignment="0" attributes="0">
-                                                  <EmptySpace max="-2" attributes="0"/>
-                                                  <Component id="concentrationUnitComboBox" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="concentrationUnitComboBox" min="-2" pref="50" max="-2" attributes="0"/>
+                                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                               </Group>
                                           </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
                                           <Component id="solventConcentrationTextField" linkSize="12" min="-2" pref="65" max="-2" attributes="1"/>
                                       </Group>
                                   </Group>
@@ -260,9 +255,9 @@
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="assayMediumComboBox" alignment="0" pref="83" max="32767" attributes="0"/>
-                                      <Component id="serumComboBox" alignment="0" pref="83" max="32767" attributes="0"/>
-                                      <Component id="mediumVolumeTextField" alignment="0" pref="83" max="32767" attributes="0"/>
+                                      <Component id="assayMediumComboBox" linkSize="12" alignment="0" min="-2" pref="68" max="-2" attributes="0"/>
+                                      <Component id="serumComboBox" linkSize="12" alignment="0" min="-2" pref="68" max="-2" attributes="0"/>
+                                      <Component id="mediumVolumeTextField" linkSize="12" alignment="0" min="-2" pref="68" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="volumeUnitLabel" min="-2" pref="43" max="-2" attributes="1"/>
@@ -275,7 +270,7 @@
                               <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="98" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="addNewButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
                       </Group>
@@ -348,7 +343,7 @@
                       </Group>
                       <Component id="addNewButton" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

@@ -108,9 +108,9 @@ public class TimeFramesSelectionDialog extends javax.swing.JDialog {
         );
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 101, Short.MAX_VALUE)
+            .addGap(0, 80, Short.MAX_VALUE)
             .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -130,14 +130,17 @@ public class TimeFramesSelectionDialog extends javax.swing.JDialog {
         cutOffTimeFrameComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel1.setText("Cut off time frame");
+        jLabel1.setToolTipText("This is the last time frame analyzed");
 
         resetCutOffButton.setText("Reset cut off");
+        resetCutOffButton.setToolTipText("Click here to reset the last time frame to the default one");
 
         firstTimeFrameComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel2.setText("Starting time frame");
+        jLabel2.setToolTipText("This is the first time frame analyzed");
 
-        jLabel3.setText("Default cut off:");
+        jLabel3.setText("Default cut off");
 
         defaultCutOffTextField.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         defaultCutOffTextField.setFocusable(false);
@@ -149,26 +152,25 @@ public class TimeFramesSelectionDialog extends javax.swing.JDialog {
         userInteractionPanelLayout.setHorizontalGroup(
             userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(userInteractionPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(userInteractionPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(firstTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(userInteractionPanelLayout.createSequentialGroup()
-                        .addGroup(userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel3))
-                        .addGap(22, 22, 22)
-                        .addComponent(cutOffTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(resetCutOffButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(269, 269, 269))
-            .addGroup(userInteractionPanelLayout.createSequentialGroup()
-                .addGap(120, 120, 120)
-                .addComponent(defaultCutOffTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(391, 391, 391))
+                .addGroup(userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(firstTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(defaultCutOffTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cutOffTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(resetCutOffButton, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
+
+        userInteractionPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cutOffTimeFrameComboBox, defaultCutOffTextField, firstTimeFrameComboBox});
+
+        userInteractionPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel2, jLabel3});
+
         userInteractionPanelLayout.setVerticalGroup(
             userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(userInteractionPanelLayout.createSequentialGroup()
@@ -176,16 +178,16 @@ public class TimeFramesSelectionDialog extends javax.swing.JDialog {
                 .addGroup(userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(firstTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(defaultCutOffTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cutOffTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(resetCutOffButton)
                     .addComponent(jLabel1))
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -203,7 +205,7 @@ public class TimeFramesSelectionDialog extends javax.swing.JDialog {
 
         warningLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         warningLabel.setForeground(new java.awt.Color(255, 0, 0));
-        warningLabel.setText("The chosen value is greater than default cut off, so default cut off will be used in analysis!");
+        warningLabel.setText("The chosen value is greater than the default cut off, so the default value will be used in the analysis!");
 
         javax.swing.GroupLayout warningPanelLayout = new javax.swing.GroupLayout(warningPanel);
         warningPanel.setLayout(warningPanelLayout);
@@ -219,7 +221,7 @@ public class TimeFramesSelectionDialog extends javax.swing.JDialog {
             .addGroup(warningPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(warningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap(3, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();

@@ -51,7 +51,7 @@
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="groupNameLabel" min="-2" pref="173" max="-2" attributes="0"/>
-                  <EmptySpace pref="561" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                   <Component id="infoScrollPane" alignment="0" pref="880" max="32767" attributes="0"/>
@@ -61,12 +61,12 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="67" max="32767" attributes="0"/>
+                  <EmptySpace pref="72" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="groupNameLabel" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel3" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
@@ -102,7 +102,7 @@
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="null"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="This panel presents a Summary Statistics Table together with a p-values Table, where p values have been computed on the selected Analysis Group performing a Mann-Whitney U test (also called Wilcoxon rank-sum test). By default, no correction is applied for multiple comparisons; you can select to adjust the p-values choosing a correction method form the drop down list.&#xa;"/>
+                <Property name="text" type="java.lang.String" value="This panel presents a Summary Statistics Table together with a p-values Table, where p values have been computed on the current Analysis Group performing a Mann-Whitney U test (also called Wilcoxon rank-sum test). By default, no correction is applied for multiple comparisons; you can select to adjust the p-values choosing a correction method form the drop down list.&#xa;"/>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[600, 150]"/>
@@ -117,9 +117,9 @@
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="12" style="2"/>
+              <Font name="Tahoma" size="12" style="0"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="ANALYISIS OF GROUP: "/>
+            <Property name="text" type="java.lang.String" value="Current group:"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="groupNameLabel">
@@ -150,6 +150,7 @@
             <TitledBorder title="Summary Statistics"/>
           </Border>
         </Property>
+        <Property name="toolTipText" type="java.lang.String" value="This table contains the summary statistics for each of the condition of the current group"/>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[200, 200]"/>
         </Property>
@@ -167,12 +168,20 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="summaryScrollPane" alignment="0" pref="512" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="summaryScrollPane" pref="492" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="summaryScrollPane" alignment="0" pref="163" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="summaryScrollPane" min="-2" pref="147" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -212,6 +221,7 @@
             <TitledBorder title="Mann - Whitney U Test"/>
           </Border>
         </Property>
+        <Property name="toolTipText" type="java.lang.String" value="This table contains the p-values from the pairwise comparisons of the conditions of the current group"/>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[200, 200]"/>
         </Property>
@@ -229,12 +239,20 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="pValuesScrollPane" alignment="0" pref="512" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="pValuesScrollPane" pref="492" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="pValuesScrollPane" alignment="1" pref="163" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="pValuesScrollPane" min="-2" pref="145" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -320,17 +338,17 @@
                       <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="significanceLevelComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="groupNameLabel1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
-                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="groupNameLabel1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="correctionMethodsComboBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" min="-2" pref="142" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" pref="193" max="32767" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="saveAnalysisButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -392,10 +410,8 @@
         </Container>
         <Component class="javax.swing.JButton" name="saveAnalysisButton">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="11" style="1"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Save Analysis"/>
+            <Property name="toolTipText" type="java.lang.String" value="Click here to assign the chosen correction method to current analysis and save computed statistics"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="groupNameLabel1">

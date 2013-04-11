@@ -36,7 +36,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.TransactionException;
 
 /**
- * This controller is not kept as a bean, it is used if errors are encountered before the login is shown.
+ * This controller is not a bean, it is used if errors are encountered before the login is enabled.
  *
  * @author Paola Masuzzo
  */
@@ -71,7 +71,7 @@ public class CellMissyStarter {
         //table binding 
         propertyGuiWrapperBindingList = ObservableCollections.observableList(new ArrayList<PropertyGuiWrapper>());
         initPropertyGuiWrappersBindingList();
-
+        // table binding for properties
         JTableBinding tableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ_WRITE, propertyGuiWrapperBindingList, cellMissyConfigDialog.getParamsTable());
 
         //Add column bindings
@@ -91,6 +91,7 @@ public class CellMissyStarter {
         /**
          * action listeners
          */
+        // save properties
         cellMissyConfigDialog.getSaveButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -114,10 +115,10 @@ public class CellMissyStarter {
                     // inform the user that every param needs to be set
                     showMessage("Please do not leave any property blank.", "error in setting new properties", JOptionPane.WARNING_MESSAGE);
                 }
-
             }
         });
 
+        // reset properties back to default
         cellMissyConfigDialog.getResetButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -139,6 +140,13 @@ public class CellMissyStarter {
         });
     }
 
+    /**
+     * Show a message dialog through main frame content pane
+     *
+     * @param message
+     * @param title
+     * @param messageType
+     */
     public void showMessage(String message, String title, Integer messageType) {
         JOptionPane.showMessageDialog(mainFrame.getContentPane(), message, title, messageType);
     }
@@ -148,21 +156,27 @@ public class CellMissyStarter {
      */
     public void getApplicationContext() {
         try {
+            // try to get the application context
             ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
             CellMissyController cellMissyController = (CellMissyController) context.getBean("cellMissyController");
+            // init main controller, if application context was got properly
             cellMissyController.init();
+            // catch TransactionException
         } catch (TransactionException ex) {
             String message = "";
             if (ex.getCause() != null && ex.getCause() instanceof PersistenceException) {
                 if (ex.getCause().getCause() != null && ex.getCause().getCause() instanceof GenericJDBCException) {
                     if (ex.getCause().getCause().getCause() != null && ex.getCause().getCause().getCause() instanceof SQLException) {
                         String causeMessage = ex.getCause().getCause().getCause().getMessage();
+                        // check for access denied exception
+                        // error with DB login credentials
                         if (causeMessage.contains("Access denied")) {
                             message = causeMessage + "\n" + "Access denied; please check your credentials to connect to DB." + "\n" + "You can edit CellMissy parameters now.";
                         }
                     }
                 } else if (ex.getCause().getCause() != null && ex.getCause().getCause() instanceof JDBCConnectionException) {
                     if (ex.getCause().getCause().getCause().getCause() != null) {
+                        // connection to DB failed
                         String causeMessage = ex.getCause().getCause().getCause().getCause().getMessage();
                         message = causeMessage + "\n" + "Connection to DB failed." + "\n" + "If you are using a not-local DB, make sure to have internet connection." + "\n" + "You can edit CellMissy properties now.";
                     }
@@ -170,14 +184,18 @@ public class CellMissyStarter {
                     if (ex.getCause().getCause().getCause() != null) {
                         SQLGrammarException exception = (SQLGrammarException) ex.getCause().getCause();
                         SQLException sqlException = exception.getSQLException();
+                        // SQl exception, check right DB schema and right credentials
                         String causeMessage = sqlException.getMessage();
                         message = causeMessage + "\n" + "Please make sure you are using the right credentials and the right DB schema name." + "\n" + "You can edit CellMissy properties now.";
                     }
                 }
             }
+            // warn the user that a problem occurred
             showMessage(message, "Error connecting to DB", JOptionPane.ERROR_MESSAGE);
+            // allow the user to change cellmissy parameters now
             editCellMissyParams();
             LOG.error(ex.getMessage());
+            // catch also generic JDBC exception: e.g. when a db name is not specified in the db.url property
         } catch (GenericJDBCException ex) {
             String message = "";
             if (ex.getCause() != null && ex.getCause() instanceof SQLException) {
@@ -185,14 +203,16 @@ public class CellMissyStarter {
                 String causeMessage = sqlException.getMessage();
                 message = causeMessage + "\n" + "Please make sure you specify a DB name in the db.url property." + "\n" + "You can edit CellMissy properties now.";
             }
+            // warn the user that a problem occurred
             showMessage(message, "Error connecting to DB", JOptionPane.ERROR_MESSAGE);
+            // allow the user to change cellmissy parameters now
             editCellMissyParams();
             LOG.error(ex.getMessage());
         }
     }
 
     /**
-     * show a dialog to edit parameters
+     * Show a dialog to edit parameters
      */
     private void editCellMissyParams() {
         // pack dialog

@@ -154,6 +154,9 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         dataTablePanel = new javax.swing.JPanel();
         graphicsParentPanel = new javax.swing.JPanel();
         globalViewPanel = new javax.swing.JPanel();
+        infoPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        infoTextPane = new javax.swing.JTextPane();
         leftPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         plotErrorBarsCheckBox = new javax.swing.JCheckBox();
@@ -165,9 +168,6 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
         useCorrectedDataCheckBox = new javax.swing.JCheckBox();
         globalAreaPanel = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        infoTextPane = new javax.swing.JTextPane();
         linearModelParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -180,22 +180,26 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
 
         resultsImportingLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         resultsImportingLabel.setText("1. Data Importing");
+        resultsImportingLabel.setToolTipText("Data loaded from DB");
 
         linearRegressionModelLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         linearRegressionModelLabel.setText("4. Linear Regression Model");
+        linearRegressionModelLabel.setToolTipText("Median velocity per condition computation and statistical analysis");
 
         preProcessingLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         preProcessingLabel.setText("2. Pre-processing");
+        preProcessingLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
         globalViewLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         globalViewLabel.setText("3. Global View");
+        globalViewLabel.setToolTipText("Look at all the biological conditions together");
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);
         topPanelLayout.setHorizontalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(topPanelLayout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addContainerGap()
                 .addComponent(resultsImportingLabel)
                 .addGap(18, 18, 18)
                 .addComponent(preProcessingLabel)
@@ -203,7 +207,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
                 .addComponent(globalViewLabel)
                 .addGap(18, 18, 18)
                 .addComponent(linearRegressionModelLabel)
-                .addContainerGap(510, Short.MAX_VALUE))
+                .addContainerGap())
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -214,7 +218,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(linearRegressionModelLabel)
                     .addComponent(globalViewLabel)
                     .addComponent(preProcessingLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -259,19 +263,23 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         resultsImporterPanel.setLayout(resultsImporterPanelLayout);
         resultsImporterPanelLayout.setHorizontalGroup(
             resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1004, Short.MAX_VALUE)
             .addGroup(resultsImporterPanelLayout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(668, Short.MAX_VALUE))
+            .addGroup(resultsImporterPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         resultsImporterPanelLayout.setVerticalGroup(
             resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(resultsImporterPanelLayout.createSequentialGroup()
-                .addGap(7, 7, 7)
+                .addContainerGap()
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE))
+                .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         bottomPanel.add(resultsImporterPanel, "resultsImporterPanel");
@@ -311,9 +319,9 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         radioButtonsPanelLayout.setHorizontalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addContainerGap()
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tableInfoLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, radioButtonsPanelLayout.createSequentialGroup()
                         .addComponent(normalizeAreaButton)
                         .addGap(18, 18, 18)
@@ -324,7 +332,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
                         .addComponent(percentageAreaIncreaseButton)
                         .addGap(18, 18, 18)
                         .addComponent(correctedAreaButton)))
-                .addContainerGap(404, Short.MAX_VALUE))
+                .addContainerGap())
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -338,7 +346,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(normalizeAreaButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tableInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(17, 17, 17))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -347,7 +355,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.08;
+        gridBagConstraints.weighty = 0.09;
         preprocessingPanel.add(radioButtonsPanel, gridBagConstraints);
 
         dataTablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -374,7 +382,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.weighty = 0.62;
+        gridBagConstraints.weighty = 0.61;
         gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
         preprocessingPanel.add(graphicsParentPanel, gridBagConstraints);
 
@@ -384,6 +392,51 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         globalViewPanel.setOpaque(false);
         globalViewPanel.setLayout(new java.awt.GridBagLayout());
 
+        infoPanel.setOpaque(false);
+        infoPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        jScrollPane1.setBorder(null);
+        jScrollPane1.setFocusable(false);
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(600, 100));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(600, 100));
+
+        infoTextPane.setBorder(null);
+        infoTextPane.setText("By default, all conditions are used for the global visualization; samples within a condition are considered as replicates and, for each condition, the average area across replicates is used. You can also select a subset of conditions to be included in the plot and use the \"Plot selected conditions\" button. This grouping is only used for visualization: you can still group conditions you want to statistically compare in next step.");
+        infoTextPane.setFocusable(false);
+        infoTextPane.setMinimumSize(new java.awt.Dimension(600, 150));
+        infoTextPane.setPreferredSize(new java.awt.Dimension(600, 150));
+        jScrollPane1.setViewportView(infoTextPane);
+
+        javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
+        infoPanel.setLayout(infoPanelLayout);
+        infoPanelLayout.setHorizontalGroup(
+            infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 850, Short.MAX_VALUE)
+            .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, infoPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 840, Short.MAX_VALUE)))
+        );
+        infoPanelLayout.setVerticalGroup(
+            infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 67, Short.MAX_VALUE)
+            .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(infoPanelLayout.createSequentialGroup()
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 7, Short.MAX_VALUE)))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+        globalViewPanel.add(infoPanel, gridBagConstraints);
+
         leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         leftPanel.setOpaque(false);
         leftPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -392,6 +445,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         jLabel1.setText("Show Error Bars");
 
         plotErrorBarsCheckBox.setText("Plot SEM");
+        plotErrorBarsCheckBox.setToolTipText("Select this if you want to plot SEM on top of area values");
         plotErrorBarsCheckBox.setOpaque(false);
 
         jScrollPane3.setBorder(null);
@@ -400,17 +454,20 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         conditionsList.setSelectedIndex(0);
         jScrollPane3.setViewportView(conditionsList);
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         jLabel2.setText("Select Conditions to plot");
 
         plotSelectedConditionsButton.setText("Plot selected conditions");
+        plotSelectedConditionsButton.setToolTipText("Plot only the conditions selected in the above list");
 
         plotAllConditionsButton.setText("Plot all conditions");
+        plotAllConditionsButton.setToolTipText("Ignores the selection on the above list and plot all conditions");
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel4.setText("N: number of Replicates");
 
         useCorrectedDataCheckBox.setText("Use corrected data");
+        useCorrectedDataCheckBox.setToolTipText("Select this if you want to use data corrected from outliers");
+        useCorrectedDataCheckBox.setOpaque(false);
 
         javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
         leftPanel.setLayout(leftPanelLayout);
@@ -419,34 +476,29 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
             .addGroup(leftPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(leftPanelLayout.createSequentialGroup()
-                        .addComponent(useCorrectedDataCheckBox)
-                        .addGap(0, 85, Short.MAX_VALUE))
-                    .addGroup(leftPanelLayout.createSequentialGroup()
-                        .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(59, 59, 59))
-                    .addGroup(leftPanelLayout.createSequentialGroup()
-                        .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(plotErrorBarsCheckBox)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(plotSelectedConditionsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(plotAllConditionsButton, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addComponent(useCorrectedDataCheckBox)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(plotErrorBarsCheckBox)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(plotSelectedConditionsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(plotAllConditionsButton, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotAllConditionsButton, plotSelectedConditionsButton});
 
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotErrorBarsCheckBox, useCorrectedDataCheckBox});
+
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(leftPanelLayout.createSequentialGroup()
-                .addGap(28, 28, 28)
+                .addContainerGap()
                 .addComponent(useCorrectedDataCheckBox)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
-                .addGap(3, 3, 3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -454,11 +506,11 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(plotErrorBarsCheckBox)
-                .addGap(24, 24, 24)
+                .addGap(18, 18, 18)
                 .addComponent(plotSelectedConditionsButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(plotAllConditionsButton)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -483,51 +535,6 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.9;
         globalViewPanel.add(globalAreaPanel, gridBagConstraints);
 
-        jPanel1.setOpaque(false);
-        jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        jScrollPane1.setBorder(null);
-        jScrollPane1.setFocusable(false);
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(600, 100));
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(600, 100));
-
-        infoTextPane.setBorder(null);
-        infoTextPane.setText("By default, all conditions are used for the global visualization; samples within a condition are considered as replicates and, for each condition, the average area across replicates is used. You can also select a subset of conditions to be included in the plot and use the \"Plot selected conditions\" button. This grouping is only used for visualization: you can still group conditions you want to statistically compare in next step.");
-        infoTextPane.setFocusable(false);
-        infoTextPane.setMinimumSize(new java.awt.Dimension(600, 150));
-        infoTextPane.setPreferredSize(new java.awt.Dimension(600, 150));
-        jScrollPane1.setViewportView(infoTextPane);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1003, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 993, Short.MAX_VALUE)))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 71, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 11, Short.MAX_VALUE)))
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
-        gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-        globalViewPanel.add(jPanel1, gridBagConstraints);
-
         bottomPanel.add(globalViewPanel, "globalViewPanel");
 
         linearModelParentPanel.setName("linearModelPanel"); // NOI18N
@@ -547,6 +554,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
 
         getAccessibleContext().setAccessibleName("");
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JRadioButton cellCoveredAreaRadioButton;
@@ -558,12 +566,12 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JLabel globalViewLabel;
     private javax.swing.JPanel globalViewPanel;
     private javax.swing.JPanel graphicsParentPanel;
+    private javax.swing.JPanel infoPanel;
     private javax.swing.JTextPane infoTextPane;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel leftPanel;

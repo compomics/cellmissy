@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
@@ -16,7 +16,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,91,0,0,2,31"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,-100,0,0,1,-59"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
@@ -38,11 +38,11 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                   <Component id="selectAssayLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="assayComboBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="343" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="assayComboBox" min="-2" pref="158" max="-2" attributes="0"/>
+                  <EmptySpace pref="142" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -54,7 +54,7 @@
                       <Component id="assayComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="selectAssayLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="19" max="32767" attributes="0"/>
+                  <EmptySpace pref="26" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -104,81 +104,91 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+              <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="compositionTextField" alignment="0" max="32767" attributes="1"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="concentrationLabel" alignment="1" min="-2" max="-2" attributes="1"/>
-                                  <Component id="volumeLabel" alignment="1" min="-2" pref="44" max="-2" attributes="1"/>
-                                  <Component id="coatingTimeLabel" alignment="1" min="-2" max="-2" attributes="1"/>
-                                  <Component id="coatingTemperatureLabel" alignment="1" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
+                                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="concentrationTextField" linkSize="3" alignment="0" pref="56" max="32767" attributes="1"/>
-                                  <Component id="volumeTextField" linkSize="3" alignment="0" pref="56" max="32767" attributes="1"/>
-                                  <Component id="coatingTimeTextField" linkSize="3" alignment="0" min="-2" pref="56" max="-2" attributes="0"/>
-                                  <Component id="coatingTemperatureTextField" linkSize="3" alignment="0" min="-2" pref="56" max="-2" attributes="0"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="compositionLabel" min="-2" max="-2" attributes="1"/>
+                                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Component id="compositionComboBox" linkSize="5" min="-2" pref="158" max="-2" attributes="1"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Component id="compositionTextField" min="-2" pref="105" max="-2" attributes="1"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="addCompositionButton" linkSize="5" pref="160" max="32767" attributes="1"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="concentrationLabel" min="-2" max="-2" attributes="1"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="concentrationTextField" linkSize="3" min="-2" pref="160" max="-2" attributes="1"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="volumeLabel" min="-2" max="-2" attributes="1"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="volumeTextField" linkSize="3" pref="56" max="32767" attributes="1"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="coatingTimeLabel" min="-2" max="-2" attributes="1"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="coatingTimeTextField" linkSize="3" min="-2" pref="56" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="coatingTemperatureLabel" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="coatingTemperatureTextField" linkSize="3" min="-2" pref="56" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                          <Component id="compositionLabel" min="-2" max="-2" attributes="1"/>
-                          <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="addCompositionButton" alignment="0" max="32767" attributes="1"/>
-                      <Component id="concentrationUnitOfMeasure" pref="133" max="32767" attributes="1"/>
-                      <Component id="volumeUnitLabel" alignment="0" min="-2" max="-2" attributes="1"/>
-                      <Component id="compositionComboBox" alignment="0" pref="133" max="32767" attributes="1"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="concentrationUnitOfMeasure" pref="100" max="32767" attributes="1"/>
+                      <Component id="volumeUnitLabel" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace min="-2" pref="201" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
-                          <Component id="compositionComboBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="compositionLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="compositionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="compositionComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="compositionTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="addCompositionButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="concentrationLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="concentrationTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="concentrationUnitOfMeasure" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="volumeTextField" linkSize="4" alignment="0" max="32767" attributes="1"/>
-                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                      <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="volumeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="volumeUnitLabel" linkSize="4" alignment="3" pref="20" max="32767" attributes="1"/>
+                          <Component id="volumeTextField" linkSize="4" alignment="3" max="32767" attributes="1"/>
                       </Group>
+                      <Component id="volumeUnitLabel" linkSize="4" pref="20" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="coatingTimeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="coatingTimeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -188,7 +198,7 @@
                       <Component id="coatingTemperatureTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="coatingTemperatureLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

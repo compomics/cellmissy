@@ -114,14 +114,14 @@ public class StatisticsPanel extends javax.swing.JPanel {
         infoScrollPane.setPreferredSize(new java.awt.Dimension(600, 100));
 
         infoTextPane.setBorder(null);
-        infoTextPane.setText("This panel presents a Summary Statistics Table together with a p-values Table, where p values have been computed on the selected Analysis Group performing a Mann-Whitney U test (also called Wilcoxon rank-sum test). By default, no correction is applied for multiple comparisons; you can select to adjust the p-values choosing a correction method form the drop down list.\n");
+        infoTextPane.setText("This panel presents a Summary Statistics Table together with a p-values Table, where p values have been computed on the current Analysis Group performing a Mann-Whitney U test (also called Wilcoxon rank-sum test). By default, no correction is applied for multiple comparisons; you can select to adjust the p-values choosing a correction method form the drop down list.\n");
         infoTextPane.setFocusable(false);
         infoTextPane.setMinimumSize(new java.awt.Dimension(600, 150));
         infoTextPane.setPreferredSize(new java.awt.Dimension(600, 150));
         infoScrollPane.setViewportView(infoTextPane);
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
-        jLabel3.setText("ANALYISIS OF GROUP: ");
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel3.setText("Current group:");
 
         groupNameLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         groupNameLabel.setForeground(new java.awt.Color(255, 0, 0));
@@ -138,18 +138,18 @@ public class StatisticsPanel extends javax.swing.JPanel {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(groupNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(561, Short.MAX_VALUE))
+                .addContainerGap())
             .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(infoScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 880, Short.MAX_VALUE))
         );
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, infoPanelLayout.createSequentialGroup()
-                .addContainerGap(67, Short.MAX_VALUE)
+                .addContainerGap(72, Short.MAX_VALUE)
                 .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(groupNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addGap(16, 16, 16))
+                .addContainerGap())
             .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(infoPanelLayout.createSequentialGroup()
                     .addComponent(infoScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -169,6 +169,7 @@ public class StatisticsPanel extends javax.swing.JPanel {
         add(infoPanel, gridBagConstraints);
 
         summaryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Summary Statistics"));
+        summaryPanel.setToolTipText("This table contains the summary statistics for each of the condition of the current group");
         summaryPanel.setMinimumSize(new java.awt.Dimension(200, 200));
         summaryPanel.setOpaque(false);
         summaryPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -192,11 +193,17 @@ public class StatisticsPanel extends javax.swing.JPanel {
         summaryPanel.setLayout(summaryPanelLayout);
         summaryPanelLayout.setHorizontalGroup(
             summaryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(summaryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
+            .addGroup(summaryPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(summaryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)
+                .addContainerGap())
         );
         summaryPanelLayout.setVerticalGroup(
             summaryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(summaryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+            .addGroup(summaryPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(summaryScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -210,6 +217,7 @@ public class StatisticsPanel extends javax.swing.JPanel {
         add(summaryPanel, gridBagConstraints);
 
         pValuesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Mann - Whitney U Test"));
+        pValuesPanel.setToolTipText("This table contains the p-values from the pairwise comparisons of the conditions of the current group");
         pValuesPanel.setMinimumSize(new java.awt.Dimension(200, 200));
         pValuesPanel.setOpaque(false);
         pValuesPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -234,11 +242,17 @@ public class StatisticsPanel extends javax.swing.JPanel {
         pValuesPanel.setLayout(pValuesPanelLayout);
         pValuesPanelLayout.setHorizontalGroup(
             pValuesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pValuesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
+            .addGroup(pValuesPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pValuesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)
+                .addContainerGap())
         );
         pValuesPanelLayout.setVerticalGroup(
             pValuesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pValuesScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+            .addGroup(pValuesPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pValuesScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -267,8 +281,8 @@ public class StatisticsPanel extends javax.swing.JPanel {
         testDescriptionTextPane.setFocusable(false);
         jScrollPane1.setViewportView(testDescriptionTextPane);
 
-        saveAnalysisButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         saveAnalysisButton.setText("Save Analysis");
+        saveAnalysisButton.setToolTipText("Click here to assign the chosen correction method to current analysis and save computed statistics");
 
         groupNameLabel1.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         groupNameLabel1.setText("*p values smaller than significance level are shown in green");
@@ -302,17 +316,17 @@ public class StatisticsPanel extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(significanceLevelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(groupNameLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
-                .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(groupNameLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(correctionMethodsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(saveAnalysisButton)
-                .addGap(32, 32, 32))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
