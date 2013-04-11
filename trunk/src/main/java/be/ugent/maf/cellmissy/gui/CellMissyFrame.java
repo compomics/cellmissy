@@ -27,11 +27,13 @@ public class CellMissyFrame extends javax.swing.JFrame {
      */
     public CellMissyFrame() {
         initComponents();
+        // set background to white
         this.getContentPane().setBackground(new Color(255, 255, 255));
         UIManager.put("nimbusBase", Color.lightGray);      // Base color
         UIManager.put("nimbusBlueGrey", Color.lightGray);  // BlueGrey
         UIManager.put("control", Color.white);         // Control
         UIManager.put("OptionPane.background", Color.white); // Background for option pane
+        UIManager.put("info", Color.white); // Background for tooltip texts (info class)
     }
 
     public JPanel getBackgroundPanel() {

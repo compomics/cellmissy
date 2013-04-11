@@ -93,7 +93,7 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
 
         finishButton.setText("Finish");
 
-        reportButton.setText("Create Report");
+        reportButton.setText("PDF Report");
 
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
@@ -101,8 +101,8 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
-                .addGap(197, 197, 197)
+                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(reportButton)
                 .addGap(18, 18, 18)
                 .addComponent(previousButton)
@@ -110,10 +110,10 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
                 .addComponent(nextButton)
                 .addGap(18, 18, 18)
                 .addComponent(finishButton)
-                .addGap(26, 26, 26))
+                .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {finishButton, nextButton, previousButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {finishButton, nextButton, previousButton, reportButton});
 
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -126,7 +126,7 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
                         .addComponent(nextButton)
                         .addComponent(finishButton)
                         .addComponent(reportButton)))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();

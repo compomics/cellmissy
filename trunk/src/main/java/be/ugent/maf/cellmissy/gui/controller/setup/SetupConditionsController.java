@@ -14,6 +14,7 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.setup.ConditionsPanel;
@@ -63,7 +64,7 @@ public class SetupConditionsController {
     private SetupConditionsPanel setupConditionsPanel;
     //parent controller
     @Autowired
-    private SetupExperimentController setupExperimentPanelController;
+    private SetupExperimentController setupExperimentController;
     //child controllers
     @Autowired
     private AssayEcmController assayEcmController;
@@ -126,6 +127,10 @@ public class SetupConditionsController {
         previousConditionIndex = -1;
     }
 
+    public CellMissyFrame getCellMissyFrame() {
+        return setupExperimentController.getCellMissyFrame();
+    }
+
     /**
      * public methods
      *
@@ -151,7 +156,7 @@ public class SetupConditionsController {
      * @param messageType
      */
     public void showMessage(String message, String title, Integer messageType) {
-        setupExperimentPanelController.showMessage(message, title, messageType);
+        setupExperimentController.showMessage(message, title, messageType);
     }
 
     /**
@@ -257,6 +262,9 @@ public class SetupConditionsController {
                         setupConditionsPanel.getCellLineNameTextField().setText("");
                         setupConditionsPanel.getCellLineNameTextField().requestFocusInWindow();
                     }
+                } else {
+                    showMessage("Please insert a name for the cell line!", "", JOptionPane.INFORMATION_MESSAGE);
+                    setupConditionsPanel.getCellLineNameTextField().requestFocusInWindow();
                 }
             }
         });
@@ -340,12 +348,12 @@ public class SetupConditionsController {
                 int locationToIndex = conditionsPanel.getConditionsJList().locationToIndex(e.getPoint());
                 //add mouse listener and enable tabbed pane on the right (only once, for Condition 1)
                 if (locationToIndex == 0) {
-                    setupExperimentPanelController.addMouseListener();
+                    setupExperimentController.addMouseListener();
                     setupConditionsPanel.getjTabbedPane1().setEnabled(true);
                 }
                 if (previousConditionIndex < plateConditionBindingList.size() && previousConditionIndex != -1) {
                     //check if validation of condition is OK
-                    if (setupExperimentPanelController.validateCondition(plateConditionBindingList.get(previousConditionIndex))) {
+                    if (setupExperimentController.validateCondition(plateConditionBindingList.get(previousConditionIndex))) {
                         //update fields of previous condition
                         updateCondition(previousConditionIndex);
                         //update and reset fields for the assay-ecm panel
@@ -360,7 +368,7 @@ public class SetupConditionsController {
         });
 
         //add an empty list of rectangles for Condition 1
-        setupExperimentPanelController.onNewConditionAdded(firstCondition);
+        setupExperimentController.onNewConditionAdded(firstCondition);
         //disable the Remove Button
         conditionsPanel.getRemoveButton().setEnabled(false);
 
@@ -378,7 +386,7 @@ public class SetupConditionsController {
                 //add the new Condition to the list
                 plateConditionBindingList.add(newCondition);
                 //add a new empty list of rectangles for the just added Condition
-                setupExperimentPanelController.onNewConditionAdded(newCondition);
+                setupExperimentController.onNewConditionAdded(newCondition);
                 //after a new condition is added enable the remove button
                 if (!conditionsPanel.getRemoveButton().isEnabled()) {
                     conditionsPanel.getRemoveButton().setEnabled(true);
@@ -392,7 +400,7 @@ public class SetupConditionsController {
             public void actionPerformed(ActionEvent e) {
                 if (conditionsPanel.getConditionsJList().getSelectedValue() != null) {
                     //empty the list of rectangles for this Condition and reset to null the Condition of the associated wells
-                    setupExperimentPanelController.onConditionToRemove((PlateCondition) (conditionsPanel.getConditionsJList().getSelectedValue()));
+                    setupExperimentController.onConditionToRemove((PlateCondition) (conditionsPanel.getConditionsJList().getSelectedValue()));
                     //remove the Condition from the list
                     plateConditionBindingList.remove(conditionsPanel.getConditionsJList().getSelectedIndex());
                     //select first condition after removing
@@ -577,7 +585,7 @@ public class SetupConditionsController {
      * add the Condition Panel and the Setup Condition Panel to their parent panels
      */
     private void initPanel() {
-        setupExperimentPanelController.getSetupPanel().getConditionsParentPanel().add(conditionsPanel, gridBagConstraints);
-        setupExperimentPanelController.getSetupPanel().getSetupConditionsParentPanel().add(setupConditionsPanel, gridBagConstraints);
+        setupExperimentController.getSetupPanel().getConditionsParentPanel().add(conditionsPanel, gridBagConstraints);
+        setupExperimentController.getSetupPanel().getSetupConditionsParentPanel().add(setupConditionsPanel, gridBagConstraints);
     }
 }

@@ -209,7 +209,7 @@ public class DataAnalysisController {
         return areaAnalysisHolder;
     }
 
-    public CellMissyFrame getMainFrame() {
+    public CellMissyFrame getCellMissyFrame() {
         return cellMissyController.getCellMissyFrame();
     }
 

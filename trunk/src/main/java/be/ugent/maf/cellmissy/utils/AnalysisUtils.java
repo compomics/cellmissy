@@ -74,6 +74,8 @@ public class AnalysisUtils {
     }
 
     /**
+     * Formatting a symmetric matrix: make the matrix diagonal, so that symmetric (identical) values are not shown anymore, i.e. they are set to null. With a customized renderer, these null values can
+     * be shown as a dash (-), as we do for example in the p values matrix.
      *
      * @param matrix
      * @return
@@ -85,10 +87,12 @@ public class AnalysisUtils {
         for (int rowIndex = 0; rowIndex < matrix.length; rowIndex++) {
             System.arraycopy(matrix[rowIndex], 0, formattedMatrix[rowIndex], 0, matrix[0].length);
         }
-
+        // iterate through the raows and columns
         for (int rowIndex = 0; rowIndex < matrix.length; rowIndex++) {
             for (int columnIndex = 0; columnIndex < matrix[0].length; columnIndex++) {
+                // get current value in the matrix
                 Double value = formattedMatrix[rowIndex][columnIndex];
+                // get the summetric value in the matrix
                 Double symmValue = formattedMatrix[columnIndex][rowIndex];
                 if (value != null && symmValue != null) {
                     if (value.equals(symmValue)) {
@@ -133,15 +137,16 @@ public class AnalysisUtils {
      * @return median
      */
     public static double computeMedian(double[] data) {
-        // sort the input data
+        // sort the input data, i.e. arrange the data points in ascending order
         Arrays.sort(data);
         //make a distinction between odd and even dataset sizes
+        // odd size: return the data point in the middle position
         if (data.length % 2 == 1) {
             return data[(data.length + 1) / 2 - 1];
         } else {
+            // even size
             double lower = data[(data.length / 2 - 1)];
             double upper = data[(data.length / 2)];
-
             return (lower + upper) / 2;
         }
     }
@@ -154,15 +159,16 @@ public class AnalysisUtils {
      */
     public static double computeStandardDeviation(double[] data) {
         double sum = 0;
+        double mean = computeMean(data);
         for (int i = 0; i < data.length; i++) {
-            final double diff = data[i] - computeMean(data);
+            double diff = data[i] - mean;
             sum += diff * diff;
         }
         return Math.sqrt(sum / data.length);
     }
 
     /**
-     * Compute Standard Error of the Mean
+     * Compute Standard Error of the Mean (SEM) of a given array of double
      *
      * @param data
      * @return SEM
@@ -187,7 +193,7 @@ public class AnalysisUtils {
     }
 
     /**
-     * Scale MAD in order to use it as a consistent estimator for the estimation of the sd
+     * Scale MAD in order to use it as a consistent estimator for the estimation of the standard deviation
      *
      * @param data
      * @return sd (related to MAD)
@@ -199,7 +205,7 @@ public class AnalysisUtils {
     }
 
     /**
-     * This method is using the Descriptive Statistics Class from org.apache.commons.math to estimate sample quantiles Cfr algorithm type 6 in R, EXCEL, Minitab and SPSS.
+     * This method is using the Descriptive Statistics Class from org.apache.commons.math to estimate sample quantiles Cfr algorithm type 6 in R, EXCEL, Minitab and SPSS. Continuous sample quantiles
      *
      * @param data
      * @param p
@@ -210,13 +216,15 @@ public class AnalysisUtils {
         for (int i = 0; i < data.length; i++) {
             dataStatistics.addValue(data[i]);
         }
+        // get an estimate for the pth percentile of the data
         return dataStatistics.getPercentile(p);
     }
 
     /**
-     * This method is estimating quantiles making use of algorithm type 7 in R This implementation is more sensitive, especially with small datasets (less than 15 data points)
+     * This method is estimating quantiles making use of algorithm type 7 in R. This is used by S as well. This implementation is more sensitive, especially with small datasets (less than 15 data
+     * points)
      *
-     * @param data -- array of double (distribution)
+     * @param data -- array of double (distribution of data points)
      * @param p -- percentile
      * @return a double
      */
@@ -225,11 +233,13 @@ public class AnalysisUtils {
         //get order statistics
         Arrays.sort(data);
         int dataSize = data.length;
-
+        // criterium to estimate the quantile: 1+p(N-1)
         double criterium = 1 + (p / 100) * (dataSize - 1);
+        // get the int part of this criterium
         int k = (int) criterium;
+        // get the double part of this criterium
         double d = criterium - k;
-
+        //
         if (k > 0 && k < dataSize) {
             estimation = data[k - 1] + d * (data[k] - data[k - 1]);
         } else if (k == 0) {

@@ -240,10 +240,10 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace pref="19" max="32767" attributes="0"/>
+                      <EmptySpace pref="23" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="clearAllButton" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Component id="clearLastButton" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="clearAllButton" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="clearLastButton" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -264,12 +264,12 @@
           <SubComponents>
             <Component class="javax.swing.JButton" name="clearLastButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Clear Last Selection"/>
+                <Property name="text" type="java.lang.String" value="Clear last selection"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="clearAllButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Clear All"/>
+                <Property name="text" type="java.lang.String" value="Clear all"/>
               </Properties>
             </Component>
           </SubComponents>

@@ -27,10 +27,10 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="addButton" min="-2" max="-2" attributes="0"/>
-                  <Component id="removeButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="addButton" linkSize="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="removeButton" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="38" max="32767" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="145" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -56,12 +56,12 @@
   <SubComponents>
     <Component class="javax.swing.JButton" name="addButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Add New Condition"/>
+        <Property name="text" type="java.lang.String" value="Add condition"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="removeButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Remove Condition"/>
+        <Property name="text" type="java.lang.String" value="Remove condition"/>
       </Properties>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">

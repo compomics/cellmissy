@@ -456,7 +456,7 @@ public class CellMissyController {
     }
 
     /**
-     *
+     * Get the card layout from the background panel of CellMissy frame
      * @return
      */
     private CardLayout getCardLayout() {

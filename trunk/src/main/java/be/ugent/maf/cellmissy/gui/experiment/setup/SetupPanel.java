@@ -196,21 +196,24 @@ public class SetupPanel extends javax.swing.JPanel {
         buttonsPanel.setOpaque(false);
         buttonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        clearLastButton.setText("Clear Last Selection");
+        clearLastButton.setText("Clear last selection");
 
-        clearAllButton.setText("Clear All");
+        clearAllButton.setText("Clear all");
 
         javax.swing.GroupLayout buttonsPanelLayout = new javax.swing.GroupLayout(buttonsPanel);
         buttonsPanel.setLayout(buttonsPanelLayout);
         buttonsPanelLayout.setHorizontalGroup(
             buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(buttonsPanelLayout.createSequentialGroup()
-                .addContainerGap(19, Short.MAX_VALUE)
+                .addContainerGap(23, Short.MAX_VALUE)
                 .addGroup(buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(clearAllButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(clearLastButton, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
+
+        buttonsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {clearAllButton, clearLastButton});
+
         buttonsPanelLayout.setVerticalGroup(
             buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, buttonsPanelLayout.createSequentialGroup()

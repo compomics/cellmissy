@@ -134,11 +134,11 @@ public class UserManagementDialog extends javax.swing.JDialog {
 
         lastNameLabel.setText("last name");
 
-        emailLabel.setText("Email");
+        emailLabel.setText("email");
 
-        selectRoleLabel.setText("Role");
+        selectRoleLabel.setText("role");
 
-        jLabel1.setText("Password");
+        jLabel1.setText("password");
 
         addUserButton.setText("add user");
 

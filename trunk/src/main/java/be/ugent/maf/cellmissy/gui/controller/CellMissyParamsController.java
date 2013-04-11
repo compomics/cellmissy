@@ -45,16 +45,13 @@ public class CellMissyParamsController {
     // services
 
     /**
-     * getters and setters
-     *
-     * @return
+     * Show a dialog to edit parameters
      */
-    public CellMissyConfigDialog getCellMissyConfigDialog() {
-        return cellMissyConfigDialog;
-    }
-
-    public void setCellMissyConfigDialog(CellMissyConfigDialog cellMissyConfigDialog) {
-        this.cellMissyConfigDialog = cellMissyConfigDialog;
+    public void editCellMissyParams() {
+        // pack dialog
+        cellMissyConfigDialog.pack();
+        // show dialog
+        cellMissyConfigDialog.setVisible(true);
     }
 
     /**
@@ -94,7 +91,9 @@ public class CellMissyParamsController {
             public void actionPerformed(ActionEvent e) {
                 //  check that properties are not left blank first
                 if (isValid()) {
-                    cellMissyConfigDialog.getParamsTable().getCellEditor().stopCellEditing();
+                    if (cellMissyConfigDialog.getParamsTable().getCellEditor() != null) {
+                        cellMissyConfigDialog.getParamsTable().getCellEditor().stopCellEditing();
+                    }
                     try {
                         // save new properties
                         PropertiesConfigurationHolder.getInstance().save();
