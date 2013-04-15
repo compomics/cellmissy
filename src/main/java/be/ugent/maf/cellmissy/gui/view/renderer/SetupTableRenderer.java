@@ -23,8 +23,10 @@ public class SetupTableRenderer extends DefaultTableCellRenderer {
         if (column == 0) {
             int length = ((String) value).length();
             String substring = ((String) value).substring(length - 1);
+            int lenght = GuiUtils.getAvailableColors().length;
             int conditionIndex = Integer.parseInt(substring);
-            setIcon(new RectIcon(GuiUtils.getAvailableColors()[conditionIndex]));
+            int indexOfColor = conditionIndex % lenght;
+            setIcon(new RectIcon(GuiUtils.getAvailableColors()[indexOfColor]));
         }
         setHorizontalAlignment(SwingConstants.LEFT);
         return this;

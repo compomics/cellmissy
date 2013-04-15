@@ -21,7 +21,9 @@ public class VelocityBarRenderer extends StatisticalBarRenderer {
         int length = conditionName.length();
         CharSequence subSequence = conditionName.subSequence(10, length);
         int conditionIndex = Integer.parseInt(subSequence.toString());
-        return GuiUtils.getAvailableColors()[conditionIndex];
+        int lenght = GuiUtils.getAvailableColors().length;
+        int indexOfColor = conditionIndex % lenght;
+        return GuiUtils.getAvailableColors()[indexOfColor + 1];
     }
 
     @Override

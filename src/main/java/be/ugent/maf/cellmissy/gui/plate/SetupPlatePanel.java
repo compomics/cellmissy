@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class is used in the setup step: show wells and let the user select them, assigning conditions
- * Drawing the mouse on the plate view, we select conditions (group of wells).
+ * This class is used in the setup step: show wells and let the user select them, assigning conditions Drawing the mouse on the plate view, we select conditions (group of wells).
+ *
  * @author Paola
  */
 public class SetupPlatePanel extends AbstractPlatePanel {
@@ -42,8 +42,8 @@ public class SetupPlatePanel extends AbstractPlatePanel {
 
     /**
      * setters and getters
-     * 
-     * @return 
+     *
+     * @return
      */
     public Map<PlateCondition, List<Rectangle>> getRectangles() {
         return rectangles;
@@ -95,7 +95,8 @@ public class SetupPlatePanel extends AbstractPlatePanel {
 
     /**
      * Render one Rectangle (for current condition).
-     * @param g 
+     *
+     * @param g
      */
     private void drawRect(Graphics g) {
 
@@ -112,30 +113,34 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         if (y + height > this.getHeight()) {
             height = this.getHeight() - y;
         }
-
-        g2d.setColor(GuiUtils.getAvailableColors()[currentCondition.getConditionIndex()]);
+        int lenght = GuiUtils.getAvailableColors().length;
+        int indexOfColor = currentCondition.getConditionIndex() % lenght;
+        g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
         g2d.drawRect(x, y, width, height);
 
     }
 
     /**
      * Render all rectangles already drawn by the user (for all conditions in the map).
-     * @param g 
+     *
+     * @param g
      */
     private void drawRectangles(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
         for (PlateCondition plateCondition : rectangles.keySet()) {
-            g2d.setColor(GuiUtils.getAvailableColors()[plateCondition.getConditionIndex()]);
+            int lenght = GuiUtils.getAvailableColors().length;
+            int indexOfColor = plateCondition.getConditionIndex() % lenght;
+            g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
             for (Rectangle rectangle : rectangles.get(plateCondition)) {
 
                 for (WellGui wellGui : wellGuiList) {
                     if (rectangle.contains(wellGui.getEllipsi().get(0).getX(), wellGui.getEllipsi().get(0).getY(), wellGui.getEllipsi().get(0).getWidth(), wellGui.getEllipsi().get(0).getHeight())) {
-                        int x = (int) wellGui.getEllipsi().get(0).getX() - SetupPlatePanel.pixelsGrid / 2;
-                        int y = (int) wellGui.getEllipsi().get(0).getY() - SetupPlatePanel.pixelsGrid / 2;
+                        int x = (int) wellGui.getEllipsi().get(0).getX() - SetupPlatePanel.pixelsGrid / 4;
+                        int y = (int) wellGui.getEllipsi().get(0).getY() - SetupPlatePanel.pixelsGrid / 4;
 
-                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + SetupPlatePanel.pixelsGrid;
-                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + SetupPlatePanel.pixelsGrid;
+                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + SetupPlatePanel.pixelsGrid / 2;
+                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + SetupPlatePanel.pixelsGrid / 2;
 
                         //create rectangle that sorrounds the wellGui and draw it
                         Rectangle rect = new Rectangle(x, y, width, height);
@@ -150,10 +155,9 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     }
 
     /**
-     * Render wells
-     * Override method from Abstract Plate Panel:
-     * if wells have already been rendered, just redraw them
-     * @param g 
+     * Render wells Override method from Abstract Plate Panel: if wells have already been rendered, just redraw them
+     *
+     * @param g
      */
     @Override
     protected void reDrawWells(Graphics g) {

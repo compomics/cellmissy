@@ -45,7 +45,9 @@ public class ConditionsLoadListRenderer extends DefaultListCellRenderer {
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         super.getListCellRendererComponent(list, value, index, false, false);
         int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
-        setIcon(new RectIcon(GuiUtils.getAvailableColors()[conditionIndex + 1]));
+        int lenght = GuiUtils.getAvailableColors().length;
+        int indexOfColor = conditionIndex % lenght;
+        setIcon(new RectIcon(GuiUtils.getAvailableColors()[indexOfColor + 1]));
         return this;
     }
 }

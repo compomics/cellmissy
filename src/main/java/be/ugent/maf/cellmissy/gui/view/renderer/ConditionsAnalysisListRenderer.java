@@ -13,8 +13,8 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
 /**
- * This renderer is used in the analysis step
- * Conditions were already set up; we click on a condition and fetch data to analyze.
+ * This renderer is used in the analysis step Conditions were already set up; we click on a condition and fetch data to analyze.
+ *
  * @author Paola Masuzzo
  */
 public class ConditionsAnalysisListRenderer extends DefaultListCellRenderer {
@@ -24,7 +24,8 @@ public class ConditionsAnalysisListRenderer extends DefaultListCellRenderer {
 
     /**
      * Constructor
-     * @param plateConditionList 
+     *
+     * @param plateConditionList
      */
     public ConditionsAnalysisListRenderer(List<PlateCondition> plateConditionList) {
         this.plateConditionList = plateConditionList;
@@ -34,6 +35,7 @@ public class ConditionsAnalysisListRenderer extends DefaultListCellRenderer {
 
     /**
      * Override Component Method
+     *
      * @param list
      * @param value
      * @param index
@@ -45,7 +47,9 @@ public class ConditionsAnalysisListRenderer extends DefaultListCellRenderer {
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
-        setIcon(new RectIcon(GuiUtils.getAvailableColors()[conditionIndex + 1]));
+        int lenght = GuiUtils.getAvailableColors().length;
+        int indexOfColor = conditionIndex % lenght;
+        setIcon(new RectIcon(GuiUtils.getAvailableColors()[indexOfColor + 1]));
         return this;
     }
 }

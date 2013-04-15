@@ -32,7 +32,7 @@ public abstract class AbstractPlatePanel extends JPanel {
     
     protected List<WellGui> wellGuiList;
     protected PlateFormat plateFormat;
-    protected static final int pixelsGrid = 7;
+    protected static final int pixelsGrid = 8;
     protected static final int pixelsBorders = 25;
 
     @Override

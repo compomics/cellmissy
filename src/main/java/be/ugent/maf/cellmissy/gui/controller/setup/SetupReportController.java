@@ -73,7 +73,7 @@ public class SetupReportController {
         tryToCreateFile(pdfFile);
         return pdfFile;
     }
-    
+
     /**
      *
      * @param pdfFile
@@ -183,8 +183,8 @@ public class SetupReportController {
      * Add plate view
      */
     private void addPlatePanel() {
-        AnalysisPlatePanel platePanel = createPanelView();
-        addImageFromJPanel(platePanel, platePanel.getWidth(), platePanel.getHeight());
+        AnalysisPlatePanel analysisPlatePanel = createPanelView();
+        addImageFromJPanel(analysisPlatePanel, analysisPlatePanel.getWidth(), analysisPlatePanel.getHeight());
     }
 
     /**
@@ -194,10 +194,10 @@ public class SetupReportController {
      */
     private AnalysisPlatePanel createPanelView() {
         // what we need to show is actually an analysis plate panel
-        AnalysisPlatePanel platePanel = new AnalysisPlatePanel();
-        platePanel.initPanel(experiment.getPlateFormat(), new Dimension(400, 500));
-        platePanel.setExperiment(experiment);
-        return platePanel;
+        AnalysisPlatePanel analysisPlatePanel = new AnalysisPlatePanel();
+        analysisPlatePanel.initPanel(experiment.getPlateFormat(), new Dimension(400, 500));
+        analysisPlatePanel.setExperiment(experiment);
+        return analysisPlatePanel;
     }
 
     /**
@@ -234,7 +234,9 @@ public class SetupReportController {
         for (int i = 0; i < plateConditions.size(); i++) {
             Paragraph paragraph = new Paragraph("" + plateConditions.get(i).getName(), titleFont);
             //set font color to condition index
-            titleFont.setColor(GuiUtils.getAvailableColors()[i + 1]);
+            int lenght = GuiUtils.getAvailableColors().length;
+            int indexOfColor = plateConditions.get(i).getConditionIndex() % lenght;
+            titleFont.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
             try {
                 document.add(paragraph);
                 addConditionInfo(plateConditions.get(i));
@@ -419,7 +421,9 @@ public class SetupReportController {
         List<PlateCondition> plateConditions = new ArrayList<>(plateConditionCollection);
         for (int i = 0; i < plateConditions.size(); i++) {
             PlateCondition plateCondition = plateConditions.get(i);
-            Color color = GuiUtils.getAvailableColors()[i + 1];
+            int lenght = GuiUtils.getAvailableColors().length;
+            int indexOfColor = plateConditions.get(i).getConditionIndex() % lenght;
+            Color color = GuiUtils.getAvailableColors()[indexOfColor];
             PdfUtils.addColoredCell(dataTable, color);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getCellLine().toString(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssay().getMatrixDimension().getDimension(), bodyFont);

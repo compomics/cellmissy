@@ -221,7 +221,9 @@ public class JFreeChartUtils {
                 int length = conditionName.length();
                 CharSequence subSequence = conditionName.subSequence(5, length);
                 int conditionIndex = Integer.parseInt(subSequence.toString());
-                XYLineAnnotation vertical = new XYLineAnnotation(x, y - dy, x, y + dy, stroke, GuiUtils.getAvailableColors()[conditionIndex]);
+                int lenght = GuiUtils.getAvailableColors().length;
+                int indexOfColor = conditionIndex % lenght;
+                XYLineAnnotation vertical = new XYLineAnnotation(x, y - dy, x, y + dy, stroke, GuiUtils.getAvailableColors()[indexOfColor + 1]);
                 plot.addAnnotation(vertical);
             }
         }
