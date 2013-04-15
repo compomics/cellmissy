@@ -83,6 +83,9 @@ public class LoginController {
      * Initialize main view
      */
     private void initLoginPanel() {
+        
+        // request focus on user name text field
+        loginDialog.getUserNameTextField().requestFocusInWindow();
 
         // login button: validate user credentials and attempt the login
         loginDialog.getLoginButton().addActionListener(new ActionListener() {
@@ -92,7 +95,7 @@ public class LoginController {
                     onLogin();
                 } else {
                     JOptionPane.showMessageDialog(loginDialog, "Please provide an user name and a password", "login validation fail", JOptionPane.WARNING_MESSAGE);
-                    loginDialog.getUserNameTextField().requestFocus();
+                    loginDialog.getUserNameTextField().requestFocusInWindow();
                 }
             }
         });
@@ -149,7 +152,7 @@ public class LoginController {
             JOptionPane.showMessageDialog(loginDialog, "No user with the given credentials could be found, please try again.", "login fail", JOptionPane.ERROR_MESSAGE);
             loginDialog.getUserNameTextField().setText("");
             loginDialog.getPasswordTextField().setText("");
-            loginDialog.getUserNameTextField().requestFocus();
+            loginDialog.getUserNameTextField().requestFocusInWindow();
         }
     }
 }

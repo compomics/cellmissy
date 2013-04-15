@@ -8,7 +8,6 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import be.ugent.maf.cellmissy.gui.plate.PlatePanelGui;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.PlateService;
@@ -18,8 +17,11 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.event.MouseInputAdapter;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -42,8 +44,8 @@ public class SetupPlateController {
     private ObservableList<PlateFormat> plateFormatBindingList;
     private Rectangle rectangle;
     private BindingGroup bindingGroup;
+    private boolean configurationIsRandom;
     //view
-    private PlatePanelGui platePanelGui;
     private SetupPlatePanel setupPlatePanel;
     //parent controller
     @Autowired
@@ -59,8 +61,8 @@ public class SetupPlateController {
     public void init() {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
+        configurationIsRandom = false;
         //create new panel
-        platePanelGui = new PlatePanelGui();
         //init views
         initSetupPlatePanel();
     }
@@ -72,10 +74,6 @@ public class SetupPlateController {
      */
     public SetupPlatePanel getSetupPlatePanel() {
         return setupPlatePanel;
-    }
-
-    public PlatePanelGui getPlatePanelGui() {
-        return platePanelGui;
     }
 
     /**
@@ -155,6 +153,32 @@ public class SetupPlateController {
         for (WellGui wellGui : setupPlatePanel.getWellGuiList()) {
             wellGui.setRectangle(null);
         }
+        for (PlateCondition plateCondition : setupExperimentController.getPlateConditionBindingList()) {
+            plateCondition.getWellCollection().clear();
+        }
+    }
+
+    /**
+     * Clear ONE selection only
+     *
+     * @param plateCondition
+     */
+    private void onClearSelection(PlateCondition plateCondition) {
+        //reset to null the condition of the selected wells
+        setupExperimentController.resetWellsCondition(plateCondition);
+        //remove the rectangles from the map and call the repaint
+        setupPlatePanel.getRectangles().get(plateCondition).clear();
+        setupPlatePanel.repaint();
+        Collection<Well> wellCollection = plateCondition.getWellCollection();
+        // set to null the rectangles of the wellguis of this condition
+        for (WellGui wellGui : setupPlatePanel.getWellGuiList()) {
+            for (Well well : wellCollection) {
+                if (wellGui.getWell().equals(well)) {
+                    wellGui.setRectangle(null);
+                }
+            }
+        }
+        wellCollection.clear();
     }
 
     /**
@@ -166,22 +190,23 @@ public class SetupPlateController {
     private void initSetupPlatePanel() {
         //init set up plate panel and add it to the bottom panel of the plate panel gui
         setupPlatePanel = new SetupPlatePanel();
-        platePanelGui.getBottomPanel().add(setupPlatePanel, gridBagConstraints);
+        setupExperimentController.getSetupPanel().getBottomPanel().add(setupPlatePanel, gridBagConstraints);
         //init plateFormatJcombo
         plateFormatBindingList = ObservableCollections.observableList(plateService.findAll());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, plateFormatBindingList, platePanelGui.getPlateFormatComboBox());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, plateFormatBindingList, setupExperimentController.getSetupPanel().getPlateFormatComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
+
 
         /**
          * add action listeners
          */
         //plate format combo box
-        platePanelGui.getPlateFormatComboBox().addActionListener(new ActionListener() {
+        setupExperimentController.getSetupPanel().getPlateFormatComboBox().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PlateFormat selectedPlateFormat = plateFormatBindingList.get(platePanelGui.getPlateFormatComboBox().getSelectedIndex());
-                Dimension parentDimension = platePanelGui.getBottomPanel().getSize();
+                PlateFormat selectedPlateFormat = plateFormatBindingList.get(setupExperimentController.getSetupPanel().getPlateFormatComboBox().getSelectedIndex());
+                Dimension parentDimension = setupExperimentController.getSetupPanel().getBottomPanel().getSize();
                 setupPlatePanel.initPanel(selectedPlateFormat, parentDimension);
                 //if selections were made on the plate, reset everything: clear the map and repaint the panel
                 for (List<Rectangle> rectangleList : setupPlatePanel.getRectangles().values()) {
@@ -195,11 +220,10 @@ public class SetupPlateController {
         setupExperimentController.getSetupPanel().getClearLastButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //reset to null the condition of the selected wells
-                setupExperimentController.resetWellsCondition(setupExperimentController.getCurrentCondition());
-                //remove the rectangles from the map and call the repaint
-                setupPlatePanel.getRectangles().get(setupExperimentController.getCurrentCondition()).clear();
-                setupPlatePanel.repaint();
+                if (selectionStarted()) {
+                    // on clear last selection only
+                    onClearSelection(setupExperimentController.getCurrentCondition());
+                }
             }
         });
 
@@ -207,13 +231,101 @@ public class SetupPlateController {
         setupExperimentController.getSetupPanel().getClearAllButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onClearPlate();
+                if (selectionStarted()) {
+                    // on clear the entire plate
+                    onClearPlate();
+                }
+            }
+        });
+
+        // randomize wells coordinates on the plate
+        setupExperimentController.getSetupPanel().getRandomButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // before randomize the wells coordinates on the plate, ask the user confirmation
+                // same confirmation is asked when the user click on a different plate format
+                // check if there are already rectangles, i.e. selections were made on the plate
+                if (selectionStarted()) {
+                    if (!configurationIsRandom) {
+                        Object[] options = {"Yes", "No", "Cancel"};
+                        int showOptionDialog = JOptionPane.showOptionDialog(null, "Current set-up will not be saved. Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+                        // if Yes, continue with randomization
+                        if (showOptionDialog == 0) {
+                            onRandomWells();
+                        }
+                    } else {
+                        onRandomWells();
+                    }
+                }
             }
         });
 
         //show 96 plate format as default
-        platePanelGui.getPlateFormatComboBox().setSelectedIndex(0);
-        setupExperimentController.getSetupPanel().getSetupPlateParentPanel().add(platePanelGui, gridBagConstraints);
+        setupExperimentController.getSetupPanel().getPlateFormatComboBox().setSelectedIndex(0);
+    }
+
+    /**
+     * Check if some rectangles already where selected on the plate view
+     *
+     * @return
+     */
+    private boolean selectionStarted() {
+        boolean started = false;
+        Collection<List<Rectangle>> values = setupPlatePanel.getRectangles().values();
+        for (List<Rectangle> list : values) {
+            if (!list.isEmpty()) {
+                started = true;
+                break;
+            }
+        }
+        return started;
+    }
+
+    /**
+     * Randomize wells coordinates on the plate panel
+     */
+    private void onRandomWells() {
+        // get list of conditions
+        ObservableList<PlateCondition> plateConditionBindingList = setupExperimentController.getPlateConditionBindingList();
+        List<WellGui> wellGuiList = setupPlatePanel.getWellGuiList();
+        int numberOfWells = wellGuiList.size();
+        // before cleaning the plate panel, put all sizes of well collections in a list
+        List<Integer> list = new ArrayList<>();
+        for (PlateCondition plateCondition : plateConditionBindingList) {
+            list.add(plateCondition.getWellCollection().size());
+        }
+        // reset the entire plate
+        onClearPlate();
+        for (int i = 0; i < plateConditionBindingList.size(); i++) {
+            // make a list to keep the new random wells
+            List<Well> randomWells = new ArrayList<>();
+            Integer numberOfWellsForCurrentCondition = list.get(i);
+            for (int j = 0; j < numberOfWellsForCurrentCondition; j++) {
+                // create a random number and take its integer part
+                Double random = Math.random() * numberOfWells;
+                int intValue = random.intValue();
+                // get the random well Gui and thus the random well
+                WellGui randomWellGui = wellGuiList.get(intValue);
+                Well randomWell = randomWellGui.getWell();
+                // check that the random well was not already assigned to another condition
+                // if not, set condition of the randow well with the current condition, add the randow well to the list and put the relative rectangle inside the rectangles map
+                if (randomWell.getPlateCondition() == null) {
+                    randomWell.setPlateCondition(plateConditionBindingList.get(i));
+                    randomWells.add(randomWell);
+                    Ellipse2D ellipse = randomWellGui.getEllipsi().get(0);
+                    Rectangle randomRectangle = ellipse.getBounds();
+                    setupPlatePanel.getRectangles().get(plateConditionBindingList.get(i)).add(randomRectangle);
+                } else {
+                    // if the randow well already had a condition, decrement the index and start again
+                    j--;
+                }
+            }
+            // take the random wells list and assign to the condition
+            plateConditionBindingList.get(i).setWellCollection(randomWells);
+        }
+        //repaint the setup plate panel
+        setupPlatePanel.repaint();
+        configurationIsRandom = true;
     }
 
     /**
@@ -269,7 +381,6 @@ public class SetupPlateController {
                                 well.setPlateCondition(setupExperimentController.getCurrentCondition());
                             }
                         }
-
                     }
                 }
                 setupPlatePanel.setStartPoint(null);

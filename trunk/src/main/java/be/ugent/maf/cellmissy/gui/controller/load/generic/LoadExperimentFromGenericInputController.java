@@ -208,7 +208,7 @@ public class LoadExperimentFromGenericInputController {
                         message += string + "\n";
                     }
                     showMessage(message, "Experiment validation problem", JOptionPane.WARNING_MESSAGE);
-                    genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getTimeFramesTextField().requestFocus(true);
+                    genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getTimeFramesTextField().requestFocusInWindow();
                 }
             }
         });

@@ -38,7 +38,9 @@ public class RectIconListRenderer extends DefaultListCellRenderer {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
         int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
-        setIcon(new RectIcon(GuiUtils.getAvailableColors()[conditionIndex + 1]));
+        int lenght = GuiUtils.getAvailableColors().length;
+        int indexOfColor = conditionIndex % lenght;
+        setIcon(new RectIcon(GuiUtils.getAvailableColors()[indexOfColor]));
         setText("N = " + numberOfReplicates.get(conditionIndex));
         return this;
     }

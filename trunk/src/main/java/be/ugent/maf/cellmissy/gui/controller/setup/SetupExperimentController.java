@@ -84,7 +84,7 @@ public class SetupExperimentController {
     private ObservableList<Magnification> magnificationBindingList;
     private BindingGroup bindingGroup;
     private File mainDirectory;
-    private boolean experimentalSetupHasBeenSaved;
+    private boolean setupSaved;
     //view
     private SetupExperimentPanel setupExperimentPanel;
     private ExperimentInfoPanel experimentInfoPanel;
@@ -115,7 +115,7 @@ public class SetupExperimentController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         mainDirectory = new File(PropertiesConfigurationHolder.getInstance().getString("mainDirectory"));
         experimentService.init(mainDirectory);
-        experimentalSetupHasBeenSaved = false;
+        setupSaved = false;
         //create panels
         experimentInfoPanel = new ExperimentInfoPanel();
         setupExperimentPanel = new SetupExperimentPanel();
@@ -245,7 +245,7 @@ public class SetupExperimentController {
         String purposeText = experimentInfoPanel.getPurposeTextArea().getText();
         if (experiment == null && (!numberText.isEmpty() | !purposeText.isEmpty())) {
             saved = false;
-        } else if (experiment != null && !experimentalSetupHasBeenSaved) {
+        } else if (experiment != null && !setupSaved) {
             saved = false;
         }
         return saved;
@@ -257,7 +257,7 @@ public class SetupExperimentController {
     public void resetAfterCardSwitch() {
         // set experiment back to null
         experiment = null;
-        experimentalSetupHasBeenSaved = false;
+        setupSaved = false;
         // disable finish button
         setupExperimentPanel.getFinishButton().setEnabled(false);
         // reset experiment info text fields
@@ -581,7 +581,7 @@ public class SetupExperimentController {
                             plateCondition.setExperiment(experiment);
                         }
                         //set experiment plate format
-                        experiment.setPlateFormat((PlateFormat) setupPlateController.getPlatePanelGui().getPlateFormatComboBox().getSelectedItem());
+                        experiment.setPlateFormat((PlateFormat) setupPanel.getPlateFormatComboBox().getSelectedItem());
                         //set the condition's collection of the experiment
                         experiment.setPlateConditionCollection(setupConditionsController.getPlateConditionBindingList());
                         //create PDF report, execute SwingWorker
@@ -627,7 +627,7 @@ public class SetupExperimentController {
             public void actionPerformed(ActionEvent e) {
                 //save the new experiment to the DB
                 experimentService.save(experiment);
-                experimentalSetupHasBeenSaved = true;
+                setupSaved = true;
                 //disable button
                 setupExperimentPanel.getFinishButton().setEnabled(false);
                 showMessage("Experiment was successfully saved to DB.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
@@ -795,7 +795,7 @@ public class SetupExperimentController {
 
         @Override
         protected File doInBackground() throws Exception {
-            //disable the pdf report button and show a waiting cursor
+            //disable buttons and show a waiting cursor
             setupExperimentPanel.getReportButton().setEnabled(false);
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             File file = setupReportController.createSetupReport(directory);

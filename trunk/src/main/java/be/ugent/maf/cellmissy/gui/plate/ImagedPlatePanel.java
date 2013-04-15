@@ -11,6 +11,7 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 /**
  * This class is used in the loading data step: imaged wells are shown with related imaging types
+ *
  * @author Paola Masuzzo
  */
 public class ImagedPlatePanel extends AbstractPlatePanel {
@@ -33,8 +35,8 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
 
     /**
      * getters and setters
-     * 
-     * @return 
+     *
+     * @return
      */
     public List<ImagingType> getImagingTypeList() {
         return imagingTypeList;
@@ -75,7 +77,8 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
 
     /**
      * Render rectangles
-     * @param g 
+     *
+     * @param g
      */
     private void showRect(Graphics g) {
 
@@ -88,13 +91,17 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
             for (Well well : plateCondition.getWellCollection()) {
                 for (WellGui wellGui : wellGuiList) {
                     if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
-                        g2d.setColor(GuiUtils.getAvailableColors()[plateConditions.indexOf(plateCondition) + 1]);
 
-                        int x = (int) wellGui.getEllipsi().get(0).getX() - ImagedPlatePanel.pixelsGrid / 2;
-                        int y = (int) wellGui.getEllipsi().get(0).getY() - ImagedPlatePanel.pixelsGrid / 2;
+                        int lenght = GuiUtils.getAvailableColors().length;
+                        int indexOfColor = plateConditions.indexOf(plateCondition) % lenght;
+                        Color color = GuiUtils.getAvailableColors()[indexOfColor + 1];
+                        g2d.setColor(color);
 
-                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + ImagedPlatePanel.pixelsGrid;
-                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + ImagedPlatePanel.pixelsGrid;
+                        int x = (int) wellGui.getEllipsi().get(0).getX() - ImagedPlatePanel.pixelsGrid / 4;
+                        int y = (int) wellGui.getEllipsi().get(0).getY() - ImagedPlatePanel.pixelsGrid / 4;
+
+                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + ImagedPlatePanel.pixelsGrid / 2;
+                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + ImagedPlatePanel.pixelsGrid / 2;
 
                         //create rectangle that sorrounds the wellGui and draw it
                         Rectangle rect = new Rectangle(x, y, width, height);
@@ -107,10 +114,9 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
     }
 
     /**
-     * render wells
-     * Override method from Abstract Plate Panel:
-     * if wells have already been rendered, redraw them taking into account full color for imaged wells
-     * @param g 
+     * render wells Override method from Abstract Plate Panel: if wells have already been rendered, redraw them taking into account full color for imaged wells
+     *
+     * @param g
      */
     @Override
     protected void reDrawWells(Graphics g) {
@@ -131,7 +137,9 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
                 } else {
                     // if it has been imaged, set its color to a different one (for each ellipse2D present)
                     List<ImagingType> uniqueImagingTypes = getUniqueImagingTypes(wellGui.getWell().getWellHasImagingTypeCollection());
-                    g2d.setColor(GuiUtils.getImagingTypeColors()[imagingTypeList.indexOf(uniqueImagingTypes.get(i))]);
+                    int index = imagingTypeList.indexOf(uniqueImagingTypes.get(i)) % GuiUtils.getImagingTypeColors().length;
+                    Color color = GuiUtils.getImagingTypeColors()[index];
+                    g2d.setColor(color);
                     g2d.fill(ellipse2D);
                 }
             }
@@ -146,8 +154,9 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
 
     /**
      * get Unique imaging types of a wellHasImagingType
+     *
      * @param wellHasImagingTypes
-     * @return 
+     * @return
      */
     public List<ImagingType> getUniqueImagingTypes(Collection<WellHasImagingType> wellHasImagingTypes) {
         List<ImagingType> imagingTypes = new ArrayList<>();

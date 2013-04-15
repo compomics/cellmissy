@@ -462,7 +462,7 @@ public class AssayEcmController {
                 } else {
                     String message = "Please insert a name for the new ECM composition!";
                     setupConditionsController.showMessage(message, "", JOptionPane.WARNING_MESSAGE);
-                    assayEcm3DPanel.getCompositionTextField().requestFocus();
+                    assayEcm3DPanel.getCompositionTextField().requestFocusInWindow();
                 }
             }
         });
@@ -529,7 +529,7 @@ public class AssayEcmController {
                 } else {
                     String message = "Please insert a name for the new ECM composition!";
                     setupConditionsController.showMessage(message, "", JOptionPane.WARNING_MESSAGE);
-                    assayEcm3DPanel.getCompositionTextField().requestFocus();
+                    assayEcm3DPanel.getCompositionTextField().requestFocusInWindow();
                 }
             }
         });
@@ -606,7 +606,7 @@ public class AssayEcmController {
                 } else {
                     String message = "Please insert a name for the new ECM composition!";
                     setupConditionsController.showMessage(message, "", JOptionPane.WARNING_MESSAGE);
-                    assayEcm25DPanel.getCompositionTextField().requestFocus();
+                    assayEcm25DPanel.getCompositionTextField().requestFocusInWindow();
                 }
             }
         });

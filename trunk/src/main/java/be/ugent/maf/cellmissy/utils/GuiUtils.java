@@ -29,9 +29,9 @@ import javax.swing.JPanel;
 public class GuiUtils {
 
     //Available colors
-    private static final Color[] availableColors = {Color.BLACK, Color.BLUE, Color.RED, Color.GREEN, Color.ORANGE, Color.MAGENTA, Color.CYAN, Color.YELLOW, new Color(0, 140, 140), new Color(125, 0, 130), Color.GRAY, Color.DARK_GRAY, new Color(130, 70, 230), new Color(90, 200, 30), new Color(175, 238, 238)};
+    private static final Color[] availableColors = {new Color(0, 0, 0), new Color(0, 0, 139), new Color(255, 0, 0), new Color(34, 139, 34), new Color(148, 0, 211), new Color(255, 140, 0), new Color(255, 0, 255), new Color(0, 140, 140), new Color(128, 0, 0), new Color(128, 128, 0)};
     //Colors used for Imaging Type Rendering 
-    private static final Color[] imagingTypeColors = {new Color(130, 70, 230), new Color(90, 200, 30), new Color(175, 238, 238)};
+    private static final Color[] imagingTypeColors = {new Color(173, 255, 47), new Color(175, 238, 238), new Color(219, 112, 147)};
 
     /**
      * Get Default Grid Bag Constraints used for Grid Bag Layout GUI Structures
@@ -160,7 +160,7 @@ public class GuiUtils {
     public static void setGraphics(Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        BasicStroke stroke = new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
+        BasicStroke stroke = new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
         g2d.setStroke(stroke);
     }
 }

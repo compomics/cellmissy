@@ -57,13 +57,15 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
             for (Well well : plateCondition.getWellCollection()) {
                 for (WellGui wellGui : wellGuiList) {
                     if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
-                        g2d.setColor(GuiUtils.getAvailableColors()[plateConditions.indexOf(plateCondition) + 1]);
+                        int lenght = GuiUtils.getAvailableColors().length;
+                        int indexOfColor = plateConditions.indexOf(plateCondition) % lenght;
+                        g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor + 1]);
 
-                        int x = (int) wellGui.getEllipsi().get(0).getX() - AnalysisPlatePanel.pixelsGrid / 2;
-                        int y = (int) wellGui.getEllipsi().get(0).getY() - AnalysisPlatePanel.pixelsGrid / 2;
+                        int x = (int) wellGui.getEllipsi().get(0).getX() - AnalysisPlatePanel.pixelsGrid / 4;
+                        int y = (int) wellGui.getEllipsi().get(0).getY() - AnalysisPlatePanel.pixelsGrid / 4;
 
-                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + AnalysisPlatePanel.pixelsGrid;
-                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + AnalysisPlatePanel.pixelsGrid;
+                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + AnalysisPlatePanel.pixelsGrid / 2;
+                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + AnalysisPlatePanel.pixelsGrid / 2;
 
                         //create rectangle that sorrounds the wellGui and draw it
                         Rectangle rect = new Rectangle(x, y, width, height);

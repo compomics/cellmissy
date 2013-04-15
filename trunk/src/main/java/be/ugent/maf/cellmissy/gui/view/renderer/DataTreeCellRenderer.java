@@ -50,7 +50,10 @@ public class DataTreeCellRenderer extends DefaultTreeCellRenderer {
         super.getTreeCellRendererComponent(tree, value, sel, true, leaf, row, hasFocus);
         if (isImagingNode(value)) {
             int indexOfImagingType = getIndexOfImagingType(value);
-            setIcon(new CircleIcon(GuiUtils.getImagingTypeColors()[indexOfImagingType]));
+            int lenght = GuiUtils.getImagingTypeColors().length;
+            int index = indexOfImagingType % lenght;
+            Color color = GuiUtils.getImagingTypeColors()[index];
+            setIcon(new CircleIcon(color));
         }
         setForeground(Color.black);
         return this;

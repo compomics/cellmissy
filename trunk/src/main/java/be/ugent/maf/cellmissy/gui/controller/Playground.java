@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 /**
- *
+ * Playground class
  * @author Paola Masuzzo
  */
 public class Playground {
