@@ -234,7 +234,7 @@ public class AreaAnalysisController {
         DefaultStatisticalCategoryDataset velocityDataset = getVelocityDataset(conditionsToShow);
         String areaUnitOfMeasurement = getAreaUnitOfMeasurement();
         JFreeChart velocityChart = ChartFactory.createLineChart("Median Velocity", "", "Velocity " + "(" + areaUnitOfMeasurement + "\\min)", velocityDataset, PlotOrientation.VERTICAL, false, false, false);
-        velocityChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
+        velocityChart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         CategoryPlot velocityPlot = velocityChart.getCategoryPlot();
         velocityPlot.setBackgroundPaint(Color.white);
         velocityPlot.setOutlinePaint(Color.white);

@@ -17,11 +17,16 @@ import java.util.List;
 import javax.swing.JPanel;
 
 /**
- * Abstract Class extending JPanel
- * Plate View Panel with a List of Well GUI and a plate format
+ * Abstract Class extending JPanel: Plate View Panel with a List of Well GUI and a plate format
+ *
  * @author Paola
  */
 public abstract class AbstractPlatePanel extends JPanel {
+
+    protected List<WellGui> wellGuiList;
+    protected PlateFormat plateFormat;
+    protected static final int pixelsGrid = 8;
+    protected static final int pixelsBorders = 25;
 
     /**
      * Constructor; setOpaque to false.
@@ -29,11 +34,6 @@ public abstract class AbstractPlatePanel extends JPanel {
     public AbstractPlatePanel() {
         setOpaque(false);
     }
-    
-    protected List<WellGui> wellGuiList;
-    protected PlateFormat plateFormat;
-    protected static final int pixelsGrid = 8;
-    protected static final int pixelsBorders = 25;
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -53,8 +53,8 @@ public abstract class AbstractPlatePanel extends JPanel {
 
     /**
      * getters
-     * 
-     * @return 
+     *
+     * @return
      */
     public List<WellGui> getWellGuiList() {
         return wellGuiList;
@@ -66,6 +66,7 @@ public abstract class AbstractPlatePanel extends JPanel {
 
     /**
      * Given a plate format and a parent dimension, this methods computes the right space to show the plate panel
+     *
      * @param plateFormat :format, numbers of rows, number of columns
      * @param parentDimension :Dimension of parent panel where the plate need to be added
      */
@@ -77,8 +78,9 @@ public abstract class AbstractPlatePanel extends JPanel {
 
     /**
      * making use of Graphics 2D, render wells
+     *
      * @param wellSize -- size of wells according to format
-     * @param g -- graphics 
+     * @param g -- graphics
      */
     public void drawWells(int wellSize, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -100,13 +102,10 @@ public abstract class AbstractPlatePanel extends JPanel {
                 ellipsi.add(ellipse2D);
                 wellGui.setEllipsi(ellipsi);
                 // wells drawn for the first time are always shown in default color
-                // the default color is the first object of the WellGui's AvailableWellColors()List
-                Color defaultColor = GuiUtils.getAvailableColors()[0];
+                Color defaultColor = GuiUtils.getDefaultColor();
                 g2d.setColor(defaultColor);
                 g2d.draw(ellipse2D);
-
                 wellGuiList.add(wellGui);
-
                 if (i == 0 || j == 0) {
                     // draw the labels on the plate
                     drawPlateLabel(ellipse2D, g2d, j + 1, i + 1);
@@ -117,10 +116,11 @@ public abstract class AbstractPlatePanel extends JPanel {
 
     /**
      * Render plate labels on upper-side and left-side of the plate view
+     *
      * @param ellipse2D
      * @param g2d
      * @param columnNumber
-     * @param rowNumber 
+     * @param rowNumber
      */
     protected void drawPlateLabel(Ellipse2D ellipse2D, Graphics2D g2d, int columnNumber, int rowNumber) {
         Font font = new Font("Arial", Font.BOLD, 12);
@@ -141,9 +141,9 @@ public abstract class AbstractPlatePanel extends JPanel {
     }
 
     /**
-     * This method is called in the initPanel method:
-     * Compute plate panel sizes according to JFrame resize
-     * @param parentDimension 
+     * This method is called in the initPanel method: Compute plate panel sizes according to JFrame resize
+     *
+     * @param parentDimension
      */
     public void doResize(Dimension parentDimension) {
         int minimumParentDimension = Math.min(parentDimension.height, parentDimension.width);
@@ -177,9 +177,9 @@ public abstract class AbstractPlatePanel extends JPanel {
     }
 
     /**
-     * Abstract method to be implemented
-     * Redraw wells according to events: Show rectangles for conditions, show ellipsis for imaging types and so on. 
-     * @param g 
+     * Abstract method to be implemented Redraw wells according to events: Show rectangles for conditions, show ellipsis for imaging types and so on.
+     *
+     * @param g
      */
     protected abstract void reDrawWells(Graphics g);
 }

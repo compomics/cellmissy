@@ -670,7 +670,7 @@ public class AreaPreProcessingController {
                 }
                 yErrorsList.add(yErrors);
                 XYSeries values = JFreeChartUtils.generateXYSeries(xValues, yValues);
-                values.setKey("Cond " + (dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1));
+                values.setKey("Condition " + (dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1));
                 xySeriesCollection.addSeries(values);
             }
         }

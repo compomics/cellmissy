@@ -337,21 +337,23 @@ public class DataAnalysisController {
     }
 
     /**
+     * Highlight label (both color and size)
      *
      * @param label
      */
-    private void highlightLabelInfo(JLabel label) {
+    private void highlightLabel(JLabel label) {
         label.setFont(new Font("Tahoma", Font.BOLD, 14));
-        label.setForeground(Color.BLUE);
+        label.setForeground(new Color(72, 61, 169));
     }
 
     /**
+     * Reset label (both size and color)
      *
      * @param label
      */
     private void resetLabel(JLabel label) {
         label.setFont(new Font("Tahoma", Font.PLAIN, 12));
-        label.setForeground(Color.BLACK);
+        label.setForeground(GuiUtils.getDefaultColor());
     }
 
     /**
@@ -365,7 +367,7 @@ public class DataAnalysisController {
                 analysisExperimentPanel.getPreviousButton().setEnabled(false);
                 // enable next button
                 analysisExperimentPanel.getNextButton().setEnabled(true);
-                highlightLabelInfo(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
+                highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
@@ -378,7 +380,7 @@ public class DataAnalysisController {
                 if (areaAnalysisHolder.getMeasuredAreaType().equals(MeasuredAreaType.CELL_COVERED_AREA)) {
                     areaPreProcessingController.getAreaAnalysisPanel().getCellCoveredAreaRadioButton().setVisible(false);
                 }
-                highlightLabelInfo(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
@@ -388,7 +390,7 @@ public class DataAnalysisController {
                 areaPreProcessingController.onGlobalView();
                 // enable next button
                 analysisExperimentPanel.getNextButton().setEnabled(true);
-                highlightLabelInfo(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
+                highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
@@ -398,7 +400,7 @@ public class DataAnalysisController {
                 // disable next button
                 analysisExperimentPanel.getNextButton().setEnabled(false);
                 areaPreProcessingController.onLinearRegressionModel();
-                highlightLabelInfo(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
+                highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
@@ -497,7 +499,7 @@ public class DataAnalysisController {
         areaAnalysisController.getGroupsBindingList().clear();
         // clear selection on lists
         metaDataAnalysisPanel.getProjectJList().clearSelection();
-        metaDataAnalysisPanel.getExperimentJList().clearSelection();        
+        metaDataAnalysisPanel.getExperimentJList().clearSelection();
         areaPreProcessingController.getPreProcessingMap().clear();
         currentCondition = null;
         experiment = null;

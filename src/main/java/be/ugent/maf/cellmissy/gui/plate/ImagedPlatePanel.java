@@ -93,8 +93,9 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
                     if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
 
                         int lenght = GuiUtils.getAvailableColors().length;
-                        int indexOfColor = plateConditions.indexOf(plateCondition) % lenght;
-                        Color color = GuiUtils.getAvailableColors()[indexOfColor + 1];
+                        int conditionIndex = plateConditions.indexOf(plateCondition);
+                        int indexOfColor = conditionIndex % lenght;
+                        Color color = GuiUtils.getAvailableColors()[indexOfColor];
                         g2d.setColor(color);
 
                         int x = (int) wellGui.getEllipsi().get(0).getX() - ImagedPlatePanel.pixelsGrid / 4;
@@ -125,20 +126,26 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
         // a list of WellGui objects is present, iterate through it
         for (WellGui wellGui : wellGuiList) {
             List<Ellipse2D> ellipsi = wellGui.getEllipsi();
-
+            // iterate through the circles
             for (int i = 0; i < ellipsi.size(); i++) {
                 Ellipse2D ellipse2D = ellipsi.get(i);
 
                 // if a color of a wellGui has been changed, keep track of it when resizing
                 // if a well was not imaged, set its color to the default one (just redraw the well)
                 if (wellGui.getWell().getWellHasImagingTypeCollection().isEmpty()) {
-                    g2d.setColor(GuiUtils.getAvailableColors()[0]);
+                    Color defaultColor = GuiUtils.getDefaultColor();
+                    g2d.setColor(defaultColor);
                     g2d.draw(ellipse2D);
                 } else {
                     // if it has been imaged, set its color to a different one (for each ellipse2D present)
+                    // this time we need to call a fill and not a draw anymore
                     List<ImagingType> uniqueImagingTypes = getUniqueImagingTypes(wellGui.getWell().getWellHasImagingTypeCollection());
-                    int index = imagingTypeList.indexOf(uniqueImagingTypes.get(i)) % GuiUtils.getImagingTypeColors().length;
-                    Color color = GuiUtils.getImagingTypeColors()[index];
+                    // how many imaging types we have?
+                    int length = GuiUtils.getImagingTypeColors().length;
+                    ImagingType currentImagingType = uniqueImagingTypes.get(i);
+                    int indexOfImagingType = imagingTypeList.indexOf(currentImagingType);
+                    int indexOfColor = indexOfImagingType % length;
+                    Color color = GuiUtils.getImagingTypeColors()[indexOfColor];
                     g2d.setColor(color);
                     g2d.fill(ellipse2D);
                 }
@@ -146,7 +153,8 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
 
             // draw the labels on the plate
             if (wellGui.getRowNumber() == 1 || wellGui.getColumnNumber() == 1) {
-                g2d.setColor(GuiUtils.getAvailableColors()[0]);
+                Color defaultColor = GuiUtils.getDefaultColor();
+                g2d.setColor(defaultColor);
                 drawPlateLabel(ellipsi.get(0), g2d, wellGui.getColumnNumber(), wellGui.getRowNumber());
             }
         }

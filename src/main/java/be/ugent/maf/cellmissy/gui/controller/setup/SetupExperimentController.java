@@ -182,12 +182,7 @@ public class SetupExperimentController {
      * @param conditionToRemove
      */
     public void onConditionToRemove(PlateCondition conditionToRemove) {
-        //set back to null the condition of the wells selected 
-        resetWellsCondition(conditionToRemove);
-        //remove the rectangles from the map
-        setupPlateController.removeRectangleEntry(conditionToRemove);
-        //repaint
-        setupPlateController.getSetupPlatePanel().repaint();
+         setupPlateController.onClearSelection(conditionToRemove);
     }
 
     /**
@@ -580,8 +575,8 @@ public class SetupExperimentController {
                         for (PlateCondition plateCondition : setupConditionsController.getPlateConditionBindingList()) {
                             plateCondition.setExperiment(experiment);
                         }
-                        //set experiment plate format
-                        experiment.setPlateFormat((PlateFormat) setupPanel.getPlateFormatComboBox().getSelectedItem());
+                        // set plate format
+                        experiment.setPlateFormat((PlateFormat)setupPanel.getPlateFormatComboBox().getSelectedItem());
                         //set the condition's collection of the experiment
                         experiment.setPlateConditionCollection(setupConditionsController.getPlateConditionBindingList());
                         //create PDF report, execute SwingWorker
@@ -596,13 +591,13 @@ public class SetupExperimentController {
                             chooseDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
                             int experimentNumber = experiment.getExperimentNumber();
                             int projectNumber = experiment.getProject().getProjectNumber();
-                            String reportName = "Setup report " + experimentNumber + " - " + projectNumber + ".pdf";
+                            String reportName = "Set-up report " + experimentNumber + " - " + projectNumber + ".pdf";
                             chooseDirectory.setSelectedFile(new File(reportName));
 
                             // in response to the button click, show open dialog
                             int returnVal = chooseDirectory.showSaveDialog(setupExperimentPanel);
                             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                                File currentDirectory = chooseDirectory.getCurrentDirectory();
+                                File currentDirectory = chooseDirectory.getSelectedFile();
                                 setupReportWorker = new SetupReportWorker(currentDirectory);
                             } else {
                                 showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
@@ -617,6 +612,7 @@ public class SetupExperimentController {
                     }
                 } else {
                     showMessage("Validation problem." + "\n" + "Check your setup and try again to create the report.", "report not created", JOptionPane.INFORMATION_MESSAGE);
+                    setupExperimentPanel.getFinishButton().setEnabled(false);
                 }
             }
         });

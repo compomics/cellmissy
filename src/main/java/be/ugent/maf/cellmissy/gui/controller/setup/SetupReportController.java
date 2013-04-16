@@ -12,7 +12,7 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.Well;
-import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
+import be.ugent.maf.cellmissy.gui.plate.PdfPlatePanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.PdfUtils;
 import com.lowagie.text.Document;
@@ -80,7 +80,8 @@ public class SetupReportController {
      */
     private void tryToCreateFile(File pdfFile) {
         try {
-            boolean success = pdfFile.createNewFile();
+            boolean success;
+            success = pdfFile.createNewFile();
             if (success) {
                 setupExperimentController.showMessage("Pdf Report successfully created!", "Report created", JOptionPane.INFORMATION_MESSAGE);
             } else {
@@ -180,11 +181,11 @@ public class SetupReportController {
     }
 
     /**
-     * Add plate view
+     * Add plate view.
      */
     private void addPlatePanel() {
-        AnalysisPlatePanel analysisPlatePanel = createPanelView();
-        addImageFromJPanel(analysisPlatePanel, analysisPlatePanel.getWidth(), analysisPlatePanel.getHeight());
+        PdfPlatePanel pdfPlatePanel = createPanelView();
+        addImageFromJPanel(pdfPlatePanel, pdfPlatePanel.getWidth(), pdfPlatePanel.getHeight());
     }
 
     /**
@@ -192,12 +193,12 @@ public class SetupReportController {
      *
      * @return
      */
-    private AnalysisPlatePanel createPanelView() {
+    private PdfPlatePanel createPanelView() {
         // what we need to show is actually an analysis plate panel
-        AnalysisPlatePanel analysisPlatePanel = new AnalysisPlatePanel();
-        analysisPlatePanel.initPanel(experiment.getPlateFormat(), new Dimension(400, 500));
-        analysisPlatePanel.setExperiment(experiment);
-        return analysisPlatePanel;
+        PdfPlatePanel pdfPlatePanel = new PdfPlatePanel();
+        pdfPlatePanel.initPanel(experiment.getPlateFormat(), new Dimension(400, 500));
+        pdfPlatePanel.setExperiment(experiment);
+        return pdfPlatePanel;
     }
 
     /**
@@ -235,7 +236,8 @@ public class SetupReportController {
             Paragraph paragraph = new Paragraph("" + plateConditions.get(i).getName(), titleFont);
             //set font color to condition index
             int lenght = GuiUtils.getAvailableColors().length;
-            int indexOfColor = plateConditions.get(i).getConditionIndex() % lenght;
+            int conditionIndex = plateConditions.get(i).getConditionIndex() - 1;
+            int indexOfColor = conditionIndex % lenght;
             titleFont.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
             try {
                 document.add(paragraph);
@@ -419,10 +421,11 @@ public class SetupReportController {
         PdfUtils.addCustomizedCell(dataTable, "Assay(Medium, %Serum)", titleFont);
         Collection<PlateCondition> plateConditionCollection = experiment.getPlateConditionCollection();
         List<PlateCondition> plateConditions = new ArrayList<>(plateConditionCollection);
+        int lenght = GuiUtils.getAvailableColors().length;
         for (int i = 0; i < plateConditions.size(); i++) {
             PlateCondition plateCondition = plateConditions.get(i);
-            int lenght = GuiUtils.getAvailableColors().length;
-            int indexOfColor = plateConditions.get(i).getConditionIndex() % lenght;
+            int conditionIndex = plateConditions.get(i).getConditionIndex() - 1;
+            int indexOfColor = conditionIndex % lenght;
             Color color = GuiUtils.getAvailableColors()[indexOfColor];
             PdfUtils.addColoredCell(dataTable, color);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getCellLine().toString(), bodyFont);

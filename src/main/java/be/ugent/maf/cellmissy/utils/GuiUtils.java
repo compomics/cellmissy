@@ -28,8 +28,12 @@ import javax.swing.JPanel;
  */
 public class GuiUtils {
 
-    //Available colors
-    private static final Color[] availableColors = {new Color(0, 0, 0), new Color(0, 0, 139), new Color(255, 0, 0), new Color(34, 139, 34), new Color(148, 0, 211), new Color(255, 140, 0), new Color(255, 0, 255), new Color(0, 140, 140), new Color(128, 0, 0), new Color(128, 128, 0)};
+    // default color: Black
+    private static final Color defaultColor = new Color(0, 0, 0);
+    // color for not-imaged wells
+    private static final Color nonImagedColor = new Color(169, 169, 169);
+    //Available colors (for set-up the experiment)
+    private static final Color[] availableColors = {new Color(0, 0, 139), new Color(255, 0, 0), new Color(34, 139, 34), new Color(148, 0, 211), new Color(255, 140, 0), new Color(30, 144, 255), new Color(255, 0, 255), new Color(0, 140, 140), new Color(128, 0, 0), new Color(128, 128, 0)};
     //Colors used for Imaging Type Rendering 
     private static final Color[] imagingTypeColors = {new Color(173, 255, 47), new Color(175, 238, 238), new Color(219, 112, 147)};
 
@@ -48,6 +52,14 @@ public class GuiUtils {
 
     public static Color[] getAvailableColors() {
         return availableColors;
+    }
+
+    public static Color getDefaultColor() {
+        return defaultColor;
+    }
+
+    public static Color getNonImagedColor() {
+        return nonImagedColor;
     }
 
     public static Color[] getImagingTypeColors() {
