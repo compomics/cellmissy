@@ -15,6 +15,7 @@ import java.util.List;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYLineAnnotation;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
@@ -36,6 +37,60 @@ import org.jfree.ui.RectangleEdge;
  */
 public class JFreeChartUtils {
 
+    // private methods
+    /**
+     * Define some parameters for the xyPlot
+     *
+     * @param xYPlot
+     */
+    private static void setupPlot(XYPlot xYPlot) {
+        // set background to white and grid color to black
+        xYPlot.setBackgroundPaint(Color.white);
+        xYPlot.setRangeGridlinePaint(Color.black);
+        // hide the border of the sorrounding box
+        xYPlot.setOutlinePaint(Color.white);
+        // get domanin and range axes
+        ValueAxis domainAxis = xYPlot.getDomainAxis();
+        ValueAxis rangeAxis = xYPlot.getRangeAxis();
+        // set label paint for axes to black
+        domainAxis.setLabelPaint(Color.black);
+        rangeAxis.setLabelPaint(Color.black);
+        // set font for labels, both on domain and range axes
+        domainAxis.setLabelFont(new Font("Tahoma", Font.BOLD, 12));
+        rangeAxis.setLabelFont(new Font("Tahoma", Font.BOLD, 12));
+    }
+
+    /**
+     * Given a list of wells and one well's coordinate, get the index of the well in the List
+     *
+     * @param wellCoordinates
+     * @param wellList
+     * @return
+     */
+    private static int getWellIndex(String wellCoordinates, List<Well> wellList) {
+        int wellIndex = 0;
+        for (Well well : wellList) {
+            if (well.toString().equals(wellCoordinates)) {
+                wellIndex = wellList.indexOf(well);
+            }
+        }
+        return wellIndex;
+    }
+
+    /**
+     * Get well coordinates from series in oder to render the lines color
+     *
+     * @param xYSeriesCollection
+     * @param indexOfSeries
+     * @return
+     */
+    private static String getWellCoordinates(XYSeriesCollection xYSeriesCollection, int indexOfSeries) {
+        String toString = xYSeriesCollection.getSeriesKey(indexOfSeries).toString();
+        int lastIndexOf = toString.lastIndexOf(")");
+        return toString.substring(0, lastIndexOf + 1);
+    }
+
+    // public methods
     /**
      * This method is generating a chart for the density function given a certain index for the condition, a xYSeriesCollection made up of the density functions (x and y values) and a string for the
      * main title.
@@ -49,7 +104,7 @@ public class JFreeChartUtils {
     public static JFreeChart generateDensityFunctionChart(PlateCondition plateCondition, int conditionIndex, XYSeriesCollection xYSeriesCollection, String chartTitle) {
         String specificChartTitle = chartTitle + " Condition " + conditionIndex + " (replicates)";
         JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, "% increase (Area)", "Density", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
-        densityChart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
+        densityChart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         //XYplot
         XYPlot xYPlot = densityChart.getXYPlot();
         //disable autorange for the axes
@@ -69,10 +124,13 @@ public class JFreeChartUtils {
         for (Well well : processedWells) {
             int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
             for (int i = counter; i < xYSeriesCollection.getSeriesCount(); i++) {
+                // wide line
+                renderer.setSeriesStroke(i, wideLine);
                 String wellCoordinates = getWellCoordinates(xYSeriesCollection, i);
                 int wellIndex = getWellIndex(wellCoordinates, processedWells);
-                renderer.setSeriesStroke(i, wideLine);
-                renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[wellIndex + 1]);
+                int length = GuiUtils.getAvailableColors().length;
+                int colorIndex = wellIndex % length;
+                renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
             }
             counter += numberOfSamplesPerWell;
         }
@@ -135,7 +193,7 @@ public class JFreeChartUtils {
      */
     public static void setupReplicatesAreaChart(JFreeChart chart, XYSeriesCollection xYSeriesCollection, List<Well> wellList) {
         // set title font 
-        chart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
+        chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         // put legend on the right edge
         chart.getLegend().setPosition(RectangleEdge.RIGHT);
         XYPlot xYPlot = chart.getXYPlot();
@@ -144,11 +202,14 @@ public class JFreeChartUtils {
         XYItemRenderer renderer = xYPlot.getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);
         for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
+            // wide line
+            renderer.setSeriesStroke(i, wideLine);
             // plot lines with colors according to well (replicate) index
             String wellCoordinates = getWellCoordinates(xYSeriesCollection, i);
             int wellIndex = getWellIndex(wellCoordinates, wellList);
-            renderer.setSeriesStroke(i, wideLine);
-            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[wellIndex + 1]);
+            int length = GuiUtils.getAvailableColors().length;
+            int colorIndex = wellIndex % length;
+            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
         }
     }
 
@@ -159,7 +220,7 @@ public class JFreeChartUtils {
      */
     public static void setupGlobalAreaChart(JFreeChart chart, XYSeriesCollection xYSeriesCollection) {
         // set title font 
-        chart.getTitle().setFont(new Font("Arial", Font.BOLD, 13));
+        chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         // get xyplot from the chart
         XYPlot xYPlot = chart.getXYPlot();
         setupPlot(xYPlot);
@@ -167,13 +228,15 @@ public class JFreeChartUtils {
         XYItemRenderer renderer = xYPlot.getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);
         for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
-            // plot lines according to conditions indexes
-            String conditionName = xYSeriesCollection.getSeriesKey(i).toString();
-            int length = conditionName.length();
-            CharSequence subSequence = conditionName.subSequence(5, length);
-            int conditionIndex = Integer.parseInt(subSequence.toString());
+            // wide line
             renderer.setSeriesStroke(i, wideLine);
-            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[conditionIndex]);
+            // plot lines according to conditions indexes
+            int length = GuiUtils.getAvailableColors().length;
+            String conditionName = xYSeriesCollection.getSeriesKey(i).toString();
+            String subsString = conditionName.substring(10);
+            int conditionIndex = Integer.parseInt(subsString) - 1;
+            int colorIndex = conditionIndex % length;
+            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
         }
     }
 
@@ -217,32 +280,15 @@ public class JFreeChartUtils {
                 double x = values.getX(j).doubleValue();
                 double y = values.getY(j).doubleValue();
                 double dy = errors[j];
-                String conditionName = valuesCollection.getSeriesKey(i).toString();
-                int length = conditionName.length();
-                CharSequence subSequence = conditionName.subSequence(5, length);
-                int conditionIndex = Integer.parseInt(subSequence.toString());
                 int lenght = GuiUtils.getAvailableColors().length;
+                String conditionName = valuesCollection.getSeriesKey(i).toString();
+                String subString = conditionName.substring(10);
+                int conditionIndex = Integer.parseInt(subString) - 1;
                 int indexOfColor = conditionIndex % lenght;
-                XYLineAnnotation vertical = new XYLineAnnotation(x, y - dy, x, y + dy, stroke, GuiUtils.getAvailableColors()[indexOfColor + 1]);
+                XYLineAnnotation vertical = new XYLineAnnotation(x, y - dy, x, y + dy, stroke, GuiUtils.getAvailableColors()[indexOfColor]);
                 plot.addAnnotation(vertical);
             }
         }
-    }
-
-    /**
-     * Define some parameters for the xyPlot
-     *
-     * @param xYPlot
-     */
-    private static void setupPlot(XYPlot xYPlot) {
-        // set background to white and grid color to black
-        xYPlot.setBackgroundPaint(Color.white);
-        xYPlot.setRangeGridlinePaint(Color.BLACK);
-        // hide the border of the sorrounding box
-        xYPlot.setOutlinePaint(Color.white);
-        // set label paint for axes to black
-        xYPlot.getDomainAxis().setLabelPaint(Color.black);
-        xYPlot.getRangeAxis().setLabelPaint(Color.black);
     }
 
     /**
@@ -260,35 +306,5 @@ public class JFreeChartUtils {
             }
         }
         return maxY;
-    }
-
-    /**
-     * Given a list of wells and one well's coordinate, get the index of the well in the List
-     *
-     * @param wellCoordinates
-     * @param wellList
-     * @return
-     */
-    private static int getWellIndex(String wellCoordinates, List<Well> wellList) {
-        int wellIndex = 0;
-        for (Well well : wellList) {
-            if (well.toString().equals(wellCoordinates)) {
-                wellIndex = wellList.indexOf(well);
-            }
-        }
-        return wellIndex;
-    }
-
-    /**
-     * Get well coordinates from series in oder to render the lines color
-     *
-     * @param xYSeriesCollection
-     * @param indexOfSeries
-     * @return
-     */
-    private static String getWellCoordinates(XYSeriesCollection xYSeriesCollection, int indexOfSeries) {
-        String toString = xYSeriesCollection.getSeriesKey(indexOfSeries).toString();
-        int lastIndexOf = toString.lastIndexOf(")");
-        return toString.substring(0, lastIndexOf + 1);
     }
 }

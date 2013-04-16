@@ -34,10 +34,11 @@ public class ConditionsSetupListRenderer extends DefaultListCellRenderer {
         PlateCondition newCondition = (PlateCondition) value;
         setText(newCondition.getName());
         int lenght = GuiUtils.getAvailableColors().length;
-        int indexOfColor = ((PlateCondition) value).getConditionIndex() % lenght;
+        int conditionIndex = ((PlateCondition) value).getConditionIndex() - 1;
+        int indexOfColor = conditionIndex % lenght;
         setIcon(new RectIcon(GuiUtils.getAvailableColors()[indexOfColor]));
         if (isSelected) {
-            setBackground(Color.lightGray);
+            setBackground(GuiUtils.getNonImagedColor());
         }
         return this;
     }

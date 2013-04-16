@@ -49,7 +49,7 @@ public class ConditionsAnalysisListRenderer extends DefaultListCellRenderer {
         int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
         int lenght = GuiUtils.getAvailableColors().length;
         int indexOfColor = conditionIndex % lenght;
-        setIcon(new RectIcon(GuiUtils.getAvailableColors()[indexOfColor + 1]));
+        setIcon(new RectIcon(GuiUtils.getAvailableColors()[indexOfColor]));
         return this;
     }
 }

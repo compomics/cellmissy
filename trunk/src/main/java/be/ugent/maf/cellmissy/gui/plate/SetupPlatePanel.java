@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class is used in the setup step: show wells and let the user select them, assigning conditions Drawing the mouse on the plate view, we select conditions (group of wells).
+ * This class is used in the setup step: show wells and let the user select them, assigning conditions. Drawing the mouse on the plate view, we select conditions (group of wells).
  *
  * @author Paola
  */
@@ -32,7 +32,7 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     private PlateCondition currentCondition;
 
     /**
-     * Constructor
+     * Constructor: initialize map with rectangles and set to null start and end point
      */
     public SetupPlatePanel() {
         startPoint = null;
@@ -41,7 +41,7 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     }
 
     /**
-     * setters and getters
+     * Getters and setters
      *
      * @return
      */
@@ -88,13 +88,14 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         }
 
         // if rectangles have already been drawn, keep them in the paint
+        // this is needed because of the repaint method that is being called from the JComponent
         if (!rectangles.values().isEmpty()) {
             drawRectangles(g);
         }
     }
 
     /**
-     * Render one Rectangle (for current condition).
+     * Render one Rectangle (for current condition) -- This is used when dragging on the plate panel and showing the current rectangle.
      *
      * @param g
      */
@@ -114,10 +115,10 @@ public class SetupPlatePanel extends AbstractPlatePanel {
             height = this.getHeight() - y;
         }
         int lenght = GuiUtils.getAvailableColors().length;
-        int indexOfColor = currentCondition.getConditionIndex() % lenght;
+        int conditionIndex = currentCondition.getConditionIndex() - 1;
+        int indexOfColor = conditionIndex % lenght;
         g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
         g2d.drawRect(x, y, width, height);
-
     }
 
     /**
@@ -130,7 +131,8 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         GuiUtils.setGraphics(g2d);
         for (PlateCondition plateCondition : rectangles.keySet()) {
             int lenght = GuiUtils.getAvailableColors().length;
-            int indexOfColor = plateCondition.getConditionIndex() % lenght;
+            int conditionIndex = plateCondition.getConditionIndex() - 1;
+            int indexOfColor = conditionIndex % lenght;
             g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
             for (Rectangle rectangle : rectangles.get(plateCondition)) {
 

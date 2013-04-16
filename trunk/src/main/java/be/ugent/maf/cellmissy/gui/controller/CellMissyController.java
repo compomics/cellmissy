@@ -415,7 +415,7 @@ public class CellMissyController {
                 if (menuItemText.equalsIgnoreCase("create experiment...")) {
                     return false;
                 } else if (!setupExperimentController.setupWasSaved()) {
-                    showOptionDialog = JOptionPane.showOptionDialog(null, "Do you really want to leave this experimental set up?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                    showOptionDialog = JOptionPane.showOptionDialog(null, "Do you really want to leave this experimental set-up?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                 } else {
                     return true;
                 }
@@ -424,7 +424,7 @@ public class CellMissyController {
                 if (menuItemText.equalsIgnoreCase("... from CELLMIA")) {
                     return false;
                 } else if (!loadExperimentFromCellMiaController.loadingWasSaved()) {
-                    showOptionDialog = JOptionPane.showOptionDialog(null, "Data won't be saved! Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                    showOptionDialog = JOptionPane.showOptionDialog(null, "Current data will not be saved! Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                 } else {
                     return true;
                 }
@@ -433,7 +433,7 @@ public class CellMissyController {
                 if (menuItemText.equalsIgnoreCase("... from generic input")) {
                     return false;
                 } else if (!loadExperimentFromGenericInputController.loadingWasSaved()) {
-                    showOptionDialog = JOptionPane.showOptionDialog(null, "Data won't be saved! Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                    showOptionDialog = JOptionPane.showOptionDialog(null, "Current data will not be saved! Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                 } else {
                     return true;
                 }

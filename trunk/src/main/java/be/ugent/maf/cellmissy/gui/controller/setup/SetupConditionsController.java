@@ -94,7 +94,7 @@ public class SetupConditionsController {
     }
 
     /**
-     * setters and getters
+     * Getters and setters
      *
      * @return
      */
@@ -122,11 +122,19 @@ public class SetupConditionsController {
         return treatmentsController.getTreatmentBindingList();
     }
 
+    /**
+     * Reset the indexes of condition (current and previous one)
+     */
     public void resetConditionIndexes() {
         conditionIndex = 0;
         previousConditionIndex = -1;
     }
 
+    /**
+     * Get the main (CellMissy) frame through the parent controller
+     *
+     * @return
+     */
     public CellMissyFrame getCellMissyFrame() {
         return setupExperimentController.getCellMissyFrame();
     }
@@ -402,10 +410,17 @@ public class SetupConditionsController {
                     //empty the list of rectangles for this Condition and reset to null the Condition of the associated wells
                     setupExperimentController.onConditionToRemove((PlateCondition) (conditionsPanel.getConditionsJList().getSelectedValue()));
                     //remove the Condition from the list
-                    plateConditionBindingList.remove(conditionsPanel.getConditionsJList().getSelectedIndex());
-                    //select first condition after removing
+                    int selectedIndex = conditionsPanel.getConditionsJList().getSelectedIndex();
+                    PlateCondition conditionToRemove = plateConditionBindingList.get(selectedIndex);
+                    // if the condition to remove is the last one, decrease previous condition index
+                    if (plateConditionBindingList.indexOf(conditionToRemove) == plateConditionBindingList.size() - 1) {
+                        previousConditionIndex = plateConditionBindingList.size() - 2;
+                    }
+                    // remove condition from the list
+                    plateConditionBindingList.remove(conditionToRemove);
+                    // select first condition after removing
                     conditionsPanel.getConditionsJList().setSelectedIndex(0);
-                    //if there's only one condition left, disable again the remove button
+                    // if there's only one condition left, disable again the remove button
                     if (plateConditionBindingList.size() == 1) {
                         conditionsPanel.getRemoveButton().setEnabled(false);
                     }
@@ -421,7 +436,7 @@ public class SetupConditionsController {
      */
     private void initFirstCondition(PlateCondition firstCondition) {
         //set the name
-        firstCondition.setName("Cond " + ++conditionIndex);
+        firstCondition.setName("Condition " + ++conditionIndex);
         //set the cell line
         CellLine cellLine = new CellLine();
         cellLine.setCellLineType(cellLineTypeBindingList.get(0));
@@ -468,7 +483,7 @@ public class SetupConditionsController {
     private void initNewCondition(PlateCondition newCondition) {
         PlateCondition previousCondition = plateConditionBindingList.get(previousConditionIndex);
         //set the name
-        newCondition.setName("Cond " + ++conditionIndex);
+        newCondition.setName("Condition " + ++conditionIndex);
         //set the cell line (the same as the previous condition)
         CellLine cellLine = previousCondition.getCellLine();
         CellLine newCellLine = new CellLine(cellLine.getSeedingTime(), cellLine.getSeedingDensity(), cellLine.getGrowthMedium(), cellLine.getSerumConcentration(), cellLine.getCellLineType(), cellLine.getSerum());

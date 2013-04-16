@@ -158,7 +158,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
         homePanelLayout.setHorizontalGroup(
             homePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(homePanelLayout.createSequentialGroup()
-                .addGap(78, 78, 78)
+                .addContainerGap()
                 .addGroup(homePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addGroup(homePanelLayout.createSequentialGroup()
@@ -167,18 +167,18 @@ public class CellMissyFrame extends javax.swing.JFrame {
                     .addGroup(homePanelLayout.createSequentialGroup()
                         .addGap(81, 81, 81)
                         .addComponent(jLabel4)))
-                .addContainerGap(295, Short.MAX_VALUE))
+                .addContainerGap())
         );
         homePanelLayout.setVerticalGroup(
             homePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(homePanelLayout.createSequentialGroup()
-                .addGap(159, 159, 159)
+                .addContainerGap()
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel6)
-                .addContainerGap(237, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         backgroundPanel.add(homePanel, "homePanel");

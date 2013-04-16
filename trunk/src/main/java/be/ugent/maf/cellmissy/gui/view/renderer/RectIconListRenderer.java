@@ -14,6 +14,7 @@ import javax.swing.JList;
 
 /**
  * This is rendering a list of rectangular icons with number of replicates for each condition
+ *
  * @author Paola Masuzzo
  */
 public class RectIconListRenderer extends DefaultListCellRenderer {
@@ -23,8 +24,9 @@ public class RectIconListRenderer extends DefaultListCellRenderer {
 
     /**
      * Constructor
-     * @param plateConditionList 
-     * @param numberOfReplicates 
+     *
+     * @param plateConditionList
+     * @param numberOfReplicates
      */
     public RectIconListRenderer(List<PlateCondition> plateConditionList, List<Integer> numberOfReplicates) {
         this.plateConditionList = plateConditionList;
@@ -36,9 +38,8 @@ public class RectIconListRenderer extends DefaultListCellRenderer {
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
-        int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
         int lenght = GuiUtils.getAvailableColors().length;
+        int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
         int indexOfColor = conditionIndex % lenght;
         setIcon(new RectIcon(GuiUtils.getAvailableColors()[indexOfColor]));
         setText("N = " + numberOfReplicates.get(conditionIndex));

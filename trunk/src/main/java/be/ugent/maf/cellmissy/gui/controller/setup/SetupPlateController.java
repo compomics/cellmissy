@@ -163,7 +163,7 @@ public class SetupPlateController {
      *
      * @param plateCondition
      */
-    private void onClearSelection(PlateCondition plateCondition) {
+    public void onClearSelection(PlateCondition plateCondition) {
         //reset to null the condition of the selected wells
         setupExperimentController.resetWellsCondition(plateCondition);
         //remove the rectangles from the map and call the repaint
@@ -205,14 +205,38 @@ public class SetupPlateController {
         setupExperimentController.getSetupPanel().getPlateFormatComboBox().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PlateFormat selectedPlateFormat = plateFormatBindingList.get(setupExperimentController.getSetupPanel().getPlateFormatComboBox().getSelectedIndex());
-                Dimension parentDimension = setupExperimentController.getSetupPanel().getBottomPanel().getSize();
-                setupPlatePanel.initPanel(selectedPlateFormat, parentDimension);
-                //if selections were made on the plate, reset everything: clear the map and repaint the panel
-                for (List<Rectangle> rectangleList : setupPlatePanel.getRectangles().values()) {
-                    rectangleList.clear();
+                // get the selected plate format
+                PlateFormat selectedPlateFormat = (PlateFormat) (setupExperimentController.getSetupPanel().getPlateFormatComboBox().getSelectedItem());
+                // if selection has not started yet, simply show the plate format
+                if (!selectionStarted()) {
+                    Dimension parentDimension = setupExperimentController.getSetupPanel().getBottomPanel().getSize();
+                    setupPlatePanel.initPanel(selectedPlateFormat, parentDimension);
+                    setupPlatePanel.repaint();
+                    // set plate format of experiment
+                    if (setupExperimentController.getExperiment() != null) {
+                        setupExperimentController.getExperiment().setPlateFormat(selectedPlateFormat);
+                    }
+                    // otherwise, check if a DIFFERENT plate format is selected
+                } else if (!selectedPlateFormat.equals(setupExperimentController.getExperiment().getPlateFormat())) {
+                    //if selections were made on the plate, reset everything: clear the map and repaint the panel
+                    // ask first the user
+                    Object[] options = {"Yes", "No", "Cancel"};
+                    int showOptionDialog = JOptionPane.showOptionDialog(null, "Current set-up will not be saved. Continue with another format?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+                    // if YES, reset the plate and move to another format
+                    if (showOptionDialog == 0) {
+                        onClearPlate();
+                        Dimension parentDimension = setupExperimentController.getSetupPanel().getBottomPanel().getSize();
+                        setupPlatePanel.initPanel(selectedPlateFormat, parentDimension);
+                        setupPlatePanel.repaint();
+                        setupExperimentController.getExperiment().setPlateFormat(selectedPlateFormat);
+                        configurationIsRandom = false;
+                    } else {
+                        //otherwise, stay on the same format
+                        PlateFormat plateFormat = setupExperimentController.getExperiment().getPlateFormat();
+                        setupExperimentController.getSetupPanel().getPlateFormatComboBox().setSelectedItem(plateFormat);
+                    }
                 }
-                setupPlatePanel.repaint();
+
             }
         });
 

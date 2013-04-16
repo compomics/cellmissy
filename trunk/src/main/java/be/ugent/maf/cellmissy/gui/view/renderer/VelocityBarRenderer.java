@@ -18,12 +18,11 @@ public class VelocityBarRenderer extends StatisticalBarRenderer {
     @Override
     public Paint getItemPaint(final int row, final int column) {
         String conditionName = (String) getPlot().getDataset().getColumnKey(column);
-        int length = conditionName.length();
-        CharSequence subSequence = conditionName.subSequence(10, length);
-        int conditionIndex = Integer.parseInt(subSequence.toString());
         int lenght = GuiUtils.getAvailableColors().length;
+        String subString = conditionName.substring(10);
+        int conditionIndex = Integer.parseInt(subString) - 1;
         int indexOfColor = conditionIndex % lenght;
-        return GuiUtils.getAvailableColors()[indexOfColor + 1];
+        return GuiUtils.getAvailableColors()[indexOfColor];
     }
 
     @Override

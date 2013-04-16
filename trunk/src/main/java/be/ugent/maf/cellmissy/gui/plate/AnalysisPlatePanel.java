@@ -8,7 +8,6 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -49,17 +48,19 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
      * @param g
      */
     private void showRect(Graphics g) {
-
+        // set graphics
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
         List<PlateCondition> plateConditions = new ArrayList<>(experiment.getPlateConditionCollection());
+        int lenght = GuiUtils.getAvailableColors().length;
+
         for (PlateCondition plateCondition : plateConditions) {
             for (Well well : plateCondition.getWellCollection()) {
                 for (WellGui wellGui : wellGuiList) {
                     if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
-                        int lenght = GuiUtils.getAvailableColors().length;
-                        int indexOfColor = plateConditions.indexOf(plateCondition) % lenght;
-                        g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor + 1]);
+                        int conditionIndex = plateConditions.indexOf(plateCondition);
+                        int indexOfColor = conditionIndex % lenght;
+                        g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
 
                         int x = (int) wellGui.getEllipsi().get(0).getX() - AnalysisPlatePanel.pixelsGrid / 4;
                         int y = (int) wellGui.getEllipsi().get(0).getY() - AnalysisPlatePanel.pixelsGrid / 4;
@@ -109,7 +110,7 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
                                 if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
                                     //get only the bigger default ellipse2D
                                     Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
-                                    g2d.setColor(Color.LIGHT_GRAY);
+                                    g2d.setColor(GuiUtils.getNonImagedColor());
                                     g2d.fill(defaultWell);
                                 }
                             }
