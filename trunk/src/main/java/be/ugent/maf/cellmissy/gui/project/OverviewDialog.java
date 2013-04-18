@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.project;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
@@ -11,7 +12,7 @@ import javax.swing.JList;
  *
  * @author Paola Masuzzo
  */
-public class OverviewProjectsDialog extends javax.swing.JDialog {
+public class OverviewDialog extends javax.swing.JDialog {
 
     public JList getExperimentJList() {
         return experimentJList;
@@ -25,13 +26,21 @@ public class OverviewProjectsDialog extends javax.swing.JDialog {
         return projectJList;
     }
 
+    public JButton getDeleteExperimentButton() {
+        return deleteExperimentButton;
+    }
+
+    public JButton getEditExperimentButton() {
+        return editExperimentButton;
+    }
+
     /**
-     * Creates new form OverviewProjectsDialog
+     * Creates new form OverviewDialog
      *
      * @param parent
      * @param modal
      */
-    public OverviewProjectsDialog(java.awt.Frame parent, boolean modal) {
+    public OverviewDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
@@ -50,8 +59,11 @@ public class OverviewProjectsDialog extends javax.swing.JDialog {
         jScrollPane3 = new javax.swing.JScrollPane();
         experimentJList = new javax.swing.JList();
         infoLabel = new javax.swing.JLabel();
+        deleteExperimentButton = new javax.swing.JButton();
+        editExperimentButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("Projects");
@@ -85,6 +97,10 @@ public class OverviewProjectsDialog extends javax.swing.JDialog {
 
         infoLabel.setText("Click on a project to see the relative experiments and their status.");
 
+        deleteExperimentButton.setText("Delete experiment");
+
+        editExperimentButton.setText("Edit experiment");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -92,9 +108,7 @@ public class OverviewProjectsDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(infoLabel))
+                    .addComponent(infoLabel)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -102,9 +116,15 @@ public class OverviewProjectsDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap())
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(editExperimentButton)
+                        .addComponent(deleteExperimentButton)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {deleteExperimentButton, editExperimentButton});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -118,6 +138,10 @@ public class OverviewProjectsDialog extends javax.swing.JDialog {
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(infoLabel)
+                .addGap(30, 30, 30)
+                .addComponent(deleteExperimentButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(editExperimentButton)
                 .addContainerGap())
         );
 
@@ -141,20 +165,20 @@ public class OverviewProjectsDialog extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(OverviewProjectsDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(OverviewDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(OverviewProjectsDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(OverviewDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(OverviewProjectsDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(OverviewDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(OverviewProjectsDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(OverviewDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                OverviewProjectsDialog dialog = new OverviewProjectsDialog(new javax.swing.JFrame(), true);
+                OverviewDialog dialog = new OverviewDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -166,6 +190,8 @@ public class OverviewProjectsDialog extends javax.swing.JDialog {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton deleteExperimentButton;
+    private javax.swing.JButton editExperimentButton;
     private javax.swing.JList experimentJList;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel jLabel1;

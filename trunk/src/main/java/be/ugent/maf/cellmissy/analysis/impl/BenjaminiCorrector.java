@@ -6,7 +6,6 @@ package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrector;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
-import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,8 +24,8 @@ public class BenjaminiCorrector implements MultipleComparisonsCorrector {
         Double[][] pValuesMatrix = analysisGroup.getpValuesMatrix();
         Double[][] adjustedPValuesMatrix = new Double[pValuesMatrix.length][pValuesMatrix.length];
         // format the matrux since its symmetric
-        Double[][] symmetricMatrix = AnalysisUtils.formatSymmetricMatrix(pValuesMatrix);
-        double[] adjustedPValues = adjustPValues(symmetricMatrix);
+        //Double[][] symmetricMatrix = AnalysisUtils.formatSymmetricMatrix(pValuesMatrix);
+        double[] adjustedPValues = adjustPValues(pValuesMatrix);
         // put back pvalues in a matrix
         int counter = 0;
         for (int rowIndex = 0; rowIndex < adjustedPValuesMatrix.length; rowIndex++) {
@@ -41,44 +40,48 @@ public class BenjaminiCorrector implements MultipleComparisonsCorrector {
     }
 
     /**
-     * 
+     *
      * @param matrix
-     * @return 
+     * @return
      */
     private double[] adjustPValues(Double[][] matrix) {
         // get p values from the matrix and put them in a vector
         double[] pValues = putPValuesInAVector(matrix);
         // number of comparisons
-        int numberOfComp = pValues.length;
+        int numberOfComparisons = pValues.length;
         // new array for adjusted p-values
-        double[] adjustedPValues = new double[numberOfComp];
+        double[] adjustedPValues = new double[numberOfComparisons];
 
         // Ranking p values
         NaturalRanking naturalRanking = new NaturalRanking();
         double[] ranks = naturalRanking.rank(pValues);
 
         List<PValue> pValuesList = new ArrayList<>();
-        for (int i = 0; i < numberOfComp; i++) {
+        for (int i = 0; i < numberOfComparisons; i++) {
             pValuesList.add(new PValue(i, pValues[i], ranks[i]));
         }
-        
+
+        // sort p values according to ranks
         Collections.sort(pValuesList, new PValueComparator());
+        // first one: max rank -- the largest p-value remains as it is.
         PValue maxRankPValue = pValuesList.get(0);
         int index = maxRankPValue.getIndex();
         adjustedPValues[index] = maxRankPValue.getpValue();
-        
-        for (int i = 1; i < numberOfComp; i++) {
-            PValue pValue = pValuesList.get(i); 
+
+        // from the second largest p-valus on, the p-value is multiplied by the total number of comparisons divided by its own rank
+        for (int i = 1; i < numberOfComparisons; i++) {
+            PValue pValue = pValuesList.get(i);
             double rank = pValue.getRank();
-            adjustedPValues[pValue.getIndex()] = pValues[i] * numberOfComp / rank;
+            adjustedPValues[pValue.getIndex()] = pValue.pValue * numberOfComparisons / rank;
         }
         return adjustedPValues;
     }
 
     /**
      * get p values from a symmetric matrix and put them in a vector
+     *
      * @param symmetricMatrix
-     * @return 
+     * @return
      */
     private double[] putPValuesInAVector(Double[][] symmetricMatrix) {
         List<Double> list = new ArrayList<>();
@@ -131,7 +134,7 @@ public class BenjaminiCorrector implements MultipleComparisonsCorrector {
             this.rank = rank;
         }
     }
-    
+
     /*
      * Comparator for Pvalue class (compare through ranking)
      */
@@ -141,6 +144,5 @@ public class BenjaminiCorrector implements MultipleComparisonsCorrector {
         public int compare(PValue o1, PValue o2) {
             return Double.compare(o2.getRank(), o1.getRank());
         }
-        
     }
 }

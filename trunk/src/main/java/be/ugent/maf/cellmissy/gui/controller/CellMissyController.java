@@ -11,15 +11,11 @@ import be.ugent.maf.cellmissy.gui.controller.analysis.DataAnalysisController;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.project.NewProjectDialog;
-import be.ugent.maf.cellmissy.gui.project.OverviewProjectsDialog;
-import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Iterator;
 import java.util.logging.Level;
 import javax.persistence.PersistenceException;
@@ -31,12 +27,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
-import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.ELProperty;
-import org.jdesktop.observablecollections.ObservableCollections;
-import org.jdesktop.swingbinding.JListBinding;
-import org.jdesktop.swingbinding.SwingBindings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -59,10 +50,11 @@ public class CellMissyController {
     CellMissyFrame cellMissyFrame;
     // subviews
     private NewProjectDialog newProjectDialog;
-    private OverviewProjectsDialog overviewProjectsDialog;
     //child controllers
     @Autowired
     private LoginController loginController;
+    @Autowired
+    private OverviewController overviewController;
     @Autowired
     private UserManagementController userManagementController;
     @Autowired
@@ -73,7 +65,6 @@ public class CellMissyController {
     private LoadExperimentFromGenericInputController loadExperimentFromGenericInputController;
     @Autowired
     private DataAnalysisController dataAnalysisController;
-    private BindingGroup bindingGroup;
     // services
 
     /**
@@ -98,7 +89,6 @@ public class CellMissyController {
      * Initialize controller
      */
     public void init() {
-        bindingGroup = new BindingGroup();
         //set uncaught exception handler
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
@@ -128,6 +118,7 @@ public class CellMissyController {
         loadExperimentFromCellMiaController.init();
         loadExperimentFromGenericInputController.init();
         dataAnalysisController.init();
+        overviewController.init();
         loginController.init();
         userManagementController.init();
 
@@ -240,7 +231,9 @@ public class CellMissyController {
      */
     public void disableAdminSection() {
         cellMissyFrame.getUserMenuItem().setEnabled(false);
-        cellMissyFrame.getNewProjectMenuItem().setEnabled(false);
+        cellMissyFrame.getNewExperimentMenuItem().setEnabled(false);
+        // disable actions on experiments for standard users
+        overviewController.disableActionsOnExperiments();
     }
 
     /**
@@ -281,30 +274,22 @@ public class CellMissyController {
         });
 
         // view all projects/experiments
-        cellMissyFrame.getAllProjectsMenuItem().addActionListener(new ActionListener() {
+        cellMissyFrame.getOverviewMenuItem().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // show a overviewProjectsDialog
-                overviewProjectsDialog.pack();
-                overviewProjectsDialog.setVisible(true);
+                // show a overviewProjectsDialog through child controller
+                overviewController.showOverviewDialog();
             }
         });
 
         // customize dialog
         newProjectDialog = new NewProjectDialog(cellMissyFrame, true);
-        overviewProjectsDialog = new OverviewProjectsDialog(cellMissyFrame, true);
         //center the dialog on the main screen
         newProjectDialog.setLocationRelativeTo(cellMissyFrame);
-        overviewProjectsDialog.setLocationRelativeTo(cellMissyFrame);
-        // set cell renderer for experiments list
-        overviewProjectsDialog.getExperimentJList().setCellRenderer(new ExperimentsListRenderer());
-
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
         ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         newProjectDialog.getInfoLabel().setIcon(scaledIcon);
-        // set icon for info label
-        overviewProjectsDialog.getInfoLabel().setIcon(scaledIcon);
 
         // create a new project
         newProjectDialog.getCreateProjectButton().addActionListener(new ActionListener() {
@@ -336,32 +321,6 @@ public class CellMissyController {
                 } else {
                     showMessage("Please insert a number for the project you want to create", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
                     newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
-                }
-            }
-        });
-
-        // see overview
-        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, setupExperimentController.getProjectBindingList(), overviewProjectsDialog.getProjectJList());
-        bindingGroup.addBinding(jListBinding);
-        bindingGroup.bind();
-
-        //show experiments for the project selected
-        overviewProjectsDialog.getProjectJList().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-                //init experimentJList
-                int locationToIndex = overviewProjectsDialog.getProjectJList().locationToIndex(e.getPoint());
-                if (setupExperimentController.findExperimentNumbersByProjectId(setupExperimentController.getProjectBindingList().get(locationToIndex).getProjectid()) != null) {
-                    setupExperimentController.setExperimentBindingList(ObservableCollections.observableList(setupExperimentController.findExperimentsByProjectId(setupExperimentController.getProjectBindingList().get(locationToIndex).getProjectid())));
-                    JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, setupExperimentController.getExperimentBindingList(), overviewProjectsDialog.getExperimentJList());
-                    bindingGroup.addBinding(jListBinding);
-                    bindingGroup.bind();
-                } else {
-                    showMessage("There are no experiments yet for this project!", "", JOptionPane.INFORMATION_MESSAGE);
-                    if (setupExperimentController.getExperimentBindingList() != null && !setupExperimentController.getExperimentBindingList().isEmpty()) {
-                        setupExperimentController.getExperimentBindingList().clear();
-                    }
                 }
             }
         });
@@ -457,6 +416,7 @@ public class CellMissyController {
 
     /**
      * Get the card layout from the background panel of CellMissy frame
+     *
      * @return
      */
     private CardLayout getCardLayout() {

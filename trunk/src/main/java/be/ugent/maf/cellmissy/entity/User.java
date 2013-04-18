@@ -24,10 +24,10 @@ import org.jasypt.hibernate.type.EncryptedStringType;
  */
 @Entity
 @Table(name = "user", uniqueConstraints =
-@UniqueConstraint(columnNames = {"first_name", "last_name"}))
+        @UniqueConstraint(columnNames = {"first_name", "last_name"}))
 @TypeDef(name = "encryptedString",
-typeClass = EncryptedStringType.class,
-parameters = {
+        typeClass = EncryptedStringType.class,
+        parameters = {
     @Parameter(name = "encryptorRegisteredName", value = "jasyptHibernateEncryptor")
 })
 @XmlRootElement
@@ -60,7 +60,7 @@ public class User implements Serializable {
     private Role role;
     @Basic(optional = false)
     @Column(name = "password")
-    @Length(min = 6, max = 40, message="Please select a password between 6 and 10 characters")
+    @Length(min = 6, max = 40, message = "Please select a password between 6 and 10 characters")
     @Type(type = "encryptedString")
     private String password;
     @Basic(optional = false)

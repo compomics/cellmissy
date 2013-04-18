@@ -1083,9 +1083,7 @@ public class AreaPreProcessingController {
         // justify text info 
         SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
         StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
-        StyledDocument styledDocument = replicatesSelectionDialog.getInfoTextPane().getStyledDocument();
-        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
-        styledDocument = timeFramesSelectionDialog.getInfoTextPane().getStyledDocument();
+        StyledDocument styledDocument = timeFramesSelectionDialog.getInfoTextPane().getStyledDocument();
         styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
         styledDocument = areaAnalysisPanel.getInfoTextPane().getStyledDocument();
         styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);

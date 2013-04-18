@@ -50,6 +50,7 @@ public class GuiUtils {
         return gridBagConstraints;
     }
 
+    // getters
     public static Color[] getAvailableColors() {
         return availableColors;
     }
