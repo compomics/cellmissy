@@ -14,18 +14,25 @@ import javax.swing.JList;
  * @author Paola Masuzzo
  */
 public class ExperimentsListRenderer extends DefaultListCellRenderer {
+
+    private boolean selectable;
     /*
-     *constructor
+     * Constructor: takes a boolean to set the focusable of the cell
      */
 
-    public ExperimentsListRenderer() {
+    public ExperimentsListRenderer(boolean selectable) {
+        this.selectable = selectable;
         setOpaque(true);
     }
 
     //Overrides method from the DefaultListCellRenderer
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        super.getListCellRendererComponent(list, value, index, false, false);
+        if (selectable) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        } else {
+            super.getListCellRendererComponent(list, value, index, false, false);
+        }
         Experiment experiment = (Experiment) value;
         setText(experiment.toString() + ", " + experiment.getExperimentStatus());
         return this;

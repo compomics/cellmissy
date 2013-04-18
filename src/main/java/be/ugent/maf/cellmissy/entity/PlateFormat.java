@@ -5,7 +5,9 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,9 +15,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -31,7 +35,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "PlateFormat.findByNumberOfCols", query = "SELECT p FROM PlateFormat p WHERE p.numberOfCols = :numberOfCols"),
     @NamedQuery(name = "PlateFormat.findByNumberOfRows", query = "SELECT p FROM PlateFormat p WHERE p.numberOfRows = :numberOfRows"),
     @NamedQuery(name = "PlateFormat.findByWellSize", query = "SELECT p FROM PlateFormat p WHERE p.wellSize = :wellSize")})
-
 public class PlateFormat implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,6 +53,8 @@ public class PlateFormat implements Serializable {
     private Integer numberOfRows;
     @Column(name = "well_size")
     private Double wellSize;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Collection<Experiment> experimentCollection;
 
     public PlateFormat() {
     }
@@ -94,13 +99,22 @@ public class PlateFormat implements Serializable {
     public void setNumberOfRows(Integer numberOfRows) {
         this.numberOfRows = numberOfRows;
     }
-    
+
     public Double getWellSize() {
         return wellSize;
     }
 
     public void setWellSize(Double wellSize) {
         this.wellSize = wellSize;
+    }
+
+    @XmlTransient
+    public Collection<Experiment> getExperimentCollection() {
+        return experimentCollection;
+    }
+
+    public void setExperimentCollection(Collection<Experiment> experimentCollection) {
+        this.experimentCollection = experimentCollection;
     }
 
     @Override

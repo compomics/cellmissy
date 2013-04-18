@@ -34,9 +34,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * This class is testing the insertion into db of an experiment.
- * The sample experiment has 2 plate conditions, each one with 3 wells (technical replicates).
- * well(1,1) and well(3,3) were imaged twice. 
+ * This class is testing the insertion into db of an experiment. The sample experiment has 2 plate conditions, each one with 3 wells (technical replicates). well(1,1) and well(3,3) were imaged twice.
+ *
  * @author Paola Masuzzo
  */
 @RunWith(SpringJUnit4ClassRunner.class)

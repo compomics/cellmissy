@@ -7,7 +7,6 @@ package be.ugent.maf.cellmissy.gui.view.renderer;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.view.icon.RectIcon;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import java.awt.Color;
 import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;

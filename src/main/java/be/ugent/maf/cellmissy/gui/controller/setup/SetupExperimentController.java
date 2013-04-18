@@ -23,7 +23,6 @@ import be.ugent.maf.cellmissy.gui.experiment.setup.SetupExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.SetupPanel;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
-import be.ugent.maf.cellmissy.gui.project.OverviewPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
@@ -89,7 +88,6 @@ public class SetupExperimentController {
     private SetupExperimentPanel setupExperimentPanel;
     private ExperimentInfoPanel experimentInfoPanel;
     private SetupPanel setupPanel;
-    private OverviewPanel overviewPanel;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -182,7 +180,7 @@ public class SetupExperimentController {
      * @param conditionToRemove
      */
     public void onConditionToRemove(PlateCondition conditionToRemove) {
-         setupPlateController.onClearSelection(conditionToRemove);
+        setupPlateController.onClearSelection(conditionToRemove);
     }
 
     /**
@@ -259,8 +257,8 @@ public class SetupExperimentController {
         experimentInfoPanel.getNumberTextField().setText("");
         experimentInfoPanel.getPurposeTextArea().setText("");
         // clear selection on both project and experiment lists
-        overviewPanel.getProjectJList().clearSelection();
-        overviewPanel.getExperimentJList().clearSelection();
+        experimentInfoPanel.getProjectJList().clearSelection();
+        experimentInfoPanel.getExperimentJList().clearSelection();
         // clear also experiments list, if not null
         if (experimentBindingList != null) {
             experimentBindingList.clear();
@@ -356,7 +354,7 @@ public class SetupExperimentController {
         List<String> messages = new ArrayList<>();
         try {
             //if the selected project does not have already the current experiment number, set the experiment number
-            if (!projectHasExperiment(((Project) overviewPanel.getProjectJList().getSelectedValue()).getProjectid(), Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()))) {
+            if (!projectHasExperiment(((Project) experimentInfoPanel.getProjectJList().getSelectedValue()).getProjectid(), Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()))) {
                 experiment.setExperimentNumber(Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()));
             } else {
                 String message = "Experiment number " + experimentInfoPanel.getNumberTextField().getText() + " already exists for this project";
@@ -427,17 +425,14 @@ public class SetupExperimentController {
      * initializes the experiment info panel
      */
     private void initExperimentInfoPanel() {
-        overviewPanel = new OverviewPanel();
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
         ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
-        overviewPanel.getInfoLabel().setIcon(scaledIcon);
-        // add overview panel
-        experimentInfoPanel.getOverviewParentPanel().add(overviewPanel, gridBagConstraints);
+        experimentInfoPanel.getInfoLabel1().setIcon(scaledIcon);
         experimentInfoPanel.getInfoLabel().setIcon(scaledIcon);
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
-        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, overviewPanel.getProjectJList());
+        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectJList());
         bindingGroup.addBinding(jListBinding);
         //init instrument combo box
         instrumentBindingList = ObservableCollections.observableList(experimentService.findAllInstruments());
@@ -453,10 +448,10 @@ public class SetupExperimentController {
         setupExperimentPanel.getTopPanel().add(experimentInfoPanel, gridBagConstraints);
 
         //select first project in the ProjectList
-        overviewPanel.getProjectJList().setSelectedIndex(0);
+        experimentInfoPanel.getProjectJList().setSelectedIndex(0);
 
         //set cell renderer for experimentJList
-        overviewPanel.getExperimentJList().setCellRenderer(new ExperimentsListRenderer());
+        experimentInfoPanel.getExperimentJList().setCellRenderer(new ExperimentsListRenderer(false));
 
         //date cannot be modified manually
         experimentInfoPanel.getDateChooser().getDateEditor().setEnabled(false);
@@ -481,15 +476,15 @@ public class SetupExperimentController {
          * add mouse listeners
          */
         //show experiments for the project selected
-        overviewPanel.getProjectJList().addMouseListener(new MouseAdapter() {
+        experimentInfoPanel.getProjectJList().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
 
                 //init experimentJList
-                int locationToIndex = overviewPanel.getProjectJList().locationToIndex(e.getPoint());
+                int locationToIndex = experimentInfoPanel.getProjectJList().locationToIndex(e.getPoint());
                 if (findExperimentNumbersByProjectId(projectBindingList.get(locationToIndex).getProjectid()) != null) {
                     experimentBindingList = ObservableCollections.observableList(findExperimentsByProjectId(projectBindingList.get(locationToIndex).getProjectid()));
-                    JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, overviewPanel.getExperimentJList());
+                    JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, experimentInfoPanel.getExperimentJList());
                     bindingGroup.addBinding(jListBinding);
                     bindingGroup.bind();
                 } else {
@@ -529,7 +524,7 @@ public class SetupExperimentController {
                     experiment.setExperimentStatus(ExperimentStatus.IN_PROGRESS);
                     //set the User of the experiment
                     experiment.setUser(cellMissyController.getCurrentUser());
-                    experiment.setProject((Project) overviewPanel.getProjectJList().getSelectedValue());
+                    experiment.setProject((Project) experimentInfoPanel.getProjectJList().getSelectedValue());
                     experiment.setInstrument((Instrument) experimentInfoPanel.getInstrumentComboBox().getSelectedItem());
                     experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());
                     experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());
@@ -576,7 +571,8 @@ public class SetupExperimentController {
                             plateCondition.setExperiment(experiment);
                         }
                         // set plate format
-                        experiment.setPlateFormat((PlateFormat)setupPanel.getPlateFormatComboBox().getSelectedItem());
+                        PlateFormat plateFormat = (PlateFormat) setupPanel.getPlateFormatComboBox().getSelectedItem();
+                        experiment.setPlateFormat(plateFormat);
                         //set the condition's collection of the experiment
                         experiment.setPlateConditionCollection(setupConditionsController.getPlateConditionBindingList());
                         //create PDF report, execute SwingWorker

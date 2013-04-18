@@ -60,6 +60,7 @@ public class LoginDialog extends javax.swing.JDialog {
         setAlwaysOnTop(true);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setIconImage(null);
+        setResizable(false);
 
         userNameLabel.setText("user name");
 
