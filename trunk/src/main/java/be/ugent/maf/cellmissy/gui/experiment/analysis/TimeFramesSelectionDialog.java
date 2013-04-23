@@ -143,6 +143,7 @@ public class TimeFramesSelectionDialog extends javax.swing.JDialog {
         jLabel3.setText("Default cut off");
 
         defaultCutOffTextField.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        defaultCutOffTextField.setBorder(null);
         defaultCutOffTextField.setFocusable(false);
         defaultCutOffTextField.setMinimumSize(new java.awt.Dimension(20, 20));
         defaultCutOffTextField.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -180,13 +181,13 @@ public class TimeFramesSelectionDialog extends javax.swing.JDialog {
                     .addComponent(firstTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(defaultCutOffTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1)
+                    .addComponent(cutOffTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cutOffTimeFrameComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(resetCutOffButton)
-                    .addComponent(jLabel1))
+                    .addComponent(defaultCutOffTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
                 .addContainerGap())
         );
 

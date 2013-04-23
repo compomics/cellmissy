@@ -24,6 +24,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,6 +34,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.hibernate.validator.constraints.Range;
 
 /**
@@ -100,6 +103,7 @@ public class Experiment implements Serializable {
     private PlateFormat plateFormat;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment", fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SELECT)
+    @OrderBy("plateConditionid")
     private Collection<PlateCondition> plateConditionCollection;
     @Transient
     private File experimentFolder;

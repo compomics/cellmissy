@@ -312,7 +312,7 @@ public class AnalysisUtils {
      */
     public static int getNumberOfSamplesPerCondition(PlateCondition plateCondition) {
         int numberOfSamples = 0;
-        List<Well> processedWells = plateCondition.getProcessedWells();
+        List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
         for (Well well : processedWells) {
             numberOfSamples += getNumberOfSamplesPerWell(well);
         }

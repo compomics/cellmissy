@@ -56,7 +56,7 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
             if (!excludeReplicates[columnIndex]) {
                 Double[] data = transposedArea[columnIndex];
                 List<double[]> tempList = new ArrayList<>();
-                for (int i = 0; i < data.length; i++) {
+                for (int i = 0; i < timeFrames.length; i++) {
                     if (data[i] != null) {
                         double[] temp = new double[2];
                         temp[0] = timeFrames[i];

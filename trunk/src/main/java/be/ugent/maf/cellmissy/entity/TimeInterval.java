@@ -5,8 +5,9 @@
 package be.ugent.maf.cellmissy.entity;
 
 /**
- * Time Frames interval used for Analysis
- * int values form first and last time frame selected (or computed by default)
+ * Time Frames interval used for Analysis int values form first and last time
+ * frame selected (or computed by default)
+ *
  * @author Paola Masuzzo
  */
 public class TimeInterval {
@@ -20,6 +21,7 @@ public class TimeInterval {
 
     /**
      * Constructor
+     *
      * @param firstTimeFrame
      * @param lastTimeFrame
      */
