@@ -26,6 +26,8 @@ import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
@@ -39,7 +41,7 @@ public class JFreeChartUtils {
 
     // private methods
     /**
-     * Define some parameters for the xyPlot
+     * Setup a xy plot
      *
      * @param xYPlot
      */
@@ -61,7 +63,8 @@ public class JFreeChartUtils {
     }
 
     /**
-     * Given a list of wells and one well's coordinate, get the index of the well in the List
+     * Given a list of wells and one well's coordinate, get the index of the
+     * well in the List
      *
      * @param wellCoordinates
      * @param wellList
@@ -92,8 +95,9 @@ public class JFreeChartUtils {
 
     // public methods
     /**
-     * This method is generating a chart for the density function given a certain index for the condition, a xYSeriesCollection made up of the density functions (x and y values) and a string for the
-     * main title.
+     * This method is generating a chart for the density function given a
+     * certain index for the condition, a xYSeriesCollection made up of the
+     * density functions (x and y values) and a string for the main title.
      *
      * @param plateCondition
      * @param conditionIndex
@@ -119,7 +123,7 @@ public class JFreeChartUtils {
         XYItemRenderer renderer = xYPlot.getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);
         // get imaged wells and number of samples for each one
-        List<Well> processedWells = plateCondition.getProcessedWells();
+        List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
         int counter = 0;
         for (Well well : processedWells) {
             int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
@@ -167,7 +171,7 @@ public class JFreeChartUtils {
     }
 
     /**
-     * Generate Series for (x,y) Area plotting
+     * Generate Series for (x,y) Area plotting from two arrays of double
      *
      * @param xValues
      * @param yValues
@@ -185,21 +189,24 @@ public class JFreeChartUtils {
     }
 
     /**
-     * Adjust font and title of chart, as well as legend's position and background color.
+     * Setup replicates area chart
      *
-     * @param chart
-     * @param xYSeriesCollection
-     * @param wellList
+     * @param chart: chart to setup
+     * @param wellList: keep track of wells added, removed: list needed
+     * @param plotLines: show lines on plot?
+     * @param plotLines: show points on plot?
      */
-    public static void setupReplicatesAreaChart(JFreeChart chart, XYSeriesCollection xYSeriesCollection, List<Well> wellList) {
+    public static void setupReplicatesAreaChart(JFreeChart chart, List<Well> wellList, boolean plotLines, boolean plotPoints) {
         // set title font 
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         // put legend on the right edge
         chart.getLegend().setPosition(RectangleEdge.RIGHT);
         XYPlot xYPlot = chart.getXYPlot();
         setupPlot(xYPlot);
+        // get the xyseriescollection from the plot
+        XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
         // modify renderer
-        XYItemRenderer renderer = xYPlot.getRenderer();
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xYPlot.getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);
         for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
             // wide line
@@ -210,22 +217,30 @@ public class JFreeChartUtils {
             int length = GuiUtils.getAvailableColors().length;
             int colorIndex = wellIndex % length;
             renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
+            // show lines?
+            renderer.setSeriesLinesVisible(i, plotLines);
+            // show points?
+            renderer.setSeriesShapesVisible(i, plotPoints);
         }
     }
 
     /**
+     * SEtup global area chart
      *
-     * @param chart
-     * @param xYSeriesCollection
+     * @param chart: chart to setup
+     * @param plotLines: show lines on plot?
+     * @param plotLines: show points on plot?
      */
-    public static void setupGlobalAreaChart(JFreeChart chart, XYSeriesCollection xYSeriesCollection) {
+    public static void setupGlobalAreaChart(JFreeChart chart, boolean plotLines, boolean plotPoints) {
         // set title font 
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         // get xyplot from the chart
         XYPlot xYPlot = chart.getXYPlot();
         setupPlot(xYPlot);
+        // get the xyseriescollection from the plot
+        XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
         // modify renderer
-        XYItemRenderer renderer = xYPlot.getRenderer();
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xYPlot.getRenderer();
         BasicStroke wideLine = new BasicStroke(1.3f);
         for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
             // wide line
@@ -237,11 +252,15 @@ public class JFreeChartUtils {
             int conditionIndex = Integer.parseInt(subsString) - 1;
             int colorIndex = conditionIndex % length;
             renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
+            // show lines?
+            renderer.setSeriesLinesVisible(i, plotLines);
+            // show points?
+            renderer.setSeriesShapesVisible(i, plotPoints);
         }
     }
 
     /**
-     * Plot error bars in both directions
+     * Plot error bars in both directions, vertical and horizontal
      *
      * @param chart
      * @param values
@@ -256,6 +275,7 @@ public class JFreeChartUtils {
             double y = values.getY(i).doubleValue();
             double dx = errors.getX(i).doubleValue();
             double dy = errors.getY(i).doubleValue();
+            // add vertical and horizontal annotations on plot
             XYLineAnnotation vertical = new XYLineAnnotation(x, y - dy, x, y + dy, stroke, paint);
             plot.addAnnotation(vertical);
             XYLineAnnotation horizontal = new XYLineAnnotation(x - dx, y, x + dx, y, stroke, paint);
@@ -272,6 +292,7 @@ public class JFreeChartUtils {
      */
     public static void plotVerticalErrorBars(JFreeChart chart, XYSeriesCollection valuesCollection, List<Double[]> verticalErrors) {
         Stroke stroke = new BasicStroke();
+        // get the plot from the chart
         XYPlot plot = chart.getXYPlot();
         for (int i = 0; i < valuesCollection.getSeriesCount(); i++) {
             Double[] errors = verticalErrors.get(i);
@@ -280,11 +301,13 @@ public class JFreeChartUtils {
                 double x = values.getX(j).doubleValue();
                 double y = values.getY(j).doubleValue();
                 double dy = errors[j];
+                // compute the right index of color to be used in the rendering
                 int lenght = GuiUtils.getAvailableColors().length;
                 String conditionName = valuesCollection.getSeriesKey(i).toString();
                 String subString = conditionName.substring(10);
                 int conditionIndex = Integer.parseInt(subString) - 1;
                 int indexOfColor = conditionIndex % lenght;
+                // add vertical annotation on plot
                 XYLineAnnotation vertical = new XYLineAnnotation(x, y - dy, x, y + dy, stroke, GuiUtils.getAvailableColors()[indexOfColor]);
                 plot.addAnnotation(vertical);
             }

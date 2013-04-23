@@ -97,7 +97,7 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
     private void initTable(Double[][] dataToShow) {
         double outliersDetectionRatio = PropertiesConfigurationHolder.getInstance().getDouble("outliersDetectionRatio");
         // List of imaged wells
-        List<Well> processedWells = plateCondition.getProcessedWells();
+        List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
         int numberOfSamplesPerCondition = AnalysisUtils.getNumberOfSamplesPerCondition(plateCondition);
         //the table needs one column for the time frames + one column for each replicate (each well imaged)
         columnNames = new String[numberOfSamplesPerCondition + 1];

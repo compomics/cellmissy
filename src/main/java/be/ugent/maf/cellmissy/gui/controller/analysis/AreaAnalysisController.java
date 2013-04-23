@@ -9,10 +9,12 @@ import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
 import be.ugent.maf.cellmissy.analysis.SignificanceLevel;
 import be.ugent.maf.cellmissy.analysis.StatisticsAnalyzer;
+import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
 import be.ugent.maf.cellmissy.entity.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.LinearRegressionPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.StatisticsPanel;
@@ -138,8 +140,8 @@ public class AreaAnalysisController {
         return dataAnalysisController.getPreProcessingMap();
     }
 
-    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, MeasuredAreaType measuredAreaType) {
-        return dataAnalysisController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, measuredAreaType);
+    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType) {
+        return dataAnalysisController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
     }
 
     public void showMessage(String message, String title, Integer messageType) {
@@ -148,6 +150,14 @@ public class AreaAnalysisController {
 
     public MeasuredAreaType getMeasuredAreaType() {
         return dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
+    }
+
+    public Algorithm getSelectedALgorithm() {
+        return dataAnalysisController.getSelectedALgorithm();
+    }
+
+    public ImagingType getSelectedImagingType() {
+        return dataAnalysisController.getSelectedImagingType();
     }
 
     /**
@@ -163,7 +173,6 @@ public class AreaAnalysisController {
         List<Double> meanSlopesList = new ArrayList();
         List<Double> madSlopesList = new ArrayList();
         List<PlateCondition> processedConditions = dataAnalysisController.getProcessedConditions();
-
         // go through all conditions in map and estimate linear model for each of them
         for (PlateCondition plateCondition : processedConditions) {
             estimateLinearModel(plateCondition, useCorrectedData);
@@ -208,11 +217,10 @@ public class AreaAnalysisController {
         columnNames[columnNames.length - 1] = "MAD";
         // set model of table
         linearRegressionPanel.getSlopesTable().setModel(new DefaultTableModel(data, columnNames));
-
+        // set cell renderer
         for (int columnIndex = 1; columnIndex < linearRegressionPanel.getSlopesTable().getColumnCount() - 2; columnIndex++) {
             linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new LinearRegressionTableRenderer());
         }
-
         //set format renderer only for last two columns together with less width
         for (int columnIndex = columnNames.length - 2; columnIndex < linearRegressionPanel.getSlopesTable().getColumnCount(); columnIndex++) {
             linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(dataAnalysisController.getFormat()));
@@ -222,6 +230,22 @@ public class AreaAnalysisController {
         linearRegressionPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         // select by default all conditions: to show all bars in the velocity chart
         linearRegressionPanel.getSlopesTable().setRowSelectionInterval(0, linearRegressionPanel.getSlopesTable().getRowCount() - 1);
+    }
+
+    /**
+     * Update information on time frames and corrected data in analysis
+     */
+    public void updateAnalysisInfo() {
+        double[] analysisTimeFrames = dataAnalysisController.getAnalysisTimeFrames();
+        linearRegressionPanel.getFirstTimeFrameTextField().setText("" + analysisTimeFrames[0]);
+        linearRegressionPanel.getLastTimeFrameTextField().setText("" + analysisTimeFrames[analysisTimeFrames.length - 1]);
+        String correctedData;
+        if (dataAnalysisController.useCorrectedData()) {
+            correctedData = "YES";
+        } else {
+            correctedData = "NO";
+        }
+        linearRegressionPanel.getCorrectedDataTextField().setText(correctedData);
     }
 
     /**
@@ -253,7 +277,8 @@ public class AreaAnalysisController {
     }
 
     /**
-     * Ask user to choose for a directory and invoke swing worker for creating PDF report
+     * Ask user to choose for a directory and invoke swing worker for creating
+     * PDF report
      *
      * @throws IOException
      */
@@ -266,7 +291,6 @@ public class AreaAnalysisController {
         chooseDirectory.setDialogTitle("Choose a directory to save the report");
         chooseDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooseDirectory.setSelectedFile(new File("Analysis Report " + experimentNumber + " - " + projectNumber + ".pdf"));
-
         // in response to the button click, show open dialog
         int returnVal = chooseDirectory.showSaveDialog(dataAnalysisController.getDataAnalysisPanel());
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -333,7 +357,8 @@ public class AreaAnalysisController {
         AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
         AreaAnalysisResults areaAnalysisResults = analysisMap.get(plateCondition);
         MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
-        areaAnalyzer.estimateLinearModel(areaPreProcessingResults, areaAnalysisResults, useCorrectedData, measuredAreaType, dataAnalysisController.getTimeFrames());
+        double[] analysisTimeFrames = dataAnalysisController.getAnalysisTimeFrames();
+        areaAnalyzer.estimateLinearModel(areaPreProcessingResults, areaAnalysisResults, useCorrectedData, measuredAreaType, analysisTimeFrames);
     }
 
     /**
@@ -355,23 +380,20 @@ public class AreaAnalysisController {
         //center the dialog on the main screen
         dialog.setLocationRelativeTo(null);
         dialog.setTitle("Statistics");
-
+        // init panel for statistics
         statisticsPanel.getSummaryTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         statisticsPanel.getSummaryScrollPane().getViewport().setBackground(Color.white);
         statisticsPanel.getpValuesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
         statisticsPanel.getpValuesScrollPane().getViewport().setBackground(Color.white);
-
         SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
         StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
         StyledDocument styledDocument = statisticsPanel.getInfoTextPane().getStyledDocument();
         styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
-        styledDocument = linearRegressionPanel.getInfoTextPane().getStyledDocument();
-        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
-
+        // init binding
         groupsBindingList = ObservableCollections.observableList(new ArrayList<AnalysisGroup>());
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, groupsBindingList, linearRegressionPanel.getGroupsList());
         bindingGroup.addBinding(jListBinding);
-
+        // fill in combo box
         List<Double> significanceLevels = new ArrayList<>();
         for (SignificanceLevel significanceLevel : SignificanceLevel.values()) {
             significanceLevels.add(significanceLevel.getValue());
@@ -380,7 +402,7 @@ public class AreaAnalysisController {
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, significanceLevelsBindingList, statisticsPanel.getSignificanceLevelComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
-
+        // fill in combo box
         for (CorrectionMethod method : CorrectionMethod.values()) {
             statisticsPanel.getCorrectionMethodsComboBox().addItem(method);
         }
@@ -388,7 +410,8 @@ public class AreaAnalysisController {
         statisticsPanel.getSignificanceLevelComboBox().setSelectedIndex(1);
 
         /**
-         * List selection Listener for linear model results Table show bar charts according to user selection in model
+         * List selection Listener for linear model results Table show bar
+         * charts according to user selection in model
          */
         linearRegressionPanel.getSlopesTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -648,7 +671,9 @@ public class AreaAnalysisController {
     }
 
     /**
-     * Add Annotations on velocity Chart A line is added horizontally between two conditions that were detected to be statistically different. If lines from previous analysis are present, delete them.
+     * Add Annotations on velocity Chart A line is added horizontally between
+     * two conditions that were detected to be statistically different. If lines
+     * from previous analysis are present, delete them.
      */
     private void addAnnotationsOnVelocityChart(AnalysisGroup analysisGroup) {
         Stroke stroke = new BasicStroke(0.5f);
@@ -689,7 +714,6 @@ public class AreaAnalysisController {
             CategoryAnnotation annotation = new CategoryTextAnnotation("N " + numberOfReplicates.length, dataset.getColumnKey(i), 10);
             velocityPlot.addAnnotation(annotation);
         }
-
         Range range = new Range(0, velocityPlot.getRangeAxis().getRange().getUpperBound() + counter);
         velocityPlot.getRangeAxis().setRange(range);
     }
@@ -767,7 +791,7 @@ public class AreaAnalysisController {
     /**
      * Swing Worker to generate PDF report
      */
-    private class AnalysisReportSwingWorker extends SwingWorker<Void, Void> {
+    private class AnalysisReportSwingWorker extends SwingWorker<File, Void> {
 
         private File directory;
         private String reportName;
@@ -778,7 +802,7 @@ public class AreaAnalysisController {
         }
 
         @Override
-        protected Void doInBackground() throws Exception {
+        protected File doInBackground() throws Exception {
             // disable button
             linearRegressionPanel.getCreateReportButton().setEnabled(false);
             //set cursor to waiting one
@@ -786,24 +810,24 @@ public class AreaAnalysisController {
             boolean useCorrectedData = dataAnalysisController.useCorrectedData();
             areaAnalysisReportController.setUseCorrectedData(useCorrectedData);
             //call the child controller to create report
-            File analysisReport = areaAnalysisReportController.createAnalysisReport(directory, reportName);
-            try {
-                // open the created pdf file
-                Desktop.getDesktop().open(analysisReport);
-            } catch (IOException ex) {
-                dataAnalysisController.showMessage(ex.getMessage(), "Error while opening file", JOptionPane.ERROR_MESSAGE);
-            }
-            return null;
+            File file = areaAnalysisReportController.createAnalysisReport(directory, reportName);
+            return file;
         }
 
         @Override
         protected void done() {
+            File file = null;
             try {
-                get();
-            } catch (InterruptedException | CancellationException ex) {
-                ex.printStackTrace();
-            } catch (ExecutionException ex) {
-                dataAnalysisController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+                file = get();
+            } catch (InterruptedException | CancellationException | ExecutionException ex) {
+                LOG.error(ex.getMessage(), ex);
+            }
+            try {
+                //if export to PDF was successfull, open the PDF file from the desktop
+                Desktop.getDesktop().open(file);
+            } catch (IOException ex) {
+                LOG.error(ex.getMessage(), ex);
+                dataAnalysisController.showMessage(ex.getMessage(), "Error while opening file", JOptionPane.ERROR_MESSAGE);
             }
             //set cursor back to default
             dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);

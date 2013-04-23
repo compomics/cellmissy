@@ -185,34 +185,50 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
         detailsPanel.setOpaque(false);
         detailsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel6.setText("Number of time frames");
 
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel7.setText("Purpose");
 
+        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel10.setText("User");
 
+        jScrollPane3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jScrollPane3.setOpaque(false);
 
         purposeTextArea.setEditable(false);
         purposeTextArea.setColumns(20);
         purposeTextArea.setRows(5);
+        purposeTextArea.setBorder(null);
+        purposeTextArea.setFocusable(false);
         purposeTextArea.setPreferredSize(new java.awt.Dimension(170, 94));
         jScrollPane3.setViewportView(purposeTextArea);
 
         userTextField.setEditable(false);
+        userTextField.setBorder(null);
+        userTextField.setFocusable(false);
         userTextField.setOpaque(false);
 
         timeFramesTextField.setEditable(false);
+        timeFramesTextField.setBorder(null);
+        timeFramesTextField.setFocusable(false);
         timeFramesTextField.setOpaque(false);
 
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel11.setText("Instrument");
 
         instrumentTextField.setEditable(false);
+        instrumentTextField.setBorder(null);
+        instrumentTextField.setFocusable(false);
         instrumentTextField.setOpaque(false);
 
+        jLabel12.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel12.setText("Magnification");
 
         magnificationTextField.setEditable(false);
+        magnificationTextField.setBorder(null);
+        magnificationTextField.setFocusable(false);
         magnificationTextField.setOpaque(false);
 
         javax.swing.GroupLayout detailsPanelLayout = new javax.swing.GroupLayout(detailsPanel);
@@ -246,7 +262,7 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(magnificationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(126, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel10, jLabel11, jLabel12, jLabel6, jLabel7});
@@ -260,25 +276,25 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(userTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
                     .addComponent(instrumentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
                     .addComponent(magnificationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(timeFramesTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(detailsPanelLayout.createSequentialGroup()
                         .addComponent(jLabel7)
-                        .addGap(93, 151, Short.MAX_VALUE))
+                        .addContainerGap())
                     .addGroup(detailsPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane3)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                         .addContainerGap())))
         );
 
@@ -294,8 +310,10 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
         jLabel5.setText("Measured area is");
 
         cellCoveredAreaRadioButton.setText("cell covered area (wound closure)");
+        cellCoveredAreaRadioButton.setOpaque(false);
 
         openAreaRadioButton.setText("open area (wound area)");
+        openAreaRadioButton.setOpaque(false);
 
         jLabel9.setText("Area unit of measurement");
 

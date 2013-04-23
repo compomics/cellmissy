@@ -60,7 +60,7 @@ public class ComputedDataTableModel extends AbstractTableModel {
     private void initTable(double[] firstColumn, Double[][] dataToShow) {
         //2D array of double (dimension: time frames * wellList +1)
         data = new Double[dataToShow.length][dataToShow[0].length + 1];
-        List<Well> processedWells = plateCondition.getProcessedWells();
+        List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
         int numberOfSamplesPerCondition = AnalysisUtils.getNumberOfSamplesPerCondition(plateCondition);
         //the table needs one column for the time frames + one column for each replicate (each well imaged)
         columnNames = new String[numberOfSamplesPerCondition + 1];

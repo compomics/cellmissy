@@ -67,7 +67,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * SetupExperiment Panel Controller: set up a new experiment. Parent controller: CellMissy Controller (main controller) Child controllers: Conditions Controller, Setup Plate Controller
+ * SetupExperiment Panel Controller: set up a new experiment. Parent controller:
+ * CellMissy Controller (main controller) Child controllers: Conditions
+ * Controller, Setup Plate Controller
  *
  * @author Paola
  */
@@ -166,7 +168,8 @@ public class SetupExperimentController {
      */
     /**
      *
-     * if the user adds a new condition, add a new entry to the map: new condition-empty list of rectangles
+     * if the user adds a new condition, add a new entry to the map: new
+     * condition-empty list of rectangles
      *
      * @param conditionToAdd added to the list
      */
@@ -175,7 +178,8 @@ public class SetupExperimentController {
     }
 
     /**
-     * if the user removes a condition from the list, wells conditions are set back to null, rectangles are removed from the map and repaint is called
+     * if the user removes a condition from the list, wells conditions are set
+     * back to null, rectangles are removed from the map and repaint is called
      *
      * @param conditionToRemove
      */
@@ -245,7 +249,8 @@ public class SetupExperimentController {
     }
 
     /**
-     * Called in the main controller, reset views and models if another view has being shown
+     * Called in the main controller, reset views and models if another view has
+     * being shown
      */
     public void resetAfterCardSwitch() {
         // set experiment back to null
@@ -282,7 +287,9 @@ public class SetupExperimentController {
     }
 
     /**
-     * When the mouse is released and the rectangle has been drawn, this method is called: set well collection of the current condition and set the condition of the selected wells
+     * When the mouse is released and the rectangle has been drawn, this method
+     * is called: set well collection of the current condition and set the
+     * condition of the selected wells
      *
      * @param plateCondition
      * @param rectangle
@@ -318,7 +325,8 @@ public class SetupExperimentController {
     }
 
     /**
-     * set back to null the condition of the wells selected (for a certain Condition)
+     * set back to null the condition of the wells selected (for a certain
+     * Condition)
      *
      * @param plateCondition
      */
@@ -336,7 +344,8 @@ public class SetupExperimentController {
     }
 
     /**
-     * set back to null the conditions of all wells selected (for all conditions)
+     * set back to null the conditions of all wells selected (for all
+     * conditions)
      */
     public void resetAllWellsCondition() {
         //set plate condition of all wells selected again to null
@@ -373,7 +382,8 @@ public class SetupExperimentController {
     }
 
     /**
-     * validate PlateCondition, if PlateCondition is not valid, go back to the previous one
+     * validate PlateCondition, if PlateCondition is not valid, go back to the
+     * previous one
      *
      * @param plateCondition
      * @return
@@ -412,7 +422,8 @@ public class SetupExperimentController {
     }
 
     /**
-     * add mouse listener to setup plate panel (Only when a condition is selected)
+     * add mouse listener to setup plate panel (Only when a condition is
+     * selected)
      */
     public void addMouseListener() {
         setupPlateController.addMouseListener();
@@ -479,18 +490,19 @@ public class SetupExperimentController {
         experimentInfoPanel.getProjectJList().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
                 //init experimentJList
                 int locationToIndex = experimentInfoPanel.getProjectJList().locationToIndex(e.getPoint());
-                if (findExperimentNumbersByProjectId(projectBindingList.get(locationToIndex).getProjectid()) != null) {
-                    experimentBindingList = ObservableCollections.observableList(findExperimentsByProjectId(projectBindingList.get(locationToIndex).getProjectid()));
-                    JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, experimentInfoPanel.getExperimentJList());
-                    bindingGroup.addBinding(jListBinding);
-                    bindingGroup.bind();
-                } else {
-                    cellMissyController.showMessage("There are no experiments yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
-                    if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
-                        experimentBindingList.clear();
+                if (locationToIndex != -1) {
+                    if (findExperimentNumbersByProjectId(projectBindingList.get(locationToIndex).getProjectid()) != null) {
+                        experimentBindingList = ObservableCollections.observableList(findExperimentsByProjectId(projectBindingList.get(locationToIndex).getProjectid()));
+                        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, experimentInfoPanel.getExperimentJList());
+                        bindingGroup.addBinding(jListBinding);
+                        bindingGroup.bind();
+                    } else {
+                        cellMissyController.showMessage("There are no experiments yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
+                        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                            experimentBindingList.clear();
+                        }
                     }
                 }
             }
@@ -749,7 +761,8 @@ public class SetupExperimentController {
     }
 
     /**
-     * this method checks if a project already has a certain experiment (checking for experiment number)
+     * this method checks if a project already has a certain experiment
+     * (checking for experiment number)
      *
      * @param projectId
      * @param experimentNumber
@@ -768,7 +781,8 @@ public class SetupExperimentController {
     }
 
     /**
-     * update last condition before creating the PDf report and saving the experiment
+     * update last condition before creating the PDf report and saving the
+     * experiment
      */
     private void updateLastCondition() {
         setupConditionsController.updateCondition(setupConditionsController.getPlateConditionBindingList().size() - 1);
@@ -778,7 +792,7 @@ public class SetupExperimentController {
      * SwingWorker to create PDF file (REPORT)
      */
     private class SetupReportWorker extends SwingWorker<File, Void> {
-
+        // directory to save the setup
         private File directory;
 
         public SetupReportWorker(File directory) {
@@ -807,6 +821,7 @@ public class SetupExperimentController {
                 Desktop.getDesktop().open(file);
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);
+                 showMessage(ex.getMessage(), "Error while opening file", JOptionPane.ERROR_MESSAGE);
             }
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             setupExperimentPanel.getFinishButton().setEnabled(true);

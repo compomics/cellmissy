@@ -15,6 +15,7 @@ import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.TimeInterval;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
@@ -74,7 +75,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Data Analysis Controller Parent Controller: CellMissy Controller (main controller) Child Controllers: Bulk Cell Analysis Controller - Single Cell Analysis Controller
+ * Data Analysis Controller Parent Controller: CellMissy Controller (main
+ * controller) Child Controllers: Bulk Cell Analysis Controller - Single Cell
+ * Analysis Controller
  *
  * @author Paola Masuzzo
  */
@@ -93,8 +96,7 @@ public class DataAnalysisController {
     private List<PlateCondition> plateConditionList;
     private BindingGroup bindingGroup;
     private Format format;
-    //array with time frames
-    private double[] timeFrames;
+    private double[] analysisTimeFrames;
     //view
     private AnalysisExperimentPanel analysisExperimentPanel;
     private MetaDataAnalysisPanel metaDataAnalysisPanel;
@@ -136,7 +138,6 @@ public class DataAnalysisController {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         format = new DecimalFormat(PropertiesConfigurationHolder.getInstance().getString("dataFormat"));
-
         areaAnalysisHolder = new AreaAnalysisHolder();
         //init child controllers
         areaPreProcessingController.init();
@@ -181,8 +182,8 @@ public class DataAnalysisController {
         return plateConditionList;
     }
 
-    public double[] getTimeFrames() {
-        return timeFrames;
+    public double[] getAnalysisTimeFrames() {
+        return analysisTimeFrames;
     }
 
     public Format getFormat() {
@@ -197,8 +198,8 @@ public class DataAnalysisController {
         return areaPreProcessingController.getPreProcessingMap();
     }
 
-    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, MeasuredAreaType measuredAreaType) {
-        return areaPreProcessingController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, measuredAreaType);
+    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType) {
+        return areaPreProcessingController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
     }
 
     public List<PlateCondition> getProcessedConditions() {
@@ -219,6 +220,14 @@ public class DataAnalysisController {
         analysisExperimentPanel.getCancelButton().setEnabled(isEnable);
     }
 
+    public Algorithm getSelectedALgorithm() {
+        return algorithmBindingList.get(metaDataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex());
+    }
+
+    public ImagingType getSelectedImagingType() {
+        return imagingTypeBindingList.get(metaDataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex());
+    }
+
     /**
      * Check if current analysis has been saved before leaving the view
      *
@@ -233,14 +242,16 @@ public class DataAnalysisController {
     }
 
     /**
-     * Called in the main controller, reset views and models if another view has being shown
+     * Called in the main controller, reset views and models if another view has
+     * being shown
      */
     public void resetAfterCardSwitch() {
         onCancel();
     }
 
     /**
-     * Fetch time steps objects from DB, update TimeStepList according to Plate Condition
+     * Fetch time steps objects from DB, update TimeStepList according to Plate
+     * Condition
      *
      * @param plateCondition
      */
@@ -275,6 +286,13 @@ public class DataAnalysisController {
     }
 
     /**
+     * Update information on time frames and corrected data in analysis
+     */
+    public void updateAnalysisInfo() {
+        areaAnalysisController.updateAnalysisInfo();
+    }
+
+    /**
      * Show message through the main controller
      *
      * @param message
@@ -286,7 +304,8 @@ public class DataAnalysisController {
     }
 
     /**
-     * The condition is loaded and plate view is refreshed with not imaged wells highlighted in gray
+     * The condition is loaded and plate view is refreshed with not imaged wells
+     * highlighted in gray
      *
      * @param plateCondition
      */
@@ -302,6 +321,38 @@ public class DataAnalysisController {
      */
     public boolean useCorrectedData() {
         return areaPreProcessingController.getAreaAnalysisPanel().getUseCorrectedDataCheckBox().isSelected();
+    }
+
+    /**
+     * This is computing the minimum time frame in order to proceed with
+     * analysis
+     */
+    public void computeAnalysisTimeFrames() {
+        List<Double> list = new ArrayList<>();
+        for (int i = 0; i < experiment.getTimeFrames(); i++) {
+            double timeFrame = i * experiment.getExperimentInterval();
+            list.add(timeFrame);
+        }
+        int analysisFirstTimeFrame = 0;
+        int analysisLastTimeFrame = list.size();
+
+        Map<PlateCondition, AreaPreProcessingResults> preProcessingMap = areaPreProcessingController.getPreProcessingMap();
+        for (PlateCondition plateCondition : plateConditionList) {
+            AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
+            TimeInterval timeInterval = areaPreProcessingResults.getTimeInterval();
+            int firstTimeFrame = timeInterval.getFirstTimeFrame();
+            int lastTimeFrame = timeInterval.getLastTimeFrame();
+            if (firstTimeFrame > analysisFirstTimeFrame) {
+                analysisFirstTimeFrame = firstTimeFrame;
+            }
+            if (lastTimeFrame < analysisLastTimeFrame) {
+                analysisLastTimeFrame = lastTimeFrame;
+            }
+        }
+        analysisTimeFrames = new double[analysisLastTimeFrame - analysisFirstTimeFrame + 1];
+        for (int i = 0; i < analysisTimeFrames.length; i++) {
+            analysisTimeFrames[i] = list.get(i + analysisFirstTimeFrame);
+        }
     }
 
     /**
@@ -404,7 +455,7 @@ public class DataAnalysisController {
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
-                showInfoMessage("The slope of this linear regression model is the median velocity of cells");
+                showInfoMessage("Choose conditions from the linerar regression table and assign them to a group to perform analysis");
                 break;
         }
     }
@@ -437,6 +488,7 @@ public class DataAnalysisController {
                 onCardSwitch();
                 // update experiment info
                 dataAnalysisPanel.getExperimentNumberTextField().setText(experiment.toString());
+                dataAnalysisPanel.getTimeFramesNumberTextField().setText("" + experiment.getTimeFrames());
                 dataAnalysisPanel.getDatasetTextField().setText(algorithmBindingList.get(metaDataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmName());
                 dataAnalysisPanel.getImagingTypeTextField().setText(imagingTypeBindingList.get(metaDataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getName());
                 showInfoMessage("Select a condition to start with analysis");
@@ -512,7 +564,9 @@ public class DataAnalysisController {
         analysisExperimentPanel.getNextButton().setEnabled(false);
         analysisExperimentPanel.getCancelButton().setEnabled(false);
         analysisExperimentPanel.getPreviousButton().setEnabled(false);
-        experimentBindingList.clear();
+        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+            experimentBindingList.clear();
+        }
         if (!areaPreProcessingController.getTimeStepsBindingList().isEmpty()) {
             areaPreProcessingController.getTimeStepsBindingList().clear();
         }
@@ -677,19 +731,8 @@ public class DataAnalysisController {
     }
 
     /**
-     * Compute time frames from time steps list This method only needs to be called one, since time frames is set for the entire experiment Time frames are then equal for both types of analysis
-     */
-    private void computeTimeFrames(int numberOfFrames) {
-        double[] timeFrames = new double[numberOfFrames];
-        for (int i = 0; i < timeFrames.length; i++) {
-            double timeFrame = i * experiment.getExperimentInterval();
-            timeFrames[i] = timeFrame;
-        }
-        this.timeFrames = timeFrames;
-    }
-
-    /**
-     * Action on selected project, find all relative performed experiments, if any
+     * Action on selected project, find all relative performed experiments, if
+     * any
      *
      * @param selectedProject
      */
@@ -716,11 +759,13 @@ public class DataAnalysisController {
     }
 
     /**
-     * Action on selected experiment, retrieve plate conditions and repaint plate panel Furthermore,
+     * Action on selected experiment, retrieve plate conditions and repaint
+     * plate panel Furthermore,
      *
      * @param selectedExperiment
      */
     private void onSelectedExperiment(Experiment selectedExperiment) {
+        // clear current lists
         if (!imagingTypeBindingList.isEmpty()) {
             imagingTypeBindingList.clear();
         }
@@ -731,7 +776,7 @@ public class DataAnalysisController {
         // set experiment
         experiment = selectedExperiment;
         //compute time frames array
-        computeTimeFrames(experiment.getTimeFrames());
+        //computeTimeFrames(experiment.getTimeFrames());
         // init a new list of plate conditions
         plateConditionList = new ArrayList<>();
         plateConditionList.addAll(experiment.getPlateConditionCollection());
@@ -767,8 +812,6 @@ public class DataAnalysisController {
         }
         //init map with conditions and results holders
         areaPreProcessingController.initMapWithConditions();
-        // init timeframes binding list with an empty one
-        updateTimeFramesList();
         //set selected algorithm to the first of the list
         metaDataAnalysisPanel.getAlgorithmComboBox().setSelectedIndex(0);
         //set selected imaging types to the first of the list
@@ -785,23 +828,6 @@ public class DataAnalysisController {
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, plateConditionBindingList, dataAnalysisPanel.getConditionsList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
-    }
-
-    /**
-     *
-     * @param plateCondition
-     * @return
-     */
-    private int getTimeStepsNumber(PlateCondition plateCondition) {
-        int number = 0;
-        for (Well well : plateCondition.getWellCollection()) {
-            List<WellHasImagingType> list = new ArrayList<>(well.getWellHasImagingTypeCollection());
-            if (!list.isEmpty()) {
-                number = list.get(0).getTimeStepCollection().size();
-            }
-        }
-
-        return number;
     }
 
     /**
@@ -828,20 +854,11 @@ public class DataAnalysisController {
     }
 
     /**
-     *
-     */
-    private void updateTimeFramesList() {
-        if (!areaPreProcessingController.getTimeFramesBindingList().isEmpty()) {
-            areaPreProcessingController.getTimeFramesBindingList().clear();
-        }
-        for (double timeFrame : timeFrames) {
-            areaPreProcessingController.getTimeFramesBindingList().add(timeFrame);
-        }
-    }
-
-    /**
-     * Swing Worker to fetch one condition time steps at once: The user selects a condition, a waiting cursor is shown on the screen and time steps result are fetched from DB. List of time steps is
-     * updated. In addition, map of child controller is updated: computations are performed here and then shown in the done method of the class.
+     * Swing Worker to fetch one condition time steps at once: The user selects
+     * a condition, a waiting cursor is shown on the screen and time steps
+     * result are fetched from DB. List of time steps is updated. In addition,
+     * map of child controller is updated: computations are performed here and
+     * then shown in the done method of the class.
      */
     private class FetchConditionSwingWorker extends SwingWorker<Void, Void> {
 
@@ -857,17 +874,6 @@ public class DataAnalysisController {
                 ImagingType imagingType = imagingTypeBindingList.get(metaDataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex());
                 wellService.fetchTimeSteps(wellList.get(i), algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
             }
-            // check for time frames
-            int timeStepsNumber = getTimeStepsNumber(currentCondition);
-            int timeFramesNumber = timeFrames.length;
-            if (timeFramesNumber != timeStepsNumber) {
-                // warn the user and set time frames to timesteps number
-                showMessage("Exp time frames number: " + timeFramesNumber + " is bigger than images number!\nNew time frames will be set to: " + timeStepsNumber, "Time frames mismatching", JOptionPane.WARNING_MESSAGE);
-                computeTimeFrames(timeStepsNumber);
-                experiment.setTimeFrames(timeStepsNumber);
-                experimentService.update(experiment);
-            }
-
             // when all wells were fetched, update TimeStepList
             updateTimeStepsList(currentCondition);
             // if time steps were actually fetched from DB, update map
@@ -891,13 +897,18 @@ public class DataAnalysisController {
                         //for current selected condition show normalized area values together with time frames
                         areaPreProcessingController.showNormalizedAreaInTable(currentCondition);
                         // show raw data plot (all replicates)
-                        areaPreProcessingController.plotRawDataReplicates(currentCondition);
+                        boolean plotLines = areaPreProcessingController.getRawAreaPanel().getPlotLinesCheckBox().isSelected();
+                        boolean plotPoints = areaPreProcessingController.getRawAreaPanel().getPlotPointsCheckBox().isSelected();
+                        areaPreProcessingController.plotRawAreaReplicates(currentCondition, plotLines, plotPoints);
+                        areaPreProcessingController.showProcessedTimeFrames(currentCondition);
                     }
                     if (areaPreProcessingController.getAreaAnalysisPanel().getCellCoveredAreaRadioButton().isSelected()) {
                         //for current selected condition show transformed area values together with time frames
                         areaPreProcessingController.showTransformedDataInTable(currentCondition);
                         // show raw data plot (all replicates)
-                        areaPreProcessingController.plotTransformedDataReplicates(currentCondition);
+                        boolean plotLines = areaPreProcessingController.getTransformedAreaPanel().getPlotLinesCheckBox().isSelected();
+                        boolean plotPoints = areaPreProcessingController.getTransformedAreaPanel().getPlotPointsCheckBox().isSelected();
+                        areaPreProcessingController.plotTransformedAreaReplicates(currentCondition, plotLines, plotPoints);
                     }
                     if (areaPreProcessingController.getAreaAnalysisPanel().getDeltaAreaButton().isSelected()) {
                         //for current selected condition show delta area values 
@@ -910,10 +921,14 @@ public class DataAnalysisController {
                         areaPreProcessingController.plotDensityFunctions(currentCondition);
                     }
                     if (areaPreProcessingController.getAreaAnalysisPanel().getCorrectedAreaButton().isSelected()) {
+                        // update time frames list for current condition
+                        areaPreProcessingController.updateTimeFramesList(currentCondition);
                         //for current selected condition show corrected area values (outliers have been deleted from distribution)
                         areaPreProcessingController.showCorrectedAreaInTable(currentCondition);
                         //show Area increases with time frames
-                        areaPreProcessingController.plotCorrectedDataReplicates(currentCondition);
+                        boolean plotLines = areaPreProcessingController.getCorrectedAreaPanel().getPlotLinesCheckBox().isSelected();
+                        boolean plotPoints = areaPreProcessingController.getCorrectedAreaPanel().getPlotPointsCheckBox().isSelected();
+                        areaPreProcessingController.plotCorrectedDataReplicates(currentCondition, plotLines, plotPoints);
                     }
                 } else {
                     // the entire condition was not imaged/analyzed: inform the user

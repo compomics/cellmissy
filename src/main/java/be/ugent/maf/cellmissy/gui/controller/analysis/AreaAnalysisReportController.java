@@ -64,7 +64,8 @@ public class AreaAnalysisReportController {
 
     /**
      * getters and setters
-     * @param useCorrectedData 
+     *
+     * @param useCorrectedData
      */
     public void setUseCorrectedData(boolean useCorrectedData) {
         this.useCorrectedData = useCorrectedData;
@@ -178,9 +179,17 @@ public class AreaAnalysisReportController {
         String title = "Analysis Report of Experiment " + experiment.getExperimentNumber() + " - " + "Project " + experiment.getProject().getProjectNumber();
         PdfUtils.addTitle(document, title, titleFont);
         PdfUtils.addEmptyLines(document, 1);
-        //lines to be printed
+        // add information on dataset (algorithm) and imaging type analyzed
         List<String> lines = new ArrayList<>();
-        String line = "Number of conditions: " + experiment.getPlateConditionCollection().size();
+        String line = "Dataset: " + areaAnalysisController.getSelectedALgorithm();
+        lines.add(line);
+        line = "Imaging Type: " + areaAnalysisController.getSelectedImagingType();
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        // add conditions number
+        lines.clear();
+        line = "Number of conditions: " + experiment.getPlateConditionCollection().size();
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -200,13 +209,14 @@ public class AreaAnalysisReportController {
         List<PlateCondition> plateConditonsList = new ArrayList<>(experiment.getPlateConditionCollection());
         MeasuredAreaType measuredAreaType = areaAnalysisController.getMeasuredAreaType();
         // create chart (for all conditions, no error bars on top)
-        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, useCorrectedData, false, measuredAreaType);
+        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, useCorrectedData, false, true, false, measuredAreaType);
         // add chart as image
         addImageFromChart(globalAreaChart, chartWidth, chartHeight);
     }
 
     /**
-     * Add image with velocity chart Velocity Chart is created will all the conditions
+     * Add image with velocity chart Velocity Chart is created will all the
+     * conditions
      */
     private void addGlobalVelocityChart() {
         List<PlateCondition> plateConditonsList = new ArrayList<>(experiment.getPlateConditionCollection());
@@ -387,7 +397,8 @@ public class AreaAnalysisReportController {
     }
 
     /**
-     * Add table with p-values if isAdjusted is false, not corrected P values are shown
+     * Add table with p-values if isAdjusted is false, not corrected P values
+     * are shown
      *
      * @param analysisGroup
      * @param isAdjusted

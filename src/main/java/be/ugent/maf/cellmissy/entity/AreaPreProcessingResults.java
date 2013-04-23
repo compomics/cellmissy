@@ -5,13 +5,19 @@
 package be.ugent.maf.cellmissy.entity;
 
 /**
- * This class is holding the results from the area-data pre-processing step. Normalized Area, Corrected Normalized Area, Delta Area, Percentage of Area Increase, Area corrected for outliers, Euclidean
- * distances between all replicates, Boolean to exclude replicates, information about the eventual interaction of the user for replicates selection and time time frames interval used for analysis.
+ * This class is holding the results from the area-data pre-processing step.
+ * Normalized Area, Corrected Normalized Area, Delta Area, Percentage of Area
+ * Increase, Area corrected for outliers, Euclidean distances between all
+ * replicates, Boolean to exclude replicates, information about the eventual
+ * interaction of the user for replicates selection and time time frames
+ * interval used for analysis.
  *
  * @author Paola Masuzzo
  */
 public class AreaPreProcessingResults {
 
+    // time frames
+    private double[] processedTimeFrames;
     // Area Raw Data (from DB)
     private Double[][] areaRawData;
     // Normalized Area - Area at Time Frame 0 is set to the same value
@@ -38,6 +44,14 @@ public class AreaPreProcessingResults {
      *
      * @return
      */
+    public double[] getProcessedTimeFrames() {
+        return processedTimeFrames;
+    }
+
+    public void setProcessedTimeFrames(double[] processedTimeFrames) {
+        this.processedTimeFrames = processedTimeFrames;
+    }
+
     public Double[][] getAreaRawData() {
         return areaRawData;
     }

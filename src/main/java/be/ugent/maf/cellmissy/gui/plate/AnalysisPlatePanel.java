@@ -13,10 +13,15 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * Analysis Plate View: Show wells with rectangles around: each rectangle has it own color, according to condition color. This class is used in the analysis step, to show conditions on the plate view
+ * Analysis Plate View: Show wells with rectangles around: each rectangle has it
+ * own color, according to condition color. This class is used in the analysis
+ * step, to show conditions on the plate view
  *
  * @author Paola Masuzzo
  */
@@ -51,7 +56,10 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
         // set graphics
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
-        List<PlateCondition> plateConditions = new ArrayList<>(experiment.getPlateConditionCollection());
+        Collection<PlateCondition> plateConditionCollection = experiment.getPlateConditionCollection();
+        List<PlateCondition> plateConditions = new ArrayList<>();
+        plateConditions.addAll(plateConditionCollection);
+
         int lenght = GuiUtils.getAvailableColors().length;
 
         for (PlateCondition plateCondition : plateConditions) {
@@ -79,7 +87,8 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
     }
 
     /**
-     * Render wells Override method from Abstract Plate Panel: if wells have already been rendered, just redraw them
+     * Render wells Override method from Abstract Plate Panel: if wells have
+     * already been rendered, just redraw them
      *
      * @param g
      */
