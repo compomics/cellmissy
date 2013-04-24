@@ -137,7 +137,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jLabel2" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -145,14 +145,13 @@
                           <Component id="jLabel3" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="firstTimeFrameComboBox" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="defaultCutOffTextField" linkSize="1" alignment="0" min="-2" pref="89" max="-2" attributes="1"/>
-                          <Component id="cutOffTimeFrameComboBox" linkSize="1" alignment="0" min="-2" max="-2" attributes="1"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="resetTimeIntervalButton" alignment="0" max="32767" attributes="0"/>
+                          <Component id="defaultCutOffTextField" alignment="0" max="32767" attributes="1"/>
+                          <Component id="cutOffTimeFrameComboBox" alignment="0" max="32767" attributes="1"/>
+                          <Component id="firstTimeFrameComboBox" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="resetCutOffButton" min="-2" pref="120" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace pref="343" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -171,10 +170,11 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="resetCutOffButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="defaultCutOffTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="resetTimeIntervalButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -199,9 +199,9 @@
                 <Property name="toolTipText" type="java.lang.String" value="This is the last time frame analyzed"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="resetCutOffButton">
+            <Component class="javax.swing.JButton" name="resetTimeIntervalButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Reset cut off"/>
+                <Property name="text" type="java.lang.String" value="Reset time interval"/>
                 <Property name="toolTipText" type="java.lang.String" value="Click here to reset the last time frame to the default one"/>
               </Properties>
             </Component>
@@ -289,7 +289,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="ff" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="The chosen value is greater than the default cut off, so the default value will be used in the analysis!"/>
+                <Property name="text" type="java.lang.String" value="The chosen cut off is greater than the default cut off !!! The choice is being ignored."/>
               </Properties>
             </Component>
           </SubComponents>

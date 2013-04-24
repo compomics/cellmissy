@@ -125,34 +125,14 @@ public class OpenAreaPreProcessor implements AreaPreProcessor {
 
     @Override
     public void setTimeInterval(AreaPreProcessingResults areaPreProcessingResults) {
-        Double[][] normalizedCorrectedArea = areaPreProcessingResults.getNormalizedCorrectedArea();
-        Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
-        // check if some replicates need to be excluded from computation (this means these replicates are outliers)
-        boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
         // first time point for interval is set to zero by default
         // this is changed if user decides to analyse only a subset of entire time frames
         int firstTimeFrame = 0;
         // last time point for interval is set to cutoff time point: by default this is the entire time frame of experiment
-        // cutoff time point is intended to be the time point from which starting every replicates in the condition has only no null values. 
-        int lastTimeFrame = normalizedCorrectedArea.length - 1;
-        // for each replicate
-        for (int columnIndex = 0; columnIndex < transposedArea.length; columnIndex++) {
-            if (!excludeReplicates[columnIndex]) {
-                // temporary last time point
-                int temporaryLastTimeFrame = lastTimeFrame;
-                for (int rowIndex = 0; rowIndex < transposedArea[0].length; rowIndex++) {
-                    if (transposedArea[columnIndex][rowIndex] == null) {
-                        temporaryLastTimeFrame = rowIndex - 1;
-                        break;
-                    }
-                }
-                if (temporaryLastTimeFrame < lastTimeFrame) {
-                    lastTimeFrame = temporaryLastTimeFrame;
-                }
-            }
-        }
-        TimeInterval timeInterval = new TimeInterval(firstTimeFrame, lastTimeFrame);
-        timeInterval.setProposedCutOff(lastTimeFrame);
+        // cutoff time point is intended to be the time point from which starting every replicates in the condition has only no null values.
+        int cutOff = computeCutOff(areaPreProcessingResults);
+        TimeInterval timeInterval = new TimeInterval(firstTimeFrame, cutOff);
+        timeInterval.setProposedCutOff(cutOff);
         areaPreProcessingResults.setTimeInterval(timeInterval);
     }
 
@@ -202,5 +182,49 @@ public class OpenAreaPreProcessor implements AreaPreProcessor {
             }
         }
         return correctedArea;
+    }
+
+    @Override
+    public void recomputeTimeInterval(AreaPreProcessingResults areaPreProcessingResults) {
+        //get existing time interval and retain the chosen first time frame
+        TimeInterval timeInterval = areaPreProcessingResults.getTimeInterval();
+        int firstTimeFrame = timeInterval.getFirstTimeFrame();
+        // recompute the cut off
+        int cutOff = computeCutOff(areaPreProcessingResults);
+        TimeInterval newTimeInterval = new TimeInterval(firstTimeFrame, cutOff);
+        newTimeInterval.setProposedCutOff(cutOff);
+        areaPreProcessingResults.setTimeInterval(timeInterval);
+    }
+
+    /**
+     * Compute cut off
+     *
+     * @param areaPreProcessingResults
+     * @return
+     */
+    private int computeCutOff(AreaPreProcessingResults areaPreProcessingResults) {
+        Double[][] normalizedCorrectedArea = areaPreProcessingResults.getNormalizedCorrectedArea();
+        Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
+        // check if some replicates need to be excluded from computation (this means these replicates are outliers)
+        boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();// last time point for interval is set to cutoff time point: by default this is the entire time frame of experiment
+        // cutoff time point is intended to be the time point from which starting every replicates in the condition has only no null values. 
+        int cutOff = normalizedCorrectedArea.length - 1;
+        // for each replicate
+        for (int columnIndex = 0; columnIndex < transposedArea.length; columnIndex++) {
+            if (!excludeReplicates[columnIndex]) {
+                // temporary last time point
+                int temporaryLastTimeFrame = cutOff;
+                for (int rowIndex = 0; rowIndex < transposedArea[0].length; rowIndex++) {
+                    if (transposedArea[columnIndex][rowIndex] == null) {
+                        temporaryLastTimeFrame = rowIndex - 1;
+                        break;
+                    }
+                }
+                if (temporaryLastTimeFrame < cutOff) {
+                    cutOff = temporaryLastTimeFrame;
+                }
+            }
+        }
+        return cutOff;
     }
 }

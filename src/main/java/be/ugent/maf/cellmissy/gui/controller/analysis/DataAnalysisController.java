@@ -928,7 +928,8 @@ public class DataAnalysisController {
                         //show Area increases with time frames
                         boolean plotLines = areaPreProcessingController.getCorrectedAreaPanel().getPlotLinesCheckBox().isSelected();
                         boolean plotPoints = areaPreProcessingController.getCorrectedAreaPanel().getPlotPointsCheckBox().isSelected();
-                        areaPreProcessingController.plotCorrectedDataReplicates(currentCondition, plotLines, plotPoints);
+                        boolean showTimeInterval = areaPreProcessingController.getCorrectedAreaPanel().getShowTimeIntervalCheckBox().isSelected();
+                        areaPreProcessingController.plotCorrectedArea(currentCondition, plotLines, plotPoints, showTimeInterval);
                     }
                 } else {
                     // the entire condition was not imaged/analyzed: inform the user

@@ -74,9 +74,15 @@ public interface AreaPreProcessor {
     public Double[][] correctForOutliers(Double[][] data);
 
     /**
-     * Set time frame interval used for analysis
+     * Set time frame interval for a condition
      *
      * @param areaPreProcessingResults
      */
     public void setTimeInterval(AreaPreProcessingResults areaPreProcessingResults);
+    
+    /**
+     * Recompute time interval for a condition: this is called if first a time interval has already been set
+     * @param areaPreProcessingResults 
+     */
+    public void recomputeTimeInterval(AreaPreProcessingResults areaPreProcessingResults);
 }
