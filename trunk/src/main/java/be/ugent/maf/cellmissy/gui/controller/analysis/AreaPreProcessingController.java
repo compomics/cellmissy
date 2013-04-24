@@ -14,6 +14,8 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.view.table.model.ComputedDataTableModel;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
+import static be.ugent.maf.cellmissy.analysis.MeasuredAreaType.CELL_COVERED_AREA;
+import static be.ugent.maf.cellmissy.analysis.MeasuredAreaType.OPEN_AREA;
 import be.ugent.maf.cellmissy.analysis.impl.CellCoveredAreaPreProcessor;
 import be.ugent.maf.cellmissy.analysis.impl.OpenAreaPreProcessor;
 import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache;
@@ -406,6 +408,7 @@ public class AreaPreProcessingController {
     }
 
     /**
+     * Show how many time frames were actually processed
      *
      * @param plateCondition
      */
@@ -413,6 +416,19 @@ public class AreaPreProcessingController {
         AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
         int processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames().length;
         rawAreaPanel.getProcessedTimeFramesTextField().setText("" + processedTimeFrames);
+    }
+
+    /**
+     * Show information on time interval
+     *
+     * @param plateCondition
+     */
+    public void showTimeIntervalInfo(PlateCondition plateCondition) {
+        AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
+        int lastTimeFrame = areaPreProcessingResults.getTimeInterval().getLastTimeFrame();
+        correctedAreaPanel.getLastTimeFrameTextField().setText("" + timeFramesBindingList.get(lastTimeFrame));
+        int firstTimeFrame = areaPreProcessingResults.getTimeInterval().getFirstTimeFrame();
+        correctedAreaPanel.getFirstTimeFrameTextField().setText("" + timeFramesBindingList.get(firstTimeFrame));
     }
 
     /**
@@ -510,6 +526,20 @@ public class AreaPreProcessingController {
     }
 
     /**
+     * Plot corrected data replicates
+     *
+     * @param showTimeInterval - use time interval chosen for current condition
+     * or use the entire experiment time frames range?
+     */
+    public void plotCorrectedArea(PlateCondition plateCondition, boolean plotLines, boolean plotPoints, boolean showTimeInterval) {
+        if (showTimeInterval) {
+            plotCorrectedAreaInTimeInterval(plateCondition, plotLines, plotPoints);
+        } else {
+            plotCorrectedAreaReplicates(plateCondition, plotLines, plotPoints);
+        }
+    }
+
+    /**
      * Plot cell covered area form open area for a certain selected condition
      *
      * @param plateCondition
@@ -566,7 +596,7 @@ public class AreaPreProcessingController {
      *
      * @param plateCondition
      */
-    public void plotCorrectedDataReplicates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints) {
+    private void plotCorrectedAreaReplicates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints) {
         int conditionIndex = dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1;
         AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
         if (areaPreProcessingResults != null) {
@@ -624,12 +654,8 @@ public class AreaPreProcessingController {
             correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
             correctedAreaChartPanel.setChart(correctedAreaChart);
             correctedAreaPanel.getReplicatesAreaChartParentPanel().add(correctedAreaChartPanel, gridBagConstraints);
-            correctedAreaPanel.getTimeIntervalCheckBox().setSelected(false);
-            // time frame info
-            int lastTimeFrame = areaPreProcessingResults.getTimeInterval().getLastTimeFrame();
-            correctedAreaPanel.getCutOffTextField().setText("" + timeFramesBindingList.get(lastTimeFrame));
-            int firstTimeFrame = areaPreProcessingResults.getTimeInterval().getFirstTimeFrame();
-            correctedAreaPanel.getFirstTimeFrameTextField().setText("" + timeFramesBindingList.get(firstTimeFrame));
+            // time interval info
+            showTimeIntervalInfo(plateCondition);
             correctedAreaPanel.getExcludedReplicatesTextArea().setText(excludedWells.toString());
             areaAnalysisPanel.getGraphicsParentPanel().add(correctedAreaPanel, gridBagConstraints);
         }
@@ -641,7 +667,7 @@ public class AreaPreProcessingController {
      *
      * @param plateCondition
      */
-    public void plotCorrectedDataInTimeInterval(PlateCondition plateCondition, boolean plotLines, boolean plotPoints) {
+    private void plotCorrectedAreaInTimeInterval(PlateCondition plateCondition, boolean plotLines, boolean plotPoints) {
         int conditionIndex = dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1;
         AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
         if (areaPreProcessingResults != null) {
@@ -651,6 +677,7 @@ public class AreaPreProcessingController {
             List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
             // check if some replicates need to be hidden from plot (this means these replicates are outliers)
             boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
+            List excludedWells = new ArrayList();
             // check for time frames interval
             TimeInterval timeInterval = areaPreProcessingResults.getTimeInterval();
             XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
@@ -678,6 +705,9 @@ public class AreaPreProcessingController {
                             XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
                             xySeries.setKey("" + (well));
                             xySeriesCollection.addSeries(xySeries);
+                        } else {
+                            // replicates excluded
+                            excludedWells.add(well);
                         }
                     }
                     counter += numberOfSamplesPerWell;
@@ -697,6 +727,9 @@ public class AreaPreProcessingController {
                             xySeries.setKey("" + (well) + ", " + (label + 1));
                             xySeriesCollection.addSeries(xySeries);
                             label++;
+                        } else {
+                            // replicates excluded
+                            excludedWells.add(well);
                         }
                     }
                     counter += numberOfSamplesPerWell;
@@ -711,10 +744,8 @@ public class AreaPreProcessingController {
             correctedAreaChartPanel.setChart(correctedAreaChart);
             correctedAreaPanel.getReplicatesAreaChartParentPanel().add(correctedAreaChartPanel, gridBagConstraints);
             // time frame info
-            int lastTimeFrame = areaPreProcessingResults.getTimeInterval().getLastTimeFrame();
-            correctedAreaPanel.getCutOffTextField().setText("" + timeFramesBindingList.get(lastTimeFrame));
-            int firstTimeFrame = areaPreProcessingResults.getTimeInterval().getFirstTimeFrame();
-            correctedAreaPanel.getFirstTimeFrameTextField().setText("" + timeFramesBindingList.get(firstTimeFrame));
+            showTimeIntervalInfo(plateCondition);
+            correctedAreaPanel.getExcludedReplicatesTextArea().setText(excludedWells.toString());
             areaAnalysisPanel.getGraphicsParentPanel().add(correctedAreaPanel, gridBagConstraints);
         }
     }
@@ -818,6 +849,90 @@ public class AreaPreProcessingController {
     }
 
     /**
+     *
+     * @param plateConditionList
+     * @param useCorrectedData
+     * @param plotErrorBars
+     * @param plotLines
+     * @param plotPoints
+     * @param measuredAreaType
+     * @return
+     */
+    public JFreeChart createGlobalAreaChartInTimeInterval(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType) {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        List<Double[]> yErrorsList = new ArrayList<>();
+        Double[][] dataToShow = null;
+        for (PlateCondition plateCondition : plateConditionList) {
+            AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
+            if (areaPreProcessingResults != null) {
+                switch (measuredAreaType) {
+                    case CELL_COVERED_AREA:
+                        if (useCorrectedData) {
+                            dataToShow = areaPreProcessingResults.getNormalizedCorrectedArea();
+                        } else {
+                            dataToShow = areaPreProcessingResults.getNormalizedArea();
+                        }
+                        break;
+                    case OPEN_AREA:
+                        if (useCorrectedData) {
+                            dataToShow = areaPreProcessingResults.getNormalizedCorrectedArea();
+                        } else {
+                            dataToShow = areaPreProcessingResults.getTransformedData();
+                        }
+                        break;
+                }
+                // Boolean (Exclude Replicates from dataset)
+                boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
+                // time interval to use is experiment analysis frames
+                double[] analysisTimeFrames = dataAnalysisController.getAnalysisTimeFrames();
+                // array for x axis: sub selection of time frames
+                double[] xValues = new double[analysisTimeFrames.length];
+                // array for y axis: same length of x axis
+                double[] yValues = new double[xValues.length];
+                Double[] yErrors = new Double[xValues.length];
+
+                int index = timeFramesBindingList.indexOf(analysisTimeFrames[0]);
+                for (int i = 0; i < xValues.length; i++) {
+                    xValues[i] = timeFramesBindingList.get(index);
+                    index++;
+                }
+                //time frames direction
+                index = timeFramesBindingList.indexOf(analysisTimeFrames[0]);
+                for (int i = 0; i < yValues.length; i++) {
+                    double[] allReplicateValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(dataToShow[index]));
+                    List<Double> replicatesToIncludeList = new ArrayList();
+                    for (int j = 0; j < allReplicateValues.length; j++) {
+                        // check if replicate has to be excluded from dataset
+                        if (!excludeReplicates[j]) {
+                            replicatesToIncludeList.add(allReplicateValues[j]);
+                        }
+                    }
+                    Double[] replicatesToIncludeArray = replicatesToIncludeList.toArray(new Double[replicatesToIncludeList.size()]);
+                    if (replicatesToIncludeArray.length != 0) {
+                        double median = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(replicatesToIncludeArray));
+                        yValues[i] = median;
+                        double mad = AnalysisUtils.computeSEM(ArrayUtils.toPrimitive(replicatesToIncludeArray));
+                        yErrors[i] = mad;
+                        index++;
+                    }
+                }
+                yErrorsList.add(yErrors);
+                XYSeries values = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                values.setKey("Condition " + (dataAnalysisController.getPlateConditionList().indexOf(plateCondition) + 1));
+                xySeriesCollection.addSeries(values);
+            }
+        }
+        String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+        JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        if (plotErrorBars) {
+            JFreeChartUtils.plotVerticalErrorBars(globalAreaChart, xySeriesCollection, yErrorsList);
+            globalAreaChart.getXYPlot().getRangeAxis().setUpperBound(JFreeChartUtils.computeMaxY(xySeriesCollection) + AnalysisUtils.getMaxOfAList(yErrorsList));
+        }
+        JFreeChartUtils.setupGlobalAreaChart(globalAreaChart, plotLines, plotPoints);
+        return globalAreaChart;
+    }
+
+    /**
      * Called by parent controller, show global view
      */
     public void onGlobalView() {
@@ -859,11 +974,12 @@ public class AreaPreProcessingController {
             boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
             boolean plotLines = areaAnalysisPanel.getPlotLinesCheckBox().isSelected();
             boolean plotPoints = areaAnalysisPanel.getPlotPointsCheckBox().isSelected();
+            boolean showTimeInterval = areaAnalysisPanel.getShowTimeIntervalCheckBox().isSelected();
             MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
             if (selectedConditions.isEmpty()) {
-                plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+                plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, plotLines, plotPoints, showTimeInterval, measuredAreaType);
             } else {
-                plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+                plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, plotLines, plotPoints, showTimeInterval, measuredAreaType);
             }
         }
     }
@@ -947,8 +1063,14 @@ public class AreaPreProcessingController {
      * @param useCorrectedData
      * @param plotErrorBars
      */
-    private void plotGlobalArea(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType) {
-        JFreeChart globalAreaChart = createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+    private void plotGlobalArea(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, boolean showTimeInterval, MeasuredAreaType measuredAreaType) {
+        JFreeChart globalAreaChart;
+        if (showTimeInterval) {
+            globalAreaChart = createGlobalAreaChartInTimeInterval(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+        } else {
+            globalAreaChart = createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+        }
+        globalAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
         globalAreaChartPanel.setChart(globalAreaChart);
         areaAnalysisPanel.getGlobalAreaPanel().add(globalAreaChartPanel, gridBagConstraints);
         areaAnalysisPanel.getGlobalAreaPanel().repaint();
@@ -1347,6 +1469,7 @@ public class AreaPreProcessingController {
                     showCorrectedAreaInTable(dataAnalysisController.getCurrentCondition());
                     boolean plotLines = correctedAreaPanel.getPlotLinesCheckBox().isSelected();
                     boolean plotPoints = correctedAreaPanel.getPlotPointsCheckBox().isSelected();
+                    boolean showTimeInterval = correctedAreaPanel.getShowTimeIntervalCheckBox().isSelected();
                     // update time frames list for current condition
                     updateTimeFramesList(dataAnalysisController.getCurrentCondition());
                     // remove other panels
@@ -1357,7 +1480,7 @@ public class AreaPreProcessingController {
                     areaAnalysisPanel.getGraphicsParentPanel().revalidate();
                     areaAnalysisPanel.getGraphicsParentPanel().repaint();
                     // plot corrected area (all replicates for selected condition)
-                    plotCorrectedDataReplicates(dataAnalysisController.getCurrentCondition(), plotLines, plotPoints);
+                    plotCorrectedArea(dataAnalysisController.getCurrentCondition(), plotLines, plotPoints, showTimeInterval);
                     // enable global view and analysis
                     proceedToAnalysis = true;
                     dataAnalysisController.getAnalysisExperimentPanel().getNextButton().setEnabled(proceedToAnalysis);
@@ -1377,19 +1500,20 @@ public class AreaPreProcessingController {
                 boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
                 boolean plotLines = areaAnalysisPanel.getPlotLinesCheckBox().isSelected();
                 boolean plotPoints = areaAnalysisPanel.getPlotPointsCheckBox().isSelected();
+                boolean showTimeInterval = areaAnalysisPanel.getShowTimeIntervalCheckBox().isSelected();
                 MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     // check if conditions are selected, if not plot entire dataset
                     if (selectedConditions.isEmpty()) {
-                        plotGlobalArea(processedConditions, useCorrectedData, true, plotLines, plotPoints, measuredAreaType);
+                        plotGlobalArea(processedConditions, useCorrectedData, true, plotLines, plotPoints, showTimeInterval, measuredAreaType);
                     } else {
-                        plotGlobalArea(selectedConditions, useCorrectedData, true, plotLines, plotPoints, measuredAreaType);
+                        plotGlobalArea(selectedConditions, useCorrectedData, true, plotLines, plotPoints, showTimeInterval, measuredAreaType);
                     }
                 } else {
                     if (selectedConditions.isEmpty()) {
-                        plotGlobalArea(processedConditions, useCorrectedData, false, plotLines, plotPoints, measuredAreaType);
+                        plotGlobalArea(processedConditions, useCorrectedData, false, plotLines, plotPoints, showTimeInterval, measuredAreaType);
                     } else {
-                        plotGlobalArea(selectedConditions, useCorrectedData, false, plotLines, plotPoints, measuredAreaType);
+                        plotGlobalArea(selectedConditions, useCorrectedData, false, plotLines, plotPoints, showTimeInterval, measuredAreaType);
                     }
                 }
             }
@@ -1404,13 +1528,14 @@ public class AreaPreProcessingController {
                 boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
                 boolean plotPoints = areaAnalysisPanel.getPlotPointsCheckBox().isSelected();
                 boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
+                boolean showTimeInterval = areaAnalysisPanel.getShowTimeIntervalCheckBox().isSelected();
                 MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     // check if conditions are selected, if not plot entire dataset
                     if (selectedConditions.isEmpty()) {
-                        plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, true, plotPoints, measuredAreaType);
+                        plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, true, plotPoints, showTimeInterval, measuredAreaType);
                     } else {
-                        plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, true, plotPoints, measuredAreaType);
+                        plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, true, plotPoints, showTimeInterval, measuredAreaType);
                     }
                 } else {
                     // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
@@ -1418,9 +1543,9 @@ public class AreaPreProcessingController {
                         areaAnalysisPanel.getPlotPointsCheckBox().setSelected(true);
                     }
                     if (selectedConditions.isEmpty()) {
-                        plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, false, true, measuredAreaType);
+                        plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, false, true, showTimeInterval, measuredAreaType);
                     } else {
-                        plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, false, true, measuredAreaType);
+                        plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, false, true, showTimeInterval, measuredAreaType);
                     }
                 }
             }
@@ -1435,13 +1560,14 @@ public class AreaPreProcessingController {
                 boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
                 boolean plotLines = areaAnalysisPanel.getPlotLinesCheckBox().isSelected();
                 boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
+                boolean showTimeInterval = areaAnalysisPanel.getShowTimeIntervalCheckBox().isSelected();
                 MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     // check if conditions are selected, if not plot entire dataset
                     if (selectedConditions.isEmpty()) {
-                        plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, plotLines, true, measuredAreaType);
+                        plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, plotLines, true, showTimeInterval, measuredAreaType);
                     } else {
-                        plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, plotLines, true, measuredAreaType);
+                        plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, plotLines, true, showTimeInterval, measuredAreaType);
                     }
                 } else {
                     // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
@@ -1449,9 +1575,9 @@ public class AreaPreProcessingController {
                         areaAnalysisPanel.getPlotLinesCheckBox().setSelected(true);
                     }
                     if (selectedConditions.isEmpty()) {
-                        plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, true, false, measuredAreaType);
+                        plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, true, false, showTimeInterval, measuredAreaType);
                     } else {
-                        plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, true, false, measuredAreaType);
+                        plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, true, false, showTimeInterval, measuredAreaType);
                     }
                 }
             }
@@ -1470,18 +1596,48 @@ public class AreaPreProcessingController {
                 boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
                 boolean plotLines = areaAnalysisPanel.getPlotLinesCheckBox().isSelected();
                 boolean plotPoints = areaAnalysisPanel.getPlotPointsCheckBox().isSelected();
+                boolean showTimeInterval = areaAnalysisPanel.getShowTimeIntervalCheckBox().isSelected();
                 MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     if (selectedConditions.isEmpty()) {
-                        plotGlobalArea(processedConditions, true, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+                        plotGlobalArea(processedConditions, true, plotErrorBars, plotLines, plotPoints, showTimeInterval, measuredAreaType);
                     } else {
-                        plotGlobalArea(selectedConditions, true, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+                        plotGlobalArea(selectedConditions, true, plotErrorBars, plotLines, plotPoints, showTimeInterval, measuredAreaType);
                     }
                 } else {
                     if (selectedConditions.isEmpty()) {
-                        plotGlobalArea(processedConditions, false, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+                        plotGlobalArea(processedConditions, false, plotErrorBars, plotLines, plotPoints, showTimeInterval, measuredAreaType);
                     } else {
-                        plotGlobalArea(selectedConditions, false, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+                        plotGlobalArea(selectedConditions, false, plotErrorBars, plotLines, plotPoints, showTimeInterval, measuredAreaType);
+                    }
+                }
+            }
+        });
+
+        /**
+         * Show the effect that the cut off time frame has on the plot
+         */
+        areaAnalysisPanel.getShowTimeIntervalCheckBox().addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                List<PlateCondition> selectedConditions = getSelectedConditions();
+                List<PlateCondition> processedConditions = getProcessedConditions();
+                boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
+                boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
+                boolean plotLines = areaAnalysisPanel.getPlotLinesCheckBox().isSelected();
+                boolean plotPoints = areaAnalysisPanel.getPlotPointsCheckBox().isSelected();
+                MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    if (selectedConditions.isEmpty()) {
+                        plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, plotLines, plotPoints, true, measuredAreaType);
+                    } else {
+                        plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, plotLines, plotPoints, true, measuredAreaType);
+                    }
+                } else {
+                    if (selectedConditions.isEmpty()) {
+                        plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, plotLines, plotPoints, false, measuredAreaType);
+                    } else {
+                        plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, plotLines, plotPoints, false, measuredAreaType);
                     }
                 }
             }
@@ -1500,8 +1656,9 @@ public class AreaPreProcessingController {
                 boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
                 boolean plotLines = areaAnalysisPanel.getPlotLinesCheckBox().isSelected();
                 boolean plotPoints = areaAnalysisPanel.getPlotPointsCheckBox().isSelected();
+                boolean showTimeInterval = areaAnalysisPanel.getShowTimeIntervalCheckBox().isSelected();
                 MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
-                plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+                plotGlobalArea(selectedConditions, useCorrectedData, plotErrorBars, plotLines, plotPoints, showTimeInterval, measuredAreaType);
             }
         });
 
@@ -1519,8 +1676,9 @@ public class AreaPreProcessingController {
                 boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
                 boolean plotLines = areaAnalysisPanel.getPlotLinesCheckBox().isSelected();
                 boolean plotPoints = areaAnalysisPanel.getPlotPointsCheckBox().isSelected();
+                boolean showTimeInterval = areaAnalysisPanel.getShowTimeIntervalCheckBox().isSelected();
                 MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
-                plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+                plotGlobalArea(processedConditions, useCorrectedData, plotErrorBars, plotLines, plotPoints, showTimeInterval, measuredAreaType);
             }
         });
 
@@ -1677,15 +1835,14 @@ public class AreaPreProcessingController {
             // update area image excluding selected technical replicates
             boolean plotLines = correctedAreaPanel.getPlotLinesCheckBox().isSelected();
             boolean plotPoints = correctedAreaPanel.getPlotPointsCheckBox().isSelected();
-            plotCorrectedDataReplicates(plateCondition, plotLines, plotPoints);
+            boolean showTimeInterval = correctedAreaPanel.getShowTimeIntervalCheckBox().isSelected();
             // keep note of the fact that the user had interaction with check boxes
             preProcessingMap.get(plateCondition).setUserSelectedReplicates(true);
-            // recompute time interval for selected condition
-            cellCoveredAreaPreProcessor.setTimeInterval(areaPreProcessingResults);
-            int lastTimeFrame = areaPreProcessingResults.getTimeInterval().getLastTimeFrame();
-            correctedAreaPanel.getCutOffTextField().setText("" + timeFramesBindingList.get(lastTimeFrame));
-            int firstTimeFrame = areaPreProcessingResults.getTimeInterval().getFirstTimeFrame();
-            correctedAreaPanel.getFirstTimeFrameTextField().setText("" + timeFramesBindingList.get(firstTimeFrame));
+            // recompute time interval 
+            cellCoveredAreaPreProcessor.recomputeTimeInterval(areaPreProcessingResults);
+            plotCorrectedArea(plateCondition, plotLines, plotPoints, showTimeInterval);
+            // time interval info
+            showTimeIntervalInfo(plateCondition);
         }
     }
 
@@ -1743,8 +1900,8 @@ public class AreaPreProcessingController {
                 dataAnalysisController.setCursor(Cursor.DEFAULT_CURSOR);
                 // show all conditions in one plot (Global Area View)
                 MeasuredAreaType measuredAreaType = dataAnalysisController.getAreaAnalysisHolder().getMeasuredAreaType();
-                // corrected data, no sem, lines AND points: default plot
-                plotGlobalArea(processedConditions, true, false, true, true, measuredAreaType);
+                // corrected data, no sem, lines AND points, NO time interval: default plot
+                plotGlobalArea(processedConditions, true, false, true, true, false, measuredAreaType);
                 dataAnalysisController.computeAnalysisTimeFrames();
                 // set value for analysis time frames
                 double[] analysisTimeFrames = dataAnalysisController.getAnalysisTimeFrames();
@@ -1864,6 +2021,7 @@ public class AreaPreProcessingController {
         // set to true both points and lines
         correctedAreaPanel.getPlotLinesCheckBox().setSelected(true);
         correctedAreaPanel.getPlotPointsCheckBox().setSelected(true);
+        correctedAreaPanel.getShowTimeIntervalCheckBox().setSelected(true);
         // initialize Binding List for time frames (2 combo boxes binded)
         timeFramesBindingList = ObservableCollections.observableList(new ArrayList<Double>());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, timeFramesSelectionDialog.getCutOffTimeFrameComboBox());
@@ -1873,19 +2031,20 @@ public class AreaPreProcessingController {
         bindingGroup.bind();
 
         /**
-         * Show the effect that the cut off time frame has on the plot
+         * Show the effect that the time interval has on the plot
          */
-        correctedAreaPanel.getTimeIntervalCheckBox().addItemListener(new ItemListener() {
+        correctedAreaPanel.getShowTimeIntervalCheckBox().addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
+                PlateCondition currentCondition = dataAnalysisController.getCurrentCondition();
                 boolean plotLines = correctedAreaPanel.getPlotLinesCheckBox().isSelected();
                 boolean plotPoints = correctedAreaPanel.getPlotPointsCheckBox().isSelected();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     // update plot when cut off has to be shown
-                    plotCorrectedDataInTimeInterval(dataAnalysisController.getCurrentCondition(), plotLines, plotPoints);
+                    plotCorrectedArea(currentCondition, plotLines, plotPoints, true);
                 } else {
                     // if check box is delesected show entire dataset
-                    plotCorrectedDataReplicates(dataAnalysisController.getCurrentCondition(), plotLines, plotPoints);
+                    plotCorrectedArea(currentCondition, plotLines, plotPoints, false);
                 }
             }
         });
@@ -1903,29 +2062,29 @@ public class AreaPreProcessingController {
                 TimeInterval timeInterval = areaPreProcessingResults.getTimeInterval();
                 boolean plotLines = correctedAreaPanel.getPlotLinesCheckBox().isSelected();
                 boolean plotPoints = correctedAreaPanel.getPlotPointsCheckBox().isSelected();
+                boolean showTimeInterval = correctedAreaPanel.getShowTimeIntervalCheckBox().isSelected();
                 // get first time frame selected
                 int selectedFirstTimeFrame = timeFramesSelectionDialog.getFirstTimeFrameComboBox().getSelectedIndex();
                 // get last time frame selected
                 int selectedLastTimeFrame = timeFramesSelectionDialog.getCutOffTimeFrameComboBox().getSelectedIndex();
+                // get proposed cut off
+                int proposedCutOff = timeInterval.getProposedCutOff();
                 if (selectedFirstTimeFrame != -1 && selectedLastTimeFrame != -1) {
-                    if (selectedFirstTimeFrame <= selectedLastTimeFrame) {
+                    if (selectedFirstTimeFrame <= selectedLastTimeFrame && selectedLastTimeFrame <= proposedCutOff) {
                         // set first and last time frames of current condition
                         timeInterval.setFirstTimeFrame(selectedFirstTimeFrame);
                         timeInterval.setLastTimeFrame(selectedLastTimeFrame);
                         // update plot
-                        plotCorrectedDataInTimeInterval(dataAnalysisController.getCurrentCondition(), plotLines, plotPoints);
+                        plotCorrectedArea(currentCondition, plotLines, plotPoints, showTimeInterval);
                         timeFramesSelectionDialog.setVisible(false);
-                    } else if (selectedLastTimeFrame > timeInterval.getProposedCutOff()) {
+                    } else if (selectedLastTimeFrame > proposedCutOff) {
                         // if last time frame provided by the user is greater than cut off time frame: Warn the user!
                         timeFramesSelectionDialog.getWarningLabel().setVisible(true);
+                        // set the index back to the proposed cut off: selection is being ignored !!
+                        timeFramesSelectionDialog.getCutOffTimeFrameComboBox().setSelectedIndex(proposedCutOff);
                     } else if (selectedLastTimeFrame < selectedFirstTimeFrame) {
                         // last time frame can not be smaller than first one: warn the user and ignore selection
                         String message = "Last time frame cannot be smaller than first one!";
-                        String title = "Error in chosing time frames";
-                        JOptionPane.showMessageDialog(timeFramesSelectionDialog, message, title, JOptionPane.WARNING_MESSAGE);
-                    } else if (selectedFirstTimeFrame > selectedLastTimeFrame) {
-                        // first time frame can not be greater than last one: warn the user and ignore selection
-                        String message = "First time frame cannot be greater than last one!";
                         String title = "Error in chosing time frames";
                         JOptionPane.showMessageDialog(timeFramesSelectionDialog, message, title, JOptionPane.WARNING_MESSAGE);
                     }
@@ -1937,19 +2096,27 @@ public class AreaPreProcessingController {
          * If the user is not happy with new selection, reset cut off value back
          * to previously computed one.
          */
-        timeFramesSelectionDialog.getResetCutOffButton().addActionListener(new ActionListener() {
+        timeFramesSelectionDialog.getResetTimeIntervalButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PlateCondition currentCondition = dataAnalysisController.getCurrentCondition();
+                AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(currentCondition);
                 boolean plotLines = correctedAreaPanel.getPlotLinesCheckBox().isSelected();
                 boolean plotPoints = correctedAreaPanel.getPlotPointsCheckBox().isSelected();
                 if (currentCondition != null) {
-                    // replot everything
-                    plotCorrectedDataReplicates(currentCondition, plotLines, plotPoints);
                     // recompute time interval
-                    cellCoveredAreaPreProcessor.setTimeInterval(preProcessingMap.get(currentCondition));
-                    // refresh info label
-                    correctedAreaPanel.getCutOffTextField().setText(timeFramesBindingList.get(preProcessingMap.get(currentCondition).getTimeInterval().getLastTimeFrame()).toString());
+                    cellCoveredAreaPreProcessor.setTimeInterval(areaPreProcessingResults);
+                    // replot everything
+                    plotCorrectedArea(currentCondition, plotLines, plotPoints, true);
+                    TimeInterval timeInterval = areaPreProcessingResults.getTimeInterval();
+                    int firstTimeFrame = areaPreProcessingResults.getTimeInterval().getFirstTimeFrame();
+                    correctedAreaPanel.getFirstTimeFrameTextField().setText("" + timeFramesBindingList.get(firstTimeFrame));
+                    int lastTimeFrame = timeInterval.getLastTimeFrame();
+                    correctedAreaPanel.getLastTimeFrameTextField().setText("" + timeFramesBindingList.get(lastTimeFrame));
+                    // set time frames in combo box
+                    timeFramesSelectionDialog.getFirstTimeFrameComboBox().setSelectedIndex(firstTimeFrame);
+                    timeFramesSelectionDialog.getCutOffTimeFrameComboBox().setSelectedIndex(lastTimeFrame);
+                    timeFramesSelectionDialog.getWarningLabel().setVisible(false);
                 }
             }
         });
@@ -2005,16 +2172,18 @@ public class AreaPreProcessingController {
         correctedAreaPanel.getPlotLinesCheckBox().addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
+                PlateCondition currentCondition = dataAnalysisController.getCurrentCondition();
                 // do you want to plot points or not? check for the value of the checkbox
                 boolean plotPoints = correctedAreaPanel.getPlotPointsCheckBox().isSelected();
+                boolean showTimeInterval = correctedAreaPanel.getShowTimeIntervalCheckBox().isSelected();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    plotCorrectedDataInTimeInterval(dataAnalysisController.getCurrentCondition(), true, plotPoints);
+                    plotCorrectedArea(currentCondition, plotPoints, plotPoints, showTimeInterval);
                 } else {
                     // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
                     if (!plotPoints) {
                         correctedAreaPanel.getPlotPointsCheckBox().setSelected(true);
                     }
-                    plotCorrectedDataInTimeInterval(dataAnalysisController.getCurrentCondition(), false, true);
+                    plotCorrectedArea(currentCondition, false, true, showTimeInterval);
                 }
             }
         });
@@ -2023,15 +2192,17 @@ public class AreaPreProcessingController {
         correctedAreaPanel.getPlotPointsCheckBox().addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
+                PlateCondition currentCondition = dataAnalysisController.getCurrentCondition();
                 boolean plotLines = correctedAreaPanel.getPlotLinesCheckBox().isSelected();
+                boolean showTimeInterval = correctedAreaPanel.getShowTimeIntervalCheckBox().isSelected();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    plotCorrectedDataInTimeInterval(dataAnalysisController.getCurrentCondition(), plotLines, true);
+                    plotCorrectedArea(currentCondition, plotLines, true, showTimeInterval);
                 } else {
                     // if the checkbox is being deselected, check for the lines checkbox, if it's deselected, select it
                     if (!plotLines) {
                         correctedAreaPanel.getPlotLinesCheckBox().setSelected(true);
                     }
-                    plotCorrectedDataInTimeInterval(dataAnalysisController.getCurrentCondition(), true, false);
+                    plotCorrectedArea(currentCondition, true, false, showTimeInterval);
                 }
             }
         });

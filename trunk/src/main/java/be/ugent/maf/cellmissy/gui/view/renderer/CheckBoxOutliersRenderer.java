@@ -4,7 +4,6 @@
  */
 package be.ugent.maf.cellmissy.gui.view.renderer;
 
-import be.ugent.maf.cellmissy.gui.view.renderer.CheckBoxCellRenderer;
 import java.awt.Component;
 import java.text.Format;
 import javax.swing.JTable;

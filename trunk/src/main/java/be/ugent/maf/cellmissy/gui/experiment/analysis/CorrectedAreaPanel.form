@@ -53,10 +53,10 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel2" linkSize="8" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="cutOffTextField" max="32767" attributes="1"/>
+                          <Component id="lastTimeFrameTextField" max="32767" attributes="1"/>
                       </Group>
                       <Component id="chooseTimeFramesButton" linkSize="3" alignment="0" pref="192" max="32767" attributes="1"/>
-                      <Component id="timeIntervalCheckBox" linkSize="4" alignment="0" min="-2" max="-2" attributes="1"/>
+                      <Component id="showTimeIntervalCheckBox" linkSize="4" alignment="0" min="-2" max="-2" attributes="1"/>
                       <Component id="plotPointsCheckBox" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="plotLinesCheckBox" linkSize="4" alignment="0" min="-2" pref="83" max="-2" attributes="0"/>
                       <Component id="excludedReplicatesLabel" alignment="0" max="32767" attributes="1"/>
@@ -81,15 +81,15 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="firstTimeFrameTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="firstTimeFrameTextField" alignment="3" min="-2" pref="19" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="cutOffTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lastTimeFrameTextField" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="timeIntervalCheckBox" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                  <Component id="showTimeIntervalCheckBox" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="chooseTimeFramesButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -102,7 +102,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JTextField" name="cutOffTextField">
+        <Component class="javax.swing.JTextField" name="lastTimeFrameTextField">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
@@ -116,10 +116,10 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JCheckBox" name="timeIntervalCheckBox">
+        <Component class="javax.swing.JCheckBox" name="showTimeIntervalCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" value="show time interval"/>
-            <Property name="toolTipText" type="java.lang.String" value="Show the current cut off on plot"/>
+            <Property name="toolTipText" type="java.lang.String" value="Show the current time interval on plot"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
@@ -207,7 +207,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="11" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Current cut off"/>
+            <Property name="text" type="java.lang.String" value="Last time frame"/>
           </Properties>
         </Component>
       </SubComponents>

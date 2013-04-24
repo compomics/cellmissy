@@ -142,6 +142,10 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         return lastTimeFrameTextField;
     }
 
+    public JCheckBox getShowTimeIntervalCheckBox() {
+        return showTimeIntervalCheckBox;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -192,6 +196,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         lastTimeFrameTextField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        showTimeIntervalCheckBox = new javax.swing.JCheckBox();
         globalAreaPanel = new javax.swing.JPanel();
         linearModelParentPanel = new javax.swing.JPanel();
 
@@ -291,7 +296,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
             .addGroup(resultsImporterPanelLayout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(803, Short.MAX_VALUE))
+                .addContainerGap(830, Short.MAX_VALUE))
             .addGroup(resultsImporterPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -303,7 +308,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
+                .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -370,7 +375,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(cellCoveredAreaRadioButton)
                     .addComponent(normalizeAreaButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tableInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
+                .addComponent(tableInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -436,19 +441,19 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         infoPanel.setLayout(infoPanelLayout);
         infoPanelLayout.setHorizontalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 985, Short.MAX_VALUE)
+            .addGap(0, 1012, Short.MAX_VALUE)
             .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, infoPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1002, Short.MAX_VALUE)))
         );
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 78, Short.MAX_VALUE)
+            .addGap(0, 76, Short.MAX_VALUE)
             .addGroup(infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(infoPanelLayout.createSequentialGroup()
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 18, Short.MAX_VALUE)))
+                    .addGap(0, 16, Short.MAX_VALUE)))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -516,6 +521,10 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         jLabel6.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel6.setText("last");
 
+        showTimeIntervalCheckBox.setText("show time interval");
+        showTimeIntervalCheckBox.setToolTipText("");
+        showTimeIntervalCheckBox.setOpaque(false);
+
         javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
         leftPanel.setLayout(leftPanelLayout);
         leftPanelLayout.setHorizontalGroup(
@@ -542,8 +551,11 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(plotErrorBarsCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(39, Short.MAX_VALUE))
+                    .addComponent(plotErrorBarsCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(leftPanelLayout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(showTimeIntervalCheckBox)))
+                .addContainerGap())
         );
 
         leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, plotAllConditionsButton, plotSelectedConditionsButton});
@@ -560,7 +572,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -572,6 +584,8 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(lastTimeFrameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(showTimeIntervalCheckBox)
+                .addGap(18, 18, 18)
                 .addComponent(useCorrectedDataCheckBox)
                 .addGap(18, 18, 18)
                 .addComponent(plotPointsCheckBox)
@@ -666,6 +680,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JPanel resultsImporterPanel;
     private javax.swing.JLabel resultsImportingLabel;
+    private javax.swing.JCheckBox showTimeIntervalCheckBox;
     private javax.swing.JLabel tableInfoLabel;
     private javax.swing.JTable timeStepsTable;
     private javax.swing.JScrollPane timeStepsTableScrollPane;

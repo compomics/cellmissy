@@ -26,16 +26,16 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         return replicatesAreaChartParentPanel;
     }
 
-    public JTextField getCutOffTextField() {
-        return cutOffTextField;
+    public JTextField getLastTimeFrameTextField() {
+        return lastTimeFrameTextField;
     }
 
     public JTextField getFirstTimeFrameTextField() {
         return firstTimeFrameTextField;
     }
 
-    public JCheckBox getTimeIntervalCheckBox() {
-        return timeIntervalCheckBox;
+    public JCheckBox getShowTimeIntervalCheckBox() {
+        return showTimeIntervalCheckBox;
     }
 
     public JButton getChooseTimeFramesButton() {
@@ -76,8 +76,8 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         leftPanel = new javax.swing.JPanel();
-        cutOffTextField = new javax.swing.JTextField();
-        timeIntervalCheckBox = new javax.swing.JCheckBox();
+        lastTimeFrameTextField = new javax.swing.JTextField();
+        showTimeIntervalCheckBox = new javax.swing.JCheckBox();
         chooseTimeFramesButton = new javax.swing.JButton();
         excludedReplicatesLabel = new javax.swing.JLabel();
         selectReplicatesButton = new javax.swing.JButton();
@@ -98,14 +98,14 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         leftPanel.setOpaque(false);
         leftPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        cutOffTextField.setBorder(null);
-        cutOffTextField.setFocusable(false);
-        cutOffTextField.setMinimumSize(new java.awt.Dimension(20, 20));
-        cutOffTextField.setPreferredSize(new java.awt.Dimension(20, 20));
+        lastTimeFrameTextField.setBorder(null);
+        lastTimeFrameTextField.setFocusable(false);
+        lastTimeFrameTextField.setMinimumSize(new java.awt.Dimension(20, 20));
+        lastTimeFrameTextField.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        timeIntervalCheckBox.setText("show time interval");
-        timeIntervalCheckBox.setToolTipText("Show the current cut off on plot");
-        timeIntervalCheckBox.setOpaque(false);
+        showTimeIntervalCheckBox.setText("show time interval");
+        showTimeIntervalCheckBox.setToolTipText("Show the current time interval on plot");
+        showTimeIntervalCheckBox.setOpaque(false);
 
         chooseTimeFramesButton.setText("choose time frames...");
         chooseTimeFramesButton.setToolTipText("Choose first and last time frame to analyze");
@@ -141,7 +141,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         firstTimeFrameTextField.setOpaque(false);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel2.setText("Current cut off");
+        jLabel2.setText("Last time frame");
 
         javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
         leftPanel.setLayout(leftPanelLayout);
@@ -155,9 +155,9 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
                     .addGroup(leftPanelLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cutOffTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lastTimeFrameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(chooseTimeFramesButton, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
-                    .addComponent(timeIntervalCheckBox)
+                    .addComponent(showTimeIntervalCheckBox)
                     .addComponent(plotPointsCheckBox)
                     .addComponent(plotLinesCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(excludedReplicatesLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -170,7 +170,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
 
         leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {chooseTimeFramesButton, selectReplicatesButton});
 
-        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotLinesCheckBox, plotPointsCheckBox, timeIntervalCheckBox});
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotLinesCheckBox, plotPointsCheckBox, showTimeIntervalCheckBox});
 
         leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel2});
 
@@ -185,13 +185,13 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(firstTimeFrameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(firstTimeFrameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(8, 8, 8)
                 .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cutOffTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(timeIntervalCheckBox)
+                    .addComponent(jLabel2)
+                    .addComponent(lastTimeFrameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10)
+                .addComponent(showTimeIntervalCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(chooseTimeFramesButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -226,18 +226,18 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton chooseTimeFramesButton;
-    private javax.swing.JTextField cutOffTextField;
     private javax.swing.JLabel excludedReplicatesLabel;
     private javax.swing.JTextArea excludedReplicatesTextArea;
     private javax.swing.JTextField firstTimeFrameTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField lastTimeFrameTextField;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JCheckBox plotLinesCheckBox;
     private javax.swing.JCheckBox plotPointsCheckBox;
     private javax.swing.JPanel replicatesAreaChartParentPanel;
     private javax.swing.JButton selectReplicatesButton;
-    private javax.swing.JCheckBox timeIntervalCheckBox;
+    private javax.swing.JCheckBox showTimeIntervalCheckBox;
     // End of variables declaration//GEN-END:variables
 }
