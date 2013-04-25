@@ -56,9 +56,9 @@
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="jScrollPane1" pref="157" max="32767" attributes="0"/>
-                      <Component id="projNumberLabel" pref="157" max="32767" attributes="0"/>
+                      <Component id="projNumberLabel" max="32767" attributes="0"/>
                       <Component id="expNumberLabel" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -130,13 +130,6 @@
           </Properties>
         </Component>
         <Container class="javax.swing.JScrollPane" name="jScrollPane1">
-          <Properties>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder/>
-              </Border>
-            </Property>
-          </Properties>
           <AuxValues>
             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
           </AuxValues>
@@ -148,6 +141,7 @@
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="columns" type="int" value="20"/>
                 <Property name="rows" type="int" value="5"/>
+                <Property name="focusable" type="boolean" value="false"/>
               </Properties>
             </Component>
           </SubComponents>

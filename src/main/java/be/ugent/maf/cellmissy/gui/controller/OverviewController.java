@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -64,7 +65,8 @@ public class OverviewController {
     }
 
     /**
-     * Show main view through parent controller after click on main frame menu item
+     * Show main view through parent controller after click on main frame menu
+     * item
      */
     public void showOverviewDialog() {
         overviewDialog.pack();
@@ -83,6 +85,8 @@ public class OverviewController {
      * Initialize dialog
      */
     private void initDialog() {
+        overviewDialog.getProjectDescriptionTextArea().setLineWrap(true);
+        overviewDialog.getProjectDescriptionTextArea().setWrapStyleWord(true);
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, overviewDialog.getProjectJList());
@@ -101,18 +105,25 @@ public class OverviewController {
         overviewDialog.getProjectJList().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
                 //init experimentJList
                 int locationToIndex = overviewDialog.getProjectJList().locationToIndex(e.getPoint());
-                if (experimentService.findExperimentNumbersByProjectId(projectBindingList.get(locationToIndex).getProjectid()) != null) {
-                    experimentBindingList = (ObservableCollections.observableList(experimentService.findExperimentsByProjectId(projectBindingList.get(locationToIndex).getProjectid())));
-                    JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, overviewDialog.getExperimentJList());
-                    bindingGroup.addBinding(jListBinding);
-                    bindingGroup.bind();
-                } else {
-                    cellMissyController.showMessage("There are no experiments yet for this project!", "", JOptionPane.INFORMATION_MESSAGE);
-                    if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
-                        experimentBindingList.clear();
+                if (locationToIndex != -1) {
+                    Project selectedProject = projectBindingList.get(locationToIndex);
+                    // set text for project description
+                    overviewDialog.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
+                    Long projectid = selectedProject.getProjectid();
+                    List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
+                    if (experimentNumbers != null) {
+                        List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
+                        experimentBindingList = (ObservableCollections.observableList(experimentList));
+                        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, overviewDialog.getExperimentJList());
+                        bindingGroup.addBinding(jListBinding);
+                        bindingGroup.bind();
+                    } else {
+                        cellMissyController.showMessage("There are no experiments yet for this project!", "", JOptionPane.INFORMATION_MESSAGE);
+                        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                            experimentBindingList.clear();
+                        }
                     }
                 }
             }
@@ -139,7 +150,7 @@ public class OverviewController {
                         // delete experiment from experiment binding list
                         experimentBindingList.remove(selectedExperiment);
                         // inform the user that the experimet was deleted
-                        cellMissyController.showMessage("Experiment was successfully deleted!", "experiment deleted", JOptionPane.INFORMATION_MESSAGE);                       
+                        cellMissyController.showMessage("Experiment was successfully deleted!", "experiment deleted", JOptionPane.INFORMATION_MESSAGE);
                     }
                 } else {
                     // else ask the user to select an experiment first

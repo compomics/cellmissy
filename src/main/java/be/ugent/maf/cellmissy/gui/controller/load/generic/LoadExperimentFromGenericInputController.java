@@ -138,7 +138,8 @@ public class LoadExperimentFromGenericInputController {
     }
 
     /**
-     * Called in the main controller, resetData views and models if another view has being shown
+     * Called in the main controller, resetData views and models if another view
+     * has being shown
      */
     public void resetAfterCardSwitch() {
         experiment = null;
@@ -154,6 +155,8 @@ public class LoadExperimentFromGenericInputController {
         genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getDurationTextField().setText("");
         genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getIntervalTextField().setText("");
         genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getTimeFramesTextField().setText("");
+        // set text area to empty field
+        genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getProjectDescriptionTextArea().setText("");
         // swap views
         GuiUtils.switchChildPanels(loadFromGenericInputPanel.getTopPanel(), genericExperimentDataController.getLoadFromGenericInputMetadataPanel(), genericImagedPlateController.getLoadFromGenericInputPlatePanel());
         loadFromGenericInputPanel.getTopPanel().repaint();
@@ -165,6 +168,8 @@ public class LoadExperimentFromGenericInputController {
      * Initialize main panel
      */
     private void initMainPanel() {
+        genericImagedPlateController.getLoadFromGenericInputPlatePanel().getPurposeTextArea().setLineWrap(true);
+        genericImagedPlateController.getLoadFromGenericInputPlatePanel().getPurposeTextArea().setWrapStyleWord(true);
         //update info message
         cellMissyController.updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Select project/experiment in progress to load motility data; provide experiment metadata to start with the import.");
         // disable buttons
@@ -336,7 +341,8 @@ public class LoadExperimentFromGenericInputController {
     }
 
     /**
-     * this method sets Migration data of wells, before the experiment is saved to DB
+     * this method sets Migration data of wells, before the experiment is saved
+     * to DB
      */
     private void setMotilityData() {
 

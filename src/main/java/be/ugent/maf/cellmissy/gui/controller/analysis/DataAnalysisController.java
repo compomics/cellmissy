@@ -337,7 +337,7 @@ public class DataAnalysisController {
         int analysisLastTimeFrame = list.size();
 
         Map<PlateCondition, AreaPreProcessingResults> preProcessingMap = areaPreProcessingController.getPreProcessingMap();
-        for (PlateCondition plateCondition : plateConditionList) {
+        for (PlateCondition plateCondition : getProcessedConditions()) {
             AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
             TimeInterval timeInterval = areaPreProcessingResults.getTimeInterval();
             int firstTimeFrame = timeInterval.getFirstTimeFrame();
@@ -552,6 +552,8 @@ public class DataAnalysisController {
         // clear selection on lists
         metaDataAnalysisPanel.getProjectJList().clearSelection();
         metaDataAnalysisPanel.getExperimentJList().clearSelection();
+        // set text area to empty field
+        metaDataAnalysisPanel.getProjectDescriptionTextArea().setText("");
         areaPreProcessingController.getPreProcessingMap().clear();
         currentCondition = null;
         experiment = null;
@@ -587,6 +589,10 @@ public class DataAnalysisController {
      * Initialize metadata analysis panel
      */
     private void initMetadataAnalysisPanel() {
+        metaDataAnalysisPanel.getPurposeTextArea().setLineWrap(true);
+        metaDataAnalysisPanel.getPurposeTextArea().setWrapStyleWord(true);
+        metaDataAnalysisPanel.getProjectDescriptionTextArea().setLineWrap(true);
+        metaDataAnalysisPanel.getProjectDescriptionTextArea().setWrapStyleWord(true);
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, metaDataAnalysisPanel.getProjectJList());
@@ -744,9 +750,14 @@ public class DataAnalysisController {
         if (!algorithmBindingList.isEmpty()) {
             algorithmBindingList.clear();
         }
-
-        if (experimentService.findExperimentsByProjectIdAndStatus(selectedProject.getProjectid(), ExperimentStatus.PERFORMED) != null) {
-            experimentBindingList = ObservableCollections.observableList(experimentService.findExperimentsByProjectIdAndStatus(selectedProject.getProjectid(), ExperimentStatus.PERFORMED));
+        // show project description
+        String projectDescription = selectedProject.getProjectDescription();
+        metaDataAnalysisPanel.getProjectDescriptionTextArea().setText(projectDescription);
+        // show relative experiments
+        Long projectid = selectedProject.getProjectid();
+        List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.PERFORMED);
+        if (experimentList != null) {
+            experimentBindingList = ObservableCollections.observableList(experimentList);
             JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, metaDataAnalysisPanel.getExperimentJList());
             bindingGroup.addBinding(jListBinding);
             bindingGroup.bind();
@@ -775,8 +786,6 @@ public class DataAnalysisController {
         }
         // set experiment
         experiment = selectedExperiment;
-        //compute time frames array
-        //computeTimeFrames(experiment.getTimeFrames());
         // init a new list of plate conditions
         plateConditionList = new ArrayList<>();
         plateConditionList.addAll(experiment.getPlateConditionCollection());

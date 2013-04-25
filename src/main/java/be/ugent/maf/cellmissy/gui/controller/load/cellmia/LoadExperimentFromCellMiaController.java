@@ -37,7 +37,8 @@ import org.springframework.stereotype.Controller;
 
 /**
  *
- * Parent Controller: CellMissy Controller (main controller) Child Controllers: Imaged Plate Controller, Experiment Metadata Controller
+ * Parent Controller: CellMissy Controller (main controller) Child Controllers:
+ * Imaged Plate Controller, Experiment Metadata Controller
  *
  * @author Paola Masuzzo
  */
@@ -133,7 +134,8 @@ public class LoadExperimentFromCellMiaController {
     }
 
     /**
-     * Called in the main controller, reset views and models if another view has being shown
+     * Called in the main controller, reset views and models if another view has
+     * being shown
      */
     public void resetAfterCardSwitch() {
         experiment = null;
@@ -156,7 +158,8 @@ public class LoadExperimentFromCellMiaController {
      * Initializes the loading data panel
      */
     private void initMainPanel() {
-
+        cellMiaImagedPlateController.getLoadFromCellMiaPlatePanel().getPurposeTextArea().setLineWrap(true);
+        cellMiaImagedPlateController.getLoadFromCellMiaPlatePanel().getPurposeTextArea().setWrapStyleWord(true);
         //disable buttons
         loadFromCellMiaPanel.getFinishButton().setEnabled(false);
         loadFromCellMiaPanel.getExpDataButton().setEnabled(false);
@@ -306,7 +309,8 @@ public class LoadExperimentFromCellMiaController {
     /**
      * Set experiment metadata parsing the obsep file from microscope
      *
-     * @param obsepFile: this is loaded from the experiment or it is rather chosen by the user
+     * @param obsepFile: this is loaded from the experiment or it is rather
+     * chosen by the user
      */
     private void setExperimentMetadata(File obsepFile) {
         // parse .obsep file 
@@ -326,7 +330,8 @@ public class LoadExperimentFromCellMiaController {
     }
 
     /**
-     * This method sets CellMIA data of wells, before the experiment is saved to DB
+     * This method sets CellMIA data of wells, before the experiment is saved to
+     * DB
      */
     private void setCellMiaData() {
         // iterate through conditions

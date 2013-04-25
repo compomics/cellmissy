@@ -131,11 +131,10 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
 
         expNumberLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
-
         purposeTextArea.setEditable(false);
         purposeTextArea.setColumns(20);
         purposeTextArea.setRows(5);
+        purposeTextArea.setFocusable(false);
         jScrollPane1.setViewportView(purposeTextArea);
 
         javax.swing.GroupLayout experimentMetadataPanelLayout = new javax.swing.GroupLayout(experimentMetadataPanel);
@@ -150,9 +149,9 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-                    .addComponent(projNumberLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-                    .addComponent(expNumberLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(projNumberLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(expNumberLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         experimentMetadataPanelLayout.setVerticalGroup(

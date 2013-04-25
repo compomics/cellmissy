@@ -264,6 +264,8 @@ public class SetupExperimentController {
         // clear selection on both project and experiment lists
         experimentInfoPanel.getProjectJList().clearSelection();
         experimentInfoPanel.getExperimentJList().clearSelection();
+        // set text area to empty field
+        experimentInfoPanel.getProjectDescriptionTextArea().setText("");
         // clear also experiments list, if not null
         if (experimentBindingList != null) {
             experimentBindingList.clear();
@@ -404,24 +406,6 @@ public class SetupExperimentController {
     }
 
     /**
-     *
-     * @param projectId
-     * @return
-     */
-    public List<Integer> findExperimentNumbersByProjectId(Long projectId) {
-        return experimentService.findExperimentNumbersByProjectId(projectId);
-    }
-
-    /**
-     *
-     * @param projectId
-     * @return
-     */
-    public List<Experiment> findExperimentsByProjectId(Long projectId) {
-        return experimentService.findExperimentsByProjectId(projectId);
-    }
-
-    /**
      * add mouse listener to setup plate panel (Only when a condition is
      * selected)
      */
@@ -433,9 +417,13 @@ public class SetupExperimentController {
      * private methods and classes
      */
     /**
-     * initializes the experiment info panel
+     * Initialize the experiment info panel
      */
     private void initExperimentInfoPanel() {
+        experimentInfoPanel.getProjectDescriptionTextArea().setLineWrap(true);
+        experimentInfoPanel.getProjectDescriptionTextArea().setWrapStyleWord(true);
+        experimentInfoPanel.getPurposeTextArea().setLineWrap(true);
+        experimentInfoPanel.getPurposeTextArea().setWrapStyleWord(true);
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
         ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
@@ -453,13 +441,10 @@ public class SetupExperimentController {
         magnificationBindingList = ObservableCollections.observableList(experimentService.findAllMagnifications());
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, magnificationBindingList, experimentInfoPanel.getMagnificationComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
-
+        // do the binding
         bindingGroup.bind();
         //add experimentInfoPanel to parent panel
         setupExperimentPanel.getTopPanel().add(experimentInfoPanel, gridBagConstraints);
-
-        //select first project in the ProjectList
-        experimentInfoPanel.getProjectJList().setSelectedIndex(0);
 
         //set cell renderer for experimentJList
         experimentInfoPanel.getExperimentJList().setCellRenderer(new ExperimentsListRenderer(false));
@@ -493,8 +478,16 @@ public class SetupExperimentController {
                 //init experimentJList
                 int locationToIndex = experimentInfoPanel.getProjectJList().locationToIndex(e.getPoint());
                 if (locationToIndex != -1) {
-                    if (findExperimentNumbersByProjectId(projectBindingList.get(locationToIndex).getProjectid()) != null) {
-                        experimentBindingList = ObservableCollections.observableList(findExperimentsByProjectId(projectBindingList.get(locationToIndex).getProjectid()));
+                    Project selectedProject = projectBindingList.get(locationToIndex);
+                    // set text for project description
+                    experimentInfoPanel.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
+                    // request focus on experiment number
+                    experimentInfoPanel.getNumberTextField().requestFocusInWindow();
+                    Long projectid = selectedProject.getProjectid();
+                    List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
+                    if (experimentNumbers != null) {
+                        List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
+                        experimentBindingList = ObservableCollections.observableList(experimentList);
                         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, experimentInfoPanel.getExperimentJList());
                         bindingGroup.addBinding(jListBinding);
                         bindingGroup.bind();
@@ -793,6 +786,7 @@ public class SetupExperimentController {
      */
     private class SetupReportWorker extends SwingWorker<File, Void> {
         // directory to save the setup
+
         private File directory;
 
         public SetupReportWorker(File directory) {
@@ -821,7 +815,7 @@ public class SetupExperimentController {
                 Desktop.getDesktop().open(file);
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);
-                 showMessage(ex.getMessage(), "Error while opening file", JOptionPane.ERROR_MESSAGE);
+                showMessage(ex.getMessage(), "Error while opening file", JOptionPane.ERROR_MESSAGE);
             }
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             setupExperimentPanel.getFinishButton().setEnabled(true);

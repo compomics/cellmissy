@@ -116,7 +116,7 @@ public class UserManagementDialog extends javax.swing.JDialog {
             .addGroup(usersPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         usersPanelLayout.setVerticalGroup(
             usersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
