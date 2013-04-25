@@ -84,11 +84,10 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
 
         expNumberLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
-
         purposeTextArea.setEditable(false);
         purposeTextArea.setColumns(20);
         purposeTextArea.setRows(5);
+        purposeTextArea.setFocusable(false);
         jScrollPane1.setViewportView(purposeTextArea);
 
         javax.swing.GroupLayout experimentMetadataPanelLayout = new javax.swing.GroupLayout(experimentMetadataPanel);
@@ -128,9 +127,8 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
                     .addComponent(expNumberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addContainerGap())
+                    .addComponent(jLabel3)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();

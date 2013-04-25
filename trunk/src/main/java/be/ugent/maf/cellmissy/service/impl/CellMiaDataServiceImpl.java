@@ -56,23 +56,21 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
         imagingTypeMap = microscopeDataService.processMicroscopeData();
         algoMap = new HashMap<>();
         File[] algoFiles = experiment.getMiaFolder().listFiles();
-
+        // iterate through the algorithms folders
         for (File file : algoFiles) {
-            //default algo-0 folder does not contain data to store
+            //default algo-0 folder does not contain data to store: skip
             if (!file.getName().endsWith("algo-0")) {
-                //create a new algorithm
+                //create a new algorithm -- this is put into the map only if the related folders are not empty
                 Algorithm algo = new Algorithm();
                 //give name to the algorithm (according to folder name)
                 algo.setAlgorithmName(file.getName().substring(file.getName().indexOf("MIA_"), file.getName().length()));
                 algo.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
-                //create a new Map copying all the wellhasimagingtypes fields (but new objects)
                 Map<ImagingType, List<WellHasImagingType>> map = copyMap();
+                // bacth folder inside the algo folder
                 for (File batchFile : Arrays.asList(file.listFiles())) {
-
                     // sample folders
                     // the number of sampleFiles is equal to the number of WellHasImagingType entities for one algorithm
                     File[] sampleFiles = batchFile.listFiles(sampleFilter);
-
                     // listFiles does not guarantee any order; sort files in alphabetical order
                     Arrays.sort(sampleFiles);
                     int imageTypeStartFolder = 0;
@@ -83,59 +81,59 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                         Map.Entry<ImagingType, List<WellHasImagingType>> next = iterator.next();
                         ImagingType imagingType = next.getKey();
                         List<WellHasImagingType> wellHasImagingTypeList = next.getValue();
-
-                        // number of sample files need to be same as number of samples that need to be processed, otherwise, throw an exception
-                        if (sampleFiles.length == getExpectedNumberOfSamples()) {
-                            //**********************************************************************************************//
-                            for (int i = imageTypeStartFolder; i < wellHasImagingTypeList.size() + imageTypeStartFolder; i++) {
-                                WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i - imageTypeStartFolder);
-                                wellHasImagingType.setAlgorithm(algo);
-                                // iterate trough the folders and look for the text files, parse the files with cellMiaFileParser
-                                // results folders
-                                File[] resultsFiles = sampleFiles[i].listFiles(resultsFilter);
-                                for (int j = 0; j < resultsFiles.length; j++) {
-                                    // text files
-                                    File[] textFiles = resultsFiles[j].listFiles(textfilesFilter);
-                                    Arrays.sort(textFiles);
-                                    for (File textFile : textFiles) {
-                                        // parse bulk cell file
-                                        if (textFile.getName().endsWith("bulkcell.txt")) {
-                                            List<TimeStep> timeStepList = cellMiaFileParser.parseBulkCellFile(textFile);
-                                            for (TimeStep timeStep : timeStepList) {
-                                                timeStep.setWellHasImagingType(wellHasImagingType);
+                        // check that there are files to be parsed -- algo is created only if there's a list of files to be processed
+                        if (sampleFiles.length != 0) {
+                            // number of sample files need to be same as number of samples that need to be processed, otherwise, throw an exception
+                            if (sampleFiles.length == getExpectedNumberOfSamples()) {
+                                //**********************************************************************************************//
+                                for (int i = imageTypeStartFolder; i < wellHasImagingTypeList.size() + imageTypeStartFolder; i++) {
+                                    WellHasImagingType wellHasImagingType = wellHasImagingTypeList.get(i - imageTypeStartFolder);
+                                    wellHasImagingType.setAlgorithm(algo);
+                                    // iterate trough the folders and look for the text files, parse the files with cellMiaFileParser
+                                    // results folders
+                                    File[] resultsFiles = sampleFiles[i].listFiles(resultsFilter);
+                                    for (int j = 0; j < resultsFiles.length; j++) {
+                                        // text files
+                                        File[] textFiles = resultsFiles[j].listFiles(textfilesFilter);
+                                        Arrays.sort(textFiles);
+                                        for (File textFile : textFiles) {
+                                            // parse bulk cell file
+                                            if (textFile.getName().endsWith("bulkcell.txt")) {
+                                                List<TimeStep> timeStepList = cellMiaFileParser.parseBulkCellFile(textFile);
+                                                for (TimeStep timeStep : timeStepList) {
+                                                    timeStep.setWellHasImagingType(wellHasImagingType);
+                                                }
+                                                wellHasImagingType.setTimeStepCollection(timeStepList);
+                                                // parse tracking cell file
+                                            } else if (textFile.getName().endsWith("tracking.txt")) {
+                                                List<Track> trackList = cellMiaFileParser.parseTrackingFile(textFile);
+                                                for (Track track : trackList) {
+                                                    track.setWellHasImagingType(wellHasImagingType);
+                                                }
+                                                wellHasImagingType.setTrackCollection(trackList);
                                             }
-                                            wellHasImagingType.setTimeStepCollection(timeStepList);
-                                            // parse tracking cell file
-                                        } else if (textFile.getName().endsWith("tracking.txt")) {
-                                            List<Track> trackList = cellMiaFileParser.parseTrackingFile(textFile);
-                                            for (Track track : trackList) {
-                                                track.setWellHasImagingType(wellHasImagingType);
-                                            }
-                                            wellHasImagingType.setTrackCollection(trackList);
                                         }
                                     }
+                                    LOG.debug("Sample " + (i + 1) + " (" + wellHasImagingType.getXCoordinate() + ", " + wellHasImagingType.getYCoordinate() + ")" + " processed." + " Imaging Type: " + imagingType + ", algo: " + algo.getAlgorithmName());
                                 }
-                                LOG.debug("Sample " + (i + 1) + " (" + wellHasImagingType.getXCoordinate() + ", " + wellHasImagingType.getYCoordinate() + ")" + " processed." + " Imaging Type: " + imagingType + ", algo: " + algo.getAlgorithmName());
+                                LOG.debug("Imaging type: " + imagingType + " processed");
+                                //***********************************************************************************************//
+                                //update collection of imaging type
+                                imagingType.setWellHasImagingTypeCollection(wellHasImagingTypeList);
+                                //start over through the other folders (next imaging type)
+                                imageTypeStartFolder += wellHasImagingTypeList.size();
+                                //one algo was processed ===========================
+                                long currentTimeMillis1 = System.currentTimeMillis();
+                                LOG.debug(algo.getAlgorithmName() + " processed in " + ((currentTimeMillis1 - currentTimeMillis) / 1000) + " s");
+                                //add all the samples to the algorithm
+                                for (List<WellHasImagingType> wellHasImagingTypes : map.values()) {
+                                    algo.getWellHasImagingTypeCollection().addAll(wellHasImagingTypes);
+                                }
+                                //update the map
+                                algoMap.put(algo, map);
+                            } else {
+                                throw new CellMiaDataLoadingException("There are " + sampleFiles.length + " files to be processed, but " + wellHasImagingTypeList.size() + " samples!\nPlease check your files structure in the MIA folder.");
                             }
-                            LOG.debug("Imaging type: " + imagingType + " processed");
-                            //***********************************************************************************************//
-
-                            //update collection of imaging type
-                            imagingType.setWellHasImagingTypeCollection(wellHasImagingTypeList);
-                            //start over through the other folders (next imaging type)
-                            imageTypeStartFolder += wellHasImagingTypeList.size();
-
-                            //one algo was processed ===========================
-                            long currentTimeMillis1 = System.currentTimeMillis();
-                            LOG.debug(algo.getAlgorithmName() + " processed in " + ((currentTimeMillis1 - currentTimeMillis) / 1000) + " s");
-                            //add all the samples to the algorithm
-                            for (List<WellHasImagingType> wellHasImagingTypes : map.values()) {
-                                algo.getWellHasImagingTypeCollection().addAll(wellHasImagingTypes);
-                            }
-                            //update the map
-                            algoMap.put(algo, map);
-                        } else {
-                            throw new CellMiaDataLoadingException("There are " + sampleFiles.length + " files to be processed, but " + wellHasImagingTypeList.size() + " samples!\nPlease check your files structure in the MIA folder.");
                         }
                     }
                 }

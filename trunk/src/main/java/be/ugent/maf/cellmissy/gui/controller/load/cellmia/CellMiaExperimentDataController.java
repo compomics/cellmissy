@@ -38,7 +38,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Experiment Data Controller: get experiment metadata from microscope (as well conditions from DB) Parent Controller: Load Experiment Controller
+ * Experiment Data Controller: get experiment metadata from microscope (as well
+ * conditions from DB) Parent Controller: Load Experiment Controller
  *
  * @author Paola Masuzzo
  */
@@ -109,6 +110,8 @@ public class CellMiaExperimentDataController {
         loadFromCellMiaMetadataPanel.getTimeFramesTextField().setText("");
         loadFromCellMiaMetadataPanel.getIntervalTextField().setText("");
         loadFromCellMiaMetadataPanel.getDurationTextField().setText("");
+        // set text area to empty field
+        loadFromCellMiaMetadataPanel.getProjectDescriptionTextArea().setText("");
         experimentService.resetFolders();
     }
 
@@ -116,11 +119,12 @@ public class CellMiaExperimentDataController {
      * Initialize Experiment Metadata panel
      */
     private void initExperimentMetadataPanel() {
+        loadFromCellMiaMetadataPanel.getProjectDescriptionTextArea().setLineWrap(true);
+        loadFromCellMiaMetadataPanel.getProjectDescriptionTextArea().setWrapStyleWord(true);
         // disable experiment metadata text fields
         loadFromCellMiaMetadataPanel.getDurationTextField().setEnabled(false);
         loadFromCellMiaMetadataPanel.getIntervalTextField().setEnabled(false);
         loadFromCellMiaMetadataPanel.getTimeFramesTextField().setEnabled(false);
-
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
         ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         loadFromCellMiaMetadataPanel.getInfoLabel().setIcon(scaledIcon);
@@ -210,7 +214,8 @@ public class CellMiaExperimentDataController {
     }
 
     /**
-     * Action on selected experiment, retrieve plate conditions and repaint plate panel
+     * Action on selected experiment, retrieve plate conditions and repaint
+     * plate panel
      *
      * @param selectedExperiment
      */
@@ -247,14 +252,21 @@ public class CellMiaExperimentDataController {
     }
 
     /**
-     * Action on selected project, find all relative in progress experiments, if any
+     * Action on selected project, find all relative in progress experiments, if
+     * any
      *
      * @param selectedProject
      */
     private void onSelectedProject(Project selectedProject) {
+        // show project description
+        String projectDescription = selectedProject.getProjectDescription();
+        loadFromCellMiaMetadataPanel.getProjectDescriptionTextArea().setText(projectDescription);
+        // show relative experiments
+        Long projectid = selectedProject.getProjectid();
+        List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.IN_PROGRESS);
         //init experimentJList
-        if (experimentService.findExperimentsByProjectIdAndStatus(selectedProject.getProjectid(), ExperimentStatus.IN_PROGRESS) != null) {
-            experimentBindingList = ObservableCollections.observableList(experimentService.findExperimentsByProjectIdAndStatus(selectedProject.getProjectid(), ExperimentStatus.IN_PROGRESS));
+        if (experimentList != null) {
+            experimentBindingList = ObservableCollections.observableList(experimentList);
             JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, loadFromCellMiaMetadataPanel.getExperimentJList());
             bindingGroup.addBinding(jListBinding);
             bindingGroup.bind();

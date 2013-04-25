@@ -1141,7 +1141,7 @@ public class AreaPreProcessingController {
         for (Well well : plateCondition.getAreaAnalyzedWells()) {
             for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
                 int numberOfTimeSteps = wellHasImagingType.getTimeStepCollection().size();
-                if (numberOfTimeSteps < numberOfTimeFrames) {
+                if (numberOfTimeSteps != 0 && numberOfTimeSteps < numberOfTimeFrames) {
                     numberOfTimeFrames = numberOfTimeSteps;
                 }
             }
@@ -1337,8 +1337,6 @@ public class AreaPreProcessingController {
         SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
         StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
         StyledDocument styledDocument = timeFramesSelectionDialog.getInfoTextPane().getStyledDocument();
-        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
-        styledDocument = areaAnalysisPanel.getInfoTextPane().getStyledDocument();
         styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
         // hide warning message
         timeFramesSelectionDialog.getWarningLabel().setVisible(false);
@@ -2022,6 +2020,8 @@ public class AreaPreProcessingController {
         correctedAreaPanel.getPlotLinesCheckBox().setSelected(true);
         correctedAreaPanel.getPlotPointsCheckBox().setSelected(true);
         correctedAreaPanel.getShowTimeIntervalCheckBox().setSelected(true);
+        correctedAreaPanel.getExcludedReplicatesTextArea().setLineWrap(true);
+        correctedAreaPanel.getExcludedReplicatesTextArea().setWrapStyleWord(true);
         // initialize Binding List for time frames (2 combo boxes binded)
         timeFramesBindingList = ObservableCollections.observableList(new ArrayList<Double>());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, timeFramesBindingList, timeFramesSelectionDialog.getCutOffTimeFrameComboBox());

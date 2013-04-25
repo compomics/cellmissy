@@ -85,6 +85,8 @@ public class GenericExperimentDataController {
      * Initialize Experiment metadata panel
      */
     private void initExperimentMetadataPanel() {
+        loadFromGenericInputMetadataPanel.getProjectDescriptionTextArea().setLineWrap(true);
+        loadFromGenericInputMetadataPanel.getProjectDescriptionTextArea().setWrapStyleWord(true);
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
         ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         loadFromGenericInputMetadataPanel.getInfoLabel().setIcon(scaledIcon);
@@ -167,7 +169,8 @@ public class GenericExperimentDataController {
     }
 
     /**
-     * Reset text fields of experiment after user has selected a different experiment
+     * Reset text fields of experiment after user has selected a different
+     * experiment
      */
     private void resetExperimentMetadataFields() {
         loadFromGenericInputMetadataPanel.getTimeFramesTextField().setText("");
@@ -189,7 +192,8 @@ public class GenericExperimentDataController {
     }
 
     /**
-     * Action on experiment selected, retrieve plate conditions and repaint plate panel
+     * Action on experiment selected, retrieve plate conditions and repaint
+     * plate panel
      *
      * @param selectedExperiment
      */
@@ -209,13 +213,20 @@ public class GenericExperimentDataController {
     }
 
     /**
-     * Action on selected project, find all relative in progress experiments, if any
+     * Action on selected project, find all relative in progress experiments, if
+     * any
      *
      * @param selectedProject
      */
     private void onSelectedProject(Project selectedProject) {
-        if (experimentService.findExperimentsByProjectIdAndStatus(selectedProject.getProjectid(), ExperimentStatus.IN_PROGRESS) != null) {
-            experimentBindingList = ObservableCollections.observableList(experimentService.findExperimentsByProjectIdAndStatus(selectedProject.getProjectid(), ExperimentStatus.IN_PROGRESS));
+        // show project description
+        String projectDescription = selectedProject.getProjectDescription();
+        loadFromGenericInputMetadataPanel.getProjectDescriptionTextArea().setText(projectDescription);
+        // show relative experiments
+        Long projectid = selectedProject.getProjectid();
+        List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.IN_PROGRESS);
+        if (experimentList != null) {
+            experimentBindingList = ObservableCollections.observableList(experimentList);
             JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, loadFromGenericInputMetadataPanel.getExperimentJList());
             bindingGroup.addBinding(jListBinding);
             bindingGroup.bind();
