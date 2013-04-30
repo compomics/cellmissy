@@ -33,7 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * User Panel Controller: user management (create, search and delete users from DB) Parent Controller: CellMissy Controller (main controller)
+ * User Panel Controller: user management (create, search and delete users from
+ * DB) Parent Controller: CellMissy Controller (main controller)
  *
  * @author Paola
  */
@@ -84,7 +85,8 @@ public class UserManagementController {
     }
 
     /**
-     * Called in the main controller, reset fields if another view is being shown
+     * Called in the main controller, reset fields if another view is being
+     * shown
      */
     public void resetAfterCardSwitch() {
         // clear selection on users list
@@ -131,11 +133,11 @@ public class UserManagementController {
                 // create a new user
                 User newUser = new User();
                 // set default nonsense values for it
-                newUser.setFirstName("first name");
-                newUser.setLastName("last name");
-                newUser.setEmail("email@email.com");
+                newUser.setFirstName("first");
+                newUser.setLastName("last");
+                newUser.setEmail("first.last@email.com");
                 newUser.setRole(Role.STANDARD_USER);
-                newUser.setPassword("password");
+                newUser.setPassword("cellmissy");
                 // add the user to the current list
                 userBindingList.add(newUser);
                 // select the user in the list
@@ -151,13 +153,13 @@ public class UserManagementController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (userManagementDialog.getUsersList().getSelectedValue() != null) {
-                    User userToSave = (User) userManagementDialog.getUsersList().getSelectedValue();
+                    User selectedUser = (User) userManagementDialog.getUsersList().getSelectedValue();
                     // if user validation was successful, save the new user to the db
-                    if (cellMissyController.validateUser(userToSave)) {
+                    if (cellMissyController.validateUser(selectedUser)) {
                         // if user id is null, persist new object to DB
-                        if (userToSave.getUserid() == null) {
+                        if (selectedUser.getUserid() == null) {
                             try {
-                                userService.save(userToSave);
+                                userService.save(selectedUser);
                                 cellMissyController.showMessage("User was saved to DB!", "user inserted into DB", JOptionPane.INFORMATION_MESSAGE);
                             } // handle ConstraintViolationException(UniqueConstraint)
                             catch (PersistenceException ex) {
@@ -166,13 +168,15 @@ public class UserManagementController {
                                 cellMissyController.showMessage(message, "Error in persisting user", JOptionPane.WARNING_MESSAGE);
                             }
                         } else {
-                            userService.update(userToSave);
+                            //otherwise, update the entity: this is calling a merge
+                            userService.update(selectedUser);
                             cellMissyController.showMessage("User was updated!", "user updated", JOptionPane.INFORMATION_MESSAGE);
                         }
+                        userManagementDialog.getUsersList().repaint();
                     }
                 } else {
                     String message = "Please select a user to save or update!";
-                    cellMissyController.showMessage(message, "", JOptionPane.INFORMATION_MESSAGE);
+                    cellMissyController.showMessage(message, "", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
@@ -181,29 +185,36 @@ public class UserManagementController {
         userManagementDialog.getDeleteUserButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String message;
                 // check that a user has been selected first
                 if (userManagementDialog.getUsersList().getSelectedValue() != null) {
                     User userToDelete = (User) userManagementDialog.getUsersList().getSelectedValue();
-                    // delete user from DB
-                    userService.delete(userToDelete);
+                    // if user id is not null, delete the user from the Db, else only from the list
+                    if (userToDelete.getUserid() != null) {
+                        message = "User (" + userToDelete + ")" + " was deleted from DB!";
+                        // delete user from DB
+                        userService.delete(userToDelete);
+                    } else {
+                        message = "User (" + userToDelete + ")" + " was deleted from current list!";
+                    }
                     // remove user from users list
                     userBindingList.remove(userToDelete);
-                    cellMissyController.showMessage("User (" + userToDelete + ")" + " was deleted from DB!", "user deleted", JOptionPane.INFORMATION_MESSAGE);
+                    cellMissyController.showMessage(message, "user deleted", JOptionPane.INFORMATION_MESSAGE);
                     resetUserFields();
                 } else {
-                    String message = "Please select a user to delete!";
+                    message = "Please select a user to delete!";
                     cellMissyController.showMessage(message, "", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
-        
+
         // window listener: check if changes are still pending
         userManagementDialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
                 // if user changes are pending, warn the user
                 if (userNotSaved()) {
-                    cellMissyController.showMessage("An user added to the list has not been saved!", "user not saved", JOptionPane.WARNING_MESSAGE);
+                    cellMissyController.showMessage("An user added to the list has not been saved!" + "\n" + "Save the user, or delete it.", "user not saved", JOptionPane.WARNING_MESSAGE);
                 } else {
                     userManagementDialog.setVisible(false);
                 }
@@ -230,7 +241,8 @@ public class UserManagementController {
     }
 
     /**
-     * Check if user changes are still pending This is called when you try to close the user management dialog
+     * Check if user changes are still pending This is called when you try to
+     * close the user management dialog
      *
      * @return
      */

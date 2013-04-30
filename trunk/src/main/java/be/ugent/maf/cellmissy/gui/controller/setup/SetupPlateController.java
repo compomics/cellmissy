@@ -33,7 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Setup Plate Panel Controller: set up plate view during experiment design Parent Controller: Setup Experiment Panel Controller
+ * Setup Plate Panel Controller: set up plate view during experiment design
+ * Parent Controller: Setup Experiment Controller
  *
  * @author Paola
  */
@@ -56,7 +57,7 @@ public class SetupPlateController {
     private GridBagConstraints gridBagConstraints;
 
     /**
-     * initialize controller
+     * Initialize controller
      */
     public void init() {
         bindingGroup = new BindingGroup();
@@ -90,7 +91,8 @@ public class SetupPlateController {
     }
 
     /**
-     * remove from the map the list of rectangles of a condition that the user wants to delete
+     * remove from the map the list of rectangles of a condition that the user
+     * wants to delete
      *
      * @param conditionToRemove from the list
      */
@@ -196,7 +198,6 @@ public class SetupPlateController {
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, plateFormatBindingList, setupExperimentController.getSetupPanel().getPlateFormatComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
-
 
         /**
          * add action listeners

@@ -51,7 +51,7 @@ public class Track implements Serializable {
     @JoinColumn(name = "l_well_has_imaging_typeid", referencedColumnName = "well_has_imaging_typeid")
     @ManyToOne(optional = false)
     private WellHasImagingType wellHasImagingType;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "track")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "track", orphanRemoval = true)
     private Collection<TrackPoint> trackPointCollection;
 
     public Track() {

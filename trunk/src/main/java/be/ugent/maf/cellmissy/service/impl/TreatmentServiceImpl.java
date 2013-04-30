@@ -41,7 +41,7 @@ public class TreatmentServiceImpl implements TreatmentService {
     
     @Override
     public void delete(Treatment entity) {
-        entity = treatmentRepository.update(entity);
+        entity = treatmentRepository.findById(entity.getTreatmentid());
         treatmentRepository.delete(entity);
     }
     

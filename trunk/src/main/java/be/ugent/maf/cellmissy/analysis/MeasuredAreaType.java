@@ -27,7 +27,7 @@ public enum MeasuredAreaType {
         String string = "";
         switch (type) {
             case 1:
-                string = "Cell covered area (wound closure)";
+                string = "Cell-covered area (wound closure)";
                 break;
             case 2:
                 string = "Open area (wound area)";

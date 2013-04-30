@@ -581,7 +581,7 @@ public class AreaPreProcessingController {
                 counter += numberOfSamplesPerWell;
             }
             // Plot Logic
-            String chartTitle = "Cell covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
+            String chartTitle = "Cell-covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
             String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
             JFreeChart transformedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(transformedAreaChart, processedWells, plotLines, plotPoints);
@@ -647,7 +647,7 @@ public class AreaPreProcessingController {
                 counter += numberOfSamplesPerWell;
             }
             // Plot Logic
-            String chartTitle = "Cell covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
+            String chartTitle = "Cell-covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
             String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
             JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, processedWells, plotLines, plotPoints);
@@ -736,7 +736,7 @@ public class AreaPreProcessingController {
                 }
             }
             // Plot Logic
-            String chartTitle = "Cell covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
+            String chartTitle = "Cell-covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
             String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
             JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, processedWells, plotLines, plotPoints);

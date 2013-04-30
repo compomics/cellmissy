@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.PersistenceException;
 import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Binding;
@@ -44,13 +45,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Set up Conditions Controller: set up conditions details during experiment design Parent controller: Setup Experiment Controller Child controllers: AssayEcm Controller, Treatment Controller
+ * Set up Conditions Controller: set up conditions details during experiment
+ * design Parent controller: Setup Experiment Controller Child controllers:
+ * AssayEcm Controller, Treatment Controller
  *
  * @author Paola
  */
 @Controller("setupConditionsController")
 public class SetupConditionsController {
 
+    private static final Logger LOG = Logger.getLogger(SetupConditionsController.class);
     //model
     private ObservableList<CellLineType> cellLineTypeBindingList;
     private ObservableList<PlateCondition> plateConditionBindingList;
@@ -168,7 +172,8 @@ public class SetupConditionsController {
     }
 
     /**
-     * this method updates fields of a condition (assay/ECM and treatments fields)
+     * this method updates fields of a condition (assay/ECM and treatments
+     * fields)
      *
      * @param conditionIndex
      */
@@ -181,7 +186,8 @@ public class SetupConditionsController {
      * validate a Plate Condition
      *
      * @param plateCondition
-     * @return a list of strings to be concatenated in order to show message to the user
+     * @return a list of strings to be concatenated in order to show message to
+     * the user
      */
     public List<String> validateCondition(PlateCondition plateCondition) {
         List<String> messages = new ArrayList<>();
@@ -266,12 +272,13 @@ public class SetupConditionsController {
                         cellLineTypeBindingList.add(newCellLineType);
                         setupConditionsPanel.getCellLineNameTextField().setText("");
                     } catch (PersistenceException exception) {
-                        showMessage("Cell Line already present in DB.", "", JOptionPane.INFORMATION_MESSAGE);
+                        LOG.error(exception.getMessage());
+                        showMessage("Cell Line already present in DB!", "", JOptionPane.WARNING_MESSAGE);
                         setupConditionsPanel.getCellLineNameTextField().setText("");
                         setupConditionsPanel.getCellLineNameTextField().requestFocusInWindow();
                     }
                 } else {
-                    showMessage("Please insert a name for the cell line!", "", JOptionPane.INFORMATION_MESSAGE);
+                    showMessage("Please insert a name for the cell line!", "", JOptionPane.WARNING_MESSAGE);
                     setupConditionsPanel.getCellLineNameTextField().requestFocusInWindow();
                 }
             }
@@ -430,7 +437,8 @@ public class SetupConditionsController {
     }
 
     /**
-     * this method assigns default fields to the first Condition created and added to the List
+     * this method assigns default fields to the first Condition created and
+     * added to the List
      *
      * @param firstCondition
      */
@@ -476,7 +484,8 @@ public class SetupConditionsController {
     }
 
     /**
-     * this method assigns values for each new condition, from the previously created 8and set-up) one
+     * this method assigns values for each new condition, from the previously
+     * created 8and set-up) one
      *
      * @param newCondition
      */
@@ -597,7 +606,8 @@ public class SetupConditionsController {
     }
 
     /**
-     * add the Condition Panel and the Setup Condition Panel to their parent panels
+     * add the Condition Panel and the Setup Condition Panel to their parent
+     * panels
      */
     private void initPanel() {
         setupExperimentController.getSetupPanel().getConditionsParentPanel().add(conditionsPanel, gridBagConstraints);

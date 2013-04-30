@@ -28,6 +28,7 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -521,7 +522,6 @@ public class SetupExperimentController {
         setupExperimentPanel.getNextButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 //create a new experiment (in progress)
                 experiment = new Experiment();
                 //check if the info was filled in properly
@@ -589,12 +589,7 @@ public class SetupExperimentController {
                             // show a jfile chooser to decide where to save the file
                             JFileChooser chooseDirectory = new JFileChooser();
                             chooseDirectory.setDialogTitle("Choose a directory to save the report");
-                            chooseDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                            int experimentNumber = experiment.getExperimentNumber();
-                            int projectNumber = experiment.getProject().getProjectNumber();
-                            String reportName = "Set-up report " + experimentNumber + " - " + projectNumber + ".pdf";
-                            chooseDirectory.setSelectedFile(new File(reportName));
-
+                            chooseDirectory.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                             // in response to the button click, show open dialog
                             int returnVal = chooseDirectory.showSaveDialog(setupExperimentPanel);
                             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -622,16 +617,45 @@ public class SetupExperimentController {
         setupExperimentPanel.getFinishButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //save the new experiment to the DB
-                experimentService.save(experiment);
-                setupSaved = true;
-                //disable button
-                setupExperimentPanel.getFinishButton().setEnabled(false);
-                showMessage("Experiment was successfully saved to DB.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
+                // create and execute a new swing worker to save the experiment in progress
+                SaveExperimentSwingWorker saveExperimentSwingWorker = new SaveExperimentSwingWorker();
+                saveExperimentSwingWorker.execute();
             }
         });
 
         cellMissyController.getCellMissyFrame().getSetupExperimentParentPanel().add(setupExperimentPanel, gridBagConstraints);
+    }
+
+    /**
+     * Swing Worker to save the Experiment
+     */
+    private class SaveExperimentSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            // finish disable button
+            setupExperimentPanel.getFinishButton().setEnabled(false);
+            // show waiting cursor
+            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            //save the new experiment to the DB
+            experimentService.save(experiment);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                setupSaved = true;
+                //show back default cursor 
+                cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                showMessage("Experiment was successfully saved to DB.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
+            } catch (InterruptedException ex) {
+                LOG.error(ex.getMessage(), ex);
+            } catch (ExecutionException ex) {
+                cellMissyController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     /**
@@ -688,7 +712,6 @@ public class SetupExperimentController {
         setupExperimentPanel.getReportButton().setVisible(true);
         setupExperimentPanel.getTopPanel().revalidate();
         setupExperimentPanel.getTopPanel().repaint();
-
         // update labels with experiment metadata
         setupPanel.getProjNumberLabel().setText(experiment.getProject().toString());
         setupPanel.getExpNumberLabel().setText(experiment.toString());

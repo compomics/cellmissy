@@ -48,10 +48,10 @@ public class PlateCondition implements Serializable {
     @Basic(optional = false)
     @Column(name = "plate_conditionid")
     private Long plateConditionid;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
     private Collection<Well> wellCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
     private Collection<Treatment> treatmentCollection;
     @JoinColumn(name = "l_cell_lineid", referencedColumnName = "cell_lineid")
@@ -64,7 +64,7 @@ public class PlateCondition implements Serializable {
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private Ecm ecm;
     @JoinColumn(name = "l_experimentid", referencedColumnName = "experimentid")
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false)
     private Experiment experiment;
     @JoinColumn(name = "l_assay_mediumid", referencedColumnName = "assay_mediumid")
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
@@ -200,7 +200,8 @@ public class PlateCondition implements Serializable {
     }
 
     /**
-     * Given a plate condition, get back only the wells that were imaged, i.e. with an non empty collection of WellHasImagingType objects
+     * Given a plate condition, get back only the wells that were imaged, i.e.
+     * with an non empty collection of WellHasImagingType objects
      *
      * @return
      */
@@ -216,7 +217,9 @@ public class PlateCondition implements Serializable {
     }
 
     /**
-     * Given a plate condition, get back only the wells that have some area values processed, i.e. imaged wells with a non empty collection of TimeStep objects
+     * Given a plate condition, get back only the wells that have some area
+     * values processed, i.e. imaged wells with a non empty collection of
+     * TimeStep objects
      *
      * @return
      */

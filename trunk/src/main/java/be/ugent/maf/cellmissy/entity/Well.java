@@ -46,7 +46,7 @@ public class Well implements Serializable {
     private Integer columnNumber;
     @Column(name = "row_number")
     private Integer rowNumber;
-    @OneToMany(mappedBy = "well")
+    @OneToMany(mappedBy = "well", orphanRemoval = true)
     private Collection<WellHasImagingType> wellHasImagingTypeCollection;
     @JoinColumn(name = "l_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = false)

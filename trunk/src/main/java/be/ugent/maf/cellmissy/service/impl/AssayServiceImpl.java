@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("assayService")
 @Transactional
 public class AssayServiceImpl implements AssayService {
-    
+
     @Autowired
     private AssayRepository assayRepository;
 
@@ -40,18 +40,17 @@ public class AssayServiceImpl implements AssayService {
 
     @Override
     public void delete(Assay entity) {
-        entity = assayRepository.update(entity);
+        entity = assayRepository.findById(entity.getAssayid());
         assayRepository.delete(entity);
     }
 
     @Override
     public List<Assay> findByMatrixDimensionName(String matrixDimensionName) {
         return assayRepository.findByMatrixDimensionName(matrixDimensionName);
-    }    
+    }
 
     @Override
     public void save(Assay entity) {
         assayRepository.save(entity);
     }
-    
 }

@@ -40,7 +40,7 @@ public class PlateServiceImpl implements PlateService {
 
     @Override
     public void delete(PlateFormat entity) {
-        entity = plateFormatRepository.update(entity);
+        entity = plateFormatRepository.findById(entity.getPlateFormatid());
         plateFormatRepository.delete(entity);
     }
 

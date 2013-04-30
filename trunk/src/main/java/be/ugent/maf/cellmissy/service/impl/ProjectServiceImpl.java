@@ -72,7 +72,7 @@ public class ProjectServiceImpl implements ProjectService {
     
     @Override
     public void delete(Project entity) {
-        entity = projectRepository.update(entity);
+        entity = projectRepository.findById(entity.getProjectid());
         projectRepository.delete(entity);
     }
     
