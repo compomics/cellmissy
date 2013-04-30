@@ -155,7 +155,7 @@ public class WellServiceImpl implements WellService {
 
     @Override
     public void delete(Well entity) {
-        entity = wellRepository.update(entity);
+        entity = wellRepository.findById(entity.getWellid());
         wellRepository.delete(entity);
     }
 

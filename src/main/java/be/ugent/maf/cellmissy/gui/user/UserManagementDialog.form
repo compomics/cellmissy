@@ -124,7 +124,7 @@
         </Property>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Details"/>
+            <TitledBorder title="Details for selected user"/>
           </Border>
         </Property>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -161,7 +161,7 @@
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace pref="26" max="32767" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="saveUserButton" alignment="0" max="32767" attributes="0"/>
@@ -169,7 +169,7 @@
                       </Group>
                       <Component id="deleteUserButton" min="-2" pref="133" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="62" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -179,11 +179,11 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Component id="addUserButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="deleteUserButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="saveUserButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
@@ -262,16 +262,19 @@
         <Component class="javax.swing.JButton" name="addUserButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="add user"/>
+            <Property name="toolTipText" type="java.lang.String" value="create a new user and add it to the list"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="deleteUserButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="delete user"/>
+            <Property name="toolTipText" type="java.lang.String" value="delete the selected user both from DB and from the list"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="saveUserButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="save/update user"/>
+            <Property name="toolTipText" type="java.lang.String" value="save or update the selected user"/>
           </Properties>
         </Component>
       </SubComponents>

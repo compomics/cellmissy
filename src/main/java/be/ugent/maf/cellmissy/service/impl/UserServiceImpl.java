@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(User entity) {
-        entity = userRepository.update(entity);
+        entity = userRepository.findById(entity.getUserid());
         userRepository.delete(entity);
     }
 

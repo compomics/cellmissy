@@ -16,6 +16,8 @@ import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Iterator;
 import java.util.logging.Level;
 import javax.persistence.PersistenceException;
@@ -32,7 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Main Controller Child Controllers: User Management, Setup Experiment, Load Experiment, Data Analysis - controllers
+ * Main Controller Child Controllers: User Management, Setup Experiment, Load
+ * Experiment, Data Analysis - controllers
  *
  * @author Paola
  */
@@ -249,6 +252,19 @@ public class CellMissyController {
      * Initialize main frame
      */
     private void initMainFrame() {
+        // do nothing on closing the main frame; ask user for the OK to proceed
+        cellMissyFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        // ask the user if he wants to actually exit from the application
+        cellMissyFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                int option = JOptionPane.showConfirmDialog(cellMissyFrame, "Do you really want to close CellMissy?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                switch (option) {
+                    case JOptionPane.YES_OPTION:
+                        System.exit(0);
+                }
+            }
+        });
         // add action listeners to MenuBar
         ItemActionListener itemActionListener = new ItemActionListener();
         // experiment manager (set up)
@@ -263,12 +279,10 @@ public class CellMissyController {
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int option = JOptionPane.showConfirmDialog(cellMissyFrame, "Exit from application?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int option = JOptionPane.showConfirmDialog(cellMissyFrame, "Do you really want to close CellMissy?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 switch (option) {
                     case JOptionPane.YES_OPTION:
                         System.exit(0);
-                    case JOptionPane.NO_OPTION:
-                        break;
                 }
             }
         });
@@ -307,6 +321,8 @@ public class CellMissyController {
                         showMessage("Project was created!", "Project created", JOptionPane.INFORMATION_MESSAGE);
                         newProjectDialog.getProjectNumberTextField().setText("");
                         newProjectDialog.getDescriptionTextArea().setText("");
+                        // close the dialog
+                        newProjectDialog.setVisible(false);
                     } catch (PersistenceException exception) {
                         showMessage("Project already present in the DB", "Error in persisting project", JOptionPane.WARNING_MESSAGE);
                         LOG.error(exception.getMessage());
@@ -363,7 +379,8 @@ public class CellMissyController {
     }
 
     /**
-     * On card switch: if current data is not saved, ask the user if he wants to change the view
+     * On card switch: if current data is not saved, ask the user if he wants to
+     * change the view
      */
     private boolean switchCard(String menuItemText) {
         int showOptionDialog = 0;

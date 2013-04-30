@@ -87,7 +87,7 @@ public class ExperimentServiceImpl implements ExperimentService {
             throw new CellMiaFoldersException("No folders found in main directory (M:\\CM)\nBe sure you are connected to the server!");
         }
 
-        // if experiment folder was successfully created, procede with the inner folders
+        // if experiment folder was successfully created, proceed with the inner folders
         if (experimentFolder != null) {
             //create subfolders
             miaFolder = new File(experimentFolder, experimentFolder.getName() + "_MIA");
@@ -128,7 +128,9 @@ public class ExperimentServiceImpl implements ExperimentService {
             if (mkdir5) {
                 LOG.debug("AlgoNull folder is created: " + algoNullFolder.getName());
             }
-        } else throw new CellMiaFoldersException("Experiment folder could not be created.\nPlease check folder structure!");
+        } else {
+            throw new CellMiaFoldersException("Experiment folder could not be created.\nPlease check folder structure!");
+        }
 
     }
 
@@ -286,7 +288,7 @@ public class ExperimentServiceImpl implements ExperimentService {
 
     @Override
     public void delete(Experiment entity) {
-        entity = experimentRepository.update(entity);
+        entity = experimentRepository.findById(entity.getExperimentid());
         experimentRepository.delete(entity);
     }
 

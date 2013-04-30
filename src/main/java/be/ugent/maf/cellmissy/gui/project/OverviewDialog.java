@@ -31,10 +31,6 @@ public class OverviewDialog extends javax.swing.JDialog {
         return deleteExperimentButton;
     }
 
-    public JButton getEditExperimentButton() {
-        return editExperimentButton;
-    }
-
     public JTextArea getProjectDescriptionTextArea() {
         return projectDescriptionTextArea;
     }
@@ -67,7 +63,6 @@ public class OverviewDialog extends javax.swing.JDialog {
         experimentJList = new javax.swing.JList();
         infoLabel = new javax.swing.JLabel();
         deleteExperimentButton = new javax.swing.JButton();
-        editExperimentButton = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         projectDescriptionTextArea = new javax.swing.JTextArea();
@@ -109,8 +104,6 @@ public class OverviewDialog extends javax.swing.JDialog {
 
         deleteExperimentButton.setText("Delete experiment");
 
-        editExperimentButton.setText("Edit experiment");
-
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel5.setText("project description");
 
@@ -144,14 +137,11 @@ public class OverviewDialog extends javax.swing.JDialog {
                                     .addGap(18, 18, 18)
                                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(editExperimentButton, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 0, 0)
                         .addComponent(deleteExperimentButton)))
                 .addContainerGap())
         );
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {deleteExperimentButton, editExperimentButton});
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jScrollPane1, jScrollPane3});
 
@@ -174,9 +164,7 @@ public class OverviewDialog extends javax.swing.JDialog {
                 .addComponent(infoLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(deleteExperimentButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(editExperimentButton)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jScrollPane1, jScrollPane3});
@@ -227,7 +215,6 @@ public class OverviewDialog extends javax.swing.JDialog {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton deleteExperimentButton;
-    private javax.swing.JButton editExperimentButton;
     private javax.swing.JList experimentJList;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel jLabel1;

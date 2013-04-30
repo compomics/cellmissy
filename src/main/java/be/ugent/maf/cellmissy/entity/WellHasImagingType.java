@@ -60,9 +60,9 @@ public class WellHasImagingType implements Serializable {
     @JoinColumn(name = "l_imaging_typeid", referencedColumnName = "imaging_typeid")
     @ManyToOne(cascade = CascadeType.ALL, optional = true)
     private ImagingType imagingType;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "wellHasImagingType")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "wellHasImagingType", orphanRemoval = true)
     private Collection<TimeStep> timeStepCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "wellHasImagingType")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "wellHasImagingType", orphanRemoval = true)
     private Collection<Track> trackCollection;
     @JoinColumn(name = "l_algorithmid", referencedColumnName = "algorithmid")
     @ManyToOne(cascade = CascadeType.ALL)

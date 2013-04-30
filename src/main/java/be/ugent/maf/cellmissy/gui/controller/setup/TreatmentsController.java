@@ -22,6 +22,7 @@ import java.util.Iterator;
 import javax.persistence.PersistenceException;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -37,13 +38,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Treatment Panel Controller: setup treatments details for each condition during experiment design Parent Controller: Conditions Panel Controller
+ * Treatment Panel Controller: setup treatments details for each condition
+ * during experiment design Parent Controller: Conditions Panel Controller
  *
  * @author Paola
  */
 @Controller("treatmentsController")
 public class TreatmentsController {
 
+    private static final Logger LOG = Logger.getLogger(TreatmentsController.class);
     //model
     //binding list for drugs
     private ObservableList<TreatmentType> drugBindingList;
@@ -120,7 +123,9 @@ public class TreatmentsController {
     }
 
     /**
-     * this method is used inn the condition panel controller to actually show the current treatment list and sync the source lists according to the last one
+     * this method is used inn the condition panel controller to actually show
+     * the current treatment list and sync the source lists according to the
+     * last one
      *
      * @param plateCondition
      */
@@ -214,7 +219,7 @@ public class TreatmentsController {
                     addTreatmentFromASourceList(treatmentsPanel.getSourceList2());
                     generalTreatmentBindingList.remove((TreatmentType) treatmentsPanel.getSourceList2().getSelectedValue());
                 } else {
-                    setupConditionsController.showMessage("Select a drug or treatment to add to current list!", "add drug/treatment error", JOptionPane.WARNING_MESSAGE);
+                    setupConditionsController.showMessage("Select a drug or a treatment to add to current list!", "add drug/treatment error", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
@@ -234,7 +239,7 @@ public class TreatmentsController {
                     }
                     treatmentBindingList.remove((Treatment) treatmentsPanel.getDestinationList().getSelectedValue());
                 } else {
-                    setupConditionsController.showMessage("Select a drug or treatment to remove from current list!", "remove drug/treatment error", JOptionPane.WARNING_MESSAGE);
+                    setupConditionsController.showMessage("Select a drug or a treatment to remove from current list!", "remove drug/treatment error", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
@@ -259,6 +264,8 @@ public class TreatmentsController {
         addDrugsTreatmentsDialog.getAddDrugButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String message;
+                String title;
                 if (!addDrugsTreatmentsDialog.getDrugTextField().getText().isEmpty()) {
                     TreatmentType newDrug = new TreatmentType();
                     //category 1: drug
@@ -269,15 +276,24 @@ public class TreatmentsController {
                         drugBindingList.add(newDrug);
                         //save drug to DB
                         treatmentService.saveTreatmentType(newDrug);
-                        setupConditionsController.showMessage("Drug was inserted into DB.", "Drug added", JOptionPane.INFORMATION_MESSAGE);
+                        message = "Drug was inserted into DB!";
+                        title = "drug added";
+                        JOptionPane.showMessageDialog(addDrugsTreatmentsDialog, message, title, JOptionPane.INFORMATION_MESSAGE);
                         addDrugsTreatmentsDialog.getDrugTextField().setText("");
+                        // close the dialog
+                        addDrugsTreatmentsDialog.setVisible(false);
                     } catch (PersistenceException exception) {
-                        setupConditionsController.showMessage("Drug already present in DB.", "Error in adding drug", JOptionPane.WARNING_MESSAGE);
+                        LOG.error(exception.getMessage());
+                        message = "Drug already present in DB!";
+                        title = "error in adding drug";
+                        JOptionPane.showMessageDialog(addDrugsTreatmentsDialog, message, title, JOptionPane.WARNING_MESSAGE);
                         addDrugsTreatmentsDialog.getDrugTextField().setText("");
                         addDrugsTreatmentsDialog.getDrugTextField().requestFocusInWindow();
                     }
                 } else {
-                    setupConditionsController.showMessage("Insert a name for the drug!", "", JOptionPane.WARNING_MESSAGE);
+                    message = "Insert a name for the drug!";
+                    title = "error in adding drug";
+                    JOptionPane.showMessageDialog(addDrugsTreatmentsDialog, message, title, JOptionPane.WARNING_MESSAGE);
                     addDrugsTreatmentsDialog.getDrugTextField().requestFocusInWindow();
                 }
             }
@@ -287,6 +303,8 @@ public class TreatmentsController {
         addDrugsTreatmentsDialog.getAddTreatmentButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String message;
+                String title;
                 if (!addDrugsTreatmentsDialog.getTreatmentTextField().getText().isEmpty()) {
                     TreatmentType newTreatment = new TreatmentType();
                     //category 2: general treatment
@@ -297,15 +315,24 @@ public class TreatmentsController {
                         generalTreatmentBindingList.add(newTreatment);
                         //save treatment to DB
                         treatmentService.saveTreatmentType(newTreatment);
-                        setupConditionsController.showMessage("Treatment was inserted into DB.", "Treatment added", JOptionPane.INFORMATION_MESSAGE);
+                        message = "Treatment was inserted into DB!";
+                        title = "treatment added";
+                        JOptionPane.showMessageDialog(addDrugsTreatmentsDialog, message, title, JOptionPane.INFORMATION_MESSAGE);
                         addDrugsTreatmentsDialog.getTreatmentTextField().setText("");
+                        // close the dialog
+                        addDrugsTreatmentsDialog.setVisible(false);
                     } catch (PersistenceException exception) {
-                        setupConditionsController.showMessage("Treatment already present in DB.", "Error in adding treatment", JOptionPane.WARNING_MESSAGE);
+                        LOG.error(exception.getMessage());
+                        message = "Treatment already present in DB!";
+                        title = "error in adding treatment";
+                        JOptionPane.showMessageDialog(addDrugsTreatmentsDialog, message, title, JOptionPane.WARNING_MESSAGE);
                         addDrugsTreatmentsDialog.getTreatmentTextField().setText("");
                         addDrugsTreatmentsDialog.getTreatmentTextField().requestFocusInWindow();
                     }
                 } else {
-                    setupConditionsController.showMessage("Insert a name for the treatment!", "", JOptionPane.WARNING_MESSAGE);
+                    message = "Insert a name for the treatment!";
+                    title = "error in adding treatment";
+                    JOptionPane.showMessageDialog(addDrugsTreatmentsDialog, message, title, JOptionPane.WARNING_MESSAGE);
                     addDrugsTreatmentsDialog.getTreatmentTextField().requestFocusInWindow();
                 }
             }
@@ -313,7 +340,8 @@ public class TreatmentsController {
     }
 
     /**
-     * this method updates drug and general treatment lists according to actual list of treatment for current condition
+     * this method updates drug and general treatment lists according to actual
+     * list of treatment for current condition
      */
     private void updateSourceLists() {
         for (Treatment treatment : treatmentBindingList) {
@@ -335,7 +363,8 @@ public class TreatmentsController {
     }
 
     /**
-     * this method updates the destination list (actual treatment list for current condition) and sync its changes with the two source lists
+     * this method updates the destination list (actual treatment list for
+     * current condition) and sync its changes with the two source lists
      *
      * @param plateCondition
      */
@@ -365,7 +394,8 @@ public class TreatmentsController {
     }
 
     /**
-     * this method adds treatments/drugs from a source list to the destination list
+     * this method adds treatments/drugs from a source list to the destination
+     * list
      *
      * @param sourceList
      */

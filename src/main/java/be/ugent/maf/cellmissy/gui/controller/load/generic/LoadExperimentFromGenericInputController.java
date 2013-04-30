@@ -255,11 +255,11 @@ public class LoadExperimentFromGenericInputController {
                     SaveExperimentWorker worker = new SaveExperimentWorker();
                     worker.execute();
                 } else {
-                    // if data loading is not valid, ask the user if he wants to procede with storing
+                    // if data loading is not valid, ask the user if he wants to proceed with storing
                     Object[] options = {"Continue", "Cancel"};
-                    int showOptionDialog = JOptionPane.showOptionDialog(null, "Some wells still do not have any data.\nDo you want to procede with storage?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                    int showOptionDialog = JOptionPane.showOptionDialog(null, "Some wells still do not have any data.\nDo you want to proceed with storage?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                     switch (showOptionDialog) {
-                        case 0: // set motility data and procede with storage
+                        case 0: // set motility data and proceed with storage
                             //set motility Data
                             setMotilityData();
                             //set experiment status to "performed" and update it to DB

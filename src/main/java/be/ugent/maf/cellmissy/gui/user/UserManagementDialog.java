@@ -8,7 +8,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPasswordField;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 
 /**
@@ -127,7 +126,7 @@ public class UserManagementDialog extends javax.swing.JDialog {
         );
 
         detailsPanel.setBackground(new java.awt.Color(255, 255, 255));
-        detailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Details"));
+        detailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Details for selected user"));
         detailsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
 
         firstNameLabel.setText("first name");
@@ -141,10 +140,13 @@ public class UserManagementDialog extends javax.swing.JDialog {
         jLabel1.setText("password");
 
         addUserButton.setText("add user");
+        addUserButton.setToolTipText("create a new user and add it to the list");
 
         deleteUserButton.setText("delete user");
+        deleteUserButton.setToolTipText("delete the selected user both from DB and from the list");
 
         saveUserButton.setText("save/update user");
+        saveUserButton.setToolTipText("save or update the selected user");
 
         javax.swing.GroupLayout detailsPanelLayout = new javax.swing.GroupLayout(detailsPanel);
         detailsPanel.setLayout(detailsPanelLayout);
@@ -170,13 +172,13 @@ public class UserManagementDialog extends javax.swing.JDialog {
                                 .addComponent(emailTextField, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(lastNameTextField))
                             .addComponent(passwordField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(saveUserButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(addUserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(deleteUserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(62, 62, 62))
+                .addContainerGap())
         );
 
         detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {emailTextField, firstNameTextField, lastNameTextField, passwordField, roleComboBox});
@@ -187,11 +189,11 @@ public class UserManagementDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(detailsPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 0, 0)
                         .addComponent(addUserButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deleteUserButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(saveUserButton))
                     .addGroup(detailsPanelLayout.createSequentialGroup()
                         .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)

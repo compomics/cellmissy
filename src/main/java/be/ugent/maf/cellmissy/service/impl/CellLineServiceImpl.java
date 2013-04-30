@@ -44,7 +44,7 @@ public class CellLineServiceImpl implements CellLineService {
 
     @Override
     public void delete(CellLine entity) {
-        entity = cellLineRepository.update(entity);
+        entity = cellLineRepository.findById(entity.getCellLineid());
         cellLineRepository.delete(entity);
     }
 

@@ -11,14 +11,17 @@ import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -141,16 +144,13 @@ public class OverviewController {
                 if (selectedIndex != -1) {
                     // ask for confirmation
                     Object[] options = {"Yes", "No", "Cancel"};
-                    int showOptionDialog = JOptionPane.showOptionDialog(null, "You are about to delete an experiment!" + "\nContinue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+                    String message = "You are about to delete an experiment!" + "\n" + "Everything from this experiment will be deleted!" + "Continue?";
+                    int showOptionDialog = JOptionPane.showOptionDialog(overviewDialog, message, "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
                     // if YES, continue, else, do nothing
                     if (showOptionDialog == 0) {
-                        Experiment selectedExperiment = experimentBindingList.get(selectedIndex);
-                        // delete experiment from DB
-                        experimentService.delete(selectedExperiment);
-                        // delete experiment from experiment binding list
-                        experimentBindingList.remove(selectedExperiment);
-                        // inform the user that the experimet was deleted
-                        cellMissyController.showMessage("Experiment was successfully deleted!", "experiment deleted", JOptionPane.INFORMATION_MESSAGE);
+                        // create and execute a new swing worker
+                        DeleteExperimentSwingWorker deleteExperimentSwingWorker = new DeleteExperimentSwingWorker();
+                        deleteExperimentSwingWorker.execute();
                     }
                 } else {
                     // else ask the user to select an experiment first
@@ -158,12 +158,43 @@ public class OverviewController {
                 }
             }
         });
+    }
 
-        // edit an experiment
-        overviewDialog.getEditExperimentButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+    /**
+     * Swing Worker to delete the Experiment
+     */
+    private class DeleteExperimentSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            // disable the delete button
+            overviewDialog.getDeleteExperimentButton().setEnabled(false);
+            // show a waiting cursor
+            overviewDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            int selectedIndex = overviewDialog.getExperimentJList().getSelectedIndex();
+            Experiment experimentToDelete = experimentBindingList.get(selectedIndex);
+            // delete experiment
+            experimentService.delete(experimentToDelete);
+            // delete experiment from experiment binding list
+            experimentBindingList.remove(experimentToDelete);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                // enable the delete button
+                overviewDialog.getDeleteExperimentButton().setEnabled(true);
+                //show back default cursor 
+                overviewDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                // show info message
+                cellMissyController.showMessage("Experiment was successfully deleted!", "experiment deleted", JOptionPane.INFORMATION_MESSAGE);
+            } catch (InterruptedException ex) {
+                LOG.error(ex.getMessage(), ex);
+            } catch (ExecutionException ex) {
+                cellMissyController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
             }
-        });
+        }
     }
 }

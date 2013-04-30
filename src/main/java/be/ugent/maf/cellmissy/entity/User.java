@@ -68,7 +68,7 @@ public class User implements Serializable {
     @Email(message = "Please insert a valid email address")
     @NotBlank(message = "Please insert an email address")
     private String email;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(mappedBy = "user")
     private Collection<Experiment> experimentCollection;
 
     public User() {

@@ -56,7 +56,7 @@ public class EcmServiceImpl implements EcmService {
 
     @Override
     public void delete(Ecm entity) {
-        entity = ecmRepository.update(entity);
+        entity = ecmRepository.findById(entity.getEcmid());
         ecmRepository.delete(entity);
     }
 

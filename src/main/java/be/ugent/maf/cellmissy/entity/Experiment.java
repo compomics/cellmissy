@@ -99,7 +99,7 @@ public class Experiment implements Serializable {
     @JoinColumn(name = "l_plate_formatid", referencedColumnName = "plate_formatid")
     @ManyToOne(optional = false)
     private PlateFormat plateFormat;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
     @OrderBy("plateConditionid")
     private Collection<PlateCondition> plateConditionCollection;
