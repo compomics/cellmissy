@@ -130,6 +130,8 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
             }
         ));
         slopesTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        slopesTable.getTableHeader().setResizingAllowed(false);
+        slopesTable.getTableHeader().setReorderingAllowed(false);
         slopesTableScrollPane.setViewportView(slopesTable);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N

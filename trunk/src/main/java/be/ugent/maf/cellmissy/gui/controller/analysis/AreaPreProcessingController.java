@@ -359,7 +359,7 @@ public class AreaPreProcessingController {
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
             dataTable.setModel(new ComputedDataTableModel(plateCondition, deltaArea, processedTimeFrames));
             dataTable.setDefaultRenderer(Object.class, new FormatRenderer(dataAnalysisController.getFormat()));
-            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
+            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
         areaAnalysisPanel.getTableInfoLabel().setText("Area increments between time frame t(n) and t(n+1)");
     }
@@ -384,7 +384,7 @@ public class AreaPreProcessingController {
             for (int i = 1; i < dataTable.getColumnCount(); i++) {
                 dataTable.getColumnModel().getColumn(i).setCellRenderer(outliersRenderer);
             }
-            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
+            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
         areaAnalysisPanel.getTableInfoLabel().setText("% area increases, distributions' outliers are shown in red");
     }
@@ -402,7 +402,7 @@ public class AreaPreProcessingController {
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
             dataTable.setModel(new ComputedDataTableModel(plateCondition, normalizedArea, processedTimeFrames));
             dataTable.setDefaultRenderer(Object.class, new FormatRenderer(dataAnalysisController.getFormat()));
-            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
+            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
         areaAnalysisPanel.getTableInfoLabel().setText("Area is normalized in terms of starting location at time zero");
     }
@@ -444,7 +444,7 @@ public class AreaPreProcessingController {
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
             dataTable.setModel(new ComputedDataTableModel(plateCondition, transformedData, processedTimeFrames));
             dataTable.setDefaultRenderer(Object.class, new FormatRenderer(dataAnalysisController.getFormat()));
-            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
+            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
         areaAnalysisPanel.getTableInfoLabel().setText("Open area is converted to (complementary) cell covered area");
     }
@@ -462,7 +462,7 @@ public class AreaPreProcessingController {
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
             dataTable.setModel(new ComputedDataTableModel(plateCondition, normalizedCorrectedArea, processedTimeFrames));
             dataTable.setDefaultRenderer(Object.class, new FormatRenderer(dataAnalysisController.getFormat()));
-            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
+            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
         areaAnalysisPanel.getTableInfoLabel().setText("Outliers are removed from distributions and new area values are shown");
     }
@@ -997,7 +997,7 @@ public class AreaPreProcessingController {
     /**
      * Use corrected data or retain the raw data?
      *
-     * @return
+     * @return boolean
      */
     public boolean useCorrectedData() {
         return areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
@@ -1046,7 +1046,7 @@ public class AreaPreProcessingController {
                 distanceMatrixTable.getColumnModel().getColumn(i).setCellEditor(checkBoxCellEditor);
                 distanceMatrixTable.getColumnModel().getColumn(i).setCellRenderer(checkBoxOutliersRenderer);
             }
-            distanceMatrixTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
+            distanceMatrixTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
             // disable row selection
             distanceMatrixTable.setRowSelectionAllowed(false);
             distanceMatrixScrollPane.setViewportView(distanceMatrixTable);

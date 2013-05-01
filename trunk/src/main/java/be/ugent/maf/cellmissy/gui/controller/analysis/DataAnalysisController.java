@@ -430,6 +430,8 @@ public class DataAnalysisController {
                 // cell covered area radio button is not visible if area is already a cell covered one
                 if (areaAnalysisHolder.getMeasuredAreaType().equals(MeasuredAreaType.CELL_COVERED_AREA)) {
                     areaPreProcessingController.getAreaAnalysisPanel().getCellCoveredAreaRadioButton().setVisible(false);
+                } else {
+                    areaPreProcessingController.getAreaAnalysisPanel().getCellCoveredAreaRadioButton().setVisible(true);
                 }
                 highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());

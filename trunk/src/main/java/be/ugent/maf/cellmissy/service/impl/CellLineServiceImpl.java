@@ -54,8 +54,8 @@ public class CellLineServiceImpl implements CellLineService {
     }
 
     @Override
-    public CellLineType saveCellLineType(CellLineType entity) {
-        return cellLineTypeRepository.update(entity);
+    public void saveCellLineType(CellLineType entity) {
+        cellLineTypeRepository.save(entity);
     }
 
     @Override

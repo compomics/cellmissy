@@ -12,15 +12,19 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * Renderer for the JTable header
+ *
  * @author Paola Masuzzo
  */
 public class TableHeaderRenderer extends DefaultTableCellRenderer {
+
+    public TableHeaderRenderer(int alignment) {
+        setHorizontalAlignment(alignment);
+    }
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
         super.getTableCellRendererComponent(table, value, false, false, row, column);
-        setHorizontalAlignment(SwingConstants.RIGHT);
         setBorder(BorderFactory.createEmptyBorder());
 
         return this;

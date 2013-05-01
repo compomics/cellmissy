@@ -17,7 +17,7 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.LinearRegressionPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.StatisticsPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.StatisticsDialog;
 import be.ugent.maf.cellmissy.gui.view.table.model.PValuesTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.StatisticalSummaryTableModel;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
@@ -34,7 +34,6 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,10 +48,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -98,8 +97,7 @@ public class AreaAnalysisController {
     // view
     private LinearRegressionPanel linearRegressionPanel;
     private ChartPanel velocityChartPanel;
-    private JDialog dialog;
-    private StatisticsPanel statisticsPanel;
+    private StatisticsDialog statisticsDialog;
     // parent controller
     @Autowired
     private DataAnalysisController dataAnalysisController;
@@ -213,21 +211,21 @@ public class AreaAnalysisController {
         for (int i = 1; i < columnNames.length - 2; i++) {
             columnNames[i] = "Repl " + i;
         }
-        columnNames[columnNames.length - 2] = "Median";
+        columnNames[columnNames.length - 2] = "median";
         columnNames[columnNames.length - 1] = "MAD";
         // set model of table
         linearRegressionPanel.getSlopesTable().setModel(new DefaultTableModel(data, columnNames));
         // set cell renderer
-        for (int columnIndex = 1; columnIndex < linearRegressionPanel.getSlopesTable().getColumnCount() - 2; columnIndex++) {
-            linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new LinearRegressionTableRenderer());
+        for (int columnIndex = 0; columnIndex < linearRegressionPanel.getSlopesTable().getColumnCount(); columnIndex++) {
+            linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new LinearRegressionTableRenderer(dataAnalysisController.getFormat()));
         }
-        //set format renderer only for last two columns together with less width
-        for (int columnIndex = columnNames.length - 2; columnIndex < linearRegressionPanel.getSlopesTable().getColumnCount(); columnIndex++) {
-            linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(dataAnalysisController.getFormat()));
-            linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setMaxWidth(50);
-            linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setPreferredWidth(50);
-        }
-        linearRegressionPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
+//        //set format renderer only for last two columns together with less width
+//        for (int columnIndex = columnNames.length - 2; columnIndex < linearRegressionPanel.getSlopesTable().getColumnCount(); columnIndex++) {
+//            linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(dataAnalysisController.getFormat()));
+//            linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setMaxWidth(50);
+//            linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setPreferredWidth(50);
+//        }
+        linearRegressionPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         // select by default all conditions: to show all bars in the velocity chart
         linearRegressionPanel.getSlopesTable().setRowSelectionInterval(0, linearRegressionPanel.getSlopesTable().getRowCount() - 1);
     }
@@ -284,13 +282,11 @@ public class AreaAnalysisController {
      */
     public void createPdfReport() throws IOException {
         Experiment experiment = dataAnalysisController.getExperiment();
-        final int experimentNumber = experiment.getExperimentNumber();
-        final int projectNumber = experiment.getProject().getProjectNumber();
         // choose directory to save pdf file
         JFileChooser chooseDirectory = new JFileChooser();
         chooseDirectory.setDialogTitle("Choose a directory to save the report");
         chooseDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        chooseDirectory.setSelectedFile(new File("Analysis Report " + experimentNumber + " - " + projectNumber + ".pdf"));
+        chooseDirectory.setSelectedFile(new File("Analysis Report " + experiment.toString() + " - " + experiment.getProject().toString() + ".pdf"));
         // in response to the button click, show open dialog
         int returnVal = chooseDirectory.showSaveDialog(dataAnalysisController.getDataAnalysisPanel());
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -371,23 +367,16 @@ public class AreaAnalysisController {
         // init chart panel
         velocityChartPanel = new ChartPanel(null);
         velocityChartPanel.setOpaque(false);
-        statisticsPanel = new StatisticsPanel();
-        dialog = new JDialog();
-        dialog.setAlwaysOnTop(false);
-        dialog.setModal(true);
-        dialog.getContentPane().setBackground(Color.white);
-        dialog.getContentPane().setLayout(new GridBagLayout());
-        //center the dialog on the main screen
-        dialog.setLocationRelativeTo(null);
-        dialog.setTitle("Statistics");
+        // init statistics panel
+        statisticsDialog = new StatisticsDialog(dataAnalysisController.getCellMissyFrame(), true);
         // init panel for statistics
-        statisticsPanel.getSummaryTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
-        statisticsPanel.getSummaryScrollPane().getViewport().setBackground(Color.white);
-        statisticsPanel.getpValuesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer());
-        statisticsPanel.getpValuesScrollPane().getViewport().setBackground(Color.white);
+        statisticsDialog.getSummaryTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+        statisticsDialog.getSummaryScrollPane().getViewport().setBackground(Color.white);
+        statisticsDialog.getpValuesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+        statisticsDialog.getpValuesScrollPane().getViewport().setBackground(Color.white);
         SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
         StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
-        StyledDocument styledDocument = statisticsPanel.getInfoTextPane().getStyledDocument();
+        StyledDocument styledDocument = statisticsDialog.getInfoTextPane().getStyledDocument();
         styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
         // init binding
         groupsBindingList = ObservableCollections.observableList(new ArrayList<AnalysisGroup>());
@@ -399,15 +388,15 @@ public class AreaAnalysisController {
             significanceLevels.add(significanceLevel.getValue());
         }
         significanceLevelsBindingList = ObservableCollections.observableList(significanceLevels);
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, significanceLevelsBindingList, statisticsPanel.getSignificanceLevelComboBox());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, significanceLevelsBindingList, statisticsDialog.getSignificanceLevelComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
         // fill in combo box
         for (CorrectionMethod method : CorrectionMethod.values()) {
-            statisticsPanel.getCorrectionMethodsComboBox().addItem(method);
+            statisticsDialog.getCorrectionMethodsComboBox().addItem(method);
         }
         //significance level to 0.05
-        statisticsPanel.getSignificanceLevelComboBox().setSelectedIndex(1);
+        statisticsDialog.getSignificanceLevelComboBox().setSelectedIndex(1);
 
         /**
          * List selection Listener for linear model results Table show bar
@@ -488,7 +477,7 @@ public class AreaAnalysisController {
                     // show statistics in tables
                     showSummary(selectedGroup);
                     // set the correction combobox to the one already chosen
-                    statisticsPanel.getCorrectionMethodsComboBox().setSelectedItem((Object) selectedGroup.getCorrectionMethod());
+                    statisticsDialog.getCorrectionMethodsComboBox().setSelectedItem((Object) selectedGroup.getCorrectionMethod());
                     if (selectedGroup.getCorrectionMethod() == CorrectionMethod.NONE) {
                         // by default show p-values without adjustment
                         showPValues(selectedGroup, false);
@@ -496,14 +485,11 @@ public class AreaAnalysisController {
                         // show p values with adjustement
                         showPValues(selectedGroup, true);
                     }
-                    // add new panel 
-                    dialog.getContentPane().add(statisticsPanel, gridBagConstraints);
-                    // pack the dialog
-                    dialog.pack();
+                    statisticsDialog.pack();
                     // center the dialog on the main frame
-                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getCellMissyFrame(), dialog);
+                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getCellMissyFrame(), statisticsDialog);
                     // show the dialog
-                    dialog.setVisible(true);
+                    statisticsDialog.setVisible(true);
                 } else {
                     // ask user to select a group
                     dataAnalysisController.showMessage("Please select a group to perform analysis on.", "You must select a group first", JOptionPane.INFORMATION_MESSAGE);
@@ -531,11 +517,11 @@ public class AreaAnalysisController {
         /**
          * Refresh p value table with current selected significance of level
          */
-        statisticsPanel.getSignificanceLevelComboBox().addActionListener(new ActionListener() {
+        statisticsDialog.getSignificanceLevelComboBox().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (statisticsPanel.getSignificanceLevelComboBox().getSelectedIndex() != -1) {
-                    Double selectedSignLevel = (Double) statisticsPanel.getSignificanceLevelComboBox().getSelectedItem();
+                if (statisticsDialog.getSignificanceLevelComboBox().getSelectedIndex() != -1) {
+                    Double selectedSignLevel = (Double) statisticsDialog.getSignificanceLevelComboBox().getSelectedItem();
                     AnalysisGroup selectedGroup = groupsBindingList.get(linearRegressionPanel.getGroupsList().getSelectedIndex());
                     boolean isAdjusted;
                     if (selectedGroup.getCorrectionMethod() == CorrectionMethod.NONE) {
@@ -545,10 +531,10 @@ public class AreaAnalysisController {
                     }
                     statisticsAnalyzer.detectSignificance(selectedGroup, selectedSignLevel, isAdjusted);
                     boolean[][] significances = selectedGroup.getSignificances();
-                    for (int i = 1; i < statisticsPanel.getpValuesTable().getColumnCount(); i++) {
-                        statisticsPanel.getpValuesTable().getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(new DecimalFormat("#.####"), significances));
+                    for (int i = 1; i < statisticsDialog.getpValuesTable().getColumnCount(); i++) {
+                        statisticsDialog.getpValuesTable().getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(new DecimalFormat("#.####"), significances));
                     }
-                    statisticsPanel.getpValuesTable().repaint();
+                    statisticsDialog.getpValuesTable().repaint();
                 }
             }
         });
@@ -556,13 +542,13 @@ public class AreaAnalysisController {
         /**
          * Apply correction for multiple comparisons
          */
-        statisticsPanel.getCorrectionMethodsComboBox().addActionListener(new ActionListener() {
+        statisticsDialog.getCorrectionMethodsComboBox().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
                 if (selectedIndex != -1) {
                     AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
-                    CorrectionMethod correctionMethod = (CorrectionMethod) statisticsPanel.getCorrectionMethodsComboBox().getSelectedItem();
+                    CorrectionMethod correctionMethod = (CorrectionMethod) statisticsDialog.getCorrectionMethodsComboBox().getSelectedItem();
                     // update test description
                     updateTestDescriptionPane(correctionMethod);
                     // if the correction method is not "NONE"
@@ -579,13 +565,13 @@ public class AreaAnalysisController {
             }
         });
         //multiple comparison correction: NONE
-        statisticsPanel.getCorrectionMethodsComboBox().setSelectedItem((Object) CorrectionMethod.NONE);
+        statisticsDialog.getCorrectionMethodsComboBox().setSelectedItem((Object) CorrectionMethod.NONE);
         updateTestDescriptionPane(CorrectionMethod.NONE);
 
         /**
          * Save analysis
          */
-        statisticsPanel.getSaveAnalysisButton().addActionListener(new ActionListener() {
+        statisticsDialog.getSaveAnalysisButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // analysis group
@@ -593,9 +579,9 @@ public class AreaAnalysisController {
                 if (selectedIndex != -1) {
                     AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
                     // set correction method (summary statistics, p-values and adjusted p-values are already set)
-                    selectedGroup.setCorrectionMethod((CorrectionMethod) statisticsPanel.getCorrectionMethodsComboBox().getSelectedItem());
+                    selectedGroup.setCorrectionMethod((CorrectionMethod) statisticsDialog.getCorrectionMethodsComboBox().getSelectedItem());
                     //show message to the user
-                    dataAnalysisController.showMessage("Analysis saved!", "Analysis saved", JOptionPane.INFORMATION_MESSAGE);
+                   JOptionPane.showMessageDialog(statisticsDialog, "Analysis was saved!", "analysis saved", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -618,10 +604,10 @@ public class AreaAnalysisController {
         } else if (correctionMethod == CorrectionMethod.BENJAMINI) {
             testDescription = "This correction is less stringent than the Bonferroni one; the p values are first ranked from the smallest to the largest. The largest p value remains as it is. The second largest p value is multiplied by the total number of comparisons divided by its rank. This is repeated for the third p value and so on.";
         }
-        statisticsPanel.getTestDescriptionTextPane().setText(testDescription);
+        statisticsDialog.getTestDescriptionTextPane().setText(testDescription);
         SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
         StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
-        StyledDocument styledDocument = statisticsPanel.getTestDescriptionTextPane().getStyledDocument();
+        StyledDocument styledDocument = statisticsDialog.getTestDescriptionTextPane().getStyledDocument();
         styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
     }
 
@@ -643,9 +629,9 @@ public class AreaAnalysisController {
      * @param analysisGroup
      */
     private void showSummary(AnalysisGroup analysisGroup) {
-        statisticsPanel.getGroupNameLabel().setText(analysisGroup.getGroupName());
+        statisticsDialog.getGroupNameLabel().setText(analysisGroup.getGroupName());
         // set model and cell renderer for statistics summary table
-        JTable summaryTable = statisticsPanel.getSummaryTable();
+        JTable summaryTable = statisticsDialog.getSummaryTable();
         summaryTable.setModel(new StatisticalSummaryTableModel(analysisGroup, dataAnalysisController.getPlateConditionList()));
         for (int i = 1; i < summaryTable.getColumnCount(); i++) {
             summaryTable.getColumnModel().getColumn(i).setCellRenderer(new FormatRenderer(new DecimalFormat("#.####")));
@@ -659,9 +645,9 @@ public class AreaAnalysisController {
      */
     private void showPValues(AnalysisGroup analysisGroup, boolean isAdjusted) {
         // set model and cell renderer for p-values table
-        JTable pValuesTable = statisticsPanel.getpValuesTable();
+        JTable pValuesTable = statisticsDialog.getpValuesTable();
         pValuesTable.setModel(new PValuesTableModel(analysisGroup, dataAnalysisController.getPlateConditionList(), isAdjusted));
-        Double selectedSignLevel = (Double) statisticsPanel.getSignificanceLevelComboBox().getSelectedItem();
+        Double selectedSignLevel = (Double) statisticsDialog.getSignificanceLevelComboBox().getSelectedItem();
         // detect significances with selected alpha level
         statisticsAnalyzer.detectSignificance(analysisGroup, selectedSignLevel, isAdjusted);
         boolean[][] significances = analysisGroup.getSignificances();

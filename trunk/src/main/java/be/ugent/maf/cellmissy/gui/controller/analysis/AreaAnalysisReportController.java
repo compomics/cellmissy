@@ -161,14 +161,22 @@ public class AreaAnalysisReportController {
      * Add content to document
      */
     private void addContent() {
+        // overview: title, dataset, imaging type, brief summary os biological conditions
         addOverview();
         PdfUtils.addEmptyLines(document, 1);
+        // table with info from biological conditions
         addConditionsInfoTable();
         PdfUtils.addEmptyLines(document, 2);
-        addGlobalAreaChart();
+        // global area chart: lines with SEM
+        addGlobalAreaChart(false);
         PdfUtils.addEmptyLines(document, 2);
+        // global area chart: points and lines with SEM
+        addGlobalAreaChart(true);
+        PdfUtils.addEmptyLines(document, 2);
+        // velocity bar chart
         addGlobalVelocityChart();
         PdfUtils.addEmptyLines(document, 2);
+        // analysis statistics paragraph
         addParagraphPerAnalysis();
     }
 
@@ -176,7 +184,7 @@ public class AreaAnalysisReportController {
      * Overview of Report experiment and project numbers + number of conditions
      */
     private void addOverview() {
-        String title = "Analysis Report of Experiment " + experiment.getExperimentNumber() + " - " + "Project " + experiment.getProject().getProjectNumber();
+        String title = "Analysis Report of Experiment " + experiment.toString() + " - " + "Project " + experiment.getProject().toString();
         PdfUtils.addTitle(document, title, titleFont);
         PdfUtils.addEmptyLines(document, 1);
         // add information on dataset (algorithm) and imaging type analyzed
@@ -200,16 +208,27 @@ public class AreaAnalysisReportController {
             lines.add("Condition " + (plateConditonsList.indexOf(plateCondition) + 1) + ": " + plateCondition.toString());
         }
         PdfUtils.addText(document, lines, true, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        // add extra info
+        lines.clear();
+        line = "Measured Area Type: " + areaAnalysisController.getMeasuredAreaType().getStringForType();
+        lines.add(line);
+        String correctedData = useCorrectedData ? "Y" : "N";
+        line = "Use data corrected for outliers? " + correctedData;
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
     }
 
     /**
-     * Add image with global area chart
+     * Add global area chart
+     *
+     * @param plotPoints
      */
-    private void addGlobalAreaChart() {
+    private void addGlobalAreaChart(boolean plotPoints) {
         List<PlateCondition> plateConditonsList = new ArrayList<>(experiment.getPlateConditionCollection());
         MeasuredAreaType measuredAreaType = areaAnalysisController.getMeasuredAreaType();
-        // create chart (for all conditions, no error bars on top)
-        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, useCorrectedData, false, true, false, measuredAreaType);
+        // create chart (for all conditions, error bars on top, both lines and points)
+        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, useCorrectedData, true, true, plotPoints, measuredAreaType);
         // add chart as image
         addImageFromChart(globalAreaChart, chartWidth, chartHeight);
     }
@@ -277,7 +296,7 @@ public class AreaAnalysisReportController {
         // add 1st row: column names
         PdfUtils.addCustomizedCell(dataTable, "Conditions", titleFont);
         PdfUtils.addCustomizedCell(dataTable, "# Replicates", titleFont);
-        PdfUtils.addCustomizedCell(dataTable, "User Selected Replicates", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Replicates were selected?", titleFont);
         PdfUtils.addCustomizedCell(dataTable, "Time Interval", titleFont);
         PdfUtils.addCustomizedCell(dataTable, "Proposed cut off", titleFont);
 
@@ -286,7 +305,7 @@ public class AreaAnalysisReportController {
             AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
             PdfUtils.addCustomizedCell(dataTable, "Condition " + (plateConditionList.indexOf(plateCondition) + 1), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, "" + findNumberOfReplicates(areaPreProcessingResults), bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, areaPreProcessingResults.isUserSelectedReplicates() ? "Yes" : "No", bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, areaPreProcessingResults.isUserSelectedReplicates() ? "Y" : "N", bodyFont);
             PdfUtils.addCustomizedCell(dataTable, areaPreProcessingResults.getTimeInterval().toString(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, "" + areaPreProcessingResults.getTimeInterval().getProposedCutOff(), bodyFont);
         }
