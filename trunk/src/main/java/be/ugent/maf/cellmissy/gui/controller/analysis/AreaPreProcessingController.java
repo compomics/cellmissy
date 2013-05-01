@@ -827,7 +827,7 @@ public class AreaPreProcessingController {
                     if (replicatesToIncludeArray.length != 0) {
                         double median = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(replicatesToIncludeArray));
                         yValues[i] = median;
-                        double mad = AnalysisUtils.computeSEM(ArrayUtils.toPrimitive(replicatesToIncludeArray));
+                        double mad = AnalysisUtils.scaleMAD(ArrayUtils.toPrimitive(replicatesToIncludeArray));
                         yErrors[i] = mad;
                         index++;
                     }
