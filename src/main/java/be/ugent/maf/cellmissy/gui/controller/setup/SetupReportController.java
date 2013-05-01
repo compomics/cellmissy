@@ -66,9 +66,7 @@ public class SetupReportController {
      */
     public File createSetupReport(File directory) {
         this.experiment = setupExperimentController.getExperiment();
-        int experimentNumber = experiment.getExperimentNumber();
-        int projectNumber = experiment.getProject().getProjectNumber();
-        String reportName = "Setup report " + experimentNumber + " - " + projectNumber + ".pdf";
+        String reportName = "Set-up Report " + experiment.toString() + " - " + experiment.getProject().toString() + ".pdf";
         File pdfFile = new File(directory, reportName);
         tryToCreateFile(pdfFile);
         return pdfFile;
@@ -111,7 +109,9 @@ public class SetupReportController {
     }
 
     /**
-     * Create PDF File: create and open a new document, add content to it and close the document. Makes use of a PdfWriter with a given FileOutputStream
+     * Create PDF File: create and open a new document, add content to it and
+     * close the document. Makes use of a PdfWriter with a given
+     * FileOutputStream
      */
     private void createPdfFile(FileOutputStream outputStream) {
         document = null;

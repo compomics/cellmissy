@@ -271,6 +271,7 @@ public class SetupConditionsController {
                         //add the new cell line to the list
                         cellLineTypeBindingList.add(newCellLineType);
                         setupConditionsPanel.getCellLineNameTextField().setText("");
+                        showMessage("Cell line inserted to DB!", "cell line saved", JOptionPane.INFORMATION_MESSAGE);
                     } catch (PersistenceException exception) {
                         LOG.error(exception.getMessage());
                         showMessage("Cell Line already present in DB!", "", JOptionPane.WARNING_MESSAGE);
