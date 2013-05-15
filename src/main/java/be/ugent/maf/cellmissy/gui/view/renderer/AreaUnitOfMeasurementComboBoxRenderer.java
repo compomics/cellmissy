@@ -10,6 +10,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
 /**
+ * Renderer for the Area Unit of Measurement combo box.
  *
  * @author Paola Masuzzo
  */

@@ -8,6 +8,7 @@ import javax.swing.JCheckBox;
 import javax.swing.SwingConstants;
 
 /**
+ * This renderer for the check box extends the component CheckBox.
  *
  * @author Paola Masuzzo
  */

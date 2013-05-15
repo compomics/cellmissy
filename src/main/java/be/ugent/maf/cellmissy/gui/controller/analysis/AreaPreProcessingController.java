@@ -25,7 +25,7 @@ import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AreaAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.CorrectedAreaPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.RawAreaPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.ReplicatesSelectionDialog;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.DistanceMatrixDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.TimeFramesSelectionDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.TransformedAreaPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.CheckBoxOutliersRenderer;
@@ -113,7 +113,7 @@ public class AreaPreProcessingController {
     private RawAreaPanel rawAreaPanel;
     private CorrectedAreaPanel correctedAreaPanel;
     private TransformedAreaPanel transformedAreaPanel;
-    private ReplicatesSelectionDialog replicatesSelectionDialog;
+    private DistanceMatrixDialog distanceMatrixDialog;
     private TimeFramesSelectionDialog timeFramesSelectionDialog;
     private ChartPanel rawAreaChartPanel;
     private ChartPanel transformedAreaChartPanel;
@@ -121,7 +121,6 @@ public class AreaPreProcessingController {
     private ChartPanel correctedDensityChartPanel;
     private ChartPanel correctedAreaChartPanel;
     private ChartPanel globalAreaChartPanel;
-    private JScrollPane distanceMatrixScrollPane;
     //parent controller
     @Autowired
     private DataAnalysisController dataAnalysisController;
@@ -1036,22 +1035,21 @@ public class AreaPreProcessingController {
             if (areaPreProcessingResults.isUserSelectedReplicates()) {
                 distanceMatrixTableModel.setCheckboxOutliers(areaPreProcessingResults.getExcludeReplicates());
             }
-            JTable distanceMatrixTable = new JTable(distanceMatrixTableModel);
+            JTable distanceMatrixTable = distanceMatrixDialog.getDistanceMatrixTable();
+            distanceMatrixTable.setModel(distanceMatrixTableModel);
             // Renderer
             CheckBoxOutliersRenderer checkBoxOutliersRenderer = new CheckBoxOutliersRenderer(transposedOutliersMatrix, dataAnalysisController.getFormat());
             // Cell Editor
             CheckBoxCellEditor checkBoxCellEditor = new CheckBoxCellEditor(distanceMatrixTableModel, plateCondition);
+            // set cell editor starting from column 1 and pack all columns
             for (int i = 1; i < distanceMatrixTable.getColumnCount(); i++) {
-                //@todo: cell editor is set for each column and row, but needs to be set only for last row
                 distanceMatrixTable.getColumnModel().getColumn(i).setCellEditor(checkBoxCellEditor);
                 distanceMatrixTable.getColumnModel().getColumn(i).setCellRenderer(checkBoxOutliersRenderer);
             }
             distanceMatrixTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+            distanceMatrixTable.getTableHeader().setReorderingAllowed(false);
             // disable row selection
             distanceMatrixTable.setRowSelectionAllowed(false);
-            distanceMatrixScrollPane.setViewportView(distanceMatrixTable);
-            distanceMatrixScrollPane.getViewport().setBackground(Color.white);
-            replicatesSelectionDialog.getDistanceMatrixTableParentPanel().add(distanceMatrixScrollPane, gridBagConstraints);
         }
     }
 
@@ -1290,6 +1288,8 @@ public class AreaPreProcessingController {
         // time steps table can not be edit, but it can be selected through columns
         areaAnalysisPanel.getTimeStepsTable().setColumnSelectionAllowed(true);
         areaAnalysisPanel.getTimeStepsTable().setRowSelectionAllowed(false);
+        areaAnalysisPanel.getTimeStepsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+
         // set background to white 
         areaAnalysisPanel.getTimeStepsTableScrollPane().getViewport().setBackground(Color.white);
         //init dataTable
@@ -1298,6 +1298,7 @@ public class AreaPreProcessingController {
         //the table will take all the viewport height available
         dataTable.setFillsViewportHeight(true);
         scrollPane.getViewport().setBackground(Color.white);
+        dataTable.getTableHeader().setReorderingAllowed(false);
         //row selection must be false && column selection true to be able to select through columns
         dataTable.setColumnSelectionAllowed(true);
         dataTable.setRowSelectionAllowed(false);
@@ -1325,14 +1326,10 @@ public class AreaPreProcessingController {
         globalAreaChartPanel = new ChartPanel(null);
         globalAreaChartPanel.setOpaque(false);
         // init other views
-        distanceMatrixScrollPane = new JScrollPane();
-        replicatesSelectionDialog = new ReplicatesSelectionDialog(dataAnalysisController.getCellMissyFrame(), true);
+        distanceMatrixDialog = new DistanceMatrixDialog(dataAnalysisController.getCellMissyFrame(), true);
         timeFramesSelectionDialog = new TimeFramesSelectionDialog(dataAnalysisController.getCellMissyFrame(), true);
         // do nothing on close the dialog
         timeFramesSelectionDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        //center the dialogs on the main screen
-        replicatesSelectionDialog.setLocationRelativeTo(dataAnalysisController.getCellMissyFrame());
-        timeFramesSelectionDialog.setLocationRelativeTo(dataAnalysisController.getCellMissyFrame());
         // justify text info 
         SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
         StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
@@ -2133,11 +2130,11 @@ public class AreaPreProcessingController {
                 if (currentCondition != null) {
                     showDistanceMatrix(currentCondition);
                     // pack the dialog
-                    replicatesSelectionDialog.pack();
+                    distanceMatrixDialog.pack();
                     // center the dialog on main frame
-                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getCellMissyFrame(), replicatesSelectionDialog);
+                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getCellMissyFrame(), distanceMatrixDialog);
                     // show the dialog
-                    replicatesSelectionDialog.setVisible(true);
+                    distanceMatrixDialog.setVisible(true);
                 }
             }
         });
@@ -2161,7 +2158,7 @@ public class AreaPreProcessingController {
                     // pack the dialog
                     timeFramesSelectionDialog.pack();
                     // center dialog on the main frame
-                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getCellMissyFrame(), replicatesSelectionDialog);
+                    GuiUtils.centerDialogOnFrame(dataAnalysisController.getCellMissyFrame(), timeFramesSelectionDialog);
                     // show the dialog
                     timeFramesSelectionDialog.setVisible(true);
                 }

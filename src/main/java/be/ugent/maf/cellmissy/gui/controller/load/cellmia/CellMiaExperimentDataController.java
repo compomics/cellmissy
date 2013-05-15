@@ -8,11 +8,14 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.Role;
+import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
 import be.ugent.maf.cellmissy.gui.experiment.load.cellmia.LoadFromCellMiaMetadataPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsLoadListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
 import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl.CycleTimeUnit;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
@@ -126,7 +129,7 @@ public class CellMiaExperimentDataController {
         loadFromCellMiaMetadataPanel.getIntervalTextField().setEnabled(false);
         loadFromCellMiaMetadataPanel.getTimeFramesTextField().setEnabled(false);
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon, 2);
         loadFromCellMiaMetadataPanel.getInfoLabel().setIcon(scaledIcon);
         loadFromCellMiaMetadataPanel.getInfoLabel1().setIcon(scaledIcon);
 
@@ -220,6 +223,30 @@ public class CellMiaExperimentDataController {
      * @param selectedExperiment
      */
     private void onSelectedExperiment(Experiment selectedExperiment) {
+        // get current user from parent controller
+        User currentUser = loadExperimentFromCellMiaController.getCurrentUser();
+        // get user of selected experiment
+        // these two entities might not be the same
+        User expUser = selectedExperiment.getUser();
+        // if the user has a standard role, check if its the same as the user for the exp, and if so, proceed to analysis
+        if (currentUser.getRole().equals(Role.STANDARD_USER)) {
+            if (currentUser.equals(expUser)) {
+                proceedToLoading(selectedExperiment);
+            } else {
+                String message = "It seems like you have no rights to load data for this experiment..." + "\n" + "Ask to user (" + expUser.getFirstName() + " " + expUser.getLastName() + ") !";
+                loadExperimentFromCellMiaController.showMessage(message, "accessing other experiment data", JOptionPane.WARNING_MESSAGE);
+            }
+        } else {
+            // if current user has ADMIN role, can do whatever he wants to...
+            proceedToLoading(selectedExperiment);
+        }
+    }
+
+    /**
+     *
+     * @param selectedExperiment
+     */
+    private void proceedToLoading(Experiment selectedExperiment) {
         //set experiment of parent controller
         loadExperimentFromCellMiaController.setExperiment(selectedExperiment);
         // init a new list of plate conditions
@@ -258,6 +285,9 @@ public class CellMiaExperimentDataController {
      * @param selectedProject
      */
     private void onSelectedProject(Project selectedProject) {
+        ExperimentsListRenderer experimentsListRenderer = new ExperimentsListRenderer(loadExperimentFromCellMiaController.getCurrentUser());
+        loadFromCellMiaMetadataPanel.getExperimentJList().setCellRenderer(experimentsListRenderer);
+
         // show project description
         String projectDescription = selectedProject.getProjectDescription();
         loadFromCellMiaMetadataPanel.getProjectDescriptionTextArea().setText(projectDescription);

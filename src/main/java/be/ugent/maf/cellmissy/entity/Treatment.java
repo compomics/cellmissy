@@ -145,6 +145,7 @@ public class Treatment implements Serializable {
         this.concentrationUnit = concentrationUnit;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;

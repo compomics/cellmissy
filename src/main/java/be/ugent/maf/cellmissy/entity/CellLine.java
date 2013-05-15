@@ -143,6 +143,7 @@ public class CellLine implements Serializable {
         this.plateCondition = plateCondition;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -160,6 +161,7 @@ public class CellLine implements Serializable {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int hash = 7;
         hash = 97 * hash + Objects.hashCode(this.seedingTime);
@@ -168,6 +170,7 @@ public class CellLine implements Serializable {
         return hash;
     }
 
+    @Override
     public String toString() {
         return cellLineType + ", " + seedingDensity + " - " + growthMedium + ", " + serumConcentration + "% " + serum;
     }

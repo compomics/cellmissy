@@ -15,8 +15,10 @@ import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.TimeInterval;
 import be.ugent.maf.cellmissy.entity.TimeStep;
+import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
@@ -29,6 +31,7 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.MetaDataAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.AreaUnitOfMeasurementComboBoxRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsAnalysisListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
@@ -130,7 +133,7 @@ public class DataAnalysisController {
         metaDataAnalysisPanel = new MetaDataAnalysisPanel();
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon, 2);
         metaDataAnalysisPanel.getInfoLabel().setIcon(scaledIcon);
         metaDataAnalysisPanel.getInfoLabel1().setIcon(scaledIcon);
         dataAnalysisPanel = new DataAnalysisPanel();
@@ -595,6 +598,7 @@ public class DataAnalysisController {
         metaDataAnalysisPanel.getPurposeTextArea().setWrapStyleWord(true);
         metaDataAnalysisPanel.getProjectDescriptionTextArea().setLineWrap(true);
         metaDataAnalysisPanel.getProjectDescriptionTextArea().setWrapStyleWord(true);
+
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, metaDataAnalysisPanel.getProjectJList());
@@ -652,8 +656,6 @@ public class DataAnalysisController {
         metaDataAnalysisPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // enable start button
-                analysisExperimentPanel.getStartButton().setEnabled(true);
                 // retrieve selected experiment
                 int locationToIndex = metaDataAnalysisPanel.getExperimentJList().locationToIndex(e.getPoint());
                 Experiment selectedExperiment = experimentBindingList.get(locationToIndex);
@@ -745,6 +747,9 @@ public class DataAnalysisController {
      * @param selectedProject
      */
     private void onSelectedProject(Project selectedProject) {
+        ExperimentsListRenderer experimentsListRenderer = new ExperimentsListRenderer(cellMissyController.getCurrentUser());
+        metaDataAnalysisPanel.getExperimentJList().setCellRenderer(experimentsListRenderer);
+
         if (!imagingTypeBindingList.isEmpty()) {
             imagingTypeBindingList.clear();
         }
@@ -773,11 +778,35 @@ public class DataAnalysisController {
 
     /**
      * Action on selected experiment, retrieve plate conditions and repaint
-     * plate panel Furthermore,
+     * plate panel.
      *
      * @param selectedExperiment
      */
     private void onSelectedExperiment(Experiment selectedExperiment) {
+        // get current user from main controller
+        User currentUser = cellMissyController.getCurrentUser();
+        // get user of selected experiment
+        // these two entities might not be the same
+        User expUser = selectedExperiment.getUser();
+        // if the user has a standard role, check if its the same as the user for the exp, and if so, proceed to analysis
+        if (currentUser.getRole().equals(Role.STANDARD_USER)) {
+            if (currentUser.equals(expUser)) {
+                proceedToAnalysis(selectedExperiment);
+            } else {
+                String message = "It seems like you have no rights to analyze these data..." + "\n" + "Ask to user (" + expUser.getFirstName() + " " + expUser.getLastName() + ") !";
+                cellMissyController.showMessage(message, "accessing other experiment data", JOptionPane.WARNING_MESSAGE);
+            }
+        } else {
+            // if current user has ADMIN role, can do whatever he wants to...
+            proceedToAnalysis(selectedExperiment);
+        }
+    }
+
+    /**
+     *
+     * @param experimentToAnalyze
+     */
+    private void proceedToAnalysis(Experiment experimentToAnalyze) {
         // clear current lists
         if (!imagingTypeBindingList.isEmpty()) {
             imagingTypeBindingList.clear();
@@ -787,7 +816,7 @@ public class DataAnalysisController {
             algorithmBindingList.clear();
         }
         // set experiment
-        experiment = selectedExperiment;
+        experiment = experimentToAnalyze;
         // init a new list of plate conditions
         plateConditionList = new ArrayList<>();
         plateConditionList.addAll(experiment.getPlateConditionCollection());
@@ -827,6 +856,8 @@ public class DataAnalysisController {
         metaDataAnalysisPanel.getAlgorithmComboBox().setSelectedIndex(0);
         //set selected imaging types to the first of the list
         metaDataAnalysisPanel.getImagingTypeComboBox().setSelectedIndex(0);
+        // enable start button
+        analysisExperimentPanel.getStartButton().setEnabled(true);
     }
 
     /**

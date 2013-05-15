@@ -15,6 +15,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 /**
+ * Renderer for the Data Tree used in the Data Loader.
  *
  * @author Paola Masuzzo
  */
@@ -23,7 +24,7 @@ public class DataTreeCellRenderer extends DefaultTreeCellRenderer {
     private List<ImagingType> imagingTypeList;
 
     /**
-     * Constructor
+     * Constructor, takes a list of imaging types
      *
      * @param imagingTypeList
      */
@@ -48,6 +49,7 @@ public class DataTreeCellRenderer extends DefaultTreeCellRenderer {
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         super.getTreeCellRendererComponent(tree, value, sel, true, leaf, row, hasFocus);
+        // if the value is an imaging node, set its icon with the correspondent color
         if (isImagingNode(value)) {
             int indexOfImagingType = getIndexOfImagingType(value);
             int lenght = GuiUtils.getImagingTypeColors().length;

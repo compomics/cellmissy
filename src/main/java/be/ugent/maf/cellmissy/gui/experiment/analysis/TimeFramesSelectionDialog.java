@@ -77,6 +77,7 @@ public class TimeFramesSelectionDialog extends javax.swing.JDialog {
         setTitle("Select time frames");
         setAlwaysOnTop(true);
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+        setResizable(false);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         timeFramesSelectionPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -92,7 +93,7 @@ public class TimeFramesSelectionDialog extends javax.swing.JDialog {
 
         infoTextPane.setEditable(false);
         infoTextPane.setBorder(null);
-        infoTextPane.setText("The cut off is defined as the time frame starting from which all replicates only have not null values, it is then determined by the shortest replicate. If you want to change this value, choose a time frame from the drop down list and see how this is reflected in the plot. If you want to reset the cut off value to the default one, click on the Reset button. You can also choose a starting time frame different from zero selecting a value from the other drop down list. ");
+        infoTextPane.setText("The cut off is defined as the time frame starting from which all replicates only have not null values, it is then determined by the shortest replicate. If you want to change this value, choose a cut off time frame from the drop down list and see how this is reflected in the plot. You can do the same for the first time frame. To reset the time interval to the default one, click on the Reset button.");
         infoTextPane.setFocusable(false);
         infoTextPane.setMinimumSize(new java.awt.Dimension(20, 20));
         infoTextPane.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -260,19 +261,14 @@ public class TimeFramesSelectionDialog extends javax.swing.JDialog {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TimeFramesSelectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TimeFramesSelectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TimeFramesSelectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(TimeFramesSelectionDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 TimeFramesSelectionDialog dialog = new TimeFramesSelectionDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {

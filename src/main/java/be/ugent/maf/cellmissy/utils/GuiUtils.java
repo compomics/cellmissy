@@ -20,6 +20,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  * Utility class for GUI
@@ -50,7 +54,6 @@ public class GuiUtils {
         return gridBagConstraints;
     }
 
-    // getters
     public static Color[] getAvailableColors() {
         return availableColors;
     }
@@ -147,26 +150,39 @@ public class GuiUtils {
     }
 
     /**
+     * Get a scaled icon starting from an icon. The rescaling is performed with
+     * the specified integer scale. This is done through a buffered image.
      *
      * @param icon
+     * @param scale
      * @return
      */
-    public static ImageIcon getScaledIcon(Icon icon) {
+    public static ImageIcon getScaledIcon(Icon icon, int scale) {
+        // get icon  size
         int iconWidth = icon.getIconWidth();
         int iconHeight = icon.getIconHeight();
-        int scale = 2;
-        BufferedImage bufferedImage = new BufferedImage(iconWidth / scale, iconHeight / scale, BufferedImage.TYPE_INT_ARGB);
+        // get the scaled sizes
+        int scaledIconWidth = iconWidth / scale;
+        int scaledIconHeight = iconHeight / scale;
+        // create the buffered image - 8-bit RGBA color components packed into integer pixels
+        BufferedImage bufferedImage = new BufferedImage(scaledIconWidth, scaledIconHeight, BufferedImage.TYPE_INT_ARGB);
+        // create graphics from the image and scale it 
         Graphics2D graphics2D = bufferedImage.createGraphics();
         setGraphics(graphics2D);
-        graphics2D.scale(0.5, 0.5);
+        // scale double
+        double scaleD = 1 / scale;
+        graphics2D.scale(scaleD, scaleD);
+        // draw the icon
         icon.paintIcon(null, graphics2D, 0, 0);
+        // dispose of the graphics
         graphics2D.dispose();
+        // create the actual image icon
         ImageIcon imageIcon = new ImageIcon(bufferedImage);
         return imageIcon;
     }
 
     /**
-     * set graphics: implementing rendering process
+     * set graphics: implementing rendering process for a Graphics2D object
      *
      * @param g2d
      */
@@ -175,5 +191,45 @@ public class GuiUtils {
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         BasicStroke stroke = new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
         g2d.setStroke(stroke);
+    }
+
+    /**
+     * Sets the preferred width of a column of a JTable specified by colIndex.
+     * The column will be just wide enough to show the column head and the
+     * widest cell in the column (the computation is done per row, then). Margin
+     * pixels are added to the left and right (resulting in an additional width
+     * of 2*margin pixels).
+     *
+     * @param table
+     * @param colIndex
+     * @param margin
+     */
+    public static void packColumn(JTable table, int colIndex, int margin) {
+        // get column model and then column
+        DefaultTableColumnModel columnModel = (DefaultTableColumnModel) table.getColumnModel();
+        TableColumn column = columnModel.getColumn(colIndex);
+        // initialize width to zero
+        int width = 0;
+        // get width of column header
+        TableCellRenderer renderer = column.getHeaderRenderer();
+        // if the header is null, just get the default one from the table
+        if (renderer == null) {
+            renderer = table.getTableHeader().getDefaultRenderer();
+        }
+        // get the component used to draw the cell -- for the header, row and coumn: zero
+        Component component = renderer.getTableCellRendererComponent(table, column.getHeaderValue(), false, false, 0, 0);
+        width = component.getPreferredSize().width;
+        // get maximum width of column data
+        // iterate through the rows
+        for (int r = 0; r < table.getRowCount(); r++) {
+            renderer = table.getCellRenderer(r, colIndex);
+            // get the component used to draw the cell -- for the current cell: row and coumn are index r and colIndex
+            component = renderer.getTableCellRendererComponent(table, table.getValueAt(r, colIndex), false, false, r, colIndex);
+            width = Math.max(width, component.getPreferredSize().width);
+        }
+        // add margin
+        width += 2 * margin;
+        // set the width
+        column.setPreferredWidth(width);
     }
 }

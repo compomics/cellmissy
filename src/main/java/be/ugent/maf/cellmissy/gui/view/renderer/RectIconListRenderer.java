@@ -13,7 +13,8 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
 /**
- * This is rendering a list of rectangular icons with number of replicates for each condition
+ * This is rendering a list of rectangular icons with number of replicates for
+ * each condition.
  *
  * @author Paola Masuzzo
  */
@@ -23,7 +24,8 @@ public class RectIconListRenderer extends DefaultListCellRenderer {
     private List<Integer> numberOfReplicates;
 
     /**
-     * Constructor
+     * Constructor, needs a list of plate conditions, together with number of
+     * replicates for each condition.
      *
      * @param plateConditionList
      * @param numberOfReplicates

@@ -8,6 +8,7 @@
     <Property name="modalityType" type="java.awt.Dialog$ModalityType" editor="org.netbeans.modules.form.editors.EnumEditor">
       <Value id="APPLICATION_MODAL"/>
     </Property>
+    <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -104,7 +105,7 @@
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="null"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="The cut off is defined as the time frame starting from which all replicates only have not null values, it is then determined by the shortest replicate. If you want to change this value, choose a time frame from the drop down list and see how this is reflected in the plot. If you want to reset the cut off value to the default one, click on the Reset button. You can also choose a starting time frame different from zero selecting a value from the other drop down list. "/>
+                    <Property name="text" type="java.lang.String" value="The cut off is defined as the time frame starting from which all replicates only have not null values, it is then determined by the shortest replicate. If you want to change this value, choose a cut off time frame from the drop down list and see how this is reflected in the plot. You can do the same for the first time frame. To reset the time interval to the default one, click on the Reset button."/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[20, 20]"/>

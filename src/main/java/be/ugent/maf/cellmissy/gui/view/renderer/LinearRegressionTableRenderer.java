@@ -12,6 +12,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
+ * Renderer for the Linear Regression Table
  *
  * @author Paola Masuzzo
  */
@@ -26,7 +27,7 @@ public class LinearRegressionTableRenderer extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-
+        // for the last two columns, format the value
         if (column == table.getColumnCount() - 1 | column == table.getColumnCount() - 2) {
             if (value != null) {
                 if (value instanceof Number) {
@@ -40,6 +41,7 @@ public class LinearRegressionTableRenderer extends DefaultTableCellRenderer {
         setValue(value);
         setOpaque(true);
 
+        // for the fist, and last two columns, set the background in selection mode with the condition index color
         if (column == 0 | column == table.getColumnCount() - 1 | column == table.getColumnCount() - 2) {
             if (isSelected) {
                 int lenght = GuiUtils.getAvailableColors().length;

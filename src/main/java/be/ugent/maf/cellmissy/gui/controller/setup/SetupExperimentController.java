@@ -23,12 +23,11 @@ import be.ugent.maf.cellmissy.gui.experiment.setup.SetupExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.SetupPanel;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
-import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsOverviewListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.awt.Cursor;
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -109,7 +108,7 @@ public class SetupExperimentController {
     private GridBagConstraints gridBagConstraints;
 
     /**
-     * initialize Controller
+     * Initialize Controller
      */
     public void init() {
         bindingGroup = new BindingGroup();
@@ -375,7 +374,7 @@ public class SetupExperimentController {
             }
 
         } catch (NumberFormatException e) {
-            messages.add("Please insert a valid Experiment Number");
+            messages.add("Please insert a valid Experiment Number!");
             experimentInfoPanel.getNumberTextField().requestFocusInWindow();
         }
         if (messages.isEmpty()) {
@@ -427,7 +426,7 @@ public class SetupExperimentController {
         experimentInfoPanel.getPurposeTextArea().setWrapStyleWord(true);
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon, 2);
         experimentInfoPanel.getInfoLabel1().setIcon(scaledIcon);
         experimentInfoPanel.getInfoLabel().setIcon(scaledIcon);
         //init projectJList
@@ -448,7 +447,8 @@ public class SetupExperimentController {
         setupExperimentPanel.getTopPanel().add(experimentInfoPanel, gridBagConstraints);
 
         //set cell renderer for experimentJList
-        experimentInfoPanel.getExperimentJList().setCellRenderer(new ExperimentsListRenderer(false));
+        ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new ExperimentsOverviewListRenderer(false);
+        experimentInfoPanel.getExperimentJList().setCellRenderer(experimentsOverviewListRenderer);
 
         //date cannot be modified manually
         experimentInfoPanel.getDateChooser().getDateEditor().setEnabled(false);

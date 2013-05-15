@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
+import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
@@ -122,6 +123,10 @@ public class LoadExperimentFromGenericInputController {
     // resetData everything
     public void resetData() {
         genericImagedPlateController.resetData();
+    }
+
+    public User getCurrentUser() {
+        return cellMissyController.getCurrentUser();
     }
 
     /**
@@ -366,6 +371,15 @@ public class LoadExperimentFromGenericInputController {
                             }
                         }
 
+                    } // what if the well was not imaged? data were not loaded for it...
+                } else if (wellGui.getWell().getWellHasImagingTypeCollection().isEmpty() && wellGui.getRectangle() != null) {
+                    for (Well well : plateCondition.getWellCollection()) {
+                        //check for coordinates
+                        if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
+                            //set collection of wellHasImagingType to the well of the plateCondition
+                            List<WellHasImagingType> list = new ArrayList<>();
+                            well.setWellHasImagingTypeCollection(list);
+                        }
                     }
                 }
             }

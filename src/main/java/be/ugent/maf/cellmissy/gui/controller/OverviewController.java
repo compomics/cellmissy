@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.gui.project.OverviewDialog;
-import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsOverviewListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -98,10 +98,11 @@ public class OverviewController {
         // customize dialog
         overviewDialog.setLocationRelativeTo(cellMissyController.getCellMissyFrame());
         // set cell renderer for experiments list
-        overviewDialog.getExperimentJList().setCellRenderer(new ExperimentsListRenderer(true));
+        ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new  ExperimentsOverviewListRenderer(true);
+        overviewDialog.getExperimentJList().setCellRenderer(experimentsOverviewListRenderer);
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon, 2);
         // set icon for info label
         overviewDialog.getInfoLabel().setIcon(scaledIcon);
         //show experiments for the project selected

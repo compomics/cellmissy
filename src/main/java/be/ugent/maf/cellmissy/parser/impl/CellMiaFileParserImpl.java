@@ -85,7 +85,6 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
 
                     if (currentTrack != null) {
                         trackList.add(currentTrack); //add the currentTrack to the track list
-
                     }
                     currentTrack = new Track();
                     currentTrack.setTrackNumber(Integer.parseInt(splitarray[0]));

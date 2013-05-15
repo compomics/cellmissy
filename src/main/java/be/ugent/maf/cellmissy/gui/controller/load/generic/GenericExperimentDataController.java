@@ -8,8 +8,11 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.Role;
+import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.experiment.load.generic.LoadFromGenericInputMetadataPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsLoadListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
 import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl.CycleTimeUnit;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
@@ -88,7 +91,7 @@ public class GenericExperimentDataController {
         loadFromGenericInputMetadataPanel.getProjectDescriptionTextArea().setLineWrap(true);
         loadFromGenericInputMetadataPanel.getProjectDescriptionTextArea().setWrapStyleWord(true);
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon, 2);
         loadFromGenericInputMetadataPanel.getInfoLabel().setIcon(scaledIcon);
         loadFromGenericInputMetadataPanel.getInfoLabel1().setIcon(scaledIcon);
 
@@ -198,6 +201,30 @@ public class GenericExperimentDataController {
      * @param selectedExperiment
      */
     private void onSelectedExperiment(Experiment selectedExperiment) {
+        // get current user from parent controller
+        User currentUser = loadExperimentFromGenericInputController.getCurrentUser();
+        // get user of selected experiment
+        // these two entities might not be the same
+        User expUser = selectedExperiment.getUser();
+        // if the user has a standard role, check if its the same as the user for the exp, and if so, proceed to analysis
+        if (currentUser.getRole().equals(Role.STANDARD_USER)) {
+            if (currentUser.equals(expUser)) {
+                proceedToLoading(selectedExperiment);
+            } else {
+                String message = "It seems like you have no rights to load data for this experiment..." + "\n" + "Ask to user (" + expUser.getFirstName() + " " + expUser.getLastName() + ") !";
+                loadExperimentFromGenericInputController.showMessage(message, "accessing other experiment data", JOptionPane.WARNING_MESSAGE);
+            }
+        } else {
+            // if current user has ADMIN role, can do whatever he wants to...
+            proceedToLoading(selectedExperiment);
+        }
+    }
+
+    /**
+     *
+     * @param selectedExperiment
+     */
+    private void proceedToLoading(Experiment selectedExperiment) {
         //set experiment of parent controller
         loadExperimentFromGenericInputController.setExperiment(selectedExperiment);
         // init a new list with plate conditions
@@ -219,6 +246,8 @@ public class GenericExperimentDataController {
      * @param selectedProject
      */
     private void onSelectedProject(Project selectedProject) {
+        ExperimentsListRenderer experimentsListRenderer = new ExperimentsListRenderer(loadExperimentFromGenericInputController.getCurrentUser());
+        loadFromGenericInputMetadataPanel.getExperimentJList().setCellRenderer(experimentsListRenderer);
         // show project description
         String projectDescription = selectedProject.getProjectDescription();
         loadFromGenericInputMetadataPanel.getProjectDescriptionTextArea().setText(projectDescription);
