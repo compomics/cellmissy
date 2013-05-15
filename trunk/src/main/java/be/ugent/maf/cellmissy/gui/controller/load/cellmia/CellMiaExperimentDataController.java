@@ -129,7 +129,7 @@ public class CellMiaExperimentDataController {
         loadFromCellMiaMetadataPanel.getIntervalTextField().setEnabled(false);
         loadFromCellMiaMetadataPanel.getTimeFramesTextField().setEnabled(false);
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon, 2);
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         loadFromCellMiaMetadataPanel.getInfoLabel().setIcon(scaledIcon);
         loadFromCellMiaMetadataPanel.getInfoLabel1().setIcon(scaledIcon);
 

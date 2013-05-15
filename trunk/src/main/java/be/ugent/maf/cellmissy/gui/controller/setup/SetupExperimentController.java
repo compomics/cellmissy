@@ -426,7 +426,7 @@ public class SetupExperimentController {
         experimentInfoPanel.getPurposeTextArea().setWrapStyleWord(true);
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon, 2);
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         experimentInfoPanel.getInfoLabel1().setIcon(scaledIcon);
         experimentInfoPanel.getInfoLabel().setIcon(scaledIcon);
         //init projectJList
