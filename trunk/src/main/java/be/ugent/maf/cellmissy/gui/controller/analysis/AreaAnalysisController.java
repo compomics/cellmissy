@@ -213,21 +213,15 @@ public class AreaAnalysisController {
         }
         columnNames[columnNames.length - 2] = "median";
         columnNames[columnNames.length - 1] = "MAD";
+        JTable slopesTable = linearRegressionPanel.getSlopesTable();
         // set model of table
-        linearRegressionPanel.getSlopesTable().setModel(new DefaultTableModel(data, columnNames));
+        slopesTable.setModel(new DefaultTableModel(data, columnNames));
         // set cell renderer
-        for (int columnIndex = 0; columnIndex < linearRegressionPanel.getSlopesTable().getColumnCount(); columnIndex++) {
-            linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new LinearRegressionTableRenderer(dataAnalysisController.getFormat()));
+        for (int columnIndex = 0; columnIndex < slopesTable.getColumnCount(); columnIndex++) {
+            slopesTable.getColumnModel().getColumn(columnIndex).setCellRenderer(new LinearRegressionTableRenderer(dataAnalysisController.getFormat()));
         }
-//        //set format renderer only for last two columns together with less width
-//        for (int columnIndex = columnNames.length - 2; columnIndex < linearRegressionPanel.getSlopesTable().getColumnCount(); columnIndex++) {
-//            linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(dataAnalysisController.getFormat()));
-//            linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setMaxWidth(50);
-//            linearRegressionPanel.getSlopesTable().getColumnModel().getColumn(columnIndex).setPreferredWidth(50);
-//        }
-        linearRegressionPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         // select by default all conditions: to show all bars in the velocity chart
-        linearRegressionPanel.getSlopesTable().setRowSelectionInterval(0, linearRegressionPanel.getSlopesTable().getRowCount() - 1);
+        slopesTable.setRowSelectionInterval(0, linearRegressionPanel.getSlopesTable().getRowCount() - 1);
     }
 
     /**
@@ -364,20 +358,20 @@ public class AreaAnalysisController {
         linearRegressionPanel = new LinearRegressionPanel();
         // control opaque property of table
         linearRegressionPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
+        JTable slopesTable = linearRegressionPanel.getSlopesTable();
+        slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
+        slopesTable.getTableHeader().setReorderingAllowed(false);
+        slopesTable.setFillsViewportHeight(true);
         // init chart panel
         velocityChartPanel = new ChartPanel(null);
         velocityChartPanel.setOpaque(false);
         // init statistics panel
         statisticsDialog = new StatisticsDialog(dataAnalysisController.getCellMissyFrame(), true);
-        // init panel for statistics
-        statisticsDialog.getSummaryTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
-        statisticsDialog.getSummaryScrollPane().getViewport().setBackground(Color.white);
-        statisticsDialog.getpValuesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
-        statisticsDialog.getpValuesScrollPane().getViewport().setBackground(Color.white);
-        SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
-        StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
-        StyledDocument styledDocument = statisticsDialog.getInfoTextPane().getStyledDocument();
-        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
+        // customize tables
+        statisticsDialog.getStatisticalSummaryTable().getTableHeader().setReorderingAllowed(false);
+        statisticsDialog.getpValuesTable().getTableHeader().setReorderingAllowed(false);
+        statisticsDialog.getStatisticalSummaryTable().setFillsViewportHeight(true);
+        statisticsDialog.getpValuesTable().setFillsViewportHeight(true);
         // init binding
         groupsBindingList = ObservableCollections.observableList(new ArrayList<AnalysisGroup>());
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, groupsBindingList, linearRegressionPanel.getGroupsList());
@@ -524,17 +518,18 @@ public class AreaAnalysisController {
                     Double selectedSignLevel = (Double) statisticsDialog.getSignificanceLevelComboBox().getSelectedItem();
                     AnalysisGroup selectedGroup = groupsBindingList.get(linearRegressionPanel.getGroupsList().getSelectedIndex());
                     boolean isAdjusted;
-                    if (selectedGroup.getCorrectionMethod() == CorrectionMethod.NONE) {
+                    if (selectedGroup.getCorrectionMethod().equals(CorrectionMethod.NONE)) {
                         isAdjusted = false;
                     } else {
                         isAdjusted = true;
                     }
                     statisticsAnalyzer.detectSignificance(selectedGroup, selectedSignLevel, isAdjusted);
                     boolean[][] significances = selectedGroup.getSignificances();
-                    for (int i = 1; i < statisticsDialog.getpValuesTable().getColumnCount(); i++) {
-                        statisticsDialog.getpValuesTable().getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(new DecimalFormat("#.####"), significances));
+                    JTable pValuesTable = statisticsDialog.getpValuesTable();
+                    for (int i = 1; i < pValuesTable.getColumnCount(); i++) {
+                        pValuesTable.getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(new DecimalFormat("#.####"), significances));
                     }
-                    statisticsDialog.getpValuesTable().repaint();
+                    pValuesTable.repaint();
                 }
             }
         });
@@ -581,7 +576,7 @@ public class AreaAnalysisController {
                     // set correction method (summary statistics, p-values and adjusted p-values are already set)
                     selectedGroup.setCorrectionMethod((CorrectionMethod) statisticsDialog.getCorrectionMethodsComboBox().getSelectedItem());
                     //show message to the user
-                   JOptionPane.showMessageDialog(statisticsDialog, "Analysis was saved!", "analysis saved", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(statisticsDialog, "Analysis was saved!", "analysis saved", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -631,11 +626,13 @@ public class AreaAnalysisController {
     private void showSummary(AnalysisGroup analysisGroup) {
         statisticsDialog.getGroupNameLabel().setText(analysisGroup.getGroupName());
         // set model and cell renderer for statistics summary table
-        JTable summaryTable = statisticsDialog.getSummaryTable();
-        summaryTable.setModel(new StatisticalSummaryTableModel(analysisGroup, dataAnalysisController.getPlateConditionList()));
-        for (int i = 1; i < summaryTable.getColumnCount(); i++) {
-            summaryTable.getColumnModel().getColumn(i).setCellRenderer(new FormatRenderer(new DecimalFormat("#.####")));
+        StatisticalSummaryTableModel statisticalSummaryTableModel = new StatisticalSummaryTableModel(analysisGroup, dataAnalysisController.getPlateConditionList());
+        JTable statisticalSummaryTable = statisticsDialog.getStatisticalSummaryTable();
+        statisticalSummaryTable.setModel(statisticalSummaryTableModel);
+        for (int i = 1; i < statisticalSummaryTable.getColumnCount(); i++) {
+            statisticalSummaryTable.getColumnModel().getColumn(i).setCellRenderer(new FormatRenderer(new DecimalFormat("#.####")));
         }
+        statisticalSummaryTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
     }
 
     /**
@@ -644,9 +641,9 @@ public class AreaAnalysisController {
      * @param analysisGroup
      */
     private void showPValues(AnalysisGroup analysisGroup, boolean isAdjusted) {
-        // set model and cell renderer for p-values table
+        PValuesTableModel pValuesTableModel = new PValuesTableModel(analysisGroup, dataAnalysisController.getPlateConditionList(), isAdjusted);
         JTable pValuesTable = statisticsDialog.getpValuesTable();
-        pValuesTable.setModel(new PValuesTableModel(analysisGroup, dataAnalysisController.getPlateConditionList(), isAdjusted));
+        pValuesTable.setModel(pValuesTableModel);
         Double selectedSignLevel = (Double) statisticsDialog.getSignificanceLevelComboBox().getSelectedItem();
         // detect significances with selected alpha level
         statisticsAnalyzer.detectSignificance(analysisGroup, selectedSignLevel, isAdjusted);
@@ -654,6 +651,7 @@ public class AreaAnalysisController {
         for (int i = 1; i < pValuesTable.getColumnCount(); i++) {
             pValuesTable.getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(new DecimalFormat("#.####"), significances));
         }
+        pValuesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
     }
 
     /**

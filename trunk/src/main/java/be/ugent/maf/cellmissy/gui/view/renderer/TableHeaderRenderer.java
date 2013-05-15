@@ -4,10 +4,10 @@
  */
 package be.ugent.maf.cellmissy.gui.view.renderer;
 
+import java.awt.Color;
 import java.awt.Component;
 import javax.swing.BorderFactory;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
@@ -25,6 +25,7 @@ public class TableHeaderRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 
         super.getTableCellRendererComponent(table, value, false, false, row, column);
+        setBackground(new Color(176, 196, 222));
         setBorder(BorderFactory.createEmptyBorder());
 
         return this;

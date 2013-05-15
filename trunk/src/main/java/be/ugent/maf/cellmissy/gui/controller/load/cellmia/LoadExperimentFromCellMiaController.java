@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.controller.load.cellmia;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
@@ -118,6 +119,10 @@ public class LoadExperimentFromCellMiaController {
 
     public ImagedPlatePanel getImagedPlatePanel() {
         return cellMiaImagedPlateController.getImagedPlatePanel();
+    }
+
+    public User getCurrentUser() {
+        return cellMissyController.getCurrentUser();
     }
 
     /**

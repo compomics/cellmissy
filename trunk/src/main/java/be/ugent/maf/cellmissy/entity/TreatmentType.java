@@ -94,6 +94,7 @@ public class TreatmentType implements Serializable {
         this.treatmentCollection = treatmentCollection;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -111,6 +112,7 @@ public class TreatmentType implements Serializable {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int hash = 3;
         hash = 53 * hash + Objects.hashCode(this.treatmentTypeid);
@@ -118,6 +120,7 @@ public class TreatmentType implements Serializable {
         return hash;
     }
 
+    @Override
     public String toString() {
         return name;
     }

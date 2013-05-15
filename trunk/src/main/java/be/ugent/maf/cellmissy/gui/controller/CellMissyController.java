@@ -108,7 +108,7 @@ public class CellMissyController {
 
         //create main frame and set its title
         cellMissyFrame = new CellMissyFrame();
-        cellMissyFrame.setTitle("CellMissy");
+        cellMissyFrame.setTitle("CellMissy - Cell Migration Invasion Storage System");
         // at starter, show main panel with logo
         getCardLayout().first(cellMissyFrame.getBackgroundPanel());
         // init booleans to true
@@ -234,7 +234,6 @@ public class CellMissyController {
      */
     public void disableAdminSection() {
         cellMissyFrame.getUserMenuItem().setEnabled(false);
-        cellMissyFrame.getNewExperimentMenuItem().setEnabled(false);
         // disable actions on experiments for standard users
         overviewController.disableActionsOnExperiments();
     }
@@ -302,7 +301,7 @@ public class CellMissyController {
         newProjectDialog.setLocationRelativeTo(cellMissyFrame);
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon, 2);
         newProjectDialog.getInfoLabel().setIcon(scaledIcon);
 
         // create a new project

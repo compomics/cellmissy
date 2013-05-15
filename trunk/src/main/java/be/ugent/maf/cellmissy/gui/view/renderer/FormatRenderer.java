@@ -12,10 +12,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * Cell Renderer for 2 decimals rounding
+ *
  * @author Paola Masuzzo
  */
 public class FormatRenderer extends DefaultTableCellRenderer {
-    //Formatter
+
     private Format formatter;
 
     public FormatRenderer(Format formatter) {

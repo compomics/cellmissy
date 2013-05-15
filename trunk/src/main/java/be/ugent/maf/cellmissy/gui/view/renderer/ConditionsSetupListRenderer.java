@@ -12,7 +12,9 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
 /**
- * This renderer is only used in the setup step: Conditions still need to be designed, so only condition indexes are shown.
+ * This renderer is only used in the setup step: Conditions still need to be
+ * designed, so only condition indexes are shown together with rectangular icons
+ * showing colours.
  *
  * @author Paola Masuzzo
  */

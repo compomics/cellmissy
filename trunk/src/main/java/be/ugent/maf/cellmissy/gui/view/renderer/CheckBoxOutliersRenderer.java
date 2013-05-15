@@ -10,14 +10,17 @@ import javax.swing.JTable;
 
 /**
  * CellRenderer for CheckBox
+ *
  * @author Paola Masuzzo
  */
 public class CheckBoxOutliersRenderer extends OutliersRenderer {
 
     /**
-     * Constructor
+     * Constructor, takes a 2D array of boolean (TRUE means point is an outlier)
+     * + a formatter
+     *
      * @param outliers
-     * @param formatter 
+     * @param formatter
      */
     public CheckBoxOutliersRenderer(boolean[][] outliers, Format formatter) {
         super(outliers, formatter);
@@ -25,12 +28,12 @@ public class CheckBoxOutliersRenderer extends OutliersRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-
         Component result = null;
-        // If we are at last row return a CheckBoxCellRenderer
+        // If we are at last row return a CheckBoxCellRenderer, that extends a JCheckbox 
         if (row == table.getRowCount() - 1) {
             result = new CheckBoxCellRenderer((boolean) value);
         } else {
+            // else, call the super
             result = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }
         return result;

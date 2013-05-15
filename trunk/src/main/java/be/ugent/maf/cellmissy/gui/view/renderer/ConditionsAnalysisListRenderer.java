@@ -13,7 +13,8 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
 /**
- * This renderer is used in the analysis step Conditions were already set up; we click on a condition and fetch data to analyze.
+ * This renderer is used in the analysis step Conditions were already set up; we
+ * click on a condition and fetch data to analyse.
  *
  * @author Paola Masuzzo
  */
@@ -23,13 +24,14 @@ public class ConditionsAnalysisListRenderer extends DefaultListCellRenderer {
     private List<PlateCondition> plateConditionList;
 
     /**
-     * Constructor
+     * Constructor, takes the list of plate conditions
      *
      * @param plateConditionList
      */
     public ConditionsAnalysisListRenderer(List<PlateCondition> plateConditionList) {
         this.plateConditionList = plateConditionList;
         setOpaque(true);
+        // set the gap between the icon and the text on the list
         setIconTextGap(10);
     }
 
@@ -49,6 +51,7 @@ public class ConditionsAnalysisListRenderer extends DefaultListCellRenderer {
         int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
         int lenght = GuiUtils.getAvailableColors().length;
         int indexOfColor = conditionIndex % lenght;
+        // set a new rectangular icon
         setIcon(new RectIcon(GuiUtils.getAvailableColors()[indexOfColor]));
         return this;
     }

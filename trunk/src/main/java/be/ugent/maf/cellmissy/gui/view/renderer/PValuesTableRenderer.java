@@ -13,6 +13,8 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
+ * Renderer for the table containing the p-values. If a p-value is under the
+ * significance level, the value is highlighted in green in the table.
  *
  * @author Paola Masuzzo
  */
@@ -21,13 +23,21 @@ public class PValuesTableRenderer extends DefaultTableCellRenderer {
     private Format formatter;
     private boolean[][] significances;
 
+    /**
+     * Constructor, takes a formatter, + a boolean containing the significances:
+     * if TRUE, the value is under the level ad has to be shown in green.
+     *
+     * @param formatter
+     * @param significances
+     */
     public PValuesTableRenderer(Format formatter, boolean[][] significances) {
         this.formatter = formatter;
         this.significances = significances;
     }
 
     /**
-     * Overriding this method, background of table is set to Green if p-value is less than alpha
+     * Overriding this method, background of table is set to Green if p-value is
+     * less than alpha
      */
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {

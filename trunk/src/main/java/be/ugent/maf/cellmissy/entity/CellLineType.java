@@ -110,6 +110,7 @@ public class CellLineType implements Serializable {
         return hash;
     }
 
+    @Override
     public String toString() {
         return name;
     }
