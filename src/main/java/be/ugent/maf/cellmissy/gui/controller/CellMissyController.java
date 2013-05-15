@@ -301,7 +301,7 @@ public class CellMissyController {
         newProjectDialog.setLocationRelativeTo(cellMissyFrame);
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon, 2);
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         newProjectDialog.getInfoLabel().setIcon(scaledIcon);
 
         // create a new project

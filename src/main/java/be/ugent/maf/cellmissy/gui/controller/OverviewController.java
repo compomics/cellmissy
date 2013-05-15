@@ -102,7 +102,7 @@ public class OverviewController {
         overviewDialog.getExperimentJList().setCellRenderer(experimentsOverviewListRenderer);
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon, 2);
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         // set icon for info label
         overviewDialog.getInfoLabel().setIcon(scaledIcon);
         //show experiments for the project selected

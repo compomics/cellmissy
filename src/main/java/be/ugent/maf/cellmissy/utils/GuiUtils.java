@@ -157,11 +157,12 @@ public class GuiUtils {
      * @param scale
      * @return
      */
-    public static ImageIcon getScaledIcon(Icon icon, int scale) {
+    public static ImageIcon getScaledIcon(Icon icon) {
         // get icon  size
         int iconWidth = icon.getIconWidth();
         int iconHeight = icon.getIconHeight();
         // get the scaled sizes
+        int scale = 2;
         int scaledIconWidth = iconWidth / scale;
         int scaledIconHeight = iconHeight / scale;
         // create the buffered image - 8-bit RGBA color components packed into integer pixels
@@ -169,9 +170,7 @@ public class GuiUtils {
         // create graphics from the image and scale it 
         Graphics2D graphics2D = bufferedImage.createGraphics();
         setGraphics(graphics2D);
-        // scale double
-        double scaleD = 1 / scale;
-        graphics2D.scale(scaleD, scaleD);
+        graphics2D.scale(0.5, 0.5);
         // draw the icon
         icon.paintIcon(null, graphics2D, 0, 0);
         // dispose of the graphics
