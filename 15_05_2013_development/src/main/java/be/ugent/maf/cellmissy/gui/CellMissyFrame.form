@@ -63,7 +63,7 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/dataLoadingIcon.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Load Motility Data..."/>
+                <Property name="text" type="java.lang.String" value="Load Migration Data..."/>
                 <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
               <SubComponents>
@@ -87,16 +87,26 @@
             </Menu>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="dataAnalysisMenuItem">
+            <Menu class="javax.swing.JMenu" name="jMenu1">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/dataAnalysisIcon.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Data Analysis"/>
-                <Property name="iconTextGap" type="int" value="2"/>
-                <Property name="inheritsPopupMenu" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Data Analysis..."/>
               </Properties>
-            </MenuItem>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="areaAnalysisMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="area analysis"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="singleCellAnalysisMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="single cell analysis"/>
+                  </Properties>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="miscMenu">

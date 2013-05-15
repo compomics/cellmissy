@@ -2,16 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.experiment.analysis;
+package be.ugent.maf.cellmissy.gui.experiment.analysis.area;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /**
  *
  * @author paola
  */
-public class TransformedAreaPanel extends javax.swing.JPanel {
+public class RawAreaPanel extends javax.swing.JPanel {
 
     public JCheckBox getPlotLinesCheckBox() {
         return plotLinesCheckBox;
@@ -25,10 +26,14 @@ public class TransformedAreaPanel extends javax.swing.JPanel {
         return replicatesAreaChartParentPanel;
     }
 
+    public JTextField getProcessedTimeFramesTextField() {
+        return processedTimeFramesTextField;
+    }
+
     /**
-     * Creates new form TransformedAreaPanel
+     * Creates new form RawAreaPanel
      */
-    public TransformedAreaPanel() {
+    public RawAreaPanel() {
         initComponents();
     }
 
@@ -45,6 +50,8 @@ public class TransformedAreaPanel extends javax.swing.JPanel {
         leftPanel = new javax.swing.JPanel();
         plotPointsCheckBox = new javax.swing.JCheckBox();
         plotLinesCheckBox = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
+        processedTimeFramesTextField = new javax.swing.JTextField();
         replicatesAreaChartParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -60,24 +67,40 @@ public class TransformedAreaPanel extends javax.swing.JPanel {
         plotLinesCheckBox.setText("plot lines");
         plotLinesCheckBox.setOpaque(false);
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel1.setText("time frames");
+
+        processedTimeFramesTextField.setEditable(false);
+        processedTimeFramesTextField.setBorder(null);
+        processedTimeFramesTextField.setFocusable(false);
+        processedTimeFramesTextField.setOpaque(false);
+
         javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
         leftPanel.setLayout(leftPanelLayout);
         leftPanelLayout.setHorizontalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, leftPanelLayout.createSequentialGroup()
-                .addContainerGap(11, Short.MAX_VALUE)
-                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(plotPointsCheckBox)
-                    .addComponent(plotLinesCheckBox))
+            .addGroup(leftPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(plotLinesCheckBox, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(plotPointsCheckBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(processedTimeFramesTextField, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
 
         leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotLinesCheckBox, plotPointsCheckBox});
 
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, processedTimeFramesTextField});
+
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, leftPanelLayout.createSequentialGroup()
-                .addContainerGap(116, Short.MAX_VALUE)
+                .addContainerGap(20, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(processedTimeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(plotPointsCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(plotLinesCheckBox)
@@ -107,9 +130,11 @@ public class TransformedAreaPanel extends javax.swing.JPanel {
         add(replicatesAreaChartParentPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JCheckBox plotLinesCheckBox;
     private javax.swing.JCheckBox plotPointsCheckBox;
+    private javax.swing.JTextField processedTimeFramesTextField;
     private javax.swing.JPanel replicatesAreaChartParentPanel;
     // End of variables declaration//GEN-END:variables
 }

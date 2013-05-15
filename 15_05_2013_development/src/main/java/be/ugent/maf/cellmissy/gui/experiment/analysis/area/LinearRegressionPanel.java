@@ -8,7 +8,7 @@
  *
  * Created on Dec 4, 2012, 2:10:47 PM
  */
-package be.ugent.maf.cellmissy.gui.experiment.analysis;
+package be.ugent.maf.cellmissy.gui.experiment.analysis.area;
 
 import javax.swing.JButton;
 import javax.swing.JList;

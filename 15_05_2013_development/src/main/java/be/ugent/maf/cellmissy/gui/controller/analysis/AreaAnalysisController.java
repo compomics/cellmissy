@@ -16,7 +16,7 @@ import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.LinearRegressionPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.area.LinearRegressionPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.StatisticsDialog;
 import be.ugent.maf.cellmissy.gui.view.table.model.PValuesTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.StatisticalSummaryTableModel;
@@ -151,7 +151,7 @@ public class AreaAnalysisController {
     }
 
     public Algorithm getSelectedALgorithm() {
-        return dataAnalysisController.getSelectedALgorithm();
+        return dataAnalysisController.getSelectedAlgorithm();
     }
 
     public ImagingType getSelectedImagingType() {

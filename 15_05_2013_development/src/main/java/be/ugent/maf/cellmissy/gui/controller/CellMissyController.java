@@ -273,7 +273,7 @@ public class CellMissyController {
         // import data from generic input
         cellMissyFrame.getGenericInputMenuItem().addActionListener(itemActionListener);
         // data analysis
-        cellMissyFrame.getDataAnalysisMenuItem().addActionListener(itemActionListener);
+        cellMissyFrame.getAreaAnalysisMenuItem().addActionListener(itemActionListener);
         // exit the application
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override
@@ -355,7 +355,7 @@ public class CellMissyController {
                 }
                 getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getSetupExperimentParentPanel().getName());
                 firstSetup = false;
-            } else if (menuItemText.equalsIgnoreCase("data analysis") && switchCard(menuItemText)) {
+            } else if (menuItemText.equalsIgnoreCase("area analysis") && switchCard(menuItemText)) {
                 if (!firstDataAnalysis) {
                     dataAnalysisController.resetAfterCardSwitch();
                 }
