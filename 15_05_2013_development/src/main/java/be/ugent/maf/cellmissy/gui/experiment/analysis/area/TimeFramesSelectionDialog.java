@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.experiment.analysis;
+package be.ugent.maf.cellmissy.gui.experiment.analysis.area;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;

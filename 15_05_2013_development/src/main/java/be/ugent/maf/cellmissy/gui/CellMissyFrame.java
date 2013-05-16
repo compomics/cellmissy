@@ -80,8 +80,12 @@ public class CellMissyFrame extends javax.swing.JFrame {
         return singleCellAnalysisMenuItem;
     }
 
-    public JPanel getAnalysisExperimentParentPanel() {
-        return analysisExperimentParentPanel;
+    public JPanel getAreaAnalysisParentPanel() {
+        return areaAnalysisParentPanel;
+    }
+
+    public JPanel getSingleCellAnalysisParentPanel() {
+        return singleCellAnalysisParentPanel;
     }
 
     public JPanel getLoadFromCellMiaParentPanel() {
@@ -118,7 +122,8 @@ public class CellMissyFrame extends javax.swing.JFrame {
         setupExperimentParentPanel = new javax.swing.JPanel();
         loadFromCellMiaParentPanel = new javax.swing.JPanel();
         loadFromGenericInputParentPanel = new javax.swing.JPanel();
-        analysisExperimentParentPanel = new javax.swing.JPanel();
+        areaAnalysisParentPanel = new javax.swing.JPanel();
+        singleCellAnalysisParentPanel = new javax.swing.JPanel();
         cellMissyMenuBar = new javax.swing.JMenuBar();
         projectMenu = new javax.swing.JMenu();
         newProjectMenuItem = new javax.swing.JMenuItem();
@@ -238,12 +243,19 @@ public class CellMissyFrame extends javax.swing.JFrame {
         loadFromGenericInputParentPanel.getAccessibleContext().setAccessibleName("loadFromGenericInputParentPanel");
         loadFromGenericInputParentPanel.getAccessibleContext().setAccessibleDescription("");
 
-        analysisExperimentParentPanel.setBackground(new java.awt.Color(255, 255, 255));
-        analysisExperimentParentPanel.setName("analysisExperimentParentPanel"); // NOI18N
-        analysisExperimentParentPanel.setLayout(new java.awt.GridBagLayout());
-        backgroundPanel.add(analysisExperimentParentPanel, "analysisExperimentParentPanel");
-        analysisExperimentParentPanel.getAccessibleContext().setAccessibleName("analysisExperimentParentPanel");
-        analysisExperimentParentPanel.getAccessibleContext().setAccessibleDescription("");
+        areaAnalysisParentPanel.setBackground(new java.awt.Color(255, 255, 255));
+        areaAnalysisParentPanel.setName("areaAnalysisParentPanel"); // NOI18N
+        areaAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
+        backgroundPanel.add(areaAnalysisParentPanel, "areaAnalysisParentPanel");
+        areaAnalysisParentPanel.getAccessibleContext().setAccessibleName("areaAnalysisParentPanel");
+        areaAnalysisParentPanel.getAccessibleContext().setAccessibleDescription("");
+
+        singleCellAnalysisParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        singleCellAnalysisParentPanel.setName("singleCellAnalysisParentPanel"); // NOI18N
+        singleCellAnalysisParentPanel.setOpaque(false);
+        singleCellAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
+        backgroundPanel.add(singleCellAnalysisParentPanel, "singleCellAnalysisParentPanel");
+        singleCellAnalysisParentPanel.getAccessibleContext().setAccessibleName("singleCellAnalysisParentPanel");
 
         cellMissyMenuBar.setBackground(java.awt.Color.white);
         cellMissyMenuBar.setAlignmentY(0.5F);
@@ -365,8 +377,8 @@ public class CellMissyFrame extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel analysisExperimentParentPanel;
     private javax.swing.JMenuItem areaAnalysisMenuItem;
+    private javax.swing.JPanel areaAnalysisParentPanel;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JMenuItem cellMiaMenuItem;
     private javax.swing.JMenuBar cellMissyMenuBar;
@@ -393,6 +405,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JMenu projectMenu;
     private javax.swing.JPanel setupExperimentParentPanel;
     private javax.swing.JMenuItem singleCellAnalysisMenuItem;
+    private javax.swing.JPanel singleCellAnalysisParentPanel;
     private javax.swing.JMenuItem userMenuItem;
     // End of variables declaration//GEN-END:variables
 }

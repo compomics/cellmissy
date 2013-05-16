@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.experiment.analysis;
+package be.ugent.maf.cellmissy.gui.experiment.analysis.area;
 
 import javax.swing.JTable;
 
@@ -44,7 +44,6 @@ public class DistanceMatrixDialog extends javax.swing.JDialog {
         setTitle("Select replicates");
         setAlwaysOnTop(true);
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
-        setPreferredSize(new java.awt.Dimension(900, 400));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         distanceMatrixScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Distance Matrix"));

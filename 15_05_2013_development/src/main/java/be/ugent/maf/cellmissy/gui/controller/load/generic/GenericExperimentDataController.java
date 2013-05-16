@@ -91,7 +91,7 @@ public class GenericExperimentDataController {
         loadFromGenericInputMetadataPanel.getProjectDescriptionTextArea().setLineWrap(true);
         loadFromGenericInputMetadataPanel.getProjectDescriptionTextArea().setWrapStyleWord(true);
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon, 2);
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         loadFromGenericInputMetadataPanel.getInfoLabel().setIcon(scaledIcon);
         loadFromGenericInputMetadataPanel.getInfoLabel1().setIcon(scaledIcon);
 

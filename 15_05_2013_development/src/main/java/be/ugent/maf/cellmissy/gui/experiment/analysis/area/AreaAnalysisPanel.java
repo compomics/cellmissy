@@ -161,7 +161,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         timeStepsTableScrollPane = new javax.swing.JScrollPane();
         timeStepsTable = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
-        preprocessingPanel = new javax.swing.JPanel();
+        preProcessingPanel = new javax.swing.JPanel();
         radioButtonsPanel = new javax.swing.JPanel();
         normalizeAreaButton = new javax.swing.JRadioButton();
         deltaAreaButton = new javax.swing.JRadioButton();
@@ -307,11 +307,11 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         bottomPanel.add(resultsImporterPanel, "resultsImporterPanel");
         resultsImporterPanel.getAccessibleContext().setAccessibleName("");
 
-        preprocessingPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        preprocessingPanel.setName("preprocessingPanel"); // NOI18N
-        preprocessingPanel.setOpaque(false);
-        preprocessingPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        preprocessingPanel.setLayout(new java.awt.GridBagLayout());
+        preProcessingPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        preProcessingPanel.setName("preProcessingPanel"); // NOI18N
+        preProcessingPanel.setOpaque(false);
+        preProcessingPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        preProcessingPanel.setLayout(new java.awt.GridBagLayout());
 
         radioButtonsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         radioButtonsPanel.setOpaque(false);
@@ -378,7 +378,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.09;
-        preprocessingPanel.add(radioButtonsPanel, gridBagConstraints);
+        preProcessingPanel.add(radioButtonsPanel, gridBagConstraints);
 
         dataTablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
         dataTablePanel.setOpaque(false);
@@ -392,7 +392,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.3;
-        preprocessingPanel.add(dataTablePanel, gridBagConstraints);
+        preProcessingPanel.add(dataTablePanel, gridBagConstraints);
 
         graphicsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         graphicsParentPanel.setOpaque(false);
@@ -406,9 +406,9 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 0.3;
         gridBagConstraints.weighty = 0.61;
         gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
-        preprocessingPanel.add(graphicsParentPanel, gridBagConstraints);
+        preProcessingPanel.add(graphicsParentPanel, gridBagConstraints);
 
-        bottomPanel.add(preprocessingPanel, "preprocessingPanel");
+        bottomPanel.add(preProcessingPanel, "preprocessingPanel");
 
         globalViewPanel.setName("globalViewPanel"); // NOI18N
         globalViewPanel.setOpaque(false);
@@ -619,7 +619,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox plotPointsCheckBox;
     private javax.swing.JButton plotSelectedConditionsButton;
     private javax.swing.JLabel preProcessingLabel;
-    private javax.swing.JPanel preprocessingPanel;
+    private javax.swing.JPanel preProcessingPanel;
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JPanel resultsImporterPanel;
     private javax.swing.JLabel resultsImportingLabel;

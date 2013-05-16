@@ -35,8 +35,8 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         return analysisPlateParentPanel;
     }
 
-    public JPanel getAreaAnalysisParentPanel() {
-        return areaAnalysisParentPanel;
+    public JPanel getAnalysisParentPanel() {
+        return analysisParentPanel;
     }
 
     public JTextField getDatasetTextField() {
@@ -67,7 +67,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
-        areaAnalysisParentPanel = new javax.swing.JPanel();
+        analysisParentPanel = new javax.swing.JPanel();
         leftPanel = new javax.swing.JPanel();
         experimentDataPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -87,11 +87,11 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
 
-        areaAnalysisParentPanel.setEnabled(false);
-        areaAnalysisParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        areaAnalysisParentPanel.setOpaque(false);
-        areaAnalysisParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        areaAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
+        analysisParentPanel.setEnabled(false);
+        analysisParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        analysisParentPanel.setOpaque(false);
+        analysisParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        analysisParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -99,7 +99,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.7;
         gridBagConstraints.weighty = 0.97;
-        add(areaAnalysisParentPanel, gridBagConstraints);
+        add(analysisParentPanel, gridBagConstraints);
 
         leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         leftPanel.setOpaque(false);
@@ -263,8 +263,8 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         add(leftPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel analysisParentPanel;
     private javax.swing.JPanel analysisPlateParentPanel;
-    private javax.swing.JPanel areaAnalysisParentPanel;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JList conditionsList;

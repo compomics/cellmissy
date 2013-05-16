@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller.analysis;
+package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
 import be.ugent.maf.cellmissy.analysis.AreaUnitOfMeasurement;
 import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
@@ -79,16 +79,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Data Analysis Controller Parent Controller: CellMissy Controller (main
- * controller) Child Controllers: Bulk Cell Analysis Controller - Single Cell
- * Analysis Controller
+ * Main controller for area analysis
  *
  * @author Paola Masuzzo
  */
-@Controller("dataAnalysisController")
-public class DataAnalysisController {
+@Controller("areaMainController")
+public class AreaMainController {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DataAnalysisController.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaMainController.class);
     //model
     private Experiment experiment;
     private AreaAnalysisHolder areaAnalysisHolder;
@@ -130,13 +128,13 @@ public class DataAnalysisController {
      * Initialize controller
      */
     public void init() {
-        //init view
+        //init views
         analysisExperimentPanel = new AnalysisExperimentPanel();
         overviewExperimentPanel = new OverviewExperimentPanel();
         metadataAreaPanel = new MetadataAreaPanel();
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon, 2);
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         overviewExperimentPanel.getInfoLabel().setIcon(scaledIcon);
         metadataAreaPanel.getInfoLabel1().setIcon(scaledIcon);
         dataAnalysisPanel = new DataAnalysisPanel();
@@ -148,10 +146,10 @@ public class DataAnalysisController {
         //init child controllers
         areaPreProcessingController.init();
         areaAnalysisController.init();
-        // init other view
+        // init other views
         initPlatePanel();
         initMainPanel();
-        initMetadataAnalysisPanel();
+        initMetadataAreaPanel();
         initDataAnalysisPanel();
     }
 
@@ -367,7 +365,7 @@ public class DataAnalysisController {
      * private methods and classes
      */
     /**
-     * initialize plate panel view
+     * Initialize plate panel view
      */
     private void initPlatePanel() {
         //show as default a 96 plate format
@@ -432,7 +430,7 @@ public class DataAnalysisController {
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
                 showInfoMessage("Area values are shown for each well, together with (column, row) coordinates");
                 break;
-            case "preprocessingPanel":
+            case "preProcessingPanel":
                 boolean proceedToAnalysis = areaPreProcessingController.isProceedToAnalysis();
                 analysisExperimentPanel.getNextButton().setEnabled(proceedToAnalysis);
                 // cell covered area radio button is not visible if area is already a cell covered one
@@ -542,7 +540,7 @@ public class DataAnalysisController {
             }
         });
 
-        cellMissyController.getCellMissyFrame().getAnalysisExperimentParentPanel().add(analysisExperimentPanel, gridBagConstraints);
+        cellMissyController.getCellMissyFrame().getAreaAnalysisParentPanel().add(analysisExperimentPanel, gridBagConstraints);
     }
 
     /**
@@ -596,9 +594,9 @@ public class DataAnalysisController {
     }
 
     /**
-     * Initialize metadata analysis panel
+     * Initialize metadata area panel
      */
-    private void initMetadataAnalysisPanel() {
+    private void initMetadataAreaPanel() {
         overviewExperimentPanel.getPurposeTextArea().setLineWrap(true);
         overviewExperimentPanel.getPurposeTextArea().setWrapStyleWord(true);
         overviewExperimentPanel.getProjectDescriptionTextArea().setLineWrap(true);
@@ -904,7 +902,7 @@ public class DataAnalysisController {
     /**
      * Swing Worker to fetch one condition time steps at once: The user selects
      * a condition, a waiting cursor is shown on the screen and time steps
-     * result are fetched from DB. List of time steps is updated. In addition,
+     * results are fetched from DB. List of time steps is updated. In addition,
      * map of child controller is updated: computations are performed here and
      * then shown in the done method of the class.
      */
@@ -941,7 +939,7 @@ public class DataAnalysisController {
                     areaPreProcessingController.showTimeStepsInTable();
                     onCardSwitch();
                     //check which button is selected for analysis:
-                    if (areaPreProcessingController.getAreaAnalysisPanel().getNormalizeAreaButton().isSelected()) {
+                    if (areaPreProcessingController.getAreaAnalysisPanel().getNormalizeAreaButton().isSelected())   {
                         //for current selected condition show normalized area values together with time frames
                         areaPreProcessingController.showNormalizedAreaInTable(currentCondition);
                         // show raw data plot (all replicates)

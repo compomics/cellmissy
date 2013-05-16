@@ -7,9 +7,10 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.gui.controller.setup.SetupExperimentController;
 import be.ugent.maf.cellmissy.gui.controller.load.generic.LoadExperimentFromGenericInputController;
 import be.ugent.maf.cellmissy.gui.controller.load.cellmia.LoadExperimentFromCellMiaController;
-import be.ugent.maf.cellmissy.gui.controller.analysis.DataAnalysisController;
+import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
+import be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.SingleCellMainController;
 import be.ugent.maf.cellmissy.gui.project.NewProjectDialog;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.CardLayout;
@@ -34,8 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Main Controller Child Controllers: User Management, Setup Experiment, Load
- * Experiment, Data Analysis - controllers
+ * Main Controller; Child Controllers: User Management, Setup Experiment, Load
+ * Experiment, Data Analysis controllers.
  *
  * @author Paola
  */
@@ -67,7 +68,9 @@ public class CellMissyController {
     @Autowired
     private LoadExperimentFromGenericInputController loadExperimentFromGenericInputController;
     @Autowired
-    private DataAnalysisController dataAnalysisController;
+    private AreaMainController areaMainController;
+    @Autowired
+    private SingleCellMainController singleCellMainController;
     // services
 
     /**
@@ -120,7 +123,8 @@ public class CellMissyController {
         setupExperimentController.init();
         loadExperimentFromCellMiaController.init();
         loadExperimentFromGenericInputController.init();
-        dataAnalysisController.init();
+        areaMainController.init();
+        singleCellMainController.init();
         overviewController.init();
         loginController.init();
         userManagementController.init();
@@ -272,8 +276,10 @@ public class CellMissyController {
         cellMissyFrame.getCellMiaMenuItem().addActionListener(itemActionListener);
         // import data from generic input
         cellMissyFrame.getGenericInputMenuItem().addActionListener(itemActionListener);
-        // data analysis
+        // area analysis
         cellMissyFrame.getAreaAnalysisMenuItem().addActionListener(itemActionListener);
+        // single cell analysis
+        cellMissyFrame.getSingleCellAnalysisMenuItem().addActionListener(itemActionListener);
         // exit the application
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override
@@ -301,7 +307,7 @@ public class CellMissyController {
         newProjectDialog.setLocationRelativeTo(cellMissyFrame);
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon, 2);
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         newProjectDialog.getInfoLabel().setIcon(scaledIcon);
 
         // create a new project
@@ -357,10 +363,12 @@ public class CellMissyController {
                 firstSetup = false;
             } else if (menuItemText.equalsIgnoreCase("area analysis") && switchCard(menuItemText)) {
                 if (!firstDataAnalysis) {
-                    dataAnalysisController.resetAfterCardSwitch();
+                    areaMainController.resetAfterCardSwitch();
                 }
-                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAnalysisExperimentParentPanel().getName());
+                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAreaAnalysisParentPanel().getName());
                 firstDataAnalysis = false;
+            } else if (menuItemText.equalsIgnoreCase("single cell analysis") && switchCard(menuItemText)) {
+                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getSingleCellAnalysisParentPanel().getName());
             } else if (menuItemText.equalsIgnoreCase("... from CELLMIA") && switchCard(menuItemText)) {
                 if (!firstLoadingFromCellMia) {
                     loadExperimentFromCellMiaController.resetAfterCardSwitch();
@@ -416,7 +424,7 @@ public class CellMissyController {
             case "analysisExperimentParentPanel":
                 if (menuItemText.equalsIgnoreCase("data analysis")) {
                     return false;
-                } else if (dataAnalysisController.analysisWasStarted()) {
+                } else if (areaMainController.analysisWasStarted()) {
                     showOptionDialog = JOptionPane.showOptionDialog(null, "Do you really want to end this data analysis session?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                 } else {
                     return true;

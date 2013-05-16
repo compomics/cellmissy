@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.experiment.analysis;
+package be.ugent.maf.cellmissy.gui.experiment.analysis.area;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -83,7 +83,6 @@ public class StatisticsDialog extends javax.swing.JDialog {
         setAlwaysOnTop(true);
         setMinimumSize(new java.awt.Dimension(20, 20));
         setModal(true);
-        setPreferredSize(new java.awt.Dimension(900, 750));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         infoPanel.setOpaque(false);

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller.analysis;
+package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
 import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
@@ -37,13 +37,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
+ * Controller for PDF report after area analysis
  * @author Paola Masuzzo
  */
-@Controller("areaAnalysisReportController")
-public class AreaAnalysisReportController {
+@Controller("areaReportController")
+public class AreaReportController {
 
-    private static final Logger LOG = Logger.getLogger(AreaAnalysisReportController.class);
+    private static final Logger LOG = Logger.getLogger(AreaReportController.class);
     //model
     private Experiment experiment;
     private Document document;
