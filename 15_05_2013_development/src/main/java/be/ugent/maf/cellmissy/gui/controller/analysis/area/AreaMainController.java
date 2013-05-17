@@ -261,7 +261,7 @@ public class AreaMainController {
      */
     public void fetchConditionTimeSteps(PlateCondition plateCondition) {
         List<Well> wellList = new ArrayList<>();
-        wellList.addAll(plateCondition.getWellCollection());
+        wellList.addAll(plateCondition.getWellList());
         Algorithm selectedAlgorithm = getSelectedAlgorithm();
         ImagingType selectedImagingType = getSelectedImagingType();
         //fetch time steps for each well
@@ -823,7 +823,7 @@ public class AreaMainController {
         experiment = experimentToAnalyze;
         // init a new list of plate conditions
         plateConditionList = new ArrayList<>();
-        plateConditionList.addAll(experiment.getPlateConditionCollection());
+        plateConditionList.addAll(experiment.getPlateConditionList());
         Dimension parentDimension = dataAnalysisPanel.getAnalysisPlateParentPanel().getSize();
         analysisPlatePanel.initPanel(experiment.getPlateFormat(), parentDimension);
         // repaint plate panel
@@ -834,7 +834,7 @@ public class AreaMainController {
         showConditionsList();
         // show algorithms and imaging types
         for (PlateCondition plateCondition : plateConditionList) {
-            for (Well well : plateCondition.getWellCollection()) {
+            for (Well well : plateCondition.getWellList()) {
                 List<Algorithm> algorithms = wellService.findAlgosByWellId(well.getWellid());
                 if (algorithms != null) {
                     for (Algorithm algorithm : algorithms) {
@@ -889,10 +889,10 @@ public class AreaMainController {
         // get only the wells that have been imaged
         List<Well> imagedWells = plateCondition.getImagedWells();
         for (Well well : imagedWells) {
-            Collection<WellHasImagingType> wellHasImagingTypeCollection = well.getWellHasImagingTypeCollection();
-            for (WellHasImagingType wellHasImagingType : wellHasImagingTypeCollection) {
-                Collection<TimeStep> timeStepCollection = wellHasImagingType.getTimeStepCollection();
-                for (TimeStep timeStep : timeStepCollection) {
+            List<WellHasImagingType> wellHasImagingTypeList = well.getWellHasImagingTypeList();
+            for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
+                List<TimeStep> timeStepList = wellHasImagingType.getTimeStepList();
+                for (TimeStep timeStep : timeStepList) {
                     areaPreProcessingController.getTimeStepsBindingList().add(timeStep);
                 }
             }
@@ -912,7 +912,7 @@ public class AreaMainController {
         protected Void doInBackground() throws Exception {
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             List<Well> wellList = new ArrayList<>();
-            wellList.addAll(currentCondition.getWellCollection());
+            wellList.addAll(currentCondition.getWellList());
             //fetch time steps for each well of condition 
             for (int i = 0; i < wellList.size(); i++) {
                 //fetch time step collection for the wellhasimagingtype of interest

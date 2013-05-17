@@ -249,10 +249,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="tableInfoLabel" alignment="0" min="-2" pref="574" max="-2" attributes="1"/>
-                              <Component id="normalizeTrajectoriesButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="tableInfoLabel" min="-2" pref="574" max="-2" attributes="1"/>
                           <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -260,9 +257,7 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="normalizeTrajectoriesButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                           <Component id="tableInfoLabel" pref="30" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -270,12 +265,6 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JRadioButton" name="normalizeTrajectoriesButton">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Normalized Trajectories"/>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
-                </Component>
                 <Component class="javax.swing.JLabel" name="tableInfoLabel">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">

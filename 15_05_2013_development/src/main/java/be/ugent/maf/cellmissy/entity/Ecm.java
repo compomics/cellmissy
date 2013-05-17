@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -76,7 +76,7 @@ public class Ecm implements Serializable {
     @ManyToOne(optional = true)
     private EcmDensity ecmDensity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecm")
-    private Collection<PlateCondition> plateConditionCollection;
+    private List<PlateCondition> plateConditionList;
     @Column(name = "concentration_unit")
     private String concentrationUnit;
     @Transient
@@ -208,12 +208,12 @@ public class Ecm implements Serializable {
     }
 
     @XmlTransient
-    public Collection<PlateCondition> getPlateConditionCollection() {
-        return plateConditionCollection;
+    public List<PlateCondition> getPlateConditionList() {
+        return plateConditionList;
     }
 
-    public void setPlateConditionCollection(Collection<PlateCondition> plateConditionCollection) {
-        this.plateConditionCollection = plateConditionCollection;
+    public void setPlateConditionList(List<PlateCondition> plateConditionList) {
+        this.plateConditionList = plateConditionList;
     }
 
     public String getConcentrationUnit() {

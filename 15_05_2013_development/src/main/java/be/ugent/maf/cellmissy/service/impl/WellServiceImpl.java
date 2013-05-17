@@ -88,7 +88,7 @@ public class WellServiceImpl implements WellService {
                 // given the two coordinates found, find the correspondent wellgui
                 WellGui wellGui = getWellGuiByCoords(wellGuiList, shiftedX, shiftedY);
                 // add the wellhasimagingtype to the well of the found wellgui
-                wellGui.getWell().getWellHasImagingTypeCollection().add(wellHasImagingType);
+                wellGui.getWell().getWellHasImagingTypeList().add(wellHasImagingType);
             }
         }
     }
@@ -204,17 +204,17 @@ public class WellServiceImpl implements WellService {
     @Override
     public void fetchTimeSteps(Well well, Long AlgorithmId, Long ImagingTpeId) {
         //for well, get the wellhasimagingtypes for a certain algorithm and imaging type
-        List<WellHasImagingType> wellHasImagingTypeCollection = new ArrayList<>();
+        List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
         List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
         // if samples are not null (the correspondent wells were actually  imaged), fetch their time steps
         if (wellHasImagingTypes != null) {
             for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
-                Hibernate.initialize(wellHasImagingType.getTimeStepCollection());
-                wellHasImagingTypeCollection.add(wellHasImagingType);
+                Hibernate.initialize(wellHasImagingType.getTimeStepList());
+                wellHasImagingTypeList.add(wellHasImagingType);
             }
         }
         // else, the collection stays empty
-        well.setWellHasImagingTypeCollection(wellHasImagingTypeCollection);
+        well.setWellHasImagingTypeList(wellHasImagingTypeList);
     }
 
     /**
@@ -231,10 +231,10 @@ public class WellServiceImpl implements WellService {
             List<WellHasImagingType> wellHasImagingTypeCollection = new ArrayList<>();
             for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
                 //fetch time step collection of that wellHasImagingType
-                Hibernate.initialize(wellHasImagingType.getTrackCollection());
+                Hibernate.initialize(wellHasImagingType.getTrackList());
                 wellHasImagingTypeCollection.add(wellHasImagingType);
             }
-            well.setWellHasImagingTypeCollection(wellHasImagingTypeCollection);
+            well.setWellHasImagingTypeList(wellHasImagingTypeCollection);
         }
     }
 
@@ -249,16 +249,16 @@ public class WellServiceImpl implements WellService {
     public void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId) {
         List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
         if (wellHasImagingTypes != null) {
-            List<WellHasImagingType> wellHasImagingTypeCollection = new ArrayList<>();
+            List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
             for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
-                List<Track> tracks = new ArrayList<>(wellHasImagingType.getTrackCollection());
+                List<Track> tracks = new ArrayList<>(wellHasImagingType.getTrackList());
                 for (Track track : tracks) {
                     // fetch track points
-                    fetchTrackPoints(track);
+                    fetchTrackPointsForTrack(track);
                 }
-                wellHasImagingTypeCollection.add(wellHasImagingType);
+                wellHasImagingTypeList.add(wellHasImagingType);
             }
-            well.setWellHasImagingTypeCollection(wellHasImagingTypeCollection);
+            well.setWellHasImagingTypeList(wellHasImagingTypeList);
         }
     }
 
@@ -279,8 +279,8 @@ public class WellServiceImpl implements WellService {
      *
      * @param track
      */
-    private void fetchTrackPoints(Track track) {
-        Hibernate.initialize(track.getTrackPointCollection());
+    private void fetchTrackPointsForTrack(Track track) {
+        Hibernate.initialize(track.getTrackPointList());
         List<Track> tracks = new ArrayList<>();
         tracks.add(track);
     }

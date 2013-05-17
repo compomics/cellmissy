@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
+ * Implementation of the area pre-processor for the open area values.
  *
  * @author Paola Masuzzo
  */

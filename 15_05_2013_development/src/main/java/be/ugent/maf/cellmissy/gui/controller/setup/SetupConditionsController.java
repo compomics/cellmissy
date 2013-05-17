@@ -179,7 +179,7 @@ public class SetupConditionsController {
      */
     public void updateCondition(Integer conditionIndex) {
         assayEcmController.updateAssayEcmConditionFields(plateConditionBindingList.get(conditionIndex));
-        treatmentsController.updateTreatmentCollection(plateConditionBindingList.get(conditionIndex));
+        treatmentsController.updateTreatmentList(plateConditionBindingList.get(conditionIndex));
     }
 
     /**
@@ -202,9 +202,9 @@ public class SetupConditionsController {
         if (!assayEcmController.validate3DEcm().isEmpty()) {
             messages.addAll(assayEcmController.validate3DEcm());
         }
-        //if validation was OK, validate the condition: check for wells collection
+        //if validation was OK, validate the condition: check for wells List
         if (messages.isEmpty()) {
-            if (plateCondition.getWellCollection().isEmpty()) {
+            if (plateCondition.getWellList().isEmpty()) {
                 String message = "Conditions must have at least one well";
                 messages.add(message);
             }
@@ -375,7 +375,7 @@ public class SetupConditionsController {
                         //update and reset fields for the assay-ecm panel
                         assayEcmController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
                         //assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                        //keep source and destination lists sync: show actual treatment collection
+                        //keep source and destination lists sync: show actual treatment List
                         treatmentsController.updateLists(plateConditionBindingList.get(locationToIndex));
                     }
                 }
@@ -476,12 +476,12 @@ public class SetupConditionsController {
         ecm.setVolumeUnit("\u00B5" + "l");
         ecm.setConcentrationUnit("mg/ml");
         firstCondition.setEcm(ecm);
-        //set an empty collection of treatments
+        //set an empty List of treatments
         List<Treatment> treatmentList = new ArrayList<>();
-        firstCondition.setTreatmentCollection(treatmentList);
-        //set an empty collection of wells
+        firstCondition.setTreatmentList(treatmentList);
+        //set an empty List of wells
         List<Well> wellList = new ArrayList<>();
-        firstCondition.setWellCollection(wellList);
+        firstCondition.setWellList(wellList);
     }
 
     /**
@@ -590,10 +590,10 @@ public class SetupConditionsController {
             newTreatment.setPlateCondition(newCondition);
             treatmentList.add(newTreatment);
         }
-        newCondition.setTreatmentCollection(treatmentList);
-        //set an empty collection of wells (wells are not recalled from previous condition)
+        newCondition.setTreatmentList(treatmentList);
+        //set an empty List of wells (wells are not recalled from previous condition)
         List<Well> wellList = new ArrayList<>();
-        newCondition.setWellCollection(wellList);
+        newCondition.setWellList(wellList);
     }
 
     /**

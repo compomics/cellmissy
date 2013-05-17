@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -61,9 +61,9 @@ public class WellHasImagingType implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, optional = true)
     private ImagingType imagingType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "wellHasImagingType", orphanRemoval = true)
-    private Collection<TimeStep> timeStepCollection;
+    private List<TimeStep> timeStepList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "wellHasImagingType", orphanRemoval = true)
-    private Collection<Track> trackCollection;
+    private List<Track> trackList;
     @JoinColumn(name = "l_algorithmid", referencedColumnName = "algorithmid")
     @ManyToOne(cascade = CascadeType.ALL)
     private Algorithm algorithm;
@@ -137,21 +137,21 @@ public class WellHasImagingType implements Serializable {
     }
 
     @XmlTransient
-    public Collection<TimeStep> getTimeStepCollection() {
-        return timeStepCollection;
+    public List<TimeStep> getTimeStepList() {
+        return timeStepList;
     }
 
-    public void setTimeStepCollection(Collection<TimeStep> timeStepCollection) {
-        this.timeStepCollection = timeStepCollection;
+    public void setTimeStepList(List<TimeStep> timeStepList) {
+        this.timeStepList = timeStepList;
     }
 
     @XmlTransient
-    public Collection<Track> getTrackCollection() {
-        return trackCollection;
+    public List<Track> getTrackList() {
+        return trackList;
     }
 
-    public void setTrackCollection(Collection<Track> trackCollection) {
-        this.trackCollection = trackCollection;
+    public void setTrackList(List<Track> trackList) {
+        this.trackList = trackList;
     }
 
     public Algorithm getAlgorithm() {

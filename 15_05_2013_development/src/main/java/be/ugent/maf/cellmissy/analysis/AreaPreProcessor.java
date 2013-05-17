@@ -8,21 +8,25 @@ import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 
 /**
- * Interface for area data pre-processing: Normalize Area, Identify and Correct for Outliers, compute Distances between replicates
+ * Interface for area data pre-processing: Normalise Area, Identify and Correct
+ * for Outliers, compute Distances between replicates, set time interval or
+ * analysis.
  *
  * @author Paola Masuzzo
  */
 public interface AreaPreProcessor {
 
     /**
-     * Normalize Area values, this method is different according to the type of measured area: is it cell covered or open area?
+     * Normalize Area values, this method is different according to the type of
+     * measured area: is it cell covered or open area?
      *
      * @param areaPreProcessingResults
      */
     public void computeNormalizedArea(AreaPreProcessingResults areaPreProcessingResults);
 
     /**
-     * Compute increments of Area from one time frame to the following one (Delta Area Values)
+     * Compute increments of Area from one time frame to the following one
+     * (Delta Area Values)
      *
      * @param areaPreProcessingResults
      */
@@ -43,7 +47,8 @@ public interface AreaPreProcessor {
     public void normalizeCorrectedArea(AreaPreProcessingResults areaPreProcessingResults);
 
     /**
-     * For Normalized and Corrected Area, compute Euclidean Distances between one replicate and all the others
+     * For Normalized and Corrected Area, compute Euclidean Distances between
+     * one replicate and all the others
      *
      * @param areaPreProcessingResults
      */
@@ -61,7 +66,8 @@ public interface AreaPreProcessor {
      * Detect outliers for a 2D array of double (one condition)
      *
      * @param data
-     * @return a matrix of Boolean (true if the data point is detected as an outlier, false if not)
+     * @return a matrix of Boolean (true if the data point is detected as an
+     * outlier, false if not)
      */
     public boolean[][] detectOutliers(Double[][] data);
 
@@ -79,10 +85,12 @@ public interface AreaPreProcessor {
      * @param areaPreProcessingResults
      */
     public void setTimeInterval(AreaPreProcessingResults areaPreProcessingResults);
-    
+
     /**
-     * Recompute time interval for a condition: this is called if first a time interval has already been set
-     * @param areaPreProcessingResults 
+     * Recompute time interval for a condition: this is called if first a time
+     * interval has already been set
+     *
+     * @param areaPreProcessingResults
      */
     public void recomputeTimeInterval(AreaPreProcessingResults areaPreProcessingResults);
 }

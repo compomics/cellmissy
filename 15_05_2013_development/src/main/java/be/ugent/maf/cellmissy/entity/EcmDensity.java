@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,7 +38,7 @@ public class EcmDensity implements Serializable {
     @Column(name = "ecm_density")
     private Double ecmDensity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmDensity")
-    private Collection<Ecm> ecmCollection;
+    private List<Ecm> ecmList;
 
     public EcmDensity() {
     }
@@ -64,12 +64,12 @@ public class EcmDensity implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Ecm> getEcmCollection() {
-        return ecmCollection;
+    public List<Ecm> getEcmList() {
+        return ecmList;
     }
 
-    public void setEcmCollection(Collection<Ecm> ecmCollection) {
-        this.ecmCollection = ecmCollection;
+    public void setEcmList(List<Ecm> ecmList) {
+        this.ecmList = ecmList;
     }
 
     @Override

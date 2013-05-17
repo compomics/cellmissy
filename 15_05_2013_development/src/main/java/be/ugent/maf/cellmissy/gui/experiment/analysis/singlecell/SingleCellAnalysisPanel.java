@@ -44,10 +44,6 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         return preProcessingLabel;
     }
 
-    public JRadioButton getNormalizeTrajectoriesButton() {
-        return normalizeTrajectoriesButton;
-    }
-
     /**
      * Creates new form SingleCellAnalysisPanel
      */
@@ -77,7 +73,6 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         trackPointsTable = new javax.swing.JTable();
         preProcessingPanel = new javax.swing.JPanel();
         radioButtonsPanel = new javax.swing.JPanel();
-        normalizeTrajectoriesButton = new javax.swing.JRadioButton();
         tableInfoLabel = new javax.swing.JLabel();
         dataTablePanel = new javax.swing.JPanel();
         graphicsParentPanel = new javax.swing.JPanel();
@@ -207,9 +202,6 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         radioButtonsPanel.setOpaque(false);
         radioButtonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        normalizeTrajectoriesButton.setText("Normalized Trajectories");
-        normalizeTrajectoriesButton.setOpaque(false);
-
         tableInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         tableInfoLabel.setMinimumSize(new java.awt.Dimension(20, 20));
         tableInfoLabel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -220,17 +212,13 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(radioButtonsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(tableInfoLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(normalizeTrajectoriesButton, javax.swing.GroupLayout.Alignment.LEADING))
+                .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(normalizeTrajectoriesButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(32, 32, 32)
                 .addComponent(tableInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -290,7 +278,6 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel dataTablePanel;
     private javax.swing.JPanel graphicsParentPanel;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JRadioButton normalizeTrajectoriesButton;
     private javax.swing.JLabel preProcessingLabel;
     private javax.swing.JPanel preProcessingPanel;
     private javax.swing.JPanel radioButtonsPanel;

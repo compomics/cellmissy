@@ -6,7 +6,7 @@ package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -49,7 +49,7 @@ public class Project implements Serializable {
     @Column(name = "description")
     private String projectDescription;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
-    private Collection<Experiment> experimentCollection;
+    private List<Experiment> experimentList;
 
     public Project() {
     }
@@ -88,12 +88,12 @@ public class Project implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Experiment> getExperimentCollection() {
-        return experimentCollection;
+    public List<Experiment> getExperimentList() {
+        return experimentList;
     }
 
-    public void setExperimentCollection(Collection<Experiment> experimentCollection) {
-        this.experimentCollection = experimentCollection;
+    public void setExperimentList(List<Experiment> experimentList) {
+        this.experimentList = experimentList;
     }
 
     @Override

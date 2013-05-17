@@ -11,4 +11,5 @@ package be.ugent.maf.cellmissy.entity;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public class SingleCellPreProcessingResults {
+    
 }

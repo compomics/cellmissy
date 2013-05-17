@@ -230,7 +230,8 @@ public class AreaPreProcessingController {
             // set processed time frames for current condition
             areaPreProcessingResults.setProcessedTimeFrames(getProcessedTimeFrames(plateCondition));
             // based on area raw data, do computations for pre-processig step
-            areaPreProcessingResults.setAreaRawData(getAreaRawData(plateCondition));
+            Double[][] areaRawData = getAreaRawData(plateCondition);
+            areaPreProcessingResults.setAreaRawData(areaRawData);
             // normalization depends on type of measured area
             MeasuredAreaType measuredAreaType = areaMainController.getAreaAnalysisHolder().getMeasuredAreaType();
             // call the pre-processors according to measured area type
@@ -1136,8 +1137,8 @@ public class AreaPreProcessingController {
         int numberOfTimeFrames = areaMainController.getExperiment().getTimeFrames();
         // look into the analyzed wells
         for (Well well : plateCondition.getAreaAnalyzedWells()) {
-            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
-                int numberOfTimeSteps = wellHasImagingType.getTimeStepCollection().size();
+            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                int numberOfTimeSteps = wellHasImagingType.getTimeStepList().size();
                 if (numberOfTimeSteps != 0 && numberOfTimeSteps < numberOfTimeFrames) {
                     numberOfTimeFrames = numberOfTimeSteps;
                 }

@@ -11,8 +11,8 @@ import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
-import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -20,7 +20,6 @@ import java.awt.GridBagConstraints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -110,7 +109,7 @@ public class SingleCellPreProcessingController {
         if (preProcessingMap.get(plateCondition) == null) {
             SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
             // do computations
-            Double[][] tracksRawData = getTracksRawData(plateCondition);
+            generateTrackPointMatrices(plateCondition);
             // fill in map
             preProcessingMap.put(plateCondition, singleCellPreProcessingResults);
         }
@@ -164,10 +163,9 @@ public class SingleCellPreProcessingController {
         JTable trackPointsTable = singleCellAnalysisPanel.getTrackPointsTable();
         tracksTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         // row and column selection
-        // tracksTable.setColumnSelectionAllowed(true);
         trackPointsTable.setColumnSelectionAllowed(true);
-        //tracksTable.setRowSelectionAllowed(false);
         trackPointsTable.setRowSelectionAllowed(false);
+
         // get the tables headers
         JTableHeader tracksTableHeader = tracksTable.getTableHeader();
         JTableHeader trackPointsTableHeader = trackPointsTable.getTableHeader();
@@ -206,7 +204,7 @@ public class SingleCellPreProcessingController {
         @Override
         protected Void doInBackground() throws Exception {
             singleCellMainController.setCursor(Cursor.WAIT_CURSOR);
-            singleCellMainController.fetchTrackPoints();
+            //singleCellMainController.fetchTrackPoints(singleCellMainController.getCurrentCondition());
             singleCellMainController.updateTrackPointsList(singleCellMainController.getCurrentCondition(), track);
             return null;
         }
@@ -236,73 +234,77 @@ public class SingleCellPreProcessingController {
         columnBinding.setColumnClass(Integer.class);
 
         columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${cellRow}"));
-        columnBinding.setColumnName("Cell row");
+        columnBinding.setColumnName("x");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
+        columnBinding.setRenderer(new FormatRenderer(singleCellMainController.getFormat()));
 
         columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${cellCol}"));
-        columnBinding.setColumnName("Cell col");
+        columnBinding.setColumnName("y");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-
-        columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${velocityPixels}"));
-        columnBinding.setColumnName("Velocity Pixels");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Double.class);
-        columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${angle}"));
-        columnBinding.setColumnName("Angle");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Double.class);
-
-        columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${angleDelta}"));
-        columnBinding.setColumnName("Delta Angle");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Double.class);
-
-        columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${relativeAngle}"));
-        columnBinding.setColumnName("Relative Angle");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Double.class);
+        columnBinding.setRenderer(new FormatRenderer(singleCellMainController.getFormat()));
 
         bindingGroup.addBinding(trackPointsTableBinding);
         bindingGroup.bind();
     }
 
     /**
+     * Get the tracks coordinates: these are still raw data!
      *
      * @param plateCondition
      * @return
      */
-    private Double[][] getTracksRawData(PlateCondition plateCondition) {
-        int totalNumberOfTrackPoints = getTotalNumberOfTrackPoints(plateCondition);
-        // get number of samples 
-        Double[][] tracksRawData = new Double[totalNumberOfTrackPoints][2];
+    private Double[][] getTracksCoordinates(PlateCondition plateCondition) {
 
-        return tracksRawData;
+        // fetch all the track points for current condition
+        singleCellMainController.fetchTrackPoints(plateCondition);
+        // get total number of track points
+        int totalNumberOfTrackPoints = getTotalNumberOfTrackPoints(plateCondition);
+        Double[][] tracksCoordinates = new Double[totalNumberOfTrackPoints][2];
+
+        List<Well> processedWells = plateCondition.getSingleCellAnalyzedWells();
+        for (Well well : processedWells) {
+            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                for (Track track : wellHasImagingType.getTrackList()) {
+                    track.generateTrackPointMatrix();
+                }
+            }
+        }
+        return tracksCoordinates;
+    }
+
+    /**
+     *
+     * @param plateCondition
+     */
+    private void generateTrackPointMatrices(PlateCondition plateCondition) {
+        singleCellMainController.fetchTrackPoints(plateCondition);
+        List<Well> processedWells = plateCondition.getSingleCellAnalyzedWells();
+        for (Well well : processedWells) {
+            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                for (Track track : wellHasImagingType.getTrackList()) {
+                    track.generateTrackPointMatrix();
+                }
+            }
+        }
 
     }
 
     /**
-     * For a certain condition, get total number of track points
+     * For a certain condition, get total number of track points.
      *
      * @param plateCondition
      * @return
      */
     private int getTotalNumberOfTrackPoints(PlateCondition plateCondition) {
         int totalNumber = 0;
-        singleCellMainController.fetchTrackPoints();
-        List<Well> imagedWells = plateCondition.getImagedWells();
-        for (Well well : imagedWells) {
-            Collection<WellHasImagingType> wellHasImagingTypeCollection = well.getWellHasImagingTypeCollection();
-            Iterator<WellHasImagingType> iterator = wellHasImagingTypeCollection.iterator();
-            while (iterator.hasNext()) {
-                WellHasImagingType wellHasImagingType = iterator.next();
-                Collection<Track> trackCollection = wellHasImagingType.getTrackCollection();
-                Iterator<Track> iterator1 = trackCollection.iterator();
-                while (iterator1.hasNext()) {
-                    Track track = iterator1.next();
-                    int size = track.getTrackPointCollection().size();
-                    totalNumber += size;
+        // get only the analyzed wells
+        List<Well> processedWells = plateCondition.getSingleCellAnalyzedWells();
+        for (Well well : processedWells) {
+            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                for (Track track : wellHasImagingType.getTrackList()) {
+                    totalNumber += track.getTrackPointList().size();
                 }
             }
         }

@@ -268,7 +268,7 @@ public class LoadExperimentFromCellMiaController {
                 for (WellGui wellGui : cellMiaImagedPlateController.getImagedPlatePanel().getWellGuiList()) {
 
                     //empty the collection of WellHasImagingType (so color is set to default)
-                    wellGui.getWell().getWellHasImagingTypeCollection().clear();
+                    wellGui.getWell().getWellHasImagingTypeList().clear();
 
                     //remove smaller ellipsi
                     List<Ellipse2D> ellipse2DList = new ArrayList<>();
@@ -340,20 +340,20 @@ public class LoadExperimentFromCellMiaController {
      */
     private void setCellMiaData() {
         // iterate through conditions
-        for (PlateCondition plateCondition : experiment.getPlateConditionCollection()) {
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
             for (WellGui wellGui : cellMiaImagedPlateController.getImagedPlatePanel().getWellGuiList()) {
 
                 //if the wellGui has a well with an empty collection of wellHasImagingTypes, the well has not been imaged: in this case, an empty collection is passed
                 //if the wellGui has a rectangle, the well belongs to a certain condition
                 if (wellGui.getRectangle() != null) {
-                    for (Well well : plateCondition.getWellCollection()) {
+                    for (Well well : plateCondition.getWellList()) {
                         //check for coordinates
                         if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
                             //set collection of wellHasImagingType to the well of the plateCondition
-                            well.setWellHasImagingTypeCollection(wellGui.getWell().getWellHasImagingTypeCollection());
+                            well.setWellHasImagingTypeList(wellGui.getWell().getWellHasImagingTypeList());
 
                             //the other way around: set the well for each wellHasImagingType
-                            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
+                            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
                                 wellHasImagingType.setWell(well);
                             }
                         }

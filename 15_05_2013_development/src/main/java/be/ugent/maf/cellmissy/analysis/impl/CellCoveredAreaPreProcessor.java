@@ -15,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * This class implements the Area PreProcessor interface. It takes care of all
- * the pre-processing operations required before handling area values and
- * proceed with real analysis.
+ * Implementation of the area pre-processor for the cell covered area values.F
  *
  * @author Paola Masuzzo
  */

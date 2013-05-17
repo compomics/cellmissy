@@ -327,8 +327,8 @@ public class AnalysisUtils {
      */
     public static int getNumberOfSamplesPerWell(Well well) {
         int numberOfSamplesPerWell = 0;
-        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
-            if (!wellHasImagingType.getTimeStepCollection().isEmpty()) {
+        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+            if (!wellHasImagingType.getTimeStepList().isEmpty()) {
                 numberOfSamplesPerWell++;
             }
         }

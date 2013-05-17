@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -44,7 +44,7 @@ public class Instrument implements Serializable {
     @Column(name = "name", unique=true)
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "instrument")
-    private Collection<Experiment> experimentCollection;
+    private List<Experiment> experimentList;
 
     public Instrument() {
     }
@@ -74,8 +74,12 @@ public class Instrument implements Serializable {
         this.name = name;
     }
 
-    public Collection<Experiment> getExperimentCollection() {
-        return experimentCollection;
+    public List<Experiment> getExperimentList() {
+        return experimentList;
+    }
+
+    public void setExperimentList(List<Experiment> experimentList) {
+        this.experimentList = experimentList;
     }
 
     @Override

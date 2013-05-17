@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -37,9 +37,9 @@ public class MatrixDimension implements Serializable {
     @Column(name = "dimension")
     private String dimension;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matrixDimension")
-    private Collection<Assay> assayCollection;
+    private List<Assay> assayList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matrixDimension")
-    private Collection<EcmComposition> ecmCompositionCollection;
+    private List<EcmComposition> ecmCompositionList;
     
     public MatrixDimension() {
     }
@@ -65,21 +65,21 @@ public class MatrixDimension implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Assay> getAssayCollection() {
-        return assayCollection;
+    public List<Assay> getAssayList() {
+        return assayList;
     }
 
-    public void setAssayCollection(Collection<Assay> assayCollection) {
-        this.assayCollection = assayCollection;
+    public void setAssayList(List<Assay> assayList) {
+        this.assayList = assayList;
     }
 
     @XmlTransient
-    public Collection<EcmComposition> getEcmCompositionCollection() {
-        return ecmCompositionCollection;
+    public List<EcmComposition> getEcmCompositionList() {
+        return ecmCompositionList;
     }
 
-    public void setEcmCompositionCollection(Collection<EcmComposition> ecmCompositionCollection) {
-        this.ecmCompositionCollection = ecmCompositionCollection;
+    public void setEcmCompositionList(List<EcmComposition> ecmCompositionList) {
+        this.ecmCompositionList = ecmCompositionList;
     }
 
     @Override

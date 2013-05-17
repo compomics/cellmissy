@@ -69,10 +69,10 @@ public class CellMiaDataServiceTest {
 //            for (ImagingType imagingType : rawDataMap.keySet()) {
 //                List<WellHasImagingType> list = rawDataMap.get(imagingType);
 //                for (WellHasImagingType wellHasImagingType : list) {
-//                    assertTrue(!wellHasImagingType.getTrackCollection().isEmpty());
-//                    System.out.println("size tracks: " + wellHasImagingType.getTrackCollection().size());
-//                    assertTrue(!wellHasImagingType.getTimeStepCollection().isEmpty());
-//                    System.out.println("size steps: " + wellHasImagingType.getTimeStepCollection().size());
+//                    assertTrue(!wellHasImagingType.getTrackcList().isEmpty());
+//                    System.out.println("size tracks: " + wellHasImagingType.getTrackcList().size());
+//                    assertTrue(!wellHasImagingType.getTimeStepList().isEmpty());
+//                    System.out.println("size steps: " + wellHasImagingType.getTimeStepList().size());
 //                }
 //            }
                 assertEquals(2, rawDataMap.size());

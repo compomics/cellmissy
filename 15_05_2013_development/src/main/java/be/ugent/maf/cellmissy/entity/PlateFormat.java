@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -54,7 +54,7 @@ public class PlateFormat implements Serializable {
     @Column(name = "well_size")
     private Double wellSize;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private Collection<Experiment> experimentCollection;
+    private List<Experiment> experimentList;
 
     public PlateFormat() {
     }
@@ -109,12 +109,12 @@ public class PlateFormat implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Experiment> getExperimentCollection() {
-        return experimentCollection;
+    public List<Experiment> getExperimentList() {
+        return experimentList;
     }
 
-    public void setExperimentCollection(Collection<Experiment> experimentCollection) {
-        this.experimentCollection = experimentCollection;
+    public void setExperimentList(List<Experiment> experimentList) {
+        this.experimentList = experimentList;
     }
 
     @Override

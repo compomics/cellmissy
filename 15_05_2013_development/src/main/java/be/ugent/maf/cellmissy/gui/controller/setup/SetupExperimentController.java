@@ -290,27 +290,27 @@ public class SetupExperimentController {
 
     /**
      * When the mouse is released and the rectangle has been drawn, this method
-     * is called: set well collection of the current condition and set the
+     * is called: set well List of the current condition and set the
      * condition of the selected wells
      *
      * @param plateCondition
      * @param rectangle
      * @return true if the selection of wells is valid, else show a message
      */
-    public boolean updateWellCollection(PlateCondition plateCondition, Rectangle rectangle) {
+    public boolean updateWellList(PlateCondition plateCondition, Rectangle rectangle) {
         boolean isSelectionValid = true;
-        Collection<Well> wellCollection = plateCondition.getWellCollection();
+        List<Well> wellList = plateCondition.getWellList();
         outerloop:
         for (WellGui wellGui : setupPlateController.getSetupPlatePanel().getWellGuiList()) {
             //get only the bigger default ellipse2D
             Ellipse2D ellipse = wellGui.getEllipsi().get(0);
             if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
                 //check if the collection already contains that well
-                if (!wellCollection.contains(wellGui.getWell())) {
+                if (!wellList.contains(wellGui.getWell())) {
                     //the selection is valid if the wells do not have a condition yet
                     if (!hasCondition(wellGui)) {
                         //in this case, add the well to the collection and set the condition of the well
-                        wellCollection.add(wellGui.getWell());
+                        wellList.add(wellGui.getWell());
                         wellGui.getWell().setPlateCondition(plateCondition);
                     } else {
                         //if the wells do have a condition already, the selection is not valid
@@ -578,8 +578,8 @@ public class SetupExperimentController {
                         // set plate format
                         PlateFormat plateFormat = (PlateFormat) setupPanel.getPlateFormatComboBox().getSelectedItem();
                         experiment.setPlateFormat(plateFormat);
-                        //set the condition's collection of the experiment
-                        experiment.setPlateConditionCollection(setupConditionsController.getPlateConditionBindingList());
+                        //set the condition's List of the experiment
+                        experiment.setPlateConditionList(setupConditionsController.getPlateConditionBindingList());
                         //create PDF report, execute SwingWorker
                         // check for cellmia or other software
                         SetupReportWorker setupReportWorker = null;

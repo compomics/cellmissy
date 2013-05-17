@@ -5,7 +5,8 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,6 +20,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -52,7 +54,9 @@ public class Track implements Serializable {
     @ManyToOne(optional = false)
     private WellHasImagingType wellHasImagingType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "track", orphanRemoval = true)
-    private Collection<TrackPoint> trackPointCollection;
+    private List<TrackPoint> trackPointList;
+    @Transient
+    private double[][] trackPointMatrix;
 
     public Track() {
     }
@@ -100,12 +104,21 @@ public class Track implements Serializable {
     }
 
     @XmlTransient
-    public Collection<TrackPoint> getTrackPointCollection() {
-        return trackPointCollection;
+    public List<TrackPoint> getTrackPointList() {
+        return trackPointList;
     }
 
-    public void setTrackPointCollection(Collection<TrackPoint> trackPointCollection) {
-        this.trackPointCollection = trackPointCollection;
+    public void setTrackPointList(List<TrackPoint> trackPointList) {
+        this.trackPointList = trackPointList;
+    }
+
+    public void generateTrackPointMatrix() {
+        trackPointMatrix = new double[trackPointList.size()][2];
+        for (int i = 0; i < trackPointMatrix.length; i++) {
+            double cellRow = trackPointList.get(i).getCellRow();
+            double cellCol = trackPointList.get(i).getCellCol();
+            trackPointMatrix[i] = new double[]{cellRow, cellCol};
+        }
     }
 
     @Override

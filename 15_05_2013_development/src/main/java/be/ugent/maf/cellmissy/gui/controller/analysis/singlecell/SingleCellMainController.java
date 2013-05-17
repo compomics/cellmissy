@@ -155,6 +155,10 @@ public class SingleCellMainController {
         return plateConditionList;
     }
 
+    public Format getFormat() {
+        return format;
+    }
+
     /**
      * Show message through the main controller
      *
@@ -177,16 +181,18 @@ public class SingleCellMainController {
 
     /**
      * Using the wellService, fetch track points from DB for selected condition
+     * Use only imaged wells, i.e. wells with a non empty collection of
+     * WellHasImagingType.
      */
-    public void fetchTrackPoints() {
-        for (Iterator<Well> it = currentCondition.getWellCollection().iterator(); it.hasNext();) {
-            Well well = it.next();
+    public void fetchTrackPoints(PlateCondition plateCondition) {
+        List<Well> imagedWells = plateCondition.getImagedWells();
+        for (Well imagedWell : imagedWells) {
             Algorithm selectedAlgorithm = getSelectedAlgorithm();
             ImagingType selectedImagingType = getSelectedImagingType();
-            wellService.fetchTrackPoints(well, selectedAlgorithm.getAlgorithmid(), selectedImagingType.getImagingTypeid());
+            wellService.fetchTrackPoints(imagedWell, selectedAlgorithm.getAlgorithmid(), selectedImagingType.getImagingTypeid());
         }
     }
-
+    
     /**
      * Update track points list with objects from a selected track in upper
      * table
@@ -199,11 +205,11 @@ public class SingleCellMainController {
         if (!singleCellPreProcessingController.getTrackPointsBindingList().isEmpty()) {
             singleCellPreProcessingController.getTrackPointsBindingList().clear();
         }
-        for (Well well : plateCondition.getWellCollection()) {
-            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
-                for (Track track : wellHasImagingType.getTrackCollection()) {
+        for (Well well : plateCondition.getWellList()) {
+            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                for (Track track : wellHasImagingType.getTrackList()) {
                     if (track.equals(selectedTrack)) {
-                        for (TrackPoint trackPoint : track.getTrackPointCollection()) {
+                        for (TrackPoint trackPoint : track.getTrackPointList()) {
                             singleCellPreProcessingController.getTrackPointsBindingList().add(trackPoint);
                         }
                     }
@@ -523,7 +529,7 @@ public class SingleCellMainController {
         experiment = experimentToAnalyze;
         // init a new list of plate conditions
         plateConditionList = new ArrayList<>();
-        plateConditionList.addAll(experiment.getPlateConditionCollection());
+        plateConditionList.addAll(experiment.getPlateConditionList());
         Dimension parentDimension = dataAnalysisPanel.getAnalysisPlateParentPanel().getSize();
         analysisPlatePanel.initPanel(experiment.getPlateFormat(), parentDimension);
         // repaint plate panel
@@ -534,7 +540,7 @@ public class SingleCellMainController {
         showConditionsList();
         // show algorithms and imaging types
         for (PlateCondition plateCondition : plateConditionList) {
-            for (Well well : plateCondition.getWellCollection()) {
+            for (Well well : plateCondition.getWellList()) {
                 List<Algorithm> algorithms = wellService.findAlgosByWellId(well.getWellid());
                 if (algorithms != null) {
                     for (Algorithm algorithm : algorithms) {
@@ -577,10 +583,10 @@ public class SingleCellMainController {
         // get only the wells that have been imaged
         List<Well> imagedWells = plateCondition.getImagedWells();
         for (Well well : imagedWells) {
-            Collection<WellHasImagingType> wellHasImagingTypeCollection = well.getWellHasImagingTypeCollection();
-            for (WellHasImagingType wellHasImagingType : wellHasImagingTypeCollection) {
-                Collection<Track> trackCollection = wellHasImagingType.getTrackCollection();
-                for (Track track : trackCollection) {
+            List<WellHasImagingType> wellHasImagingTypeList = well.getWellHasImagingTypeList();
+            for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
+                List<Track> trackList = wellHasImagingType.getTrackList();
+                for (Track track : trackList) {
                     singleCellPreProcessingController.getTracksBindingList().add(track);
                 }
             }
@@ -598,7 +604,7 @@ public class SingleCellMainController {
         protected Void doInBackground() throws Exception {
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             List<Well> wellList = new ArrayList<>();
-            wellList.addAll(currentCondition.getWellCollection());
+            wellList.addAll(currentCondition.getWellList());
             //fetch tracks for each well of condition 
             for (int i = 0; i < wellList.size(); i++) {
                 //fetch tracks collection for the wellhasimagingtype of interest

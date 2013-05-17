@@ -229,7 +229,7 @@ public class GenericExperimentDataController {
         loadExperimentFromGenericInputController.setExperiment(selectedExperiment);
         // init a new list with plate conditions
         plateConditionList = new ArrayList<>();
-        plateConditionList.addAll(loadExperimentFromGenericInputController.getExperiment().getPlateConditionCollection());
+        plateConditionList.addAll(loadExperimentFromGenericInputController.getExperiment().getPlateConditionList());
         // repaint plate panel
         loadExperimentFromGenericInputController.getImagedPlatePanel().setExperiment(selectedExperiment);
         Dimension parentDimension = loadExperimentFromGenericInputController.getLoadFromGenericInputPlatePanel().getPlateParentPanel().getSize();

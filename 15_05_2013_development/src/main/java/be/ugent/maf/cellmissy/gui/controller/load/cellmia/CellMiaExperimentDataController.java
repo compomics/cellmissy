@@ -97,7 +97,7 @@ public class CellMiaExperimentDataController {
     public void resetAfterUserInteraction() {
         // reset collection of wellHasImagingType on plate panel
         for (WellGui wellGui : loadExperimentFromCellMiaController.getImagedPlatePanel().getWellGuiList()) {
-            wellGui.getWell().getWellHasImagingTypeCollection().clear();
+            wellGui.getWell().getWellHasImagingTypeList().clear();
         }
         // set imaging type back to null
         loadExperimentFromCellMiaController.getImagedPlatePanel().setImagingTypeList(null);
@@ -251,7 +251,7 @@ public class CellMiaExperimentDataController {
         loadExperimentFromCellMiaController.setExperiment(selectedExperiment);
         // init a new list of plate conditions
         plateConditionList = new ArrayList<>();
-        plateConditionList.addAll(selectedExperiment.getPlateConditionCollection());
+        plateConditionList.addAll(selectedExperiment.getPlateConditionList());
         Dimension parentDimension = loadExperimentFromCellMiaController.getLoadFromCellMiaPlatePanel().getPlateParentPanel().getSize();
         loadExperimentFromCellMiaController.getImagedPlatePanel().initPanel(selectedExperiment.getPlateFormat(), parentDimension);
         // repaint plate panel

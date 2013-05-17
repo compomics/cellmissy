@@ -98,23 +98,23 @@ public class TreatmentsController {
     }
 
     /**
-     * update treatment collection for previously selected condition
+     * update treatment List for previously selected condition
      *
      * @param plateCondition
      */
-    public void updateTreatmentCollection(PlateCondition plateCondition) {
-        // add to the collection newly inserted treatments
+    public void updateTreatmentList(PlateCondition plateCondition) {
+        // add to the List newly inserted treatments
         for (Treatment treatment : treatmentBindingList) {
             //set plate condition of the treatment
             treatment.setPlateCondition(plateCondition);
-            //update treatment collection of the plate condition
-            if (!plateCondition.getTreatmentCollection().contains(treatment)) {
-                plateCondition.getTreatmentCollection().add(treatment);
+            //update treatment List of the plate condition
+            if (!plateCondition.getTreatmentList().contains(treatment)) {
+                plateCondition.getTreatmentList().add(treatment);
             }
         }
 
-        // remove form the collection treatments not present anymore
-        Iterator<Treatment> iterator = plateCondition.getTreatmentCollection().iterator();
+        // remove form the List treatments not present anymore
+        Iterator<Treatment> iterator = plateCondition.getTreatmentList().iterator();
         while (iterator.hasNext()) {
             if (!treatmentBindingList.contains(iterator.next())) {
                 iterator.remove();
@@ -370,8 +370,8 @@ public class TreatmentsController {
      */
     private void updateDestinationList(PlateCondition plateCondition) {
         //fill in the treatment binding list with the acutually treatments for the current condition
-        if (!plateCondition.getTreatmentCollection().isEmpty()) {
-            for (Treatment treatment : plateCondition.getTreatmentCollection()) {
+        if (!plateCondition.getTreatmentList().isEmpty()) {
+            for (Treatment treatment : plateCondition.getTreatmentList()) {
                 if (!treatmentBindingList.contains(treatment)) {
                     treatmentBindingList.add(treatment);
                 }

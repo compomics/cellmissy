@@ -6,7 +6,6 @@ package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Basic;
@@ -50,10 +49,10 @@ public class PlateCondition implements Serializable {
     private Long plateConditionid;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
-    private Collection<Well> wellCollection;
+    private List<Well> wellList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
-    private Collection<Treatment> treatmentCollection;
+    private List<Treatment> treatmentList;
     @JoinColumn(name = "l_cell_lineid", referencedColumnName = "cell_lineid")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private CellLine cellLine;
@@ -90,20 +89,20 @@ public class PlateCondition implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Well> getWellCollection() {
-        return wellCollection;
+    public List<Well> getWellList() {
+        return wellList;
     }
 
-    public void setWellCollection(Collection<Well> wellCollection) {
-        this.wellCollection = wellCollection;
+    public void setWellList(List<Well> wellList) {
+        this.wellList = wellList;
     }
 
-    public Collection<Treatment> getTreatmentCollection() {
-        return treatmentCollection;
+    public List<Treatment> getTreatmentList() {
+        return treatmentList;
     }
 
-    public void setTreatmentCollection(Collection<Treatment> treatmentCollection) {
-        this.treatmentCollection = treatmentCollection;
+    public void setTreatmentList(List<Treatment> treatmentList) {
+        this.treatmentList = treatmentList;
     }
 
     public CellLine getCellLine() {
@@ -190,7 +189,7 @@ public class PlateCondition implements Serializable {
 
     @Override
     public String toString() {
-        return cellLine.getCellLineType() + ", " + assay.getMatrixDimension() + ", " + assay + ", " + treatmentCollection;
+        return cellLine.getCellLineType() + ", " + assay.getMatrixDimension() + ", " + assay + ", " + treatmentList;
     }
 
     public Integer getConditionIndex() {
@@ -201,15 +200,15 @@ public class PlateCondition implements Serializable {
 
     /**
      * Given a plate condition, get back only the wells that were imaged, i.e.
-     * with an non empty collection of WellHasImagingType objects
+     * with an non empty list of WellHasImagingType objects
      *
      * @return
      */
     public List<Well> getImagedWells() {
         List<Well> imagedWells = new ArrayList<>();
-        for (Well well : this.getWellCollection()) {
-            Collection<WellHasImagingType> wellHasImagingTypeCollection = well.getWellHasImagingTypeCollection();
-            if (!wellHasImagingTypeCollection.isEmpty()) {
+        for (Well well : this.getWellList()) {
+            List<WellHasImagingType> wellHasImagingTypeList = well.getWellHasImagingTypeList();
+            if (!wellHasImagingTypeList.isEmpty()) {
                 imagedWells.add(well);
             }
         }
@@ -218,7 +217,7 @@ public class PlateCondition implements Serializable {
 
     /**
      * Given a plate condition, get back only the wells that have some area
-     * values processed, i.e. imaged wells with a non empty collection of
+     * values processed, i.e. imaged wells with a non empty list of
      * TimeStep objects
      *
      * @return
@@ -227,9 +226,9 @@ public class PlateCondition implements Serializable {
         List<Well> areaAnalyzedWells = new ArrayList<>();
         // look only in the imaged wells
         for (Well well : this.getImagedWells()) {
-            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
+            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
                 // if area analysis was OK... the well was processed
-                if (!wellHasImagingType.getTimeStepCollection().isEmpty()) {
+                if (!wellHasImagingType.getTimeStepList().isEmpty()) {
                     if (!areaAnalyzedWells.contains(well)) {
                         areaAnalyzedWells.add(well);
                     }
@@ -241,7 +240,7 @@ public class PlateCondition implements Serializable {
     
     /**
      * Given a plate condition, get back only the wells that have some area
-     * values processed, i.e. imaged wells with a non empty collection of
+     * values processed, i.e. imaged wells with a non empty list of
      * TimeStep objects
      *
      * @return
@@ -250,9 +249,9 @@ public class PlateCondition implements Serializable {
         List<Well> singleCellAnalyzedWells = new ArrayList<>();
         // look only in the imaged wells
         for (Well well : this.getImagedWells()) {
-            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
+            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
                 // if single cell analysis was OK... the well was processed
-                if (!wellHasImagingType.getTrackCollection().isEmpty()) {
+                if (!wellHasImagingType.getTrackList().isEmpty()) {
                     if (!singleCellAnalyzedWells.contains(well)) {
                         singleCellAnalyzedWells.add(well);
                     }

@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -44,7 +44,7 @@ public class EcmComposition implements Serializable {
     @Column(name = "composition_type")
     private String compositionType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmComposition")
-    private Collection<Ecm> ecmCollection;
+    private List<Ecm> ecmList;
     @JoinColumn(name = "l_matrix_dimensionid", referencedColumnName = "matrix_dimensionid")
     @ManyToOne(optional = false)
     private MatrixDimension matrixDimension;
@@ -73,12 +73,12 @@ public class EcmComposition implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Ecm> getEcmCollection() {
-        return ecmCollection;
+    public List<Ecm> getEcmList() {
+        return ecmList;
     }
 
-    public void setEcmCollection(Collection<Ecm> ecmCollection) {
-        this.ecmCollection = ecmCollection;
+    public void setEcmList(List<Ecm> ecmList) {
+        this.ecmList = ecmList;
     }
 
     public MatrixDimension getMatrixDimension() {

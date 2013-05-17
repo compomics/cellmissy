@@ -64,7 +64,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                 Algorithm algo = new Algorithm();
                 //give name to the algorithm (according to folder name)
                 algo.setAlgorithmName(file.getName().substring(file.getName().indexOf("MIA_"), file.getName().length()));
-                algo.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
+                algo.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
                 Map<ImagingType, List<WellHasImagingType>> map = copyMap();
                 // bacth folder inside the algo folder
                 for (File batchFile : Arrays.asList(file.listFiles())) {
@@ -103,14 +103,14 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                                                 for (TimeStep timeStep : timeStepList) {
                                                     timeStep.setWellHasImagingType(wellHasImagingType);
                                                 }
-                                                wellHasImagingType.setTimeStepCollection(timeStepList);
+                                                wellHasImagingType.setTimeStepList(timeStepList);
                                                 // parse tracking cell file
                                             } else if (textFile.getName().endsWith("tracking.txt")) {
                                                 List<Track> trackList = cellMiaFileParser.parseTrackingFile(textFile);
                                                 for (Track track : trackList) {
                                                     track.setWellHasImagingType(wellHasImagingType);
                                                 }
-                                                wellHasImagingType.setTrackCollection(trackList);
+                                                wellHasImagingType.setTrackList(trackList);
                                             }
                                         }
                                     }
@@ -118,8 +118,8 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                                 }
                                 LOG.debug("Imaging type: " + imagingType + " processed");
                                 //***********************************************************************************************//
-                                //update collection of imaging type
-                                imagingType.setWellHasImagingTypeCollection(wellHasImagingTypeList);
+                                //update List of imaging type
+                                imagingType.setWellHasImagingTypeList(wellHasImagingTypeList);
                                 //start over through the other folders (next imaging type)
                                 imageTypeStartFolder += wellHasImagingTypeList.size();
                                 //one algo was processed ===========================
@@ -127,7 +127,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                                 LOG.debug(algo.getAlgorithmName() + " processed in " + ((currentTimeMillis1 - currentTimeMillis) / 1000) + " s");
                                 //add all the samples to the algorithm
                                 for (List<WellHasImagingType> wellHasImagingTypes : map.values()) {
-                                    algo.getWellHasImagingTypeCollection().addAll(wellHasImagingTypes);
+                                    algo.getWellHasImagingTypeList().addAll(wellHasImagingTypes);
                                 }
                                 //update the map
                                 algoMap.put(algo, map);
