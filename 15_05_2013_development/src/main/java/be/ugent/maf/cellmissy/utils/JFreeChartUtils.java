@@ -125,7 +125,7 @@ public class JFreeChartUtils {
         List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
         int counter = 0;
         for (Well well : processedWells) {
-            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(well);
             for (int i = counter; i < xYSeriesCollection.getSeriesCount(); i++) {
                 // wide line
                 renderer.setSeriesStroke(i, wideLine);

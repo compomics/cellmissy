@@ -5,7 +5,6 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -112,9 +111,14 @@ public class Track implements Serializable {
         this.trackPointList = trackPointList;
     }
 
+    public double[][] getTrackPointMatrix() {
+        return trackPointMatrix;
+    }
+
     public void generateTrackPointMatrix() {
         trackPointMatrix = new double[trackPointList.size()][2];
         for (int i = 0; i < trackPointMatrix.length; i++) {
+            // put in each row (x, y) coordinates
             double cellRow = trackPointList.get(i).getCellRow();
             double cellCol = trackPointList.get(i).getCellCol();
             trackPointMatrix[i] = new double[]{cellRow, cellCol};

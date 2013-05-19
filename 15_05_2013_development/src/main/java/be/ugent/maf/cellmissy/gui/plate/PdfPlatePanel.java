@@ -12,7 +12,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,10 +50,10 @@ public class PdfPlatePanel extends AbstractPlatePanel {
         // set graphics
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
-        List<PlateCondition> plateConditions = new ArrayList<>(experiment.getPlateConditionList());
+        List<PlateCondition> plateConditionList = experiment.getPlateConditionList();
         int lenght = GuiUtils.getAvailableColors().length;
 
-        for (PlateCondition plateCondition : plateConditions) {
+        for (PlateCondition plateCondition : plateConditionList) {
             for (Well well : plateCondition.getWellList()) {
                 for (WellGui wellGui : wellGuiList) {
                     if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {

@@ -43,8 +43,6 @@ import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.Icon;
@@ -192,7 +190,7 @@ public class SingleCellMainController {
             wellService.fetchTrackPoints(imagedWell, selectedAlgorithm.getAlgorithmid(), selectedImagingType.getImagingTypeid());
         }
     }
-    
+
     /**
      * Update track points list with objects from a selected track in upper
      * table
@@ -370,7 +368,6 @@ public class SingleCellMainController {
         bindingGroup.addBinding(jComboBoxBinding);
         //do the binding
         bindingGroup.bind();
-
 
         /**
          * add mouse listeners
@@ -628,6 +625,11 @@ public class SingleCellMainController {
                 if (!singleCellPreProcessingController.getTracksBindingList().isEmpty()) {
                     singleCellPreProcessingController.showTracksInTable();
                     onCardSwitch();
+                    //check which button is selected for analysis:
+                    if (singleCellPreProcessingController.getSingleCellAnalysisPanel().getNormalizedTrackCoordinatesRadioButton().isSelected()) {
+                        //for current selected condition show normalized track coordinates values
+                        singleCellPreProcessingController.showTrackCoordinatesInTable(currentCondition);
+                    }
                 }
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);

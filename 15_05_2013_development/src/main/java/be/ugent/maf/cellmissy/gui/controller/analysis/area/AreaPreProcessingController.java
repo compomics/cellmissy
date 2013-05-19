@@ -11,7 +11,7 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.TimeInterval;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import be.ugent.maf.cellmissy.gui.view.table.model.ComputedDataTableModel;
+import be.ugent.maf.cellmissy.gui.view.table.model.AreaDataTableModel;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
 import static be.ugent.maf.cellmissy.analysis.MeasuredAreaType.CELL_COVERED_AREA;
@@ -356,7 +356,7 @@ public class AreaPreProcessingController {
         if (areaPreProcessingResults != null) {
             Double[][] deltaArea = areaPreProcessingResults.getDeltaArea();
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
-            dataTable.setModel(new ComputedDataTableModel(plateCondition, deltaArea, processedTimeFrames));
+            dataTable.setModel(new AreaDataTableModel(plateCondition, deltaArea, processedTimeFrames));
             dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat()));
             dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
@@ -374,7 +374,7 @@ public class AreaPreProcessingController {
         if (areaPreProcessingResults != null) {
             Double[][] percentageAreaIncrease = preProcessingMap.get(plateCondition).getPercentageAreaIncrease();
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
-            dataTable.setModel(new ComputedDataTableModel(plateCondition, percentageAreaIncrease, processedTimeFrames));
+            dataTable.setModel(new AreaDataTableModel(plateCondition, percentageAreaIncrease, processedTimeFrames));
             //format first column
             dataTable.getColumnModel().getColumn(0).setCellRenderer(new FormatRenderer(areaMainController.getFormat()));
             boolean[][] outliers = cellCoveredAreaPreProcessor.detectOutliers(percentageAreaIncrease);
@@ -399,7 +399,7 @@ public class AreaPreProcessingController {
         if (areaPreProcessingResults != null) {
             Double[][] normalizedArea = areaPreProcessingResults.getNormalizedArea();
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
-            dataTable.setModel(new ComputedDataTableModel(plateCondition, normalizedArea, processedTimeFrames));
+            dataTable.setModel(new AreaDataTableModel(plateCondition, normalizedArea, processedTimeFrames));
             dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat()));
             dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
@@ -441,7 +441,7 @@ public class AreaPreProcessingController {
         if (areaPreProcessingResults != null) {
             Double[][] transformedData = areaPreProcessingResults.getTransformedData();
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
-            dataTable.setModel(new ComputedDataTableModel(plateCondition, transformedData, processedTimeFrames));
+            dataTable.setModel(new AreaDataTableModel(plateCondition, transformedData, processedTimeFrames));
             dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat()));
             dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
@@ -459,7 +459,7 @@ public class AreaPreProcessingController {
         if (areaPreProcessingResults != null) {
             Double[][] normalizedCorrectedArea = areaPreProcessingResults.getNormalizedCorrectedArea();
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
-            dataTable.setModel(new ComputedDataTableModel(plateCondition, normalizedCorrectedArea, processedTimeFrames));
+            dataTable.setModel(new AreaDataTableModel(plateCondition, normalizedCorrectedArea, processedTimeFrames));
             dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat()));
             dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
@@ -488,7 +488,7 @@ public class AreaPreProcessingController {
             double[] xValues = processedTimeFrames;
             int counter = 0;
             for (Well well : processedWells) {
-                int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+                int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(well);
                 if (numberOfSamplesPerWell == 1) {
                     for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                         double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
@@ -559,7 +559,7 @@ public class AreaPreProcessingController {
             double[] xValues = processedTimeFrames;
             int counter = 0;
             for (Well well : processedWells) {
-                int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+                int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(well);
                 if (numberOfSamplesPerWell == 1) {
                     for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                         double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
@@ -611,7 +611,7 @@ public class AreaPreProcessingController {
             double[] xValues = areaPreProcessingResults.getProcessedTimeFrames();
             int counter = 0;
             for (Well well : processedWells) {
-                int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+                int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(well);
                 if (numberOfSamplesPerWell == 1) {
                     for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                         // if boolean is false, replicate has to be considered in the plot
@@ -689,7 +689,7 @@ public class AreaPreProcessingController {
             }
             int counter = 0;
             for (Well well : processedWells) {
-                int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+                int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(well);
                 if (numberOfSamplesPerWell == 1) {
                     for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                         index = timeInterval.getFirstTimeFrame();
@@ -1084,7 +1084,7 @@ public class AreaPreProcessingController {
         // get processed time frames
         double[] processedTimeFrames = getProcessedTimeFrames(plateCondition);
         // get number of samples 
-        int numberOfSamplesPerCondition = AnalysisUtils.getNumberOfSamplesPerCondition(plateCondition);
+        int numberOfSamplesPerCondition = AnalysisUtils.getNumberOfAreaAnalyzedSamples(plateCondition);
         boolean firstAreaIsZero = false;
         Double[][] areaRawData = new Double[processedTimeFrames.length][numberOfSamplesPerCondition];
         int counter = 0;
@@ -1200,7 +1200,7 @@ public class AreaPreProcessingController {
         List<List<double[]>> densityFunctions = densityFunctionsMap.get(dataCategory);
         int counter = 0;
         for (Well well : imagedWells) {
-            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(well);
             if (numberOfSamplesPerWell == 1) {
                 for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                     // x values

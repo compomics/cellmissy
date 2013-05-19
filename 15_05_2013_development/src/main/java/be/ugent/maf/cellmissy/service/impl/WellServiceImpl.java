@@ -56,7 +56,8 @@ public class WellServiceImpl implements WellService {
     private Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> algoMap;
 
     /**
-     * Given first well imaged and an imaging type, this method is predicting the imaged pattern of wells on the given plate format
+     * Given first well imaged and an imaging type, this method is predicting
+     * the imaged pattern of wells on the given plate format
      *
      * @param imagingType
      * @param plateFormat
@@ -94,7 +95,8 @@ public class WellServiceImpl implements WellService {
     }
 
     /**
-     * Given a list of wellGui and x and y shifted values, find a certain wellGui
+     * Given a list of wellGui and x and y shifted values, find a certain
+     * wellGui
      *
      * @param wellGuiList
      * @param shiftedX
@@ -111,7 +113,8 @@ public class WellServiceImpl implements WellService {
     }
 
     /**
-     * Initialize CellMia data service, microscope data service and process data from the microscope
+     * Initialize CellMia data service, microscope data service and process data
+     * from the microscope
      *
      * @param experiment
      */
@@ -159,15 +162,16 @@ public class WellServiceImpl implements WellService {
         wellRepository.delete(entity);
     }
 
-   /**
-    * Get the global algorithm map from CellMia data service
-    * @return
-    * @throws FileParserException
-    * @throws PositionListMismatchException
-    * @throws CellMiaDataLoadingException 
-    */
+    /**
+     * Get the global algorithm map from CellMia data service
+     *
+     * @return
+     * @throws FileParserException
+     * @throws PositionListMismatchException
+     * @throws CellMiaDataLoadingException
+     */
     @Override
-    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException, CellMiaDataLoadingException{
+    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException, CellMiaDataLoadingException {
         algoMap = cellMiaDataService.processCellMiaData();
         return algoMap;
     }
@@ -251,8 +255,8 @@ public class WellServiceImpl implements WellService {
         if (wellHasImagingTypes != null) {
             List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
             for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
-                List<Track> tracks = new ArrayList<>(wellHasImagingType.getTrackList());
-                for (Track track : tracks) {
+                List<Track> trackList = wellHasImagingType.getTrackList();
+                for (Track track : trackList) {
                     // fetch track points
                     fetchTrackPointsForTrack(track);
                 }
@@ -263,7 +267,8 @@ public class WellServiceImpl implements WellService {
     }
 
     /**
-     * Get wellHasImagingTypes for some wells, for a certain algorithm and for a certain imagingType
+     * Get wellHasImagingTypes for some wells, for a certain algorithm and for a
+     * certain imagingType
      *
      * @param wellId
      * @param AlgorithmId
@@ -286,7 +291,7 @@ public class WellServiceImpl implements WellService {
     }
 
     @Override
-    public int getNumberOfSamples() throws CellMiaDataLoadingException{
+    public int getNumberOfSamples() throws CellMiaDataLoadingException {
         return cellMiaDataService.getNumberOfSamples();
     }
 

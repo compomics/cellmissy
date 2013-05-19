@@ -31,7 +31,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -231,17 +230,17 @@ public class SetupReportController {
     private void addParagraphPerCondition() {
         // add main title for section
         PdfUtils.addTitle(document, "BIOLOGICAL CONDITIONS", titleFont);
-        List<PlateCondition> plateConditions = new ArrayList(experiment.getPlateConditionList());
-        for (int i = 0; i < plateConditions.size(); i++) {
-            Paragraph paragraph = new Paragraph("" + plateConditions.get(i).getName(), titleFont);
+        List<PlateCondition> plateConditionList = experiment.getPlateConditionList();
+        for (int i = 0; i < plateConditionList.size(); i++) {
+            Paragraph paragraph = new Paragraph("" + plateConditionList.get(i).getName(), titleFont);
             //set font color to condition index
             int lenght = GuiUtils.getAvailableColors().length;
-            int conditionIndex = plateConditions.get(i).getConditionIndex() - 1;
+            int conditionIndex = plateConditionList.get(i).getConditionIndex() - 1;
             int indexOfColor = conditionIndex % lenght;
             titleFont.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
             try {
                 document.add(paragraph);
-                addConditionInfo(plateConditions.get(i));
+                addConditionInfo(plateConditionList.get(i));
                 PdfUtils.addEmptyLines(document, 1);
             } catch (DocumentException ex) {
                 LOG.error(ex.getMessage(), ex);
@@ -384,9 +383,9 @@ public class SetupReportController {
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, titleFont);
         lines.clear();
-        List<Treatment> treatments = new ArrayList<>(plateCondition.getTreatmentList());
-        for (int i = 0; i < treatments.size(); i++) {
-            Treatment treatment = treatments.get(i);
+        List<Treatment> treatmentList = plateCondition.getTreatmentList();
+        for (int i = 0; i < treatmentList.size(); i++) {
+            Treatment treatment = treatmentList.get(i);
             line = "Treatment type: " + treatment.getTreatmentType();
             lines.add(line);
             line = "Treatment concentration: " + treatment.getConcentration() + " " + treatment.getConcentrationUnit();

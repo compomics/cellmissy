@@ -74,8 +74,10 @@ public class AnalysisUtils {
     }
 
     /**
-     * Formatting a symmetric matrix: make the matrix diagonal, so that symmetric (identical) values are not shown anymore, i.e. they are set to null. With a customized renderer, these null values can
-     * be shown as a dash (-), as we do for example in the p values matrix.
+     * Formatting a symmetric matrix: make the matrix diagonal, so that
+     * symmetric (identical) values are not shown anymore, i.e. they are set to
+     * null. With a customized renderer, these null values can be shown as a
+     * dash (-), as we do for example in the p values matrix.
      *
      * @param matrix
      * @return
@@ -193,7 +195,8 @@ public class AnalysisUtils {
     }
 
     /**
-     * Scale MAD in order to use it as a consistent estimator for the estimation of the standard deviation
+     * Scale MAD in order to use it as a consistent estimator for the estimation
+     * of the standard deviation
      *
      * @param data
      * @return sd (related to MAD)
@@ -205,7 +208,9 @@ public class AnalysisUtils {
     }
 
     /**
-     * This method is using the Descriptive Statistics Class from org.apache.commons.math to estimate sample quantiles Cfr algorithm type 6 in R, EXCEL, Minitab and SPSS. Continuous sample quantiles
+     * This method is using the Descriptive Statistics Class from
+     * org.apache.commons.math to estimate sample quantiles Cfr algorithm type 6
+     * in R, EXCEL, Minitab and SPSS. Continuous sample quantiles
      *
      * @param data
      * @param p
@@ -221,8 +226,9 @@ public class AnalysisUtils {
     }
 
     /**
-     * This method is estimating quantiles making use of algorithm type 7 in R. This is used by S as well. This implementation is more sensitive, especially with small datasets (less than 15 data
-     * points)
+     * This method is estimating quantiles making use of algorithm type 7 in R.
+     * This is used by S as well. This implementation is more sensitive,
+     * especially with small datasets (less than 15 data points)
      *
      * @param data -- array of double (distribution of data points)
      * @param p -- percentile
@@ -252,7 +258,8 @@ public class AnalysisUtils {
     }
 
     /**
-     * Given two vectors A and B, this method is computing the Euclidean Distance between them
+     * Given two vectors A and B, this method is computing the Euclidean
+     * Distance between them
      *
      * @param firstVector
      * @param secondVector
@@ -296,7 +303,7 @@ public class AnalysisUtils {
     public static int getMaximumNumberOfReplicates(List<PlateCondition> plateConditions) {
         int max = 0;
         for (PlateCondition plateCondition : plateConditions) {
-            int numberOfSamplesPerCondition = getNumberOfSamplesPerCondition(plateCondition);
+            int numberOfSamplesPerCondition = getNumberOfAreaAnalyzedSamples(plateCondition);
             if (numberOfSamplesPerCondition > max) {
                 max = numberOfSamplesPerCondition;
             }
@@ -305,18 +312,33 @@ public class AnalysisUtils {
     }
 
     /**
-     * Get number of sample points for each condition
+     * Get number of samples that produced area results values.
      *
      * @param plateCondition
      * @return
      */
-    public static int getNumberOfSamplesPerCondition(PlateCondition plateCondition) {
-        int numberOfSamples = 0;
-        List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
-        for (Well well : processedWells) {
-            numberOfSamples += getNumberOfSamplesPerWell(well);
+    public static int getNumberOfAreaAnalyzedSamples(PlateCondition plateCondition) {
+        int areaAnalyzedSamples = 0;
+        List<Well> areaAnalyzedWells = plateCondition.getAreaAnalyzedWells();
+        for (Well well : areaAnalyzedWells) {
+            areaAnalyzedSamples += getNumberOfAreaAnalyzedSamplesPerWell(well);
         }
-        return numberOfSamples;
+        return areaAnalyzedSamples;
+    }
+
+    /**
+     * Get number of samples that produced single cell analysis results.
+     *
+     * @param plateCondition
+     * @return
+     */
+    public static int getNumberOfSingleCellAnalyzedSamples(PlateCondition plateCondition) {
+        int singleCellAnalyzedSamples = 0;
+        List<Well> singleCellAnalyzedWells = plateCondition.getSingleCellAnalyzedWells();
+        for (Well well : singleCellAnalyzedWells) {
+            singleCellAnalyzedSamples += getNumberOfSingleCellAnalyzedSamplesPerWell(well);
+        }
+        return singleCellAnalyzedSamples;
     }
 
     /**
@@ -325,7 +347,7 @@ public class AnalysisUtils {
      * @param well
      * @return
      */
-    public static int getNumberOfSamplesPerWell(Well well) {
+    public static int getNumberOfAreaAnalyzedSamplesPerWell(Well well) {
         int numberOfSamplesPerWell = 0;
         for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
             if (!wellHasImagingType.getTimeStepList().isEmpty()) {
@@ -333,5 +355,21 @@ public class AnalysisUtils {
             }
         }
         return numberOfSamplesPerWell;
+    }
+
+    /**
+     * 
+     * @param well
+     * @return 
+     */
+    public static int getNumberOfSingleCellAnalyzedSamplesPerWell(Well well) {
+        int numberOfSamplesPerWell = 0;
+        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+            if (!wellHasImagingType.getTrackList().isEmpty()) {
+                numberOfSamplesPerWell++;
+            }
+        }
+        return numberOfSamplesPerWell;
+
     }
 }

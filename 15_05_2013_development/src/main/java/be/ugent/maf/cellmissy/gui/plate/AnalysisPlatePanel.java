@@ -12,7 +12,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -104,11 +103,11 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
         }
         // highlight the ones that were not imaged
         if (experiment != null) {
-            List<PlateCondition> plateConditions = new ArrayList<>(experiment.getPlateConditionList());
-            for (PlateCondition plateCondition : plateConditions) {
+            List<PlateCondition> plateConditionList = experiment.getPlateConditionList();
+            for (PlateCondition plateCondition : plateConditionList) {
                 if (plateCondition.isLoaded()) {
-                    List<Well> wells = new ArrayList<>(plateCondition.getWellList());
-                    for (Well well : wells) {
+                    List<Well> wellList = plateCondition.getWellList();
+                    for (Well well : wellList) {
                         if (well.getWellHasImagingTypeList().isEmpty()) {
                             for (WellGui wellGui : wellGuiList) {
                                 if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {

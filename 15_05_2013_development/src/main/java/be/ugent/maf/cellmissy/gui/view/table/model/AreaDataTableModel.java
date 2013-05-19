@@ -12,11 +12,12 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * This class extends AbstractTableModel
+ * This class extends AbstractTableModel. Table Model to show data for area
+ * analysis.
  *
  * @author Paola Masuzzo
  */
-public class ComputedDataTableModel extends AbstractTableModel {
+public class AreaDataTableModel extends AbstractTableModel {
 
     private PlateCondition plateCondition;
     private String columnNames[];
@@ -29,7 +30,7 @@ public class ComputedDataTableModel extends AbstractTableModel {
      * @param dataToShow
      * @param firstColumn
      */
-    public ComputedDataTableModel(PlateCondition plateCondition, Double[][] dataToShow, double[] firstColumn) {
+    public AreaDataTableModel(PlateCondition plateCondition, Double[][] dataToShow, double[] firstColumn) {
         this.plateCondition = plateCondition;
         initTable(firstColumn, dataToShow);
     }
@@ -60,19 +61,19 @@ public class ComputedDataTableModel extends AbstractTableModel {
     private void initTable(double[] firstColumn, Double[][] dataToShow) {
         //2D array of double (dimension: time frames * wellList +1)
         data = new Double[dataToShow.length][dataToShow[0].length + 1];
-        List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
-        int numberOfSamplesPerCondition = AnalysisUtils.getNumberOfSamplesPerCondition(plateCondition);
+        List<Well> areaAnalyzedWells = plateCondition.getAreaAnalyzedWells();
+        int numberOfSamplesPerCondition = AnalysisUtils.getNumberOfAreaAnalyzedSamples(plateCondition);
         //the table needs one column for the time frames + one column for each replicate (each well imaged)
         columnNames = new String[numberOfSamplesPerCondition + 1];
         //first column name: Time Frames
         columnNames[0] = "time frame";
         int counter = 1;
-        for (int j = 0; j < processedWells.size(); j++) {
-            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(processedWells.get(j));
-            for (int i = counter; i < numberOfSamplesPerWell + counter; i++) {
-                columnNames[i] = "" + processedWells.get(j);
+        for (int j = 0; j < areaAnalyzedWells.size(); j++) {
+            int numberOfAreaAnalyzedSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(areaAnalyzedWells.get(j));
+            for (int i = counter; i < numberOfAreaAnalyzedSamplesPerWell + counter; i++) {
+                columnNames[i] = "" + areaAnalyzedWells.get(j);
             }
-            counter += numberOfSamplesPerWell;
+            counter += numberOfAreaAnalyzedSamplesPerWell;
         }
         for (int i = 0; i < data.length; i++) {
             //fill in first column
