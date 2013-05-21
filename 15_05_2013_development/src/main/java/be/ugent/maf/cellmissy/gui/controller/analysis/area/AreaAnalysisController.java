@@ -113,7 +113,7 @@ public class AreaAnalysisController {
     private GridBagConstraints gridBagConstraints;
 
     /**
-     * initialize controller
+     * Initialize controller
      */
     public void init() {
         bindingGroup = new BindingGroup();

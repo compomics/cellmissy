@@ -625,10 +625,12 @@ public class SingleCellMainController {
                 if (!singleCellPreProcessingController.getTracksBindingList().isEmpty()) {
                     singleCellPreProcessingController.showTracksInTable();
                     onCardSwitch();
-                    //check which button is selected for analysis:
+                    //check which button is selected for analysis:s
                     if (singleCellPreProcessingController.getSingleCellAnalysisPanel().getNormalizedTrackCoordinatesRadioButton().isSelected()) {
                         //for current selected condition show normalized track coordinates values
-                        singleCellPreProcessingController.showTrackCoordinatesInTable(currentCondition);
+                        singleCellPreProcessingController.showNormalizedTrackCoordinatesInTable(currentCondition);
+                    } else if (singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocityRadioButton().isSelected()) {
+                        singleCellPreProcessingController.showVelocitiesInTable(currentCondition);
                     }
                 }
             } catch (InterruptedException ex) {

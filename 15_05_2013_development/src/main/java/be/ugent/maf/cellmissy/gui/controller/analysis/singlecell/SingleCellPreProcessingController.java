@@ -9,8 +9,6 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.SingleCellPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
-import be.ugent.maf.cellmissy.entity.Well;
-import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
@@ -24,14 +22,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import javax.swing.ButtonGroup;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.table.JTableHeader;
-import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.ELProperty;
@@ -112,14 +109,14 @@ public class SingleCellPreProcessingController {
      */
     public void updateMapWithCondition(PlateCondition plateCondition) {
         if (preProcessingMap.get(plateCondition) == null) {
-            // generate all the track point matrices for current condition
-            generateTrackPointMatrices(plateCondition);
             // create a new object to hold pre-processing results
             SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
             // do computations
-            Double[][] normalizedTrackCoordinates = getNormalizedTrackCoordinates(plateCondition);
-            singleCellPreProcessingResults.setNormalizedTrackCoordinates(normalizedTrackCoordinates);
-            singleCellPreProcessor.generateFixedDataStructure(singleCellPreProcessingResults, plateCondition);
+            singleCellMainController.fetchTrackPoints(plateCondition);
+            singleCellPreProcessor.generateTrackResultsList(singleCellPreProcessingResults, plateCondition);
+            singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateNormalizedTrackCoordinatesMatrix(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateVelocitiesVector(singleCellPreProcessingResults);
 
             // fill in map
             preProcessingMap.put(plateCondition, singleCellPreProcessingResults);
@@ -162,20 +159,40 @@ public class SingleCellPreProcessingController {
      *
      * @param plateCondition
      */
-    public void showTrackCoordinatesInTable(PlateCondition plateCondition) {
+    public void showNormalizedTrackCoordinatesInTable(PlateCondition plateCondition) {
         SingleCellPreProcessingResults singleCellPreProcessingResults = preProcessingMap.get(plateCondition);
         if (singleCellPreProcessingResults != null) {
-            Object[][] fixedDataStructure = singleCellPreProcessingResults.getFixedDataStructure();
-            Double[][] normalizedTrackCoordinates = singleCellPreProcessingResults.getNormalizedTrackCoordinates();
+            Object[][] fixedDataStructure = singleCellPreProcessingResults.getDataStructure();
+            Double[][] normalizedTrackCoordinatesMatrix = singleCellPreProcessingResults.getNormalizedTrackCoordinatesMatrix();
             String[] columnNames = {"well", "track", "time index", "x", "y"};
-            dataTable.setModel(new SingleCellDataTableModel(fixedDataStructure, normalizedTrackCoordinates, columnNames));
+            dataTable.setModel(new SingleCellDataTableModel(fixedDataStructure, normalizedTrackCoordinatesMatrix, columnNames));
             FormatRenderer formatRenderer = new FormatRenderer(singleCellMainController.getFormat());
             for (int i = 3; i < dataTable.getColumnCount(); i++) {
                 dataTable.getColumnModel().getColumn(i).setCellRenderer(formatRenderer);
             }
-            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+//            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
-        singleCellAnalysisPanel.getTableInfoLabel().setText("Tracks Coordinates");
+        singleCellAnalysisPanel.getTableInfoLabel().setText("Tracks Coordinates normalized to 0");
+    }
+
+    /**
+     *
+     * @param plateCondition
+     */
+    public void showVelocitiesInTable(PlateCondition plateCondition) {
+        SingleCellPreProcessingResults singleCellPreProcessingResults = preProcessingMap.get(plateCondition);
+        if (singleCellPreProcessingResults != null) {
+            Object[][] fixedDataStructure = singleCellPreProcessingResults.getDataStructure();
+            Double[] velocitiesVector = singleCellPreProcessingResults.getVelocitiesVector();
+            String[] columnNames = {"well", "track", "time index", "velocity"};
+            dataTable.setModel(new SingleCellDataTableModel(fixedDataStructure, velocitiesVector, columnNames));
+            FormatRenderer formatRenderer = new FormatRenderer(singleCellMainController.getFormat());
+            for (int i = 3; i < dataTable.getColumnCount(); i++) {
+                dataTable.getColumnModel().getColumn(i).setCellRenderer(formatRenderer);
+            }
+//            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+        }
+        singleCellAnalysisPanel.getTableInfoLabel().setText("Velocities");
     }
 
     /**
@@ -216,6 +233,11 @@ public class SingleCellPreProcessingController {
         dataTable.setColumnSelectionAllowed(true);
         dataTable.setRowSelectionAllowed(false);
         singleCellAnalysisPanel.getDataTablePanel().add(scrollPane);
+        //create a ButtonGroup for the radioButtons used for analysis
+        ButtonGroup radioButtonGroup = new ButtonGroup();
+        //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
+        radioButtonGroup.add(singleCellAnalysisPanel.getNormalizedTrackCoordinatesRadioButton());
+        radioButtonGroup.add(singleCellAnalysisPanel.getVelocityRadioButton());
         //select as default first button (Normalized track coordinates Computation)
         singleCellAnalysisPanel.getNormalizedTrackCoordinatesRadioButton().setSelected(true);
         preProcessingMap = new LinkedHashMap<>();
@@ -239,8 +261,7 @@ public class SingleCellPreProcessingController {
             public void actionPerformed(ActionEvent e) {
                 //check that a condition is selected
                 if (singleCellMainController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != - 1) {
-                    //show delta area values in the table            
-                    showTrackCoordinatesInTable(singleCellMainController.getCurrentCondition());
+                    showNormalizedTrackCoordinatesInTable(singleCellMainController.getCurrentCondition());
                 }
             }
         });
@@ -248,12 +269,12 @@ public class SingleCellPreProcessingController {
         singleCellAnalysisPanel.getVelocityRadioButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PlateCondition currentCondition = singleCellMainController.getCurrentCondition();
-                SingleCellPreProcessingResults singleCellPreProcessingResults = preProcessingMap.get(currentCondition);
-                singleCellPreProcessor.computeDirectionalMovements(singleCellPreProcessingResults, currentCondition);
+                //check that a condition is selected
+                if (singleCellMainController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != - 1) {
+                    showVelocitiesInTable(singleCellMainController.getCurrentCondition());
+                }
             }
         });
-
 
         // add view to parent panel
         singleCellMainController.getDataAnalysisPanel().getAnalysisParentPanel().add(singleCellAnalysisPanel, gridBagConstraints);
@@ -290,76 +311,5 @@ public class SingleCellPreProcessingController {
 
         bindingGroup.addBinding(trackPointsTableBinding);
         bindingGroup.bind();
-    }
-
-    /**
-     * For a condition, generate the track points matrix.
-     *
-     * @param plateCondition
-     */
-    private void generateTrackPointMatrices(PlateCondition plateCondition) {
-        // fetch the track points for the current plate condition
-        singleCellMainController.fetchTrackPoints(plateCondition);
-        List<Well> processedWells = plateCondition.getSingleCellAnalyzedWells();
-        for (Well well : processedWells) {
-            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
-                for (Track track : wellHasImagingType.getTrackList()) {
-                    // generate the track points matrix for the current track
-                    track.generateTrackPointMatrix();
-                }
-            }
-        }
-    }
-
-    /**
-     *
-     * @param plateCondition
-     * @return
-     */
-    private int getNumberOfTrackPoints(PlateCondition plateCondition) {
-        int number = 0;
-        List<Well> processedWells = plateCondition.getSingleCellAnalyzedWells();
-        for (Well well : processedWells) {
-            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
-                for (Track track : wellHasImagingType.getTrackList()) {
-                    // generate the track points matrix for the current track
-                    double[][] trackPointMatrix = track.getTrackPointMatrix();
-                    number += trackPointMatrix.length;
-                }
-            }
-        }
-        return number;
-    }
-
-    /**
-     *
-     * @param plateCondition
-     * @return
-     */
-    private Double[][] getNormalizedTrackCoordinates(PlateCondition plateCondition) {
-        int numberOfTrackPoints = getNumberOfTrackPoints(plateCondition);
-        Double[][] trackCoordinates = new Double[numberOfTrackPoints][2];
-        List<Well> processedWells = plateCondition.getSingleCellAnalyzedWells();
-        int counter = 0;
-        for (Well well : processedWells) {
-            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
-                for (Track track : wellHasImagingType.getTrackList()) {
-                    // generate the track points matrix for the current track
-                    double[][] trackPointMatrix = track.getTrackPointMatrix();
-                    for (int i = 0; i < trackPointMatrix.length; i++) {
-                        double[] firstTrackCoordinates = trackPointMatrix[0];
-                        double x0 = firstTrackCoordinates[0];
-                        double y0 = firstTrackCoordinates[1];
-                        double currentX = trackPointMatrix[i][0];
-                        double currentY = trackPointMatrix[i][1];
-                        double[] normalizedTrackCoordinates = new double[]{currentX - x0, currentY - y0};
-                        trackCoordinates[counter] = ArrayUtils.toObject(normalizedTrackCoordinates);
-                        counter++;
-                    }
-                }
-            }
-        }
-
-        return trackCoordinates;
     }
 }

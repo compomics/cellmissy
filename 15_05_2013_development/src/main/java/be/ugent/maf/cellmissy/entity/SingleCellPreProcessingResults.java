@@ -4,6 +4,8 @@
  */
 package be.ugent.maf.cellmissy.entity;
 
+import java.util.List;
+
 /**
  * This class is holding the results from the pre processing of single cell
  * analysis.
@@ -12,34 +14,44 @@ package be.ugent.maf.cellmissy.entity;
  */
 public class SingleCellPreProcessingResults {
 
+    // list of track data holders
+    private List<TrackDataHolder> trackDataHolders;
     // data structure containing wells, tracks numbers and time indexes 
-    private Object[][] fixedDataStructure;
+    private Object[][] dataStructure;
     // track coordinates normalized to position (0, 0)
-    private Double[][] normalizedTrackCoordinates;
-    // directional movements in x and y
-    private Double[][] directionalMovements;
+    private Double[][] normalizedTrackCoordinatesMatrix;
+    // array for velocities
+    private Double[] velocitiesVector;
 
-    public Object[][] getFixedDataStructure() {
-        return fixedDataStructure;
+    public List<TrackDataHolder> getTrackDataHolders() {
+        return trackDataHolders;
     }
 
-    public void setFixedDataStructure(Object[][] fixedDataStructure) {
-        this.fixedDataStructure = fixedDataStructure;
+    public void setTrackDataHolders(List<TrackDataHolder> trackDataHolders) {
+        this.trackDataHolders = trackDataHolders;
     }
 
-    public Double[][] getNormalizedTrackCoordinates() {
-        return normalizedTrackCoordinates;
+    public Object[][] getDataStructure() {
+        return dataStructure;
     }
 
-    public void setNormalizedTrackCoordinates(Double[][] normalizedTrackCoordinates) {
-        this.normalizedTrackCoordinates = normalizedTrackCoordinates;
+    public void setDataStructure(Object[][] dataStructure) {
+        this.dataStructure = dataStructure;
     }
 
-    public Double[][] getDirectionalMovements() {
-        return directionalMovements;
+    public Double[][] getNormalizedTrackCoordinatesMatrix() {
+        return normalizedTrackCoordinatesMatrix;
     }
 
-    public void setDirectionalMovements(Double[][] directionalMovements) {
-        this.directionalMovements = directionalMovements;
+    public void setNormalizedTrackCoordinatesMatrix(Double[][] normalizedTrackCoordinatesMatrix) {
+        this.normalizedTrackCoordinatesMatrix = normalizedTrackCoordinatesMatrix;
+    }
+
+    public Double[] getVelocitiesVector() {
+        return velocitiesVector;
+    }
+
+    public void setVelocitiesVector(Double[] velocitiesVector) {
+        this.velocitiesVector = velocitiesVector;
     }
 }

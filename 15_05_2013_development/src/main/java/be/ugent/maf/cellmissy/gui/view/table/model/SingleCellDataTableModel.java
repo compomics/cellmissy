@@ -16,13 +16,25 @@ public class SingleCellDataTableModel extends AbstractTableModel {
     private String columnNames[];
 
     /**
-     * Constructor
      *
+     * @param fixedData
      * @param dataToAdd
+     * @param columnNames
      */
     public SingleCellDataTableModel(Object[][] fixedData, Object[][] dataToAdd, String columnNames[]) {
         this.columnNames = columnNames;
         initTable(fixedData, dataToAdd);
+    }
+
+    /**
+     *
+     * @param fixedData
+     * @param vectorToAdd
+     * @param columnNames
+     */
+    public SingleCellDataTableModel(Object[][] fixedData, Object[] vectorToAdd, String columnNames[]) {
+        this.columnNames = columnNames;
+        initTable2(fixedData, vectorToAdd);
     }
 
     @Override
@@ -61,6 +73,24 @@ public class SingleCellDataTableModel extends AbstractTableModel {
                     data[row][col] = fixedData[row][col];
                 } else {
                     data[row][col] = dataToAdd[row][col - firstLength];
+                }
+            }
+        }
+    }
+
+    private void initTable2(Object[][] fixedData, Object[] vectorToAdd) {
+        int firstLength = fixedData[0].length;
+        int secondLength = vectorToAdd.length;
+        int totalLength = firstLength + secondLength;
+
+        data = new Object[fixedData.length][totalLength];
+
+        for (int row = 0; row < data.length; row++) {
+            for (int col = 0; col < data[0].length; col++) {
+                if (col < firstLength) {
+                    data[row][col] = fixedData[row][col];
+                } else {
+                    data[row][col] = vectorToAdd[row];
                 }
             }
         }

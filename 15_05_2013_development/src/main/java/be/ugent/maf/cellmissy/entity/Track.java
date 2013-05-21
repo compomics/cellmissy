@@ -19,7 +19,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -54,8 +53,6 @@ public class Track implements Serializable {
     private WellHasImagingType wellHasImagingType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "track", orphanRemoval = true)
     private List<TrackPoint> trackPointList;
-    @Transient
-    private double[][] trackPointMatrix;
 
     public Track() {
     }
@@ -109,20 +106,6 @@ public class Track implements Serializable {
 
     public void setTrackPointList(List<TrackPoint> trackPointList) {
         this.trackPointList = trackPointList;
-    }
-
-    public double[][] getTrackPointMatrix() {
-        return trackPointMatrix;
-    }
-
-    public void generateTrackPointMatrix() {
-        trackPointMatrix = new double[trackPointList.size()][2];
-        for (int i = 0; i < trackPointMatrix.length; i++) {
-            // put in each row (x, y) coordinates
-            double cellRow = trackPointList.get(i).getCellRow();
-            double cellCol = trackPointList.get(i).getCellCol();
-            trackPointMatrix[i] = new double[]{cellRow, cellCol};
-        }
     }
 
     @Override

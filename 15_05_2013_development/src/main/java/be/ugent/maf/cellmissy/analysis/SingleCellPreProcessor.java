@@ -19,12 +19,24 @@ public interface SingleCellPreProcessor {
      * @param singleCellPreProcessingResults
      * @param plateCondition
      */
-    public void generateFixedDataStructure(SingleCellPreProcessingResults singleCellPreProcessingResults, PlateCondition plateCondition);
-    
+    public void generateTrackResultsList(SingleCellPreProcessingResults singleCellPreProcessingResults, PlateCondition plateCondition);
+
     /**
-     * Compute directional movements in x and y directions
+     *
      * @param singleCellPreProcessingResults
-     * @param plateCondition 
+     * @param plateCondition
      */
-    public void computeDirectionalMovements(SingleCellPreProcessingResults singleCellPreProcessingResults, PlateCondition plateCondition);
+    public void generateDataStructure(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateNormalizedTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 }
