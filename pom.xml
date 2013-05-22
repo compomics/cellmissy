@@ -5,7 +5,7 @@
 
     <groupId>be.ugent.maf</groupId>
     <artifactId>CellMissy</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>CellMissy</name>
@@ -408,6 +408,38 @@
             <groupId>net.sourceforge.jcalendarbutton</groupId>
             <artifactId>jcalendarbutton</artifactId>
             <version>1.4.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.compomics</groupId>
+            <artifactId>utilities</artifactId>
+            <version>3.13.24</version>
+            <type>jar</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.compomics</groupId>
+                    <artifactId>peptizer</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>de.proteinms.omxparser</groupId>
+                    <artifactId>omssa-parser</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>batik</groupId>
+                    <artifactId>pdf-transcoder</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>batik</groupId>
+                    <artifactId>batik-all</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>uk.ac.ebi.jmzml</groupId>
+                    <artifactId>jmzml</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>derby</artifactId>
+                    <groupId>org.apache.derby</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>  
     
