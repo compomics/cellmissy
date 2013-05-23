@@ -11,7 +11,6 @@
 package be.ugent.maf.cellmissy.gui;
 
 import be.ugent.maf.cellmissy.gui.controller.ApplicationValidator;
-import be.ugent.maf.cellmissy.gui.controller.CellMissyStarter;
 import java.awt.Color;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
