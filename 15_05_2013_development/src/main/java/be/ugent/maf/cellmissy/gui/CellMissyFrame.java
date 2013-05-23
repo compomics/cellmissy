@@ -10,7 +10,7 @@
  */
 package be.ugent.maf.cellmissy.gui;
 
-import be.ugent.maf.cellmissy.gui.controller.CellMissyStarter;
+import be.ugent.maf.cellmissy.gui.controller.ApplicationValidator;
 import java.awt.Color;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -370,9 +370,9 @@ public class CellMissyFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                CellMissyStarter cellMissyStarter = new CellMissyStarter();
-                cellMissyStarter.init();
-                cellMissyStarter.getApplicationContext();
+                ApplicationValidator applicationValidator = new ApplicationValidator();
+                applicationValidator.init();
+                applicationValidator.getApplicationContext();
             }
         });
     }
