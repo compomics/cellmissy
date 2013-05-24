@@ -6,7 +6,6 @@ package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
@@ -36,32 +35,16 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         return bottomPanel;
     }
 
-    public JLabel getTableInfoLabel() {
-        return tableInfoLabel;
-    }
-
     public JLabel getResultsImportingLabel() {
         return resultsImportingLabel;
     }
 
-    public JLabel getPreProcessingLabel() {
-        return preProcessingLabel;
+    public JLabel getTrackCoordinatesLabel() {
+        return trackCoordinatesLabel;
     }
 
-    public JRadioButton getNormalizedTrackCoordinatesRadioButton() {
-        return normalizedTrackCoordinatesRadioButton;
-    }
-
-    public JPanel getDataTablePanel() {
-        return dataTablePanel;
-    }
-
-    public JRadioButton getAngleRadioButton() {
-        return angleRadioButton;
-    }
-
-    public JRadioButton getVelocityRadioButton() {
-        return velocityRadioButton;
+    public JPanel getTrackCoordinatesParentPanel() {
+        return trackCoordinatesParentPanel;
     }
 
     /**
@@ -83,7 +66,8 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
 
         topPanel = new javax.swing.JPanel();
         resultsImportingLabel = new javax.swing.JLabel();
-        preProcessingLabel = new javax.swing.JLabel();
+        trackCoordinatesLabel = new javax.swing.JLabel();
+        singleCellVelocitiesLabel = new javax.swing.JLabel();
         bottomPanel = new javax.swing.JPanel();
         resultsImporterPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -91,15 +75,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         tracksTable = new javax.swing.JTable();
         trackPointsScrollPane = new javax.swing.JScrollPane();
         trackPointsTable = new javax.swing.JTable();
-        preProcessingPanel = new javax.swing.JPanel();
-        radioButtonsPanel = new javax.swing.JPanel();
-        tableInfoLabel = new javax.swing.JLabel();
-        normalizedTrackCoordinatesRadioButton = new javax.swing.JRadioButton();
-        velocityRadioButton = new javax.swing.JRadioButton();
-        angleRadioButton = new javax.swing.JRadioButton();
-        dataTablePanel = new javax.swing.JPanel();
-        graphicsParentPanel = new javax.swing.JPanel();
-        extraPanel = new javax.swing.JPanel();
+        trackCoordinatesParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -112,9 +88,13 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         resultsImportingLabel.setText("1. Data Importing");
         resultsImportingLabel.setToolTipText("Data loaded from DB");
 
-        preProcessingLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        preProcessingLabel.setText("2. Pre-processing");
-        preProcessingLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
+        trackCoordinatesLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        trackCoordinatesLabel.setText("2. Track Coordinates");
+        trackCoordinatesLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
+
+        singleCellVelocitiesLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        singleCellVelocitiesLabel.setText("3. Single Cell Velocities");
+        singleCellVelocitiesLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);
@@ -124,8 +104,10 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(resultsImportingLabel)
                 .addGap(18, 18, 18)
-                .addComponent(preProcessingLabel)
-                .addContainerGap(685, Short.MAX_VALUE))
+                .addComponent(trackCoordinatesLabel)
+                .addGap(18, 18, 18)
+                .addComponent(singleCellVelocitiesLabel)
+                .addContainerGap(667, Short.MAX_VALUE))
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -133,8 +115,9 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(resultsImportingLabel)
-                    .addComponent(preProcessingLabel))
-                .addContainerGap(13, Short.MAX_VALUE))
+                    .addComponent(trackCoordinatesLabel)
+                    .addComponent(singleCellVelocitiesLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -198,7 +181,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                         .addGroup(resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(resultsImporterPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 717, Short.MAX_VALUE))
+                                .addGap(0, 860, Short.MAX_VALUE))
                             .addComponent(trackPointsScrollPane))
                         .addContainerGap())))
         );
@@ -208,7 +191,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tracksScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+                .addComponent(tracksScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(trackPointsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -217,120 +200,12 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         bottomPanel.add(resultsImporterPanel, "resultsImporterPanel");
         resultsImporterPanel.getAccessibleContext().setAccessibleName("resultsImporterPanel");
 
-        preProcessingPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        preProcessingPanel.setName("preProcessingPanel"); // NOI18N
-        preProcessingPanel.setOpaque(false);
-        preProcessingPanel.setLayout(new java.awt.GridBagLayout());
-
-        radioButtonsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        radioButtonsPanel.setOpaque(false);
-        radioButtonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        tableInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
-        tableInfoLabel.setMinimumSize(new java.awt.Dimension(20, 20));
-        tableInfoLabel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        normalizedTrackCoordinatesRadioButton.setText("Track Coordinates");
-        normalizedTrackCoordinatesRadioButton.setOpaque(false);
-
-        velocityRadioButton.setText("Velocity");
-        velocityRadioButton.setOpaque(false);
-
-        angleRadioButton.setText("Angle");
-        angleRadioButton.setOpaque(false);
-
-        javax.swing.GroupLayout radioButtonsPanelLayout = new javax.swing.GroupLayout(radioButtonsPanel);
-        radioButtonsPanel.setLayout(radioButtonsPanelLayout);
-        radioButtonsPanelLayout.setHorizontalGroup(
-            radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                        .addComponent(normalizedTrackCoordinatesRadioButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(velocityRadioButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(angleRadioButton))
-                    .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-        radioButtonsPanelLayout.setVerticalGroup(
-            radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, radioButtonsPanelLayout.createSequentialGroup()
-                .addContainerGap(12, Short.MAX_VALUE)
-                .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(normalizedTrackCoordinatesRadioButton)
-                    .addComponent(velocityRadioButton)
-                    .addComponent(angleRadioButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.09;
-        preProcessingPanel.add(radioButtonsPanel, gridBagConstraints);
-
-        dataTablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        dataTablePanel.setOpaque(false);
-        dataTablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        dataTablePanel.setLayout(new java.awt.BorderLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.3;
-        preProcessingPanel.add(dataTablePanel, gridBagConstraints);
-
-        graphicsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        graphicsParentPanel.setOpaque(false);
-        graphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        graphicsParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.weighty = 0.61;
-        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
-        preProcessingPanel.add(graphicsParentPanel, gridBagConstraints);
-
-        extraPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        extraPanel.setOpaque(false);
-        extraPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        javax.swing.GroupLayout extraPanelLayout = new javax.swing.GroupLayout(extraPanel);
-        extraPanel.setLayout(extraPanelLayout);
-        extraPanelLayout.setHorizontalGroup(
-            extraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 447, Short.MAX_VALUE)
-        );
-        extraPanelLayout.setVerticalGroup(
-            extraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 198, Short.MAX_VALUE)
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.3;
-        preProcessingPanel.add(extraPanel, gridBagConstraints);
-
-        bottomPanel.add(preProcessingPanel, "preProcessingPanel");
-        preProcessingPanel.getAccessibleContext().setAccessibleName("preProcessingPanel");
+        trackCoordinatesParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        trackCoordinatesParentPanel.setName("trackCoordinatesParentPanel"); // NOI18N
+        trackCoordinatesParentPanel.setOpaque(false);
+        trackCoordinatesParentPanel.setLayout(new java.awt.GridBagLayout());
+        bottomPanel.add(trackCoordinatesParentPanel, "trackCoordinatesParentPanel");
+        trackCoordinatesParentPanel.getAccessibleContext().setAccessibleName("trackCoordinatesParentPanel");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -343,24 +218,17 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         add(bottomPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JRadioButton angleRadioButton;
     private javax.swing.JPanel bottomPanel;
-    private javax.swing.JPanel dataTablePanel;
-    private javax.swing.JPanel extraPanel;
-    private javax.swing.JPanel graphicsParentPanel;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JRadioButton normalizedTrackCoordinatesRadioButton;
-    private javax.swing.JLabel preProcessingLabel;
-    private javax.swing.JPanel preProcessingPanel;
-    private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JPanel resultsImporterPanel;
     private javax.swing.JLabel resultsImportingLabel;
-    private javax.swing.JLabel tableInfoLabel;
+    private javax.swing.JLabel singleCellVelocitiesLabel;
     private javax.swing.JPanel topPanel;
+    private javax.swing.JLabel trackCoordinatesLabel;
+    private javax.swing.JPanel trackCoordinatesParentPanel;
     private javax.swing.JScrollPane trackPointsScrollPane;
     private javax.swing.JTable trackPointsTable;
     private javax.swing.JScrollPane tracksScrollPane;
     private javax.swing.JTable tracksTable;
-    private javax.swing.JRadioButton velocityRadioButton;
     // End of variables declaration//GEN-END:variables
 }

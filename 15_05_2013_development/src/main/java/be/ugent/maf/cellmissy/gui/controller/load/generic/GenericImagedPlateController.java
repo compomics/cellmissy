@@ -16,7 +16,7 @@ import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.gui.view.renderer.DataTreeCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.RightAlignmentRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.parser.GenericInputFileParser;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -38,6 +38,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -800,13 +801,13 @@ public class GenericImagedPlateController {
         columnBinding.setColumnName("Dataset");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(String.class);
-        columnBinding.setRenderer(new RightAlignmentRenderer());
+        columnBinding.setRenderer(new AlignedTableRenderer(SwingConstants.RIGHT));
 
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.imagingType.name}"));
         columnBinding.setColumnName("Imaging type");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(String.class);
-        columnBinding.setRenderer(new RightAlignmentRenderer());
+        columnBinding.setRenderer(new AlignedTableRenderer(SwingConstants.RIGHT));
 
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${timeStepSequence}"));
         columnBinding.setColumnName("Time sequence");
@@ -817,7 +818,7 @@ public class GenericImagedPlateController {
         columnBinding.setColumnName("Area");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new FormatRenderer(format));
+        columnBinding.setRenderer(new FormatRenderer(SwingConstants.RIGHT, format));
 
         bindingGroup.addBinding(timeStepsTableBinding);
         bindingGroup.bind();

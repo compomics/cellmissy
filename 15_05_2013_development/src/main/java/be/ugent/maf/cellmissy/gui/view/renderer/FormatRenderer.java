@@ -17,9 +17,16 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class FormatRenderer extends DefaultTableCellRenderer {
 
+    private int alignment;
     private Format formatter;
 
-    public FormatRenderer(Format formatter) {
+    /**
+     * 
+     * @param alignment
+     * @param formatter 
+     */
+    public FormatRenderer(int alignment, Format formatter) {
+        this.alignment = alignment;
         this.formatter = formatter;
     }
 
@@ -33,7 +40,7 @@ public class FormatRenderer extends DefaultTableCellRenderer {
             }
         }
         setValue(value);
-        setHorizontalAlignment(SwingConstants.RIGHT);
+        setHorizontalAlignment(alignment);
         setOpaque(true);
 
         if (isSelected) {

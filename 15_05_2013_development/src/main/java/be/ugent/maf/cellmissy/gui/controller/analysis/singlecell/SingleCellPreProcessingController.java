@@ -10,21 +10,19 @@ import be.ugent.maf.cellmissy.entity.SingleCellPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
-import be.ugent.maf.cellmissy.gui.view.table.model.SingleCellDataTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import javax.swing.ButtonGroup;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -55,7 +53,6 @@ public class SingleCellPreProcessingController {
     private ObservableList<TrackPoint> trackPointsBindingList;
     private JTableBinding tracksTableBinding;
     private JTableBinding trackPointsTableBinding;
-    private JTable dataTable;
     private Map<PlateCondition, SingleCellPreProcessingResults> preProcessingMap;
     // view
     private SingleCellAnalysisPanel singleCellAnalysisPanel;
@@ -63,6 +60,8 @@ public class SingleCellPreProcessingController {
     @Autowired
     private SingleCellMainController singleCellMainController;
     // child controllers
+    @Autowired
+    private TrackCoordinatesController trackCoordinatesController;
     //services
     @Autowired
     private SingleCellPreProcessor singleCellPreProcessor;
@@ -76,10 +75,21 @@ public class SingleCellPreProcessingController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         // init views
         initSingleCellAnalysisPanel();
+        // init child controllers
+        trackCoordinatesController.init();
     }
 
+    /**
+     * getters
+     *
+     * @return
+     */
     public SingleCellAnalysisPanel getSingleCellAnalysisPanel() {
         return singleCellAnalysisPanel;
+    }
+
+    public TrackCoordinatesPanel getTrackCoordinatesPanel() {
+        return trackCoordinatesController.getTrackCoordinatesPanel();
     }
 
     public ObservableList<Track> getTracksBindingList() {
@@ -88,6 +98,42 @@ public class SingleCellPreProcessingController {
 
     public ObservableList<TrackPoint> getTrackPointsBindingList() {
         return trackPointsBindingList;
+    }
+
+    public PlateCondition getCurrentCondition() {
+        return singleCellMainController.getCurrentCondition();
+    }
+
+    public Format getFormat() {
+        return singleCellMainController.getFormat();
+    }
+
+    public SingleCellPreProcessingResults getResultsHolder(PlateCondition plateCondition) {
+        return preProcessingMap.get(plateCondition);
+    }
+
+    public List<PlateCondition> getPlateConditionList() {
+        return singleCellMainController.getPlateConditionList();
+    }
+
+    public void showRawTrackCoordinatesInTable(PlateCondition plateCondition) {
+        trackCoordinatesController.showRawTrackCoordinatesInTable(plateCondition);
+    }
+
+    public void updateTrackNumberLabel(PlateCondition plateCondition) {
+        trackCoordinatesController.updateTrackNumberLabel(plateCondition);
+    }
+
+    public void updateWellBindingList(PlateCondition plateCondition) {
+        trackCoordinatesController.updateWellBindingList(plateCondition);
+    }
+
+    public void showNormalizedTrackCoordinatesInTable(PlateCondition plateCondition) {
+        trackCoordinatesController.showNormalizedTrackCoordinatesInTable(plateCondition);
+    }
+
+    public void plotRawTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints) {
+        trackCoordinatesController.plotRawTrackCoordinates(plateCondition, plotLines, plotPoints);
     }
 
     /**
@@ -99,6 +145,17 @@ public class SingleCellPreProcessingController {
             plateCondition.setLoaded(false);
             preProcessingMap.put(plateCondition, null);
         }
+    }
+
+    /**
+     * Show message through the main controller
+     *
+     * @param message
+     * @param title
+     * @param messageType
+     */
+    public void showMessage(String message, String title, Integer messageType) {
+        singleCellMainController.showMessage(message, title, messageType);
     }
 
     /**
@@ -115,9 +172,9 @@ public class SingleCellPreProcessingController {
             singleCellMainController.fetchTrackPoints(plateCondition);
             singleCellPreProcessor.generateTrackResultsList(singleCellPreProcessingResults, plateCondition);
             singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults);
             singleCellPreProcessor.generateNormalizedTrackCoordinatesMatrix(singleCellPreProcessingResults);
             singleCellPreProcessor.generateVelocitiesVector(singleCellPreProcessingResults);
-
             // fill in map
             preProcessingMap.put(plateCondition, singleCellPreProcessingResults);
         }
@@ -156,46 +213,6 @@ public class SingleCellPreProcessingController {
     }
 
     /**
-     *
-     * @param plateCondition
-     */
-    public void showNormalizedTrackCoordinatesInTable(PlateCondition plateCondition) {
-        SingleCellPreProcessingResults singleCellPreProcessingResults = preProcessingMap.get(plateCondition);
-        if (singleCellPreProcessingResults != null) {
-            Object[][] fixedDataStructure = singleCellPreProcessingResults.getDataStructure();
-            Double[][] normalizedTrackCoordinatesMatrix = singleCellPreProcessingResults.getNormalizedTrackCoordinatesMatrix();
-            String[] columnNames = {"well", "track", "time index", "x", "y"};
-            dataTable.setModel(new SingleCellDataTableModel(fixedDataStructure, normalizedTrackCoordinatesMatrix, columnNames));
-            FormatRenderer formatRenderer = new FormatRenderer(singleCellMainController.getFormat());
-            for (int i = 3; i < dataTable.getColumnCount(); i++) {
-                dataTable.getColumnModel().getColumn(i).setCellRenderer(formatRenderer);
-            }
-//            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
-        }
-        singleCellAnalysisPanel.getTableInfoLabel().setText("Tracks Coordinates normalized to 0");
-    }
-
-    /**
-     *
-     * @param plateCondition
-     */
-    public void showVelocitiesInTable(PlateCondition plateCondition) {
-        SingleCellPreProcessingResults singleCellPreProcessingResults = preProcessingMap.get(plateCondition);
-        if (singleCellPreProcessingResults != null) {
-            Object[][] fixedDataStructure = singleCellPreProcessingResults.getDataStructure();
-            Double[] velocitiesVector = singleCellPreProcessingResults.getVelocitiesVector();
-            String[] columnNames = {"well", "track", "time index", "velocity"};
-            dataTable.setModel(new SingleCellDataTableModel(fixedDataStructure, velocitiesVector, columnNames));
-            FormatRenderer formatRenderer = new FormatRenderer(singleCellMainController.getFormat());
-            for (int i = 3; i < dataTable.getColumnCount(); i++) {
-                dataTable.getColumnModel().getColumn(i).setCellRenderer(formatRenderer);
-            }
-//            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
-        }
-        singleCellAnalysisPanel.getTableInfoLabel().setText("Velocities");
-    }
-
-    /**
      * Initialize main panel
      */
     private void initSingleCellAnalysisPanel() {
@@ -222,24 +239,6 @@ public class SingleCellPreProcessingController {
         tracksTableHeader.setReorderingAllowed(false);
         trackPointsTableHeader.setReorderingAllowed(false);
 
-        //init dataTable
-        dataTable = new JTable();
-        JScrollPane scrollPane = new JScrollPane(dataTable);
-        //the table will take all the viewport height available
-        dataTable.setFillsViewportHeight(true);
-        scrollPane.getViewport().setBackground(Color.white);
-        dataTable.getTableHeader().setReorderingAllowed(false);
-        //row selection must be false && column selection true to be able to select through columns
-        dataTable.setColumnSelectionAllowed(true);
-        dataTable.setRowSelectionAllowed(false);
-        singleCellAnalysisPanel.getDataTablePanel().add(scrollPane);
-        //create a ButtonGroup for the radioButtons used for analysis
-        ButtonGroup radioButtonGroup = new ButtonGroup();
-        //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
-        radioButtonGroup.add(singleCellAnalysisPanel.getNormalizedTrackCoordinatesRadioButton());
-        radioButtonGroup.add(singleCellAnalysisPanel.getVelocityRadioButton());
-        //select as default first button (Normalized track coordinates Computation)
-        singleCellAnalysisPanel.getNormalizedTrackCoordinatesRadioButton().setSelected(true);
         preProcessingMap = new LinkedHashMap<>();
 
         // if you clisk on a row, the relative track points are fetched from Db and shown in another table
@@ -250,29 +249,6 @@ public class SingleCellPreProcessingController {
                 Track selectedTrack = tracksBindingList.get(selectedRow);
                 singleCellMainController.updateTrackPointsList(singleCellMainController.getCurrentCondition(), selectedTrack);
                 showTrackPointsInTable();
-            }
-        });
-
-        /**
-         * add action listeners
-         */
-        singleCellAnalysisPanel.getNormalizedTrackCoordinatesRadioButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //check that a condition is selected
-                if (singleCellMainController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != - 1) {
-                    showNormalizedTrackCoordinatesInTable(singleCellMainController.getCurrentCondition());
-                }
-            }
-        });
-
-        singleCellAnalysisPanel.getVelocityRadioButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //check that a condition is selected
-                if (singleCellMainController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != - 1) {
-                    showVelocitiesInTable(singleCellMainController.getCurrentCondition());
-                }
             }
         });
 
@@ -301,13 +277,13 @@ public class SingleCellPreProcessingController {
         columnBinding.setColumnName("x");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new FormatRenderer(singleCellMainController.getFormat()));
+        columnBinding.setRenderer(new FormatRenderer(SwingConstants.RIGHT, singleCellMainController.getFormat()));
 
         columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${cellCol}"));
         columnBinding.setColumnName("y");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new FormatRenderer(singleCellMainController.getFormat()));
+        columnBinding.setRenderer(new FormatRenderer(SwingConstants.RIGHT, singleCellMainController.getFormat()));
 
         bindingGroup.addBinding(trackPointsTableBinding);
         bindingGroup.bind();

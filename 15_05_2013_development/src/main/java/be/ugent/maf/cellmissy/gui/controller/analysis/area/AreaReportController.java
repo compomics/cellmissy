@@ -255,7 +255,7 @@ public class AreaReportController {
      * @param chart
      */
     private void addImageFromChart(JFreeChart chart, int imageWidth, int imageHeight) {
-        Image imageFromChart = PdfUtils.getImageFromChart(writer, chart, imageWidth, imageHeight);
+        Image imageFromChart = PdfUtils.getImageFromJFreeChart(writer, chart, imageWidth, imageHeight);
         // put image in the center
         imageFromChart.setAlignment(Element.ALIGN_CENTER);
         try {

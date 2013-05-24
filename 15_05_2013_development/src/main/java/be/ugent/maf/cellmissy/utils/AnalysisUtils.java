@@ -209,8 +209,8 @@ public class AnalysisUtils {
 
     /**
      * This method is using the Descriptive Statistics Class from
-     * org.apache.commons.math to estimate sample quantiles Cfr algorithm type 6
-     * in R, EXCEL, Minitab and SPSS. Continuous sample quantiles
+     * org.apache.commons.math to estimate sample quantiles. Cfr algorithm type
+     * 6 in R, EXCEL, Minitab and SPSS. Continuous sample quantiles
      *
      * @param data
      * @param p
@@ -228,7 +228,7 @@ public class AnalysisUtils {
     /**
      * This method is estimating quantiles making use of algorithm type 7 in R.
      * This is used by S as well. This implementation is more sensitive,
-     * especially with small datasets (less than 15 data points)
+     * especially with small datasets (less than 15 data points).
      *
      * @param data -- array of double (distribution of data points)
      * @param p -- percentile
@@ -245,7 +245,7 @@ public class AnalysisUtils {
         int k = (int) criterium;
         // get the double part of this criterium
         double d = criterium - k;
-        //
+        // check for the range in which k falls
         if (k > 0 && k < dataSize) {
             estimation = data[k - 1] + d * (data[k] - data[k - 1]);
         } else if (k == 0) {
@@ -253,13 +253,12 @@ public class AnalysisUtils {
         } else if (k == dataSize) {
             estimation = data[dataSize - 1];
         }
-
         return estimation;
     }
 
     /**
      * Given two vectors A and B, this method is computing the Euclidean
-     * Distance between them
+     * Distance between them.
      *
      * @param firstVector
      * @param secondVector
@@ -358,9 +357,9 @@ public class AnalysisUtils {
     }
 
     /**
-     * 
+     *
      * @param well
-     * @return 
+     * @return
      */
     public static int getNumberOfSingleCellAnalyzedSamplesPerWell(Well well) {
         int numberOfSamplesPerWell = 0;

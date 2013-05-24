@@ -18,6 +18,8 @@ public class SingleCellPreProcessingResults {
     private List<TrackDataHolder> trackDataHolders;
     // data structure containing wells, tracks numbers and time indexes 
     private Object[][] dataStructure;
+    // raw data track coordinates
+    private Double[][] rawTrackCoordinatesMatrix;
     // track coordinates normalized to position (0, 0)
     private Double[][] normalizedTrackCoordinatesMatrix;
     // array for velocities
@@ -37,6 +39,14 @@ public class SingleCellPreProcessingResults {
 
     public void setDataStructure(Object[][] dataStructure) {
         this.dataStructure = dataStructure;
+    }
+
+    public Double[][] getRawTrackCoordinatesMatrix() {
+        return rawTrackCoordinatesMatrix;
+    }
+
+    public void setRawTrackCoordinatesMatrix(Double[][] rawTrackCoordinatesMatrix) {
+        this.rawTrackCoordinatesMatrix = rawTrackCoordinatesMatrix;
     }
 
     public Double[][] getNormalizedTrackCoordinatesMatrix() {

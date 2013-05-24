@@ -37,13 +37,14 @@ public class PdfUtils {
 
     /**
      * Get an image to add to the document from a JFreeChart
+     *
      * @param pdfWriter
      * @param chart to be added
      * @param imageWidth
      * @param imageHeight
      * @return
      */
-    public static Image getImageFromChart(PdfWriter pdfWriter, JFreeChart chart, int imageWidth, int imageHeight) {
+    public static Image getImageFromJFreeChart(PdfWriter pdfWriter, JFreeChart chart, int imageWidth, int imageHeight) {
         Image imageFromChart = null;
         PdfContentByte contentByte = pdfWriter.getDirectContent();
         PdfTemplate template = contentByte.createTemplate(imageWidth, imageHeight);
@@ -61,6 +62,7 @@ public class PdfUtils {
 
     /**
      * Get an image to add to the document from a JPanel
+     *
      * @param pdfWriter
      * @param panel
      * @param imageWidth
@@ -86,6 +88,7 @@ public class PdfUtils {
 
     /**
      * Add empty lines between one section and another one
+     *
      * @param document
      * @param numberOfLines
      */
@@ -101,6 +104,7 @@ public class PdfUtils {
 
     /**
      * Add text to document
+     *
      * @param document
      * @param text
      * @param isIndented
@@ -125,7 +129,8 @@ public class PdfUtils {
     }
 
     /**
-     * Add a cell to a table, with customized font to display
+     * Add a cell to a table, with customised font to display.
+     *
      * @param table
      * @param cellText
      * @param font
@@ -137,6 +142,7 @@ public class PdfUtils {
 
     /**
      * Set up the look of a PdfPTable
+     *
      * @param dataTable
      */
     public static void setUpPdfPTable(PdfPTable dataTable) {
@@ -150,6 +156,7 @@ public class PdfUtils {
 
     /**
      * Add a simple line with some text as Title
+     *
      * @param document
      * @param title to add
      * @param titleFont
@@ -169,6 +176,7 @@ public class PdfUtils {
 
     /**
      * Add a cell with colored border to a table
+     *
      * @param table
      * @param color
      */

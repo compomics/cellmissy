@@ -32,7 +32,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
 
 /**
- * This class contains some helpful JFreeChart utilities
+ * This class contains some helpful JFreeChart utilities.
  *
  * @author Paola Masuzzo
  */
@@ -63,7 +63,7 @@ public class JFreeChartUtils {
 
     /**
      * Given a list of wells and one well's coordinate, get the index of the
-     * well in the List
+     * well in the List.
      *
      * @param wellCoordinates
      * @param wellList
@@ -80,7 +80,7 @@ public class JFreeChartUtils {
     }
 
     /**
-     * Get well coordinates from series in oder to render the lines color
+     * Get well coordinates from series in oder to render the lines colour
      *
      * @param xYSeriesCollection
      * @param indexOfSeries
@@ -170,7 +170,7 @@ public class JFreeChartUtils {
     }
 
     /**
-     * Generate Series for (x,y) Area plotting from two arrays of double
+     * Generate Series for (x,y).
      *
      * @param xValues
      * @param yValues
@@ -256,6 +256,21 @@ public class JFreeChartUtils {
             // show points?
             renderer.setSeriesShapesVisible(i, plotPoints);
         }
+    }
+
+    /**
+     *
+     * @param chart
+     * @param plotLines
+     * @param plotPoints
+     */
+    public static void setupTrackCoordinatesPlot(JFreeChart chart, boolean plotLines, boolean plotPoints) {
+        // set title font 
+        chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
+        // put legend on the right edge
+        chart.getLegend().setPosition(RectangleEdge.RIGHT);
+        XYPlot xYPlot = chart.getXYPlot();
+        setupPlot(xYPlot);
     }
 
     /**

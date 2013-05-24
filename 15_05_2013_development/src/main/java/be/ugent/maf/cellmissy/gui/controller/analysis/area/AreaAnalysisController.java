@@ -631,7 +631,7 @@ public class AreaAnalysisController {
         JTable statisticalSummaryTable = statisticsDialog.getStatisticalSummaryTable();
         statisticalSummaryTable.setModel(statisticalSummaryTableModel);
         for (int i = 1; i < statisticalSummaryTable.getColumnCount(); i++) {
-            statisticalSummaryTable.getColumnModel().getColumn(i).setCellRenderer(new FormatRenderer(new DecimalFormat("#.####")));
+            statisticalSummaryTable.getColumnModel().getColumn(i).setCellRenderer(new FormatRenderer(SwingConstants.RIGHT, new DecimalFormat("#.####")));
         }
         statisticalSummaryTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
     }

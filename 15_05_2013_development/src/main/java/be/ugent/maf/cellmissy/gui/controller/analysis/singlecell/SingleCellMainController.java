@@ -625,12 +625,17 @@ public class SingleCellMainController {
                 if (!singleCellPreProcessingController.getTracksBindingList().isEmpty()) {
                     singleCellPreProcessingController.showTracksInTable();
                     onCardSwitch();
-                    //check which button is selected for analysis:s
-                    if (singleCellPreProcessingController.getSingleCellAnalysisPanel().getNormalizedTrackCoordinatesRadioButton().isSelected()) {
-                        //for current selected condition show normalized track coordinates values
+                    // ********************************************************************* // 
+                    singleCellPreProcessingController.updateTrackNumberLabel(currentCondition);
+                    singleCellPreProcessingController.updateWellBindingList(currentCondition);
+                    //check which button is selected for analysis:
+                    if (singleCellPreProcessingController.getTrackCoordinatesPanel().getRawCoordinatesRadioButton().isSelected()) {
+                        singleCellPreProcessingController.showRawTrackCoordinatesInTable(currentCondition);
+                        boolean plotLines = singleCellPreProcessingController.getTrackCoordinatesPanel().getPlotLinesCheckBox().isSelected();
+                        boolean plotPoints = singleCellPreProcessingController.getTrackCoordinatesPanel().getPlotPointsCheckBox().isSelected();
+                        singleCellPreProcessingController.plotRawTrackCoordinates(currentCondition, plotLines, plotPoints);
+                    } else if (singleCellPreProcessingController.getTrackCoordinatesPanel().getNormalizedCoordinatesRadioButton().isSelected()) {
                         singleCellPreProcessingController.showNormalizedTrackCoordinatesInTable(currentCondition);
-                    } else if (singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocityRadioButton().isSelected()) {
-                        singleCellPreProcessingController.showVelocitiesInTable(currentCondition);
                     }
                 }
             } catch (InterruptedException ex) {
@@ -666,15 +671,14 @@ public class SingleCellMainController {
                 // enable next button
                 analysisExperimentPanel.getNextButton().setEnabled(true);
                 highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getResultsImportingLabel());
-                resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getPreProcessingLabel());
+                resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesLabel());
                 showInfoMessage("Tracks are shown for each well, together with (column, row) coordinates");
                 break;
-            case "preProcessingPanel":
-                highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getPreProcessingLabel());
+            case "trackCoordinatesParentPanel":
+                highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesLabel());
                 resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getResultsImportingLabel());
-                showInfoMessage("");
+                showInfoMessage("Track Coordinates are shown for each well");
                 break;
         }
-
     }
 }

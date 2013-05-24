@@ -10,7 +10,7 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class SingleCellDataTableModel extends AbstractTableModel {
+public class TrackCoordinatesTableModel extends AbstractTableModel {
 
     private Object[][] data;
     private String columnNames[];
@@ -19,22 +19,9 @@ public class SingleCellDataTableModel extends AbstractTableModel {
      *
      * @param fixedData
      * @param dataToAdd
-     * @param columnNames
      */
-    public SingleCellDataTableModel(Object[][] fixedData, Object[][] dataToAdd, String columnNames[]) {
-        this.columnNames = columnNames;
+    public TrackCoordinatesTableModel(Object[][] fixedData, Object[][] dataToAdd) {
         initTable(fixedData, dataToAdd);
-    }
-
-    /**
-     *
-     * @param fixedData
-     * @param vectorToAdd
-     * @param columnNames
-     */
-    public SingleCellDataTableModel(Object[][] fixedData, Object[] vectorToAdd, String columnNames[]) {
-        this.columnNames = columnNames;
-        initTable2(fixedData, vectorToAdd);
     }
 
     @Override
@@ -61,6 +48,7 @@ public class SingleCellDataTableModel extends AbstractTableModel {
      * define structure for table
      */
     private void initTable(Object[][] fixedData, Object[][] dataToAdd) {
+        columnNames = new String[]{"well", "track", "time index", "x", "y"};
         int firstLength = fixedData[0].length;
         int secondLength = dataToAdd[0].length;
         int totalLength = firstLength + secondLength;
@@ -73,24 +61,6 @@ public class SingleCellDataTableModel extends AbstractTableModel {
                     data[row][col] = fixedData[row][col];
                 } else {
                     data[row][col] = dataToAdd[row][col - firstLength];
-                }
-            }
-        }
-    }
-
-    private void initTable2(Object[][] fixedData, Object[] vectorToAdd) {
-        int firstLength = fixedData[0].length;
-        int secondLength = vectorToAdd.length;
-        int totalLength = firstLength + secondLength;
-
-        data = new Object[fixedData.length][totalLength];
-
-        for (int row = 0; row < data.length; row++) {
-            for (int col = 0; col < data[0].length; col++) {
-                if (col < firstLength) {
-                    data[row][col] = fixedData[row][col];
-                } else {
-                    data[row][col] = vectorToAdd[row];
                 }
             }
         }

@@ -54,6 +54,11 @@ public class GuiUtils {
         return gridBagConstraints;
     }
 
+    /**
+     * Getters
+     *
+     * @return
+     */
     public static Color[] getAvailableColors() {
         return availableColors;
     }
@@ -104,7 +109,7 @@ public class GuiUtils {
     }
 
     /**
-     * Centers the dialog on the parent frame.
+     * Center the dialog on the parent frame.
      *
      * @param parentFrame the parent frame
      * @param dialog the dialog
