@@ -46,7 +46,7 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="trackCoordinatesLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="singleCellVelocitiesLabel" min="-2" max="-2" attributes="0"/>
+                  <Component id="velocitiesLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="667" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -58,7 +58,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="resultsImportingLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="trackCoordinatesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="singleCellVelocitiesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="velocitiesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -84,7 +84,7 @@
             <Property name="toolTipText" type="java.lang.String" value="Data pre-processing: normalization and outliers detection"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="singleCellVelocitiesLabel">
+        <Component class="javax.swing.JLabel" name="velocitiesLabel">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="12" style="0"/>
@@ -235,6 +235,26 @@
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
               <CardConstraints cardName="trackCoordinatesParentPanel"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+        </Container>
+        <Container class="javax.swing.JPanel" name="velocitiesParentPanel">
+          <Properties>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[20, 20]"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="velocitiesParentPanel" noResource="true"/>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
+          <AccessibilityProperties>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="velocitiesParentPanel"/>
+            <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value=""/>
+          </AccessibilityProperties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+              <CardConstraints cardName="velocitiesParentPanel"/>
             </Constraint>
           </Constraints>
 

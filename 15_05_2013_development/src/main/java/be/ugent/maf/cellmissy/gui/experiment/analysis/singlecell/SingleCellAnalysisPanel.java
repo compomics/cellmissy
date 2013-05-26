@@ -47,6 +47,14 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         return trackCoordinatesParentPanel;
     }
 
+    public JPanel getVelocitiesParentPanel() {
+        return velocitiesParentPanel;
+    }
+
+    public JLabel getVelocitiesLabel() {
+        return velocitiesLabel;
+    }
+
     /**
      * Creates new form SingleCellAnalysisPanel
      */
@@ -67,7 +75,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         topPanel = new javax.swing.JPanel();
         resultsImportingLabel = new javax.swing.JLabel();
         trackCoordinatesLabel = new javax.swing.JLabel();
-        singleCellVelocitiesLabel = new javax.swing.JLabel();
+        velocitiesLabel = new javax.swing.JLabel();
         bottomPanel = new javax.swing.JPanel();
         resultsImporterPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -76,6 +84,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         trackPointsScrollPane = new javax.swing.JScrollPane();
         trackPointsTable = new javax.swing.JTable();
         trackCoordinatesParentPanel = new javax.swing.JPanel();
+        velocitiesParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -92,9 +101,9 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         trackCoordinatesLabel.setText("2. Track Coordinates");
         trackCoordinatesLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
-        singleCellVelocitiesLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        singleCellVelocitiesLabel.setText("3. Single Cell Velocities");
-        singleCellVelocitiesLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
+        velocitiesLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        velocitiesLabel.setText("3. Single Cell Velocities");
+        velocitiesLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);
@@ -106,7 +115,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(trackCoordinatesLabel)
                 .addGap(18, 18, 18)
-                .addComponent(singleCellVelocitiesLabel)
+                .addComponent(velocitiesLabel)
                 .addContainerGap(667, Short.MAX_VALUE))
         );
         topPanelLayout.setVerticalGroup(
@@ -116,7 +125,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(resultsImportingLabel)
                     .addComponent(trackCoordinatesLabel)
-                    .addComponent(singleCellVelocitiesLabel))
+                    .addComponent(velocitiesLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -207,6 +216,14 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         bottomPanel.add(trackCoordinatesParentPanel, "trackCoordinatesParentPanel");
         trackCoordinatesParentPanel.getAccessibleContext().setAccessibleName("trackCoordinatesParentPanel");
 
+        velocitiesParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        velocitiesParentPanel.setName("velocitiesParentPanel"); // NOI18N
+        velocitiesParentPanel.setOpaque(false);
+        velocitiesParentPanel.setLayout(new java.awt.GridBagLayout());
+        bottomPanel.add(velocitiesParentPanel, "velocitiesParentPanel");
+        velocitiesParentPanel.getAccessibleContext().setAccessibleName("velocitiesParentPanel");
+        velocitiesParentPanel.getAccessibleContext().setAccessibleDescription("");
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -222,7 +239,6 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel resultsImporterPanel;
     private javax.swing.JLabel resultsImportingLabel;
-    private javax.swing.JLabel singleCellVelocitiesLabel;
     private javax.swing.JPanel topPanel;
     private javax.swing.JLabel trackCoordinatesLabel;
     private javax.swing.JPanel trackCoordinatesParentPanel;
@@ -230,5 +246,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JTable trackPointsTable;
     private javax.swing.JScrollPane tracksScrollPane;
     private javax.swing.JTable tracksTable;
+    private javax.swing.JLabel velocitiesLabel;
+    private javax.swing.JPanel velocitiesParentPanel;
     // End of variables declaration//GEN-END:variables
 }

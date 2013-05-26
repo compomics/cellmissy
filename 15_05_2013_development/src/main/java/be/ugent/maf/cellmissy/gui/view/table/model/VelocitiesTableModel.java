@@ -7,11 +7,11 @@ package be.ugent.maf.cellmissy.gui.view.table.model;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Table Model for track coordinates data
+ * Table model for velocities data
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class TrackCoordinatesTableModel extends AbstractTableModel {
+public class VelocitiesTableModel extends AbstractTableModel {
 
     private Object[][] data;
     private String columnNames[];
@@ -20,10 +20,10 @@ public class TrackCoordinatesTableModel extends AbstractTableModel {
      * Constructor
      *
      * @param dataStructure
-     * @param coordinatesMatrix
+     * @param velocitiesVector
      */
-    public TrackCoordinatesTableModel(Object[][] dataStructure, Object[][] coordinatesMatrix) {
-        initTable(dataStructure, coordinatesMatrix);
+    public VelocitiesTableModel(Object[][] dataStructure, Object[] velocitiesVector) {
+        initTable(dataStructure, velocitiesVector);
     }
 
     @Override
@@ -49,10 +49,10 @@ public class TrackCoordinatesTableModel extends AbstractTableModel {
     /**
      * define structure for table
      */
-    private void initTable(Object[][] dataStructure, Object[][] coordinatesMatrix) {
-        columnNames = new String[]{"well", "track", "time index", "x", "y"};
+    private void initTable(Object[][] dataStructure, Object[] velocitiesVector) {
+        columnNames = new String[]{"well", "track", "time index", "velocity"};
         int firstLength = dataStructure[0].length;
-        int secondLength = coordinatesMatrix[0].length;
+        int secondLength = 1;
         int totalLength = firstLength + secondLength;
 
         data = new Object[dataStructure.length][totalLength];
@@ -62,7 +62,7 @@ public class TrackCoordinatesTableModel extends AbstractTableModel {
                 if (col < firstLength) {
                     data[row][col] = dataStructure[row][col];
                 } else {
-                    data[row][col] = coordinatesMatrix[row][col - firstLength];
+                    data[row][col] = velocitiesVector[row];
                 }
             }
         }

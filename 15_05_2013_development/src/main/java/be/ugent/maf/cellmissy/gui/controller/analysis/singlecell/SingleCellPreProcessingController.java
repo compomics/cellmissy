@@ -11,6 +11,7 @@ import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.VelocitiesPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -62,6 +63,8 @@ public class SingleCellPreProcessingController {
     // child controllers
     @Autowired
     private TrackCoordinatesController trackCoordinatesController;
+    @Autowired
+    private VelocitiesController velocitiesController;
     //services
     @Autowired
     private SingleCellPreProcessor singleCellPreProcessor;
@@ -77,6 +80,7 @@ public class SingleCellPreProcessingController {
         initSingleCellAnalysisPanel();
         // init child controllers
         trackCoordinatesController.init();
+        velocitiesController.init();
     }
 
     /**
@@ -90,6 +94,10 @@ public class SingleCellPreProcessingController {
 
     public TrackCoordinatesPanel getTrackCoordinatesPanel() {
         return trackCoordinatesController.getTrackCoordinatesPanel();
+    }
+
+    public VelocitiesPanel getVelocitiesPanel() {
+        return velocitiesController.getVelocitiesPanel();
     }
 
     public ObservableList<Track> getTracksBindingList() {
@@ -108,7 +116,7 @@ public class SingleCellPreProcessingController {
         return singleCellMainController.getFormat();
     }
 
-    public SingleCellPreProcessingResults getResultsHolder(PlateCondition plateCondition) {
+    public SingleCellPreProcessingResults getPreProcessingResults(PlateCondition plateCondition) {
         return preProcessingMap.get(plateCondition);
     }
 
@@ -120,8 +128,8 @@ public class SingleCellPreProcessingController {
         trackCoordinatesController.showRawTrackCoordinatesInTable(plateCondition);
     }
 
-    public void updateTrackNumberLabel(PlateCondition plateCondition) {
-        trackCoordinatesController.updateTrackNumberLabel(plateCondition);
+    public void updateTrackNumberLabel() {
+        trackCoordinatesController.updateTrackNumberLabel();
     }
 
     public void updateWellBindingList(PlateCondition plateCondition) {
@@ -132,8 +140,20 @@ public class SingleCellPreProcessingController {
         trackCoordinatesController.showNormalizedTrackCoordinatesInTable(plateCondition);
     }
 
-    public void plotRawTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints) {
-        trackCoordinatesController.plotRawTrackCoordinates(plateCondition, plotLines, plotPoints);
+    public void plotRawTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints, boolean showLegend) {
+        trackCoordinatesController.plotRawTrackCoordinates(plateCondition, plotLines, plotPoints, showLegend);
+    }
+
+    public void plotNormalizedTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints, boolean showLegend) {
+        trackCoordinatesController.plotNormalizedTrackCoordinates(plateCondition, plotLines, plotPoints, showLegend);
+    }
+
+    public void resetRandomTracks() {
+        trackCoordinatesController.resetRandomTracks();
+    }
+
+    public void showRawVelocitiesInTable(PlateCondition plateCondition) {
+        velocitiesController.showRawVelocitiesInTable(plateCondition);
     }
 
     /**

@@ -27,6 +27,7 @@ import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
@@ -224,7 +225,7 @@ public class JFreeChartUtils {
     }
 
     /**
-     * SEtup global area chart
+     * Setup global area chart
      *
      * @param chart: chart to setup
      * @param plotLines: show lines on plot?
@@ -259,6 +260,7 @@ public class JFreeChartUtils {
     }
 
     /**
+     * Set up track coordinates plot
      *
      * @param chart
      * @param plotLines
@@ -267,10 +269,29 @@ public class JFreeChartUtils {
     public static void setupTrackCoordinatesPlot(JFreeChart chart, boolean plotLines, boolean plotPoints) {
         // set title font 
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
-        // put legend on the right edge
-        chart.getLegend().setPosition(RectangleEdge.RIGHT);
+        // put legend on the right edge, if present
+        LegendTitle legend = chart.getLegend();
+        if (legend != null) {
+            legend.setPosition(RectangleEdge.RIGHT);
+        }
         XYPlot xYPlot = chart.getXYPlot();
         setupPlot(xYPlot);
+        // get the xyseriescollection from the plot
+        XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
+        // modify renderer
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xYPlot.getRenderer();
+        BasicStroke wideLine = new BasicStroke(1.3f);
+        for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
+            // wide line
+            renderer.setSeriesStroke(i, wideLine);
+            int length = GuiUtils.getAvailableColors().length;
+            int colorIndex = i % length;
+            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
+            // show lines?
+            renderer.setSeriesLinesVisible(i, plotLines);
+            // show points?
+            renderer.setSeriesShapesVisible(i, plotPoints);
+        }
     }
 
     /**
