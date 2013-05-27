@@ -7,11 +7,10 @@ package be.ugent.maf.cellmissy.gui.view.table.model;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Table model for velocities data
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class VelocitiesTableModel extends AbstractTableModel {
+public class MotileStepsTableModel extends AbstractTableModel {
 
     private Object[][] data;
     private String columnNames[];
@@ -21,9 +20,10 @@ public class VelocitiesTableModel extends AbstractTableModel {
      *
      * @param dataStructure
      * @param velocitiesVector
+     * @param motileSteps
      */
-    public VelocitiesTableModel(Object[][] dataStructure, Object[] velocitiesVector) {
-        initTable(dataStructure, velocitiesVector);
+    public MotileStepsTableModel(Object[][] dataStructure, Object[] velocitiesVector, Object[] motileSteps) {
+        initTable(dataStructure, velocitiesVector, motileSteps);
     }
 
     @Override
@@ -49,11 +49,12 @@ public class VelocitiesTableModel extends AbstractTableModel {
     /**
      * define structure for table
      */
-    private void initTable(Object[][] dataStructure, Object[] velocitiesVector) {
-        columnNames = new String[]{"well", "track", "time index", "velocity (pixels)"};
+    private void initTable(Object[][] dataStructure, Object[] velocitiesVector, Object[] motileSteps) {
+        columnNames = new String[]{"well", "track", "time index", "velocity (pixels)", "motile step?"};
         int firstLength = dataStructure[0].length;
         int secondLength = 1;
-        int totalLength = firstLength + secondLength;
+        int thirdLength = 1;
+        int totalLength = firstLength + secondLength + thirdLength;
 
         data = new Object[dataStructure.length][totalLength];
 
@@ -61,8 +62,10 @@ public class VelocitiesTableModel extends AbstractTableModel {
             for (int col = 0; col < data[0].length; col++) {
                 if (col < firstLength) {
                     data[row][col] = dataStructure[row][col];
-                } else {
+                } else if (col == firstLength) {
                     data[row][col] = velocitiesVector[row];
+                } else {
+                    data[row][col] = motileSteps[row];
                 }
             }
         }

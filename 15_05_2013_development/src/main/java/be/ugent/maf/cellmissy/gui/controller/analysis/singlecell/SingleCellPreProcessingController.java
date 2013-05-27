@@ -156,6 +156,10 @@ public class SingleCellPreProcessingController {
         velocitiesController.showRawVelocitiesInTable(plateCondition);
     }
 
+    public void showMotileStepsInTable(PlateCondition plateCondition) {
+        velocitiesController.showMotileStepsInTable(plateCondition);
+    }
+
     /**
      * Initialize map with plate conditions as keys and null objects as values
      */
@@ -179,6 +183,15 @@ public class SingleCellPreProcessingController {
     }
 
     /**
+     * 
+     * @param singleCellPreProcessingResults
+     * @param motileCriterium 
+     */
+    public void generateMotileStepsVector(SingleCellPreProcessingResults singleCellPreProcessingResults, double motileCriterium) {
+        singleCellPreProcessor.generateMotileStepsVector(singleCellPreProcessingResults, motileCriterium);
+    }
+
+    /**
      * When a condition is selected pre processing results are computed and
      * condition is put into the map together with its results holder object
      *
@@ -195,6 +208,8 @@ public class SingleCellPreProcessingController {
             singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults);
             singleCellPreProcessor.generateNormalizedTrackCoordinatesMatrix(singleCellPreProcessingResults);
             singleCellPreProcessor.generateVelocitiesVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateMotileStepsVector(singleCellPreProcessingResults, velocitiesController.getMotileCriterium());
+            singleCellPreProcessor.generateMeanVelocitiesVector(singleCellPreProcessingResults);
             // fill in map
             preProcessingMap.put(plateCondition, singleCellPreProcessingResults);
         }
@@ -294,13 +309,13 @@ public class SingleCellPreProcessingController {
         columnBinding.setColumnClass(Integer.class);
 
         columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${cellRow}"));
-        columnBinding.setColumnName("x");
+        columnBinding.setColumnName("x (pixels)");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
         columnBinding.setRenderer(new FormatRenderer(SwingConstants.RIGHT, singleCellMainController.getFormat()));
 
         columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${cellCol}"));
-        columnBinding.setColumnName("y");
+        columnBinding.setColumnName("y (pixels)");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
         columnBinding.setRenderer(new FormatRenderer(SwingConstants.RIGHT, singleCellMainController.getFormat()));

@@ -24,6 +24,10 @@ public class SingleCellPreProcessingResults {
     private Double[][] normalizedTrackCoordinatesMatrix;
     // array for velocities
     private Double[] velocitiesVector;
+    // boolean for the motile steps computation
+    private Object[] motileStepsVector;
+    // array for velocities filtered for non motile steps
+    private Double[] meanVelocitiesVector;
 
     public List<TrackDataHolder> getTrackDataHolders() {
         return trackDataHolders;
@@ -63,5 +67,21 @@ public class SingleCellPreProcessingResults {
 
     public void setVelocitiesVector(Double[] velocitiesVector) {
         this.velocitiesVector = velocitiesVector;
+    }
+
+    public Object[] getMotileStepsVector() {
+        return motileStepsVector;
+    }
+
+    public void setMotileStepsVector(Object[] motileStepsVector) {
+        this.motileStepsVector = motileStepsVector;
+    }
+
+    public Double[] getMeanVelocitiesVector() {
+        return meanVelocitiesVector;
+    }
+
+    public void setMeanVelocitiesVector(Double[] meanVelocitiesVector) {
+        this.meanVelocitiesVector = meanVelocitiesVector;
     }
 }

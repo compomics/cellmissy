@@ -50,7 +50,7 @@ public class TrackCoordinatesTableModel extends AbstractTableModel {
      * define structure for table
      */
     private void initTable(Object[][] dataStructure, Object[][] coordinatesMatrix) {
-        columnNames = new String[]{"well", "track", "time index", "x", "y"};
+        columnNames = new String[]{"well", "track", "time index", "x (pixels)", "y (pixels)"};
         int firstLength = dataStructure[0].length;
         int secondLength = coordinatesMatrix[0].length;
         int totalLength = firstLength + secondLength;

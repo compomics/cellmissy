@@ -8,10 +8,13 @@ import be.ugent.maf.cellmissy.analysis.TrackOperator;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.TrackDataHolder;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.List;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Component;
 
 /**
+ * Implementation for the Track Operator interface.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -83,6 +86,35 @@ public class TrackOperatorImpl implements TrackOperator {
             }
         }
         trackDataHolder.setVelocities(velocities);
+    }
+
+    @Override
+    public void filterNonMotileSteps(TrackDataHolder trackDataHolder, double motileCriterium) {
+        // get velocities vector
+        Double[] velocities = trackDataHolder.getVelocities();
+        Object[] motileSteps = new Object[velocities.length];
+        for (int i = 0; i < motileSteps.length - 1; i++) {
+            // if the velocity is equal or greater to the criterium, set the motile boolean to true
+            // else, the default is false
+            if (velocities[i] != null) {
+                if (velocities[i] >= motileCriterium) {
+                    motileSteps[i] = true;
+                } else {
+                    motileSteps[i] = false;
+                }
+            } else if (velocities[i] == null) {
+                motileSteps[i] = null;
+            }
+        }
+        trackDataHolder.setMotileSteps(motileSteps);
+    }
+
+    @Override
+    public void generateMeanVelocities(TrackDataHolder trackDataHolder) {
+        Double[] velocities = trackDataHolder.getVelocities();
+        Double[] excludeNullValues = AnalysisUtils.excludeNullValues(velocities);
+        double meanVelocity = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(excludeNullValues));
+        trackDataHolder.setMeanVelocity(meanVelocity);
     }
 
     @Override

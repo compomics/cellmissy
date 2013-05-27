@@ -99,16 +99,48 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
             Double[] velocities = trackDataHolder.getVelocities();
-            for (int row = 0; row < velocities.length; row++) {
-                velocitiesVector[counter] = velocities[row];
+            for (int i = 0; i < velocities.length; i++) {
+                velocitiesVector[counter] = velocities[i];
                 counter++;
             }
         }
         singleCellPreProcessingResults.setVelocitiesVector(velocitiesVector);
     }
 
+    @Override
+    public void generateMotileStepsVector(SingleCellPreProcessingResults singleCellPreProcessingResults, double motileCriterium) {
+        Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
+        Object[] motileStepsVector = new Object[dataStructure.length];
+        filterNonMotileSteps(singleCellPreProcessingResults, motileCriterium);
+        int counter = 0;
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            Object[] motileSteps = trackDataHolder.getMotileSteps();
+            for (int i = 0; i < motileSteps.length; i++) {
+                motileStepsVector[counter] = motileSteps[i];
+                counter++;
+            }
+        }
+        singleCellPreProcessingResults.setMotileStepsVector(motileStepsVector);
+    }
+
+    @Override
+    public void generateMeanVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+        Double[] meanVelocitiesVector = new Double[trackDataHolders.size()];
+        generateMeanVelocities(singleCellPreProcessingResults);
+        int counter = 0;
+        for (TrackDataHolder trackDataHolder : trackDataHolders) {
+            double meanVelocity = trackDataHolder.getMeanVelocity();
+            for (int i = 0; i < meanVelocitiesVector.length; i++) {
+                meanVelocitiesVector[counter] = meanVelocity;
+                counter++;
+            }
+        }
+        singleCellPreProcessingResults.setMeanVelocitiesVector(meanVelocitiesVector);
+    }
+
     /**
-     * Generate matrix with raw data
+     * Generate matrix with raw data.
      *
      * @param singleCellPreProcessingResults
      */
@@ -119,7 +151,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     /**
-     * Compute normalized track coordinates
+     * Compute normalized track coordinates.
      *
      * @param singleCellPreProcessingResults
      */
@@ -130,7 +162,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     /**
-     * Compute velocities
+     * Compute velocities.
      *
      * @param singleCellPreProcessingResults
      */
@@ -152,7 +184,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     /**
-     * Calculate the total number of track points
+     * Calculate the total number of track points.
      *
      * @param singleCellPreProcessingResults
      * @return
@@ -163,5 +195,29 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
             trackPointsNumber += trackDataHolder.getTrack().getTrackPointList().size();
         }
         return trackPointsNumber;
+    }
+
+    /**
+     * Filter non motile steps, using the given double value.
+     *
+     * @param singleCellPreProcessingResults
+     * @param motileCriterium
+     */
+    private void filterNonMotileSteps(SingleCellPreProcessingResults singleCellPreProcessingResults, double motileCriterium) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.filterNonMotileSteps(trackDataHolder, motileCriterium);
+        }
+    }
+
+    /**
+     * Generate the filtered velocities vector: velocities are filtered against
+     * non motile cells.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    private void generateMeanVelocities(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.generateMeanVelocities(trackDataHolder);
+        }
     }
 }

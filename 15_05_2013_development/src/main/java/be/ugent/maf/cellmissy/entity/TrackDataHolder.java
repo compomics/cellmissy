@@ -19,8 +19,12 @@ public class TrackDataHolder {
     private Double[][] normalizedTrackCoordinates;
     // matrix for delta movements in (x, y) direction
     private Double[][] deltaMovements;
-    // array for velocitie
+    // array for velocities
     private Double[] velocities;
+    // objects for the motile steps computation: this can be false, true or null
+    private Object[] motileSteps;
+    // array for velocities filtered for non motile steps
+    private double meanVelocity;
     // array for angles
     private Double[] angles;
 
@@ -66,6 +70,22 @@ public class TrackDataHolder {
 
     public void setVelocities(Double[] velocities) {
         this.velocities = velocities;
+    }
+
+    public Object[] getMotileSteps() {
+        return motileSteps;
+    }
+
+    public void setMotileSteps(Object[] motileSteps) {
+        this.motileSteps = motileSteps;
+    }
+
+    public double getMeanVelocity() {
+        return meanVelocity;
+    }
+
+    public void setMeanVelocity(double meanVelocity) {
+        this.meanVelocity = meanVelocity;
     }
 
     public Double[] getAngles() {

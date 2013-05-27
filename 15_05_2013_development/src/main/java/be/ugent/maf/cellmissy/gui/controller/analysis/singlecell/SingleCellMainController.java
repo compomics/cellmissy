@@ -600,14 +600,12 @@ public class SingleCellMainController {
         @Override
         protected Void doInBackground() throws Exception {
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            List<Well> wellList = new ArrayList<>();
-            wellList.addAll(currentCondition.getWellList());
             //fetch tracks for each well of condition 
-            for (int i = 0; i < wellList.size(); i++) {
+            for (int i = 0; i < currentCondition.getWellList().size(); i++) {
                 //fetch tracks collection for the wellhasimagingtype of interest
                 Algorithm algorithm = getSelectedAlgorithm();
                 ImagingType imagingType = getSelectedImagingType();
-                wellService.fetchTracks(wellList.get(i), algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
+                wellService.fetchTracks(currentCondition.getWellList().get(i), algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
             }
             // when all wells re fetched, update tracks list
             updateTracksList(currentCondition);  // if time steps were actually fetched from DB, update map
@@ -687,10 +685,12 @@ public class SingleCellMainController {
                 highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocitiesLabel());
                 resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getResultsImportingLabel());
                 resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesLabel());
-                showInfoMessage("Velocites are shown");
+                showInfoMessage("Single Cell Velocities");
                 // check which button is selected for analysis
                 if (singleCellPreProcessingController.getVelocitiesPanel().getRawVelocitiesRadioButton().isSelected()) {
                     singleCellPreProcessingController.showRawVelocitiesInTable(currentCondition);
+                } else if (singleCellPreProcessingController.getVelocitiesPanel().getMotileStepsRadioButton().isSelected()) {
+                    singleCellPreProcessingController.showMotileStepsInTable(currentCondition);
                 }
                 break;
         }

@@ -45,4 +45,21 @@ public interface SingleCellPreProcessor {
      * @param singleCellPreProcessingResults
      */
     public void generateVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     * Generate a vector holding the information True or False: T if the step is
+     * motile, F if the step is not considered as motile (according to the
+     * motile criterium)
+     *
+     * @param singleCellPreProcessingResults
+     * @param motileCriterium
+     */
+    public void generateMotileStepsVector(SingleCellPreProcessingResults singleCellPreProcessingResults, double motileCriterium);
+
+    /**
+     * Generate a vector with mean velocities per track.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateMeanVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 }

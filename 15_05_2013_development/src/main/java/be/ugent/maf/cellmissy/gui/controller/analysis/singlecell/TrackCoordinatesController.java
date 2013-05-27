@@ -55,7 +55,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("trackCoordinatesController")
 public class TrackCoordinatesController {
-    
+
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TrackCoordinatesController.class);
     // model
     private BindingGroup bindingGroup;
@@ -91,6 +91,27 @@ public class TrackCoordinatesController {
     }
 
     /**
+     *
+     */
+    public void updateTrackNumberLabel() {
+        int trackNumber = getTrackNumberForCondition();
+        trackCoordinatesPanel.getTotalTracksNumberLabel().setText("" + trackNumber);
+    }
+
+    /**
+     *
+     * @param plateCondition
+     */
+    public void updateWellBindingList(PlateCondition plateCondition) {
+        if (!wellBindingList.isEmpty()) {
+            wellBindingList.clear();
+        }
+        for (Well well : plateCondition.getSingleCellAnalyzedWells()) {
+            wellBindingList.add(well);
+        }
+    }
+
+    /**
      * For the given condition, show the raw track coordinates in a table.
      *
      * @param plateCondition
@@ -112,27 +133,6 @@ public class TrackCoordinatesController {
             coordinatesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
         }
         trackCoordinatesPanel.getTableInfoLabel().setText("Raw Tracks Coordinates");
-    }
-
-    /**
-     *
-     */
-    public void updateTrackNumberLabel() {
-        int trackNumber = getTrackNumberForCondition();
-        trackCoordinatesPanel.getTotalTracksNumberLabel().setText("" + trackNumber);
-    }
-
-    /**
-     *
-     * @param plateCondition
-     */
-    public void updateWellBindingList(PlateCondition plateCondition) {
-        if (!wellBindingList.isEmpty()) {
-            wellBindingList.clear();
-        }
-        for (Well well : plateCondition.getSingleCellAnalyzedWells()) {
-            wellBindingList.add(well);
-        }
     }
 
     /**
@@ -162,7 +162,8 @@ public class TrackCoordinatesController {
 
     /**
      * Plot raw data track coordinates for current condition, specifying if
-     * points and/or lines need to be shown on the plot.
+     * points and/or lines need to be shown on the plot + specifying if the
+     * legend needs to be created or not.
      *
      * @param plateCondition
      * @param tracks
@@ -199,7 +200,8 @@ public class TrackCoordinatesController {
     /**
      * Plot track coordinates normalised to start (x, y) zero for current
      * condition, specifying if points and /or lines need to be shown on the
-     * plot.
+     * plot + specifying if the legend needs to be created or not.
+     *
      *
      * @param plateCondition
      * @param plotLines
@@ -321,6 +323,7 @@ public class TrackCoordinatesController {
         });
 
         // track coordinates normalized to first time point
+        // this means that all the tracks start from the origin (0, 0)
         trackCoordinatesPanel.getNormalizedCoordinatesRadioButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -390,7 +393,7 @@ public class TrackCoordinatesController {
             }
         });
 
-        // hide or show legend for current plot?
+        // hide or show legend for current plot? // this is useful since with lots of tracks the view gets too crowded!!
         trackCoordinatesPanel.getShowLegendCheckBox().addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -437,7 +440,7 @@ public class TrackCoordinatesController {
         trackCoordinatesPanel.getWellsComboBox().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForCurrentWell();
+                List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForSelectedWell();
                 int numberTracksForCurrentWell = trackHoldersForCurrentWell.size();
                 // update info with number of tracks for current selected well
                 trackCoordinatesPanel.getTracksNumberCurrentWellLabel().setText("" + numberTracksForCurrentWell);
@@ -449,14 +452,33 @@ public class TrackCoordinatesController {
     }
 
     /**
-     * Generate randomly the tracks to put into the plot
+     * Generate randomly the tracks to put into the plot.
      *
-     * @return
      */
     private void generateRandomTrackDataHolders() {
+        // check if tracks need to be generated from within the same well or not
+        if (trackCoordinatesPanel.getFromSameWellRadioButton().isSelected()) {
+            generateRandomTrackDataHoldersForWell();
+        } else {
+            // else: the random tracks need to be generated from all the wells in the condition
+            generateRandomTrackHoldersForCondition();
+        }
+    }
+
+    /**
+     * Generate the random track holders within a well.
+     */
+    private void generateRandomTrackDataHoldersForWell() {
+        // get only the track holders for the selected well
+        List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForSelectedWell();
+        int numberTracksForCurrentWell = trackHoldersForCurrentWell.size();
+        // update info with number of tracks for current selected well
+        trackCoordinatesPanel.getTracksNumberCurrentWellLabel().setText("" + numberTracksForCurrentWell);
+        // if the user does not write anything, number of tracks to be plotted is set to default
         String text = trackCoordinatesPanel.getRandomTracksNumberTextField().getText();
-        // if the user does not write anything, number of tracks to be plotted is 10 
-        int randomTracksNumber = 10;
+        // the default is set to 10, if possible, otherwise is less
+        int defaultNumberOfTracks = getDefaultNumberOfTracks(numberTracksForCurrentWell);
+        int randomTracksNumber = defaultNumberOfTracks;
         if (!text.isEmpty()) {
             try {
                 randomTracksNumber = Integer.parseInt(text);
@@ -465,68 +487,96 @@ public class TrackCoordinatesController {
                 singleCellPreProcessingController.showMessage("Please insert a valid number of tracks!", "error setting number of tracks", JOptionPane.WARNING_MESSAGE);
             }
         }
-        // check if tracks need to be generated from within the same well or not
-        if (trackCoordinatesPanel.getFromSameWellRadioButton().isSelected()) {
-            List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForCurrentWell();
-            int numberTracksForCurrentWell = trackHoldersForCurrentWell.size();
-            // update info with number of tracks for current selected well
-            trackCoordinatesPanel.getTracksNumberCurrentWellLabel().setText("" + numberTracksForCurrentWell);
-            // the tracks that you want to plot need to be less or equal to the tracks for the current well
-            // else, show an info message and set the number back to 10
-            if (randomTracksNumber > numberTracksForCurrentWell) {
-                randomTracksNumber = 10;
-                singleCellPreProcessingController.showMessage("Please insert a number of tracks to plot smaller or equal\nto the number of tracks for the selected well!", "error in choosing number of tracks", JOptionPane.WARNING_MESSAGE);
-            }
-            // update text field
-            trackCoordinatesPanel.getRandomTracksNumberTextField().setText("" + randomTracksNumber);
-            // pick up randomly the track holders and add them to the list
-            for (int j = 0; j < randomTracksNumber; j++) {
-                // create a random number and take its int part
-                Double random = Math.random() * numberTracksForCurrentWell;
-                int intValue = random.intValue();
-                TrackDataHolder randomTrackDataHolder = trackHoldersForCurrentWell.get(intValue);
-                if (!randomTrackDataHolders.contains(randomTrackDataHolder)) {
-                    randomTrackDataHolders.add(randomTrackDataHolder);
-                } else {
-                    j--;
-                }
-            }
-        } else {
-            // get track holders for current condition
-            List<TrackDataHolder> trackHoldersForCurrentCondition = getTrackHoldersForCurrentCondition();
-            // else: the random tracks need to be generated from all the wells in the condition
-            int trackNumberForCondition = trackHoldersForCurrentCondition.size();
-            if (randomTracksNumber > trackNumberForCondition) {
-                randomTracksNumber = 10;
-                singleCellPreProcessingController.showMessage("Please insert a number of tracks to plot smaller or equal\nto the number of tracks for the current condition!", "error in choosing number of tracks", JOptionPane.WARNING_MESSAGE);
-            }
-            // update text field
-            trackCoordinatesPanel.getRandomTracksNumberTextField().setText("" + randomTracksNumber);
-            for (int j = 0; j < randomTracksNumber; j++) {
-                // create a random number and take its int part
-                Double random = Math.random() * trackNumberForCondition;
-                int intValue = random.intValue();
-                TrackDataHolder randomTrackDataHolder = trackHoldersForCurrentCondition.get(intValue);
-                if (!randomTrackDataHolders.contains(randomTrackDataHolder)) {
-                    randomTrackDataHolders.add(randomTrackDataHolder);
-                } else {
-                    j--;
-                }
+        // the # of tracks that you want to plot need to be less or equal to # of tracks for the current well
+        // else, show an info message and set the number back to default
+        if (randomTracksNumber > numberTracksForCurrentWell) {
+            randomTracksNumber = defaultNumberOfTracks;
+            singleCellPreProcessingController.showMessage("Please insert a number of tracks to plot smaller or equal\nto the number of tracks for the selected well!", "error in choosing number of tracks", JOptionPane.WARNING_MESSAGE);
+        }
+        // update text field
+        trackCoordinatesPanel.getRandomTracksNumberTextField().setText("" + randomTracksNumber);
+        // pick up randomly the track holders and add them to the list
+        for (int j = 0; j < randomTracksNumber; j++) {
+            // create a random number and take its int part
+            Double random = Math.random() * numberTracksForCurrentWell;
+            int intValue = random.intValue();
+            TrackDataHolder randomTrackDataHolder = trackHoldersForCurrentWell.get(intValue);
+            if (!randomTrackDataHolders.contains(randomTrackDataHolder)) {
+                randomTrackDataHolders.add(randomTrackDataHolder);
+            } else {
+                j--;
             }
         }
     }
 
     /**
-     *
-     * @return
+     * Generate the random track holders across the wells of a condition.
      */
-    private List<TrackDataHolder> getTrackHoldersForCurrentWell() {
-        PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-        SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(currentCondition);
+    private void generateRandomTrackHoldersForCondition() {
+        // get track holders for current condition
+        List<TrackDataHolder> trackHoldersForCurrentCondition = getTrackHoldersForCurrentCondition();
+        int trackNumberForCondition = trackHoldersForCurrentCondition.size();
+        // if the user does not write anything, number of tracks to be plotted is set to default
+        String text = trackCoordinatesPanel.getRandomTracksNumberTextField().getText();
+        // the default is set to 10, if possible, otherwise is less
+        int defaultNumberOfTracks = getDefaultNumberOfTracks(trackNumberForCondition);
+        int randomTracksNumber = defaultNumberOfTracks;
+        if (!text.isEmpty()) {
+            try {
+                randomTracksNumber = Integer.parseInt(text);
+            } catch (NumberFormatException ex) {
+                LOG.error(ex.getMessage());
+                singleCellPreProcessingController.showMessage("Please insert a valid number of tracks!", "error setting number of tracks", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        if (randomTracksNumber > trackNumberForCondition) {
+            randomTracksNumber = 10;
+            singleCellPreProcessingController.showMessage("Please insert a number of tracks to plot smaller or equal\nto the number of tracks for the current condition!", "error in choosing number of tracks", JOptionPane.WARNING_MESSAGE);
+        }
+        // update text field
+        trackCoordinatesPanel.getRandomTracksNumberTextField().setText("" + randomTracksNumber);
+        // pick up randomly the track holders and add them to the list
+        for (int j = 0; j < randomTracksNumber; j++) {
+            // create a random number and take its int part
+            Double random = Math.random() * trackNumberForCondition;
+            int intValue = random.intValue();
+            TrackDataHolder randomTrackDataHolder = trackHoldersForCurrentCondition.get(intValue);
+            if (!randomTrackDataHolders.contains(randomTrackDataHolder)) {
+                randomTrackDataHolders.add(randomTrackDataHolder);
+            } else {
+                j--;
+            }
+        }
+    }
+
+    /**
+     * The default number of tracks to be plotted is 10; if the maw available
+     * number of tracks is less than 10, the default is decreased.
+     *
+     * @param maxTracks
+     * @return the default number
+     */
+    private int getDefaultNumberOfTracks(int maxTracks) {
+        int defaultNumber = 10;
+        if (defaultNumber > maxTracks) {
+            defaultNumber--;
+        }
+        return defaultNumber;
+    }
+
+    /**
+     * From the entire track holders for the selected current condition, get
+     * only the ones for the selected well
+     *
+     * @return a list of track data holders for the current selected well
+     */
+    private List<TrackDataHolder> getTrackHoldersForSelectedWell() {
+        // first, get the track holders for the current condition
+        List<TrackDataHolder> trackHoldersForCurrentCondition = getTrackHoldersForCurrentCondition();
         List<TrackDataHolder> trackHoldersForCurrentWell = new ArrayList<>();
-        // get the well selected
+        // then, get the selected well, and filter only the results from this well
         Well selectedWell = (Well) trackCoordinatesPanel.getWellsComboBox().getSelectedItem();
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+        for (TrackDataHolder trackDataHolder : trackHoldersForCurrentCondition) {
             if (trackDataHolder.getTrack().getWellHasImagingType().getWell().equals(selectedWell)) {
                 trackHoldersForCurrentWell.add(trackDataHolder);
             }
@@ -535,8 +585,10 @@ public class TrackCoordinatesController {
     }
 
     /**
+     * Through the parent controller, get the track data holders for the current
+     * condition.
      *
-     * @return
+     * @return the track data holders
      */
     private List<TrackDataHolder> getTrackHoldersForCurrentCondition() {
         PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
@@ -545,8 +597,9 @@ public class TrackCoordinatesController {
     }
 
     /**
+     * Get the total number of tracks for the current condition.
      *
-     * @return
+     * @return the number.
      */
     private int getTrackNumberForCondition() {
         return getTrackHoldersForCurrentCondition().size();
