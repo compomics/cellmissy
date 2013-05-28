@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Magnification.findByMagnificationid", query = "SELECT m FROM Magnification m WHERE m.magnificationid = :magnificationid"),
     @NamedQuery(name = "Magnification.findByMagnificationNumber", query = "SELECT m FROM Magnification m WHERE m.magnificationNumber = :magnificationNumber")})
 public class Magnification implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -99,5 +100,8 @@ public class Magnification implements Serializable {
     public String toString() {
         return magnificationNumber;
     }
-    
+
+    public double getMagnificationValue() {
+        return Double.parseDouble(magnificationNumber.split("x")[0]);
+    }
 }

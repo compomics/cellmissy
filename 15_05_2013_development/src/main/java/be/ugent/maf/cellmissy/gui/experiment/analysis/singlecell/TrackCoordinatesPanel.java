@@ -81,10 +81,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         return tracksNumberCurrentWellLabel;
     }
 
-    public JCheckBox getShowLegendCheckBox() {
-        return showLegendCheckBox;
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -114,8 +110,8 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         tracksNumberCurrentWellLabel = new javax.swing.JLabel();
         plotButton = new javax.swing.JButton();
-        showLegendCheckBox = new javax.swing.JCheckBox();
         graphicsParentPanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -177,7 +173,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weightx = 0.55;
         gridBagConstraints.weighty = 0.35;
         add(dataTablePanel, gridBagConstraints);
 
@@ -215,9 +211,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
 
         plotButton.setText("Plot again");
 
-        showLegendCheckBox.setText("show legend");
-        showLegendCheckBox.setOpaque(false);
-
         javax.swing.GroupLayout extraPanelLayout = new javax.swing.GroupLayout(extraPanel);
         extraPanel.setLayout(extraPanelLayout);
         extraPanelLayout.setHorizontalGroup(
@@ -250,16 +243,14 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(tracksNumberCurrentWellLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(18, 18, 18)
                 .addGroup(extraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(plotLinesCheckBox)
                     .addComponent(plotPointsCheckBox)
-                    .addComponent(showLegendCheckBox)
                     .addComponent(plotButton))
                 .addContainerGap())
         );
 
-        extraPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotButton, plotLinesCheckBox, plotPointsCheckBox, showLegendCheckBox});
+        extraPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotButton, plotLinesCheckBox, plotPointsCheckBox});
 
         extraPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {totalTracksNumberLabel, tracksNumberCurrentWellLabel});
 
@@ -294,8 +285,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(fromDifferentWellsRadioButton))
                     .addGroup(extraPanelLayout.createSequentialGroup()
-                        .addComponent(showLegendCheckBox)
-                        .addGap(10, 10, 10)
+                        .addGap(33, 33, 33)
                         .addComponent(plotButton)))
                 .addContainerGap())
         );
@@ -305,7 +295,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weightx = 0.45;
         gridBagConstraints.weighty = 0.35;
         add(extraPanel, gridBagConstraints);
 
@@ -316,11 +306,34 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weightx = 0.55;
         gridBagConstraints.weighty = 0.55;
         add(graphicsParentPanel, gridBagConstraints);
+
+        jPanel1.setMinimumSize(new java.awt.Dimension(20, 20));
+        jPanel1.setOpaque(false);
+        jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 471, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 351, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.45;
+        gridBagConstraints.weighty = 0.55;
+        add(jPanel1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel dataTablePanel;
@@ -332,6 +345,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JRadioButton normalizedCoordinatesRadioButton;
     private javax.swing.JButton plotButton;
     private javax.swing.JCheckBox plotLinesCheckBox;
@@ -339,7 +353,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JTextField randomTracksNumberTextField;
     private javax.swing.JRadioButton rawCoordinatesRadioButton;
-    private javax.swing.JCheckBox showLegendCheckBox;
     private javax.swing.JLabel tableInfoLabel;
     private javax.swing.JLabel totalTracksNumberLabel;
     private javax.swing.JLabel tracksNumberCurrentWellLabel;

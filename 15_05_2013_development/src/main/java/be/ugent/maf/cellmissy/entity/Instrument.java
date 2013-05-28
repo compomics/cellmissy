@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "instrument", uniqueConstraints =
-@UniqueConstraint(columnNames = "name")) 
+        @UniqueConstraint(columnNames = "name"))
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Instrument.findAll", query = "SELECT i FROM Instrument i"),
@@ -41,8 +41,11 @@ public class Instrument implements Serializable {
     @Column(name = "instrumentid")
     private Long instrumentid;
     @Basic(optional = false)
-    @Column(name = "name", unique=true)
+    @Column(name = "name", unique = true)
     private String name;
+    @Basic(optional = false)
+    @Column(name = "conversion_factor", unique = true)
+    private double conversionFactor;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "instrument")
     private List<Experiment> experimentList;
 
@@ -56,6 +59,11 @@ public class Instrument implements Serializable {
     public Instrument(Long instrumentid, String name) {
         this.instrumentid = instrumentid;
         this.name = name;
+    }
+
+    public Instrument(String name, double conversionFactor) {
+        this.name = name;
+        this.conversionFactor = conversionFactor;
     }
 
     public Long getInstrumentid() {
@@ -72,6 +80,14 @@ public class Instrument implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public double getConversionFactor() {
+        return conversionFactor;
+    }
+
+    public void setConversionFactor(double conversionFactor) {
+        this.conversionFactor = conversionFactor;
     }
 
     public List<Experiment> getExperimentList() {

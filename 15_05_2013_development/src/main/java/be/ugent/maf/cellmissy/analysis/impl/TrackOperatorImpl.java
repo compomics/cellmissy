@@ -22,15 +22,17 @@ import org.springframework.stereotype.Component;
 public class TrackOperatorImpl implements TrackOperator {
 
     @Override
-    public void generateTrackCoordinatesMatrix(TrackDataHolder trackDataHolder) {
+    public void generateTrackCoordinatesMatrix(TrackDataHolder trackDataHolder, double conversionFactor) {
         Track track = trackDataHolder.getTrack();
         List<TrackPoint> trackPointList = track.getTrackPointList();
         Double[][] trackCoordinatesMatrix = new Double[trackPointList.size()][2];
         for (int i = 0; i < trackCoordinatesMatrix.length; i++) {
             // put in each row (x, y) coordinates from trackPoint
             double cellRow = trackPointList.get(i).getCellRow();
+            double x = cellRow / conversionFactor;
             double cellCol = trackPointList.get(i).getCellCol();
-            trackCoordinatesMatrix[i] = new Double[]{cellRow, cellCol};
+            double y = cellCol / conversionFactor;
+            trackCoordinatesMatrix[i] = new Double[]{x, y};
         }
         trackDataHolder.setTrackCoordinatesMatrix(trackCoordinatesMatrix);
     }

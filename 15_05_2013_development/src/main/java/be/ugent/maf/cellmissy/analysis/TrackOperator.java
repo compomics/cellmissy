@@ -13,12 +13,15 @@ import be.ugent.maf.cellmissy.entity.TrackDataHolder;
 public interface TrackOperator {
 
     /**
-     * Generate Track Point Matrix for a track.
+     * Generate Track Point Matrix for a track. This is already scaling
+     * according to the conversion factor, going from pixels to micrometers. If
+     * the conversion factor is equal to one, data was already in micrometers
+     * and no actual conversion is taken up.
      *
-     * @param track
      * @param trackDataHolder
+     * @param conversionFactor
      */
-    public void generateTrackCoordinatesMatrix(TrackDataHolder trackDataHolder);
+    public void generateTrackCoordinatesMatrix(TrackDataHolder trackDataHolder, double conversionFactor);
 
     /**
      * Compute normalised track coordinates starting from the track point

@@ -31,8 +31,9 @@ public interface SingleCellPreProcessor {
     /**
      *
      * @param singleCellPreProcessingResults
+     * @param conversionFactor
      */
-    public void generateRawTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateRawTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults, double conversionFactor);
 
     /**
      *

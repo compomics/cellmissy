@@ -135,7 +135,7 @@ public class AreaMainController {
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
         ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         overviewExperimentPanel.getInfoLabel().setIcon(scaledIcon);
-        metadataAreaPanel.getInfoLabel1().setIcon(scaledIcon);
+        metadataAreaPanel.getInfoLabel().setIcon(scaledIcon);
         dataAnalysisPanel = new DataAnalysisPanel();
         analysisPlatePanel = new AnalysisPlatePanel();
         bindingGroup = new BindingGroup();

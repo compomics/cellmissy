@@ -4,7 +4,7 @@ INSERT INTO `project` (`projectid`, `project_number`, `description`) VALUES ('2'
 INSERT INTO `project` (`projectid`, `project_number`) VALUES ('3', '3');
 
 INSERT INTO matrix_dimension VALUES (1,'2D'),(2,'3D'),(3, '2.5D');
-INSERT INTO `instrument`VALUES (1, 'generic microscope');
+INSERT INTO `instrument`VALUES (1, 1.55038, 'generic microscope');
 INSERT INTO `magnification` VALUES (1, '10x');
 INSERT INTO plate_format VALUES (1,96,12,8,8991.88),(2,48,8,6,13440.5),(3,24,6,4,19749.4),(4,12,4,3,27545.4),(5,6,3,2,40140.4);
 INSERT INTO assay VALUES (1,'ORIS',1),(2,'random seeding',1),(3,'ORIS',2),(4,'mixed',2),(5,'MCTS',2);

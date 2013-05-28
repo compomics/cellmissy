@@ -22,7 +22,6 @@ import be.ugent.maf.cellmissy.parser.CellMiaFileParserTest;
 import be.ugent.maf.cellmissy.service.EcmService;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.Test;

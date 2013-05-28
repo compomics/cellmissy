@@ -50,7 +50,7 @@ public class VelocitiesTableModel extends AbstractTableModel {
      * define structure for table
      */
     private void initTable(Object[][] dataStructure, Object[] velocitiesVector) {
-        columnNames = new String[]{"well", "track", "time index", "velocity (pixels)"};
+        columnNames = new String[]{"well", "track", "time index", "velocity (µm)"};
         int firstLength = dataStructure[0].length;
         int secondLength = 1;
         int totalLength = firstLength + secondLength;

@@ -27,7 +27,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="infoLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="infoLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -86,7 +86,7 @@
                   <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="infoLabel1" min="-2" max="-2" attributes="0"/>
+              <Component id="infoLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -141,7 +141,7 @@
     </Component>
     <Component class="javax.swing.JComboBox" name="areaUnitOfMeasurementComboBox">
     </Component>
-    <Component class="javax.swing.JLabel" name="infoLabel1">
+    <Component class="javax.swing.JLabel" name="infoLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Select a dataset and an imaging type to analyze. Specify wich type of area you have measured and its unit of measurement."/>
       </Properties>

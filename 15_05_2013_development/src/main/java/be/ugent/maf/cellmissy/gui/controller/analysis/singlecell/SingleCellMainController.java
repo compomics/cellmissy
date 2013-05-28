@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
+import be.ugent.maf.cellmissy.analysis.TrackCoordinatesUnitOfMeasurement;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
@@ -24,6 +25,7 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.OverviewExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.MetadataSingleCellPanel;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsAnalysisListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.CoordinatesUnitOfMeasurementComboBoxRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.PlateService;
@@ -145,6 +147,10 @@ public class SingleCellMainController {
         return imagingTypeBindingList.get(metadataSingleCellPanel.getImagingTypeComboBox().getSelectedIndex());
     }
 
+    public TrackCoordinatesUnitOfMeasurement getCoordinatesUnitOfMeasurement() {
+        return (TrackCoordinatesUnitOfMeasurement) metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox().getSelectedItem();
+    }
+
     public PlateCondition getCurrentCondition() {
         return currentCondition;
     }
@@ -155,6 +161,10 @@ public class SingleCellMainController {
 
     public Format getFormat() {
         return format;
+    }
+
+    public Experiment getExperiment() {
+        return experiment;
     }
 
     /**
@@ -368,6 +378,15 @@ public class SingleCellMainController {
         bindingGroup.addBinding(jComboBoxBinding);
         //do the binding
         bindingGroup.bind();
+
+        // add track coordinates unit of measure to combo box
+        for (TrackCoordinatesUnitOfMeasurement trackCoordinatesUnitOfMeasurement : TrackCoordinatesUnitOfMeasurement.values()) {
+            metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox().addItem(trackCoordinatesUnitOfMeasurement);
+        }
+
+        metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox().setRenderer(new CoordinatesUnitOfMeasurementComboBoxRenderer());
+        // set default unit of measurement: micro meters
+        metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox().setSelectedItem(TrackCoordinatesUnitOfMeasurement.MICRO_METERS);
 
         /**
          * add mouse listeners
@@ -671,14 +690,13 @@ public class SingleCellMainController {
                 singleCellPreProcessingController.resetRandomTracks();
                 boolean plotLines = singleCellPreProcessingController.getTrackCoordinatesPanel().getPlotLinesCheckBox().isSelected();
                 boolean plotPoints = singleCellPreProcessingController.getTrackCoordinatesPanel().getPlotPointsCheckBox().isSelected();
-                boolean showLegend = singleCellPreProcessingController.getTrackCoordinatesPanel().getShowLegendCheckBox().isSelected();
                 //check which button is selected for analysis:
                 if (singleCellPreProcessingController.getTrackCoordinatesPanel().getRawCoordinatesRadioButton().isSelected()) {
                     singleCellPreProcessingController.showRawTrackCoordinatesInTable(currentCondition);
-                    singleCellPreProcessingController.plotRawTrackCoordinates(currentCondition, plotLines, plotPoints, showLegend);
+                    singleCellPreProcessingController.plotRawTrackCoordinates(currentCondition, plotLines, plotPoints);
                 } else if (singleCellPreProcessingController.getTrackCoordinatesPanel().getNormalizedCoordinatesRadioButton().isSelected()) {
                     singleCellPreProcessingController.showNormalizedTrackCoordinatesInTable(currentCondition);
-                    singleCellPreProcessingController.plotNormalizedTrackCoordinates(currentCondition, plotLines, plotPoints, showLegend);
+                    singleCellPreProcessingController.plotNormalizedTrackCoordinates(currentCondition, plotLines, plotPoints);
                 }
                 break;
             case "velocitiesParentPanel":

@@ -14,8 +14,8 @@ import javax.swing.JRadioButton;
  */
 public class MetadataAreaPanel extends javax.swing.JPanel {
 
-    public JLabel getInfoLabel1() {
-        return infoLabel1;
+    public JLabel getInfoLabel() {
+        return infoLabel;
     }
 
     public JComboBox getAlgorithmComboBox() {
@@ -63,7 +63,7 @@ public class MetadataAreaPanel extends javax.swing.JPanel {
         openAreaRadioButton = new javax.swing.JRadioButton();
         jLabel9 = new javax.swing.JLabel();
         areaUnitOfMeasurementComboBox = new javax.swing.JComboBox();
-        infoLabel1 = new javax.swing.JLabel();
+        infoLabel = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(20, 20));
@@ -82,7 +82,7 @@ public class MetadataAreaPanel extends javax.swing.JPanel {
 
         jLabel9.setText("Area unit of measurement");
 
-        infoLabel1.setText("Select a dataset and an imaging type to analyze. Specify wich type of area you have measured and its unit of measurement.");
+        infoLabel.setText("Select a dataset and an imaging type to analyze. Specify wich type of area you have measured and its unit of measurement.");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -91,7 +91,7 @@ public class MetadataAreaPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(infoLabel1)
+                    .addComponent(infoLabel)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -138,7 +138,7 @@ public class MetadataAreaPanel extends javax.swing.JPanel {
                     .addComponent(areaUnitOfMeasurementComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
                 .addGap(18, 18, 18)
-                .addComponent(infoLabel1)
+                .addComponent(infoLabel)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -147,7 +147,7 @@ public class MetadataAreaPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox areaUnitOfMeasurementComboBox;
     private javax.swing.JRadioButton cellCoveredAreaRadioButton;
     private javax.swing.JComboBox imagingTypeComboBox;
-    private javax.swing.JLabel infoLabel1;
+    private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;

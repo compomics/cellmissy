@@ -40,9 +40,7 @@ import org.jdesktop.swingbinding.SwingBindings;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.LegendItem;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,7 +169,7 @@ public class TrackCoordinatesController {
      * @param plotPoints
      * @param showLegend
      */
-    public void plotRawTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints, boolean showLegend) {
+    public void plotRawTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints) {
         if (randomTrackDataHolders.isEmpty()) {
             generateRandomTrackDataHolders();
         }
@@ -188,7 +186,7 @@ public class TrackCoordinatesController {
         }
         // Plot Logic
         String chartTitle = "Raw track coordinates - Condition " + conditionIndex;
-        JFreeChart rawCoordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollection, PlotOrientation.VERTICAL, showLegend, true, false);
+        JFreeChart rawCoordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         JFreeChartUtils.setupTrackCoordinatesPlot(rawCoordinatesChart, plotLines, plotPoints);
         rawCoordinatesChartPanel.setChart(rawCoordinatesChart);
         trackCoordinatesPanel.getGraphicsParentPanel().remove(normalizedCoordinatesChartPanel);
@@ -208,7 +206,7 @@ public class TrackCoordinatesController {
      * @param plotPoints
      * @param showLegend
      */
-    public void plotNormalizedTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints, boolean showLegend) {
+    public void plotNormalizedTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints) {
         if (randomTrackDataHolders.isEmpty()) {
             generateRandomTrackDataHolders();
         }
@@ -225,7 +223,7 @@ public class TrackCoordinatesController {
         }
         // Plot Logic
         String chartTitle = "Normalized track coordinates - Condition " + conditionIndex;
-        JFreeChart normalizedCoordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollection, PlotOrientation.VERTICAL, showLegend, true, false);
+        JFreeChart normalizedCoordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         JFreeChartUtils.setupTrackCoordinatesPlot(normalizedCoordinatesChart, plotLines, plotPoints);
         normalizedCoordinatesChartPanel.setChart(normalizedCoordinatesChart);
         trackCoordinatesPanel.getGraphicsParentPanel().remove(rawCoordinatesChartPanel);
@@ -296,7 +294,6 @@ public class TrackCoordinatesController {
         trackCoordinatesPanel.getFromSameWellRadioButton().setSelected(true);
         trackCoordinatesPanel.getPlotLinesCheckBox().setSelected(true);
         trackCoordinatesPanel.getPlotPointsCheckBox().setSelected(true);
-        trackCoordinatesPanel.getShowLegendCheckBox().setSelected(true);
         //init chart panels
         rawCoordinatesChartPanel = new ChartPanel(null);
         rawCoordinatesChartPanel.setOpaque(false);
@@ -316,8 +313,7 @@ public class TrackCoordinatesController {
                     showRawTrackCoordinatesInTable(currentCondition);
                     boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
                     boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
-                    boolean showLegend = trackCoordinatesPanel.getShowLegendCheckBox().isSelected();
-                    plotRawTrackCoordinates(currentCondition, plotLines, plotPoints, showLegend);
+                    plotRawTrackCoordinates(currentCondition, plotLines, plotPoints);
                 }
             }
         });
@@ -333,8 +329,7 @@ public class TrackCoordinatesController {
                     showNormalizedTrackCoordinatesInTable(currentCondition);
                     boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
                     boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
-                    boolean showLegend = trackCoordinatesPanel.getShowLegendCheckBox().isSelected();
-                    plotNormalizedTrackCoordinates(currentCondition, plotLines, plotPoints, showLegend);
+                    plotNormalizedTrackCoordinates(currentCondition, plotLines, plotPoints);
                 }
             }
         });
@@ -345,12 +340,11 @@ public class TrackCoordinatesController {
             public void itemStateChanged(ItemEvent e) {
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
                 boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
-                boolean showLegend = trackCoordinatesPanel.getShowLegendCheckBox().isSelected();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     if (trackCoordinatesPanel.getRawCoordinatesRadioButton().isSelected()) {
-                        plotRawTrackCoordinates(currentCondition, true, plotPoints, showLegend);
+                        plotRawTrackCoordinates(currentCondition, true, plotPoints);
                     } else {
-                        plotNormalizedTrackCoordinates(currentCondition, true, plotPoints, showLegend);
+                        plotNormalizedTrackCoordinates(currentCondition, true, plotPoints);
                     }
                 } else {
                     // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
@@ -358,9 +352,9 @@ public class TrackCoordinatesController {
                         trackCoordinatesPanel.getPlotPointsCheckBox().setSelected(true);
                     }
                     if (trackCoordinatesPanel.getRawCoordinatesRadioButton().isSelected()) {
-                        plotRawTrackCoordinates(currentCondition, false, true, showLegend);
+                        plotRawTrackCoordinates(currentCondition, false, true);
                     } else {
-                        plotNormalizedTrackCoordinates(currentCondition, false, true, showLegend);
+                        plotNormalizedTrackCoordinates(currentCondition, false, true);
                     }
                 }
             }
@@ -372,12 +366,11 @@ public class TrackCoordinatesController {
             public void itemStateChanged(ItemEvent e) {
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
                 boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
-                boolean showLegend = trackCoordinatesPanel.getShowLegendCheckBox().isSelected();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     if (trackCoordinatesPanel.getRawCoordinatesRadioButton().isSelected()) {
-                        plotRawTrackCoordinates(currentCondition, plotLines, true, showLegend);
+                        plotRawTrackCoordinates(currentCondition, plotLines, true);
                     } else {
-                        plotNormalizedTrackCoordinates(currentCondition, plotLines, true, showLegend);
+                        plotNormalizedTrackCoordinates(currentCondition, plotLines, true);
                     }
                 } else {
                     // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
@@ -385,32 +378,9 @@ public class TrackCoordinatesController {
                         trackCoordinatesPanel.getPlotLinesCheckBox().setSelected(true);
                     }
                     if (trackCoordinatesPanel.getRawCoordinatesRadioButton().isSelected()) {
-                        plotRawTrackCoordinates(currentCondition, true, false, showLegend);
+                        plotRawTrackCoordinates(currentCondition, true, false);
                     } else {
-                        plotNormalizedTrackCoordinates(currentCondition, true, false, showLegend);
-                    }
-                }
-            }
-        });
-
-        // hide or show legend for current plot? // this is useful since with lots of tracks the view gets too crowded!!
-        trackCoordinatesPanel.getShowLegendCheckBox().addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-                boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
-                boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    if (trackCoordinatesPanel.getRawCoordinatesRadioButton().isSelected()) {
-                        plotRawTrackCoordinates(currentCondition, plotLines, plotPoints, true);
-                    } else {
-                        plotNormalizedTrackCoordinates(currentCondition, plotLines, plotPoints, true);
-                    }
-                } else {
-                    if (trackCoordinatesPanel.getRawCoordinatesRadioButton().isSelected()) {
-                        plotRawTrackCoordinates(currentCondition, plotLines, plotPoints, false);
-                    } else {
-                        plotNormalizedTrackCoordinates(currentCondition, plotLines, plotPoints, false);
+                        plotNormalizedTrackCoordinates(currentCondition, true, false);
                     }
                 }
             }
@@ -423,14 +393,13 @@ public class TrackCoordinatesController {
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
                 boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
                 boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
-                boolean showLegend = trackCoordinatesPanel.getShowLegendCheckBox().isSelected();
                 if (currentCondition != null) {
                     resetRandomTracks();
                     generateRandomTrackDataHolders();
                     if (trackCoordinatesPanel.getRawCoordinatesRadioButton().isSelected()) {
-                        plotRawTrackCoordinates(currentCondition, plotLines, plotPoints, showLegend);
+                        plotRawTrackCoordinates(currentCondition, plotLines, plotPoints);
                     } else {
-                        plotNormalizedTrackCoordinates(currentCondition, plotLines, plotPoints, showLegend);
+                        plotNormalizedTrackCoordinates(currentCondition, plotLines, plotPoints);
                     }
                 }
             }

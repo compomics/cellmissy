@@ -24,18 +24,20 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="infoLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="imagingTypeComboBox" alignment="0" min="-2" pref="184" max="-2" attributes="1"/>
-                          <Component id="algorithmComboBox" alignment="1" min="-2" pref="184" max="-2" attributes="1"/>
+                          <Component id="imagingTypeComboBox" linkSize="1" min="-2" pref="184" max="-2" attributes="1"/>
+                          <Component id="algorithmComboBox" linkSize="1" min="-2" pref="184" max="-2" attributes="1"/>
+                          <Component id="coordinatesUnitOfMeasurementComboBox" linkSize="1" min="-2" pref="187" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="infoLabel" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -53,6 +55,11 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="imagingTypeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="coordinatesUnitOfMeasurementComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="infoLabel" min="-2" max="-2" attributes="0"/>
@@ -86,9 +93,16 @@
         </Property>
       </Properties>
     </Component>
+    <Component class="javax.swing.JLabel" name="jLabel3">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Coordinates unit of measurement"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="coordinatesUnitOfMeasurementComboBox">
+    </Component>
     <Component class="javax.swing.JLabel" name="infoLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Select a dataset and an imaging type to analyze. "/>
+        <Property name="text" type="java.lang.String" value="Select a dataset and an imaging type to analyze. Specify the unit of measurement for the track coordinates."/>
       </Properties>
     </Component>
   </SubComponents>

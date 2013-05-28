@@ -5,6 +5,9 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.analysis.SingleCellPreProcessor;
+import be.ugent.maf.cellmissy.analysis.TrackCoordinatesUnitOfMeasurement;
+import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.SingleCellPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Track;
@@ -140,12 +143,12 @@ public class SingleCellPreProcessingController {
         trackCoordinatesController.showNormalizedTrackCoordinatesInTable(plateCondition);
     }
 
-    public void plotRawTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints, boolean showLegend) {
-        trackCoordinatesController.plotRawTrackCoordinates(plateCondition, plotLines, plotPoints, showLegend);
+    public void plotRawTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints) {
+        trackCoordinatesController.plotRawTrackCoordinates(plateCondition, plotLines, plotPoints);
     }
 
-    public void plotNormalizedTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints, boolean showLegend) {
-        trackCoordinatesController.plotNormalizedTrackCoordinates(plateCondition, plotLines, plotPoints, showLegend);
+    public void plotNormalizedTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints) {
+        trackCoordinatesController.plotNormalizedTrackCoordinates(plateCondition, plotLines, plotPoints);
     }
 
     public void resetRandomTracks() {
@@ -183,9 +186,9 @@ public class SingleCellPreProcessingController {
     }
 
     /**
-     * 
+     *
      * @param singleCellPreProcessingResults
-     * @param motileCriterium 
+     * @param motileCriterium
      */
     public void generateMotileStepsVector(SingleCellPreProcessingResults singleCellPreProcessingResults, double motileCriterium) {
         singleCellPreProcessor.generateMotileStepsVector(singleCellPreProcessingResults, motileCriterium);
@@ -205,7 +208,7 @@ public class SingleCellPreProcessingController {
             singleCellMainController.fetchTrackPoints(plateCondition);
             singleCellPreProcessor.generateTrackResultsList(singleCellPreProcessingResults, plateCondition);
             singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, computeConversionFactor());
             singleCellPreProcessor.generateNormalizedTrackCoordinatesMatrix(singleCellPreProcessingResults);
             singleCellPreProcessor.generateVelocitiesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateMotileStepsVector(singleCellPreProcessingResults, velocitiesController.getMotileCriterium());
@@ -216,7 +219,7 @@ public class SingleCellPreProcessingController {
     }
 
     /**
-     * Show table with Tracks results from CellMIA analysis (Tracks fetched from
+     * Show table with Tracking results from image analysis (Tracks fetched from
      * DB) this is populating the JTable in the ResultsImporter Panel
      */
     public void showTracksInTable() {
@@ -292,9 +295,13 @@ public class SingleCellPreProcessingController {
     }
 
     /**
-     * Show track points in the table
+     * Show track points in the table: this is raw data
      */
     private void showTrackPointsInTable() {
+        // get the tracking coordinates unit of measuremet
+        TrackCoordinatesUnitOfMeasurement coordinatesUnitOfMeasurement = singleCellMainController.getCoordinatesUnitOfMeasurement();
+        String unitOfMeasurementString = coordinatesUnitOfMeasurement.getUnitOfMeasurementString();
+
         // table binding
         trackPointsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, trackPointsBindingList, singleCellAnalysisPanel.getTrackPointsTable());
 
@@ -309,18 +316,42 @@ public class SingleCellPreProcessingController {
         columnBinding.setColumnClass(Integer.class);
 
         columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${cellRow}"));
-        columnBinding.setColumnName("x (pixels)");
+        columnBinding.setColumnName("x" + " (" + unitOfMeasurementString + ")");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
         columnBinding.setRenderer(new FormatRenderer(SwingConstants.RIGHT, singleCellMainController.getFormat()));
 
         columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${cellCol}"));
-        columnBinding.setColumnName("y (pixels)");
+        columnBinding.setColumnName("y" + " (" + unitOfMeasurementString + ")");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
         columnBinding.setRenderer(new FormatRenderer(SwingConstants.RIGHT, singleCellMainController.getFormat()));
 
         bindingGroup.addBinding(trackPointsTableBinding);
         bindingGroup.bind();
+    }
+
+    /**
+     * Compute the conversion factor according to coordinates unit of
+     * measurement and experiment magnification.
+     *
+     * @return
+     */
+    private double computeConversionFactor() {
+        Experiment currentExperiment = singleCellMainController.getExperiment();
+        // by default, conversion factor is equal to 1
+        // this is the case of having imported micrometers results to the DB
+        double conversionFactor = 1;
+        // get the actual unit of measurement: if its pixels, override the conversion factor
+        TrackCoordinatesUnitOfMeasurement coordinatesUnitOfMeasurement = singleCellMainController.getCoordinatesUnitOfMeasurement();
+        if (coordinatesUnitOfMeasurement.equals(TrackCoordinatesUnitOfMeasurement.PIXELS)) {
+            // conversion factor needs to be set according to conversion factor of instrument and magnification used
+            // actual conversion factor = instrument conversion factor x magnifiction / 10
+            Magnification magnification = currentExperiment.getMagnification();
+            double instrumentConversionFactor = currentExperiment.getInstrument().getConversionFactor();
+            double magnificationValue = magnification.getMagnificationValue();
+            conversionFactor = instrumentConversionFactor * magnificationValue / 10;
+        }
+        return conversionFactor;
     }
 }

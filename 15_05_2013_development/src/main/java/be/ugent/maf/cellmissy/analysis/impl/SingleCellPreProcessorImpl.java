@@ -60,10 +60,10 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
-    public void generateRawTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void generateRawTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults, double conversionFactor) {
         Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
         Double[][] rawTrackCoordinatesMatrix = new Double[dataStructure.length][2];
-        generateTrackCoordinatesMatrix(singleCellPreProcessingResults);
+        generateTrackCoordinatesMatrix(singleCellPreProcessingResults, conversionFactor);
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
             Double[][] trackCoordinatesMatrix = trackDataHolder.getTrackCoordinatesMatrix();
@@ -128,13 +128,10 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
         Double[] meanVelocitiesVector = new Double[trackDataHolders.size()];
         generateMeanVelocities(singleCellPreProcessingResults);
-        int counter = 0;
-        for (TrackDataHolder trackDataHolder : trackDataHolders) {
+        for (int i = 0; i < meanVelocitiesVector.length; i++) {
+            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
             double meanVelocity = trackDataHolder.getMeanVelocity();
-            for (int i = 0; i < meanVelocitiesVector.length; i++) {
-                meanVelocitiesVector[counter] = meanVelocity;
-                counter++;
-            }
+            meanVelocitiesVector[i] = meanVelocity;
         }
         singleCellPreProcessingResults.setMeanVelocitiesVector(meanVelocitiesVector);
     }
@@ -144,9 +141,9 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    private void generateTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    private void generateTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults, double conversionFactor) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.generateTrackCoordinatesMatrix(trackDataHolder);
+            trackOperator.generateTrackCoordinatesMatrix(trackDataHolder, conversionFactor);
         }
     }
 
