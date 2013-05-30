@@ -35,8 +35,8 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         return bottomPanel;
     }
 
-    public JLabel getResultsImportingLabel() {
-        return resultsImportingLabel;
+    public JLabel getInspectingDataLabel() {
+        return inspectingDataLabel;
     }
 
     public JLabel getTrackCoordinatesLabel() {
@@ -73,11 +73,11 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         topPanel = new javax.swing.JPanel();
-        resultsImportingLabel = new javax.swing.JLabel();
+        inspectingDataLabel = new javax.swing.JLabel();
         trackCoordinatesLabel = new javax.swing.JLabel();
         velocitiesLabel = new javax.swing.JLabel();
         bottomPanel = new javax.swing.JPanel();
-        resultsImporterPanel = new javax.swing.JPanel();
+        inspectingDataPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         tracksScrollPane = new javax.swing.JScrollPane();
         tracksTable = new javax.swing.JTable();
@@ -93,9 +93,9 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         topPanel.setOpaque(false);
         topPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        resultsImportingLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        resultsImportingLabel.setText("1. Data Importing");
-        resultsImportingLabel.setToolTipText("Data loaded from DB");
+        inspectingDataLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        inspectingDataLabel.setText("1. Inspecting Data");
+        inspectingDataLabel.setToolTipText("Data loaded from DB");
 
         trackCoordinatesLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         trackCoordinatesLabel.setText("2. Track Coordinates");
@@ -111,19 +111,19 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(topPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(resultsImportingLabel)
+                .addComponent(inspectingDataLabel)
                 .addGap(18, 18, 18)
                 .addComponent(trackCoordinatesLabel)
                 .addGap(18, 18, 18)
                 .addComponent(velocitiesLabel)
-                .addContainerGap(667, Short.MAX_VALUE))
+                .addContainerGap(663, Short.MAX_VALUE))
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(topPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(resultsImportingLabel)
+                    .addComponent(inspectingDataLabel)
                     .addComponent(trackCoordinatesLabel)
                     .addComponent(velocitiesLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -143,9 +143,9 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         bottomPanel.setLayout(new java.awt.CardLayout());
 
-        resultsImporterPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        resultsImporterPanel.setName("resultsImporterPanel"); // NOI18N
-        resultsImporterPanel.setOpaque(false);
+        inspectingDataPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        inspectingDataPanel.setName("inspectingDataPanel"); // NOI18N
+        inspectingDataPanel.setOpaque(false);
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         jLabel3.setText("Tracking results from DB");
@@ -176,27 +176,23 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         ));
         trackPointsScrollPane.setViewportView(trackPointsTable);
 
-        javax.swing.GroupLayout resultsImporterPanelLayout = new javax.swing.GroupLayout(resultsImporterPanel);
-        resultsImporterPanel.setLayout(resultsImporterPanelLayout);
-        resultsImporterPanelLayout.setHorizontalGroup(
-            resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(resultsImporterPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout inspectingDataPanelLayout = new javax.swing.GroupLayout(inspectingDataPanel);
+        inspectingDataPanel.setLayout(inspectingDataPanelLayout);
+        inspectingDataPanelLayout.setHorizontalGroup(
+            inspectingDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, inspectingDataPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(resultsImporterPanelLayout.createSequentialGroup()
-                        .addComponent(tracksScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 495, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(resultsImporterPanelLayout.createSequentialGroup()
-                        .addGroup(resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(resultsImporterPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 860, Short.MAX_VALUE))
-                            .addComponent(trackPointsScrollPane))
-                        .addContainerGap())))
+                .addGroup(inspectingDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(tracksScrollPane)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, inspectingDataPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 860, Short.MAX_VALUE))
+                    .addComponent(trackPointsScrollPane, javax.swing.GroupLayout.Alignment.LEADING))
+                .addContainerGap())
         );
-        resultsImporterPanelLayout.setVerticalGroup(
-            resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(resultsImporterPanelLayout.createSequentialGroup()
+        inspectingDataPanelLayout.setVerticalGroup(
+            inspectingDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(inspectingDataPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -206,8 +202,8 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        bottomPanel.add(resultsImporterPanel, "resultsImporterPanel");
-        resultsImporterPanel.getAccessibleContext().setAccessibleName("resultsImporterPanel");
+        bottomPanel.add(inspectingDataPanel, "inspectingDataPanel");
+        inspectingDataPanel.getAccessibleContext().setAccessibleName("inspectingDataPanel");
 
         trackCoordinatesParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         trackCoordinatesParentPanel.setName("trackCoordinatesParentPanel"); // NOI18N
@@ -236,9 +232,9 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
+    private javax.swing.JLabel inspectingDataLabel;
+    private javax.swing.JPanel inspectingDataPanel;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel resultsImporterPanel;
-    private javax.swing.JLabel resultsImportingLabel;
     private javax.swing.JPanel topPanel;
     private javax.swing.JLabel trackCoordinatesLabel;
     private javax.swing.JPanel trackCoordinatesParentPanel;

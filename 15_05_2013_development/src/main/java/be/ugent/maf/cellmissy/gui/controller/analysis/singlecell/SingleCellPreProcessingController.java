@@ -139,20 +139,16 @@ public class SingleCellPreProcessingController {
         trackCoordinatesController.updateWellBindingList(plateCondition);
     }
 
-    public void showNormalizedTrackCoordinatesInTable(PlateCondition plateCondition) {
-        trackCoordinatesController.showNormalizedTrackCoordinatesInTable(plateCondition);
+    public void showShiftedTrackCoordinatesInTable(PlateCondition plateCondition) {
+        trackCoordinatesController.showShiftedTrackCoordinatesInTable(plateCondition);
     }
 
-    public void plotRawTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints) {
-        trackCoordinatesController.plotRawTrackCoordinates(plateCondition, plotLines, plotPoints);
-    }
-
-    public void plotNormalizedTrackCoordinates(PlateCondition plateCondition, boolean plotLines, boolean plotPoints) {
-        trackCoordinatesController.plotNormalizedTrackCoordinates(plateCondition, plotLines, plotPoints);
+    public void plotRandomTrackCoordinates(PlateCondition plateCondition, boolean useRawData, boolean plotLines, boolean plotPoints) {
+        trackCoordinatesController.plotRandomTrackCoordinates(plateCondition, useRawData, plotLines, plotPoints);
     }
 
     public void resetRandomTracks() {
-        trackCoordinatesController.resetRandomTracks();
+        trackCoordinatesController.resetTracksList();
     }
 
     public void showRawVelocitiesInTable(PlateCondition plateCondition) {

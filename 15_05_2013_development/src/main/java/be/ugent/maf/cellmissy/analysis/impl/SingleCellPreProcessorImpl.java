@@ -82,7 +82,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         computeNormalizedTrackCoordinates(singleCellPreProcessingResults);
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            Double[][] normalizedTrackCoordinates = trackDataHolder.getNormalizedTrackCoordinates();
+            Double[][] normalizedTrackCoordinates = trackDataHolder.getShiftedTrackCoordinates();
             for (int row = 0; row < normalizedTrackCoordinates.length; row++) {
                 normalizedTrackCoordinatesMatrix[counter] = normalizedTrackCoordinates[row];
                 counter++;

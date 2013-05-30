@@ -38,7 +38,7 @@
                   <Component id="imageAnalysisDataPanel" max="32767" attributes="0"/>
                   <Component id="microscopeDataPanel" pref="340" max="32767" attributes="1"/>
               </Group>
-              <EmptySpace pref="88" max="32767" attributes="0"/>
+              <EmptySpace pref="241" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -46,7 +46,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="overviewPanel" pref="369" max="32767" attributes="0"/>
+              <Component id="overviewPanel" pref="399" max="32767" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="experimentDataPanel" min="-2" pref="276" max="-2" attributes="1"/>
@@ -121,7 +121,7 @@
                       <Component id="jScrollPane3" linkSize="10" min="-2" pref="138" max="-2" attributes="1"/>
                       <Component id="jScrollPane1" linkSize="10" min="-2" pref="158" max="-2" attributes="1"/>
                   </Group>
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="27" max="32767" attributes="0"/>
                   <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jScrollPane4" min="-2" max="-2" attributes="0"/>

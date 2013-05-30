@@ -51,7 +51,7 @@ public class TrackOperatorImpl implements TrackOperator {
             double currentY = trackPointMatrix[row][1];
             normalizedTrackCoordinates[row] = new Double[]{currentX - x0, currentY - y0};
         }
-        trackDataHolder.setNormalizedTrackCoordinates(normalizedTrackCoordinates);
+        trackDataHolder.setShiftedTrackCoordinates(normalizedTrackCoordinates);
     }
 
     @Override

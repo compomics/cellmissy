@@ -669,12 +669,12 @@ public class SingleCellMainController {
     private void onCardSwitch() {
         String currentCardName = GuiUtils.getCurrentCardName(singleCellPreProcessingController.getSingleCellAnalysisPanel().getBottomPanel());
         switch (currentCardName) {
-            case "resultsImporterPanel":
+            case "inspectingDataPanel":
                 // disable previous button
                 analysisExperimentPanel.getPreviousButton().setEnabled(false);
                 // enable next button
                 analysisExperimentPanel.getNextButton().setEnabled(true);
-                highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getResultsImportingLabel());
+                highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getInspectingDataLabel());
                 resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocitiesLabel());
                 resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesLabel());
                 showInfoMessage("Tracks are shown for each well, together with (column, row) coordinates");
@@ -683,7 +683,7 @@ public class SingleCellMainController {
             case "trackCoordinatesParentPanel":
                 highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesLabel());
                 resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocitiesLabel());
-                resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getResultsImportingLabel());
+                resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getInspectingDataLabel());
                 showInfoMessage("Track Coordinates are shown for each well");
                 singleCellPreProcessingController.updateTrackNumberLabel();
                 singleCellPreProcessingController.updateWellBindingList(currentCondition);
@@ -691,17 +691,17 @@ public class SingleCellMainController {
                 boolean plotLines = singleCellPreProcessingController.getTrackCoordinatesPanel().getPlotLinesCheckBox().isSelected();
                 boolean plotPoints = singleCellPreProcessingController.getTrackCoordinatesPanel().getPlotPointsCheckBox().isSelected();
                 //check which button is selected for analysis:
-                if (singleCellPreProcessingController.getTrackCoordinatesPanel().getRawCoordinatesRadioButton().isSelected()) {
+                boolean useRawCoordinates = singleCellPreProcessingController.getTrackCoordinatesPanel().getUnshiftedCoordinatesRadioButton().isSelected();
+                singleCellPreProcessingController.plotRandomTrackCoordinates(currentCondition, useRawCoordinates, plotLines, plotPoints);
+                if (useRawCoordinates) {
                     singleCellPreProcessingController.showRawTrackCoordinatesInTable(currentCondition);
-                    singleCellPreProcessingController.plotRawTrackCoordinates(currentCondition, plotLines, plotPoints);
-                } else if (singleCellPreProcessingController.getTrackCoordinatesPanel().getNormalizedCoordinatesRadioButton().isSelected()) {
-                    singleCellPreProcessingController.showNormalizedTrackCoordinatesInTable(currentCondition);
-                    singleCellPreProcessingController.plotNormalizedTrackCoordinates(currentCondition, plotLines, plotPoints);
+                } else {
+                    singleCellPreProcessingController.showShiftedTrackCoordinatesInTable(currentCondition);
                 }
                 break;
             case "velocitiesParentPanel":
                 highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocitiesLabel());
-                resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getResultsImportingLabel());
+                resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getInspectingDataLabel());
                 resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesLabel());
                 showInfoMessage("Single Cell Velocities");
                 // check which button is selected for analysis

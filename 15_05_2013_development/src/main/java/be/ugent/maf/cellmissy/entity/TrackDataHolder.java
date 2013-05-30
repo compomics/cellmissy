@@ -16,7 +16,7 @@ public class TrackDataHolder {
     // matrix for track coordinates (x, y)
     private Double[][] trackCoordinatesMatrix;
     // matrix for normalized track coordinates
-    private Double[][] normalizedTrackCoordinates;
+    private Double[][] shiftedTrackCoordinates;
     // matrix for delta movements in (x, y) direction
     private Double[][] deltaMovements;
     // array for velocities
@@ -48,12 +48,12 @@ public class TrackDataHolder {
         this.trackCoordinatesMatrix = trackCoordinatesMatrix;
     }
 
-    public Double[][] getNormalizedTrackCoordinates() {
-        return normalizedTrackCoordinates;
+    public Double[][] getShiftedTrackCoordinates() {
+        return shiftedTrackCoordinates;
     }
 
-    public void setNormalizedTrackCoordinates(Double[][] normalizedTrackCoordinates) {
-        this.normalizedTrackCoordinates = normalizedTrackCoordinates;
+    public void setShiftedTrackCoordinates(Double[][] shiftedTrackCoordinates) {
+        this.shiftedTrackCoordinates = shiftedTrackCoordinates;
     }
 
     public Double[][] getDeltaMovements() {
@@ -94,5 +94,12 @@ public class TrackDataHolder {
 
     public void setAngles(Double[] angles) {
         this.angles = angles;
+    }
+
+    @Override
+    public String toString() {
+        int trackNumber = track.getTrackNumber();
+        Well well = track.getWellHasImagingType().getWell();
+        return "track " + trackNumber + ", well " + well;
     }
 }
