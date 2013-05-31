@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.impl;
 
+import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import be.ugent.maf.cellmissy.analysis.TrackOperator;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
@@ -11,6 +12,7 @@ import be.ugent.maf.cellmissy.entity.TrackDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,6 +22,9 @@ import org.springframework.stereotype.Component;
  */
 @Component("trackOperator")
 public class TrackOperatorImpl implements TrackOperator {
+
+    @Autowired
+    private OutliersHandler outliersHandler;
 
     @Override
     public void generateTrackCoordinatesMatrix(TrackDataHolder trackDataHolder, double conversionFactor) {
@@ -77,46 +82,33 @@ public class TrackOperatorImpl implements TrackOperator {
     public void computeVelocities(TrackDataHolder trackDataHolder) {
         // get delta movements
         Double[][] deltaMovements = trackDataHolder.getDeltaMovements();
-        Double[] velocities = new Double[deltaMovements.length];
-        for (int row = 0; row < velocities.length; row++) {
+        Double[] instantaneousVelocities = new Double[deltaMovements.length];
+        for (int row = 0; row < instantaneousVelocities.length; row++) {
             Double deltaX = deltaMovements[row][0];
             Double deltaY = deltaMovements[row][1];
             if (deltaX != null && deltaY != null) {
                 // deltaZ = sqrt(deltaX² + deltaY²)
                 Double velocity = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-                velocities[row] = velocity;
+                instantaneousVelocities[row] = velocity;
             }
         }
-        trackDataHolder.setVelocities(velocities);
+        trackDataHolder.setInstantaneousVelocities(instantaneousVelocities);
     }
 
     @Override
-    public void filterNonMotileSteps(TrackDataHolder trackDataHolder, double motileCriterium) {
+    public void filterNonMotileSteps(TrackDataHolder trackDataHolder) {
         // get velocities vector
-        Double[] velocities = trackDataHolder.getVelocities();
-        Object[] motileSteps = new Object[velocities.length];
-        for (int i = 0; i < motileSteps.length - 1; i++) {
-            // if the velocity is equal or greater to the criterium, set the motile boolean to true
-            // else, the default is false
-            if (velocities[i] != null) {
-                if (velocities[i] >= motileCriterium) {
-                    motileSteps[i] = true;
-                } else {
-                    motileSteps[i] = false;
-                }
-            } else if (velocities[i] == null) {
-                motileSteps[i] = null;
-            }
-        }
-        trackDataHolder.setMotileSteps(motileSteps);
+        Double[] instantaneousVelocities = trackDataHolder.getInstantaneousVelocities();
+        boolean[] outliers = outliersHandler.detectOutliers(instantaneousVelocities);
+        trackDataHolder.setOutliers(outliers);
     }
 
     @Override
     public void generateMeanVelocities(TrackDataHolder trackDataHolder) {
-        Double[] velocities = trackDataHolder.getVelocities();
-        Double[] excludeNullValues = AnalysisUtils.excludeNullValues(velocities);
-        double meanVelocity = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(excludeNullValues));
-        trackDataHolder.setMeanVelocity(meanVelocity);
+        Double[] instantaneousVelocities = trackDataHolder.getInstantaneousVelocities();
+        Double[] excludeNullValues = AnalysisUtils.excludeNullValues(instantaneousVelocities);
+        double trackVelocity = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(excludeNullValues));
+        trackDataHolder.setTrackVelocity(trackVelocity);
     }
 
     @Override

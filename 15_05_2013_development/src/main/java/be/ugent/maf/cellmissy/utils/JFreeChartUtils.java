@@ -280,7 +280,7 @@ public class JFreeChartUtils {
         XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
         // modify renderer
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xYPlot.getRenderer();
-        BasicStroke wideLine = new BasicStroke(1.3f);
+        BasicStroke wideLine = new BasicStroke(1.5f);
         for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
             // wide line
             renderer.setSeriesStroke(i, wideLine);

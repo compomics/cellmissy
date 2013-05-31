@@ -13,7 +13,7 @@ import javax.swing.JTable;
  *
  * @author Paola Masuzzo
  */
-public class CheckBoxOutliersRenderer extends OutliersRenderer {
+public class CheckBoxOutliersRenderer extends AreaOutliersRenderer {
 
     /**
      * Constructor, takes a 2D array of boolean (TRUE means point is an outlier)

@@ -23,11 +23,11 @@ public class SingleCellPreProcessingResults {
     // track coordinates normalized to position (0, 0)
     private Double[][] normalizedTrackCoordinatesMatrix;
     // array for velocities
-    private Double[] velocitiesVector;
+    private Double[] instantaneousVelocitiesVector;
     // boolean for the motile steps computation
-    private Object[] motileStepsVector;
+    private boolean[] outliersVector;
     // array for velocities filtered for non motile steps
-    private Double[] meanVelocitiesVector;
+    private Double[] trackVelocitiesVector;
 
     public List<TrackDataHolder> getTrackDataHolders() {
         return trackDataHolders;
@@ -61,27 +61,27 @@ public class SingleCellPreProcessingResults {
         this.normalizedTrackCoordinatesMatrix = normalizedTrackCoordinatesMatrix;
     }
 
-    public Double[] getVelocitiesVector() {
-        return velocitiesVector;
+    public Double[] getInstantaneousVelocitiesVector() {
+        return instantaneousVelocitiesVector;
     }
 
-    public void setVelocitiesVector(Double[] velocitiesVector) {
-        this.velocitiesVector = velocitiesVector;
+    public void setInstantaneousVelocitiesVector(Double[] instantaneousVelocitiesVector) {
+        this.instantaneousVelocitiesVector = instantaneousVelocitiesVector;
     }
 
-    public Object[] getMotileStepsVector() {
-        return motileStepsVector;
+    public boolean[] getOutliersVector() {
+        return outliersVector;
     }
 
-    public void setMotileStepsVector(Object[] motileStepsVector) {
-        this.motileStepsVector = motileStepsVector;
+    public void setOutliersVector(boolean[] outliersVector) {
+        this.outliersVector = outliersVector;
     }
 
-    public Double[] getMeanVelocitiesVector() {
-        return meanVelocitiesVector;
+    public Double[] getTrackVelocitiesVector() {
+        return trackVelocitiesVector;
     }
 
-    public void setMeanVelocitiesVector(Double[] meanVelocitiesVector) {
-        this.meanVelocitiesVector = meanVelocitiesVector;
+    public void setTrackVelocitiesVector(Double[] trackVelocitiesVector) {
+        this.trackVelocitiesVector = trackVelocitiesVector;
     }
 }

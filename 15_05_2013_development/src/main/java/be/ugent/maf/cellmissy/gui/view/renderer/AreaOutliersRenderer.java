@@ -16,7 +16,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  *
  * @author Paola Masuzzo
  */
-public class OutliersRenderer extends DefaultTableCellRenderer {
+public class AreaOutliersRenderer extends DefaultTableCellRenderer {
 
     private boolean[][] outliers;
     private Format formatter;
@@ -28,7 +28,7 @@ public class OutliersRenderer extends DefaultTableCellRenderer {
      * @param outliers
      * @param formatter
      */
-    public OutliersRenderer(boolean[][] outliers, Format formatter) {
+    public AreaOutliersRenderer(boolean[][] outliers, Format formatter) {
         this.outliers = outliers;
         this.formatter = formatter;
     }
@@ -58,7 +58,6 @@ public class OutliersRenderer extends DefaultTableCellRenderer {
         }
         setValue(value);
         setHorizontalAlignment(SwingConstants.RIGHT);
-
         return this;
     }
 }

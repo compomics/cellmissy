@@ -4,16 +4,13 @@
  */
 package be.ugent.maf.cellmissy.gui.view.renderer;
 
+import be.ugent.maf.cellmissy.entity.TrackDataHolder;
+import be.ugent.maf.cellmissy.gui.view.icon.LineIcon;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Shape;
+import java.util.List;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
 import javax.swing.JList;
-import org.jfree.chart.LegendItem;
-import org.jfree.chart.LegendItemCollection;
 
 /**
  *
@@ -21,50 +18,32 @@ import org.jfree.chart.LegendItemCollection;
  */
 public class PlottedTracksListRenderer extends DefaultListCellRenderer {
 
-    private LegendItemCollection legendItems;
+    private List<TrackDataHolder> trackDataHolders;
 
-    public PlottedTracksListRenderer(LegendItemCollection legendItems) {
-        this.legendItems = legendItems;
-    }
-
-    @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        super.getListCellRendererComponent(list, value, index, false, false);
-        LegendItem legendItem = legendItems.get(index);
-        Shape shape = legendItem.getShape();
-        String description = legendItem.getDescription();
-       // setIcon(new TrackIcon(shape));
-        setText(description);
-        return this;
+    public PlottedTracksListRenderer(List<TrackDataHolder> trackDataHolders) {
+        this.trackDataHolders = trackDataHolders;
+        setOpaque(true);
+        // set the gap between the icon and the text on the list
+        setIconTextGap(10);
     }
 
     /**
      *
+     * @param list
+     * @param value
+     * @param index
+     * @param isSelected
+     * @param cellHasFocus
+     * @return
      */
-    private class TrackIcon implements Icon {
-
-        private Shape shape;
-
-        public TrackIcon(Shape shape) {
-            this.shape = shape;
-        }
-
-        @Override
-        public void paintIcon(Component c, Graphics g, int x, int y) {
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.draw(shape);
-        }
-
-        @Override
-        public int getIconWidth() {
-            Rectangle bounds = shape.getBounds();
-            return bounds.width;
-        }
-
-        @Override
-        public int getIconHeight() {
-            Rectangle bounds = shape.getBounds();
-            return bounds.height;
-        }
+    @Override
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        int trackIndex = trackDataHolders.indexOf((TrackDataHolder) value);
+        int lenght = GuiUtils.getAvailableColors().length;
+        int indexOfColor = trackIndex % lenght;
+        // set a new rectangular icon
+        setIcon(new LineIcon(GuiUtils.getAvailableColors()[indexOfColor]));
+        return this;
     }
 }

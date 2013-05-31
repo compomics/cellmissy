@@ -29,7 +29,7 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.area.DistanceMatrixDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.TimeFramesSelectionDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.TransformedAreaPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.CheckBoxOutliersRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.OutliersRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.AreaOutliersRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.DistanceMatrixTableModel;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.RectIconListRenderer;
@@ -379,9 +379,9 @@ public class AreaPreProcessingController {
             dataTable.getColumnModel().getColumn(0).setCellRenderer(new FormatRenderer(SwingConstants.RIGHT, areaMainController.getFormat()));
             boolean[][] outliers = cellCoveredAreaPreProcessor.detectOutliers(percentageAreaIncrease);
             //show outliers in red from second column on
-            OutliersRenderer outliersRenderer = new OutliersRenderer(outliers, areaMainController.getFormat());
+            AreaOutliersRenderer areaOutliersRenderer = new AreaOutliersRenderer(outliers, areaMainController.getFormat());
             for (int i = 1; i < dataTable.getColumnCount(); i++) {
-                dataTable.getColumnModel().getColumn(i).setCellRenderer(outliersRenderer);
+                dataTable.getColumnModel().getColumn(i).setCellRenderer(areaOutliersRenderer);
             }
             dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }

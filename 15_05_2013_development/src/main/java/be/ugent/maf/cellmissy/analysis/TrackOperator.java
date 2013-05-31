@@ -52,7 +52,7 @@ public interface TrackOperator {
      * @param trackDataHolder
      * @param motileCriterium
      */
-    public void filterNonMotileSteps(TrackDataHolder trackDataHolder, double motileCriterium);
+    public void filterNonMotileSteps(TrackDataHolder trackDataHolder);
 
     /**
      * Generate the velocities filtered through the motile step criterium.

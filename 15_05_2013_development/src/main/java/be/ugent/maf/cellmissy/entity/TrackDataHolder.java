@@ -19,12 +19,12 @@ public class TrackDataHolder {
     private Double[][] shiftedTrackCoordinates;
     // matrix for delta movements in (x, y) direction
     private Double[][] deltaMovements;
-    // array for velocities
-    private Double[] velocities;
-    // objects for the motile steps computation: this can be false, true or null
-    private Object[] motileSteps;
+    // array for  the instantaneous velocities
+    private Double[] instantaneousVelocities;
+    // boolean for outliers: TRUE is data point is an outlier
+    private boolean[] outliers;
     // array for velocities filtered for non motile steps
-    private double meanVelocity;
+    private double trackVelocity;
     // array for angles
     private Double[] angles;
 
@@ -64,28 +64,28 @@ public class TrackDataHolder {
         this.deltaMovements = deltaMovements;
     }
 
-    public Double[] getVelocities() {
-        return velocities;
+    public Double[] getInstantaneousVelocities() {
+        return instantaneousVelocities;
     }
 
-    public void setVelocities(Double[] velocities) {
-        this.velocities = velocities;
+    public void setInstantaneousVelocities(Double[] instantaneousVelocities) {
+        this.instantaneousVelocities = instantaneousVelocities;
     }
 
-    public Object[] getMotileSteps() {
-        return motileSteps;
+    public boolean[] getOutliers() {
+        return outliers;
     }
 
-    public void setMotileSteps(Object[] motileSteps) {
-        this.motileSteps = motileSteps;
+    public void setOutliers(boolean[] outliers) {
+        this.outliers = outliers;
     }
 
-    public double getMeanVelocity() {
-        return meanVelocity;
+    public double getTrackVelocity() {
+        return trackVelocity;
     }
 
-    public void setMeanVelocity(double meanVelocity) {
-        this.meanVelocity = meanVelocity;
+    public void setTrackVelocity(double trackVelocity) {
+        this.trackVelocity = trackVelocity;
     }
 
     public Double[] getAngles() {

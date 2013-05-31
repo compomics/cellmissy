@@ -19,6 +19,7 @@ import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,14 +27,19 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.BeanProperty;
+import org.jdesktop.beansbinding.Binding;
 import org.jdesktop.beansbinding.BindingGroup;
+import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
@@ -43,7 +49,6 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,9 +111,7 @@ public class TrackCoordinatesController {
         if (!wellBindingList.isEmpty()) {
             wellBindingList.clear();
         }
-        for (Well well : plateCondition.getSingleCellAnalyzedWells()) {
-            wellBindingList.add(well);
-        }
+        wellBindingList.addAll(plateCondition.getSingleCellAnalyzedWells());
     }
 
     /**
@@ -211,6 +214,7 @@ public class TrackCoordinatesController {
         if (!trackDataHolderBindingList.isEmpty()) {
             trackDataHolderBindingList.clear();
         }
+        trackCoordinatesPanel.getTrackLengthTextField().setText("");
     }
 
     /**
@@ -229,16 +233,6 @@ public class TrackCoordinatesController {
     }
 
     /**
-     *
-     */
-    private void updateTracksLegend() {
-        JFreeChart chart = coordinatesChartPanel.getChart();
-        XYPlot xyPlot = chart.getXYPlot();
-        PlottedTracksListRenderer plottedTracksListRenderer = new PlottedTracksListRenderer(xyPlot.getLegendItems());
-        trackCoordinatesPanel.getPlottedTracksJList().setCellRenderer(plottedTracksListRenderer);
-    }
-
-    /**
      * Initialize main panel
      */
     private void initTrackCoordinatesPanel() {
@@ -253,6 +247,7 @@ public class TrackCoordinatesController {
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackDataHolderBindingList, trackCoordinatesPanel.getPlottedTracksJList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
+        trackCoordinatesPanel.getPlottedTracksJList().setCellRenderer(new PlottedTracksListRenderer(trackDataHolderBindingList));
         //init dataTable
         coordinatesTable = new JTable();
         JScrollPane scrollPane = new JScrollPane(coordinatesTable);
@@ -277,6 +272,11 @@ public class TrackCoordinatesController {
         coordinatesChartPanel = new ChartPanel(null);
         coordinatesChartPanel.setOpaque(false);
         trackCoordinatesPanel.getGraphicsParentPanel().add(coordinatesChartPanel, gridBagConstraints);
+        // other binding properties
+        // autobind track length
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.track.trackLength"), trackCoordinatesPanel.getTrackLengthTextField(), BeanProperty.create("text"), "tracklengthbinding");
+        bindingGroup.addBinding(binding);
+        bindingGroup.bind();
 
         /**
          * add action listeners
@@ -382,11 +382,8 @@ public class TrackCoordinatesController {
         trackCoordinatesPanel.getPlotAllTracksForAConditionButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-                boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
-                boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
-                boolean useRawData = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
-                plotAllTrackCoordinatesForCondition(currentCondition, useRawData, plotLines, plotPoints);
+                PlotAllTracksConditionSwingWorker plotAllTracksConditionSwingWorker = new PlotAllTracksConditionSwingWorker();
+                plotAllTracksConditionSwingWorker.execute();
             }
         });
 
@@ -394,11 +391,8 @@ public class TrackCoordinatesController {
         trackCoordinatesPanel.getPlotAllTracksForAWellButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Well selectedWell = (Well) trackCoordinatesPanel.getWellsComboBox().getSelectedItem();
-                boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
-                boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
-                boolean useRawCoordinates = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
-                plotAllTrackCoordinatesForWell(selectedWell, useRawCoordinates, plotLines, plotPoints);
+                PlotAllTracksWellSwingWorker plotAllTracksWellSwingWorker = new PlotAllTracksWellSwingWorker();
+                plotAllTracksWellSwingWorker.execute();
             }
         });
 
@@ -439,6 +433,10 @@ public class TrackCoordinatesController {
                 trackCoordinatesMatrix = trackDataHolder.getShiftedTrackCoordinates();
             }
             XYSeries xySeries = generateXYSeries(trackCoordinatesMatrix);
+            Track track = trackDataHolder.getTrack();
+            int trackNumber = track.getTrackNumber();
+            Well well = track.getWellHasImagingType().getWell();
+            xySeries.setKey("track " + trackNumber + ", well " + well);
             xYSeriesCollection.addSeries(xySeries);
         }
 
@@ -581,9 +579,8 @@ public class TrackCoordinatesController {
      *
      */
     private void generateAllTrackHoldersForCurrentCondition() {
-        for (TrackDataHolder trackDataHolder : getTrackHoldersForCurrentCondition()) {
-            trackDataHolderBindingList.add(trackDataHolder);
-        }
+        List<TrackDataHolder> trackHoldersForCurrentCondition = getTrackHoldersForCurrentCondition();
+        trackDataHolderBindingList.addAll(trackHoldersForCurrentCondition);
     }
 
     /**
@@ -591,9 +588,8 @@ public class TrackCoordinatesController {
      * @param well
      */
     private void generateAllTrackHoldersForCurrentWell(Well well) {
-        for (TrackDataHolder trackDataHolder : getTrackHoldersForWell(well)) {
-            trackDataHolderBindingList.add(trackDataHolder);
-        }
+        List<TrackDataHolder> trackHoldersForWell = getTrackHoldersForWell(well);
+        trackDataHolderBindingList.addAll(trackHoldersForWell);
     }
 
     /**
@@ -606,51 +602,93 @@ public class TrackCoordinatesController {
     }
 
     /**
-     *
-     * @param plateCondition
-     * @param plotLines
-     * @param plotPoints
+     * Swing Worker to plot all track together!
      */
-    private void plotAllTrackCoordinatesForCondition(PlateCondition plateCondition, boolean useRawCoordinates, boolean plotLines, boolean plotPoints) {
-        resetTracksList();
-        generateAllTrackHoldersForCurrentCondition();
-        XYSeriesCollection xYSeriesCollection = generateXYSeriesCollectionForPlot(useRawCoordinates);
-        // Plot Logic
-        int conditionIndex = singleCellPreProcessingController.getPlateConditionList().indexOf(plateCondition) + 1;
-        String chartTitle;
-        if (useRawCoordinates) {
-            chartTitle = trackDataHolderBindingList.size() + " tracks - condition " + conditionIndex;
-        } else {
-            chartTitle = trackDataHolderBindingList.size() + " tracks, coordinates shifted to (0, 0) - condition " + conditionIndex;
+    private class PlotAllTracksConditionSwingWorker extends SwingWorker<Void, Void> {
+
+        private boolean useRawCoordinates = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
+        private XYSeriesCollection xYSeriesCollection;
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            resetTracksList();
+            generateAllTrackHoldersForCurrentCondition();
+            xYSeriesCollection = generateXYSeriesCollectionForPlot(useRawCoordinates);
+            return null;
         }
-        JFreeChart rawCoordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-        JFreeChartUtils.setupTrackCoordinatesPlot(rawCoordinatesChart, plotLines, plotPoints);
-        coordinatesChartPanel.setChart(rawCoordinatesChart);
-        trackCoordinatesPanel.getGraphicsParentPanel().revalidate();
-        trackCoordinatesPanel.getGraphicsParentPanel().repaint();
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+                boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
+                boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
+                // Plot Logic
+                int conditionIndex = singleCellPreProcessingController.getPlateConditionList().indexOf(currentCondition) + 1;
+                String chartTitle;
+                if (useRawCoordinates) {
+                    chartTitle = trackDataHolderBindingList.size() + " tracks - condition " + conditionIndex;
+                } else {
+                    chartTitle = trackDataHolderBindingList.size() + " tracks, coordinates shifted to (0, 0) - condition " + conditionIndex;
+                }
+                JFreeChart coordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+                JFreeChartUtils.setupTrackCoordinatesPlot(coordinatesChart, plotLines, plotPoints);
+                coordinatesChartPanel.setChart(coordinatesChart);
+                trackCoordinatesPanel.getGraphicsParentPanel().revalidate();
+                trackCoordinatesPanel.getGraphicsParentPanel().repaint();
+                singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            } catch (InterruptedException ex) {
+                LOG.error(ex.getMessage(), ex);
+            } catch (ExecutionException ex) {
+                singleCellPreProcessingController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     /**
-     *
-     * @param well
-     * @param plotLines
-     * @param plotPoints
+     * Swing Worker to plot all track together!
      */
-    private void plotAllTrackCoordinatesForWell(Well well, boolean useRawCoordinates, boolean plotLines, boolean plotPoints) {
-        resetTracksList();
-        generateAllTrackHoldersForCurrentWell(well);
-        XYSeriesCollection xYSeriesCollection = generateXYSeriesCollectionForPlot(useRawCoordinates);
-        // Plot Logic
-        String chartTitle;
-        if (useRawCoordinates) {
-            chartTitle = trackDataHolderBindingList.size() + " tracks - well " + well.toString();
-        } else {
-            chartTitle = trackDataHolderBindingList.size() + " tracks,  coordinates shifted to (0, 0) - well " + well.toString();
+    private class PlotAllTracksWellSwingWorker extends SwingWorker<Void, Void> {
+
+        boolean useRawCoordinates = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
+        private Well selectedWell = (Well) trackCoordinatesPanel.getWellsComboBox().getSelectedItem();
+        private XYSeriesCollection xYSeriesCollection;
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            resetTracksList();
+            generateAllTrackHoldersForCurrentWell(selectedWell);
+            xYSeriesCollection = generateXYSeriesCollectionForPlot(useRawCoordinates);
+            return null;
         }
-        JFreeChart rawCoordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-        JFreeChartUtils.setupTrackCoordinatesPlot(rawCoordinatesChart, plotLines, plotPoints);
-        coordinatesChartPanel.setChart(rawCoordinatesChart);
-        trackCoordinatesPanel.getGraphicsParentPanel().revalidate();
-        trackCoordinatesPanel.getGraphicsParentPanel().repaint();
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
+                boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
+                // Plot Logic
+                String chartTitle;
+                if (useRawCoordinates) {
+                    chartTitle = trackDataHolderBindingList.size() + " tracks - well " + selectedWell.toString();
+                } else {
+                    chartTitle = trackDataHolderBindingList.size() + " tracks,  coordinates shifted to (0, 0) - well " + selectedWell.toString();
+                }
+                JFreeChart rawCoordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+                JFreeChartUtils.setupTrackCoordinatesPlot(rawCoordinatesChart, plotLines, plotPoints);
+                coordinatesChartPanel.setChart(rawCoordinatesChart);
+                trackCoordinatesPanel.getGraphicsParentPanel().revalidate();
+                trackCoordinatesPanel.getGraphicsParentPanel().repaint();
+            } catch (InterruptedException ex) {
+                LOG.error(ex.getMessage(), ex);
+            } catch (ExecutionException ex) {
+                singleCellPreProcessingController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+            }
+            singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
     }
 }

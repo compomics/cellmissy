@@ -45,7 +45,7 @@ public interface SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    public void generateVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateInstantaneousVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate a vector holding the information True or False: T if the step is
@@ -55,12 +55,12 @@ public interface SingleCellPreProcessor {
      * @param singleCellPreProcessingResults
      * @param motileCriterium
      */
-    public void generateMotileStepsVector(SingleCellPreProcessingResults singleCellPreProcessingResults, double motileCriterium);
+    public void generateOutliersVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate a vector with mean velocities per track.
      *
      * @param singleCellPreProcessingResults
      */
-    public void generateMeanVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateTrackVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 }

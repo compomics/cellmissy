@@ -183,8 +183,8 @@ public class SingleCellMainController {
      *
      * @param type
      */
-    public void setCursor(int type) {
-        cellMissyController.setCursor(Cursor.getPredefinedCursor(type));
+    public void setCursor(Cursor cursor) {
+        cellMissyController.setCursor(cursor);
     }
 
     /**
@@ -705,11 +705,9 @@ public class SingleCellMainController {
                 resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesLabel());
                 showInfoMessage("Single Cell Velocities");
                 // check which button is selected for analysis
-                if (singleCellPreProcessingController.getVelocitiesPanel().getRawVelocitiesRadioButton().isSelected()) {
-                    singleCellPreProcessingController.showRawVelocitiesInTable(currentCondition);
-                } else if (singleCellPreProcessingController.getVelocitiesPanel().getMotileStepsRadioButton().isSelected()) {
-                    singleCellPreProcessingController.showMotileStepsInTable(currentCondition);
-                }
+                if (singleCellPreProcessingController.getVelocitiesPanel().getInstantaneousVelocitiesRadioButton().isSelected()) {
+                    singleCellPreProcessingController.showInstantaneousVelocitiesInTable(currentCondition);
+                } 
                 break;
         }
     }

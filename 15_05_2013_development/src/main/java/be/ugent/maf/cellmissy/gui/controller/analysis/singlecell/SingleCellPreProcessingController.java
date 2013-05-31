@@ -19,6 +19,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -151,12 +152,8 @@ public class SingleCellPreProcessingController {
         trackCoordinatesController.resetTracksList();
     }
 
-    public void showRawVelocitiesInTable(PlateCondition plateCondition) {
-        velocitiesController.showRawVelocitiesInTable(plateCondition);
-    }
-
-    public void showMotileStepsInTable(PlateCondition plateCondition) {
-        velocitiesController.showMotileStepsInTable(plateCondition);
+    public void showInstantaneousVelocitiesInTable(PlateCondition plateCondition) {
+        velocitiesController.showInstantaneousVelocitiesInTable(plateCondition);
     }
 
     /**
@@ -182,12 +179,12 @@ public class SingleCellPreProcessingController {
     }
 
     /**
+     * Set cursor from main controller
      *
-     * @param singleCellPreProcessingResults
-     * @param motileCriterium
+     * @param type
      */
-    public void generateMotileStepsVector(SingleCellPreProcessingResults singleCellPreProcessingResults, double motileCriterium) {
-        singleCellPreProcessor.generateMotileStepsVector(singleCellPreProcessingResults, motileCriterium);
+    public void setCursor(Cursor cursor) {
+        singleCellMainController.setCursor(cursor);
     }
 
     /**
@@ -206,9 +203,8 @@ public class SingleCellPreProcessingController {
             singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
             singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, computeConversionFactor());
             singleCellPreProcessor.generateNormalizedTrackCoordinatesMatrix(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateVelocitiesVector(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateMotileStepsVector(singleCellPreProcessingResults, velocitiesController.getMotileCriterium());
-            singleCellPreProcessor.generateMeanVelocitiesVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateInstantaneousVelocitiesVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateOutliersVector(singleCellPreProcessingResults);
             // fill in map
             preProcessingMap.put(plateCondition, singleCellPreProcessingResults);
         }

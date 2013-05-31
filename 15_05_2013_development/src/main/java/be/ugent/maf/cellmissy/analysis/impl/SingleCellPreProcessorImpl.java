@@ -92,48 +92,48 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
-    public void generateVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void generateInstantaneousVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
         Double[] velocitiesVector = new Double[dataStructure.length];
         computeVelocities(singleCellPreProcessingResults);
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            Double[] velocities = trackDataHolder.getVelocities();
-            for (int i = 0; i < velocities.length; i++) {
-                velocitiesVector[counter] = velocities[i];
+            Double[] instantaneousVelocities = trackDataHolder.getInstantaneousVelocities();
+            for (int i = 0; i < instantaneousVelocities.length; i++) {
+                velocitiesVector[counter] = instantaneousVelocities[i];
                 counter++;
             }
         }
-        singleCellPreProcessingResults.setVelocitiesVector(velocitiesVector);
+        singleCellPreProcessingResults.setInstantaneousVelocitiesVector(velocitiesVector);
     }
 
     @Override
-    public void generateMotileStepsVector(SingleCellPreProcessingResults singleCellPreProcessingResults, double motileCriterium) {
+    public void generateOutliersVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-        Object[] motileStepsVector = new Object[dataStructure.length];
-        filterNonMotileSteps(singleCellPreProcessingResults, motileCriterium);
+        boolean[] outliersVector = new boolean[dataStructure.length];
+        computeOutliers(singleCellPreProcessingResults);
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            Object[] motileSteps = trackDataHolder.getMotileSteps();
-            for (int i = 0; i < motileSteps.length; i++) {
-                motileStepsVector[counter] = motileSteps[i];
+            boolean[] outliers = trackDataHolder.getOutliers();
+            for (int i = 0; i < outliers.length; i++) {
+                outliersVector[counter] = outliersVector[i];
                 counter++;
             }
         }
-        singleCellPreProcessingResults.setMotileStepsVector(motileStepsVector);
+        singleCellPreProcessingResults.setOutliersVector(outliersVector);
     }
 
     @Override
-    public void generateMeanVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void generateTrackVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] meanVelocitiesVector = new Double[trackDataHolders.size()];
+        Double[] trackVelocitiesVector = new Double[trackDataHolders.size()];
         generateMeanVelocities(singleCellPreProcessingResults);
-        for (int i = 0; i < meanVelocitiesVector.length; i++) {
+        for (int i = 0; i < trackVelocitiesVector.length; i++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double meanVelocity = trackDataHolder.getMeanVelocity();
-            meanVelocitiesVector[i] = meanVelocity;
+            double trackVelocity = trackDataHolder.getTrackVelocity();
+            trackVelocitiesVector[i] = trackVelocity;
         }
-        singleCellPreProcessingResults.setMeanVelocitiesVector(meanVelocitiesVector);
+        singleCellPreProcessingResults.setTrackVelocitiesVector(trackVelocitiesVector);
     }
 
     /**
@@ -200,9 +200,9 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      * @param singleCellPreProcessingResults
      * @param motileCriterium
      */
-    private void filterNonMotileSteps(SingleCellPreProcessingResults singleCellPreProcessingResults, double motileCriterium) {
+    private void computeOutliers(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.filterNonMotileSteps(trackDataHolder, motileCriterium);
+            trackOperator.filterNonMotileSteps(trackDataHolder);
         }
     }
 
