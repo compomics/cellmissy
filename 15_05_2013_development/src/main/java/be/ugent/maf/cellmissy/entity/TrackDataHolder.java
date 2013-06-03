@@ -13,6 +13,8 @@ public class TrackDataHolder {
 
     // track
     private Track track;
+    // time indexes
+    private double[] timeIndexes;
     // matrix for track coordinates (x, y)
     private Double[][] trackCoordinatesMatrix;
     // matrix for normalized track coordinates
@@ -25,6 +27,10 @@ public class TrackDataHolder {
     private boolean[] outliers;
     // array for velocities filtered for non motile steps
     private double trackVelocity;
+    // double for cumulative distance (between first and last time point of the track)
+    private double cumulativeDistance;
+    // double for euclidean distance (between first and last time point of the track)
+    private double euclideanDistance;
     // array for angles
     private Double[] angles;
 
@@ -38,6 +44,14 @@ public class TrackDataHolder {
 
     public void setTrack(Track track) {
         this.track = track;
+    }
+
+    public double[] getTimeIndexes() {
+        return timeIndexes;
+    }
+
+    public void setTimeIndexes(double[] timeIndexes) {
+        this.timeIndexes = timeIndexes;
     }
 
     public Double[][] getTrackCoordinatesMatrix() {
@@ -86,6 +100,22 @@ public class TrackDataHolder {
 
     public void setTrackVelocity(double trackVelocity) {
         this.trackVelocity = trackVelocity;
+    }
+
+    public double getCumulativeDistance() {
+        return cumulativeDistance;
+    }
+
+    public void setCumulativeDistance(double cumulativeDistance) {
+        this.cumulativeDistance = cumulativeDistance;
+    }
+
+    public double getEuclideanDistance() {
+        return euclideanDistance;
+    }
+
+    public void setEuclideanDistance(double euclideanDistance) {
+        this.euclideanDistance = euclideanDistance;
     }
 
     public Double[] getAngles() {

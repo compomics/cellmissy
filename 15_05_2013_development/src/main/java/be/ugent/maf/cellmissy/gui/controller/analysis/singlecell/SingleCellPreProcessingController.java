@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.SingleCellPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
+import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.VelocitiesPanel;
@@ -155,6 +156,10 @@ public class SingleCellPreProcessingController {
     public void showInstantaneousVelocitiesInTable(PlateCondition plateCondition) {
         velocitiesController.showInstantaneousVelocitiesInTable(plateCondition);
     }
+    
+    public CellMissyFrame getMainFrame(){
+        return singleCellMainController.getCellMissyFrame();
+    }
 
     /**
      * Initialize map with plate conditions as keys and null objects as values
@@ -201,9 +206,13 @@ public class SingleCellPreProcessingController {
             singleCellMainController.fetchTrackPoints(plateCondition);
             singleCellPreProcessor.generateTrackResultsList(singleCellPreProcessingResults, plateCondition);
             singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateTimeIndexes(singleCellPreProcessingResults);
             singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, computeConversionFactor());
             singleCellPreProcessor.generateNormalizedTrackCoordinatesMatrix(singleCellPreProcessingResults);
             singleCellPreProcessor.generateInstantaneousVelocitiesVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateTrackVelocitiesVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.computeCumulativeDistances(singleCellPreProcessingResults);
+            singleCellPreProcessor.computeEuclideanDistances(singleCellPreProcessingResults);
             singleCellPreProcessor.generateOutliersVector(singleCellPreProcessingResults);
             // fill in map
             preProcessingMap.put(plateCondition, singleCellPreProcessingResults);

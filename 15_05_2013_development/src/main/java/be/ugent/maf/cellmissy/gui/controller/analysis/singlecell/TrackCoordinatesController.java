@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.entity.SingleCellPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
@@ -18,13 +19,17 @@ import be.ugent.maf.cellmissy.gui.view.table.model.TrackCoordinatesTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -49,8 +54,11 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RectangleEdge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -71,6 +79,11 @@ public class TrackCoordinatesController {
     // view
     private TrackCoordinatesPanel trackCoordinatesPanel;
     private ChartPanel coordinatesChartPanel;
+    private TrackCoordinatesDialog trackCoordinatesDialog;
+    private ChartPanel xtCoordinateChartPanel;
+    private ChartPanel ytCoordinateChartPanel;
+    private ChartPanel unshiftedTrackChartPanel;
+    private ChartPanel shiftedTrackChartPanel;
     // parent controller
     @Autowired
     private SingleCellPreProcessingController singleCellPreProcessingController;
@@ -214,7 +227,11 @@ public class TrackCoordinatesController {
         if (!trackDataHolderBindingList.isEmpty()) {
             trackDataHolderBindingList.clear();
         }
+        // reset text fields
         trackCoordinatesPanel.getTrackLengthTextField().setText("");
+        trackCoordinatesPanel.getMedianVelocityTextField().setText("");
+        trackCoordinatesPanel.getCumDistanceTextField().setText("");
+        trackCoordinatesPanel.getEuclDistanceTextField().setText("");
     }
 
     /**
@@ -225,7 +242,7 @@ public class TrackCoordinatesController {
         Double[][] transposed = AnalysisUtils.transpose2DArray(coordinatesToPlot);
         // take first row: x coordinates
         double[] xCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposed[0]));
-        // take second row: y coodinates
+        // take second row: y coordinates
         double[] yCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposed[1]));
         // generate xy series for the plot
         XYSeries xySeries = JFreeChartUtils.generateXYSeries(xCoordinates, yCoordinates);
@@ -268,14 +285,38 @@ public class TrackCoordinatesController {
         trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().setSelected(true);
         trackCoordinatesPanel.getPlotLinesCheckBox().setSelected(true);
         trackCoordinatesPanel.getPlotPointsCheckBox().setSelected(false);
-        //init chart panel
+        //init chart panels
         coordinatesChartPanel = new ChartPanel(null);
         coordinatesChartPanel.setOpaque(false);
         trackCoordinatesPanel.getGraphicsParentPanel().add(coordinatesChartPanel, gridBagConstraints);
+        xtCoordinateChartPanel = new ChartPanel(null);
+        xtCoordinateChartPanel.setOpaque(false);
+        ytCoordinateChartPanel = new ChartPanel(null);
+        ytCoordinateChartPanel.setOpaque(false);
+        unshiftedTrackChartPanel = new ChartPanel(null);
+        unshiftedTrackChartPanel.setOpaque(false);
+        shiftedTrackChartPanel = new ChartPanel(null);
+        shiftedTrackChartPanel.setOpaque(false);
+        // init dialog
+        trackCoordinatesDialog = new TrackCoordinatesDialog(singleCellPreProcessingController.getMainFrame(), true);
+        trackCoordinatesDialog.getXtCoordinateParentPanel().add(xtCoordinateChartPanel, gridBagConstraints);
+        trackCoordinatesDialog.getYtCoordinateParentPanel().add(ytCoordinateChartPanel, gridBagConstraints);
+        trackCoordinatesDialog.getUnshiftedParentPanel().add(unshiftedTrackChartPanel, gridBagConstraints);
+        trackCoordinatesDialog.getShiftedParentPanel().add(shiftedTrackChartPanel, gridBagConstraints);
         // other binding properties
         // autobind track length
         Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.track.trackLength"), trackCoordinatesPanel.getTrackLengthTextField(), BeanProperty.create("text"), "tracklengthbinding");
         bindingGroup.addBinding(binding);
+        // autobind track median velocity
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackVelocity"), trackCoordinatesPanel.getMedianVelocityTextField(), BeanProperty.create("text"), "trackmedianvelocitybinding");
+        bindingGroup.addBinding(binding);
+        // autobind accumulative distance
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.cumulativeDistance"), trackCoordinatesPanel.getCumDistanceTextField(), BeanProperty.create("text"), "cumdistancebinding");
+        bindingGroup.addBinding(binding);
+        // autobind euclidean distance
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.euclideanDistance"), trackCoordinatesPanel.getEuclDistanceTextField(), BeanProperty.create("text"), "eucldistancebinding");
+        bindingGroup.addBinding(binding);
+        // do the binding
         bindingGroup.bind();
 
         /**
@@ -396,8 +437,156 @@ public class TrackCoordinatesController {
             }
         });
 
+        // show dialog with x and y coordinates in time
+        trackCoordinatesPanel.getShowPlotsTrackButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                TrackDataHolder trackDataHolder = (TrackDataHolder) trackCoordinatesPanel.getPlottedTracksJList().getSelectedValue();
+                if (trackDataHolder != null) {
+                    // plot the data associated with the current track
+                    plotSingleTrackData(trackDataHolder);
+                    // pack and show the dialog with the plots
+                    trackCoordinatesDialog.pack();
+                    trackCoordinatesDialog.setVisible(true);
+                }
+            }
+        });
+
+        // 
+        trackCoordinatesPanel.getPlottedTracksJList().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int locationToIndex = trackCoordinatesPanel.getPlottedTracksJList().locationToIndex(e.getPoint());
+                boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
+                boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
+                if (locationToIndex != -1) {
+                    JFreeChart coordinatesChart = coordinatesChartPanel.getChart();
+                    JFreeChartUtils.highlightSeries(coordinatesChart, locationToIndex, plotLines, plotPoints);
+                }
+            }
+        });
+
         // add view to parent panel
         singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesParentPanel().add(trackCoordinatesPanel, gridBagConstraints);
+    }
+
+    /**
+     * Make the plots for the single track.
+     *
+     * @param trackDataHolder
+     */
+    private void plotSingleTrackData(TrackDataHolder trackDataHolder) {
+        // plot x and y coordinates in time
+        plotCoordinatesInTime(trackDataHolder);
+        // plot the unshifted and the shifted track coordinates
+        plotUnshiftedCoordinates(trackDataHolder);
+        plotShiftedCoordinates(trackDataHolder);
+    }
+
+    /**
+     * Plot x and y coordinates in time for the given track. The track is
+     * actually get from the track data holder object.
+     *
+     * @param track
+     */
+    private void plotCoordinatesInTime(TrackDataHolder trackDataHolder) {
+        // get the selected track data holder, and thus the track to plot in time
+        Track track = trackDataHolder.getTrack();
+        // get the coordinates matrix
+        Double[][] trackCoordinatesMatrix = trackDataHolder.getTrackCoordinatesMatrix();
+        // we need to transpose the matrix
+        Double[][] transpose2DArray = AnalysisUtils.transpose2DArray(trackCoordinatesMatrix);
+        // we get the x coordinates and the time information
+        double[] xCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transpose2DArray[0]));
+        double[] timeIndexes = trackDataHolder.getTimeIndexes();
+        // we create the series and set its key
+        XYSeries xtSeries = JFreeChartUtils.generateXYSeries(timeIndexes, xCoordinates);
+        int trackNumber = track.getTrackNumber();
+        Well well = track.getWellHasImagingType().getWell();
+        String seriesKey = "track " + trackNumber + ", well " + well;
+        xtSeries.setKey(seriesKey);
+        // we then create the XYSeriesCollection qnd use it to make a new line chart
+        XYSeriesCollection xtSeriesCollection = new XYSeriesCollection(xtSeries);
+        JFreeChart xtCoordinatesChart = ChartFactory.createXYLineChart("", "time index", "x (µm)", xtSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        // set up the plot of the chart
+        setupSingleTrackPlot(xtCoordinatesChart, trackDataHolder);
+        xtCoordinateChartPanel.setChart(xtCoordinatesChart);
+        // we repeat exactly the same with the y coordinates in time
+        double[] yCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transpose2DArray[1]));
+        XYSeries ytSeries = JFreeChartUtils.generateXYSeries(timeIndexes, yCoordinates);
+        ytSeries.setKey(seriesKey);
+        XYSeriesCollection ytSeriesCollection = new XYSeriesCollection(ytSeries);
+        JFreeChart ytCoordinatesChart = ChartFactory.createXYLineChart("", "time index", "y (µm)", ytSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        // set up the plot of the chart
+        setupSingleTrackPlot(ytCoordinatesChart, trackDataHolder);
+        ytCoordinateChartPanel.setChart(ytCoordinatesChart);
+    }
+
+    /**
+     * Plot the unshifted track coordinates for the current track. We get the
+     * current track from the selected track data holder object.
+     *
+     * @param trackDataHolder
+     */
+    private void plotUnshiftedCoordinates(TrackDataHolder trackDataHolder) {
+        // get the coordinates matrix
+        Double[][] trackCoordinatesMatrix = trackDataHolder.getTrackCoordinatesMatrix();
+        XYSeries xYSeries = generateXYSeries(trackCoordinatesMatrix);
+        Track track = trackDataHolder.getTrack();
+        int trackNumber = track.getTrackNumber();
+        Well well = track.getWellHasImagingType().getWell();
+        String seriesKey = "track " + trackNumber + ", well " + well;
+        xYSeries.setKey(seriesKey);
+        XYSeriesCollection ySeriesCollection = new XYSeriesCollection(xYSeries);
+        JFreeChart unshiftedCoordinatesChart = ChartFactory.createXYLineChart("Unshifted track coordinates", "x (µm)", "y (µm)", ySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        setupSingleTrackPlot(unshiftedCoordinatesChart, trackDataHolder);
+        unshiftedTrackChartPanel.setChart(unshiftedCoordinatesChart);
+    }
+
+    /**
+     * Plot the shifted track coordinates for the current track. We get the
+     * current track from the selected track data holder object.
+     *
+     * @param trackDataHolder
+     */
+    private void plotShiftedCoordinates(TrackDataHolder trackDataHolder) {
+        // get the coordinates matrix
+        Double[][] shiftedTrackCoordinates = trackDataHolder.getShiftedTrackCoordinates();
+        XYSeries xYSeries = generateXYSeries(shiftedTrackCoordinates);
+        Track track = trackDataHolder.getTrack();
+        int trackNumber = track.getTrackNumber();
+        Well well = track.getWellHasImagingType().getWell();
+        String seriesKey = "track " + trackNumber + ", well " + well;
+        xYSeries.setKey(seriesKey);
+        XYSeriesCollection ySeriesCollection = new XYSeriesCollection(xYSeries);
+        JFreeChart shiftedCoordinatesChart = ChartFactory.createXYLineChart("Track coordinates shifted to (0, 0)", "x (µm)", "y (µm)", ySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        setupSingleTrackPlot(shiftedCoordinatesChart, trackDataHolder);
+        shiftedTrackChartPanel.setChart(shiftedCoordinatesChart);
+    }
+
+    /**
+     * Set up the plot over time.
+     *
+     * @param chart
+     */
+    private void setupSingleTrackPlot(JFreeChart chart, TrackDataHolder trackDataHolder) {
+        // set up the plot
+        XYPlot xTPlot = chart.getXYPlot();
+        JFreeChartUtils.setupPlot(xTPlot);
+        // set title font 
+        chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
+        // put legend on the right edge, if present
+        chart.getLegend().setPosition(RectangleEdge.BOTTOM);
+        // modify renderer
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xTPlot.getRenderer();
+        BasicStroke wideLine = new BasicStroke(1.5f);
+        renderer.setSeriesStroke(0, wideLine);
+        int indexOf = trackDataHolderBindingList.indexOf(trackDataHolder);
+        int length = GuiUtils.getAvailableColors().length;
+        int colorIndex = indexOf % length;
+        renderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[colorIndex]);
+        renderer.setSeriesLinesVisible(0, true);
+        renderer.setSeriesShapesVisible(0, true);
     }
 
     /**

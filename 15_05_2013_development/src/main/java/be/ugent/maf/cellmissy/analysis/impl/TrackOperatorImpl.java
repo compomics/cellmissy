@@ -27,6 +27,17 @@ public class TrackOperatorImpl implements TrackOperator {
     private OutliersHandler outliersHandler;
 
     @Override
+    public void generateTimeIndexes(TrackDataHolder trackDataHolder) {
+        Track track = trackDataHolder.getTrack();
+        List<TrackPoint> trackPointList = track.getTrackPointList();
+        double[] timeIndexes = new double[trackPointList.size()];
+        for (int i = 0; i < timeIndexes.length; i++) {
+            timeIndexes[i] = trackPointList.get(i).getTimeIndex();
+        }
+        trackDataHolder.setTimeIndexes(timeIndexes);
+    }
+
+    @Override
     public void generateTrackCoordinatesMatrix(TrackDataHolder trackDataHolder, double conversionFactor) {
         Track track = trackDataHolder.getTrack();
         List<TrackPoint> trackPointList = track.getTrackPointList();
@@ -104,11 +115,33 @@ public class TrackOperatorImpl implements TrackOperator {
     }
 
     @Override
-    public void generateMeanVelocities(TrackDataHolder trackDataHolder) {
+    public void computeTrackVelocity(TrackDataHolder trackDataHolder) {
         Double[] instantaneousVelocities = trackDataHolder.getInstantaneousVelocities();
         Double[] excludeNullValues = AnalysisUtils.excludeNullValues(instantaneousVelocities);
-        double trackVelocity = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(excludeNullValues));
+        double trackVelocity = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
         trackDataHolder.setTrackVelocity(trackVelocity);
+    }
+
+    @Override
+    public void computeCumulativeDistance(TrackDataHolder trackDataHolder) {
+        double cumulativeDistance = 0;
+        Double[] instantaneousVelocities = trackDataHolder.getInstantaneousVelocities();
+        for (int i = 0; i < instantaneousVelocities.length; i++) {
+            if (instantaneousVelocities[i] != null) {
+                cumulativeDistance += instantaneousVelocities[i];
+            }
+        }
+        trackDataHolder.setCumulativeDistance(cumulativeDistance);
+    }
+
+    @Override
+    public void computeEuclideanDistance(TrackDataHolder trackDataHolder) {
+        Double[][] deltaMovements = trackDataHolder.getDeltaMovements();
+        // last delta movements
+        Double deltaX = deltaMovements[deltaMovements.length - 2][0];
+        Double deltaY = deltaMovements[deltaMovements.length - 2][1];
+        double euclideanDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+        trackDataHolder.setEuclideanDistance(euclideanDistance);
     }
 
     @Override

@@ -13,6 +13,13 @@ import be.ugent.maf.cellmissy.entity.TrackDataHolder;
 public interface TrackOperator {
 
     /**
+     * Generate Double vector with time indexes of track.
+     *
+     * @param trackDataHolder
+     */
+    public void generateTimeIndexes(TrackDataHolder trackDataHolder);
+
+    /**
      * Generate Track Point Matrix for a track. This is already scaling
      * according to the conversion factor, going from pixels to micrometers. If
      * the conversion factor is equal to one, data was already in micrometers
@@ -59,7 +66,24 @@ public interface TrackOperator {
      *
      * @param trackDataHolder
      */
-    public void generateMeanVelocities(TrackDataHolder trackDataHolder);
+    public void computeTrackVelocity(TrackDataHolder trackDataHolder);
+
+    /**
+     * Compute cumulative distance between start and end point of track. This is
+     * usually bigger the real displacement, and it's equal to the total path
+     * length.
+     *
+     * @param trackDataHolder
+     */
+    public void computeCumulativeDistance(TrackDataHolder trackDataHolder);
+
+    /**
+     * Compute Euclidean distance between start and end point. This is the real
+     * displacement of a cell along the track.
+     *
+     * @param trackDataHolder
+     */
+    public void computeEuclideanDistance(TrackDataHolder trackDataHolder);
 
     /**
      * Compute angles.

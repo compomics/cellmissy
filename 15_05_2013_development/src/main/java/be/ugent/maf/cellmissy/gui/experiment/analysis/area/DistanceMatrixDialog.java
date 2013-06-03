@@ -43,7 +43,9 @@ public class DistanceMatrixDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Select replicates");
         setAlwaysOnTop(true);
+        setMinimumSize(new java.awt.Dimension(60, 40));
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+        setPreferredSize(new java.awt.Dimension(600, 300));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         distanceMatrixScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Distance Matrix"));

@@ -31,6 +31,12 @@ public interface SingleCellPreProcessor {
     /**
      *
      * @param singleCellPreProcessingResults
+     */
+    public void generateTimeIndexes(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     *
+     * @param singleCellPreProcessingResults
      * @param conversionFactor
      */
     public void generateRawTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults, double conversionFactor);
@@ -63,4 +69,18 @@ public interface SingleCellPreProcessor {
      * @param singleCellPreProcessingResults
      */
     public void generateTrackVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     * Compute cumulative distances for each track.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void computeCumulativeDistances(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     * Compute Euclidean distances for each track.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void computeEuclideanDistances(SingleCellPreProcessingResults singleCellPreProcessingResults);
 }

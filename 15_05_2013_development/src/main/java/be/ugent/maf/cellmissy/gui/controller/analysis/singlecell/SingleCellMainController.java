@@ -18,6 +18,7 @@ import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
@@ -165,6 +166,10 @@ public class SingleCellMainController {
 
     public Experiment getExperiment() {
         return experiment;
+    }
+
+    public CellMissyFrame getCellMissyFrame() {
+        return cellMissyController.getCellMissyFrame();
     }
 
     /**
@@ -687,7 +692,6 @@ public class SingleCellMainController {
                 showInfoMessage("Track Coordinates are shown for each well");
                 singleCellPreProcessingController.updateTrackNumberLabel();
                 singleCellPreProcessingController.updateWellBindingList(currentCondition);
-                singleCellPreProcessingController.resetRandomTracks();
                 boolean plotLines = singleCellPreProcessingController.getTrackCoordinatesPanel().getPlotLinesCheckBox().isSelected();
                 boolean plotPoints = singleCellPreProcessingController.getTrackCoordinatesPanel().getPlotPointsCheckBox().isSelected();
                 //check which button is selected for analysis:
@@ -707,7 +711,7 @@ public class SingleCellMainController {
                 // check which button is selected for analysis
                 if (singleCellPreProcessingController.getVelocitiesPanel().getInstantaneousVelocitiesRadioButton().isSelected()) {
                     singleCellPreProcessingController.showInstantaneousVelocitiesInTable(currentCondition);
-                } 
+                }
                 break;
         }
     }

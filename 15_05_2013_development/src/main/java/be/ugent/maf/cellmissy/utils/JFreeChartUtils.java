@@ -41,28 +41,6 @@ public class JFreeChartUtils {
 
     // private methods
     /**
-     * Setup a xy plot
-     *
-     * @param xYPlot
-     */
-    private static void setupPlot(XYPlot xYPlot) {
-        // set background to white and grid color to black
-        xYPlot.setBackgroundPaint(Color.white);
-        xYPlot.setRangeGridlinePaint(Color.black);
-        // hide the border of the sorrounding box
-        xYPlot.setOutlinePaint(Color.white);
-        // get domanin and range axes
-        ValueAxis domainAxis = xYPlot.getDomainAxis();
-        ValueAxis rangeAxis = xYPlot.getRangeAxis();
-        // set label paint for axes to black
-        domainAxis.setLabelPaint(Color.black);
-        rangeAxis.setLabelPaint(Color.black);
-        // set font for labels, both on domain and range axes
-        domainAxis.setLabelFont(new Font("Tahoma", Font.BOLD, 12));
-        rangeAxis.setLabelFont(new Font("Tahoma", Font.BOLD, 12));
-    }
-
-    /**
      * Given a list of wells and one well's coordinate, get the index of the
      * well in the List.
      *
@@ -168,6 +146,28 @@ public class JFreeChartUtils {
                 }
             }
         }
+    }
+
+    /**
+     * Setup a xy plot
+     *
+     * @param xYPlot
+     */
+    public static void setupPlot(XYPlot xYPlot) {
+        // set background to white and grid color to black
+        xYPlot.setBackgroundPaint(Color.white);
+        xYPlot.setRangeGridlinePaint(Color.black);
+        // hide the border of the sorrounding box
+        xYPlot.setOutlinePaint(Color.white);
+        // get domanin and range axes
+        ValueAxis domainAxis = xYPlot.getDomainAxis();
+        ValueAxis rangeAxis = xYPlot.getRangeAxis();
+        // set label paint for axes to black
+        domainAxis.setLabelPaint(Color.black);
+        rangeAxis.setLabelPaint(Color.black);
+        // set font for labels, both on domain and range axes
+        domainAxis.setLabelFont(new Font("Tahoma", Font.BOLD, 12));
+        rangeAxis.setLabelFont(new Font("Tahoma", Font.BOLD, 12));
     }
 
     /**
@@ -364,5 +364,36 @@ public class JFreeChartUtils {
             }
         }
         return maxY;
+    }
+
+    /**
+     *
+     * @param chart
+     * @param seriesToHighlight
+     * @param plotLines
+     * @param plotPoints
+     */
+    public static void highlightSeries(JFreeChart chart, int seriesToHighlight, boolean plotLines, boolean plotPoints) {
+        XYPlot xYPlot = chart.getXYPlot();
+        // get the xyseriescollection from the plot
+        XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xYPlot.getRenderer();
+        BasicStroke wideLine = new BasicStroke(2f);
+        BasicStroke normalLine = new BasicStroke(1.5f);
+        for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
+            int length = GuiUtils.getAvailableColors().length;
+            if (i == seriesToHighlight) {
+                int colorIndex = seriesToHighlight % length;
+                renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
+                renderer.setSeriesStroke(i, wideLine);
+            } else {
+                renderer.setSeriesPaint(i, GuiUtils.getNonImagedColor());
+                renderer.setSeriesStroke(i, normalLine);
+            }
+            // show lines?
+            renderer.setSeriesLinesVisible(i, plotLines);
+            // show points?
+            renderer.setSeriesShapesVisible(i, plotPoints);
+        }
     }
 }

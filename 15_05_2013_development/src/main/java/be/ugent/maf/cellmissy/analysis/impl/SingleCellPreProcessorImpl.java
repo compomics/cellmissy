@@ -136,6 +136,27 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         singleCellPreProcessingResults.setTrackVelocitiesVector(trackVelocitiesVector);
     }
 
+    @Override
+    public void generateTimeIndexes(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.generateTimeIndexes(trackDataHolder);
+        }
+    }
+
+    @Override
+    public void computeCumulativeDistances(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.computeCumulativeDistance(trackDataHolder);
+        }
+    }
+
+    @Override
+    public void computeEuclideanDistances(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.computeEuclideanDistance(trackDataHolder);
+        }
+    }
+
     /**
      * Generate matrix with raw data.
      *
@@ -214,7 +235,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      */
     private void generateMeanVelocities(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.generateMeanVelocities(trackDataHolder);
+            trackOperator.computeTrackVelocity(trackDataHolder);
         }
     }
 }
