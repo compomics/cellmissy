@@ -17,6 +17,7 @@ public class SingleCellPreProcessingResults {
     // list of track data holders
     private List<TrackDataHolder> trackDataHolders;
     // data structure containing wells, tracks numbers and time indexes 
+    // this data structure is on the track point level 
     private Object[][] dataStructure;
     // raw data track coordinates
     private Double[][] rawTrackCoordinatesMatrix;

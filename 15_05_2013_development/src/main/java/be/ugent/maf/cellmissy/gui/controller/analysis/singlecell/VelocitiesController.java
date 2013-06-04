@@ -69,14 +69,11 @@ public class VelocitiesController {
         if (singleCellPreProcessingResults != null) {
             Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
             Double[] instantaneousVelocitiesVector = singleCellPreProcessingResults.getInstantaneousVelocitiesVector();
-            boolean[] outliers = singleCellPreProcessingResults.getOutliersVector();
             velocitiesTable.setModel(new VelocitiesTableModel(dataStructure, instantaneousVelocitiesVector));
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             for (int i = 0; i < velocitiesTable.getColumnModel().getColumnCount(); i++) {
                 velocitiesTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
             }
-            VelocityOutliersRenderer velocityOutliersRenderer = new VelocityOutliersRenderer(outliers, singleCellPreProcessingController.getFormat());
-            velocitiesTable.getColumnModel().getColumn(velocitiesTable.getColumnCount() - 1).setCellRenderer(velocityOutliersRenderer);
             velocitiesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
         }
         velocitiesPanel.getTableInfoLabel().setText("Instantaneous Single Cell Velocities (for each time step)");

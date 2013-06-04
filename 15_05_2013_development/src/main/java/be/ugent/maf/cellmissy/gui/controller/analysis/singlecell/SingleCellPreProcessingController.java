@@ -213,7 +213,7 @@ public class SingleCellPreProcessingController {
             singleCellPreProcessor.generateTrackVelocitiesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.computeCumulativeDistances(singleCellPreProcessingResults);
             singleCellPreProcessor.computeEuclideanDistances(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateOutliersVector(singleCellPreProcessingResults);
+//            singleCellPreProcessor.generateOutliersVector(singleCellPreProcessingResults);
             // fill in map
             preProcessingMap.put(plateCondition, singleCellPreProcessingResults);
         }

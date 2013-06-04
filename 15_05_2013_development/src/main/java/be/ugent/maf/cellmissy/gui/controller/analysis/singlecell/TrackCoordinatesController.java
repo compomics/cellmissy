@@ -214,7 +214,7 @@ public class TrackCoordinatesController {
                 break;
         }
         JFreeChart coordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollectionForPlot, PlotOrientation.VERTICAL, false, true, false);
-        JFreeChartUtils.setupTrackCoordinatesPlot(coordinatesChart, plotLines, plotPoints);
+        JFreeChartUtils.setupTrackCoordinatesPlot(coordinatesChart, trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex(), plotLines, plotPoints);
         coordinatesChartPanel.setChart(coordinatesChart);
         trackCoordinatesPanel.getGraphicsParentPanel().revalidate();
         trackCoordinatesPanel.getGraphicsParentPanel().repaint();
@@ -359,15 +359,16 @@ public class TrackCoordinatesController {
             public void itemStateChanged(ItemEvent e) {
                 //PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
                 boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
-                JFreeChart chart = coordinatesChartPanel.getChart();
+                JFreeChart coordinatesChart = coordinatesChartPanel.getChart();
+                int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    JFreeChartUtils.setupTrackCoordinatesPlot(chart, true, plotPoints);
+                    JFreeChartUtils.setupTrackCoordinatesPlot(coordinatesChart, selectedTrackIndex, true, plotPoints);
                 } else {
                     // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
                     if (!plotPoints) {
                         trackCoordinatesPanel.getPlotPointsCheckBox().setSelected(true);
                     }
-                    JFreeChartUtils.setupTrackCoordinatesPlot(chart, false, true);
+                    JFreeChartUtils.setupTrackCoordinatesPlot(coordinatesChart, selectedTrackIndex, false, true);
                 }
             }
         });
@@ -379,14 +380,15 @@ public class TrackCoordinatesController {
                 //PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
                 boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
                 JFreeChart chart = coordinatesChartPanel.getChart();
+                int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    JFreeChartUtils.setupTrackCoordinatesPlot(chart, plotLines, true);
+                    JFreeChartUtils.setupTrackCoordinatesPlot(chart, selectedTrackIndex, plotLines, true);
                 } else {
                     // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
                     if (!plotLines) {
                         trackCoordinatesPanel.getPlotLinesCheckBox().setSelected(true);
                     }
-                    JFreeChartUtils.setupTrackCoordinatesPlot(chart, true, false);
+                    JFreeChartUtils.setupTrackCoordinatesPlot(chart, selectedTrackIndex, true, false);
                 }
             }
         });
@@ -452,7 +454,7 @@ public class TrackCoordinatesController {
             }
         });
 
-        // 
+        // select a track and highlight it in the current plot
         trackCoordinatesPanel.getPlottedTracksJList().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -461,8 +463,22 @@ public class TrackCoordinatesController {
                 boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
                 if (locationToIndex != -1) {
                     JFreeChart coordinatesChart = coordinatesChartPanel.getChart();
-                    JFreeChartUtils.highlightSeries(coordinatesChart, locationToIndex, plotLines, plotPoints);
+                    JFreeChartUtils.setupTrackCoordinatesPlot(coordinatesChart, locationToIndex, plotLines, plotPoints);
                 }
+            }
+        });
+
+        // clear selection on the tracks list
+        trackCoordinatesPanel.getClearSelectionButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // clear the selection on the list
+                trackCoordinatesPanel.getPlottedTracksJList().clearSelection();
+                // refresh the plot
+                JFreeChart chart = coordinatesChartPanel.getChart();
+                boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
+                boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
+                JFreeChartUtils.setupTrackCoordinatesPlot(chart, -1, plotLines, plotPoints);
             }
         });
 
@@ -571,14 +587,14 @@ public class TrackCoordinatesController {
      */
     private void setupSingleTrackPlot(JFreeChart chart, TrackDataHolder trackDataHolder) {
         // set up the plot
-        XYPlot xTPlot = chart.getXYPlot();
-        JFreeChartUtils.setupPlot(xTPlot);
+        XYPlot xyPlot = chart.getXYPlot();
+        JFreeChartUtils.setupPlot(xyPlot);
         // set title font 
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         // put legend on the right edge, if present
         chart.getLegend().setPosition(RectangleEdge.BOTTOM);
         // modify renderer
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xTPlot.getRenderer();
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xyPlot.getRenderer();
         BasicStroke wideLine = new BasicStroke(1.5f);
         renderer.setSeriesStroke(0, wideLine);
         int indexOf = trackDataHolderBindingList.indexOf(trackDataHolder);
@@ -823,7 +839,8 @@ public class TrackCoordinatesController {
                     chartTitle = trackDataHolderBindingList.size() + " tracks, coordinates shifted to (0, 0) - condition " + conditionIndex;
                 }
                 JFreeChart coordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-                JFreeChartUtils.setupTrackCoordinatesPlot(coordinatesChart, plotLines, plotPoints);
+                int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
+                JFreeChartUtils.setupTrackCoordinatesPlot(coordinatesChart, selectedTrackIndex, plotLines, plotPoints);
                 coordinatesChartPanel.setChart(coordinatesChart);
                 trackCoordinatesPanel.getGraphicsParentPanel().revalidate();
                 trackCoordinatesPanel.getGraphicsParentPanel().repaint();
@@ -867,9 +884,10 @@ public class TrackCoordinatesController {
                 } else {
                     chartTitle = trackDataHolderBindingList.size() + " tracks,  coordinates shifted to (0, 0) - well " + selectedWell.toString();
                 }
-                JFreeChart rawCoordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-                JFreeChartUtils.setupTrackCoordinatesPlot(rawCoordinatesChart, plotLines, plotPoints);
-                coordinatesChartPanel.setChart(rawCoordinatesChart);
+                JFreeChart coordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+                int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
+                JFreeChartUtils.setupTrackCoordinatesPlot(coordinatesChart, selectedTrackIndex, plotLines, plotPoints);
+                coordinatesChartPanel.setChart(coordinatesChart);
                 trackCoordinatesPanel.getGraphicsParentPanel().revalidate();
                 trackCoordinatesPanel.getGraphicsParentPanel().repaint();
             } catch (InterruptedException ex) {

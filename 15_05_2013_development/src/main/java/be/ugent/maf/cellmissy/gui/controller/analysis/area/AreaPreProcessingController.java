@@ -840,7 +840,7 @@ public class AreaPreProcessingController {
         String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
         JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         if (plotErrorBars) {
-            JFreeChartUtils.plotVerticalErrorBars(globalAreaChart, xySeriesCollection, yErrorsList);
+            JFreeChartUtils.plotVerticalErrorBars(globalAreaChart, yErrorsList);
             globalAreaChart.getXYPlot().getRangeAxis().setUpperBound(JFreeChartUtils.computeMaxY(xySeriesCollection) + AnalysisUtils.getMaxOfAList(yErrorsList));
         }
         JFreeChartUtils.setupGlobalAreaChart(globalAreaChart, plotLines, plotPoints);
@@ -924,7 +924,7 @@ public class AreaPreProcessingController {
         String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
         JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         if (plotErrorBars) {
-            JFreeChartUtils.plotVerticalErrorBars(globalAreaChart, xySeriesCollection, yErrorsList);
+            JFreeChartUtils.plotVerticalErrorBars(globalAreaChart, yErrorsList);
             globalAreaChart.getXYPlot().getRangeAxis().setUpperBound(JFreeChartUtils.computeMaxY(xySeriesCollection) + AnalysisUtils.getMaxOfAList(yErrorsList));
         }
         JFreeChartUtils.setupGlobalAreaChart(globalAreaChart, plotLines, plotPoints);

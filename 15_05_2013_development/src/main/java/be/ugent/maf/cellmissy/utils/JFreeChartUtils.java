@@ -11,10 +11,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Stroke;
+import java.awt.geom.Ellipse2D;
 import java.util.List;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYLineAnnotation;
+import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
@@ -27,7 +29,7 @@ import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.title.LegendTitle;
+import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
@@ -266,27 +268,35 @@ public class JFreeChartUtils {
      * @param plotLines
      * @param plotPoints
      */
-    public static void setupTrackCoordinatesPlot(JFreeChart chart, boolean plotLines, boolean plotPoints) {
+    public static void setupTrackCoordinatesPlot(JFreeChart chart, int seriesToHighlight, boolean plotLines, boolean plotPoints) {
         // set title font 
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
-        // put legend on the right edge, if present
-        LegendTitle legend = chart.getLegend();
-        if (legend != null) {
-            legend.setPosition(RectangleEdge.RIGHT);
-        }
         XYPlot xYPlot = chart.getXYPlot();
         setupPlot(xYPlot);
         // get the xyseriescollection from the plot
         XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
         // modify renderer
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xYPlot.getRenderer();
-        BasicStroke wideLine = new BasicStroke(1.5f);
+        renderer.removeAnnotations();
+        int length = GuiUtils.getAvailableColors().length;
+        BasicStroke normalLine = new BasicStroke(1.5f);
+        BasicStroke wideLine = new BasicStroke(2.5f);
         for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
-            // wide line
-            renderer.setSeriesStroke(i, wideLine);
-            int length = GuiUtils.getAvailableColors().length;
-            int colorIndex = i % length;
-            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
+            if (seriesToHighlight != -1) {
+                if (i == seriesToHighlight) {
+                    int colorIndex = seriesToHighlight % length;
+                    renderer.setSeriesPaint(seriesToHighlight, GuiUtils.getAvailableColors()[colorIndex]);
+                    renderer.setSeriesStroke(seriesToHighlight, wideLine);
+                    addCirclePointersOnPlot(xYPlot, seriesToHighlight);
+                } else {
+                    renderer.setSeriesPaint(i, GuiUtils.getNonImagedColor());
+                    renderer.setSeriesStroke(i, normalLine);
+                }
+            } else {
+                renderer.setSeriesStroke(i, normalLine);
+                int colorIndex = i % length;
+                renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
+            }
             // show lines?
             renderer.setSeriesLinesVisible(i, plotLines);
             // show points?
@@ -325,20 +335,22 @@ public class JFreeChartUtils {
      * @param valuesCollection
      * @param verticalErrors
      */
-    public static void plotVerticalErrorBars(JFreeChart chart, XYSeriesCollection valuesCollection, List<Double[]> verticalErrors) {
+    public static void plotVerticalErrorBars(JFreeChart chart, List<Double[]> verticalErrors) {
         Stroke stroke = new BasicStroke();
         // get the plot from the chart
         XYPlot plot = chart.getXYPlot();
-        for (int i = 0; i < valuesCollection.getSeriesCount(); i++) {
+        // get the xyseriescollection from the plot
+        XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) plot.getDataset();
+        for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
             Double[] errors = verticalErrors.get(i);
-            XYSeries values = valuesCollection.getSeries(i);
+            XYSeries values = xYSeriesCollection.getSeries(i);
             for (int j = 0; j < values.getItemCount(); j++) {
                 double x = values.getX(j).doubleValue();
                 double y = values.getY(j).doubleValue();
                 double dy = errors[j];
                 // compute the right index of color to be used in the rendering
                 int lenght = GuiUtils.getAvailableColors().length;
-                String conditionName = valuesCollection.getSeriesKey(i).toString();
+                String conditionName = xYSeriesCollection.getSeriesKey(i).toString();
                 String subString = conditionName.substring(10);
                 int conditionIndex = Integer.parseInt(subString) - 1;
                 int indexOfColor = conditionIndex % lenght;
@@ -369,31 +381,36 @@ public class JFreeChartUtils {
     /**
      *
      * @param chart
-     * @param seriesToHighlight
-     * @param plotLines
-     * @param plotPoints
+     * @param seriesIndex
      */
-    public static void highlightSeries(JFreeChart chart, int seriesToHighlight, boolean plotLines, boolean plotPoints) {
-        XYPlot xYPlot = chart.getXYPlot();
-        // get the xyseriescollection from the plot
-        XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xYPlot.getRenderer();
-        BasicStroke wideLine = new BasicStroke(2f);
-        BasicStroke normalLine = new BasicStroke(1.5f);
-        for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
-            int length = GuiUtils.getAvailableColors().length;
-            if (i == seriesToHighlight) {
-                int colorIndex = seriesToHighlight % length;
-                renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
-                renderer.setSeriesStroke(i, wideLine);
-            } else {
-                renderer.setSeriesPaint(i, GuiUtils.getNonImagedColor());
-                renderer.setSeriesStroke(i, normalLine);
-            }
-            // show lines?
-            renderer.setSeriesLinesVisible(i, plotLines);
-            // show points?
-            renderer.setSeriesShapesVisible(i, plotPoints);
-        }
+    public static void addCirclePointersOnPlot(XYPlot plot, int seriesIndex) {
+        int circleSize = 3;
+        Stroke stroke = new BasicStroke(1.5f);
+        int length = GuiUtils.getAvailableColors().length;
+        int colorIndex = seriesIndex % length;
+        Color color = GuiUtils.getAvailableColors()[colorIndex];
+        XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) plot.getDataset();
+        XYSeries currentSeries = xYSeriesCollection.getSeries(seriesIndex);
+        int itemCount = currentSeries.getItemCount();
+        // **************************************************//
+        XYDataItem firstDataItem = currentSeries.getDataItem(0);
+        double firstX = firstDataItem.getXValue();
+        double firstY = firstDataItem.getYValue();
+        int firstTopLeftX = (int) Math.round(firstX - circleSize / 2);
+        int firstTopLeftY = (int) Math.round(firstY - circleSize / 2);
+        Ellipse2D emptyCircle = new Ellipse2D.Double(firstTopLeftX, firstTopLeftY, circleSize, circleSize);
+        XYShapeAnnotation emptyCircleAnnotation = new XYShapeAnnotation(emptyCircle, stroke, color);
+
+        // *************************************************************//
+        XYDataItem lastDataItem = currentSeries.getDataItem(itemCount - 1);
+        double lastX = lastDataItem.getXValue();
+        double lastY = lastDataItem.getYValue();
+        int lastTopLeftX = (int) Math.round(lastX - circleSize / 2);
+        int lastTopLeftY = (int) Math.round(lastY - circleSize / 2);
+        Ellipse2D filledCircle = new Ellipse2D.Double(lastTopLeftX, lastTopLeftY, circleSize, circleSize);
+        XYShapeAnnotation filledCircleAnnotation = new XYShapeAnnotation(filledCircle, stroke, color, color);
+
+        plot.getRenderer().addAnnotation(emptyCircleAnnotation);
+        plot.getRenderer().addAnnotation(filledCircleAnnotation);
     }
 }
