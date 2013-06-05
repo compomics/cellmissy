@@ -156,8 +156,12 @@ public class SingleCellPreProcessingController {
     public void showInstantaneousVelocitiesInTable(PlateCondition plateCondition) {
         velocitiesController.showInstantaneousVelocitiesInTable(plateCondition);
     }
-    
-    public CellMissyFrame getMainFrame(){
+
+    public void showTrackVelocitesInTable(PlateCondition plateCondition) {
+        velocitiesController.showTrackVelocitesInTable(plateCondition);
+    }
+
+    public CellMissyFrame getMainFrame() {
         return singleCellMainController.getCellMissyFrame();
     }
 
@@ -208,11 +212,15 @@ public class SingleCellPreProcessingController {
             singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTimeIndexes(singleCellPreProcessingResults);
             singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, computeConversionFactor());
-            singleCellPreProcessor.generateNormalizedTrackCoordinatesMatrix(singleCellPreProcessingResults);
+            singleCellPreProcessor.computeCoordinatesRanges(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
             singleCellPreProcessor.generateInstantaneousVelocitiesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTrackVelocitiesVector(singleCellPreProcessingResults);
-            singleCellPreProcessor.computeCumulativeDistances(singleCellPreProcessingResults);
-            singleCellPreProcessor.computeEuclideanDistances(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateTrackAnglesVector(singleCellPreProcessingResults);
 //            singleCellPreProcessor.generateOutliersVector(singleCellPreProcessingResults);
             // fill in map
             preProcessingMap.put(plateCondition, singleCellPreProcessingResults);

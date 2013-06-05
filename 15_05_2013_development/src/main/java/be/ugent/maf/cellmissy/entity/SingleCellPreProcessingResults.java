@@ -8,7 +8,9 @@ import java.util.List;
 
 /**
  * This class is holding the results from the pre processing of single cell
- * analysis.
+ * analysis. This object stays associated to a certain biological condition and
+ * keeps all the track-related data. The data are computed for a single track
+ * data holder and then brought all together in this class.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -21,14 +23,24 @@ public class SingleCellPreProcessingResults {
     private Object[][] dataStructure;
     // raw data track coordinates
     private Double[][] rawTrackCoordinatesMatrix;
-    // track coordinates normalized to position (0, 0)
-    private Double[][] normalizedTrackCoordinatesMatrix;
-    // array for velocities
-    private Double[] instantaneousVelocitiesVector;
-    // boolean for the motile steps computation
+    // track coordinates shifted to position (0, 0)
+    private Double[][] shiftedTrackCoordinatesMatrix;
+    // boolean for the motile steps computation --- ******************* to be revisited
     private boolean[] outliersVector;
-    // array for velocities filtered for non motile steps
+    // array for instantaneous velocities
+    private Double[] instantaneousVelocitiesVector;
+    // array for track velocities
     private Double[] trackVelocitiesVector;
+    // array for track cumulative distancse
+    private Double[] cumulativeDistancesVector;
+    // array for track Euclidean distancse
+    private Double[] euclideanDistancesVector;
+    //array for directionalities 
+    private Double[] directionalitiesVector;
+    // array for turning angles
+    private Double[] turningAnglesVector;
+    // array for track angles
+    private Double[] trackAnglesVector;
 
     public List<TrackDataHolder> getTrackDataHolders() {
         return trackDataHolders;
@@ -54,20 +66,12 @@ public class SingleCellPreProcessingResults {
         this.rawTrackCoordinatesMatrix = rawTrackCoordinatesMatrix;
     }
 
-    public Double[][] getNormalizedTrackCoordinatesMatrix() {
-        return normalizedTrackCoordinatesMatrix;
+    public Double[][] getShiftedTrackCoordinatesMatrix() {
+        return shiftedTrackCoordinatesMatrix;
     }
 
-    public void setNormalizedTrackCoordinatesMatrix(Double[][] normalizedTrackCoordinatesMatrix) {
-        this.normalizedTrackCoordinatesMatrix = normalizedTrackCoordinatesMatrix;
-    }
-
-    public Double[] getInstantaneousVelocitiesVector() {
-        return instantaneousVelocitiesVector;
-    }
-
-    public void setInstantaneousVelocitiesVector(Double[] instantaneousVelocitiesVector) {
-        this.instantaneousVelocitiesVector = instantaneousVelocitiesVector;
+    public void setShiftedTrackCoordinatesMatrix(Double[][] normalizedTrackCoordinatesMatrix) {
+        this.shiftedTrackCoordinatesMatrix = normalizedTrackCoordinatesMatrix;
     }
 
     public boolean[] getOutliersVector() {
@@ -78,11 +82,59 @@ public class SingleCellPreProcessingResults {
         this.outliersVector = outliersVector;
     }
 
+    public Double[] getInstantaneousVelocitiesVector() {
+        return instantaneousVelocitiesVector;
+    }
+
+    public void setInstantaneousVelocitiesVector(Double[] instantaneousVelocitiesVector) {
+        this.instantaneousVelocitiesVector = instantaneousVelocitiesVector;
+    }
+
     public Double[] getTrackVelocitiesVector() {
         return trackVelocitiesVector;
     }
 
     public void setTrackVelocitiesVector(Double[] trackVelocitiesVector) {
         this.trackVelocitiesVector = trackVelocitiesVector;
+    }
+
+    public Double[] getCumulativeDistancesVector() {
+        return cumulativeDistancesVector;
+    }
+
+    public void setCumulativeDistancesVector(Double[] cumulativeDistancesVector) {
+        this.cumulativeDistancesVector = cumulativeDistancesVector;
+    }
+
+    public Double[] getEuclideanDistancesVector() {
+        return euclideanDistancesVector;
+    }
+
+    public void setEuclideanDistancesVector(Double[] euclideanDistancesVector) {
+        this.euclideanDistancesVector = euclideanDistancesVector;
+    }
+
+    public Double[] getDirectionalitiesVector() {
+        return directionalitiesVector;
+    }
+
+    public void setDirectionalitiesVector(Double[] directionalitiesVector) {
+        this.directionalitiesVector = directionalitiesVector;
+    }
+
+    public Double[] getTurningAnglesVector() {
+        return turningAnglesVector;
+    }
+
+    public void setTurningAnglesVector(Double[] turningAnglesVector) {
+        this.turningAnglesVector = turningAnglesVector;
+    }
+
+    public Double[] getTrackAnglesVector() {
+        return trackAnglesVector;
+    }
+
+    public void setTrackAnglesVector(Double[] trackAnglesVector) {
+        this.trackAnglesVector = trackAnglesVector;
     }
 }

@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.utils;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -29,6 +30,7 @@ import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -287,7 +289,7 @@ public class JFreeChartUtils {
                     int colorIndex = seriesToHighlight % length;
                     renderer.setSeriesPaint(seriesToHighlight, GuiUtils.getAvailableColors()[colorIndex]);
                     renderer.setSeriesStroke(seriesToHighlight, wideLine);
-                    addCirclePointersOnPlot(xYPlot, seriesToHighlight);
+                    addCirclePointersOnTrackPlot(xYPlot, seriesToHighlight);
                 } else {
                     renderer.setSeriesPaint(i, GuiUtils.getNonImagedColor());
                     renderer.setSeriesStroke(i, normalLine);
@@ -383,12 +385,12 @@ public class JFreeChartUtils {
      * @param chart
      * @param seriesIndex
      */
-    public static void addCirclePointersOnPlot(XYPlot plot, int seriesIndex) {
-        int circleSize = 3;
+    public static void addCirclePointersOnTrackPlot(XYPlot plot, int seriesIndex) {
         Stroke stroke = new BasicStroke(1.5f);
         int length = GuiUtils.getAvailableColors().length;
         int colorIndex = seriesIndex % length;
         Color color = GuiUtils.getAvailableColors()[colorIndex];
+
         XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) plot.getDataset();
         XYSeries currentSeries = xYSeriesCollection.getSeries(seriesIndex);
         int itemCount = currentSeries.getItemCount();
@@ -396,15 +398,18 @@ public class JFreeChartUtils {
         XYDataItem firstDataItem = currentSeries.getDataItem(0);
         double firstX = firstDataItem.getXValue();
         double firstY = firstDataItem.getYValue();
+        // *************************************************************//
+        XYDataItem lastDataItem = currentSeries.getDataItem(itemCount - 1);
+        double lastX = lastDataItem.getXValue();
+        double lastY = lastDataItem.getYValue();
+
+        double circleSize = 4;
+
         int firstTopLeftX = (int) Math.round(firstX - circleSize / 2);
         int firstTopLeftY = (int) Math.round(firstY - circleSize / 2);
         Ellipse2D emptyCircle = new Ellipse2D.Double(firstTopLeftX, firstTopLeftY, circleSize, circleSize);
         XYShapeAnnotation emptyCircleAnnotation = new XYShapeAnnotation(emptyCircle, stroke, color);
 
-        // *************************************************************//
-        XYDataItem lastDataItem = currentSeries.getDataItem(itemCount - 1);
-        double lastX = lastDataItem.getXValue();
-        double lastY = lastDataItem.getYValue();
         int lastTopLeftX = (int) Math.round(lastX - circleSize / 2);
         int lastTopLeftY = (int) Math.round(lastY - circleSize / 2);
         Ellipse2D filledCircle = new Ellipse2D.Double(lastTopLeftX, lastTopLeftY, circleSize, circleSize);
@@ -412,5 +417,28 @@ public class JFreeChartUtils {
 
         plot.getRenderer().addAnnotation(emptyCircleAnnotation);
         plot.getRenderer().addAnnotation(filledCircleAnnotation);
+    }
+
+    /**
+     *
+     * @param chart
+     * @param trackDataHolder
+     */
+    public static void setupSingleTrackPlot(JFreeChart chart, TrackDataHolder trackDataHolder, int trackIndex, Range range) {
+        // set up the plot
+        XYPlot xyPlot = chart.getXYPlot();
+        xyPlot.getRangeAxis().setRange(range);
+        JFreeChartUtils.setupPlot(xyPlot);
+        // set title font 
+        chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
+        // modify renderer
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xyPlot.getRenderer();
+        BasicStroke wideLine = new BasicStroke(2.5f);
+        renderer.setSeriesStroke(0, wideLine);
+        int length = GuiUtils.getAvailableColors().length;
+        int colorIndex = trackIndex % length;
+        renderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[colorIndex]);
+        renderer.setSeriesLinesVisible(0, true);
+        renderer.setSeriesShapesVisible(0, true);
     }
 }

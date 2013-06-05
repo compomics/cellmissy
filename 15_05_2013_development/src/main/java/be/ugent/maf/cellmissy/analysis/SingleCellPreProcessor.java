@@ -45,13 +45,13 @@ public interface SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    public void generateNormalizedTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void computeCoordinatesRanges(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      *
      * @param singleCellPreProcessingResults
      */
-    public void generateInstantaneousVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateShiftedTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate a vector holding the information True or False: T if the step is
@@ -62,6 +62,12 @@ public interface SingleCellPreProcessor {
      * @param motileCriterium
      */
     public void generateOutliersVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateInstantaneousVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate a vector with mean velocities per track.
@@ -75,12 +81,31 @@ public interface SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    public void computeCumulativeDistances(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateCumulativeDistancesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Compute Euclidean distances for each track.
      *
      * @param singleCellPreProcessingResults
      */
-    public void computeEuclideanDistances(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateEuclideanDistancesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     * Compute directionality for each track.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateDirectionalitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateTurningAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    
+    /**
+     * 
+     * @param singleCellPreProcessingResults 
+     */
+    public void generateTrackAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 }

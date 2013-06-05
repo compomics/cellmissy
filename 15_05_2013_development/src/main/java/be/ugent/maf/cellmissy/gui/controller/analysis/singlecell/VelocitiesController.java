@@ -8,8 +8,9 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.SingleCellPreProcessingResults;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.VelocitiesPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.AlignedTableRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.VelocityOutliersRenderer;
+import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.VelocitiesTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Color;
@@ -71,12 +72,38 @@ public class VelocitiesController {
             Double[] instantaneousVelocitiesVector = singleCellPreProcessingResults.getInstantaneousVelocitiesVector();
             velocitiesTable.setModel(new VelocitiesTableModel(dataStructure, instantaneousVelocitiesVector));
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
+            FormatRenderer formatRenderer = new FormatRenderer(SwingConstants.CENTER, singleCellPreProcessingController.getFormat());
             for (int i = 0; i < velocitiesTable.getColumnModel().getColumnCount(); i++) {
                 velocitiesTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
             }
+            velocitiesTable.getColumnModel().getColumn(3).setCellRenderer(formatRenderer);
             velocitiesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
         }
         velocitiesPanel.getTableInfoLabel().setText("Instantaneous Single Cell Velocities (for each time step)");
+    }
+
+    /**
+     * Show the track velocities: a track velocity comes fro the median of
+     * instantaneous velocities for a single track.
+     *
+     * @param plateCondition
+     */
+    public void showTrackVelocitesInTable(PlateCondition plateCondition) {
+        SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
+        if (singleCellPreProcessingResults != null) {
+            Double[] trackVelocitiesVector = singleCellPreProcessingResults.getTrackVelocitiesVector();
+            String[] columnNames = {"well", "track", "track velocity (µm)"};
+            TrackDataTableModel trackDataTableModel = new TrackDataTableModel(columnNames, singleCellPreProcessingResults, trackVelocitiesVector);
+            velocitiesTable.setModel(trackDataTableModel);
+            AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
+            FormatRenderer formatRenderer = new FormatRenderer(SwingConstants.CENTER, singleCellPreProcessingController.getFormat());
+            for (int i = 0; i < velocitiesTable.getColumnModel().getColumnCount(); i++) {
+                velocitiesTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
+            }
+            velocitiesTable.getColumnModel().getColumn(2).setCellRenderer(formatRenderer);
+            velocitiesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
+        }
+        velocitiesPanel.getTableInfoLabel().setText("Track velocities (median of instantaneous velocities)");
     }
 
     /**
@@ -115,6 +142,18 @@ public class VelocitiesController {
                 //check that a condition is selected
                 if (currentCondition != null) {
                     showInstantaneousVelocitiesInTable(currentCondition);
+                }
+            }
+        });
+
+        // show track velocities
+        velocitiesPanel.getTrackVelocitiesRadioButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+                //check that a condition is selected
+                if (currentCondition != null) {
+                    showTrackVelocitesInTable(currentCondition);
                 }
             }
         });

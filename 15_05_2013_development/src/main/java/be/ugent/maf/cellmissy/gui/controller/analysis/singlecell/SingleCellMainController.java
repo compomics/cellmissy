@@ -711,6 +711,8 @@ public class SingleCellMainController {
                 // check which button is selected for analysis
                 if (singleCellPreProcessingController.getVelocitiesPanel().getInstantaneousVelocitiesRadioButton().isSelected()) {
                     singleCellPreProcessingController.showInstantaneousVelocitiesInTable(currentCondition);
+                } else {
+                    singleCellPreProcessingController.showTrackVelocitesInTable(currentCondition);
                 }
                 break;
         }

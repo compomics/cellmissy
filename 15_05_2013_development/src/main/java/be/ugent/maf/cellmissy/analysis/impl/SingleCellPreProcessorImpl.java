@@ -76,10 +76,17 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
-    public void generateNormalizedTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void computeCoordinatesRanges(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.computeCoordinatesRange(trackDataHolder);
+        }
+    }
+
+    @Override
+    public void generateShiftedTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
         Double[][] normalizedTrackCoordinatesMatrix = new Double[dataStructure.length][2];
-        computeNormalizedTrackCoordinates(singleCellPreProcessingResults);
+        computeShiftedTrackCoordinates(singleCellPreProcessingResults);
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
             Double[][] normalizedTrackCoordinates = trackDataHolder.getShiftedTrackCoordinates();
@@ -88,23 +95,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
                 counter++;
             }
         }
-        singleCellPreProcessingResults.setNormalizedTrackCoordinatesMatrix(normalizedTrackCoordinatesMatrix);
-    }
-
-    @Override
-    public void generateInstantaneousVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-        Double[] velocitiesVector = new Double[dataStructure.length];
-        computeVelocities(singleCellPreProcessingResults);
-        int counter = 0;
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            Double[] instantaneousVelocities = trackDataHolder.getInstantaneousVelocities();
-            for (int i = 0; i < instantaneousVelocities.length; i++) {
-                velocitiesVector[counter] = instantaneousVelocities[i];
-                counter++;
-            }
-        }
-        singleCellPreProcessingResults.setInstantaneousVelocitiesVector(velocitiesVector);
+        singleCellPreProcessingResults.setShiftedTrackCoordinatesMatrix(normalizedTrackCoordinatesMatrix);
     }
 
     @Override
@@ -124,10 +115,26 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
+    public void generateInstantaneousVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
+        Double[] instantaneousVelocitiesVector = new Double[dataStructure.length];
+        computeVelocities(singleCellPreProcessingResults);
+        int counter = 0;
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            Double[] instantaneousVelocities = trackDataHolder.getInstantaneousVelocities();
+            for (int i = 0; i < instantaneousVelocities.length; i++) {
+                instantaneousVelocitiesVector[counter] = instantaneousVelocities[i];
+                counter++;
+            }
+        }
+        singleCellPreProcessingResults.setInstantaneousVelocitiesVector(instantaneousVelocitiesVector);
+    }
+
+    @Override
     public void generateTrackVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
         Double[] trackVelocitiesVector = new Double[trackDataHolders.size()];
-        generateMeanVelocities(singleCellPreProcessingResults);
+        computeTrackVelocities(singleCellPreProcessingResults);
         for (int i = 0; i < trackVelocitiesVector.length; i++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(i);
             double trackVelocity = trackDataHolder.getTrackVelocity();
@@ -144,17 +151,71 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
-    public void computeCumulativeDistances(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeCumulativeDistance(trackDataHolder);
+    public void generateCumulativeDistancesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+        Double[] cumulativeDistancesVector = new Double[trackDataHolders.size()];
+        computeCumulativeDistances(singleCellPreProcessingResults);
+        for (int i = 0; i < cumulativeDistancesVector.length; i++) {
+            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
+            double cumulativeDistance = trackDataHolder.getCumulativeDistance();
+            cumulativeDistancesVector[i] = cumulativeDistance;
         }
+        singleCellPreProcessingResults.setCumulativeDistancesVector(cumulativeDistancesVector);
     }
 
     @Override
-    public void computeEuclideanDistances(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeEuclideanDistance(trackDataHolder);
+    public void generateEuclideanDistancesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+        Double[] euclideanDistancesVector = new Double[trackDataHolders.size()];
+        computeEuclideanDistances(singleCellPreProcessingResults);
+        for (int i = 0; i < euclideanDistancesVector.length; i++) {
+            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
+            double euclideanDistance = trackDataHolder.getEuclideanDistance();
+            euclideanDistancesVector[i] = euclideanDistance;
         }
+        singleCellPreProcessingResults.setEuclideanDistancesVector(euclideanDistancesVector);
+    }
+
+    @Override
+    public void generateDirectionalitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+        Double[] directionalitiesVector = new Double[trackDataHolders.size()];
+        computeDirectionalities(singleCellPreProcessingResults);
+        for (int i = 0; i < directionalitiesVector.length; i++) {
+            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
+            double directionality = trackDataHolder.getDirectionality();
+            directionalitiesVector[i] = directionality;
+        }
+        singleCellPreProcessingResults.setDirectionalitiesVector(directionalitiesVector);
+    }
+
+    @Override
+    public void generateTurningAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
+        Double[] turningAnglesVector = new Double[dataStructure.length];
+        computeTurningAngles(singleCellPreProcessingResults);
+        int counter = 0;
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            Double[] turningAngles = trackDataHolder.getTurningAngles();
+            for (int i = 0; i < turningAngles.length; i++) {
+                turningAnglesVector[counter] = turningAngles[i];
+                counter++;
+            }
+        }
+        singleCellPreProcessingResults.setTurningAnglesVector(turningAnglesVector);
+    }
+
+    @Override
+    public void generateTrackAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+        Double[] trackAnglesVector = new Double[trackDataHolders.size()];
+        computeTrackAngles(singleCellPreProcessingResults);
+        for (int i = 0; i < trackAnglesVector.length; i++) {
+            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
+            double trackAngle = trackDataHolder.getTrackAngle();
+            trackAnglesVector[i] = trackAngle;
+        }
+        singleCellPreProcessingResults.setTrackAnglesVector(trackAnglesVector);
     }
 
     /**
@@ -173,9 +234,9 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    private void computeNormalizedTrackCoordinates(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    private void computeShiftedTrackCoordinates(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeNormalizedTrackCoordinates(trackDataHolder);
+            trackOperator.computeShiftedTrackCoordinates(trackDataHolder);
         }
     }
 
@@ -187,7 +248,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     private void computeVelocities(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
             computeDeltaMovements(trackDataHolder);
-            trackOperator.computeVelocities(trackDataHolder);
+            trackOperator.computeInstantaneousVelocities(trackDataHolder);
         }
     }
 
@@ -228,14 +289,68 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     /**
-     * Generate the filtered velocities vector: velocities are filtered against
-     * non motile cells.
+     * Compute the track velocity for each track data holder.
      *
      * @param singleCellPreProcessingResults
      */
-    private void generateMeanVelocities(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    private void computeTrackVelocities(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
             trackOperator.computeTrackVelocity(trackDataHolder);
+        }
+    }
+
+    /**
+     * Compute the cumulative distances for each track data holder.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    private void computeCumulativeDistances(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.computeCumulativeDistance(trackDataHolder);
+        }
+    }
+
+    /**
+     * Compute the Euclidean distances for each track data holder.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    private void computeEuclideanDistances(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.computeEuclideanDistance(trackDataHolder);
+        }
+    }
+
+    /**
+     * Compute the directionality for each track data holder.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    private void computeDirectionalities(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.computeDirectionality(trackDataHolder);
+        }
+    }
+
+    /**
+     * Compute the turning angles for each track data holder.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    private void computeTurningAngles(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.computeTurningAngles(trackDataHolder);
+        }
+    }
+
+    /**
+     * Compute the track angle for each track data holder.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    private void computeTrackAngles(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.computeTrackAngle(trackDataHolder);
         }
     }
 }

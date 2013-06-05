@@ -7,7 +7,8 @@ package be.ugent.maf.cellmissy.gui.view.table.model;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Table model for velocities data
+ * Table model for velocities data --- this could be extended to a more general
+ * table model to keep data from track points.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -19,8 +20,9 @@ public class VelocitiesTableModel extends AbstractTableModel {
     /**
      * Constructor
      *
-     * @param dataStructure
-     * @param velocitiesVector
+     * @param dataStructure: the fixed track point data information
+     * @param velocitiesVector: the extra data vector we add to the table as
+     * last column
      */
     public VelocitiesTableModel(Object[][] dataStructure, Object[] velocitiesVector) {
         initTable(dataStructure, velocitiesVector);

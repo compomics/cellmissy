@@ -10,6 +10,8 @@ import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.TrackDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +56,23 @@ public class TrackOperatorImpl implements TrackOperator {
     }
 
     @Override
-    public void computeNormalizedTrackCoordinates(TrackDataHolder trackDataHolder) {
+    public void computeCoordinatesRange(TrackDataHolder trackDataHolder) {
+        Double[][] trackCoordinatesMatrix = trackDataHolder.getTrackCoordinatesMatrix();
+        Double[][] transpose2DArray = AnalysisUtils.transpose2DArray(trackCoordinatesMatrix);
+        Double[] xCoordinates = transpose2DArray[0];
+        Double[] yCoordinates = transpose2DArray[1];
+        Double xMin = Collections.min(Arrays.asList(xCoordinates));
+        Double xMax = Collections.max(Arrays.asList(xCoordinates));
+        Double yMin = Collections.min(Arrays.asList(yCoordinates));
+        Double yMax = Collections.max(Arrays.asList(yCoordinates));
+        trackDataHolder.setxMin(xMin);
+        trackDataHolder.setxMax(xMax);
+        trackDataHolder.setyMin(yMin);
+        trackDataHolder.setyMax(yMax);
+    }
+
+    @Override
+    public void computeShiftedTrackCoordinates(TrackDataHolder trackDataHolder) {
         Double[][] trackPointMatrix = trackDataHolder.getTrackCoordinatesMatrix();
         Double[][] normalizedTrackCoordinates = new Double[trackPointMatrix.length][trackPointMatrix[0].length];
         Double[] firstTrackCoordinates = trackPointMatrix[0];
@@ -90,7 +108,7 @@ public class TrackOperatorImpl implements TrackOperator {
     }
 
     @Override
-    public void computeVelocities(TrackDataHolder trackDataHolder) {
+    public void computeInstantaneousVelocities(TrackDataHolder trackDataHolder) {
         // get delta movements
         Double[][] deltaMovements = trackDataHolder.getDeltaMovements();
         Double[] instantaneousVelocities = new Double[deltaMovements.length];
@@ -145,11 +163,17 @@ public class TrackOperatorImpl implements TrackOperator {
     }
 
     @Override
-    public void computeAngles(TrackDataHolder trackDataHolder) {
+    public void computeDirectionality(TrackDataHolder trackDataHolder) {
+        double directionality = trackDataHolder.getEuclideanDistance() / trackDataHolder.getCumulativeDistance();
+        trackDataHolder.setDirectionality(directionality);
+    }
+
+    @Override
+    public void computeTurningAngles(TrackDataHolder trackDataHolder) {
         // get delta movements
         Double[][] deltaMovements = trackDataHolder.getDeltaMovements();
-        Double[] angles = new Double[deltaMovements.length];
-        for (int row = 0; row < angles.length; row++) {
+        Double[] turningAngles = new Double[deltaMovements.length];
+        for (int row = 0; row < turningAngles.length; row++) {
             Double deltaX = deltaMovements[row][0];
             Double deltaY = deltaMovements[row][1];
             if (deltaX != null && deltaY != null) {
@@ -157,9 +181,17 @@ public class TrackOperatorImpl implements TrackOperator {
                 Double angleRadians = Math.atan2(deltaY, deltaX);
                 // go from radians to degrees
                 Double angle = angleRadians * 180 / Math.PI;
-                angles[row] = angle;
+                turningAngles[row] = angle;
             }
         }
-        trackDataHolder.setAngles(angles);
+        trackDataHolder.setTurningAngles(turningAngles);
+    }
+
+    @Override
+    public void computeTrackAngle(TrackDataHolder trackDataHolder) {
+        Double[] turningAngles = trackDataHolder.getTurningAngles();
+        Double[] excludeNullValues = AnalysisUtils.excludeNullValues(turningAngles);
+        double trackAngle = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
+        trackDataHolder.setTrackAngle(trackAngle);
     }
 }

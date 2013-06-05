@@ -113,8 +113,8 @@ public class AnalysisUtils {
      * @return
      */
     public static Double roundThreeDecimals(Double d) {
-        DecimalFormat twoDForm = new DecimalFormat("###.###");
-        return Double.valueOf(twoDForm.format(d));
+        DecimalFormat threeDForm = new DecimalFormat("###.###");
+        return Double.valueOf(threeDForm.format(d));
     }
 
     /**

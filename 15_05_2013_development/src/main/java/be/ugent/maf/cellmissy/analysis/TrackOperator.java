@@ -31,12 +31,19 @@ public interface TrackOperator {
     public void generateTrackCoordinatesMatrix(TrackDataHolder trackDataHolder, double conversionFactor);
 
     /**
+     * Compute the min and max x + min and max y
+     *
+     * @param trackDataHolder
+     */
+    public void computeCoordinatesRange(TrackDataHolder trackDataHolder);
+
+    /**
      * Compute normalised track coordinates starting from the track point
      * matrix.
      *
      * @param trackDataHolder
      */
-    public void computeNormalizedTrackCoordinates(TrackDataHolder trackDataHolder);
+    public void computeShiftedTrackCoordinates(TrackDataHolder trackDataHolder);
 
     /**
      * Compute delta movements matrix.
@@ -50,7 +57,7 @@ public interface TrackOperator {
      *
      * @param trackDataHolder
      */
-    public void computeVelocities(TrackDataHolder trackDataHolder);
+    public void computeInstantaneousVelocities(TrackDataHolder trackDataHolder);
 
     /**
      * Compute motile steps: if the cell has been moved more than a certain
@@ -86,9 +93,24 @@ public interface TrackOperator {
     public void computeEuclideanDistance(TrackDataHolder trackDataHolder);
 
     /**
+     * Compute directionality of a certain track as the ratio between the
+     * Euclidean and the cumulative distance.
+     *
+     * @param trackDataHolder
+     */
+    public void computeDirectionality(TrackDataHolder trackDataHolder);
+
+    /**
      * Compute angles.
      *
      * @param trackDataHolder
      */
-    public void computeAngles(TrackDataHolder trackDataHolder);
+    public void computeTurningAngles(TrackDataHolder trackDataHolder);
+
+    /**
+     * Compute track angle: median across all angles for the track.
+     *
+     * @param trackDataHolder
+     */
+    public void computeTrackAngle(TrackDataHolder trackDataHolder);
 }
