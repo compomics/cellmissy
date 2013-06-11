@@ -16,6 +16,7 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
+import be.ugent.maf.cellmissy.gui.controller.OverviewController;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.setup.ExperimentInfoPanel;
@@ -23,6 +24,7 @@ import be.ugent.maf.cellmissy.gui.experiment.setup.SetupExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.SetupPanel;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
+import be.ugent.maf.cellmissy.gui.project.NewProjectDialog;
 import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsOverviewListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
@@ -32,17 +34,15 @@ import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import javax.persistence.PersistenceException;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -54,6 +54,8 @@ import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.text.Document;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -89,6 +91,7 @@ public class SetupExperimentController {
     //view
     private SetupExperimentPanel setupExperimentPanel;
     private ExperimentInfoPanel experimentInfoPanel;
+    private NewProjectDialog newProjectDialog;
     private SetupPanel setupPanel;
     //parent controller
     @Autowired
@@ -96,6 +99,8 @@ public class SetupExperimentController {
     //child controllers
     @Autowired
     private SetupConditionsController setupConditionsController;
+    @Autowired
+    private OverviewController overviewController;
     @Autowired
     private SetupPlateController setupPlateController;
     @Autowired
@@ -124,8 +129,10 @@ public class SetupExperimentController {
         //init views
         initExperimentInfoPanel();
         initSetupExperimentPanel();
+        initNewProjectDialog();
 
         //init child controllers
+        overviewController.init();
         setupPlateController.init();
         setupConditionsController.init();
     }
@@ -163,9 +170,18 @@ public class SetupExperimentController {
         return cellMissyController.getCellMissyFrame();
     }
 
+    public ExperimentInfoPanel getExperimentInfoPanel() {
+        return experimentInfoPanel;
+    }
+
     /**
      * public methods
      */
+    public void disableActionsOnExperiments() {
+        overviewController.disableActionsOnExperiments();
+        experimentInfoPanel.getNewProjectButton().setEnabled(false);
+    }
+
     /**
      *
      * if the user adds a new condition, add a new entry to the map: new
@@ -299,18 +315,18 @@ public class SetupExperimentController {
      */
     public boolean updateWellCollection(PlateCondition plateCondition, Rectangle rectangle) {
         boolean isSelectionValid = true;
-        Collection<Well> wellCollection = plateCondition.getWellCollection();
+        List<Well> wellList = plateCondition.getWellList();
         outerloop:
         for (WellGui wellGui : setupPlateController.getSetupPlatePanel().getWellGuiList()) {
             //get only the bigger default ellipse2D
             Ellipse2D ellipse = wellGui.getEllipsi().get(0);
             if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
                 //check if the collection already contains that well
-                if (!wellCollection.contains(wellGui.getWell())) {
+                if (!wellList.contains(wellGui.getWell())) {
                     //the selection is valid if the wells do not have a condition yet
                     if (!hasCondition(wellGui)) {
                         //in this case, add the well to the collection and set the condition of the well
-                        wellCollection.add(wellGui.getWell());
+                        wellList.add(wellGui.getWell());
                         wellGui.getWell().setPlateCondition(plateCondition);
                     } else {
                         //if the wells do have a condition already, the selection is not valid
@@ -473,31 +489,104 @@ public class SetupExperimentController {
          * add mouse listeners
          */
         //show experiments for the project selected
-        experimentInfoPanel.getProjectJList().addMouseListener(new MouseAdapter() {
+        experimentInfoPanel.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                //init experimentJList
-                int locationToIndex = experimentInfoPanel.getProjectJList().locationToIndex(e.getPoint());
-                if (locationToIndex != -1) {
-                    Project selectedProject = projectBindingList.get(locationToIndex);
-                    // set text for project description
-                    experimentInfoPanel.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
-                    // request focus on experiment number
-                    experimentInfoPanel.getNumberTextField().requestFocusInWindow();
-                    Long projectid = selectedProject.getProjectid();
-                    List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
-                    if (experimentNumbers != null) {
-                        List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
-                        experimentBindingList = ObservableCollections.observableList(experimentList);
-                        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, experimentInfoPanel.getExperimentJList());
-                        bindingGroup.addBinding(jListBinding);
-                        bindingGroup.bind();
-                    } else {
-                        cellMissyController.showMessage("There are no experiments yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
-                        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
-                            experimentBindingList.clear();
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    //init experimentJList
+                    int selectedIndex = experimentInfoPanel.getProjectJList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        Project selectedProject = projectBindingList.get(selectedIndex);
+                        // set text for project description
+                        experimentInfoPanel.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
+                        // request focus on experiment number
+                        experimentInfoPanel.getNumberTextField().requestFocusInWindow();
+                        Long projectid = selectedProject.getProjectid();
+                        List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
+                        if (experimentNumbers != null) {
+                            List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
+                            experimentBindingList = ObservableCollections.observableList(experimentList);
+                            JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, experimentInfoPanel.getExperimentJList());
+                            bindingGroup.addBinding(jListBinding);
+                            bindingGroup.bind();
+                        } else {
+                            cellMissyController.showMessage("There are no experiments yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
+                            if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                                experimentBindingList.clear();
+                            }
                         }
                     }
+                }
+            }
+        });
+
+        // create a new project
+        experimentInfoPanel.getNewProjectButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                newProjectDialog.getProjectNumberTextField().setText("");
+                newProjectDialog.getDescriptionTextArea().setText("");
+                // show a newProjectDialog
+                newProjectDialog.pack();
+                newProjectDialog.setVisible(true);
+            }
+        });
+
+        // get an overview of the projects
+        experimentInfoPanel.getOverviewButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // show a overviewProjectsDialog through child controller
+                overviewController.showOverviewDialog();
+            }
+        });
+    }
+
+    /**
+     * Initialize new project dialog
+     */
+    private void initNewProjectDialog() {
+        // customize dialog
+        newProjectDialog = new NewProjectDialog(getCellMissyFrame(), true);
+        //center the dialog on the main screen
+        newProjectDialog.setLocationRelativeTo(getCellMissyFrame());
+        // set icon for info label
+        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        newProjectDialog.getInfoLabel().setIcon(scaledIcon);
+
+        // create a new project
+        newProjectDialog.getCreateProjectButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //create new project: save it to DB and create folder on the server
+                if (!newProjectDialog.getProjectNumberTextField().getText().isEmpty()) {
+                    try {
+                        int projectNumber = Integer.parseInt(newProjectDialog.getProjectNumberTextField().getText());
+                        //project description is not mandatory
+                        String projectDescription = newProjectDialog.getDescriptionTextArea().getText();
+                        createNewProject(projectNumber, projectDescription);
+                        LOG.info("project " + projectNumber + " (" + projectDescription + ") " + "was created");
+                        // creation of new project was successfull
+                        showMessage("Project was created!", "Project created", JOptionPane.INFORMATION_MESSAGE);
+                        newProjectDialog.getProjectNumberTextField().setText("");
+                        newProjectDialog.getDescriptionTextArea().setText("");
+                        // close the dialog
+                        newProjectDialog.setVisible(false);
+                    } catch (PersistenceException exception) {
+                        showMessage("Project already present in the DB", "Error in persisting project", JOptionPane.WARNING_MESSAGE);
+                        LOG.error(exception.getMessage());
+                        newProjectDialog.getProjectNumberTextField().setText("");
+                        newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
+                    } catch (NumberFormatException exception) {
+                        showMessage("Please insert a valid number", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
+                        LOG.error(exception.getMessage());
+                        newProjectDialog.getProjectNumberTextField().setText("");
+                        newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
+                    }
+                } else {
+                    showMessage("Please insert a number for the project you want to create", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
+                    newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
                 }
             }
         });
@@ -579,7 +668,7 @@ public class SetupExperimentController {
                         PlateFormat plateFormat = (PlateFormat) setupPanel.getPlateFormatComboBox().getSelectedItem();
                         experiment.setPlateFormat(plateFormat);
                         //set the condition's collection of the experiment
-                        experiment.setPlateConditionCollection(setupConditionsController.getPlateConditionBindingList());
+                        experiment.setPlateConditionList(setupConditionsController.getPlateConditionBindingList());
                         //create PDF report, execute SwingWorker
                         // check for cellmia or other software
                         SetupReportWorker setupReportWorker = null;

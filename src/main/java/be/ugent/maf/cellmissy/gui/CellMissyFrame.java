@@ -48,24 +48,12 @@ public class CellMissyFrame extends javax.swing.JFrame {
         return dataAnalysisMenuItem;
     }
 
-    public JMenuItem getProjectMenuItem() {
-        return newProjectMenuItem;
-    }
-
-    public JMenuItem getOverviewMenuItem() {
-        return overviewMenuItem;
-    }
-
     public JMenuItem getExitMenuItem() {
         return exitMenuItem;
     }
 
     public JMenuItem getNewExperimentMenuItem() {
         return newExperimentMenuItem;
-    }
-
-    public JMenuItem getNewProjectMenuItem() {
-        return newProjectMenuItem;
     }
 
     public JMenuItem getUserMenuItem() {
@@ -116,11 +104,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
         loadFromGenericInputParentPanel = new javax.swing.JPanel();
         analysisExperimentParentPanel = new javax.swing.JPanel();
         cellMissyMenuBar = new javax.swing.JMenuBar();
-        projectMenu = new javax.swing.JMenu();
-        newProjectMenuItem = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        overviewMenuItem = new javax.swing.JMenuItem();
-        experimentMenu = new javax.swing.JMenu();
+        fileMenu = new javax.swing.JMenu();
         newExperimentMenuItem = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         loadDataMenu = new javax.swing.JMenu();
@@ -128,10 +112,13 @@ public class CellMissyFrame extends javax.swing.JFrame {
         cellMiaMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         dataAnalysisMenuItem = new javax.swing.JMenuItem();
-        miscMenu = new javax.swing.JMenu();
-        userMenuItem = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jSeparator5 = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
+        editMenu = new javax.swing.JMenu();
+        userMenuItem = new javax.swing.JMenuItem();
+        helpMenu = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBounds(new java.awt.Rectangle(30, 5, 0, 0));
@@ -243,33 +230,17 @@ public class CellMissyFrame extends javax.swing.JFrame {
         cellMissyMenuBar.setAlignmentY(0.5F);
         cellMissyMenuBar.setMinimumSize(new java.awt.Dimension(5, 2));
 
-        projectMenu.setText("Project");
-
-        newProjectMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/newIcon.png"))); // NOI18N
-        newProjectMenuItem.setText("Create Project ...");
-        newProjectMenuItem.setIconTextGap(2);
-        newProjectMenuItem.setName(""); // NOI18N
-        projectMenu.add(newProjectMenuItem);
-        projectMenu.add(jSeparator2);
-
-        overviewMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/overviewIcon.png"))); // NOI18N
-        overviewMenuItem.setText("Overview Projects ...");
-        overviewMenuItem.setIconTextGap(2);
-        projectMenu.add(overviewMenuItem);
-
-        cellMissyMenuBar.add(projectMenu);
-
-        experimentMenu.setText("Experiment");
+        fileMenu.setText("File");
 
         newExperimentMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/newIcon.png"))); // NOI18N
         newExperimentMenuItem.setText("Create Experiment...");
         newExperimentMenuItem.setToolTipText("");
         newExperimentMenuItem.setIconTextGap(2);
-        experimentMenu.add(newExperimentMenuItem);
-        experimentMenu.add(jSeparator3);
+        fileMenu.add(newExperimentMenuItem);
+        fileMenu.add(jSeparator3);
 
         loadDataMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dataLoadingIcon.png"))); // NOI18N
-        loadDataMenu.setText("Load Motility Data...");
+        loadDataMenu.setText("Load Data...");
         loadDataMenu.setIconTextGap(2);
 
         genericInputMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/genericInputIcon.png"))); // NOI18N
@@ -280,31 +251,41 @@ public class CellMissyFrame extends javax.swing.JFrame {
         cellMiaMenuItem.setText("... from CELLMIA");
         loadDataMenu.add(cellMiaMenuItem);
 
-        experimentMenu.add(loadDataMenu);
-        experimentMenu.add(jSeparator4);
+        fileMenu.add(loadDataMenu);
+        fileMenu.add(jSeparator4);
 
         dataAnalysisMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dataAnalysisIcon.png"))); // NOI18N
         dataAnalysisMenuItem.setText("Data Analysis");
         dataAnalysisMenuItem.setIconTextGap(2);
         dataAnalysisMenuItem.setInheritsPopupMenu(true);
-        experimentMenu.add(dataAnalysisMenuItem);
+        fileMenu.add(dataAnalysisMenuItem);
+        fileMenu.add(jSeparator5);
 
-        cellMissyMenuBar.add(experimentMenu);
+        exitMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/exitApplicationIcon.png"))); // NOI18N
+        exitMenuItem.setText("Exit");
+        exitMenuItem.setIconTextGap(2);
+        fileMenu.add(exitMenuItem);
 
-        miscMenu.setText("Miscellaneous");
+        cellMissyMenuBar.add(fileMenu);
+
+        editMenu.setText("Edit");
 
         userMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/userManagementIcon.png"))); // NOI18N
         userMenuItem.setText("User Management");
         userMenuItem.setIconTextGap(2);
-        miscMenu.add(userMenuItem);
-        miscMenu.add(jSeparator1);
+        editMenu.add(userMenuItem);
 
-        exitMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/exitApplicationIcon.png"))); // NOI18N
-        exitMenuItem.setText("Quit CellMissy...");
-        exitMenuItem.setIconTextGap(2);
-        miscMenu.add(exitMenuItem);
+        cellMissyMenuBar.add(editMenu);
 
-        cellMissyMenuBar.add(miscMenu);
+        helpMenu.setText("Help");
+
+        jMenuItem1.setText("About");
+        helpMenu.add(jMenuItem1);
+
+        jMenuItem2.setText("Help");
+        helpMenu.add(jMenuItem2);
+
+        cellMissyMenuBar.add(helpMenu);
 
         setJMenuBar(cellMissyMenuBar);
 
@@ -359,26 +340,25 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem cellMiaMenuItem;
     private javax.swing.JMenuBar cellMissyMenuBar;
     private javax.swing.JMenuItem dataAnalysisMenuItem;
+    private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
-    private javax.swing.JMenu experimentMenu;
+    private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem genericInputMenuItem;
+    private javax.swing.JMenu helpMenu;
     private javax.swing.JPanel homePanel;
     private javax.swing.JPanel homeParentPanel;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
+    private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JMenu loadDataMenu;
     private javax.swing.JPanel loadFromCellMiaParentPanel;
     private javax.swing.JPanel loadFromGenericInputParentPanel;
-    private javax.swing.JMenu miscMenu;
     private javax.swing.JMenuItem newExperimentMenuItem;
-    private javax.swing.JMenuItem newProjectMenuItem;
-    private javax.swing.JMenuItem overviewMenuItem;
-    private javax.swing.JMenu projectMenu;
     private javax.swing.JPanel setupExperimentParentPanel;
     private javax.swing.JMenuItem userMenuItem;
     // End of variables declaration//GEN-END:variables

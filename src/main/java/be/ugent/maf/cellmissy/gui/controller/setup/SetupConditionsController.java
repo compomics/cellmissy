@@ -24,12 +24,12 @@ import be.ugent.maf.cellmissy.service.CellLineService;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.PersistenceException;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -204,7 +204,7 @@ public class SetupConditionsController {
         }
         //if validation was OK, validate the condition: check for wells collection
         if (messages.isEmpty()) {
-            if (plateCondition.getWellCollection().isEmpty()) {
+            if (plateCondition.getWellList().isEmpty()) {
                 String message = "Conditions must have at least one well";
                 messages.add(message);
             }
@@ -357,29 +357,33 @@ public class SetupConditionsController {
          * add mouse listeners
          */
         //if Condition validation is OK, update previous condition and user input fields
-        conditionsPanel.getConditionsJList().addMouseListener(new MouseAdapter() {
+        conditionsPanel.getConditionsJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                conditionsPanel.getAddButton().setEnabled(true);
-                int locationToIndex = conditionsPanel.getConditionsJList().locationToIndex(e.getPoint());
-                //add mouse listener and enable tabbed pane on the right (only once, for Condition 1)
-                if (locationToIndex == 0) {
-                    setupExperimentController.addMouseListener();
-                    setupConditionsPanel.getjTabbedPane1().setEnabled(true);
-                }
-                if (previousConditionIndex < plateConditionBindingList.size() && previousConditionIndex != -1) {
-                    //check if validation of condition is OK
-                    if (setupExperimentController.validateCondition(plateConditionBindingList.get(previousConditionIndex))) {
-                        //update fields of previous condition
-                        updateCondition(previousConditionIndex);
-                        //update and reset fields for the assay-ecm panel
-                        assayEcmController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                        //assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                        //keep source and destination lists sync: show actual treatment collection
-                        treatmentsController.updateLists(plateConditionBindingList.get(locationToIndex));
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    conditionsPanel.getAddButton().setEnabled(true);
+                    int selectedIndex = conditionsPanel.getConditionsJList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        //add mouse listener and enable tabbed pane on the right (only once, for Condition 1)
+                        if (selectedIndex == 0) {
+                            setupExperimentController.addMouseListener();
+                            setupConditionsPanel.getjTabbedPane1().setEnabled(true);
+                        }
+                        if (previousConditionIndex < plateConditionBindingList.size() && previousConditionIndex != -1) {
+                            //check if validation of condition is OK
+                            if (setupExperimentController.validateCondition(plateConditionBindingList.get(previousConditionIndex))) {
+                                //update fields of previous condition
+                                updateCondition(previousConditionIndex);
+                                //update and reset fields for the assay-ecm panel
+                                assayEcmController.updateAssayEcmInputFields(plateConditionBindingList.get(selectedIndex));
+                                //assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
+                                //keep source and destination lists sync: show actual treatment collection
+                                treatmentsController.updateLists(plateConditionBindingList.get(selectedIndex));
+                            }
+                        }
+                        previousConditionIndex = selectedIndex;
                     }
                 }
-                previousConditionIndex = locationToIndex;
             }
         });
 
@@ -478,10 +482,10 @@ public class SetupConditionsController {
         firstCondition.setEcm(ecm);
         //set an empty collection of treatments
         List<Treatment> treatmentList = new ArrayList<>();
-        firstCondition.setTreatmentCollection(treatmentList);
+        firstCondition.setTreatmentList(treatmentList);
         //set an empty collection of wells
         List<Well> wellList = new ArrayList<>();
-        firstCondition.setWellCollection(wellList);
+        firstCondition.setWellList(wellList);
     }
 
     /**
@@ -590,10 +594,10 @@ public class SetupConditionsController {
             newTreatment.setPlateCondition(newCondition);
             treatmentList.add(newTreatment);
         }
-        newCondition.setTreatmentCollection(treatmentList);
+        newCondition.setTreatmentList(treatmentList);
         //set an empty collection of wells (wells are not recalled from previous condition)
         List<Well> wellList = new ArrayList<>();
-        newCondition.setWellCollection(wellList);
+        newCondition.setWellList(wellList);
     }
 
     /**

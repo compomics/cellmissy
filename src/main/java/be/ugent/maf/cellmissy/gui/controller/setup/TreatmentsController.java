@@ -15,13 +15,13 @@ import be.ugent.maf.cellmissy.service.TreatmentService;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javax.persistence.PersistenceException;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -108,13 +108,13 @@ public class TreatmentsController {
             //set plate condition of the treatment
             treatment.setPlateCondition(plateCondition);
             //update treatment collection of the plate condition
-            if (!plateCondition.getTreatmentCollection().contains(treatment)) {
-                plateCondition.getTreatmentCollection().add(treatment);
+            if (!plateCondition.getTreatmentList().contains(treatment)) {
+                plateCondition.getTreatmentList().add(treatment);
             }
         }
 
         // remove form the collection treatments not present anymore
-        Iterator<Treatment> iterator = plateCondition.getTreatmentCollection().iterator();
+        Iterator<Treatment> iterator = plateCondition.getTreatmentList().iterator();
         while (iterator.hasNext()) {
             if (!treatmentBindingList.contains(iterator.next())) {
                 iterator.remove();
@@ -246,17 +246,25 @@ public class TreatmentsController {
 
         //add mouse listeners
         //select drug OR general treatment
-        treatmentsPanel.getSourceList1().addMouseListener(new MouseAdapter() {
+        treatmentsPanel.getSourceList1().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                treatmentsPanel.getSourceList2().clearSelection();
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    if (treatmentsPanel.getSourceList1().getSelectedIndex() != -1) {
+                        treatmentsPanel.getSourceList2().clearSelection();
+                    }
+                }
             }
         });
 
-        treatmentsPanel.getSourceList2().addMouseListener(new MouseAdapter() {
+        treatmentsPanel.getSourceList2().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                treatmentsPanel.getSourceList1().clearSelection();
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    if (treatmentsPanel.getSourceList2().getSelectedIndex() != -1) {
+                        treatmentsPanel.getSourceList1().clearSelection();
+                    }
+                }
             }
         });
 
@@ -370,8 +378,8 @@ public class TreatmentsController {
      */
     private void updateDestinationList(PlateCondition plateCondition) {
         //fill in the treatment binding list with the acutually treatments for the current condition
-        if (!plateCondition.getTreatmentCollection().isEmpty()) {
-            for (Treatment treatment : plateCondition.getTreatmentCollection()) {
+        if (!plateCondition.getTreatmentList().isEmpty()) {
+            for (Treatment treatment : plateCondition.getTreatmentList()) {
                 if (!treatmentBindingList.contains(treatment)) {
                     treatmentBindingList.add(treatment);
                 }

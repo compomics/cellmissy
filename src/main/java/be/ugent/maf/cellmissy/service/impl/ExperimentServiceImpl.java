@@ -324,9 +324,9 @@ public class ExperimentServiceImpl implements ExperimentService {
 
     @Override
     public void saveMotilityDataForExperiment(Experiment entity) {
-        for (PlateCondition plateCondition : entity.getPlateConditionCollection()) {
-            for (Well well : plateCondition.getWellCollection()) {
-                for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
+        for (PlateCondition plateCondition : entity.getPlateConditionList()) {
+            for (Well well : plateCondition.getWellList()) {
+                for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
                     wellHasImagingTypeRepository.save(wellHasImagingType);
                 }
             }

@@ -84,6 +84,7 @@ public class OverviewDialog extends javax.swing.JDialog {
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+        projectJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         projectJList.setMinimumSize(new java.awt.Dimension(10, 10));
         projectJList.setName(""); // NOI18N
         projectJList.setPreferredSize(new java.awt.Dimension(10, 10));
@@ -98,6 +99,7 @@ public class OverviewDialog extends javax.swing.JDialog {
         jScrollPane3.setOpaque(false);
         jScrollPane3.setPreferredSize(new java.awt.Dimension(10, 10));
 
+        experimentJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane3.setViewportView(experimentJList);
 
         infoLabel.setText("Click on a project to see the relative experiments and their status.");
@@ -137,9 +139,7 @@ public class OverviewDialog extends javax.swing.JDialog {
                                     .addGap(18, 18, 18)
                                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, 0)
-                        .addComponent(deleteExperimentButton)))
+                    .addComponent(deleteExperimentButton, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
 

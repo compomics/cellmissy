@@ -14,8 +14,6 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.Icon;
@@ -23,6 +21,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -82,6 +82,7 @@ public class OverviewController {
     public void disableActionsOnExperiments() {
         // disable delete experiment button
         overviewDialog.getDeleteExperimentButton().setEnabled(false);
+        overviewDialog.getExperimentJList().setFocusable(false);
     }
 
     /**
@@ -98,7 +99,7 @@ public class OverviewController {
         // customize dialog
         overviewDialog.setLocationRelativeTo(cellMissyController.getCellMissyFrame());
         // set cell renderer for experiments list
-        ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new  ExperimentsOverviewListRenderer(true);
+        ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new ExperimentsOverviewListRenderer(true);
         overviewDialog.getExperimentJList().setCellRenderer(experimentsOverviewListRenderer);
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
@@ -106,27 +107,29 @@ public class OverviewController {
         // set icon for info label
         overviewDialog.getInfoLabel().setIcon(scaledIcon);
         //show experiments for the project selected
-        overviewDialog.getProjectJList().addMouseListener(new MouseAdapter() {
+        overviewDialog.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                //init experimentJList
-                int locationToIndex = overviewDialog.getProjectJList().locationToIndex(e.getPoint());
-                if (locationToIndex != -1) {
-                    Project selectedProject = projectBindingList.get(locationToIndex);
-                    // set text for project description
-                    overviewDialog.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
-                    Long projectid = selectedProject.getProjectid();
-                    List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
-                    if (experimentNumbers != null) {
-                        List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
-                        experimentBindingList = (ObservableCollections.observableList(experimentList));
-                        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, overviewDialog.getExperimentJList());
-                        bindingGroup.addBinding(jListBinding);
-                        bindingGroup.bind();
-                    } else {
-                        cellMissyController.showMessage("There are no experiments yet for this project!", "", JOptionPane.INFORMATION_MESSAGE);
-                        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
-                            experimentBindingList.clear();
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    //init experimentJList
+                    int selectedIndex = overviewDialog.getProjectJList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        Project selectedProject = projectBindingList.get(selectedIndex);
+                        // set text for project description
+                        overviewDialog.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
+                        Long projectid = selectedProject.getProjectid();
+                        List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
+                        if (experimentNumbers != null) {
+                            List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
+                            experimentBindingList = (ObservableCollections.observableList(experimentList));
+                            JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, overviewDialog.getExperimentJList());
+                            bindingGroup.addBinding(jListBinding);
+                            bindingGroup.bind();
+                        } else {
+                            cellMissyController.showMessage("There are no experiments yet for this project!", "", JOptionPane.INFORMATION_MESSAGE);
+                            if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                                experimentBindingList.clear();
+                            }
                         }
                     }
                 }

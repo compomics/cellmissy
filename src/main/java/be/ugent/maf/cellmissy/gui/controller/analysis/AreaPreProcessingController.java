@@ -1137,8 +1137,8 @@ public class AreaPreProcessingController {
         int numberOfTimeFrames = dataAnalysisController.getExperiment().getTimeFrames();
         // look into the analyzed wells
         for (Well well : plateCondition.getAreaAnalyzedWells()) {
-            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
-                int numberOfTimeSteps = wellHasImagingType.getTimeStepCollection().size();
+            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                int numberOfTimeSteps = wellHasImagingType.getTimeStepList().size();
                 if (numberOfTimeSteps != 0 && numberOfTimeSteps < numberOfTimeFrames) {
                     numberOfTimeFrames = numberOfTimeSteps;
                 }

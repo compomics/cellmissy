@@ -196,6 +196,7 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
         jScrollPane3.setOpaque(false);
 
         groupsList.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
+        groupsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         groupsList.setMinimumSize(new java.awt.Dimension(20, 20));
         groupsList.setPreferredSize(new java.awt.Dimension(20, 20));
         groupsList.setSelectedIndex(0);

@@ -351,34 +351,34 @@ public class LoadExperimentFromGenericInputController {
      */
     private void setMotilityData() {
 
-        for (PlateCondition plateCondition : experiment.getPlateConditionCollection()) {
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
             for (WellGui wellGui : genericImagedPlateController.getImagedPlatePanel().getWellGuiList()) {
 
                 //if the wellGui has a well with a NOT empty collection of wellHasImagingTypes, the well has been imaged
                 //if the wellGui has a rectangle, the well belongs to a certain condition
                 //only if these two conditions are true, motility data must be set and stored to DB
-                if (!wellGui.getWell().getWellHasImagingTypeCollection().isEmpty() && wellGui.getRectangle() != null) {
+                if (!wellGui.getWell().getWellHasImagingTypeList().isEmpty() && wellGui.getRectangle() != null) {
 
-                    for (Well well : plateCondition.getWellCollection()) {
+                    for (Well well : plateCondition.getWellList()) {
                         //check for coordinates
                         if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
                             //set collection of wellHasImagingType to the well of the plateCondition
-                            well.setWellHasImagingTypeCollection(wellGui.getWell().getWellHasImagingTypeCollection());
+                            well.setWellHasImagingTypeList(wellGui.getWell().getWellHasImagingTypeList());
 
                             //the other way around: set the well for each wellHasImagingType
-                            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeCollection()) {
+                            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
                                 wellHasImagingType.setWell(well);
                             }
                         }
 
                     } // what if the well was not imaged? data were not loaded for it...
-                } else if (wellGui.getWell().getWellHasImagingTypeCollection().isEmpty() && wellGui.getRectangle() != null) {
-                    for (Well well : plateCondition.getWellCollection()) {
+                } else if (wellGui.getWell().getWellHasImagingTypeList().isEmpty() && wellGui.getRectangle() != null) {
+                    for (Well well : plateCondition.getWellList()) {
                         //check for coordinates
                         if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
                             //set collection of wellHasImagingType to the well of the plateCondition
                             List<WellHasImagingType> list = new ArrayList<>();
-                            well.setWellHasImagingTypeCollection(list);
+                            well.setWellHasImagingTypeList(list);
                         }
                     }
                 }

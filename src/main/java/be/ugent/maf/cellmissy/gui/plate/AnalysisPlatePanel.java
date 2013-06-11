@@ -13,7 +13,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -54,14 +53,12 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
         // set graphics
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
-        Collection<PlateCondition> plateConditionCollection = experiment.getPlateConditionCollection();
-        List<PlateCondition> plateConditions = new ArrayList<>();
-        plateConditions.addAll(plateConditionCollection);
+        List<PlateCondition> plateConditions = experiment.getPlateConditionList();
 
         int lenght = GuiUtils.getAvailableColors().length;
 
         for (PlateCondition plateCondition : plateConditions) {
-            for (Well well : plateCondition.getWellCollection()) {
+            for (Well well : plateCondition.getWellList()) {
                 for (WellGui wellGui : wellGuiList) {
                     if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
                         int conditionIndex = plateConditions.indexOf(plateCondition);
@@ -107,12 +104,12 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
         }
         // highlight the ones that were not imaged
         if (experiment != null) {
-            List<PlateCondition> plateConditions = new ArrayList<>(experiment.getPlateConditionCollection());
+            List<PlateCondition> plateConditions = experiment.getPlateConditionList();
             for (PlateCondition plateCondition : plateConditions) {
                 if (plateCondition.isLoaded()) {
-                    List<Well> wells = new ArrayList<>(plateCondition.getWellCollection());
+                    List<Well> wells = plateCondition.getWellList();
                     for (Well well : wells) {
-                        if (well.getWellHasImagingTypeCollection().isEmpty()) {
+                        if (well.getWellHasImagingTypeList().isEmpty()) {
                             for (WellGui wellGui : wellGuiList) {
                                 if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
                                     //get only the bigger default ellipse2D

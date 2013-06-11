@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -47,7 +47,7 @@ public class Well implements Serializable {
     @Column(name = "row_number")
     private Integer rowNumber;
     @OneToMany(mappedBy = "well", orphanRemoval = true)
-    private Collection<WellHasImagingType> wellHasImagingTypeCollection;
+    private List<WellHasImagingType> wellHasImagingTypeList;
     @JoinColumn(name = "l_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = false)
     private PlateCondition plateCondition;
@@ -89,12 +89,12 @@ public class Well implements Serializable {
     }
 
     @XmlTransient
-    public Collection<WellHasImagingType> getWellHasImagingTypeCollection() {
-        return wellHasImagingTypeCollection;
+    public List<WellHasImagingType> getWellHasImagingTypeList() {
+        return wellHasImagingTypeList;
     }
 
-    public void setWellHasImagingTypeCollection(Collection<WellHasImagingType> wellHasImagingTypeCollection) {
-        this.wellHasImagingTypeCollection = wellHasImagingTypeCollection;
+    public void setWellHasImagingTypeList(List<WellHasImagingType> wellHasImagingTypeList) {
+        this.wellHasImagingTypeList = wellHasImagingTypeList;
     }
 
     public PlateCondition getPlateCondition() {

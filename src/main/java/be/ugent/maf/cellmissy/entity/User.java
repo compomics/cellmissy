@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -69,7 +69,7 @@ public class User implements Serializable {
     @NotBlank(message = "Please insert an email address")
     private String email;
     @OneToMany(mappedBy = "user")
-    private Collection<Experiment> experimentCollection;
+    private List<Experiment> experimentList;
 
     public User() {
     }
@@ -136,12 +136,12 @@ public class User implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Experiment> getExperimentCollection() {
-        return experimentCollection;
+    public List<Experiment> getExperimentList() {
+        return experimentList;
     }
 
-    public void setExperimentCollection(Collection<Experiment> experimentCollection) {
-        this.experimentCollection = experimentCollection;
+    public void setExperimentList(List<Experiment> experimentList) {
+        this.experimentList = experimentList;
     }
 
     @Override

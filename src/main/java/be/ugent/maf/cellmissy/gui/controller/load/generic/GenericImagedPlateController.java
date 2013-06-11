@@ -31,7 +31,6 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JFileChooser;
@@ -126,7 +125,7 @@ public class GenericImagedPlateController {
         for (WellGui wellGui : imagedPlatePanel.getWellGuiList()) {
             // wellGui with a condition on the plate
             if (wellGui.getRectangle() != null) {
-                if (wellGui.getWell().getWellHasImagingTypeCollection().isEmpty()) {
+                if (wellGui.getWell().getWellHasImagingTypeList().isEmpty()) {
                     isDataLoadingValid = false;
                     break;
                 }
@@ -146,7 +145,7 @@ public class GenericImagedPlateController {
         List<WellGui> wellGuiList = imagedPlatePanel.getWellGuiList();
         for (WellGui wellGui : wellGuiList) {
             // clear the wellhasimagingtype collection
-            wellGui.getWell().getWellHasImagingTypeCollection().clear();
+            wellGui.getWell().getWellHasImagingTypeList().clear();
             List<Ellipse2D> ellipsi = wellGui.getEllipsi();
             Iterator<Ellipse2D> iterator = ellipsi.iterator();
             while (iterator.hasNext()) {
@@ -173,7 +172,7 @@ public class GenericImagedPlateController {
         List<WellGui> wellGuiList = imagedPlatePanel.getWellGuiList();
         // set empty list of wellhasimagingtype to the plate
         for (WellGui wellGui : wellGuiList) {
-            wellGui.getWell().setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
+            wellGui.getWell().setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
         }
         /**
          * Mouse Listener for imaged plate panel
@@ -197,21 +196,21 @@ public class GenericImagedPlateController {
                         if (validateSelection(selectedWellGui)) {
                             // new wellHasImagingType (for selected well and current imaging type/algorithm)
                             WellHasImagingType newWellHasImagingType = new WellHasImagingType(selectedWellGui.getWell(), currentImagingType, currentAlgorithm);
-                            // get the collection of WellHasImagingType for the selected well
-                            Collection<WellHasImagingType> wellHasImagingTypeCollection = selectedWellGui.getWell().getWellHasImagingTypeCollection();
+                            // get the list of WellHasImagingType for the selected well
+                            List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
                             // 
                             reloadData(selectedWellGui);
                             // check if the wellHasImagingType was already processed
                             // this is comparing objects with column, row numbers, and algorithm,imaging types
-                            if (!wellHasImagingTypeCollection.contains(newWellHasImagingType)) {
+                            if (!wellHasImagingTypeList.contains(newWellHasImagingType)) {
                                 // if it was not already processed, choose a file to parse
                                 File bulkCellFile = chooseData();
                                 if (bulkCellFile != null) {
                                     // load data
                                     loadData(bulkCellFile, newWellHasImagingType, selectedWellGui);
                                     // update relation with algorithm and imaging type
-                                    currentAlgorithm.getWellHasImagingTypeCollection().add(newWellHasImagingType);
-                                    currentImagingType.getWellHasImagingTypeCollection().add(newWellHasImagingType);
+                                    currentAlgorithm.getWellHasImagingTypeList().add(newWellHasImagingType);
+                                    currentImagingType.getWellHasImagingTypeList().add(newWellHasImagingType);
                                     // highlight imaged well
                                     highlightImagedWell(selectedWellGui);
                                     // check if table still has to be initialized
@@ -231,10 +230,10 @@ public class GenericImagedPlateController {
                                             // remove from the list the old data
                                             removeOldDataFromList(newWellHasImagingType);
                                             // remove the data from the well
-                                            selectedWellGui.getWell().getWellHasImagingTypeCollection().remove(newWellHasImagingType);
+                                            selectedWellGui.getWell().getWellHasImagingTypeList().remove(newWellHasImagingType);
                                             // update relation with algorithm and imaging type
-                                            currentAlgorithm.getWellHasImagingTypeCollection().remove(newWellHasImagingType);
-                                            currentImagingType.getWellHasImagingTypeCollection().remove(newWellHasImagingType);
+                                            currentAlgorithm.getWellHasImagingTypeList().remove(newWellHasImagingType);
+                                            currentImagingType.getWellHasImagingTypeList().remove(newWellHasImagingType);
                                             // load new data
                                             loadData(newFile, newWellHasImagingType, selectedWellGui);
                                         }
@@ -243,16 +242,16 @@ public class GenericImagedPlateController {
                                         if (!imagingTypeIsNotLast(selectedWellGui)) {
                                             List<WellHasImagingType> oldSamples = removeOldDataFromList(newWellHasImagingType);
                                             // remove the data from the well
-                                            selectedWellGui.getWell().getWellHasImagingTypeCollection().removeAll(oldSamples);
+                                            selectedWellGui.getWell().getWellHasImagingTypeList().removeAll(oldSamples);
                                             // update relation with algorithm and imaging type
-                                            currentAlgorithm.getWellHasImagingTypeCollection().remove(newWellHasImagingType);
-                                            currentImagingType.getWellHasImagingTypeCollection().remove(newWellHasImagingType);
+                                            currentAlgorithm.getWellHasImagingTypeList().remove(newWellHasImagingType);
+                                            currentImagingType.getWellHasImagingTypeList().remove(newWellHasImagingType);
                                             onCancel(selectedWellGui);
                                         } else {
-                                            List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(selectedWellGui.getWell().getWellHasImagingTypeCollection());
+                                            List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(selectedWellGui.getWell().getWellHasImagingTypeList());
                                             ImagingType lastImagingType = uniqueImagingTypes.get(uniqueImagingTypes.size() - 1);
                                             loadExperimentFromGenericInputController.showMessage("Please remove first last added imaging type " + "(" + lastImagingType.getName() + ")", "", JOptionPane.WARNING_MESSAGE);
-                                            List<Algorithm> uniqueAlgorithms = getUniqueAlgorithms(wellHasImagingTypeCollection);
+                                            List<Algorithm> uniqueAlgorithms = getUniqueAlgorithms(wellHasImagingTypeList);
                                             Algorithm lastAlgorithm = uniqueAlgorithms.get(uniqueAlgorithms.size() - 1);
                                             selectImagingTypeOnTree(lastImagingType, lastAlgorithm);
                                         }
@@ -280,12 +279,12 @@ public class GenericImagedPlateController {
     }
 
     /**
-     * Get unique algorithms from a collection of samples
+     * Get unique algorithms from a list of samples
      *
      * @param wellHasImagingTypes
      * @return
      */
-    private List<Algorithm> getUniqueAlgorithms(Collection<WellHasImagingType> wellHasImagingTypes) {
+    private List<Algorithm> getUniqueAlgorithms(List<WellHasImagingType> wellHasImagingTypes) {
         List<Algorithm> algorithms = new ArrayList<>();
 
         for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
@@ -332,13 +331,13 @@ public class GenericImagedPlateController {
      * @param selectedWellGui
      */
     private void loadData(File bulkCellFile, WellHasImagingType newWellHasImagingType, WellGui selectedWellGui) {
-        Collection<WellHasImagingType> wellHasImagingTypeCollection = selectedWellGui.getWell().getWellHasImagingTypeCollection();
+        List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
         // parse raw data for selected well
         try {
             List<TimeStep> timeSteps = genericInputFileParser.parseBulkCellFile(bulkCellFile);
-            // set the timeStepCollection and add the wellHasImagingType to the collection
-            newWellHasImagingType.setTimeStepCollection(timeSteps);
-            wellHasImagingTypeCollection.add(newWellHasImagingType);
+            // set the timeStepList and add the wellHasImagingType to the list
+            newWellHasImagingType.setTimeStepList(timeSteps);
+            wellHasImagingTypeList.add(newWellHasImagingType);
             for (TimeStep timeStep : timeSteps) {
                 timeStep.setWellHasImagingType(newWellHasImagingType);
             }
@@ -405,9 +404,9 @@ public class GenericImagedPlateController {
     private void reloadData(WellGui selectedWellGui) {
         // empty the list
         timeStepsBindingList.clear();
-        Collection<WellHasImagingType> wellHasImagingTypeCollection = selectedWellGui.getWell().getWellHasImagingTypeCollection();
-        for (WellHasImagingType wellHasImagingType : wellHasImagingTypeCollection) {
-            for (TimeStep timeStep : wellHasImagingType.getTimeStepCollection()) {
+        List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
+        for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
+            for (TimeStep timeStep : wellHasImagingType.getTimeStepList()) {
                 timeStepsBindingList.add(timeStep);
             }
         }
@@ -455,8 +454,8 @@ public class GenericImagedPlateController {
      */
     private void highlightImagedWell(WellGui selectedWellGui) {
         List<Ellipse2D> ellipsi = selectedWellGui.getEllipsi();
-        Collection<WellHasImagingType> wellHasImagingTypeCollection = selectedWellGui.getWell().getWellHasImagingTypeCollection();
-        List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(wellHasImagingTypeCollection);
+        List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
+        List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(wellHasImagingTypeList);
         // if size is one, only one imaging type was processed: do not add eny ellipsi
         if (uniqueImagingTypes.size() != 1) {
             if (ellipsi.size() < uniqueImagingTypes.size()) {
@@ -483,19 +482,19 @@ public class GenericImagedPlateController {
      * @param wellGui
      */
     private void onCancel(WellGui wellGui) {
-        Collection<WellHasImagingType> wellHasImagingTypeCollection = wellGui.getWell().getWellHasImagingTypeCollection();
-        Iterator<WellHasImagingType> iterator = wellHasImagingTypeCollection.iterator();
+        List<WellHasImagingType> wellHasImagingTypeList = wellGui.getWell().getWellHasImagingTypeList();
+        Iterator<WellHasImagingType> iterator = wellHasImagingTypeList.iterator();
         while (iterator.hasNext()) {
             if (iterator.next().getImagingType().equals(imagedPlatePanel.getCurrentImagingType())) {
                 iterator.remove();
             }
         }
         // get unique imaging types from the collection
-        List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(wellHasImagingTypeCollection);
+        List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(wellHasImagingTypeList);
         // index of last added ellipse
         int lastIndex = uniqueImagingTypes.size();
         // if the ellipse is the first one, do not remove it, neither if it still contains the current imaging type
-        if (lastIndex != 0 && !containsImagingType(wellHasImagingTypeCollection, currentImagingType)) {
+        if (lastIndex != 0 && !containsImagingType(wellHasImagingTypeList, currentImagingType)) {
             // ellipse to remove
             Ellipse2D ellipseToRemove = wellGui.getEllipsi().get(lastIndex);
             wellGui.getEllipsi().remove(ellipseToRemove);
@@ -509,8 +508,8 @@ public class GenericImagedPlateController {
      * @return
      */
     private boolean imagingTypeIsNotLast(WellGui wellGui) {
-        Collection<WellHasImagingType> wellHasImagingTypeCollection = wellGui.getWell().getWellHasImagingTypeCollection();
-        List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(wellHasImagingTypeCollection);
+        List<WellHasImagingType> wellHasImagingTypeList = wellGui.getWell().getWellHasImagingTypeList();
+        List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(wellHasImagingTypeList);
         boolean isNotLast = false;
         int numberOfImagingTypes = uniqueImagingTypes.size();
         int currentImagingIndex = uniqueImagingTypes.indexOf(currentImagingType);
@@ -527,7 +526,7 @@ public class GenericImagedPlateController {
      * @param imagingType
      * @return
      */
-    private boolean containsImagingType(Collection<WellHasImagingType> wellHasImagingTypes, ImagingType imagingType) {
+    private boolean containsImagingType(List<WellHasImagingType> wellHasImagingTypes, ImagingType imagingType) {
         for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
             if (wellHasImagingType.getImagingType().equals(imagingType)) {
                 return true;
@@ -649,7 +648,7 @@ public class GenericImagedPlateController {
                 if (!datasetName.isEmpty()) {
                     Algorithm newAlgorithm = new Algorithm();
                     newAlgorithm.setAlgorithmName(datasetName);
-                    newAlgorithm.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
+                    newAlgorithm.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
                     // add algo to list and to data tree
                     addDataset(newAlgorithm);
                     loadFromGenericInputPlatePanel.getDatasetNameTextField().setText("");
@@ -672,7 +671,7 @@ public class GenericImagedPlateController {
                     if (!imagingName.isEmpty()) {
                         ImagingType newImagingType = new ImagingType();
                         newImagingType.setName(imagingName);
-                        newImagingType.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
+                        newImagingType.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
                         // exposure time and light intensity are not set
                         // add imaging type to list and to data tree
                         addImagingType(newImagingType);

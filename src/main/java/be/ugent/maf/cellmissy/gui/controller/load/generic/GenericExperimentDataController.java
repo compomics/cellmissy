@@ -18,8 +18,6 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Dimension;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Icon;
@@ -27,6 +25,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -114,38 +114,45 @@ public class GenericExperimentDataController {
          * add mouse listeners
          */
         //when a project from the list is selected, show all experiments in progress for that project
-        loadFromGenericInputMetadataPanel.getProjectJList().addMouseListener(new MouseAdapter() {
+        loadFromGenericInputMetadataPanel.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                // retrieve selected project
-                int locationToIndex = loadFromGenericInputMetadataPanel.getProjectJList().locationToIndex(e.getPoint());
-                Project selectedProject = projectBindingList.get(locationToIndex);
-                if (loadExperimentFromGenericInputController.getExperiment() == null) {
-                    // if experiment is still null, project is being selected for the first time
-                    onSelectedProject(selectedProject);
-                    // if experiment is not null and a different project is selected, reset redo on selected project
-                } else if (loadExperimentFromGenericInputController.getExperiment() != null && !loadExperimentFromGenericInputController.getExperiment().getProject().equals(selectedProject)) {
-                    resetOnANewProject();
-                    onSelectedProject(selectedProject);
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // retrieve selected project
+                    int selectedIndex = loadFromGenericInputMetadataPanel.getProjectJList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        Project selectedProject = projectBindingList.get(selectedIndex);
+                        if (loadExperimentFromGenericInputController.getExperiment() == null) {
+                            // if experiment is still null, project is being selected for the first time
+                            onSelectedProject(selectedProject);
+                            // if experiment is not null and a different project is selected, reset redo on selected project
+                        } else if (loadExperimentFromGenericInputController.getExperiment() != null && !loadExperimentFromGenericInputController.getExperiment().getProject().equals(selectedProject)) {
+                            resetOnANewProject();
+                            onSelectedProject(selectedProject);
+                        }
+                    }
                 }
-
             }
         });
 
         //when an experiment from the list is selected, show the right plate format with the wells sorrounded by rectangles if conditions were selected
-        loadFromGenericInputMetadataPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
+        loadFromGenericInputMetadataPanel.getExperimentJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                // retrieve selected experiment
-                int locationToIndex = loadFromGenericInputMetadataPanel.getExperimentJList().locationToIndex(e.getPoint());
-                Experiment selectedExperiment = experimentBindingList.get(locationToIndex);
-                if (selectedExperiment != null && loadExperimentFromGenericInputController.getExperiment() == null) {
-                    // if the experiment is still null, it is being selected for the first time
-                    onSelectedExperiment(selectedExperiment);
-                    // otherwise, if a different experiment has being selected, reset and recall the onselected experiment
-                } else if (selectedExperiment != null && loadExperimentFromGenericInputController.getExperiment().equals(selectedExperiment)) {
-                    resetOnANewExperiment();
-                    onSelectedExperiment(selectedExperiment);
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // retrieve selected experiment
+                    int selectedIndex = loadFromGenericInputMetadataPanel.getExperimentJList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        Experiment selectedExperiment = experimentBindingList.get(selectedIndex);
+                        if (selectedExperiment != null && loadExperimentFromGenericInputController.getExperiment() == null) {
+                            // if the experiment is still null, it is being selected for the first time
+                            onSelectedExperiment(selectedExperiment);
+                            // otherwise, if a different experiment has being selected, reset and recall the onselected experiment
+                        } else if (selectedExperiment != null && loadExperimentFromGenericInputController.getExperiment().equals(selectedExperiment)) {
+                            resetOnANewExperiment();
+                            onSelectedExperiment(selectedExperiment);
+                        }
+                    }
                 }
             }
         });
@@ -228,8 +235,7 @@ public class GenericExperimentDataController {
         //set experiment of parent controller
         loadExperimentFromGenericInputController.setExperiment(selectedExperiment);
         // init a new list with plate conditions
-        plateConditionList = new ArrayList<>();
-        plateConditionList.addAll(loadExperimentFromGenericInputController.getExperiment().getPlateConditionCollection());
+        plateConditionList = loadExperimentFromGenericInputController.getExperiment().getPlateConditionList();
         // repaint plate panel
         loadExperimentFromGenericInputController.getImagedPlatePanel().setExperiment(selectedExperiment);
         Dimension parentDimension = loadExperimentFromGenericInputController.getLoadFromGenericInputPlatePanel().getPlateParentPanel().getSize();

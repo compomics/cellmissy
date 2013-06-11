@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "BottomMatrix.findByBottomMatrixid", query = "SELECT b FROM BottomMatrix b WHERE b.bottomMatrixid = :bottomMatrixid"),
     @NamedQuery(name = "BottomMatrix.findByType", query = "SELECT b FROM BottomMatrix b WHERE b.type = :type")})
 public class BottomMatrix implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +42,7 @@ public class BottomMatrix implements Serializable {
     @Column(name = "type")
     private String type;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bottomMatrix")
-    private Collection<Ecm> ecmCollection;
+    private List<Ecm> ecmList;
 
     public BottomMatrix() {
     }
@@ -67,12 +68,12 @@ public class BottomMatrix implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Ecm> getEcmCollection() {
-        return ecmCollection;
+    public List<Ecm> getEcmList() {
+        return ecmList;
     }
 
-    public void setEcmCollection(Collection<Ecm> ecmCollection) {
-        this.ecmCollection = ecmCollection;
+    public void setEcmList(List<Ecm> ecmList) {
+        this.ecmList = ecmList;
     }
 
     @Override
@@ -99,5 +100,4 @@ public class BottomMatrix implements Serializable {
     public String toString() {
         return type;
     }
-    
 }

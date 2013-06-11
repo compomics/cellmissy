@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -32,7 +32,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CellLineType.findAll", query = "SELECT c FROM CellLineType c"),
     @NamedQuery(name = "CellLineType.findByCellLineTypeid", query = "SELECT c FROM CellLineType c WHERE c.cellLineTypeid = :cellLineTypeid"),
     @NamedQuery(name = "CellLineType.findByName", query = "SELECT c FROM CellLineType c WHERE c.name = :name")})
-
 public class CellLineType implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,7 +45,7 @@ public class CellLineType implements Serializable {
     @Column(name = "name", unique = true)
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cellLineType")
-    private Collection<CellLine> cellLineCollection;
+    private List<CellLine> cellLineList;
 
     public CellLineType() {
     }
@@ -76,12 +75,12 @@ public class CellLineType implements Serializable {
         this.name = name;
     }
 
-    public Collection<CellLine> getCellLineCollection() {
-        return cellLineCollection;
+    public List<CellLine> getCellLineList() {
+        return cellLineList;
     }
 
-    public void setCellLineCollection(Collection<CellLine> cellLineCollection) {
-        this.cellLineCollection = cellLineCollection;
+    public void setCellLineList(List<CellLine> cellLineList) {
+        this.cellLineList = cellLineList;
     }
 
     @Override

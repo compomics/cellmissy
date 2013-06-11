@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -52,7 +52,7 @@ public class Track implements Serializable {
     @ManyToOne(optional = false)
     private WellHasImagingType wellHasImagingType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "track", orphanRemoval = true)
-    private Collection<TrackPoint> trackPointCollection;
+    private List<TrackPoint> trackPointList;
 
     public Track() {
     }
@@ -100,12 +100,12 @@ public class Track implements Serializable {
     }
 
     @XmlTransient
-    public Collection<TrackPoint> getTrackPointCollection() {
-        return trackPointCollection;
+    public List<TrackPoint> getTrackPointList() {
+        return trackPointList;
     }
 
-    public void setTrackPointCollection(Collection<TrackPoint> trackPointCollection) {
-        this.trackPointCollection = trackPointCollection;
+    public void setTrackPointList(List<TrackPoint> trackPointList) {
+        this.trackPointList = trackPointList;
     }
 
     @Override

@@ -21,15 +21,14 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -97,7 +96,7 @@ public class CellMiaExperimentDataController {
     public void resetAfterUserInteraction() {
         // reset collection of wellHasImagingType on plate panel
         for (WellGui wellGui : loadExperimentFromCellMiaController.getImagedPlatePanel().getWellGuiList()) {
-            wellGui.getWell().getWellHasImagingTypeCollection().clear();
+            wellGui.getWell().getWellHasImagingTypeList().clear();
         }
         // set imaging type back to null
         loadExperimentFromCellMiaController.getImagedPlatePanel().setImagingTypeList(null);
@@ -149,37 +148,45 @@ public class CellMiaExperimentDataController {
          * add mouse listeners
          */
         //when a project from the list is selected, show all experiments in progress for that project
-        loadFromCellMiaMetadataPanel.getProjectJList().addMouseListener(new MouseAdapter() {
+        loadFromCellMiaMetadataPanel.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                // retrieve selected project
-                int locationToIndex = loadFromCellMiaMetadataPanel.getProjectJList().locationToIndex(e.getPoint());
-                Project selectedProject = projectBindingList.get(locationToIndex);
-                if (loadExperimentFromCellMiaController.getExperiment() == null) {
-                    // if experiment is still null, project is being selected for the first time
-                    onSelectedProject(selectedProject);
-                    // if experiment is not null and a different project is selected, reset redo on selected project
-                } else if (loadExperimentFromCellMiaController.getExperiment() != null && !loadExperimentFromCellMiaController.getExperiment().getProject().equals(selectedProject)) {
-                    resetOnANewProject();
-                    onSelectedProject(selectedProject);
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // retrieve selected project
+                    int selectedIndex = loadFromCellMiaMetadataPanel.getProjectJList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        Project selectedProject = projectBindingList.get(selectedIndex);
+                        if (loadExperimentFromCellMiaController.getExperiment() == null) {
+                            // if experiment is still null, project is being selected for the first time
+                            onSelectedProject(selectedProject);
+                            // if experiment is not null and a different project is selected, reset redo on selected project
+                        } else if (loadExperimentFromCellMiaController.getExperiment() != null && !loadExperimentFromCellMiaController.getExperiment().getProject().equals(selectedProject)) {
+                            resetOnANewProject();
+                            onSelectedProject(selectedProject);
+                        }
+                    }
                 }
             }
         });
 
         //when an experiment from the list is selected, show the right plate format with the wells sorrounded by rectangles if conditions were selected
-        loadFromCellMiaMetadataPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
+        loadFromCellMiaMetadataPanel.getExperimentJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                // retrieve selected experiment
-                int locationToIndex = loadFromCellMiaMetadataPanel.getExperimentJList().locationToIndex(e.getPoint());
-                Experiment selectedExperiment = experimentBindingList.get(locationToIndex);
-                if (selectedExperiment != null && loadExperimentFromCellMiaController.getExperiment() == null) {
-                    // if the experiment is still null, it is being selected for the first time
-                    onSelectedExperiment(selectedExperiment);
-                    // otherwise, if a different experiment has being selected, reset and recall the onselected experiment
-                } else if (selectedExperiment != null && !loadExperimentFromCellMiaController.getExperiment().equals(selectedExperiment)) {
-                    resetOnANewExperiment();
-                    onSelectedExperiment(selectedExperiment);
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // retrieve selected experiment
+                    int selectedIndex = loadFromCellMiaMetadataPanel.getExperimentJList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        Experiment selectedExperiment = experimentBindingList.get(selectedIndex);
+                        if (selectedExperiment != null && loadExperimentFromCellMiaController.getExperiment() == null) {
+                            // if the experiment is still null, it is being selected for the first time
+                            onSelectedExperiment(selectedExperiment);
+                            // otherwise, if a different experiment has being selected, reset and recall the onselected experiment
+                        } else if (selectedExperiment != null && !loadExperimentFromCellMiaController.getExperiment().equals(selectedExperiment)) {
+                            resetOnANewExperiment();
+                            onSelectedExperiment(selectedExperiment);
+                        }
+                    }
                 }
             }
         });
@@ -250,8 +257,7 @@ public class CellMiaExperimentDataController {
         //set experiment of parent controller
         loadExperimentFromCellMiaController.setExperiment(selectedExperiment);
         // init a new list of plate conditions
-        plateConditionList = new ArrayList<>();
-        plateConditionList.addAll(selectedExperiment.getPlateConditionCollection());
+        plateConditionList = selectedExperiment.getPlateConditionList();
         Dimension parentDimension = loadExperimentFromCellMiaController.getLoadFromCellMiaPlatePanel().getPlateParentPanel().getSize();
         loadExperimentFromCellMiaController.getImagedPlatePanel().initPanel(selectedExperiment.getPlateFormat(), parentDimension);
         // repaint plate panel
