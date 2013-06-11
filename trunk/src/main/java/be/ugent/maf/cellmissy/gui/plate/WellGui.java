@@ -28,7 +28,7 @@ public class WellGui {
      */
     public WellGui(int rowNumber, int columnNumber) {
         well = new Well();
-        well.setWellHasImagingTypeCollection(new ArrayList<WellHasImagingType>());
+        well.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
         well.setRowNumber(rowNumber);
         well.setColumnNumber(columnNumber);
     }
@@ -67,6 +67,6 @@ public class WellGui {
 
     @Override
     public String toString() {
-        return "row: " + well.getRowNumber() + ", column: " + well.getColumnNumber() + ", number of wellHasImagingTypes: " + well.getWellHasImagingTypeCollection().size();
+        return "row: " + well.getRowNumber() + ", column: " + well.getColumnNumber() + ", number of wellHasImagingTypes: " + well.getWellHasImagingTypeList().size();
     }
 }

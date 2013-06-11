@@ -7,8 +7,8 @@ package be.ugent.maf.cellmissy.entity;
 import java.io.File;
 import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -102,7 +102,7 @@ public class Experiment implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
     @OrderBy("plateConditionid")
-    private Collection<PlateCondition> plateConditionCollection;
+    private List<PlateCondition> plateConditionList;
     @Transient
     private File experimentFolder;
     @Transient
@@ -263,12 +263,12 @@ public class Experiment implements Serializable {
     }
 
     @XmlTransient
-    public Collection<PlateCondition> getPlateConditionCollection() {
-        return plateConditionCollection;
+    public List<PlateCondition> getPlateConditionList() {
+        return plateConditionList;
     }
 
-    public void setPlateConditionCollection(Collection<PlateCondition> plateConditionCollection) {
-        this.plateConditionCollection = plateConditionCollection;
+    public void setPlateConditionList(List<PlateCondition> plateConditionList) {
+        this.plateConditionList = plateConditionList;
     }
 
     @Override

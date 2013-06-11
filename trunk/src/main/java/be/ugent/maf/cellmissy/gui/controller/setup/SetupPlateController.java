@@ -156,7 +156,7 @@ public class SetupPlateController {
             wellGui.setRectangle(null);
         }
         for (PlateCondition plateCondition : setupExperimentController.getPlateConditionBindingList()) {
-            plateCondition.getWellCollection().clear();
+            plateCondition.getWellList().clear();
         }
     }
 
@@ -171,7 +171,7 @@ public class SetupPlateController {
         //remove the rectangles from the map and call the repaint
         setupPlatePanel.getRectangles().get(plateCondition).clear();
         setupPlatePanel.repaint();
-        Collection<Well> wellCollection = plateCondition.getWellCollection();
+        Collection<Well> wellCollection = plateCondition.getWellList();
         // set to null the rectangles of the wellguis of this condition
         for (WellGui wellGui : setupPlatePanel.getWellGuiList()) {
             for (Well well : wellCollection) {
@@ -317,7 +317,7 @@ public class SetupPlateController {
         // before cleaning the plate panel, put all sizes of well collections in a list
         List<Integer> list = new ArrayList<>();
         for (PlateCondition plateCondition : plateConditionBindingList) {
-            list.add(plateCondition.getWellCollection().size());
+            list.add(plateCondition.getWellList().size());
         }
         // reset the entire plate
         onClearPlate();
@@ -346,7 +346,7 @@ public class SetupPlateController {
                 }
             }
             // take the random wells list and assign to the condition
-            plateConditionBindingList.get(i).setWellCollection(randomWells);
+            plateConditionBindingList.get(i).setWellList(randomWells);
         }
         //repaint the setup plate panel
         setupPlatePanel.repaint();
@@ -401,7 +401,7 @@ public class SetupPlateController {
                     //if the selection of wells is valid (wells do not already have a condition set), add the rectangle to the map
                     if (setupExperimentController.updateWellCollection(setupExperimentController.getCurrentCondition(), rectangle)) {
                         setupPlatePanel.getRectangles().get(setupExperimentController.getCurrentCondition()).add(rectangle);
-                        for (Well well : setupExperimentController.getCurrentCondition().getWellCollection()) {
+                        for (Well well : setupExperimentController.getCurrentCondition().getWellList()) {
                             if (well.getPlateCondition() == null) {
                                 well.setPlateCondition(setupExperimentController.getCurrentCondition());
                             }

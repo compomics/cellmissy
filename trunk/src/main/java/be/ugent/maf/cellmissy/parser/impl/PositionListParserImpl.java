@@ -82,7 +82,7 @@ public class PositionListParserImpl implements PositionListParser {
                             }
                         }
                         // set the Collection of WellHasImagingTypes with the current List
-                        imagingType.setWellHasImagingTypeCollection(wellHasImagingTypeList);
+                        imagingType.setWellHasImagingTypeList(wellHasImagingTypeList);
 
                     } catch (FileNotFoundException e) {
                         LOG.error(e.getMessage(), e);

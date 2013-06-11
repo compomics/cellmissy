@@ -10,7 +10,6 @@ import be.ugent.maf.cellmissy.gui.controller.load.cellmia.LoadExperimentFromCell
 import be.ugent.maf.cellmissy.gui.controller.analysis.DataAnalysisController;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
-import be.ugent.maf.cellmissy.gui.project.NewProjectDialog;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.CardLayout;
 import java.awt.Cursor;
@@ -20,14 +19,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Iterator;
 import java.util.logging.Level;
-import javax.persistence.PersistenceException;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.ELProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +47,9 @@ public class CellMissyController {
     //main frame
     CellMissyFrame cellMissyFrame;
     // subviews
-    private NewProjectDialog newProjectDialog;
     //child controllers
     @Autowired
     private LoginController loginController;
-    @Autowired
-    private OverviewController overviewController;
     @Autowired
     private UserManagementController userManagementController;
     @Autowired
@@ -121,7 +113,6 @@ public class CellMissyController {
         loadExperimentFromCellMiaController.init();
         loadExperimentFromGenericInputController.init();
         dataAnalysisController.init();
-        overviewController.init();
         loginController.init();
         userManagementController.init();
 
@@ -208,23 +199,12 @@ public class CellMissyController {
     public void initAdminSection() {
         // menu item and create project item are not enabled for standand users
         cellMissyFrame.getUserMenuItem().setEnabled(true);
-        cellMissyFrame.getNewProjectMenuItem().setEnabled(true);
+        setupExperimentController.getExperimentInfoPanel().getNewProjectButton().setEnabled(true);
         // user management
         cellMissyFrame.getUserMenuItem().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 userManagementController.showUserManagementDialog();
-            }
-        });
-        // create a new  project
-        cellMissyFrame.getNewProjectMenuItem().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                newProjectDialog.getProjectNumberTextField().setText("");
-                newProjectDialog.getDescriptionTextArea().setText("");
-                // show a newProjectDialog
-                newProjectDialog.pack();
-                newProjectDialog.setVisible(true);
             }
         });
     }
@@ -235,7 +215,7 @@ public class CellMissyController {
     public void disableAdminSection() {
         cellMissyFrame.getUserMenuItem().setEnabled(false);
         // disable actions on experiments for standard users
-        overviewController.disableActionsOnExperiments();
+        setupExperimentController.disableActionsOnExperiments();
     }
 
     /**
@@ -282,60 +262,6 @@ public class CellMissyController {
                 switch (option) {
                     case JOptionPane.YES_OPTION:
                         System.exit(0);
-                }
-            }
-        });
-
-        // view all projects/experiments
-        cellMissyFrame.getOverviewMenuItem().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // show a overviewProjectsDialog through child controller
-                overviewController.showOverviewDialog();
-            }
-        });
-
-        // customize dialog
-        newProjectDialog = new NewProjectDialog(cellMissyFrame, true);
-        //center the dialog on the main screen
-        newProjectDialog.setLocationRelativeTo(cellMissyFrame);
-        // set icon for info label
-        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
-        newProjectDialog.getInfoLabel().setIcon(scaledIcon);
-
-        // create a new project
-        newProjectDialog.getCreateProjectButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //create new project: save it to DB and create folder on the server
-                if (!newProjectDialog.getProjectNumberTextField().getText().isEmpty()) {
-                    try {
-                        int projectNumber = Integer.parseInt(newProjectDialog.getProjectNumberTextField().getText());
-                        //project description is not mandatory
-                        String projectDescription = newProjectDialog.getDescriptionTextArea().getText();
-                        setupExperimentController.createNewProject(projectNumber, projectDescription);
-                        LOG.info("project " + projectNumber + " (" + projectDescription + ") " + "was created");
-                        // creation of new project was successfull
-                        showMessage("Project was created!", "Project created", JOptionPane.INFORMATION_MESSAGE);
-                        newProjectDialog.getProjectNumberTextField().setText("");
-                        newProjectDialog.getDescriptionTextArea().setText("");
-                        // close the dialog
-                        newProjectDialog.setVisible(false);
-                    } catch (PersistenceException exception) {
-                        showMessage("Project already present in the DB", "Error in persisting project", JOptionPane.WARNING_MESSAGE);
-                        LOG.error(exception.getMessage());
-                        newProjectDialog.getProjectNumberTextField().setText("");
-                        newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
-                    } catch (NumberFormatException exception) {
-                        showMessage("Please insert a valid number", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
-                        LOG.error(exception.getMessage());
-                        newProjectDialog.getProjectNumberTextField().setText("");
-                        newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
-                    }
-                } else {
-                    showMessage("Please insert a number for the project you want to create", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
-                    newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
                 }
             }
         });

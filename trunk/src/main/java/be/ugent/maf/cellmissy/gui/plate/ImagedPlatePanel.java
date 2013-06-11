@@ -17,7 +17,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -84,11 +83,10 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
 
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
-        List<PlateCondition> plateConditions = new ArrayList<>();
-        plateConditions.addAll(experiment.getPlateConditionCollection());
+        List<PlateCondition> plateConditions = experiment.getPlateConditionList();
 
         for (PlateCondition plateCondition : plateConditions) {
-            for (Well well : plateCondition.getWellCollection()) {
+            for (Well well : plateCondition.getWellList()) {
                 for (WellGui wellGui : wellGuiList) {
                     if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
 
@@ -132,18 +130,18 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
 
                 // if a color of a wellGui has been changed, keep track of it when resizing
                 // if a well was not imaged, set its color to the default one (just redraw the well)
-                if (wellGui.getWell().getWellHasImagingTypeCollection().isEmpty()) {
+                if (wellGui.getWell().getWellHasImagingTypeList().isEmpty()) {
                     Color defaultColor = GuiUtils.getDefaultColor();
                     g2d.setColor(defaultColor);
                     g2d.draw(ellipse2D);
                 } else {
                     // if it has been imaged, set its color to a different one (for each ellipse2D present)
                     // this time we need to call a fill and not a draw anymore
-                    List<ImagingType> uniqueImagingTypes = getUniqueImagingTypes(wellGui.getWell().getWellHasImagingTypeCollection());
+                    List<ImagingType> uniqueImagingTypes = getUniqueImagingTypes(wellGui.getWell().getWellHasImagingTypeList());
                     // how many imaging types we have?
                     int length = GuiUtils.getImagingTypeColors().length;
-                    ImagingType currentImagingType = uniqueImagingTypes.get(i);
-                    int indexOfImagingType = imagingTypeList.indexOf(currentImagingType);
+                    ImagingType currentIT = uniqueImagingTypes.get(i);
+                    int indexOfImagingType = imagingTypeList.indexOf(currentIT);
                     int indexOfColor = indexOfImagingType % length;
                     Color color = GuiUtils.getImagingTypeColors()[indexOfColor];
                     g2d.setColor(color);
@@ -166,7 +164,7 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
      * @param wellHasImagingTypes
      * @return
      */
-    public List<ImagingType> getUniqueImagingTypes(Collection<WellHasImagingType> wellHasImagingTypes) {
+    public List<ImagingType> getUniqueImagingTypes(List<WellHasImagingType> wellHasImagingTypes) {
         List<ImagingType> imagingTypes = new ArrayList<>();
 
         for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {

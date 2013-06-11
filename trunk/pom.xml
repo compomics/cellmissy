@@ -5,7 +5,7 @@
 
     <groupId>be.ugent.maf</groupId>
     <artifactId>CellMissy</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <name>CellMissy</name>
@@ -294,6 +294,7 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.18</version>
         </dependency>
+ 
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>jsr250-api</artifactId>

@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -48,7 +48,7 @@ public class TreatmentType implements Serializable {
     @Column(name = "treatment_category")
     private Integer treatmentCategory;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "treatmentType")
-    private Collection<Treatment> treatmentCollection;
+    private List<Treatment> treatmentList;
 
     public TreatmentType() {
     }
@@ -86,12 +86,12 @@ public class TreatmentType implements Serializable {
         this.treatmentCategory = treatmentCategory;
     }
 
-    public Collection<Treatment> getTreatmentCollection() {
-        return treatmentCollection;
+    public List<Treatment> getTreatmentList() {
+        return treatmentList;
     }
 
-    public void setTreatmentCollection(Collection<Treatment> treatmentCollection) {
-        this.treatmentCollection = treatmentCollection;
+    public void setTreatmentList(List<Treatment> treatmentList) {
+        this.treatmentList = treatmentList;
     }
 
     @Override

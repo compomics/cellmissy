@@ -31,7 +31,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -231,7 +230,7 @@ public class SetupReportController {
     private void addParagraphPerCondition() {
         // add main title for section
         PdfUtils.addTitle(document, "BIOLOGICAL CONDITIONS", titleFont);
-        List<PlateCondition> plateConditions = new ArrayList(experiment.getPlateConditionCollection());
+        List<PlateCondition> plateConditions = new ArrayList(experiment.getPlateConditionList());
         for (int i = 0; i < plateConditions.size(); i++) {
             Paragraph paragraph = new Paragraph("" + plateConditions.get(i).getName(), titleFont);
             //set font color to condition index
@@ -264,10 +263,10 @@ public class SetupReportController {
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, titleFont);
         lines.clear();
-        Collection<Well> wellCollection = plateCondition.getWellCollection();
-        line = "Number of wells: " + wellCollection.size();
+        List<Well> wellList = plateCondition.getWellList();
+        line = "Number of wells: " + wellList.size();
         lines.add(line);
-        line = "Wells (column, row): " + wellCollection;
+        line = "Wells (column, row): " + wellList;
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         lines.clear();
@@ -384,7 +383,7 @@ public class SetupReportController {
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, titleFont);
         lines.clear();
-        List<Treatment> treatments = new ArrayList<>(plateCondition.getTreatmentCollection());
+        List<Treatment> treatments = plateCondition.getTreatmentList();
         for (int i = 0; i < treatments.size(); i++) {
             Treatment treatment = treatments.get(i);
             line = "Treatment type: " + treatment.getTreatmentType();
@@ -419,8 +418,7 @@ public class SetupReportController {
         PdfUtils.addCustomizedCell(dataTable, "ECM", titleFont);
         PdfUtils.addCustomizedCell(dataTable, "Treatments", titleFont);
         PdfUtils.addCustomizedCell(dataTable, "Assay(Medium, %Serum)", titleFont);
-        Collection<PlateCondition> plateConditionCollection = experiment.getPlateConditionCollection();
-        List<PlateCondition> plateConditions = new ArrayList<>(plateConditionCollection);
+        List<PlateCondition> plateConditions = experiment.getPlateConditionList();
         int lenght = GuiUtils.getAvailableColors().length;
         for (int i = 0; i < plateConditions.size(); i++) {
             PlateCondition plateCondition = plateConditions.get(i);
@@ -432,7 +430,7 @@ public class SetupReportController {
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssay().getMatrixDimension().getDimension(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssay().getAssayType(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getEcm().toString(), bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, plateCondition.getTreatmentCollection().toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getTreatmentList().toString(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssayMedium().toString(), bodyFont);
         }
         return dataTable;

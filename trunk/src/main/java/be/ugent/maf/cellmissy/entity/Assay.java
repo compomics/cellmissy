@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -45,7 +45,7 @@ public class Assay implements Serializable {
     @ManyToOne(optional = false)
     private MatrixDimension matrixDimension;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "assay")
-    private Collection<PlateCondition> plateConditionCollection;
+    private List<PlateCondition> plateConditionList;
 
     public Assay() {
     }
@@ -79,12 +79,12 @@ public class Assay implements Serializable {
     }
 
     @XmlTransient
-    public Collection<PlateCondition> getPlateConditionCollection() {
-        return plateConditionCollection;
+    public List<PlateCondition> getPlateConditionList() {
+        return plateConditionList;
     }
 
-    public void setPlateConditionCollection(Collection<PlateCondition> plateConditionCollection) {
-        this.plateConditionCollection = plateConditionCollection;
+    public void setPlateConditionList(List<PlateCondition> plateConditionList) {
+        this.plateConditionList = plateConditionList;
     }
 
     @Override

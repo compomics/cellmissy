@@ -108,20 +108,20 @@ public class ExperimentRepositoryTest {
         for (Well well : wells) {
             wellHasImagingTypes = new ArrayList<>();
             WellHasImagingType wellHasImagingType = new WellHasImagingType(well, firstImagingType, algorithm);
-            wellHasImagingType.setTimeStepCollection(timeStepList);
+            wellHasImagingType.setTimeStepList(timeStepList);
             for (TimeStep timeStep : timeStepList) {
                 timeStep.setWellHasImagingType(wellHasImagingType);
             }
-            wellHasImagingType.setTrackCollection(trackList);
+            wellHasImagingType.setTrackList(trackList);
             for (Track track : trackList) {
                 track.setWellHasImagingType(wellHasImagingType);
             }
             wellHasImagingTypes.add(wellHasImagingType);
             globalWellHasImagingTypes.add(wellHasImagingType);
-            well.setWellHasImagingTypeCollection(wellHasImagingTypes);
+            well.setWellHasImagingTypeList(wellHasImagingTypes);
         }
 
-        firstPlateCondition.setWellCollection(wells);
+        firstPlateCondition.setWellList(wells);
         // assay, assay medium, ecm, cell line
         firstPlateCondition.setAssay(assayRepository.findByMatrixDimensionName("2D").get(0));
         firstPlateCondition.setAssayMedium(new AssayMedium("medium1", "serum1", 1.0, 5.0));
@@ -153,23 +153,23 @@ public class ExperimentRepositoryTest {
         for (Well well : wells) {
             wellHasImagingTypes = new ArrayList<>();
             WellHasImagingType wellHasImagingType = new WellHasImagingType(well, firstImagingType, algorithm);
-            wellHasImagingType.setTimeStepCollection(timeStepList);
+            wellHasImagingType.setTimeStepList(timeStepList);
             for (TimeStep timeStep : timeStepList) {
                 timeStep.setWellHasImagingType(wellHasImagingType);
             }
-            wellHasImagingType.setTrackCollection(trackList);
+            wellHasImagingType.setTrackList(trackList);
             for (Track track : trackList) {
                 track.setWellHasImagingType(wellHasImagingType);
             }
             wellHasImagingTypes.add(wellHasImagingType);
             globalWellHasImagingTypes.add(wellHasImagingType);
-            well.setWellHasImagingTypeCollection(wellHasImagingTypes);
+            well.setWellHasImagingTypeList(wellHasImagingTypes);
         }
 
-        firstImagingType.setWellHasImagingTypeCollection(globalWellHasImagingTypes);
-        algorithm.setWellHasImagingTypeCollection(globalWellHasImagingTypes);
+        firstImagingType.setWellHasImagingTypeList(globalWellHasImagingTypes);
+        algorithm.setWellHasImagingTypeList(globalWellHasImagingTypes);
 
-        secondPlateCondition.setWellCollection(wells);
+        secondPlateCondition.setWellList(wells);
         // assay, assay medium, ecm, cell line
         secondPlateCondition.setAssay(assayRepository.findByMatrixDimensionName("3D").get(0));
         secondPlateCondition.setAssayMedium(new AssayMedium("medium2", "serum2", 2.0, 10.0));
@@ -181,7 +181,7 @@ public class ExperimentRepositoryTest {
         List<PlateCondition> plateConditions = new ArrayList<>();
         plateConditions.add(firstPlateCondition);
         plateConditions.add(secondPlateCondition);
-        experiment.setPlateConditionCollection(plateConditions);
+        experiment.setPlateConditionList(plateConditions);
         experiment.setExperimentStatus(ExperimentStatus.IN_PROGRESS);
 
         //instrument, magnification and user fields
@@ -191,18 +191,18 @@ public class ExperimentRepositoryTest {
 
         Experiment savedExperiment = experimentRepository.update(experiment);
         Assert.assertNotNull(savedExperiment.getExperimentid());
-        Assert.assertEquals(2, savedExperiment.getPlateConditionCollection().size());
-        Collection<PlateCondition> plateConditionCollection = savedExperiment.getPlateConditionCollection();
-        for (PlateCondition plateCondition : plateConditionCollection) {
-            Assert.assertEquals(3, plateCondition.getWellCollection().size());
-            for (Well well : plateCondition.getWellCollection()) {
-                Assert.assertEquals(1, well.getWellHasImagingTypeCollection().size());
+        Assert.assertEquals(2, savedExperiment.getPlateConditionList().size());
+        List<PlateCondition> plateConditionList = savedExperiment.getPlateConditionList();
+        for (PlateCondition plateCondition : plateConditionList) {
+            Assert.assertEquals(3, plateCondition.getWellList().size());
+            for (Well well : plateCondition.getWellList()) {
+                Assert.assertEquals(1, well.getWellHasImagingTypeList().size());
             }
         }
         // test plate format
         Assert.assertEquals(plateFormatRepository.findByFormat(6), savedExperiment.getPlateFormat());
         // collection of the algorithm and the imaging type
-        Assert.assertEquals(6, algorithm.getWellHasImagingTypeCollection().size());
-        Assert.assertEquals(6, firstImagingType.getWellHasImagingTypeCollection().size());
+        Assert.assertEquals(6, algorithm.getWellHasImagingTypeList().size());
+        Assert.assertEquals(6, firstImagingType.getWellHasImagingTypeList().size());
     }
 }

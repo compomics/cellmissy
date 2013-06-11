@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Magnification.findByMagnificationid", query = "SELECT m FROM Magnification m WHERE m.magnificationid = :magnificationid"),
     @NamedQuery(name = "Magnification.findByMagnificationNumber", query = "SELECT m FROM Magnification m WHERE m.magnificationNumber = :magnificationNumber")})
 public class Magnification implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +42,7 @@ public class Magnification implements Serializable {
     @Column(name = "magnification_number")
     private String magnificationNumber;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "magnification")
-    private Collection<Experiment> experimentCollection;
+    private List<Experiment> experimentList;
 
     public Magnification() {
     }
@@ -58,7 +59,7 @@ public class Magnification implements Serializable {
         this.magnificationid = magnificationid;
     }
 
-    public String getMagnificationNumber() {
+    public String getMagnficationNumber() {
         return magnificationNumber;
     }
 
@@ -67,12 +68,12 @@ public class Magnification implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Experiment> getExperimentCollection() {
-        return experimentCollection;
+    public List<Experiment> getExperimentList() {
+        return experimentList;
     }
 
-    public void setExperimentCollection(Collection<Experiment> experimentCollection) {
-        this.experimentCollection = experimentCollection;
+    public void setExperimentList(List<Experiment> experimentList) {
+        this.experimentList = experimentList;
     }
 
     @Override
@@ -99,5 +100,4 @@ public class Magnification implements Serializable {
     public String toString() {
         return magnificationNumber;
     }
-    
 }

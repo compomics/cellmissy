@@ -27,7 +27,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -244,7 +243,7 @@ public class CellMiaImagedPlateController {
     private void onCancel() {
         for (WellGui wellGui : imagedPlatePanel.getWellGuiList()) {
             //empty the collection of WellHasImagingType (so color is set to default) but ONLY for current Imaging Type
-            Iterator<WellHasImagingType> iterator = wellGui.getWell().getWellHasImagingTypeCollection().iterator();
+            Iterator<WellHasImagingType> iterator = wellGui.getWell().getWellHasImagingTypeList().iterator();
             while (iterator.hasNext()) {
                 if (iterator.next().getImagingType().equals(imagedPlatePanel.getCurrentImagingType())) {
                     iterator.remove();
@@ -278,13 +277,13 @@ public class CellMiaImagedPlateController {
 
         if (currentImagingTypeIndex != 0) {
             for (WellGui wellGui : wellGuiList) {
-                if (containsImagingType(wellGui.getWell().getWellHasImagingTypeCollection(), currentImagingType)) {
+                if (containsImagingType(wellGui.getWell().getWellHasImagingTypeList(), currentImagingType)) {
 
                     List<Ellipse2D> ellipsi = wellGui.getEllipsi();
                     // get the bigger ellipsi and calculate factors for the new ones (concentric wells)
                     Ellipse2D ellipse2D = ellipsi.get(currentImagingTypeIndex - 1);
                     double size = ellipse2D.getHeight();
-                    double newSize = (size / imagedPlatePanel.getUniqueImagingTypes(wellGui.getWell().getWellHasImagingTypeCollection()).size());
+                    double newSize = (size / imagedPlatePanel.getUniqueImagingTypes(wellGui.getWell().getWellHasImagingTypeList()).size());
                     double newTopLeftX = ellipse2D.getCenterX() - (newSize / 2);
                     double newTopLeftY = ellipse2D.getCenterY() - (newSize / 2);
 
@@ -310,7 +309,7 @@ public class CellMiaImagedPlateController {
 
         for (WellGui wellGui : imagedPlatePanel.getWellGuiList()) {
             //check if the wellGui was imaged
-            if (!wellGui.getWell().getWellHasImagingTypeCollection().isEmpty()) {
+            if (!wellGui.getWell().getWellHasImagingTypeList().isEmpty()) {
                 //check if the imaged wellGui has a condition
                 if (wellGui.getRectangle() == null) {
                     isSelectionValid = false;
@@ -328,7 +327,7 @@ public class CellMiaImagedPlateController {
      * @param imagingType
      * @return
      */
-    private boolean containsImagingType(Collection<WellHasImagingType> wellHasImagingTypes, ImagingType imagingType) {
+    private boolean containsImagingType(List<WellHasImagingType> wellHasImagingTypes, ImagingType imagingType) {
         for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
             if (wellHasImagingType.getImagingType().equals(imagingType)) {
                 return true;

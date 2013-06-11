@@ -148,6 +148,7 @@ public class TreatmentsPanel extends javax.swing.JPanel {
         jScrollPane2.setMinimumSize(new java.awt.Dimension(20, 20));
         jScrollPane2.setOpaque(false);
 
+        sourceList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         sourceList1.setToolTipText("");
         jScrollPane2.setViewportView(sourceList1);
 
@@ -164,6 +165,7 @@ public class TreatmentsPanel extends javax.swing.JPanel {
         jScrollPane4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Treatments", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
         jScrollPane4.setOpaque(false);
 
+        sourceList2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         sourceList2.setToolTipText("");
         jScrollPane4.setViewportView(sourceList2);
 

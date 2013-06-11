@@ -37,8 +37,6 @@ import java.awt.GridBagConstraints;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -494,15 +492,17 @@ public class AreaAnalysisController {
         /**
          * Update button text if analysis was already done
          */
-        linearRegressionPanel.getGroupsList().addMouseListener(new MouseAdapter() {
+        linearRegressionPanel.getGroupsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                int locationToIndex = linearRegressionPanel.getGroupsList().locationToIndex(e.getPoint());
-                if (locationToIndex != -1) {
-                    if (groupsBindingList.get(locationToIndex).getpValuesMatrix() == null) {
-                        linearRegressionPanel.getStatisticsButton().setText("Perform Statistical Analysis...");
-                    } else {
-                        linearRegressionPanel.getStatisticsButton().setText("Modify Statistical Analysis...");
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        if (groupsBindingList.get(selectedIndex).getpValuesMatrix() == null) {
+                            linearRegressionPanel.getStatisticsButton().setText("Perform Statistical Analysis...");
+                        } else {
+                            linearRegressionPanel.getStatisticsButton().setText("Modify Statistical Analysis...");
+                        }
                     }
                 }
             }

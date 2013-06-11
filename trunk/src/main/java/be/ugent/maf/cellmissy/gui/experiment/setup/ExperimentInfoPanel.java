@@ -11,6 +11,7 @@
 package be.ugent.maf.cellmissy.gui.experiment.setup;
 
 import com.toedter.calendar.JDateChooser;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -79,6 +80,14 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
         return genericRadioButton;
     }
 
+    public JButton getNewProjectButton() {
+        return newProjectButton;
+    }
+
+    public JButton getOverviewButton() {
+        return overviewButton;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -117,6 +126,9 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
         imageAnalysisLabel = new javax.swing.JLabel();
         cellMiaRadioButton = new javax.swing.JRadioButton();
         genericRadioButton = new javax.swing.JRadioButton();
+        jPanel1 = new javax.swing.JPanel();
+        newProjectButton = new javax.swing.JButton();
+        overviewButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(20, 20));
@@ -144,6 +156,7 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+        projectJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         projectJList.setMinimumSize(new java.awt.Dimension(10, 10));
         projectJList.setName(""); // NOI18N
         projectJList.setPreferredSize(new java.awt.Dimension(10, 10));
@@ -167,6 +180,7 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
         jScrollPane3.setOpaque(false);
         jScrollPane3.setPreferredSize(new java.awt.Dimension(10, 10));
 
+        experimentJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane3.setViewportView(experimentJList);
 
         javax.swing.GroupLayout overviewPanelLayout = new javax.swing.GroupLayout(overviewPanel);
@@ -206,7 +220,7 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
                 .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 22, Short.MAX_VALUE)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -356,6 +370,40 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Add a project/Overview"));
+        jPanel1.setMinimumSize(new java.awt.Dimension(20, 20));
+        jPanel1.setName(""); // NOI18N
+        jPanel1.setOpaque(false);
+        jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        newProjectButton.setText("add a new project");
+
+        overviewButton.setText("overview projects");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(newProjectButton)
+                    .addComponent(overviewButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {newProjectButton, overviewButton});
+
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addComponent(newProjectButton)
+                .addGap(18, 18, 18)
+                .addComponent(overviewButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -368,14 +416,19 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(imageAnalysisDataPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(microscopeDataPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE))
-                .addContainerGap(88, Short.MAX_VALUE))
+                    .addComponent(microscopeDataPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE))
+                .addContainerGap(366, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(overviewPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE))
+                    .addComponent(overviewPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(experimentDataPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -403,14 +456,17 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JComboBox magnificationComboBox;
     private javax.swing.JPanel microscopeDataPanel;
+    private javax.swing.JButton newProjectButton;
     private javax.swing.JLabel numberLabel;
     private javax.swing.JTextField numberTextField;
+    private javax.swing.JButton overviewButton;
     private javax.swing.JPanel overviewPanel;
     private javax.swing.JTextArea projectDescriptionTextArea;
     private javax.swing.JList projectJList;

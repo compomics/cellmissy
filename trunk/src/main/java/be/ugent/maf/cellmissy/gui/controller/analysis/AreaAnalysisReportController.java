@@ -197,13 +197,13 @@ public class AreaAnalysisReportController {
         PdfUtils.addEmptyLines(document, 1);
         // add conditions number
         lines.clear();
-        line = "Number of conditions: " + experiment.getPlateConditionCollection().size();
+        line = "Number of conditions: " + experiment.getPlateConditionList().size();
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
         // add conditions info
         lines.clear();
-        List<PlateCondition> plateConditonsList = new ArrayList<>(experiment.getPlateConditionCollection());
+        List<PlateCondition> plateConditonsList = experiment.getPlateConditionList();
         for (PlateCondition plateCondition : plateConditonsList) {
             lines.add("Condition " + (plateConditonsList.indexOf(plateCondition) + 1) + ": " + plateCondition.toString());
         }
@@ -225,7 +225,7 @@ public class AreaAnalysisReportController {
      * @param plotPoints
      */
     private void addGlobalAreaChart(boolean plotPoints) {
-        List<PlateCondition> plateConditonsList = new ArrayList<>(experiment.getPlateConditionCollection());
+        List<PlateCondition> plateConditonsList = experiment.getPlateConditionList();
         MeasuredAreaType measuredAreaType = areaAnalysisController.getMeasuredAreaType();
         // create chart (for all conditions, error bars on top, both lines and points)
         JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, useCorrectedData, true, true, plotPoints, measuredAreaType);
@@ -238,7 +238,7 @@ public class AreaAnalysisReportController {
      * conditions
      */
     private void addGlobalVelocityChart() {
-        List<PlateCondition> plateConditonsList = new ArrayList<>(experiment.getPlateConditionCollection());
+        List<PlateCondition> plateConditonsList = experiment.getPlateConditionList();
         int[] conditionsToShow = new int[plateConditonsList.size()];
         for (int i = 0; i < conditionsToShow.length; i++) {
             conditionsToShow[i] = i;
@@ -289,7 +289,7 @@ public class AreaAnalysisReportController {
      */
     private PdfPTable createConditionsInfoTable() {
         Map<PlateCondition, AreaPreProcessingResults> preProcessingMap = areaAnalysisController.getPreProcessingMap();
-        List<PlateCondition> plateConditionList = new ArrayList<>(experiment.getPlateConditionCollection());
+        List<PlateCondition> plateConditionList = experiment.getPlateConditionList();
         // new table with 5 columns
         PdfPTable dataTable = new PdfPTable(5);
         PdfUtils.setUpPdfPTable(dataTable);

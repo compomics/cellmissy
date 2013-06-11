@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -49,10 +49,10 @@ public class ImagingType implements Serializable {
     @Column(name = "exposure_time")
     private Double exposureTime;
     @OneToMany(mappedBy = "imagingType")
-    private Collection<WellHasImagingType> wellHasImagingTypeCollection;
+    private List<WellHasImagingType> wellHasImagingTypeList;
     @Transient
     private String exposureTimeUnit;
-    
+
     public ImagingType() {
     }
 
@@ -93,12 +93,12 @@ public class ImagingType implements Serializable {
     }
 
     @XmlTransient
-    public Collection<WellHasImagingType> getWellHasImagingTypeCollection() {
-        return wellHasImagingTypeCollection;
+    public List<WellHasImagingType> getWellHasImagingTypeList() {
+        return wellHasImagingTypeList;
     }
 
-    public void setWellHasImagingTypeCollection(Collection<WellHasImagingType> wellHasImagingTypeCollection) {
-        this.wellHasImagingTypeCollection = wellHasImagingTypeCollection;
+    public void setWellHasImagingTypeList(List<WellHasImagingType> wellHasImagingTypeList) {
+        this.wellHasImagingTypeList = wellHasImagingTypeList;
     }
 
     public String getExposureTimeUnit() {

@@ -56,7 +56,8 @@ public class WellServiceImpl implements WellService {
     private Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> algoMap;
 
     /**
-     * Given first well imaged and an imaging type, this method is predicting the imaged pattern of wells on the given plate format
+     * Given first well imaged and an imaging type, this method is predicting
+     * the imaged pattern of wells on the given plate format
      *
      * @param imagingType
      * @param plateFormat
@@ -88,13 +89,14 @@ public class WellServiceImpl implements WellService {
                 // given the two coordinates found, find the correspondent wellgui
                 WellGui wellGui = getWellGuiByCoords(wellGuiList, shiftedX, shiftedY);
                 // add the wellhasimagingtype to the well of the found wellgui
-                wellGui.getWell().getWellHasImagingTypeCollection().add(wellHasImagingType);
+                wellGui.getWell().getWellHasImagingTypeList().add(wellHasImagingType);
             }
         }
     }
 
     /**
-     * Given a list of wellGui and x and y shifted values, find a certain wellGui
+     * Given a list of wellGui and x and y shifted values, find a certain
+     * wellGui
      *
      * @param wellGuiList
      * @param shiftedX
@@ -111,7 +113,8 @@ public class WellServiceImpl implements WellService {
     }
 
     /**
-     * Initialize CellMia data service, microscope data service and process data from the microscope
+     * Initialize CellMia data service, microscope data service and process data
+     * from the microscope
      *
      * @param experiment
      */
@@ -159,15 +162,16 @@ public class WellServiceImpl implements WellService {
         wellRepository.delete(entity);
     }
 
-   /**
-    * Get the global algorithm map from CellMia data service
-    * @return
-    * @throws FileParserException
-    * @throws PositionListMismatchException
-    * @throws CellMiaDataLoadingException 
-    */
+    /**
+     * Get the global algorithm map from CellMia data service
+     *
+     * @return
+     * @throws FileParserException
+     * @throws PositionListMismatchException
+     * @throws CellMiaDataLoadingException
+     */
     @Override
-    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException, CellMiaDataLoadingException{
+    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException, CellMiaDataLoadingException {
         algoMap = cellMiaDataService.processCellMiaData();
         return algoMap;
     }
@@ -204,17 +208,17 @@ public class WellServiceImpl implements WellService {
     @Override
     public void fetchTimeSteps(Well well, Long AlgorithmId, Long ImagingTpeId) {
         //for well, get the wellhasimagingtypes for a certain algorithm and imaging type
-        List<WellHasImagingType> wellHasImagingTypeCollection = new ArrayList<>();
+        List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
         List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
         // if samples are not null (the correspondent wells were actually  imaged), fetch their time steps
         if (wellHasImagingTypes != null) {
             for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
-                Hibernate.initialize(wellHasImagingType.getTimeStepCollection());
-                wellHasImagingTypeCollection.add(wellHasImagingType);
+                Hibernate.initialize(wellHasImagingType.getTimeStepList());
+                wellHasImagingTypeList.add(wellHasImagingType);
             }
         }
-        // else, the collection stays empty
-        well.setWellHasImagingTypeCollection(wellHasImagingTypeCollection);
+        // else, the list stays empty
+        well.setWellHasImagingTypeList(wellHasImagingTypeList);
     }
 
     /**
@@ -228,13 +232,13 @@ public class WellServiceImpl implements WellService {
     public void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId) {
         List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
         if (wellHasImagingTypes != null) {
-            List<WellHasImagingType> wellHasImagingTypeCollection = new ArrayList<>();
+            List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
             for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
-                //fetch time step collection of that wellHasImagingType
-                Hibernate.initialize(wellHasImagingType.getTrackCollection());
-                wellHasImagingTypeCollection.add(wellHasImagingType);
+                //fetch time step list of that wellHasImagingType
+                Hibernate.initialize(wellHasImagingType.getTrackList());
+                wellHasImagingTypeList.add(wellHasImagingType);
             }
-            well.setWellHasImagingTypeCollection(wellHasImagingTypeCollection);
+            well.setWellHasImagingTypeList(wellHasImagingTypeList);
         }
     }
 
@@ -249,21 +253,22 @@ public class WellServiceImpl implements WellService {
     public void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId) {
         List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
         if (wellHasImagingTypes != null) {
-            List<WellHasImagingType> wellHasImagingTypeCollection = new ArrayList<>();
+            List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
             for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
-                List<Track> tracks = new ArrayList<>(wellHasImagingType.getTrackCollection());
+                List<Track> tracks = new ArrayList<>(wellHasImagingType.getTrackList());
                 for (Track track : tracks) {
                     // fetch track points
                     fetchTrackPoints(track);
                 }
-                wellHasImagingTypeCollection.add(wellHasImagingType);
+                wellHasImagingTypeList.add(wellHasImagingType);
             }
-            well.setWellHasImagingTypeCollection(wellHasImagingTypeCollection);
+            well.setWellHasImagingTypeList(wellHasImagingTypeList);
         }
     }
 
     /**
-     * Get wellHasImagingTypes for some wells, for a certain algorithm and for a certain imagingType
+     * Get wellHasImagingTypes for some wells, for a certain algorithm and for a
+     * certain imagingType
      *
      * @param wellId
      * @param AlgorithmId
@@ -280,13 +285,13 @@ public class WellServiceImpl implements WellService {
      * @param track
      */
     private void fetchTrackPoints(Track track) {
-        Hibernate.initialize(track.getTrackPointCollection());
+        Hibernate.initialize(track.getTrackPointList());
         List<Track> tracks = new ArrayList<>();
         tracks.add(track);
     }
 
     @Override
-    public int getNumberOfSamples() throws CellMiaDataLoadingException{
+    public int getNumberOfSamples() throws CellMiaDataLoadingException {
         return cellMiaDataService.getNumberOfSamples();
     }
 
