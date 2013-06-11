@@ -41,8 +41,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
@@ -54,6 +52,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Binding;
@@ -397,29 +397,37 @@ public class SingleCellMainController {
          * add mouse listeners
          */
         //when a project from the list is selected, show all experiments performed for that project        
-        overviewExperimentPanel.getProjectJList().addMouseListener(new MouseAdapter() {
+        overviewExperimentPanel.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                // retrieve selected project
-                int locationToIndex = overviewExperimentPanel.getProjectJList().locationToIndex(e.getPoint());
-                Project selectedProject = projectBindingList.get(locationToIndex);
-                if (experiment == null || !selectedProject.equals(experiment.getProject()) || experimentBindingList.isEmpty()) {
-                    // project is being selected for the first time
-                    onSelectedProject(selectedProject);
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // retrieve selected project
+                    int selectedIndex = overviewExperimentPanel.getProjectJList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        Project selectedProject = projectBindingList.get(selectedIndex);
+                        if (experiment == null || !selectedProject.equals(experiment.getProject()) || experimentBindingList.isEmpty()) {
+                            // project is being selected for the first time
+                            onSelectedProject(selectedProject);
+                        }
+                    }
                 }
             }
         });
 
         //when an experiment is selected, show algorithms and imaging types used for that experiment
         //show also conditions in the Jlist behind and plate view according to the conditions setup
-        overviewExperimentPanel.getExperimentJList().addMouseListener(new MouseAdapter() {
+        overviewExperimentPanel.getExperimentJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                // retrieve selected experiment
-                int locationToIndex = overviewExperimentPanel.getExperimentJList().locationToIndex(e.getPoint());
-                Experiment selectedExperiment = experimentBindingList.get(locationToIndex);
-                if (experiment == null || !selectedExperiment.equals(experiment)) {
-                    onSelectedExperiment(selectedExperiment);
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // retrieve selected experiment
+                    int selectedIndex = overviewExperimentPanel.getExperimentJList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        Experiment selectedExperiment = experimentBindingList.get(selectedIndex);
+                        if (experiment == null || !selectedExperiment.equals(experiment)) {
+                            onSelectedExperiment(selectedExperiment);
+                        }
+                    }
                 }
             }
         });
@@ -452,21 +460,25 @@ public class SingleCellMainController {
      */
     private void initDataAnalysisPanel() {
         //when a certain condition is selected, fetch time steps for each well of the condition
-        dataAnalysisPanel.getConditionsList().addMouseListener(new MouseAdapter() {
+        dataAnalysisPanel.getConditionsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                int locationToIndex = dataAnalysisPanel.getConditionsList().locationToIndex(e.getPoint());
-                PlateCondition selectedCondition = plateConditionList.get(locationToIndex);
-                if (currentCondition == null || !currentCondition.equals(selectedCondition)) {
-                    // clean track points list if not empty
-                    if (!singleCellPreProcessingController.getTrackPointsBindingList().isEmpty()) {
-                        singleCellPreProcessingController.getTrackPointsBindingList().clear();
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    int selectedIndex = dataAnalysisPanel.getConditionsList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        PlateCondition selectedCondition = plateConditionList.get(selectedIndex);
+                        if (currentCondition == null || !currentCondition.equals(selectedCondition)) {
+                            // clean track points list if not empty
+                            if (!singleCellPreProcessingController.getTrackPointsBindingList().isEmpty()) {
+                                singleCellPreProcessingController.getTrackPointsBindingList().clear();
+                            }
+                            // Execute Swing Worker to fetch Selected Condition: 
+                            FetchConditionSwingWorker fetchConditionSwingWorker = new FetchConditionSwingWorker();
+                            fetchConditionSwingWorker.execute();
+                        }
+                        currentCondition = selectedCondition;
                     }
-                    // Execute Swing Worker to fetch Selected Condition: 
-                    FetchConditionSwingWorker fetchConditionSwingWorker = new FetchConditionSwingWorker();
-                    fetchConditionSwingWorker.execute();
                 }
-                currentCondition = selectedCondition;
             }
         });
     }
