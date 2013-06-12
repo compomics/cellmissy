@@ -48,7 +48,7 @@ public class CellMissyConfigDialog extends javax.swing.JDialog {
         resetButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("CellMissy properties");
+        setTitle("CellMissy - Properties");
         setAlwaysOnTop(true);
         setPreferredSize(new java.awt.Dimension(500, 400));
 

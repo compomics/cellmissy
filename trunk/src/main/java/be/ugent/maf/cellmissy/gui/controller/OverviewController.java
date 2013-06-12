@@ -79,7 +79,7 @@ public class OverviewController {
     /**
      * Disable buttons for STANDARD users
      */
-    public void disableActionsOnExperiments() {
+    public void disableAdminSection() {
         // disable delete experiment button
         overviewDialog.getDeleteExperimentButton().setEnabled(false);
         overviewDialog.getExperimentJList().setFocusable(false);

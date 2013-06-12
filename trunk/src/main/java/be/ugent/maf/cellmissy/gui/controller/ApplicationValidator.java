@@ -155,7 +155,7 @@ public class ApplicationValidator {
     /**
      * Handle exceptions when getting the application context
      */
-    public void getApplicationContext() {
+    public void startApplicationContext() {
         try {
             // try to get the application context
             ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();

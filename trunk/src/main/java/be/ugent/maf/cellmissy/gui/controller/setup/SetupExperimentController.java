@@ -16,7 +16,6 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
-import be.ugent.maf.cellmissy.gui.controller.OverviewController;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.setup.ExperimentInfoPanel;
@@ -100,8 +99,6 @@ public class SetupExperimentController {
     @Autowired
     private SetupConditionsController setupConditionsController;
     @Autowired
-    private OverviewController overviewController;
-    @Autowired
     private SetupPlateController setupPlateController;
     @Autowired
     private SetupReportController setupReportController;
@@ -132,7 +129,6 @@ public class SetupExperimentController {
         initNewProjectDialog();
 
         //init child controllers
-        overviewController.init();
         setupPlateController.init();
         setupConditionsController.init();
     }
@@ -172,14 +168,6 @@ public class SetupExperimentController {
 
     public ExperimentInfoPanel getExperimentInfoPanel() {
         return experimentInfoPanel;
-    }
-
-    /**
-     * public methods
-     */
-    public void disableActionsOnExperiments() {
-        overviewController.disableActionsOnExperiments();
-        experimentInfoPanel.getNewProjectButton().setEnabled(false);
     }
 
     /**
@@ -230,6 +218,11 @@ public class SetupExperimentController {
      */
     public void showMessage(String message, String title, Integer messageType) {
         cellMissyController.showMessage(message, title, messageType);
+    }
+
+    public void disableAdminSection() {
+        experimentInfoPanel.getNewProjectButton().setEnabled(false);
+
     }
 
     /**
@@ -529,15 +522,6 @@ public class SetupExperimentController {
                 // show a newProjectDialog
                 newProjectDialog.pack();
                 newProjectDialog.setVisible(true);
-            }
-        });
-
-        // get an overview of the projects
-        experimentInfoPanel.getOverviewButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // show a overviewProjectsDialog through child controller
-                overviewController.showOverviewDialog();
             }
         });
     }
