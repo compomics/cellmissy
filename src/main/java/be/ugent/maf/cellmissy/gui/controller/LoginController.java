@@ -80,10 +80,19 @@ public class LoginController {
     }
 
     /**
+     * 
+     */
+    public void showLoginDialog() {
+        //show login dialog
+        loginDialog.setLocationRelativeTo(null);
+        loginDialog.setVisible(true);
+    }
+
+    /**
      * Initialize main view
      */
     private void initLoginPanel() {
-        
+
         // request focus on user name text field
         loginDialog.getUserNameTextField().requestFocusInWindow();
 
@@ -116,10 +125,6 @@ public class LoginController {
                 cellMissyParamsController.editCellMissyParams();
             }
         });
-
-        //show login dialog
-        loginDialog.setLocationRelativeTo(null);
-        loginDialog.setVisible(true);
     }
 
     /**

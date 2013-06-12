@@ -9,20 +9,28 @@ import be.ugent.maf.cellmissy.gui.controller.load.generic.LoadExperimentFromGene
 import be.ugent.maf.cellmissy.gui.controller.load.cellmia.LoadExperimentFromCellMiaController;
 import be.ugent.maf.cellmissy.gui.controller.analysis.DataAnalysisController;
 import be.ugent.maf.cellmissy.entity.User;
+import be.ugent.maf.cellmissy.gui.AboutDialog;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
+import be.ugent.maf.cellmissy.gui.HelpDialog;
+import be.ugent.maf.cellmissy.gui.StartupDialog;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.CardLayout;
 import java.awt.Cursor;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Iterator;
 import java.util.logging.Level;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.ELProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +54,18 @@ public class CellMissyController {
     //view
     //main frame
     CellMissyFrame cellMissyFrame;
+    // startup dialog with functionalities of the software
+    private StartupDialog startupDialog;
+    private HelpDialog helpDialog;
+    private AboutDialog aboutDialog;
     // subviews
     //child controllers
     @Autowired
     private LoginController loginController;
     @Autowired
     private UserManagementController userManagementController;
+    @Autowired
+    private OverviewController overviewController;
     @Autowired
     private SetupExperimentController setupExperimentController;
     @Autowired
@@ -101,6 +115,10 @@ public class CellMissyController {
         //create main frame and set its title
         cellMissyFrame = new CellMissyFrame();
         cellMissyFrame.setTitle("CellMissy - Cell Migration Invasion Storage System");
+        // create a new startup dialog
+        startupDialog = new StartupDialog(cellMissyFrame, true);
+        aboutDialog = new AboutDialog(cellMissyFrame, true);
+        helpDialog = new HelpDialog(cellMissyFrame, true);
         // at starter, show main panel with logo
         getCardLayout().first(cellMissyFrame.getBackgroundPanel());
         // init booleans to true
@@ -113,11 +131,16 @@ public class CellMissyController {
         loadExperimentFromCellMiaController.init();
         loadExperimentFromGenericInputController.init();
         dataAnalysisController.init();
+        overviewController.init();
         loginController.init();
         userManagementController.init();
 
         // initialize main frame
         initMainFrame();
+        // initialize start up dialog
+        initStartupDialog();
+        // show login dialog 
+        loginController.showLoginDialog();
     }
 
     /**
@@ -215,7 +238,8 @@ public class CellMissyController {
     public void disableAdminSection() {
         cellMissyFrame.getUserMenuItem().setEnabled(false);
         // disable actions on experiments for standard users
-        setupExperimentController.disableActionsOnExperiments();
+        overviewController.disableAdminSection();
+        setupExperimentController.disableAdminSection();
     }
 
     /**
@@ -224,7 +248,11 @@ public class CellMissyController {
     public void enterTheApplication() {
         cellMissyFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         cellMissyFrame.setLocationRelativeTo(null);
+        // we show the main frame
         cellMissyFrame.setVisible(true);
+        GuiUtils.centerDialogOnFrame(cellMissyFrame, startupDialog);
+        // on top of this, we show the startup dialog
+        startupDialog.setVisible(true);
     }
 
     /**
@@ -237,7 +265,7 @@ public class CellMissyController {
         cellMissyFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
-                int option = JOptionPane.showConfirmDialog(cellMissyFrame, "Do you really want to close CellMissy?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int option = JOptionPane.showConfirmDialog(cellMissyFrame, "Do you really want to close CellMissy?", "exit CellMissy", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 switch (option) {
                     case JOptionPane.YES_OPTION:
                         System.exit(0);
@@ -258,11 +286,107 @@ public class CellMissyController {
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int option = JOptionPane.showConfirmDialog(cellMissyFrame, "Do you really want to close CellMissy?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int option = JOptionPane.showConfirmDialog(cellMissyFrame, "Do you really want to close CellMissy?", "exit CellMissy", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 switch (option) {
                     case JOptionPane.YES_OPTION:
                         System.exit(0);
                 }
+            }
+        });
+        // get an overview of the projects
+        cellMissyFrame.getOverviewMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onOverview();
+            }
+        });
+
+        // open an about dialog
+        cellMissyFrame.getAboutMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onAbout();
+            }
+        });
+
+        // open an help dialog
+        cellMissyFrame.getHelpMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onHelp();
+            }
+        });
+
+
+        SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
+        StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
+        StyledDocument styledDocument = aboutDialog.getAboutTextPane().getStyledDocument();
+        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
+        aboutDialog.getAboutTextPane().setCaretPosition(0);
+        helpDialog.getHelpTextPane().setCaretPosition(0);
+        styledDocument = helpDialog.getHelpTextPane().getStyledDocument();
+        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
+        Image helpImage = new ImageIcon(getClass().getResource("/helpIcon.png")).getImage();
+        helpDialog.setIconImage(helpImage);
+        Image aboutImage = new ImageIcon(getClass().getResource("/informationIcon.png")).getImage();
+        aboutDialog.setIconImage(aboutImage);
+    }
+
+    /**
+     * Initialize start up dialog
+     */
+    private void initStartupDialog() {
+        /**
+         * add action listeners
+         */
+        // create experiment
+        startupDialog.getCreateExpButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startupDialog.setVisible(false);
+                onCreateExperiment();
+            }
+        });
+
+        // load data from generic input
+        startupDialog.getGenericInputButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startupDialog.setVisible(false);
+                onLoadingFromGenericInput();
+            }
+        });
+
+        // load data from CELLMIA
+        startupDialog.getCellMiaButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startupDialog.setVisible(false);
+                onLoadingFromCellMia();
+            }
+        });
+
+        // data analysis
+        startupDialog.getDataAnalysisButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startupDialog.setVisible(false);
+                onDataAnalysis();
+            }
+        });
+        // overview
+        startupDialog.getOverviewButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onOverview();
+            }
+        });
+
+        // about CellMissy
+        startupDialog.getAboutButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onAbout();
             }
         });
     }
@@ -275,32 +399,84 @@ public class CellMissyController {
         @Override
         public void actionPerformed(ActionEvent e) {
             String menuItemText = ((JMenuItem) e.getSource()).getText();
-            if (menuItemText.equalsIgnoreCase("create experiment...") && switchCard(menuItemText)) {
-                if (!firstSetup) {
-                    setupExperimentController.resetAfterCardSwitch();
-                }
-                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getSetupExperimentParentPanel().getName());
-                firstSetup = false;
+            if (menuItemText.equalsIgnoreCase("create experiment") && switchCard(menuItemText)) {
+                onCreateExperiment();
             } else if (menuItemText.equalsIgnoreCase("data analysis") && switchCard(menuItemText)) {
-                if (!firstDataAnalysis) {
-                    dataAnalysisController.resetAfterCardSwitch();
-                }
-                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAnalysisExperimentParentPanel().getName());
-                firstDataAnalysis = false;
+                onDataAnalysis();
             } else if (menuItemText.equalsIgnoreCase("... from CELLMIA") && switchCard(menuItemText)) {
-                if (!firstLoadingFromCellMia) {
-                    loadExperimentFromCellMiaController.resetAfterCardSwitch();
-                }
-                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromCellMiaParentPanel().getName());
-                firstLoadingFromCellMia = false;
+                onLoadingFromCellMia();
             } else if (menuItemText.equalsIgnoreCase("... from generic input") && switchCard(menuItemText)) {
-                if (!firstLoadingFromGenericInput) {
-                    loadExperimentFromGenericInputController.resetAfterCardSwitch();
-                }
-                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromGenericInputParentPanel().getName());
-                firstLoadingFromGenericInput = false;
+                onLoadingFromGenericInput();
             }
         }
+    }
+
+    /**
+     * Action performed on creating a new experiment
+     */
+    private void onCreateExperiment() {
+        if (!firstSetup) {
+            setupExperimentController.resetAfterCardSwitch();
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getSetupExperimentParentPanel().getName());
+        firstSetup = false;
+    }
+
+    /**
+     * Action performed on loading data from generic input
+     */
+    private void onLoadingFromGenericInput() {
+        if (!firstLoadingFromGenericInput) {
+            loadExperimentFromGenericInputController.resetAfterCardSwitch();
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromGenericInputParentPanel().getName());
+        firstLoadingFromGenericInput = false;
+    }
+
+    /**
+     * Action performed on loading data from CELLMIA
+     */
+    private void onLoadingFromCellMia() {
+        if (!firstLoadingFromCellMia) {
+            loadExperimentFromCellMiaController.resetAfterCardSwitch();
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromCellMiaParentPanel().getName());
+        firstLoadingFromCellMia = false;
+    }
+
+    /**
+     * Action performed on data analysis
+     */
+    private void onDataAnalysis() {
+        if (!firstDataAnalysis) {
+            dataAnalysisController.resetAfterCardSwitch();
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAnalysisExperimentParentPanel().getName());
+        firstDataAnalysis = false;
+    }
+
+    /**
+     * Action performed on getting the overview projects/experiments
+     */
+    private void onOverview() {
+        // show a overviewProjectsDialog through child controller
+        overviewController.showOverviewDialog();
+    }
+
+    /**
+     * Action performed on getting about information
+     */
+    private void onAbout() {
+        aboutDialog.setLocationRelativeTo(cellMissyFrame);
+        aboutDialog.setVisible(true);
+    }
+
+    /**
+     * Action performed on getting help information
+     */
+    private void onHelp() {
+        helpDialog.setLocationRelativeTo(cellMissyFrame);
+        helpDialog.setVisible(true);
     }
 
     /**
