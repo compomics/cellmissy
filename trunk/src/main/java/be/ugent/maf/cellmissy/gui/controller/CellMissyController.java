@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.gui.controller.setup.SetupExperimentController;
 import be.ugent.maf.cellmissy.gui.controller.load.generic.LoadExperimentFromGenericInputController;
 import be.ugent.maf.cellmissy.gui.controller.load.cellmia.LoadExperimentFromCellMiaController;
-import be.ugent.maf.cellmissy.gui.controller.analysis.DataAnalysisController;
+import be.ugent.maf.cellmissy.gui.controller.analysis.AreaController;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.AboutDialog;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
@@ -73,7 +73,7 @@ public class CellMissyController {
     @Autowired
     private LoadExperimentFromGenericInputController loadExperimentFromGenericInputController;
     @Autowired
-    private DataAnalysisController dataAnalysisController;
+    private AreaController areaController;
     // services
 
     /**
@@ -130,7 +130,7 @@ public class CellMissyController {
         setupExperimentController.init();
         loadExperimentFromCellMiaController.init();
         loadExperimentFromGenericInputController.init();
-        dataAnalysisController.init();
+        areaController.init();
         overviewController.init();
         loginController.init();
         userManagementController.init();
@@ -449,7 +449,7 @@ public class CellMissyController {
      */
     private void onDataAnalysis() {
         if (!firstDataAnalysis) {
-            dataAnalysisController.resetAfterCardSwitch();
+            areaController.resetAfterCardSwitch();
         }
         getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAnalysisExperimentParentPanel().getName());
         firstDataAnalysis = false;
@@ -518,7 +518,7 @@ public class CellMissyController {
             case "analysisExperimentParentPanel":
                 if (menuItemText.equalsIgnoreCase("data analysis")) {
                     return false;
-                } else if (dataAnalysisController.analysisWasStarted()) {
+                } else if (areaController.analysisWasStarted()) {
                     showOptionDialog = JOptionPane.showOptionDialog(null, "Do you really want to end this data analysis session?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                 } else {
                     return true;

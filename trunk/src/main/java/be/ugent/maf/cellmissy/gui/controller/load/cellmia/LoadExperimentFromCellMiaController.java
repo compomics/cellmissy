@@ -146,7 +146,7 @@ public class LoadExperimentFromCellMiaController {
         experiment = null;
         dataLoadingHasBeenSaved = false;
         // clear selection on project list
-        cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel().getProjectJList().clearSelection();
+        cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel().getProjectsComboBox().setSelectedIndex(0);
         if (cellMiaExperimentDataController.getExperimentBindingList() != null) {
             cellMiaExperimentDataController.getExperimentBindingList().clear();
         }
