@@ -18,8 +18,10 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Dimension;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JList;
@@ -31,6 +33,7 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
+import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +64,7 @@ public class GenericExperimentDataController {
     private ProjectService projectService;
 
     /**
-     * initialize controller
+     * Initialize controller
      */
     public void init() {
         bindingGroup = new BindingGroup();
@@ -97,8 +100,8 @@ public class GenericExperimentDataController {
 
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
-        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, loadFromGenericInputMetadataPanel.getProjectJList());
-        bindingGroup.addBinding(jListBinding);
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, projectBindingList, loadFromGenericInputMetadataPanel.getProjectsComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
         //do the binding
         bindingGroup.bind();
@@ -114,44 +117,40 @@ public class GenericExperimentDataController {
          * add mouse listeners
          */
         //when a project from the list is selected, show all experiments in progress for that project
-        loadFromGenericInputMetadataPanel.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        loadFromGenericInputMetadataPanel.getProjectsComboBox().addActionListener(new ActionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    // retrieve selected project
-                    int selectedIndex = loadFromGenericInputMetadataPanel.getProjectJList().getSelectedIndex();
-                    if (selectedIndex != -1) {
-                        Project selectedProject = projectBindingList.get(selectedIndex);
-                        if (loadExperimentFromGenericInputController.getExperiment() == null) {
-                            // if experiment is still null, project is being selected for the first time
-                            onSelectedProject(selectedProject);
-                            // if experiment is not null and a different project is selected, reset redo on selected project
-                        } else if (loadExperimentFromGenericInputController.getExperiment() != null && !loadExperimentFromGenericInputController.getExperiment().getProject().equals(selectedProject)) {
-                            resetOnANewProject();
-                            onSelectedProject(selectedProject);
-                        }
+            public void actionPerformed(ActionEvent e) {
+                // retrieve selected project
+                int selectedIndex = loadFromGenericInputMetadataPanel.getProjectsComboBox().getSelectedIndex();
+                if (selectedIndex != -1) {
+                    Project selectedProject = projectBindingList.get(selectedIndex);
+                    if (loadExperimentFromGenericInputController.getExperiment() == null) {
+                        // if experiment is still null, project is being selected for the first time
+                        onSelectedProject(selectedProject);
+                        // if experiment is not null and a different project is selected, reset redo on selected project
+                    } else if (loadExperimentFromGenericInputController.getExperiment() != null && !loadExperimentFromGenericInputController.getExperiment().getProject().equals(selectedProject)) {
+                        resetOnANewProject();
+                        onSelectedProject(selectedProject);
                     }
                 }
             }
         });
 
         //when an experiment from the list is selected, show the right plate format with the wells sorrounded by rectangles if conditions were selected
-        loadFromGenericInputMetadataPanel.getExperimentJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        loadFromGenericInputMetadataPanel.getExperimentsComboBox().addActionListener(new ActionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    // retrieve selected experiment
-                    int selectedIndex = loadFromGenericInputMetadataPanel.getExperimentJList().getSelectedIndex();
-                    if (selectedIndex != -1) {
-                        Experiment selectedExperiment = experimentBindingList.get(selectedIndex);
-                        if (selectedExperiment != null && loadExperimentFromGenericInputController.getExperiment() == null) {
-                            // if the experiment is still null, it is being selected for the first time
-                            onSelectedExperiment(selectedExperiment);
-                            // otherwise, if a different experiment has being selected, reset and recall the onselected experiment
-                        } else if (selectedExperiment != null && loadExperimentFromGenericInputController.getExperiment().equals(selectedExperiment)) {
-                            resetOnANewExperiment();
-                            onSelectedExperiment(selectedExperiment);
-                        }
+            public void actionPerformed(ActionEvent e) {
+                // retrieve selected experiment
+                int selectedIndex = loadFromGenericInputMetadataPanel.getExperimentsComboBox().getSelectedIndex();
+                if (selectedIndex != -1) {
+                    Experiment selectedExperiment = experimentBindingList.get(selectedIndex);
+                    if (selectedExperiment != null && loadExperimentFromGenericInputController.getExperiment() == null) {
+                        // if the experiment is still null, it is being selected for the first time
+                        onSelectedExperiment(selectedExperiment);
+                        // otherwise, if a different experiment has being selected, reset and recall the onselected experiment
+                    } else if (selectedExperiment != null && loadExperimentFromGenericInputController.getExperiment().equals(selectedExperiment)) {
+                        resetOnANewExperiment();
+                        onSelectedExperiment(selectedExperiment);
                     }
                 }
             }
@@ -253,7 +252,7 @@ public class GenericExperimentDataController {
      */
     private void onSelectedProject(Project selectedProject) {
         ExperimentsListRenderer experimentsListRenderer = new ExperimentsListRenderer(loadExperimentFromGenericInputController.getCurrentUser());
-        loadFromGenericInputMetadataPanel.getExperimentJList().setCellRenderer(experimentsListRenderer);
+        loadFromGenericInputMetadataPanel.getExperimentsComboBox().setRenderer(experimentsListRenderer);
         // show project description
         String projectDescription = selectedProject.getProjectDescription();
         loadFromGenericInputMetadataPanel.getProjectDescriptionTextArea().setText(projectDescription);
@@ -262,13 +261,12 @@ public class GenericExperimentDataController {
         List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.IN_PROGRESS);
         if (experimentList != null) {
             experimentBindingList = ObservableCollections.observableList(experimentList);
-            JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, loadFromGenericInputMetadataPanel.getExperimentJList());
-            bindingGroup.addBinding(jListBinding);
-            bindingGroup.bind();
+            loadFromGenericInputMetadataPanel.getExperimentsComboBox().setModel(new DefaultComboBoxModel<>(experimentList.toArray()));
         } else {
             loadExperimentFromGenericInputController.showMessage("There are no experiments in progress for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
             if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                 experimentBindingList.clear();
+                loadFromGenericInputMetadataPanel.getExperimentsComboBox().setModel(new DefaultComboBoxModel<>());
             }
         }
     }

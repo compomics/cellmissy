@@ -43,6 +43,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.persistence.PersistenceException;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -53,8 +54,6 @@ import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.text.Document;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -62,7 +61,6 @@ import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
-import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -270,9 +268,9 @@ public class SetupExperimentController {
         // reset experiment info text fields
         experimentInfoPanel.getNumberTextField().setText("");
         experimentInfoPanel.getPurposeTextArea().setText("");
-        // clear selection on both project and experiment lists
-        experimentInfoPanel.getProjectJList().clearSelection();
-        experimentInfoPanel.getExperimentJList().clearSelection();
+        // set to 0 the indexes on both projects and experiments combo boxes
+        experimentInfoPanel.getProjectsComboBox().setSelectedIndex(0);
+        experimentInfoPanel.getExperimentsComboBox().setSelectedIndex(0);
         // set text area to empty field
         experimentInfoPanel.getProjectDescriptionTextArea().setText("");
         // clear also experiments list, if not null
@@ -374,7 +372,7 @@ public class SetupExperimentController {
         List<String> messages = new ArrayList<>();
         try {
             //if the selected project does not have already the current experiment number, set the experiment number
-            if (!projectHasExperiment(((Project) experimentInfoPanel.getProjectJList().getSelectedValue()).getProjectid(), Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()))) {
+            if (!projectHasExperiment(((Project) experimentInfoPanel.getProjectsComboBox().getSelectedItem()).getProjectid(), Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()))) {
                 experiment.setExperimentNumber(Integer.parseInt(experimentInfoPanel.getNumberTextField().getText()));
             } else {
                 String message = "Experiment number " + experimentInfoPanel.getNumberTextField().getText() + " already exists for this project";
@@ -440,11 +438,11 @@ public class SetupExperimentController {
         experimentInfoPanel.getInfoLabel().setIcon(scaledIcon);
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
-        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectJList());
-        bindingGroup.addBinding(jListBinding);
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectsComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
         //init instrument combo box
         instrumentBindingList = ObservableCollections.observableList(experimentService.findAllInstruments());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, instrumentBindingList, experimentInfoPanel.getInstrumentComboBox());
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, instrumentBindingList, experimentInfoPanel.getInstrumentComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         //init magnification combo box
         magnificationBindingList = ObservableCollections.observableList(experimentService.findAllMagnifications());
@@ -454,10 +452,6 @@ public class SetupExperimentController {
         bindingGroup.bind();
         //add experimentInfoPanel to parent panel
         setupExperimentPanel.getTopPanel().add(experimentInfoPanel, gridBagConstraints);
-
-        //set cell renderer for experimentJList
-        ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new ExperimentsOverviewListRenderer(false);
-        experimentInfoPanel.getExperimentJList().setCellRenderer(experimentsOverviewListRenderer);
 
         //date cannot be modified manually
         experimentInfoPanel.getDateChooser().getDateEditor().setEnabled(false);
@@ -482,31 +476,31 @@ public class SetupExperimentController {
          * add mouse listeners
          */
         //show experiments for the project selected
-        experimentInfoPanel.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        experimentInfoPanel.getProjectsComboBox().addActionListener(new ActionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    //init experimentJList
-                    int selectedIndex = experimentInfoPanel.getProjectJList().getSelectedIndex();
-                    if (selectedIndex != -1) {
-                        Project selectedProject = projectBindingList.get(selectedIndex);
-                        // set text for project description
-                        experimentInfoPanel.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
-                        // request focus on experiment number
-                        experimentInfoPanel.getNumberTextField().requestFocusInWindow();
-                        Long projectid = selectedProject.getProjectid();
-                        List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
-                        if (experimentNumbers != null) {
-                            List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
-                            experimentBindingList = ObservableCollections.observableList(experimentList);
-                            JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, experimentInfoPanel.getExperimentJList());
-                            bindingGroup.addBinding(jListBinding);
-                            bindingGroup.bind();
-                        } else {
-                            cellMissyController.showMessage("There are no experiments yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
-                            if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
-                                experimentBindingList.clear();
-                            }
+            public void actionPerformed(ActionEvent e) {
+                //init experimentJList
+                int selectedIndex = experimentInfoPanel.getProjectsComboBox().getSelectedIndex();
+                if (selectedIndex != -1) {
+                    //set cell renderer for experimentJList
+                    ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new ExperimentsOverviewListRenderer(false);
+                    experimentInfoPanel.getExperimentsComboBox().setRenderer(experimentsOverviewListRenderer);
+                    Project selectedProject = projectBindingList.get(selectedIndex);
+                    // set text for project description
+                    experimentInfoPanel.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
+                    // request focus on experiment number
+                    experimentInfoPanel.getNumberTextField().requestFocusInWindow();
+                    Long projectid = selectedProject.getProjectid();
+                    List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
+                    if (experimentNumbers != null) {
+                        List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
+                        experimentBindingList = ObservableCollections.observableList(experimentList);
+                        experimentInfoPanel.getExperimentsComboBox().setModel(new DefaultComboBoxModel<>(experimentList.toArray()));
+                    } else {
+                        cellMissyController.showMessage("There are no experiments yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
+                        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                            experimentBindingList.clear();
+                            experimentInfoPanel.getExperimentsComboBox().setModel(new DefaultComboBoxModel<>());
                         }
                     }
                 }
@@ -602,7 +596,7 @@ public class SetupExperimentController {
                     experiment.setExperimentStatus(ExperimentStatus.IN_PROGRESS);
                     //set the User of the experiment
                     experiment.setUser(cellMissyController.getCurrentUser());
-                    experiment.setProject((Project) experimentInfoPanel.getProjectJList().getSelectedValue());
+                    experiment.setProject((Project) experimentInfoPanel.getProjectsComboBox().getSelectedItem());
                     experiment.setInstrument((Instrument) experimentInfoPanel.getInstrumentComboBox().getSelectedItem());
                     experiment.setMagnification((Magnification) experimentInfoPanel.getMagnificationComboBox().getSelectedItem());
                     experiment.setExperimentDate(experimentInfoPanel.getDateChooser().getDate());

@@ -150,7 +150,7 @@ public class LoadExperimentFromGenericInputController {
         experiment = null;
         dataLoadingHasBeenSaved = false;
         // clear selection on project list
-        genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getProjectJList().clearSelection();
+        genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getProjectsComboBox().setSelectedIndex(0);
         // clear experiment list
         if (genericExperimentDataController.getExperimentBindingList() != null) {
             genericExperimentDataController.getExperimentBindingList().clear();

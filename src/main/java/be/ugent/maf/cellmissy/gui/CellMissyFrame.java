@@ -249,7 +249,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         fileMenu.setText("File");
 
         newExperimentMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        newExperimentMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/newIcon.png"))); // NOI18N
         newExperimentMenuItem.setMnemonic('E');
         newExperimentMenuItem.setText("Create Experiment");
         newExperimentMenuItem.setToolTipText("");
@@ -257,18 +256,15 @@ public class CellMissyFrame extends javax.swing.JFrame {
         fileMenu.add(newExperimentMenuItem);
         fileMenu.add(jSeparator3);
 
-        loadDataMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dataLoadingIcon.png"))); // NOI18N
         loadDataMenu.setMnemonic('L');
         loadDataMenu.setText("Load Data...");
         loadDataMenu.setIconTextGap(2);
 
         genericInputMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
-        genericInputMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/genericInputIcon.png"))); // NOI18N
         genericInputMenuItem.setText("... from generic input");
         loadDataMenu.add(genericInputMenuItem);
 
         cellMiaMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
-        cellMiaMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cellmia.png"))); // NOI18N
         cellMiaMenuItem.setText("... from CELLMIA");
         loadDataMenu.add(cellMiaMenuItem);
 
@@ -276,7 +272,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         fileMenu.add(jSeparator4);
 
         dataAnalysisMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
-        dataAnalysisMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dataAnalysisIcon.png"))); // NOI18N
         dataAnalysisMenuItem.setMnemonic('D');
         dataAnalysisMenuItem.setText("Data Analysis");
         dataAnalysisMenuItem.setInheritsPopupMenu(true);
@@ -284,14 +279,12 @@ public class CellMissyFrame extends javax.swing.JFrame {
         fileMenu.add(jSeparator5);
 
         overviewMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        overviewMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/overviewIcon.png"))); // NOI18N
         overviewMenuItem.setMnemonic('O');
         overviewMenuItem.setText("Overview");
         fileMenu.add(overviewMenuItem);
         fileMenu.add(jSeparator6);
 
         exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
-        exitMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/exitApplicationIcon.png"))); // NOI18N
         exitMenuItem.setMnemonic('X');
         exitMenuItem.setText("Exit");
         exitMenuItem.setPreferredSize(new java.awt.Dimension(139, 31));
@@ -303,7 +296,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         editMenu.setText("Edit");
 
         userMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_MASK));
-        userMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/userManagementIcon.png"))); // NOI18N
         userMenuItem.setMnemonic('U');
         userMenuItem.setText("User Management");
         userMenuItem.setIconTextGap(2);
@@ -315,13 +307,11 @@ public class CellMissyFrame extends javax.swing.JFrame {
         helpMenu.setText("Help");
 
         helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
-        helpMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/helpIcon.png"))); // NOI18N
         helpMenuItem.setMnemonic('H');
         helpMenuItem.setText("Help");
         helpMenu.add(helpMenuItem);
         helpMenu.add(jSeparator1);
 
-        aboutMenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/informationIcon.png"))); // NOI18N
         aboutMenuItem.setMnemonic('A');
         aboutMenuItem.setText("About");
         helpMenu.add(aboutMenuItem);

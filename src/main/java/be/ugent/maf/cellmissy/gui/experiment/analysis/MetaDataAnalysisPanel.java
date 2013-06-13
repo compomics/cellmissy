@@ -33,16 +33,16 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
         return cellCoveredAreaRadioButton;
     }
 
-    public JList getExperimentJList() {
-        return experimentJList;
+    public JComboBox getExperimentsComboBox() {
+        return experimentsComboBox;
+    }
+
+    public JComboBox getProjectsComboBox() {
+        return projectsComboBox;
     }
 
     public JComboBox getImagingTypeComboBox() {
         return imagingTypeComboBox;
-    }
-
-    public JList getProjectJList() {
-        return projectJList;
     }
 
     public JRadioButton getOpenAreaRadioButton() {
@@ -95,15 +95,13 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
 
         overviewPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        projectJList = new javax.swing.JList();
         jLabel4 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        experimentJList = new javax.swing.JList();
         infoLabel = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         projectDescriptionTextArea = new javax.swing.JTextArea();
         jLabel8 = new javax.swing.JLabel();
+        projectsComboBox = new javax.swing.JComboBox();
+        experimentsComboBox = new javax.swing.JComboBox();
         detailsPanel = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
@@ -138,20 +136,8 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel3.setText("Projects");
 
-        jScrollPane1.setBorder(null);
-        jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-
-        projectJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(projectJList);
-
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel4.setText("Performed experiments");
-
-        jScrollPane2.setBorder(null);
-        jScrollPane2.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-
-        experimentJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane2.setViewportView(experimentJList);
 
         infoLabel.setText("Click on a project to see the relative performed experiments.");
 
@@ -164,6 +150,8 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel8.setText("project description");
+
+        experimentsComboBox.setMinimumSize(new java.awt.Dimension(40, 20));
 
         javax.swing.GroupLayout overviewPanelLayout = new javax.swing.GroupLayout(overviewPanel);
         overviewPanel.setLayout(overviewPanelLayout);
@@ -179,16 +167,22 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
                                 .addComponent(jScrollPane4)
                                 .addGroup(overviewPanelLayout.createSequentialGroup()
                                     .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel3))
+                                        .addComponent(jLabel3)
+                                        .addComponent(projectsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGap(18, 18, 18)
-                                    .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel4)
-                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(35, 35, 35))
-                    .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                                    .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(overviewPanelLayout.createSequentialGroup()
+                                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addGap(15, 15, 15))
+                                        .addComponent(experimentsComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addGap(41, 41, 41))
+                    .addGroup(overviewPanelLayout.createSequentialGroup()
+                        .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
+
+        overviewPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {experimentsComboBox, projectsComboBox});
+
         overviewPanelLayout.setVerticalGroup(
             overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, overviewPanelLayout.createSequentialGroup()
@@ -196,11 +190,11 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
                 .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
                 .addGap(18, 18, 18)
+                .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(projectsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(experimentsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -223,7 +217,6 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel10.setText("User");
 
-        jScrollPane3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jScrollPane3.setOpaque(false);
 
         purposeTextArea.setEditable(false);
@@ -436,7 +429,7 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox areaUnitOfMeasurementComboBox;
     private javax.swing.JRadioButton cellCoveredAreaRadioButton;
     private javax.swing.JPanel detailsPanel;
-    private javax.swing.JList experimentJList;
+    private javax.swing.JComboBox experimentsComboBox;
     private javax.swing.JComboBox imagingTypeComboBox;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel infoLabel1;
@@ -453,15 +446,13 @@ public class MetaDataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTextField magnificationTextField;
     private javax.swing.JRadioButton openAreaRadioButton;
     private javax.swing.JPanel overviewPanel;
     private javax.swing.JTextArea projectDescriptionTextArea;
-    private javax.swing.JList projectJList;
+    private javax.swing.JComboBox projectsComboBox;
     private javax.swing.JTextArea purposeTextArea;
     private javax.swing.JTextField timeFramesTextField;
     private javax.swing.JPanel userSelectionPanel;

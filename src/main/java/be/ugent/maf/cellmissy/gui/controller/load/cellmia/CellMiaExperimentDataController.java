@@ -21,19 +21,22 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
+import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,8 +137,8 @@ public class CellMiaExperimentDataController {
 
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
-        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, loadFromCellMiaMetadataPanel.getProjectJList());
-        bindingGroup.addBinding(jListBinding);
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, projectBindingList, loadFromCellMiaMetadataPanel.getProjectsComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
         //do the binding
         bindingGroup.bind();
 
@@ -145,47 +148,43 @@ public class CellMiaExperimentDataController {
         }
 
         /**
-         * add mouse listeners
+         * add action listeners
          */
         //when a project from the list is selected, show all experiments in progress for that project
-        loadFromCellMiaMetadataPanel.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        loadFromCellMiaMetadataPanel.getProjectsComboBox().addActionListener(new ActionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    // retrieve selected project
-                    int selectedIndex = loadFromCellMiaMetadataPanel.getProjectJList().getSelectedIndex();
-                    if (selectedIndex != -1) {
-                        Project selectedProject = projectBindingList.get(selectedIndex);
-                        if (loadExperimentFromCellMiaController.getExperiment() == null) {
-                            // if experiment is still null, project is being selected for the first time
-                            onSelectedProject(selectedProject);
-                            // if experiment is not null and a different project is selected, reset redo on selected project
-                        } else if (loadExperimentFromCellMiaController.getExperiment() != null && !loadExperimentFromCellMiaController.getExperiment().getProject().equals(selectedProject)) {
-                            resetOnANewProject();
-                            onSelectedProject(selectedProject);
-                        }
+            public void actionPerformed(ActionEvent e) {
+                // retrieve selected project
+                int selectedIndex = loadFromCellMiaMetadataPanel.getProjectsComboBox().getSelectedIndex();
+                if (selectedIndex != -1) {
+                    Project selectedProject = projectBindingList.get(selectedIndex);
+                    if (loadExperimentFromCellMiaController.getExperiment() == null) {
+                        // if experiment is still null, project is being selected for the first time
+                        onSelectedProject(selectedProject);
+                        // if experiment is not null and a different project is selected, reset redo on selected project
+                    } else if (loadExperimentFromCellMiaController.getExperiment() != null && !loadExperimentFromCellMiaController.getExperiment().getProject().equals(selectedProject)) {
+                        resetOnANewProject();
+                        onSelectedProject(selectedProject);
                     }
                 }
             }
         });
 
         //when an experiment from the list is selected, show the right plate format with the wells sorrounded by rectangles if conditions were selected
-        loadFromCellMiaMetadataPanel.getExperimentJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        loadFromCellMiaMetadataPanel.getExperimentsComboBox().addActionListener(new ActionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    // retrieve selected experiment
-                    int selectedIndex = loadFromCellMiaMetadataPanel.getExperimentJList().getSelectedIndex();
-                    if (selectedIndex != -1) {
-                        Experiment selectedExperiment = experimentBindingList.get(selectedIndex);
-                        if (selectedExperiment != null && loadExperimentFromCellMiaController.getExperiment() == null) {
-                            // if the experiment is still null, it is being selected for the first time
-                            onSelectedExperiment(selectedExperiment);
-                            // otherwise, if a different experiment has being selected, reset and recall the onselected experiment
-                        } else if (selectedExperiment != null && !loadExperimentFromCellMiaController.getExperiment().equals(selectedExperiment)) {
-                            resetOnANewExperiment();
-                            onSelectedExperiment(selectedExperiment);
-                        }
+            public void actionPerformed(ActionEvent e) {
+                // retrieve selected experiment
+                int selectedIndex = loadFromCellMiaMetadataPanel.getExperimentsComboBox().getSelectedIndex();
+                if (selectedIndex != -1) {
+                    Experiment selectedExperiment = experimentBindingList.get(selectedIndex);
+                    if (selectedExperiment != null && loadExperimentFromCellMiaController.getExperiment() == null) {
+                        // if the experiment is still null, it is being selected for the first time
+                        onSelectedExperiment(selectedExperiment);
+                        // otherwise, if a different experiment has being selected, reset and recall the onselected experiment
+                    } else if (selectedExperiment != null && !loadExperimentFromCellMiaController.getExperiment().equals(selectedExperiment)) {
+                        resetOnANewExperiment();
+                        onSelectedExperiment(selectedExperiment);
                     }
                 }
             }
@@ -292,7 +291,7 @@ public class CellMiaExperimentDataController {
      */
     private void onSelectedProject(Project selectedProject) {
         ExperimentsListRenderer experimentsListRenderer = new ExperimentsListRenderer(loadExperimentFromCellMiaController.getCurrentUser());
-        loadFromCellMiaMetadataPanel.getExperimentJList().setCellRenderer(experimentsListRenderer);
+        loadFromCellMiaMetadataPanel.getExperimentsComboBox().setRenderer(experimentsListRenderer);
 
         // show project description
         String projectDescription = selectedProject.getProjectDescription();
@@ -303,14 +302,14 @@ public class CellMiaExperimentDataController {
         //init experimentJList
         if (experimentList != null) {
             experimentBindingList = ObservableCollections.observableList(experimentList);
-            JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, loadFromCellMiaMetadataPanel.getExperimentJList());
-            bindingGroup.addBinding(jListBinding);
-            bindingGroup.bind();
+            loadFromCellMiaMetadataPanel.getExperimentsComboBox().setModel(new DefaultComboBoxModel<>(experimentBindingList.toArray()));
         } else {
-            loadExperimentFromCellMiaController.showMessage("There are no experiments in progress for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
+            experimentBindingList = ObservableCollections.observableList(new ArrayList<Experiment>());
             if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                 experimentBindingList.clear();
             }
+            loadFromCellMiaMetadataPanel.getExperimentsComboBox().setModel(new DefaultComboBoxModel<>(experimentBindingList.toArray()));
+            loadExperimentFromCellMiaController.showMessage("There are no experiments in progress for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 }
