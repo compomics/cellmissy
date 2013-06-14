@@ -129,6 +129,10 @@ public class LoadExperimentFromGenericInputController {
         return cellMissyController.getCurrentUser();
     }
 
+    public void setExpListRenderer(User currentUser) {
+        genericExperimentDataController.setExpListRenderer(currentUser);
+    }
+
     /**
      * Check if current analysis has been saved before leaving the view
      *
@@ -150,7 +154,7 @@ public class LoadExperimentFromGenericInputController {
         experiment = null;
         dataLoadingHasBeenSaved = false;
         // clear selection on project list
-        genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getProjectsComboBox().setSelectedIndex(0);
+        genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getProjectsList().clearSelection();
         // clear experiment list
         if (genericExperimentDataController.getExperimentBindingList() != null) {
             genericExperimentDataController.getExperimentBindingList().clear();
@@ -335,8 +339,9 @@ public class LoadExperimentFromGenericInputController {
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 loadFromGenericInputPanel.getSaveDataProgressBar().setVisible(false);
                 //update info for the user
-                showMessage("Experiment was successfully saved to DB.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
+                showMessage("Experiment was successfully saved to DB.\nPlease choose what you want to do next.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
                 updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Experiment was successfully saved to DB.");
+                cellMissyController.onStartup();
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
