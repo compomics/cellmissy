@@ -125,6 +125,10 @@ public class LoadExperimentFromCellMiaController {
         return cellMissyController.getCurrentUser();
     }
 
+    public void setExpListRenderer(User currentUser) {
+        cellMiaExperimentDataController.setExpListRenderer(currentUser);
+    }
+
     /**
      * Check if current analysis has been saved before leaving the view
      *
@@ -146,7 +150,7 @@ public class LoadExperimentFromCellMiaController {
         experiment = null;
         dataLoadingHasBeenSaved = false;
         // clear selection on project list
-        cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel().getProjectsComboBox().setSelectedIndex(0);
+        cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel().getProjectsList().clearSelection();
         if (cellMiaExperimentDataController.getExperimentBindingList() != null) {
             cellMiaExperimentDataController.getExperimentBindingList().clear();
         }
@@ -397,8 +401,9 @@ public class LoadExperimentFromCellMiaController {
                 loadFromCellMiaPanel.getSaveDataProgressBar().setVisible(false);
                 LOG.debug("Experiment was saved.");
                 //update info for the user
-                showMessage("Experiment was successfully saved to DB.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
+                showMessage("Experiment was successfully saved to DB.\nPlease choose what you want to do next.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
                 updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Experiment was successfully saved to DB.");
+                cellMissyController.onStartup();
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {

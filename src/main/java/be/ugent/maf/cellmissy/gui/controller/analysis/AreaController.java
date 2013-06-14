@@ -53,7 +53,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -227,6 +226,11 @@ public class AreaController {
 
     public ImagingType getSelectedImagingType() {
         return imagingTypeBindingList.get(metaDataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex());
+    }
+
+    public void setExpListRenderer(User currentUser) {
+        ExperimentsListRenderer experimentsListRenderer = new ExperimentsListRenderer(currentUser);
+        metaDataAnalysisPanel.getExperimentsList().setCellRenderer(experimentsListRenderer);
     }
 
     /**
@@ -551,8 +555,8 @@ public class AreaController {
         }
         areaAnalysisController.getGroupsBindingList().clear();
         // clear selection on lists
-        metaDataAnalysisPanel.getProjectsComboBox().setSelectedIndex(0);
-        metaDataAnalysisPanel.getExperimentsComboBox().setSelectedIndex(0);
+        metaDataAnalysisPanel.getProjectsList().clearSelection();
+        metaDataAnalysisPanel.getExperimentsList().clearSelection();
         // set text area to empty field
         metaDataAnalysisPanel.getProjectDescriptionTextArea().setText("");
         areaPreProcessingController.getPreProcessingMap().clear();
@@ -581,7 +585,6 @@ public class AreaController {
     private void resetExperimentMetadataFields() {
         metaDataAnalysisPanel.getUserTextField().setText("");
         metaDataAnalysisPanel.getInstrumentTextField().setText("");
-        metaDataAnalysisPanel.getMagnificationTextField().setText("");
         metaDataAnalysisPanel.getPurposeTextArea().setText("");
         metaDataAnalysisPanel.getTimeFramesTextField().setText("");
     }
@@ -597,12 +600,12 @@ public class AreaController {
 
         //init projects combo box
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, projectBindingList, metaDataAnalysisPanel.getProjectsComboBox());
-        bindingGroup.addBinding(jComboBoxBinding);
+        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, metaDataAnalysisPanel.getProjectsList());
+        bindingGroup.addBinding(jListBinding);
 
         //init algorithms combobox
         algorithmBindingList = ObservableCollections.observableList(new ArrayList<Algorithm>());
-        jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, algorithmBindingList, metaDataAnalysisPanel.getAlgorithmComboBox());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, algorithmBindingList, metaDataAnalysisPanel.getAlgorithmComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
 
         //init imagingtypes combo box
@@ -631,35 +634,40 @@ public class AreaController {
         metaDataAnalysisPanel.getAreaUnitOfMeasurementComboBox().setSelectedItem(AreaUnitOfMeasurement.MICRO_METERS);
 
         /**
-         * add action listeners
+         * add mouse listeners
          */
-        //when a project from the list is selected, show all experiments performed for that project        
-        metaDataAnalysisPanel.getProjectsComboBox().addActionListener(new ActionListener() {
+        //when a project from the list is selected, show all experiments performed for that project     
+        metaDataAnalysisPanel.getProjectsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                // retrieve selected project
-                int selectedIndex = metaDataAnalysisPanel.getProjectsComboBox().getSelectedIndex();
-                if (selectedIndex != -1) {
-                    Project selectedProject = projectBindingList.get(selectedIndex);
-                    if (experiment == null || !selectedProject.equals(experiment.getProject()) || experimentBindingList.isEmpty()) {
-                        // project is being selected for the first time
-                        onSelectedProject(selectedProject);
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // retrieve selected project
+                    int selectedIndex = metaDataAnalysisPanel.getProjectsList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        Project selectedProject = projectBindingList.get(selectedIndex);
+                        if (experiment == null || !selectedProject.equals(experiment.getProject()) || experimentBindingList.isEmpty()) {
+                            // project is being selected for the first time
+                            onSelectedProject(selectedProject);
+                        }
                     }
                 }
             }
         });
 
+
         //when an experiment is selected, show algorithms and imaging types used for that experiment
         //show also conditions in the Jlist behind and plate view according to the conditions setup
-        metaDataAnalysisPanel.getExperimentsComboBox().addActionListener(new ActionListener() {
+        metaDataAnalysisPanel.getExperimentsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                // retrieve selected experiment
-                int selectedIndex = metaDataAnalysisPanel.getExperimentsComboBox().getSelectedIndex();
-                if (selectedIndex != -1) {
-                    Experiment selectedExperiment = experimentBindingList.get(selectedIndex);
-                    if (experiment == null || !selectedExperiment.equals(experiment)) {
-                        onSelectedExperiment(selectedExperiment);
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // retrieve selected experiment
+                    int selectedIndex = metaDataAnalysisPanel.getExperimentsList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        Experiment selectedExperiment = experimentBindingList.get(selectedIndex);
+                        if (experiment == null || !selectedExperiment.equals(experiment)) {
+                            onSelectedExperiment(selectedExperiment);
+                        }
                     }
                 }
             }
@@ -667,23 +675,19 @@ public class AreaController {
 
         // bind information fields
         // exp user
-        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentsComboBox(), BeanProperty.create("selectedItem.user.firstName"), metaDataAnalysisPanel.getUserTextField(), BeanProperty.create("text"), "experimentuserbinding");
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentsList(), BeanProperty.create("selectedElement.user.firstName"), metaDataAnalysisPanel.getUserTextField(), BeanProperty.create("text"), "experimentuserbinding");
         bindingGroup.addBinding(binding);
         // exp purpose
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentsComboBox(), BeanProperty.create("selectedItem.purpose"), metaDataAnalysisPanel.getPurposeTextArea(), BeanProperty.create("text"), "experimentpurposebinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentsList(), BeanProperty.create("selectedElement.purpose"), metaDataAnalysisPanel.getPurposeTextArea(), BeanProperty.create("text"), "experimentpurposebinding");
         bindingGroup.addBinding(binding);
         // instrument
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentsComboBox(), BeanProperty.create("selectedItem.instrument.name"), metaDataAnalysisPanel.getInstrumentTextField(), BeanProperty.create("text"), "instrumentbinding");
-        bindingGroup.addBinding(binding);
-        // resolution
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentsComboBox(), BeanProperty.create("selectedItem.magnification.magnificationNumber"), metaDataAnalysisPanel.getMagnificationTextField(), BeanProperty.create("text"), "magnificationbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentsList(), BeanProperty.create("selectedElement.instrument.name"), metaDataAnalysisPanel.getInstrumentTextField(), BeanProperty.create("text"), "instrumentbinding");
         bindingGroup.addBinding(binding);
         // exp time frames
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentsComboBox(), BeanProperty.create("selectedItem.timeFrames"), metaDataAnalysisPanel.getTimeFramesTextField(), BeanProperty.create("text"), "experimentimeframesbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentsList(), BeanProperty.create("selectedElement.timeFrames"), metaDataAnalysisPanel.getTimeFramesTextField(), BeanProperty.create("text"), "experimentimeframesbinding");
         bindingGroup.addBinding(binding);
         // do the binding       
         bindingGroup.bind();
-
 
         // button group for radio buttons
         ButtonGroup buttonGroup = new ButtonGroup();
@@ -751,8 +755,6 @@ public class AreaController {
      * @param selectedProject
      */
     private void onSelectedProject(Project selectedProject) {
-        ExperimentsListRenderer experimentsListRenderer = new ExperimentsListRenderer(cellMissyController.getCurrentUser());
-        metaDataAnalysisPanel.getExperimentsComboBox().setRenderer(experimentsListRenderer);
 
         if (!imagingTypeBindingList.isEmpty()) {
             imagingTypeBindingList.clear();
@@ -769,17 +771,15 @@ public class AreaController {
         List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.PERFORMED);
         if (experimentList != null) {
             experimentBindingList = ObservableCollections.observableList(experimentList);
-//            metaDataAnalysisPanel.getExperimentsComboBox().setModel(new DefaultComboBoxModel<>(experimentBindingList.toArray()));
+            JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, metaDataAnalysisPanel.getExperimentsList());
+            bindingGroup.addBinding(jListBinding);
+            bindingGroup.bind();
         } else {
-            experimentBindingList = ObservableCollections.observableList(new ArrayList<Experiment>());
             cellMissyController.showMessage("There are no experiments performed yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
-//            if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
-//                experimentBindingList.clear();
-//                metaDataAnalysisPanel.getExperimentsComboBox().setModel(new DefaultComboBoxModel<>(experimentBindingList.toArray()));
-//            }
+            if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                experimentBindingList.clear();
+            }
         }
-        metaDataAnalysisPanel.getExperimentsComboBox().setModel(new DefaultComboBoxModel<>(experimentBindingList.toArray()));
-
     }
 
     /**

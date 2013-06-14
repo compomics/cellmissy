@@ -128,7 +128,7 @@ public class LoginController {
     }
 
     /**
-     * On login: attempt to connect
+     * On login: attempt to enter the application
      */
     private void onLogin() {
         //check if a user with given user name and password is found in the db    
