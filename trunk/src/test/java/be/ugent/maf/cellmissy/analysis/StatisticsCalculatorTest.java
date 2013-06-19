@@ -20,8 +20,6 @@ import static junit.framework.Assert.*;
 @ContextConfiguration("classpath:myTestSpringXMLConfig.xml")
 public class StatisticsCalculatorTest {
 
-    @Autowired
-    private StatisticsCalculator statisticsCalculator;
     private static double[] xData;
     private static double[] yData;
 
@@ -37,11 +35,12 @@ public class StatisticsCalculatorTest {
     }
 
     /**
-     * 
+     *
      */
     @Test
     public void testMannWhitney() {
-        double pValue = statisticsCalculator.executeMannWhitneyUTest(xData, yData);
+        StatisticsCalculator statisticsCalculator = StatisticsTestFactory.getInstance().getStatisticsCalculator("mann_Whitney_Statistics");
+        double pValue = statisticsCalculator.executeStatisticalTest(xData, yData);
         assertNotNull(pValue);
         System.out.println("pValue is:  " + pValue);
     }

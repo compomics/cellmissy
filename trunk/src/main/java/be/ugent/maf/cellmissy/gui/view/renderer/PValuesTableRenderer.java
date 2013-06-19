@@ -49,7 +49,7 @@ public class PValuesTableRenderer extends DefaultTableCellRenderer {
         } else {
             setBackground(table.getBackground());
             if (significances[row][column - 1]) {
-                setForeground(Color.green);
+                setForeground(new Color(34, 139, 34));
                 setFont(new Font("Tahoma", Font.BOLD, 11));
             } else {
                 setForeground(Color.black);

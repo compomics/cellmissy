@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
-import org.springframework.stereotype.Component;
 import umontreal.iro.lecuyer.gof.KernelDensity;
 import umontreal.iro.lecuyer.probdist.EmpiricalDist;
 import umontreal.iro.lecuyer.probdist.NormalDist;
@@ -21,30 +20,38 @@ import umontreal.iro.lecuyer.rng.MRG31k3p;
 import umontreal.iro.lecuyer.rng.RandomStream;
 
 /**
- * This class makes use of "SSJ: Stochastic Simulation in Java" library from iro.umontreal.ca to estimate probability density function of an array of double.
- * It first generates independent and identically distributed random variables from the dataset, at which the density needs to be computed
- * and then generates the vector of density estimates at the corresponding variables.
- * 
- * The KernelDensityGen class from the same library is used: the class implements random variate generators for distributions
- * obtained via kernel density estimation methods from a set of n individual observations x1,..., xn.
- * The basic idea is to center a copy of the same symmetric density at each observation and take an equally weighted mixture of the n copies as an estimator of the density
- * from which the observations come. The resulting kernel density has the general form: fn(x) = (1/nh)∑i=1nk((x - xi)/h).
- * K is the kernel (here a Gaussian is chosen) and h is the bandwidth (smoothing factor). 
+ * This class makes use of "SSJ: Stochastic Simulation in Java" library from
+ * iro.umontreal.ca to estimate probability density function of an array of
+ * double. It first generates independent and identically distributed random
+ * variables from the dataset, at which the density needs to be computed and
+ * then generates the vector of density estimates at the corresponding
+ * variables.
+ *
+ * The KernelDensityGen class from the same library is used: the class
+ * implements random variate generators for distributions obtained via kernel
+ * density estimation methods from a set of n individual observations x1,...,
+ * xn. The basic idea is to center a copy of the same symmetric density at each
+ * observation and take an equally weighted mixture of the n copies as an
+ * estimator of the density from which the observations come. The resulting
+ * kernel density has the general form: fn(x) = (1/nh)∑i=1nk((x - xi)/h). K is
+ * the kernel (here a Gaussian is chosen) and h is the bandwidth (smoothing
+ * factor).
+ *
  * @author Paola Masuzzo
  */
-@Component("normalKernelDensityEstimator")
 public class NormalKernelDensityEstimator implements KernelDensityEstimator {
 
-    //Number Of Density Points to be used
-    // This is a measurements of the estimation precision
-    // usually, this is set to a default of 512, as in most KDE algorithms default values, i.e. R "density"function, OmicSoft, Matlab algorithms.
     private EmpiricalDist empiricalDist;
     private KernelDensityGen kernelDensityGen;
 
     /**
-     * this method init the KDE, i.e. sort values in ascending order, compute an empirical distribution out of it,
-     * makes use of a NormalGen to generate random variates from the normal distribution, and then use these variates to generate a kernel density generator of the empirical distribution 
-     * @param data 
+     * this method initialise the KDE, i.e. sort values in ascending order,
+     * compute an empirical distribution out of it, makes use of a NormalGen to
+     * generate random variates from the normal distribution, and then use these
+     * variates to generate a kernel density generator of the empirical
+     * distribution
+     *
+     * @param data
      */
     private void init(double[] data) {
         Arrays.sort(data);
@@ -58,6 +65,9 @@ public class NormalKernelDensityEstimator implements KernelDensityEstimator {
 
     @Override
     public List estimateDensityFunction(Double[] data) {
+        // Number Of Density Points to be used
+        // This is a measurements of the estimation precision
+        // usually, this is set to a default of 512, as in most KDE algorithms default values, i.e. R "density"function, OmicSoft, Matlab algorithms.
         int numberOfDensityPoints = PropertiesConfigurationHolder.getInstance().getInt("numberOFDensityPoints");
         List<double[]> densityFunction = new ArrayList<>();
         //init the KDE with a normal generator

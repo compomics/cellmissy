@@ -12,12 +12,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Analysis Plate View: Show wells with rectangles around: each rectangle has it
- * own color, according to condition color. This class is used in the analysis
+ * own colour, according to condition colour. This class is used in the analysis
  * step, to show conditions on the plate view
  *
  * @author Paola Masuzzo

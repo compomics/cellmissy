@@ -13,7 +13,8 @@ import be.ugent.maf.cellmissy.entity.AnalysisGroup;
 public interface MultipleComparisonsCorrector {
 
     /**
-     * Correct for multiple Comparisons
+     * Correct for multiple Comparisons.
+     *
      * @param analysisGroup
      */
     public void correctForMultipleComparisons(AnalysisGroup analysisGroup);

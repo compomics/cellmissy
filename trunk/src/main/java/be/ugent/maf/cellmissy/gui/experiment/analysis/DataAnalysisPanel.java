@@ -228,6 +228,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder("Select a condition"));
         jScrollPane3.setOpaque(false);
 
+        conditionsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         conditionsList.setSelectedIndex(0);
         jScrollPane3.setViewportView(conditionsList);
 

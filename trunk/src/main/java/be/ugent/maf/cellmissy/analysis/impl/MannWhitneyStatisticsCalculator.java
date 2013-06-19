@@ -8,17 +8,17 @@ import be.ugent.maf.cellmissy.analysis.StatisticsCalculator;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
-import org.springframework.stereotype.Component;
 
 /**
- * Implementation for Statistics Calculator
+ * Implementation for Statistics Calculator: it is performing a
+ * MannWhitneyUTest.
+ *
  * @author Paola Masuzzo
  */
-@Component("statisticsCalculator")
-public class StatisticsCalculatorImpl implements StatisticsCalculator {
+public class MannWhitneyStatisticsCalculator implements StatisticsCalculator {
 
     @Override
-    public double executeMannWhitneyUTest(double[] x, double[] y) {
+    public double executeStatisticalTest(double[] x, double[] y) {
 
         MannWhitneyUTest mannWhitneyUTest = new MannWhitneyUTest();
         double pValue = mannWhitneyUTest.mannWhitneyUTest(x, y);

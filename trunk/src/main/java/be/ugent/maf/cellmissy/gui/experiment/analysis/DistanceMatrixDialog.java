@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis;
 
+import javax.swing.JComboBox;
 import javax.swing.JTable;
 
 /**
@@ -63,7 +64,7 @@ public class DistanceMatrixDialog extends javax.swing.JDialog {
         distanceMatrixScrollPane.setViewportView(distanceMatrixTable);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;

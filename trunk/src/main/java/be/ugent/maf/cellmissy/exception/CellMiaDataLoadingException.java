@@ -5,7 +5,8 @@
 package be.ugent.maf.cellmissy.exception;
 
 /**
- * CellMia data loading exception, thrown when no data to be imported are found, or number of samples expected is different from number of folders to process.
+ * CellMia data loading exception, thrown when no data to be imported are found,
+ * or number of samples expected is different from number of folders to process.
  *
  * @author Paola Masuzzo
  */

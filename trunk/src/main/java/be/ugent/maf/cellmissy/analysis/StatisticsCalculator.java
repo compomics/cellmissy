@@ -19,7 +19,7 @@ public interface StatisticsCalculator {
      * @param y
      * @return p-value associated with the test 
      */
-    public double executeMannWhitneyUTest(double[] x, double[] y);
+    public double executeStatisticalTest(double[] x, double[] y);
     
     /**
      * Given data and alpha level, detect significance

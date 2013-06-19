@@ -66,7 +66,7 @@ public class PlateCondition implements Serializable {
     @ManyToOne(optional = false)
     private Experiment experiment;
     @JoinColumn(name = "l_assay_mediumid", referencedColumnName = "assay_mediumid")
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     private AssayMedium assayMedium;
     @Transient
     private String name;

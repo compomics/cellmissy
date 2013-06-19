@@ -122,8 +122,27 @@ public class SetupConditionsController {
         return previousConditionIndex;
     }
 
+    public void setPreviousConditionIndex(Integer previousConditionIndex) {
+        this.previousConditionIndex = previousConditionIndex;
+    }
+
     public ObservableList<Treatment> getTreatmentBindingList() {
         return treatmentsController.getTreatmentBindingList();
+    }
+
+    public Integer getConditionIndex() {
+        return conditionIndex;
+    }
+
+    public void setConditionIndex(Integer conditionIndex) {
+        this.conditionIndex = conditionIndex;
+    }
+
+    public void updateFields(PlateCondition plateCondition) {
+        assayEcmController.updateAssayEcmInputFields(plateCondition);
+        //assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
+        //keep source and destination lists sync: show actual treatment collection
+        treatmentsController.updateLists(plateCondition);
     }
 
     /**
@@ -213,7 +232,7 @@ public class SetupConditionsController {
     }
 
     /**
-     * Create and initialize the first condition
+     * Create and initialise the first condition
      *
      * @return
      */
@@ -227,7 +246,7 @@ public class SetupConditionsController {
      * private methods and classes
      */
     /**
-     * initialize cell Line panel
+     * Initialize cell Line panel
      */
     private void initCellLinePanel() {
         //init cellLineJCombo

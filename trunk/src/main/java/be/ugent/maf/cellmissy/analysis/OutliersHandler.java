@@ -5,7 +5,8 @@
 package be.ugent.maf.cellmissy.analysis;
 
 /**
- * This interface is taking care of outliers
+ * This interface is taking care of outliers. It has two methods, one for the
+ * detection of them, and one for the correction of the data points.
  *
  * @author Paola Masuzzo
  */

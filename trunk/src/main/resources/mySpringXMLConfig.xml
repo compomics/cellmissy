@@ -86,4 +86,27 @@
                                 expression="org.springframework.stereotype.Controller"/>
     </context:component-scan> 
     
+    <!-- analysis implementations beans -->
+    <!-- specify a bean name for each implementation, and the fully qualified classname, i.e.: including package -->
+    <bean id="benjamini" class="be.ugent.maf.cellmissy.analysis.impl.BenjaminiCorrector">
+    </bean>
+    
+    <bean id="bonferroni" class="be.ugent.maf.cellmissy.analysis.impl.BonferroniCorrector">
+    </bean>
+    
+    <bean id="iQR_R_algorithm" class="be.ugent.maf.cellmissy.analysis.impl.IQRRAlgorithmOutliersHandler">
+    </bean>
+    
+    <bean id="iQR_Excel_algorithm" class="be.ugent.maf.cellmissy.analysis.impl.IQRExcelAlgorithmOutliersHandler">
+    </bean>
+    
+    <bean id="normal_Kernel" class="be.ugent.maf.cellmissy.analysis.impl.NormalKernelDensityEstimator">
+    </bean>
+    
+    <bean id="euclidean_Distance" class="be.ugent.maf.cellmissy.analysis.impl.EuclideanDistanceMetric">
+    </bean>
+    
+    <bean id="mann_Whitney_Statistics" class="be.ugent.maf.cellmissy.analysis.impl.MannWhitneyStatisticsCalculator">
+    </bean>
+    
 </beans>

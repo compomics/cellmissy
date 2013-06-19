@@ -4,13 +4,14 @@
  */
 package be.ugent.maf.cellmissy.entity;
 
-import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 
 /**
- * This class contains list of conditions that were compared, together with results from statistical analysis
+ * This class contains list of conditions that were compared, together with
+ * results from statistical analysis.
+ *
  * @author Paola Masuzzo
  */
 public class AnalysisGroup {
@@ -28,14 +29,15 @@ public class AnalysisGroup {
     // Summary Statistics for each Condition of the group
     private List<StatisticalSummary> statisticalSummaries;
     // correction method chosen for multiple comparisons correction
-    private CorrectionMethod correctionMethod;
+    private String correctionMethodName;
     // boolean to keep significances
     private boolean[][] significances;
 
     /**
      * Constructor
+     *
      * @param plateConditions
-     * @param analysisResults  
+     * @param analysisResults
      */
     public AnalysisGroup(List<PlateCondition> plateConditions, List<AreaAnalysisResults> analysisResults) {
         this.plateConditions = plateConditions;
@@ -90,12 +92,12 @@ public class AnalysisGroup {
         this.adjustedPValuesMatrix = adjustedPValuesMatrix;
     }
 
-    public CorrectionMethod getCorrectionMethod() {
-        return correctionMethod;
+    public String getCorrectionMethodName() {
+        return correctionMethodName;
     }
 
-    public void setCorrectionMethod(CorrectionMethod correctionMethod) {
-        this.correctionMethod = correctionMethod;
+    public void setCorrectionMethodName(String correctionMethodName) {
+        this.correctionMethodName = correctionMethodName;
     }
 
     public boolean[][] getSignificances() {
@@ -121,7 +123,7 @@ public class AnalysisGroup {
         if (!Objects.equals(this.analysisResults, other.analysisResults)) {
             return false;
         }
-        if (this.correctionMethod != other.correctionMethod) {
+        if (!Objects.equals(this.correctionMethodName, other.correctionMethodName)) {
             return false;
         }
         return true;
@@ -132,7 +134,7 @@ public class AnalysisGroup {
         int hash = 7;
         hash = 89 * hash + Objects.hashCode(this.plateConditions);
         hash = 89 * hash + Objects.hashCode(this.analysisResults);
-        hash = 89 * hash + (this.correctionMethod != null ? this.correctionMethod.hashCode() : 0);
+        hash = 89 * hash + (this.correctionMethodName != null ? this.correctionMethodName.hashCode() : 0);
         return hash;
     }
 
