@@ -136,12 +136,18 @@ public class ExperimentServiceImpl implements ExperimentService {
 
     @Override
     public void loadFolderStructure(Experiment experiment) throws CellMiaFoldersException {
-        for (File file : mainDirectory.listFiles()) {
-            if (file.getName().contains(experiment.getProject().toString())) {
-                //project folder
-                projectFolder = file;
-                break;
+        File[] listFiles = mainDirectory.listFiles();
+
+        if (listFiles != null) {
+            for (File file : listFiles) {
+                if (file.getName().contains(experiment.getProject().toString())) {
+                    //project folder
+                    projectFolder = file;
+                    break;
+                }
             }
+        } else {
+            throw new CellMiaFoldersException("No folders found in main directory (M:\\CM)\nBe sure you are connected to the server!");
         }
 
         // check for project folder
@@ -231,10 +237,10 @@ public class ExperimentServiceImpl implements ExperimentService {
             // check for folder containg obsep file
             if (docFiles != null) {
                 List<File> obsepFolders = new ArrayList<>();
-                File[] listFiles = docFiles.listFiles();
-                for (int i = 0; i < listFiles.length; i++) {
-                    if (listFiles[i].getName().startsWith("D")) {
-                        obsepFolders.add(listFiles[i]);
+                File[] docFilesListed = docFiles.listFiles();
+                for (int i = 0; i < docFilesListed.length; i++) {
+                    if (docFilesListed[i].getName().startsWith("D")) {
+                        obsepFolders.add(docFilesListed[i]);
                     }
                 }
                 //obsep file

@@ -100,8 +100,11 @@
                               <Component id="newProjectButton" alignment="0" min="-2" pref="115" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <Component id="jLabel6" linkSize="12" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="infoLabel1" linkSize="12" alignment="0" max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
+                          <Component id="jLabel6" linkSize="12" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>

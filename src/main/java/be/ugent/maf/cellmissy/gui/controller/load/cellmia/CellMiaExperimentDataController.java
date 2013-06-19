@@ -285,7 +285,7 @@ public class CellMiaExperimentDataController {
             info = "ERROR: please check folder structure for current experiment!";
             loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.red);
             loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), info);
-            loadExperimentFromCellMiaController.showMessage(ex.getMessage(), "Error in loading folder structure", JOptionPane.ERROR_MESSAGE);
+            loadExperimentFromCellMiaController.showMessage(ex.getMessage(), "Error in loading project/experiment folders", JOptionPane.ERROR_MESSAGE);
         }
     }
 

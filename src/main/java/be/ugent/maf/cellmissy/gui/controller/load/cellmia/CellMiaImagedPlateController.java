@@ -391,7 +391,7 @@ public class CellMiaImagedPlateController {
             } catch (InterruptedException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (ExecutionException ex) {
-                LOG.error(ex.getMessage());
+                LOG.error(ex.getMessage(), ex);
                 if (ex.getCause() instanceof FileParserException || ex.getCause() instanceof PositionListMismatchException) {
                     String message = "Error in parsing position list(s) !";
                     loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.red);
@@ -403,7 +403,8 @@ public class CellMiaImagedPlateController {
                     loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), message);
                     loadExperimentFromCellMiaController.showMessage(ex.getMessage(), "ERROR in loading data", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    loadExperimentFromCellMiaController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+                    LOG.error(ex.getMessage(), ex);
+                    loadExperimentFromCellMiaController.handleUnexpectedError(ex);
                 }
             }
         }

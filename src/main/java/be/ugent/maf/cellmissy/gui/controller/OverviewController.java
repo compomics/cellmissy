@@ -194,10 +194,9 @@ public class OverviewController {
                 overviewDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 // show info message
                 cellMissyController.showMessage("Experiment was successfully deleted!", "experiment deleted", JOptionPane.INFORMATION_MESSAGE);
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
-            } catch (ExecutionException ex) {
-                cellMissyController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+                cellMissyController.handleUnexpectedError(ex);
             }
         }
     }

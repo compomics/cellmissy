@@ -7,14 +7,16 @@ package be.ugent.maf.cellmissy.analysis.impl;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import org.apache.commons.lang.ArrayUtils;
-import org.springframework.stereotype.Component;
 
 /**
- * Interface for handling outliers in a distribution of data points
+ * This is implementing the outliers detection following the interquartile range
+ * criterium, with the R type algorithm.
+ *
  * @author Paola Masuzzo
  */
-@Component("outliersHandler")
-public class OutliersHandlerImpl implements OutliersHandler {
+public class IQRRAlgorithmOutliersHandler implements OutliersHandler {
+
+    final double k = 1.5;
 
     @Override
     public boolean[][] detectOutliers(Double[][] data) {
@@ -24,17 +26,20 @@ public class OutliersHandlerImpl implements OutliersHandler {
         for (int rowIndex = 0; rowIndex < transposedData.length; rowIndex++) {
             Double[] row = transposedData[rowIndex];
             Double[] excludeNullValues = AnalysisUtils.excludeNullValues(row);
-            final double k = 1.5;
 
             //quantiles are estimated on primitive values, and null values need to be excluded
             double firstQuartile = AnalysisUtils.estimateQuantile(ArrayUtils.toPrimitive(excludeNullValues), 25);
             double thirdQuartile = AnalysisUtils.estimateQuantile(ArrayUtils.toPrimitive(excludeNullValues), 75);
+            // compute interquartile range
             double IQR = thirdQuartile - firstQuartile;
 
             for (int columnIndex = 0; columnIndex < row.length; columnIndex++) {
-                //an outlier is here defined as a data point greater than 1.5 * (upper quartile + interquile range)
-                if (row[columnIndex] != null && row[columnIndex] > (thirdQuartile + k * IQR)) {
-                    booleanMatrix[columnIndex][rowIndex] = true;
+                //an outlier is here defined as a data point smaller than 1.5 times (first quartile - IQR)
+                // greater than 1.5 * (third quartile + IQR)
+                if (row[columnIndex] != null) {
+                    if (row[columnIndex] < (firstQuartile - k * IQR) | row[columnIndex] > (thirdQuartile + k * IQR)) {
+                        booleanMatrix[columnIndex][rowIndex] = true;
+                    }
                 }
             }
         }

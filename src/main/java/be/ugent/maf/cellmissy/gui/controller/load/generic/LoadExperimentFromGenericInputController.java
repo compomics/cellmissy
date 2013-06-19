@@ -96,6 +96,10 @@ public class LoadExperimentFromGenericInputController {
         cellMissyController.showMessage(message, title, messageType);
     }
 
+    public void handleUnexpectedError(Exception ex) {
+        cellMissyController.handleUnexpectedError(ex);
+    }
+
     public void updateInfoLabel(JLabel label, String message) {
         cellMissyController.updateInfoLabel(label, message);
     }
@@ -342,10 +346,9 @@ public class LoadExperimentFromGenericInputController {
                 showMessage("Experiment was successfully saved to DB.\nPlease choose what you want to do next.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
                 updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Experiment was successfully saved to DB.");
                 cellMissyController.onStartup();
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
-            } catch (ExecutionException ex) {
-                showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+                handleUnexpectedError(ex);
             }
         }
     }

@@ -91,6 +91,7 @@ import org.jfree.data.Range;
 
 /**
  *
+ * Controller for area pre-processing.
  *
  * @author Paola Masuzzo
  */
@@ -125,8 +126,6 @@ public class AreaPreProcessingController {
     private AreaController areaController;
     //child controllers
     //services
-    @Autowired
-    private KernelDensityEstimator kernelDensityEstimator;
     @Autowired
     private DensityFunctionHolderCache densityFunctionHolderCache;
     @Autowired
@@ -234,6 +233,10 @@ public class AreaPreProcessingController {
             // normalization depends on type of measured area
             MeasuredAreaType measuredAreaType = areaController.getAreaAnalysisHolder().getMeasuredAreaType();
             // call the pre-processors according to measured area type
+            // check for the outliers algorithm to apply - we get it from the parent controller
+            String outliersHandlerBeanName = areaController.getOutliersHandlerBeanName();
+            // check for the distance metric to use
+            String distanceMetricBeanName = areaController.getDistanceMetricBeanName();
             switch (measuredAreaType) {
                 case CELL_COVERED_AREA:
                     // normalize area
@@ -243,11 +246,11 @@ public class AreaPreProcessingController {
                     // % area increase
                     cellCoveredAreaPreProcessor.computeAreaIncrease(areaPreProcessingResults);
                     // correct and normalize area
-                    cellCoveredAreaPreProcessor.normalizeCorrectedArea(areaPreProcessingResults);
+                    cellCoveredAreaPreProcessor.normalizeCorrectedArea(areaPreProcessingResults, outliersHandlerBeanName);
                     // compute distance matrix
-                    cellCoveredAreaPreProcessor.computeDistanceMatrix(areaPreProcessingResults);
+                    cellCoveredAreaPreProcessor.computeDistanceMatrix(areaPreProcessingResults, distanceMetricBeanName);
                     // exclude replicates
-                    cellCoveredAreaPreProcessor.excludeReplicates(areaPreProcessingResults, plateCondition);
+                    cellCoveredAreaPreProcessor.excludeReplicates(areaPreProcessingResults, plateCondition, outliersHandlerBeanName);
                     // set time interval for analysis
                     cellCoveredAreaPreProcessor.setTimeInterval(areaPreProcessingResults);
                     break;
@@ -262,11 +265,11 @@ public class AreaPreProcessingController {
                     // % area increase
                     openAreaPreProcessor.computeAreaIncrease(areaPreProcessingResults);
                     // correct and normalize area
-                    openAreaPreProcessor.normalizeCorrectedArea(areaPreProcessingResults);
+                    openAreaPreProcessor.normalizeCorrectedArea(areaPreProcessingResults, outliersHandlerBeanName);
                     // compute distance matrix
-                    openAreaPreProcessor.computeDistanceMatrix(areaPreProcessingResults);
+                    openAreaPreProcessor.computeDistanceMatrix(areaPreProcessingResults, distanceMetricBeanName);
                     // exclude replicates
-                    openAreaPreProcessor.excludeReplicates(areaPreProcessingResults, plateCondition);
+                    openAreaPreProcessor.excludeReplicates(areaPreProcessingResults, plateCondition, outliersHandlerBeanName);
                     // set time interval for analysis
                     openAreaPreProcessor.setTimeInterval(areaPreProcessingResults);
                     break;
@@ -369,6 +372,7 @@ public class AreaPreProcessingController {
      * @param plateCondition
      */
     public void showAreaIncreaseInTable(PlateCondition plateCondition) {
+        String outliersHandlerBeanName = areaController.getOutliersHandlerBeanName();
         AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
         if (areaPreProcessingResults != null) {
             Double[][] percentageAreaIncrease = preProcessingMap.get(plateCondition).getPercentageAreaIncrease();
@@ -376,7 +380,7 @@ public class AreaPreProcessingController {
             dataTable.setModel(new ComputedDataTableModel(plateCondition, percentageAreaIncrease, processedTimeFrames));
             //format first column
             dataTable.getColumnModel().getColumn(0).setCellRenderer(new FormatRenderer(areaController.getFormat()));
-            boolean[][] outliers = cellCoveredAreaPreProcessor.detectOutliers(percentageAreaIncrease);
+            boolean[][] outliers = cellCoveredAreaPreProcessor.detectOutliers(percentageAreaIncrease, outliersHandlerBeanName);
             //show outliers in red from second column on
             OutliersRenderer outliersRenderer = new OutliersRenderer(outliers, areaController.getFormat());
             for (int i = 1; i < dataTable.getColumnCount(); i++) {
@@ -389,7 +393,7 @@ public class AreaPreProcessingController {
 
     /**
      * for each replicate (well) of a certain selected condition, show
-     * normalized area values, close to time frames
+     * normalised area values, close to time frames
      *
      * @param plateCondition
      */
@@ -449,7 +453,7 @@ public class AreaPreProcessingController {
 
     /**
      * for each replicate (well) of a certain selected condition, show
-     * normalized corrected (for outliers) area values, close to time frames
+     * normalised corrected (for outliers) area values, close to time frames
      *
      * @param plateCondition
      */
@@ -1024,10 +1028,11 @@ public class AreaPreProcessingController {
      * @param plateCondition
      */
     private void showDistanceMatrix(PlateCondition plateCondition) {
+        String outliersHandlerBeanName = areaController.getOutliersHandlerBeanName();
         AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
         if (areaPreProcessingResults != null) {
             Double[][] distanceMatrix = areaPreProcessingResults.getDistanceMatrix();
-            boolean[][] outliersMatrix = cellCoveredAreaPreProcessor.detectOutliers(distanceMatrix);
+            boolean[][] outliersMatrix = cellCoveredAreaPreProcessor.detectOutliers(distanceMatrix, outliersHandlerBeanName);
             boolean[][] transposedOutliersMatrix = AnalysisUtils.transposeBooleanMatrix(outliersMatrix);
             DistanceMatrixTableModel distanceMatrixTableModel = new DistanceMatrixTableModel(distanceMatrix, outliersMatrix, plateCondition);
             // if user already had interaction through check boxes overwrite distance matrix table behavior 
@@ -1248,6 +1253,8 @@ public class AreaPreProcessingController {
      * components: x values and y values.
      */
     private Map<DataCategory, List<List<double[]>>> estimateDensityFunctions(PlateCondition plateCondition) {
+        String outliersHandlerBeanName = areaController.getOutliersHandlerBeanName();
+        String kernelDensityEstimatorBeanName = areaController.getKernelDensityEstimatorBeanName();
         AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
         Map<DensityFunctionHolderCache.DataCategory, List<List<double[]>>> densityFunctions = new HashMap<>();
         List<List<double[]>> rawDataDensityFunctions = new ArrayList<>();
@@ -1256,13 +1263,13 @@ public class AreaPreProcessingController {
         Double[][] percentageAreaIncrease = areaPreProcessingResults.getPercentageAreaIncrease();
         Double[][] transposedRawData = AnalysisUtils.transpose2DArray(percentageAreaIncrease);
         // corrected data (after outliers detection)
-        Double[][] correctedArea = cellCoveredAreaPreProcessor.correctForOutliers(percentageAreaIncrease);
+        Double[][] correctedArea = cellCoveredAreaPreProcessor.correctForOutliers(percentageAreaIncrease, outliersHandlerBeanName);
         Double[][] transposedCorrectedData = AnalysisUtils.transpose2DArray(correctedArea);
         for (int i = 0; i < transposedRawData.length; i++) {
             // compute density function for each replicate of the raw data
-            List<double[]> oneReplicateRawDataDensityFunction = kernelDensityEstimator.estimateDensityFunction(transposedRawData[i]);
+            List<double[]> oneReplicateRawDataDensityFunction = cellCoveredAreaPreProcessor.estimateDensityFunction(transposedRawData[i], kernelDensityEstimatorBeanName);
             // compute density function for each replicate of the corrected data
-            List<double[]> oneReplicateCorrectedDataDensityFunction = kernelDensityEstimator.estimateDensityFunction(transposedCorrectedData[i]);
+            List<double[]> oneReplicateCorrectedDataDensityFunction = cellCoveredAreaPreProcessor.estimateDensityFunction(transposedCorrectedData[i], kernelDensityEstimatorBeanName);
             // per replicate
             rawDataDensityFunctions.add(oneReplicateRawDataDensityFunction);
             correctedDataDensityFunctions.add(oneReplicateCorrectedDataDensityFunction);
@@ -1724,10 +1731,9 @@ public class AreaPreProcessingController {
                 JFreeChart correctedDensityChart = JFreeChartUtils.generateDensityFunctionChart(plateCondition, conditionIndex, correctedDataXYSeriesCollection, "KDE corrected data");
                 plotCorrectedDataDensityFunctions(correctedDensityChart);
                 areaController.setCursor(Cursor.DEFAULT_CURSOR);
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
-            } catch (ExecutionException ex) {
-                areaController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+                areaController.handleUnexpectedError(ex);
             }
         }
     }
@@ -1914,10 +1920,9 @@ public class AreaPreProcessingController {
                     // inform the user that not all conditions were imaged
                     areaController.showMessage("Note that not every condition was imaged!", "", JOptionPane.INFORMATION_MESSAGE);
                 }
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
-            } catch (ExecutionException ex) {
-                areaController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+                areaController.handleUnexpectedError(ex);
             }
         }
     }

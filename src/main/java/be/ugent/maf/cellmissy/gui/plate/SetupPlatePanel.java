@@ -4,7 +4,9 @@
  */
 package be.ugent.maf.cellmissy.gui.plate;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -16,7 +18,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class is used in the setup step: show wells and let the user select them, assigning conditions. Drawing the mouse on the plate view, we select conditions (group of wells).
+ * This class is used in the setup step: show wells and let the user select
+ * them, assigning conditions. Drawing the mouse on the plate view, we select
+ * conditions (group of wells).
  *
  * @author Paola
  */
@@ -30,14 +34,20 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     private Map<PlateCondition, List<Rectangle>> rectangles;
     // current plate condition
     private PlateCondition currentCondition;
+    private Experiment experiment;
 
     /**
-     * Constructor: initialize map with rectangles and set to null start and end point
+     * Constructor: initialize map with rectangles and set to null start and end
+     * point
      */
     public SetupPlatePanel() {
         startPoint = null;
         endPoint = null;
         rectangles = new HashMap<>();
+    }
+
+    public void setExperiment(Experiment experiment) {
+        this.experiment = experiment;
     }
 
     /**
@@ -92,10 +102,52 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         if (!rectangles.values().isEmpty()) {
             drawRectangles(g);
         }
+
+        if (experiment != null) {
+            showRect(g);
+        }
     }
 
     /**
-     * Render one Rectangle (for current condition) -- This is used when dragging on the plate panel and showing the current rectangle.
+     * Render rectangles
+     *
+     * @param g
+     */
+    private void showRect(Graphics g) {
+        // set graphics
+        Graphics2D g2d = (Graphics2D) g;
+        GuiUtils.setGraphics(g2d);
+        List<PlateCondition> plateConditions = experiment.getPlateConditionList();
+
+        int lenght = GuiUtils.getAvailableColors().length;
+
+        for (PlateCondition plateCondition : plateConditions) {
+            for (Well well : plateCondition.getWellList()) {
+                for (WellGui wellGui : wellGuiList) {
+                    if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
+                        int conditionIndex = plateConditions.indexOf(plateCondition);
+                        int indexOfColor = conditionIndex % lenght;
+                        g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
+
+                        int x = (int) wellGui.getEllipsi().get(0).getX() - AnalysisPlatePanel.pixelsGrid / 4;
+                        int y = (int) wellGui.getEllipsi().get(0).getY() - AnalysisPlatePanel.pixelsGrid / 4;
+
+                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + AnalysisPlatePanel.pixelsGrid / 2;
+                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + AnalysisPlatePanel.pixelsGrid / 2;
+
+                        //create rectangle that sorrounds the wellGui and draw it
+                        Rectangle rect = new Rectangle(x, y, width, height);
+                        g2d.draw(rect);
+                        wellGui.setRectangle(rect);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Render one Rectangle (for current condition) -- This is used when
+     * dragging on the plate panel and showing the current rectangle.
      *
      * @param g
      */
@@ -122,7 +174,8 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     }
 
     /**
-     * Render all rectangles already drawn by the user (for all conditions in the map).
+     * Render all rectangles already drawn by the user (for all conditions in
+     * the map).
      *
      * @param g
      */
@@ -152,12 +205,11 @@ public class SetupPlatePanel extends AbstractPlatePanel {
                 }
             }
         }
-
-
     }
 
     /**
-     * Render wells Override method from Abstract Plate Panel: if wells have already been rendered, just redraw them
+     * Render wells Override method from Abstract Plate Panel: if wells have
+     * already been rendered, just redraw them
      *
      * @param g
      */

@@ -74,7 +74,6 @@ public class CellMissyController {
     private LoadExperimentFromGenericInputController loadExperimentFromGenericInputController;
     @Autowired
     private AreaController areaController;
-    // services
 
     /**
      * Get main frame
@@ -93,8 +92,8 @@ public class CellMissyController {
     public User getCurrentUser() {
         return loginController.getCurrentUser();
     }
-    
-    public void onStartup(){
+
+    public void onStartup() {
         startupDialog.setVisible(true);
     }
 
@@ -159,6 +158,16 @@ public class CellMissyController {
      */
     public void showMessage(String message, String title, Integer messageType) {
         JOptionPane.showMessageDialog(cellMissyFrame.getContentPane(), message, title, messageType);
+    }
+
+    /**
+     * Handle unexpected error: show an error message and exit the application.
+     *
+     * @param ex
+     */
+    public void handleUnexpectedError(Exception ex) {
+        JOptionPane.showMessageDialog(cellMissyFrame.getContentPane(), "Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+        System.exit(1);
     }
 
     /**
@@ -321,7 +330,7 @@ public class CellMissyController {
             }
         });
 
-
+        // format texts for the about and the help dialogs
         SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
         StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
         StyledDocument styledDocument = aboutDialog.getAboutTextPane().getStyledDocument();

@@ -5,7 +5,6 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis;
 
 import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
-import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
 import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Experiment;
@@ -472,13 +471,13 @@ public class AreaAnalysisReportController {
             addSummaryStatisticsTable(analysisGroup);
             PdfUtils.addEmptyLines(document, 1);
             PdfUtils.addTitle(document, "PAIRWISE COMPARISONS (p-values)", titleFont);
-            PdfUtils.addTitle(document, "Multiple comparisons correction: NONE", titleFont);
+            PdfUtils.addTitle(document, "Multiple comparisons correction: none", titleFont);
             // add not corrected p values
             addPValuesTable(analysisGroup, false);
             // if a correction method was chosen for the analysis group, choose also corrected values
-            if (analysisGroup.getCorrectionMethod() != CorrectionMethod.NONE) {
+            if (!analysisGroup.getCorrectionMethodName().equals("none")) {
                 PdfUtils.addEmptyLines(document, 1);
-                PdfUtils.addTitle(document, "Multiple comparisons correction: " + analysisGroup.getCorrectionMethod(), titleFont);
+                PdfUtils.addTitle(document, "Multiple comparisons correction: " + analysisGroup.getCorrectionMethodName(), titleFont);
                 // add corrected p values
                 addPValuesTable(analysisGroup, true);
             }

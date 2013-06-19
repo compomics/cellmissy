@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static junit.framework.Assert.*;
@@ -22,8 +21,6 @@ import static junit.framework.Assert.*;
 @ContextConfiguration("classpath:myTestSpringXMLConfig.xml")
 public class AreaPreProcessorTest {
 
-    @Autowired
-    private KernelDensityEstimator kernelDensityEstimator;
     private static Double[] data;
 
     /**
@@ -42,7 +39,7 @@ public class AreaPreProcessorTest {
      */
     @Test
     public void testKernelDensityEstimation() {
-
+        KernelDensityEstimator kernelDensityEstimator = KernelDensityEstimatorFactory.getInstance().getKernelDensityEstimator("normal_Kernel");
         List<double[]> estimateDensityFunction = kernelDensityEstimator.estimateDensityFunction(data);
         double[] randomSamples = estimateDensityFunction.get(0);
         double[] estimatedValues = estimateDensityFunction.get(1);

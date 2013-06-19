@@ -74,8 +74,10 @@ public class AnalysisUtils {
     }
 
     /**
-     * Formatting a symmetric matrix: make the matrix diagonal, so that symmetric (identical) values are not shown anymore, i.e. they are set to null. With a customized renderer, these null values can
-     * be shown as a dash (-), as we do for example in the p values matrix.
+     * Formatting a symmetric matrix: make the matrix diagonal, so that
+     * symmetric (identical) values are not shown anymore, i.e. they are set to
+     * null. With a customized renderer, these null values can be shown as a
+     * dash (-), as we do for example in the p values matrix.
      *
      * @param matrix
      * @return
@@ -193,7 +195,8 @@ public class AnalysisUtils {
     }
 
     /**
-     * Scale MAD in order to use it as a consistent estimator for the estimation of the standard deviation
+     * Scale MAD in order to use it as a consistent estimator for the estimation
+     * of the standard deviation
      *
      * @param data
      * @return sd (related to MAD)
@@ -205,7 +208,9 @@ public class AnalysisUtils {
     }
 
     /**
-     * This method is using the Descriptive Statistics Class from org.apache.commons.math to estimate sample quantiles Cfr algorithm type 6 in R, EXCEL, Minitab and SPSS. Continuous sample quantiles
+     * This method is using the Descriptive Statistics Class from
+     * org.apache.commons.math to estimate sample quantiles Cfr algorithm type 6
+     * in R, EXCEL, Minitab and SPSS. Continuous sample quantiles
      *
      * @param data
      * @param p
@@ -221,8 +226,9 @@ public class AnalysisUtils {
     }
 
     /**
-     * This method is estimating quantiles making use of algorithm type 7 in R. This is used by S as well. This implementation is more sensitive, especially with small datasets (less than 15 data
-     * points)
+     * This method is estimating quantiles making use of algorithm type 7 in R.
+     * This is used by S as well. This implementation is more sensitive,
+     * especially with small datasets (less than 15 data points)
      *
      * @param data -- array of double (distribution of data points)
      * @param p -- percentile
@@ -249,24 +255,6 @@ public class AnalysisUtils {
         }
 
         return estimation;
-    }
-
-    /**
-     * Given two vectors A and B, this method is computing the Euclidean Distance between them
-     *
-     * @param firstVector
-     * @param secondVector
-     * @return a double value for the distance
-     */
-    public static double computeEuclideanDistance(Double[] firstVector, Double[] secondVector) {
-        double distance = 0;
-        for (int i = 0; i < firstVector.length; i++) {
-            if (firstVector[i] != null && secondVector[i] != null) {
-                double temp = Math.pow((firstVector[i] - secondVector[i]), 2);
-                distance += temp;
-            }
-        }
-        return Math.sqrt(distance);
     }
 
     /**

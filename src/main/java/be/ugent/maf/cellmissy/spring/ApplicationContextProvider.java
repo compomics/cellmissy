@@ -9,17 +9,21 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  *
- * @author niels
+ * @author Paola Masuzzo
  */
 public class ApplicationContextProvider {
 
     private ApplicationContext applicationContext;
     private static final ApplicationContextProvider provider = new ApplicationContextProvider();
 
+    /**
+     * Private constructor.
+     *
+     * @throws ExceptionInInitializerError
+     */
     private ApplicationContextProvider() throws ExceptionInInitializerError {
         try {
             this.applicationContext = new ClassPathXmlApplicationContext("mySpringXMLConfig.xml");
-            //this.applicationContext = new FileSystemXmlApplicationContext("mySpringXMLConfig.xml");
         } catch (Throwable ex) {
             throw new ExceptionInInitializerError(ex);
         }

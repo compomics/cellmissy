@@ -6,9 +6,10 @@ package be.ugent.maf.cellmissy.gui.controller.analysis;
 
 import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
 import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
-import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
+import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory;
 import be.ugent.maf.cellmissy.analysis.SignificanceLevel;
 import be.ugent.maf.cellmissy.analysis.StatisticsAnalyzer;
+import be.ugent.maf.cellmissy.analysis.StatisticsTestFactory;
 import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
 import be.ugent.maf.cellmissy.entity.AreaAnalysisResults;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
@@ -383,10 +385,20 @@ public class AreaAnalysisController {
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, significanceLevelsBindingList, statisticsDialog.getSignificanceLevelComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
-        // fill in combo box
-        for (CorrectionMethod method : CorrectionMethod.values()) {
-            statisticsDialog.getCorrectionMethodsComboBox().addItem(method);
+        // add the NONE (default) correction method
+        // when the none is selected, the software does not correct for multiple hypotheses 
+        statisticsDialog.getCorrectionMethodsComboBox().addItem("none");
+        // fill in combo box: get all the correction methods from the factory
+        Set<String> correctionBeanNames = MultipleComparisonsCorrectionFactory.getInstance().getCorrectionBeanNames();
+        for (String correctionBeanName : correctionBeanNames) {
+            statisticsDialog.getCorrectionMethodsComboBox().addItem(correctionBeanName);
         }
+        // do the same for the statistical tests
+        Set<String> statisticsCalculatorBeanNames = StatisticsTestFactory.getInstance().getStatisticsCalculatorBeanNames();
+        for (String testName : statisticsCalculatorBeanNames) {
+            statisticsDialog.getStatisticalTestComboBox().addItem(testName);
+        }
+
         //significance level to 0.05
         statisticsDialog.getSignificanceLevelComboBox().setSelectedIndex(1);
 
@@ -461,16 +473,17 @@ public class AreaAnalysisController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
+                String statisticalTestName = statisticsDialog.getStatisticalTestComboBox().getSelectedItem().toString();
                 // check that an analysis group is being selected
                 if (selectedIndex != -1) {
                     AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
                     // compute statistics
-                    computeStatistics(selectedGroup);
+                    computeStatistics(selectedGroup, statisticalTestName);
                     // show statistics in tables
                     showSummary(selectedGroup);
                     // set the correction combobox to the one already chosen
-                    statisticsDialog.getCorrectionMethodsComboBox().setSelectedItem((Object) selectedGroup.getCorrectionMethod());
-                    if (selectedGroup.getCorrectionMethod() == CorrectionMethod.NONE) {
+                    statisticsDialog.getCorrectionMethodsComboBox().setSelectedItem((Object) selectedGroup.getCorrectionMethodName());
+                    if (selectedGroup.getCorrectionMethodName().equals("none")) {
                         // by default show p-values without adjustment
                         showPValues(selectedGroup, false);
                     } else {
@@ -515,15 +528,16 @@ public class AreaAnalysisController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (statisticsDialog.getSignificanceLevelComboBox().getSelectedIndex() != -1) {
+                    String statisticalTest = statisticsDialog.getStatisticalTestComboBox().getSelectedItem().toString();
                     Double selectedSignLevel = (Double) statisticsDialog.getSignificanceLevelComboBox().getSelectedItem();
                     AnalysisGroup selectedGroup = groupsBindingList.get(linearRegressionPanel.getGroupsList().getSelectedIndex());
                     boolean isAdjusted;
-                    if (selectedGroup.getCorrectionMethod().equals(CorrectionMethod.NONE)) {
+                    if (selectedGroup.getCorrectionMethodName().equals("none")) {
                         isAdjusted = false;
                     } else {
                         isAdjusted = true;
                     }
-                    statisticsAnalyzer.detectSignificance(selectedGroup, selectedSignLevel, isAdjusted);
+                    statisticsAnalyzer.detectSignificance(selectedGroup, statisticalTest, selectedSignLevel, isAdjusted);
                     boolean[][] significances = selectedGroup.getSignificances();
                     JTable pValuesTable = statisticsDialog.getpValuesTable();
                     for (int i = 1; i < pValuesTable.getColumnCount(); i++) {
@@ -535,7 +549,7 @@ public class AreaAnalysisController {
         });
 
         /**
-         * Apply correction for multiple comparisons
+         * Apply correction for multiple comparisons: choose the algorithm!
          */
         statisticsDialog.getCorrectionMethodsComboBox().addActionListener(new ActionListener() {
             @Override
@@ -543,11 +557,11 @@ public class AreaAnalysisController {
                 int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
                 if (selectedIndex != -1) {
                     AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
-                    CorrectionMethod correctionMethod = (CorrectionMethod) statisticsDialog.getCorrectionMethodsComboBox().getSelectedItem();
+                    String correctionMethod = statisticsDialog.getCorrectionMethodsComboBox().getSelectedItem().toString();
                     // update test description
                     updateTestDescriptionPane(correctionMethod);
                     // if the correction method is not "NONE"
-                    if (correctionMethod != CorrectionMethod.NONE) {
+                    if (!correctionMethod.equals("none")) {
                         // adjust p values
                         statisticsAnalyzer.correctForMultipleComparisons(selectedGroup, correctionMethod);
                         // show p - values with the applied correction
@@ -559,9 +573,28 @@ public class AreaAnalysisController {
                 }
             }
         });
-        //multiple comparison correction: NONE
-        statisticsDialog.getCorrectionMethodsComboBox().setSelectedItem((Object) CorrectionMethod.NONE);
-        updateTestDescriptionPane(CorrectionMethod.NONE);
+
+        /**
+         * Perform statistical test: choose the test!!
+         */
+        statisticsDialog.getStatisticalTestComboBox().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // get the selected test to be executed
+                String selectedTest = statisticsDialog.getStatisticalTestComboBox().getSelectedItem().toString();
+                // analysis group
+                int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
+                if (selectedIndex != -1) {
+                    AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
+                    computeStatistics(selectedGroup, selectedTest);
+                }
+            }
+        });
+
+        //multiple comparison correction: set the default correction to none
+        statisticsDialog.getCorrectionMethodsComboBox().setSelectedIndex(0);
+        updateTestDescriptionPane("none");
+        statisticsDialog.getStatisticalTestComboBox().setSelectedIndex(0);
 
         /**
          * Save analysis
@@ -574,7 +607,7 @@ public class AreaAnalysisController {
                 if (selectedIndex != -1) {
                     AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
                     // set correction method (summary statistics, p-values and adjusted p-values are already set)
-                    selectedGroup.setCorrectionMethod((CorrectionMethod) statisticsDialog.getCorrectionMethodsComboBox().getSelectedItem());
+                    selectedGroup.setCorrectionMethodName(statisticsDialog.getCorrectionMethodsComboBox().getSelectedItem().toString());
                     //show message to the user
                     JOptionPane.showMessageDialog(statisticsDialog, "Analysis was saved!", "analysis saved", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -588,16 +621,23 @@ public class AreaAnalysisController {
     /**
      * Update text pane with description of statistical test
      *
-     * @param correctionMethod
+     * @param correctionMethodName
      */
-    private void updateTestDescriptionPane(CorrectionMethod correctionMethod) {
+    private void updateTestDescriptionPane(String correctionMethodName) {
         String testDescription = "";
-        if (correctionMethod == CorrectionMethod.NONE) {
-            testDescription = "No correction is applied.";
-        } else if (correctionMethod == CorrectionMethod.BONFERRONI) {
-            testDescription = "This correction is the most stringent one; p values are multiplied for number of pairwise comparisons.";
-        } else if (correctionMethod == CorrectionMethod.BENJAMINI) {
-            testDescription = "This correction is less stringent than the Bonferroni one; the p values are first ranked from the smallest to the largest. The largest p value remains as it is. The second largest p value is multiplied by the total number of comparisons divided by its rank. This is repeated for the third p value and so on.";
+        switch (correctionMethodName) {
+            case "none":
+                testDescription = "No correction is applied for multiple comparisons.";
+                break;
+            case "bonferroni":
+                testDescription = "This correction is the most stringent one; p values are multiplied for number of pairwise comparisons.";
+                break;
+            case "benjamini":
+                testDescription = "This correction is less stringent than the Bonferroni one; the p values are first ranked from the smallest to the largest. The largest p value remains as it is. The second largest p value is multiplied by the total number of comparisons divided by its rank. This is repeated for the third p value and so on.";
+                break;
+            default:
+                testDescription = "No information is available for the current selected correction method.";
+                break;
         }
         statisticsDialog.getTestDescriptionTextPane().setText(testDescription);
         SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
@@ -611,11 +651,11 @@ public class AreaAnalysisController {
      *
      * @param analysisGroup
      */
-    private void computeStatistics(AnalysisGroup analysisGroup) {
+    private void computeStatistics(AnalysisGroup analysisGroup, String statisticalTestName) {
         // generate summary statistics
-        statisticsAnalyzer.generateSummaryStatistics(analysisGroup);
+        statisticsAnalyzer.generateSummaryStatistics(analysisGroup, statisticalTestName);
         // execute mann whitney test --- set p values matrix (no adjustment)
-        statisticsAnalyzer.executePairwiseComparisons(analysisGroup);
+        statisticsAnalyzer.executePairwiseComparisons(analysisGroup, statisticalTestName);
     }
 
     /**
@@ -641,12 +681,13 @@ public class AreaAnalysisController {
      * @param analysisGroup
      */
     private void showPValues(AnalysisGroup analysisGroup, boolean isAdjusted) {
+        String statisticalTestName = statisticsDialog.getStatisticalTestComboBox().getSelectedItem().toString();
         PValuesTableModel pValuesTableModel = new PValuesTableModel(analysisGroup, areaController.getPlateConditionList(), isAdjusted);
         JTable pValuesTable = statisticsDialog.getpValuesTable();
         pValuesTable.setModel(pValuesTableModel);
         Double selectedSignLevel = (Double) statisticsDialog.getSignificanceLevelComboBox().getSelectedItem();
         // detect significances with selected alpha level
-        statisticsAnalyzer.detectSignificance(analysisGroup, selectedSignLevel, isAdjusted);
+        statisticsAnalyzer.detectSignificance(analysisGroup, statisticalTestName, selectedSignLevel, isAdjusted);
         boolean[][] significances = analysisGroup.getSignificances();
         for (int i = 1; i < pValuesTable.getColumnCount(); i++) {
             pValuesTable.getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(new DecimalFormat("#.####"), significances));
@@ -730,7 +771,7 @@ public class AreaAnalysisController {
         if (!linearRegressionPanel.getGroupNameTextField().getText().isEmpty()) {
             analysisGroup.setGroupName(linearRegressionPanel.getGroupNameTextField().getText());
             // set correction method to NONE by default
-            analysisGroup.setCorrectionMethod(CorrectionMethod.NONE);
+            analysisGroup.setCorrectionMethodName("none");
             linearRegressionPanel.getGroupNameTextField().setText("");
             // actually add the group to the analysis list
             if (!groupsBindingList.contains(analysisGroup)) {

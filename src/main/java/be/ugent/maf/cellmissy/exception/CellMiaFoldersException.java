@@ -5,7 +5,8 @@
 package be.ugent.maf.cellmissy.exception;
 
 /**
- * Folder structure exception, thrown when folder structure is not properly loaded for an experiment. Automatically loading for CELLMIA input only.
+ * Folder structure exception, thrown when folder structure is not properly
+ * loaded for an experiment. Automatically loading for CELLMIA input only.
  *
  * @author Paola Masuzzo
  */

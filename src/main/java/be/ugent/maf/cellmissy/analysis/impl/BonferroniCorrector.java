@@ -8,6 +8,8 @@ import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrector;
 import be.ugent.maf.cellmissy.entity.AnalysisGroup;
 
 /**
+ * This is performing a multiple comparisons correction with the Bonferroni
+ * algorithm.
  *
  * @author Paola Masuzzo
  */

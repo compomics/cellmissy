@@ -46,6 +46,7 @@ public class SetupPlateController {
     private Rectangle rectangle;
     private BindingGroup bindingGroup;
     private boolean configurationIsRandom;
+    private boolean selectionStarted;
     //view
     private SetupPlatePanel setupPlatePanel;
     //parent controller
@@ -75,6 +76,10 @@ public class SetupPlateController {
      */
     public SetupPlatePanel getSetupPlatePanel() {
         return setupPlatePanel;
+    }
+
+    public void setSelectionStarted(boolean selectionStarted) {
+        this.selectionStarted = selectionStarted;
     }
 
     /**
@@ -150,6 +155,7 @@ public class SetupPlateController {
         for (List<Rectangle> rectangleList : setupPlatePanel.getRectangles().values()) {
             rectangleList.clear();
         }
+        setupPlatePanel.setExperiment(null);
         setupPlatePanel.repaint();
         // set to null the rectangles of the wellguis
         for (WellGui wellGui : setupPlatePanel.getWellGuiList()) {
@@ -295,15 +301,14 @@ public class SetupPlateController {
      * @return
      */
     private boolean selectionStarted() {
-        boolean started = false;
         Collection<List<Rectangle>> values = setupPlatePanel.getRectangles().values();
         for (List<Rectangle> list : values) {
             if (!list.isEmpty()) {
-                started = true;
+                selectionStarted = true;
                 break;
             }
         }
-        return started;
+        return selectionStarted;
     }
 
     /**

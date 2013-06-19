@@ -5,7 +5,10 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis;
 
 import be.ugent.maf.cellmissy.analysis.AreaUnitOfMeasurement;
+import be.ugent.maf.cellmissy.analysis.DistanceMetricFactory;
+import be.ugent.maf.cellmissy.analysis.KernelDensityEstimatorFactory;
 import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
+import be.ugent.maf.cellmissy.analysis.OutliersHandlerFactory;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.AreaAnalysisHolder;
@@ -51,6 +54,7 @@ import java.text.Format;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -97,6 +101,9 @@ public class AreaController {
     private BindingGroup bindingGroup;
     private Format format;
     private double[] analysisTimeFrames;
+    private String outliersHandlerBeanName;
+    private String kernelDensityEstimatorBeanName;
+    private String distanceMetricBeanName;
     //view
     private AnalysisExperimentPanel analysisExperimentPanel;
     private MetaDataAnalysisPanel metaDataAnalysisPanel;
@@ -233,6 +240,30 @@ public class AreaController {
         metaDataAnalysisPanel.getExperimentsList().setCellRenderer(experimentsListRenderer);
     }
 
+    public String getOutliersHandlerBeanName() {
+        return outliersHandlerBeanName;
+    }
+
+    public void setOutliersHandlerBeanName(String outliersHandlerBeanName) {
+        this.outliersHandlerBeanName = outliersHandlerBeanName;
+    }
+
+    public String getKernelDensityEstimatorBeanName() {
+        return kernelDensityEstimatorBeanName;
+    }
+
+    public void setKernelDensityEstimatorBeanName(String kernelDensityEstimatorBeanName) {
+        this.kernelDensityEstimatorBeanName = kernelDensityEstimatorBeanName;
+    }
+
+    public String getDistanceMetricBeanName() {
+        return distanceMetricBeanName;
+    }
+
+    public void setDistanceMetricBeanName(String distanceMetricBeanName) {
+        this.distanceMetricBeanName = distanceMetricBeanName;
+    }
+
     /**
      * Check if current analysis has been saved before leaving the view
      *
@@ -304,6 +335,10 @@ public class AreaController {
      */
     public void showMessage(String message, String title, Integer messageType) {
         cellMissyController.showMessage(message, title, messageType);
+    }
+
+    public void handleUnexpectedError(Exception ex) {
+        cellMissyController.handleUnexpectedError(ex);
     }
 
     /**
@@ -567,7 +602,7 @@ public class AreaController {
         analysisExperimentPanel.getTopPanel().repaint();
         analysisExperimentPanel.getTopPanel().revalidate();
         resetExperimentMetadataFields();
-        analysisExperimentPanel.getStartButton().setEnabled(true);
+        analysisExperimentPanel.getStartButton().setEnabled(false);
         analysisExperimentPanel.getNextButton().setEnabled(false);
         analysisExperimentPanel.getCancelButton().setEnabled(false);
         analysisExperimentPanel.getPreviousButton().setEnabled(false);
@@ -718,6 +753,58 @@ public class AreaController {
                 }
             }
         });
+
+        // add the analysis preferences to the comboboxes
+        // these values are read from the spring XML config file
+        // get all the outliers correction and detection algoritms from the factory
+        Set<String> outliersHandlersBeanNames = OutliersHandlerFactory.getInstance().getOutliersHandlersBeanNames();
+        for (String outliersAlgorithm : outliersHandlersBeanNames) {
+            metaDataAnalysisPanel.getOutliersAlgorithmsComboBox().addItem(outliersAlgorithm);
+        }
+
+        // add the action listener
+        metaDataAnalysisPanel.getOutliersAlgorithmsComboBox().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedOutliersAlgorithm = metaDataAnalysisPanel.getOutliersAlgorithmsComboBox().getSelectedItem().toString();
+                setOutliersHandlerBeanName(selectedOutliersAlgorithm);
+            }
+        });
+        // set as default the first one
+        metaDataAnalysisPanel.getOutliersAlgorithmsComboBox().setSelectedIndex(0);
+
+        // do exactly the same for the kernel density estimation and the distance metric
+        Set<String> kernelDensityEstimatorsBeanNames = KernelDensityEstimatorFactory.getInstance().getKernelDensityEstimatorsBeanNames();
+        for (String estimatorName : kernelDensityEstimatorsBeanNames) {
+            metaDataAnalysisPanel.getKernelDensityEstimatorsComboBox().addItem(estimatorName);
+        }
+
+        // add the action listener
+        metaDataAnalysisPanel.getKernelDensityEstimatorsComboBox().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedKDEAlgorithm = metaDataAnalysisPanel.getKernelDensityEstimatorsComboBox().getSelectedItem().toString();
+                setKernelDensityEstimatorBeanName(selectedKDEAlgorithm);
+            }
+        });
+        // set as default the first one
+        metaDataAnalysisPanel.getKernelDensityEstimatorsComboBox().setSelectedIndex(0);
+
+        Set<String> distanceMetricsBeanNames = DistanceMetricFactory.getInstance().getDistanceMetricsBeanNames();
+        for (String distanceMetricName : distanceMetricsBeanNames) {
+            metaDataAnalysisPanel.getDistanceMetricsComboBox().addItem(distanceMetricName);
+        }
+
+        // add the action listener
+        metaDataAnalysisPanel.getDistanceMetricsComboBox().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedDistanceMetric = metaDataAnalysisPanel.getDistanceMetricsComboBox().getSelectedItem().toString();
+                setDistanceMetricBeanName(selectedDistanceMetric);
+            }
+        });
+        // set as default the first one
+        metaDataAnalysisPanel.getDistanceMetricsComboBox().setSelectedIndex(0);
 
         // select cell covered area as default
         metaDataAnalysisPanel.getCellCoveredAreaRadioButton().setSelected(true);
@@ -987,10 +1074,9 @@ public class AreaController {
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 // the condition is loaded, and plate view is refreshed
                 showNotImagedWells(currentCondition);
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
-            } catch (ExecutionException ex) {
-                showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+                cellMissyController.handleUnexpectedError(ex);
             }
         }
     }
