@@ -18,7 +18,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -28,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "instrument", uniqueConstraints =
         @UniqueConstraint(columnNames = "name"))
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Instrument.findAll", query = "SELECT i FROM Instrument i"),
     @NamedQuery(name = "Instrument.findByInstrumentid", query = "SELECT i FROM Instrument i WHERE i.instrumentid = :instrumentid"),
@@ -47,6 +51,7 @@ public class Instrument implements Serializable {
     @Column(name = "conversion_factor", unique = true)
     private double conversionFactor;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "instrument")
+    @XmlTransient
     private Collection<Experiment> experimentCollection;
 
     public Instrument() {

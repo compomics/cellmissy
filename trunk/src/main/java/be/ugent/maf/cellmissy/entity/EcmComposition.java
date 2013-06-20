@@ -19,6 +19,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -29,6 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "ecm_composition")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "EcmComposition.findAll", query = "SELECT e FROM EcmComposition e"),
     @NamedQuery(name = "EcmComposition.findByCompositionTypeid", query = "SELECT e FROM EcmComposition e WHERE e.compositionTypeid = :compositionTypeid"),
@@ -41,10 +44,12 @@ public class EcmComposition implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "composition_typeid")
+    @XmlTransient
     private Long compositionTypeid;
     @Column(name = "composition_type")
     private String compositionType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmComposition")
+    @XmlTransient
     private List<Ecm> ecmList;
     @JoinColumn(name = "l_matrix_dimensionid", referencedColumnName = "matrix_dimensionid")
     @ManyToOne(optional = false)
@@ -73,7 +78,6 @@ public class EcmComposition implements Serializable {
         this.compositionType = compositionType;
     }
 
-    @XmlTransient
     public List<Ecm> getEcmList() {
         return ecmList;
     }

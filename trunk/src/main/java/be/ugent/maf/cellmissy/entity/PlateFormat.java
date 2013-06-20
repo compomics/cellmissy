@@ -18,6 +18,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -28,6 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "plate_format")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "PlateFormat.findAll", query = "SELECT p FROM PlateFormat p"),
     @NamedQuery(name = "PlateFormat.findByPlateFormatid", query = "SELECT p FROM PlateFormat p WHERE p.plateFormatid = :plateFormatid"),
@@ -53,7 +56,8 @@ public class PlateFormat implements Serializable {
     private Integer numberOfRows;
     @Column(name = "well_size")
     private Double wellSize;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateFormat")
+    @XmlTransient
     private List<Experiment> experimentList;
 
     public PlateFormat() {
@@ -108,7 +112,6 @@ public class PlateFormat implements Serializable {
         this.wellSize = wellSize;
     }
 
-    @XmlTransient
     public List<Experiment> getExperimentList() {
         return experimentList;
     }

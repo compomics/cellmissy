@@ -79,27 +79,7 @@
                     </execution>
                 </executions>
             </plugin>
-            
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>1.5</version>
-                <executions>                                   
-                    <execution>
-                        <id>schemagen</id>
-                        <goals>
-                            <goal>schemagen</goal>
-                        </goals>
-                    </execution>                
-                </executions>
-                <configuration>                   
-                    <includes>
-                        <include>be/ugent/maf/cellmissy/entity/*.java</include>                                                                                                                                                                                               
-                    </includes>                    
-                    <outputDirectory>${project.build.directory}/schemas</outputDirectory>
-                </configuration>
-            </plugin>
-            
+                       
             <!-- Jar plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

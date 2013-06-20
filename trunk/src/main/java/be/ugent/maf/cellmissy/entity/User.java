@@ -7,9 +7,9 @@ package be.ugent.maf.cellmissy.entity;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -31,6 +31,7 @@ import org.jasypt.hibernate.type.EncryptedStringType;
     @Parameter(name = "encryptorRegisteredName", value = "jasyptHibernateEncryptor")
 })
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findByUserid", query = "SELECT u FROM User u WHERE u.userid = :userid"),
@@ -135,7 +136,6 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    @XmlTransient
     public List<Experiment> getExperimentList() {
         return experimentList;
     }

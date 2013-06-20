@@ -19,7 +19,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -28,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "cell_line_type")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "CellLineType.findAll", query = "SELECT c FROM CellLineType c"),
     @NamedQuery(name = "CellLineType.findByCellLineTypeid", query = "SELECT c FROM CellLineType c WHERE c.cellLineTypeid = :cellLineTypeid"),
@@ -45,6 +49,7 @@ public class CellLineType implements Serializable {
     @Column(name = "name", unique = true)
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cellLineType")
+    @XmlTransient
     private List<CellLine> cellLineList;
 
     public CellLineType() {

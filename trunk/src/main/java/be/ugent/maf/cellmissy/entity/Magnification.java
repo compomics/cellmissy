@@ -17,6 +17,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -27,6 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "magnification")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Magnification.findAll", query = "SELECT m FROM Magnification m"),
     @NamedQuery(name = "Magnification.findByMagnificationid", query = "SELECT m FROM Magnification m WHERE m.magnificationid = :magnificationid"),
@@ -42,6 +45,7 @@ public class Magnification implements Serializable {
     @Column(name = "magnification_number")
     private String magnificationNumber;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "magnification")
+    @XmlTransient
     private List<Experiment> experimentList;
 
     public Magnification() {
@@ -67,7 +71,6 @@ public class Magnification implements Serializable {
         this.magnificationNumber = magnificationNumber;
     }
 
-    @XmlTransient
     public List<Experiment> getExperimentList() {
         return experimentList;
     }

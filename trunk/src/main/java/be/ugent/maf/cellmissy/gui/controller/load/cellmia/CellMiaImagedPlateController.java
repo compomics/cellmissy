@@ -39,7 +39,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Imaged Plate Controller: show conditions and highlight imaged wells on plate view Parent Controller: Load Experiment Controller
+ * Imaged Plate Controller: show conditions and highlight imaged wells on plate
+ * view Parent Controller: Load Experiment Controller
  *
  * @author Paola Masuzzo
  */
@@ -215,7 +216,8 @@ public class CellMiaImagedPlateController {
     }
 
     /**
-     * Action performed on Forward button: proceed with next imaging type or save the experiment to DB, if there are no more imaging types to process
+     * Action performed on Forward button: proceed with next imaging type or
+     * save the experiment to DB, if there are no more imaging types to process
      */
     private void onForward() {
         //check if there are more imaging types to process
@@ -238,7 +240,8 @@ public class CellMiaImagedPlateController {
     }
 
     /**
-     * If a selection is not validated, reset plate view (ONLY for current imaging type)
+     * If a selection is not validated, reset plate view (ONLY for current
+     * imaging type)
      */
     private void onCancel() {
         for (WellGui wellGui : imagedPlatePanel.getWellGuiList()) {
@@ -263,7 +266,8 @@ public class CellMiaImagedPlateController {
     }
 
     /**
-     * Compute the concentric ellipsi to show all imaged wells according to imaging types found
+     * Compute the concentric ellipsi to show all imaged wells according to
+     * imaging types found
      *
      * @param firstWellGui
      */
@@ -396,12 +400,15 @@ public class CellMiaImagedPlateController {
                     String message = "Error in parsing position list(s) !";
                     loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.red);
                     loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), message);
-                    loadExperimentFromCellMiaController.showMessage(ex.getMessage(), "ERROR in parsing position list(s)", JOptionPane.ERROR_MESSAGE);
+                    loadExperimentFromCellMiaController.showMessage(ex.getMessage() + "\nYou can click Forward and try again.", "ERROR in parsing position list(s)!", JOptionPane.ERROR_MESSAGE);
+                    loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getForwardButton().setEnabled(true);
                 } else if (ex.getCause() instanceof CellMiaDataLoadingException) {
                     String message = "Error in loading data !";
                     loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel().setForeground(Color.red);
                     loadExperimentFromCellMiaController.updateInfoLabel(loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getInfolabel(), message);
                     loadExperimentFromCellMiaController.showMessage(ex.getMessage(), "ERROR in loading data", JOptionPane.ERROR_MESSAGE);
+                    loadExperimentFromCellMiaController.showMessage(ex.getMessage() + "\nYou can click Forward and try again.", "ERROR in parsing position list(s)!", JOptionPane.ERROR_MESSAGE);
+                    loadExperimentFromCellMiaController.getLoadFromCellMiaPanel().getForwardButton().setEnabled(true);
                 } else {
                     LOG.error(ex.getMessage(), ex);
                     loadExperimentFromCellMiaController.handleUnexpectedError(ex);

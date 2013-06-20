@@ -19,7 +19,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -28,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "treatment_type")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "TreatmentType.findAll", query = "SELECT t FROM TreatmentType t"),
     @NamedQuery(name = "TreatmentType.findByTreatmentTypeid", query = "SELECT t FROM TreatmentType t WHERE t.treatmentTypeid = :treatmentTypeid"),
@@ -48,6 +52,7 @@ public class TreatmentType implements Serializable {
     @Column(name = "treatment_category")
     private Integer treatmentCategory;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "treatmentType")
+    @XmlTransient
     private List<Treatment> treatmentList;
 
     public TreatmentType() {

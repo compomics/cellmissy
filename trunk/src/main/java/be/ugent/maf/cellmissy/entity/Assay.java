@@ -17,6 +17,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -27,6 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "assay")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Assay.findAll", query = "SELECT a FROM Assay a"),
     @NamedQuery(name = "Assay.findByAssayid", query = "SELECT a FROM Assay a WHERE a.assayid = :assayid"),
@@ -38,6 +41,7 @@ public class Assay implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "assayid")
+    @XmlTransient
     private Long assayid;
     @Column(name = "assay_type")
     private String assayType;
@@ -45,6 +49,7 @@ public class Assay implements Serializable {
     @ManyToOne(optional = false)
     private MatrixDimension matrixDimension;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "assay")
+    @XmlTransient
     private List<PlateCondition> plateConditionList;
 
     public Assay() {
@@ -78,7 +83,6 @@ public class Assay implements Serializable {
         this.matrixDimension = matrixDimension;
     }
 
-    @XmlTransient
     public List<PlateCondition> getPlateConditionList() {
         return plateConditionList;
     }

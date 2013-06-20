@@ -18,6 +18,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.validator.constraints.Range;
@@ -29,6 +31,7 @@ import org.hibernate.validator.constraints.Range;
 @Entity
 @Table(name = "cell_line")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "CellLine.findAll", query = "SELECT c FROM CellLine c"),
     @NamedQuery(name = "CellLine.findByCellLineid", query = "SELECT c FROM CellLine c WHERE c.cellLineid = :cellLineid"),
@@ -44,6 +47,7 @@ public class CellLine implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "cell_lineid")
+    @XmlTransient
     private Long cellLineid;
     @Column(name = "seeding_time")
     private String seedingTime;
@@ -57,6 +61,7 @@ public class CellLine implements Serializable {
     @Column(name = "serum_concentration")
     private Double serumConcentration;
     @OneToOne(mappedBy = "cellLine")
+    @XmlTransient
     private PlateCondition plateCondition;
     @JoinColumn(name = "l_cell_line_typeid", referencedColumnName = "cell_line_typeid")
     @ManyToOne(optional = false)
@@ -134,7 +139,6 @@ public class CellLine implements Serializable {
         this.cellLineType = cellLineType;
     }
 
-    @XmlTransient
     public PlateCondition getPlateCondition() {
         return plateCondition;
     }
@@ -172,6 +176,6 @@ public class CellLine implements Serializable {
 
     @Override
     public String toString() {
-        return cellLineType + ", " + seedingDensity + " - " + growthMedium + ", " + serumConcentration + "% " + serum;
+        return cellLineType + ", " + seedingDensity + ", " + seedingTime + ", " + growthMedium + ", " + serumConcentration + "% " + serum;
     }
 }

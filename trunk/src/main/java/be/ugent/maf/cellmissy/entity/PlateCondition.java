@@ -24,6 +24,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.annotations.Fetch;
@@ -36,6 +40,7 @@ import org.hibernate.annotations.FetchMode;
 @Entity
 @Table(name = "plate_condition")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "PlateCondition.findAll", query = "SELECT p FROM PlateCondition p"),
     @NamedQuery(name = "PlateCondition.findByPlateConditionid", query = "SELECT p FROM PlateCondition p WHERE p.plateConditionid = :plateConditionid")})
@@ -46,12 +51,17 @@ public class PlateCondition implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "plate_conditionid")
+    @XmlTransient
     private Long plateConditionid;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
+    @XmlElementWrapper(name = "wells")
+    @XmlElement(name = "well")
     private List<Well> wellList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateCondition", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
+    @XmlElementWrapper(name = "treatments")
+    @XmlElement(name = "treatment")
     private List<Treatment> treatmentList;
     @JoinColumn(name = "l_cell_lineid", referencedColumnName = "cell_lineid")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
@@ -64,6 +74,7 @@ public class PlateCondition implements Serializable {
     private Ecm ecm;
     @JoinColumn(name = "l_experimentid", referencedColumnName = "experimentid")
     @ManyToOne(optional = false)
+    @XmlTransient
     private Experiment experiment;
     @JoinColumn(name = "l_assay_mediumid", referencedColumnName = "assay_mediumid")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
@@ -71,6 +82,7 @@ public class PlateCondition implements Serializable {
     @Transient
     private String name;
     @Transient
+    @XmlTransient
     private boolean loaded;
 
     public PlateCondition() {
@@ -88,7 +100,6 @@ public class PlateCondition implements Serializable {
         this.plateConditionid = plateConditionid;
     }
 
-    @XmlTransient
     public List<Well> getWellList() {
         return wellList;
     }

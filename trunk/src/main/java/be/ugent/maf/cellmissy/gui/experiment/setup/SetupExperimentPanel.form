@@ -19,7 +19,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,-123,0,0,4,-72"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,127,0,0,5,20"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
@@ -68,16 +68,20 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="infolabel" pref="565" max="32767" attributes="0"/>
+                  <Component id="infolabel" pref="431" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="copySettingsButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="importTemplateButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="copySettingsButton" linkSize="2" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="reportButton" linkSize="2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="exportTemplateButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="previousButton" linkSize="2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="nextButton" linkSize="2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="finishButton" linkSize="2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -94,6 +98,8 @@
                           <Component id="finishButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="reportButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="copySettingsButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="importTemplateButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportTemplateButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="infolabel" alignment="1" min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
@@ -106,11 +112,13 @@
         <Component class="javax.swing.JButton" name="previousButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Previous"/>
+            <Property name="toolTipText" type="java.lang.String" value="Go back"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="nextButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Next"/>
+            <Property name="toolTipText" type="java.lang.String" value="Go next"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="infolabel">
@@ -118,16 +126,31 @@
         <Component class="javax.swing.JButton" name="finishButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Finish"/>
+            <Property name="toolTipText" type="java.lang.String" value="Finish the current set-up: save the experiment to the DB"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="reportButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="PDF Report"/>
+            <Property name="toolTipText" type="java.lang.String" value="Create a PDF file with set-up for current experiment"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="copySettingsButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Copy Settings from other Exp..."/>
+            <Property name="text" type="java.lang.String" value="Copy settings..."/>
+            <Property name="toolTipText" type="java.lang.String" value="Copy the set-up settings from another experiment from this project."/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="importTemplateButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Import template..."/>
+            <Property name="toolTipText" type="java.lang.String" value="Import a text file and use it as template for the current experiment set-up"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="exportTemplateButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Export template..."/>
+            <Property name="toolTipText" type="java.lang.String" value="Export the current experiment set-up to a file template"/>
           </Properties>
         </Component>
       </SubComponents>

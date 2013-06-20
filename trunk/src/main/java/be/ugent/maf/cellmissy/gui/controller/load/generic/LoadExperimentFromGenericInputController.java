@@ -328,7 +328,7 @@ public class LoadExperimentFromGenericInputController {
             // show a waiting cursor
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             // save motility data
-            experimentService.saveMotilityDataForExperiment(experiment);
+            experimentService.saveMigrationDataForExperiment(experiment);
             // update experiment
             experiment = experimentService.update(experiment);
             return null;
