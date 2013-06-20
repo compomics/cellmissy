@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.entity.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
 
 /**
  *

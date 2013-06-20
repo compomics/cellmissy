@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import java.util.List;
 

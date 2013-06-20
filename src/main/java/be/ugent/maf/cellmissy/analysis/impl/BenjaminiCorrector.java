@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrector;
-import be.ugent.maf.cellmissy.entity.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
