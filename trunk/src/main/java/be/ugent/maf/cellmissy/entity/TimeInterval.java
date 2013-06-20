@@ -19,6 +19,9 @@ public class TimeInterval {
     // default cutoff
     private int proposedCutOff;
 
+    public TimeInterval() {
+    }    
+    
     /**
      * Constructor
      *

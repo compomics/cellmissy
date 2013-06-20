@@ -19,7 +19,7 @@ import static be.ugent.maf.cellmissy.analysis.MeasuredAreaType.OPEN_AREA;
 import be.ugent.maf.cellmissy.analysis.impl.CellCoveredAreaPreProcessor;
 import be.ugent.maf.cellmissy.analysis.impl.OpenAreaPreProcessor;
 import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache;
-import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AreaAnalysisPanel;
