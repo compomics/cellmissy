@@ -19,8 +19,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -29,6 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "track")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Track.findAll", query = "SELECT t FROM Track t"),
     @NamedQuery(name = "Track.findByTrackid", query = "SELECT t FROM Track t WHERE t.trackid = :trackid"),
@@ -99,7 +101,6 @@ public class Track implements Serializable {
         this.wellHasImagingType = wellHasImagingType;
     }
 
-    @XmlTransient
     public List<TrackPoint> getTrackPointList() {
         return trackPointList;
     }

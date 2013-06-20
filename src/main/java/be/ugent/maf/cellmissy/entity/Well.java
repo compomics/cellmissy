@@ -19,6 +19,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -29,6 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "well")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Well.findAll", query = "SELECT w FROM Well w"),
     @NamedQuery(name = "Well.findByWellid", query = "SELECT w FROM Well w WHERE w.wellid = :wellid"),
@@ -41,15 +44,18 @@ public class Well implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "wellid")
+    @XmlTransient
     private Long wellid;
     @Column(name = "column_number")
     private Integer columnNumber;
     @Column(name = "row_number")
     private Integer rowNumber;
     @OneToMany(mappedBy = "well", orphanRemoval = true)
+    @XmlTransient
     private List<WellHasImagingType> wellHasImagingTypeList;
     @JoinColumn(name = "l_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = false)
+    @XmlTransient
     private PlateCondition plateCondition;
 
     public Well() {
@@ -88,7 +94,6 @@ public class Well implements Serializable {
         this.rowNumber = rowNumber;
     }
 
-    @XmlTransient
     public List<WellHasImagingType> getWellHasImagingTypeList() {
         return wellHasImagingTypeList;
     }

@@ -374,7 +374,6 @@ public class SetupReportController {
                 line = "ECM polymerisation pH: " + ecm.getPolymerisationPh();
                 lines.add(line);
                 break;
-
         }
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         lines.clear();

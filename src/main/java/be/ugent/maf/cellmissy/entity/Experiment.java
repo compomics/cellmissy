@@ -30,6 +30,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.annotations.Fetch;
@@ -43,6 +47,7 @@ import org.hibernate.validator.constraints.Range;
 @Entity
 @Table(name = "experiment")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Experiment.findAll", query = "SELECT e FROM Experiment e"),
     @NamedQuery(name = "Experiment.findByExperimentid", query = "SELECT e FROM Experiment e WHERE e.experimentid = :experimentid"),
@@ -61,40 +66,52 @@ public class Experiment implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
+    @XmlTransient
     @Column(name = "experimentid")
     private Long experimentid;
     @Basic(optional = false)
     @Range(min = 1, max = 100, message = "Experiment number must be between 1 and 100")
     @Column(name = "experiment_number")
+    @XmlTransient
     private int experimentNumber;
     @Size(min = 3, max = 150, message = "Purpose field must have between 3 and 150 characters")
     @Column(name = "purpose")
+    @XmlTransient
     private String purpose;
     @Basic(optional = true)
     @Column(name = "experiment_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @XmlTransient
     private Date experimentDate;
     @Column(name = "duration")
+    @XmlTransient
     private Double duration;
     @Column(name = "experiment_interval")
+    @XmlTransient
     private Double experimentInterval;
     @Column(name = "time_frames")
+    @XmlTransient
     private Integer timeFrames;
     @Basic(optional = false)
     @Column(name = "experiment_status")
     @Enumerated(EnumType.STRING)
+    @XmlTransient
     private ExperimentStatus experimentStatus;
     @JoinColumn(name = "l_magnificationid", referencedColumnName = "magnificationid")
     @ManyToOne(optional = false)
+    @XmlTransient
     private Magnification magnification;
     @JoinColumn(name = "l_userid", referencedColumnName = "userid")
     @ManyToOne(optional = false)
+    @XmlTransient
     private User user;
     @JoinColumn(name = "l_instrumentid", referencedColumnName = "instrumentid")
     @ManyToOne(optional = false)
+    @XmlTransient
     private Instrument instrument;
     @JoinColumn(name = "l_projectid", referencedColumnName = "projectid")
     @ManyToOne(optional = false)
+    @XmlTransient
     private Project project;
     @JoinColumn(name = "l_plate_formatid", referencedColumnName = "plate_formatid")
     @ManyToOne(optional = false)
@@ -102,6 +119,8 @@ public class Experiment implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
     @OrderBy("plateConditionid")
+    @XmlElementWrapper(name = "plateConditions")
+    @XmlElement(name = "plateCondition")
     private List<PlateCondition> plateConditionList;
     @Transient
     private File experimentFolder;
@@ -262,7 +281,6 @@ public class Experiment implements Serializable {
         this.obsepFile = obsepFile;
     }
 
-    @XmlTransient
     public List<PlateCondition> getPlateConditionList() {
         return plateConditionList;
     }

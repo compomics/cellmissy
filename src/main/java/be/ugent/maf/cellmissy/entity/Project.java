@@ -19,6 +19,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -30,6 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "project", uniqueConstraints =
         @UniqueConstraint(columnNames = "project_number"))
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Project.findAll", query = "SELECT p FROM Project p"),
     @NamedQuery(name = "Project.findByProjectid", query = "SELECT p FROM Project p WHERE p.projectid = :projectid"),
@@ -49,6 +52,7 @@ public class Project implements Serializable {
     @Column(name = "description")
     private String projectDescription;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    @XmlTransient
     private List<Experiment> experimentList;
 
     public Project() {
@@ -87,7 +91,6 @@ public class Project implements Serializable {
         this.projectDescription = projectDescription;
     }
 
-    @XmlTransient
     public List<Experiment> getExperimentList() {
         return experimentList;
     }

@@ -4,11 +4,15 @@
  */
 package be.ugent.maf.cellmissy.service.impl;
 
+import be.ugent.maf.cellmissy.entity.AssayMedium;
+import be.ugent.maf.cellmissy.entity.CellLine;
+import be.ugent.maf.cellmissy.entity.Ecm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.Instrument;
 import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
@@ -18,8 +22,14 @@ import be.ugent.maf.cellmissy.repository.MagnificationRepository;
 import be.ugent.maf.cellmissy.repository.WellHasImagingTypeRepository;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -329,7 +339,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     }
 
     @Override
-    public void saveMotilityDataForExperiment(Experiment entity) {
+    public void saveMigrationDataForExperiment(Experiment entity) {
         for (PlateCondition plateCondition : entity.getPlateConditionList()) {
             for (Well well : plateCondition.getWellList()) {
                 for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
@@ -342,5 +352,66 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Override
     public void save(Experiment entity) {
         experimentRepository.save(entity);
+    }
+
+    @Override
+    public void copyExperimentSetup(Experiment experimentToCopy, Experiment newExperiment) {
+        // get all the settings from the experiment to be copied
+        // plate format
+        newExperiment.setPlateFormat(experimentToCopy.getPlateFormat());
+        // plate conditions
+        List<PlateCondition> plateConditionList = experimentToCopy.getPlateConditionList();
+        List<PlateCondition> conditions = new ArrayList<>();
+        for (int i = 0; i < plateConditionList.size(); i++) {
+            PlateCondition plateCondition = plateConditionList.get(i);
+            // create a new condition
+            PlateCondition newPlateCondition = new PlateCondition();
+            newPlateCondition.setName("Condition " + (i + 1));
+            // assay
+            newPlateCondition.setAssay(plateCondition.getAssay());
+            // ecm
+            Ecm ecm = plateCondition.getEcm();
+            Ecm newEcm = new Ecm(ecm.getConcentration(), ecm.getVolume(), ecm.getCoatingTime(), ecm.getCoatingTemperature(), ecm.getPolymerisationTime(), ecm.getPolymerisationTemperature(), ecm.getBottomMatrix(), ecm.getEcmComposition(), ecm.getEcmDensity(), ecm.getConcentrationUnit(), ecm.getVolumeUnit());
+            newPlateCondition.setEcm(newEcm);
+            // cell line
+            CellLine cellLine = plateCondition.getCellLine();
+            CellLine newCellLine = new CellLine(cellLine.getSeedingTime(), cellLine.getSeedingDensity(), cellLine.getGrowthMedium(), cellLine.getSerumConcentration(), cellLine.getCellLineType(), cellLine.getSerum());
+            newPlateCondition.setCellLine(newCellLine);
+            // assay medium
+            AssayMedium assayMedium = plateCondition.getAssayMedium();
+            AssayMedium newAssayMedium = new AssayMedium(assayMedium.getMedium(), assayMedium.getSerum(), assayMedium.getSerumConcentration(), assayMedium.getVolume());
+            newPlateCondition.setAssayMedium(newAssayMedium);
+            // treatments
+            List<Treatment> treatmentList = plateCondition.getTreatmentList();
+            List<Treatment> treatments = new ArrayList<>();
+            for (Treatment treatment : treatmentList) {
+                Treatment newTreatment = new Treatment(treatment.getConcentration(), treatment.getConcentrationUnit(), treatment.getTiming(), treatment.getDrugSolvent(), treatment.getDrugSolventConcentration(), treatment.getTreatmentType());
+                newTreatment.setPlateCondition(newPlateCondition);
+                treatments.add(newTreatment);
+            }
+            newPlateCondition.setTreatmentList(treatments);
+            // wells
+            List<Well> wellList = plateCondition.getWellList();
+            List<Well> wells = new ArrayList<>();
+            for (Well well : wellList) {
+                Well newWell = new Well(well.getColumnNumber(), well.getRowNumber());
+                newWell.setPlateCondition(newPlateCondition);
+                wells.add(newWell);
+            }
+            newPlateCondition.setWellList(wells);
+            conditions.add(newPlateCondition);
+        }
+        newExperiment.setPlateConditionList(conditions);
+    }
+
+    @Override
+    public void exportSetupTemplateToXMLFile(File directory, Experiment experiment) throws JAXBException, FileNotFoundException {
+        JAXBContext jc = JAXBContext.newInstance(Experiment.class);
+        //Create marshaller
+        Marshaller m = jc.createMarshaller();
+        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        //Marshal object into file.
+        File file = new File(directory, "Setup Template " + experiment + " - " + experiment.getProject() + ".xml");
+        m.marshal(experiment, new FileOutputStream(file));
     }
 }

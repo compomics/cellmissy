@@ -18,6 +18,7 @@ import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -159,6 +160,7 @@ public class LoadExperimentFromCellMiaController {
             cellMiaExperimentDataController.getExperimentBindingList().clear();
         }
         cellMiaExperimentDataController.resetAfterUserInteraction();
+        loadFromCellMiaPanel.getInfolabel().setForeground(Color.black);
         // swap views
         GuiUtils.switchChildPanels(loadFromCellMiaPanel.getTopPanel(), cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel(), cellMiaImagedPlateController.getLoadFromCellMiaPlatePanel());
         cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Select a project and then an experiment in progress to load CELLMIA data.");
@@ -389,7 +391,7 @@ public class LoadExperimentFromCellMiaController {
             // show a waiting cursor
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             // save motility data
-            experimentService.saveMotilityDataForExperiment(experiment);
+            experimentService.saveMigrationDataForExperiment(experiment);
             // update experiment
             experiment = experimentService.update(experiment);
             return null;

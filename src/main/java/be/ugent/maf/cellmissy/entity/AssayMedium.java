@@ -15,7 +15,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -24,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "assay_medium")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "AssayMedium.findAll", query = "SELECT a FROM AssayMedium a"),
     @NamedQuery(name = "AssayMedium.findByAssayMediumid", query = "SELECT a FROM AssayMedium a WHERE a.assayMediumid = :assayMediumid"),
@@ -37,6 +41,7 @@ public class AssayMedium implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "assay_mediumid")
+    @XmlTransient
     private Long assayMediumid;
     @Column(name = "medium")
     private String medium;
@@ -47,6 +52,7 @@ public class AssayMedium implements Serializable {
     @Column(name = "volume")
     private Double volume;
     @OneToOne(mappedBy = "assayMedium")
+    @XmlTransient
     private PlateCondition plateCondition;
 
     public AssayMedium() {

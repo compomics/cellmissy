@@ -19,6 +19,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -29,6 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "algorithm")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Algorithm.findAll", query = "SELECT a FROM Algorithm a"),
     @NamedQuery(name = "Algorithm.findByAlgorithmid", query = "SELECT a FROM Algorithm a WHERE a.algorithmid = :algorithmid"),
@@ -40,6 +43,7 @@ public class Algorithm implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "algorithmid")
+    @XmlTransient
     private Long algorithmid;
     @Basic(optional = false)
     @NotNull

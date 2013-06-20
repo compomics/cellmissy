@@ -20,6 +20,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -30,6 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "ecm")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Ecm.findAll", query = "SELECT e FROM Ecm e"),
     @NamedQuery(name = "Ecm.findByEcmid", query = "SELECT e FROM Ecm e WHERE e.ecmid = :ecmid"),
@@ -47,6 +50,7 @@ public class Ecm implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ecmid")
+    @XmlTransient
     private Long ecmid;
     @Column(name = "concentration")
     private Double concentration;
@@ -76,6 +80,7 @@ public class Ecm implements Serializable {
     @ManyToOne(optional = true)
     private EcmDensity ecmDensity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecm")
+    @XmlTransient
     private List<PlateCondition> plateConditionList;
     @Column(name = "concentration_unit")
     private String concentrationUnit;
@@ -207,7 +212,6 @@ public class Ecm implements Serializable {
         this.ecmDensity = ecmDensity;
     }
 
-    @XmlTransient
     public List<PlateCondition> getPlateConditionList() {
         return plateConditionList;
     }

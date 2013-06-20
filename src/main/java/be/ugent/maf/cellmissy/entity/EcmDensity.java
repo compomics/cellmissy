@@ -15,6 +15,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -25,6 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "ecm_density")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "EcmDensity.findAll", query = "SELECT e FROM EcmDensity e"),
     @NamedQuery(name = "EcmDensity.findByEcmDensityid", query = "SELECT e FROM EcmDensity e WHERE e.ecmDensityid = :ecmDensityid"),
@@ -35,10 +38,12 @@ public class EcmDensity implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "ecm_densityid")
+    @XmlTransient
     private Long ecmDensityid;
     @Column(name = "ecm_density")
     private Double ecmDensity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmDensity")
+    @XmlTransient
     private List<Ecm> ecmList;
 
     public EcmDensity() {
@@ -64,7 +69,6 @@ public class EcmDensity implements Serializable {
         this.ecmDensity = ecmDensity;
     }
 
-    @XmlTransient
     public List<Ecm> getEcmList() {
         return ecmList;
     }

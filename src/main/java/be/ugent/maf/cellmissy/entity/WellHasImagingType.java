@@ -20,6 +20,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -30,6 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "well_has_imaging_type")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "WellHasImagingType.findAll", query = "SELECT w FROM WellHasImagingType w"),
     @NamedQuery(name = "WellHasImagingType.findByWellHasImagingTypeid", query = "SELECT w FROM WellHasImagingType w WHERE w.wellHasImagingTypeid = :wellHasImagingTypeid"),
@@ -55,7 +58,8 @@ public class WellHasImagingType implements Serializable {
     @Column(name = "y_coordinate")
     private Double yCoordinate;
     @JoinColumn(name = "l_wellid", referencedColumnName = "wellid")
-    @ManyToOne()
+    @ManyToOne
+    @XmlTransient
     private Well well;
     @JoinColumn(name = "l_imaging_typeid", referencedColumnName = "imaging_typeid")
     @ManyToOne(cascade = CascadeType.ALL, optional = true)
@@ -136,7 +140,6 @@ public class WellHasImagingType implements Serializable {
         this.imagingType = imagingType;
     }
 
-    @XmlTransient
     public List<TimeStep> getTimeStepList() {
         return timeStepList;
     }
@@ -145,7 +148,6 @@ public class WellHasImagingType implements Serializable {
         this.timeStepList = timeStepList;
     }
 
-    @XmlTransient
     public List<Track> getTrackList() {
         return trackList;
     }

@@ -155,7 +155,6 @@ public class SetupPlateController {
         for (List<Rectangle> rectangleList : setupPlatePanel.getRectangles().values()) {
             rectangleList.clear();
         }
-        setupPlatePanel.setExperiment(null);
         setupPlatePanel.repaint();
         // set to null the rectangles of the wellguis
         for (WellGui wellGui : setupPlatePanel.getWellGuiList()) {

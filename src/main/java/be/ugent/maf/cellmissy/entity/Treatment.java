@@ -17,6 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -27,6 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "treatment")
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Treatment.findAll", query = "SELECT t FROM Treatment t"),
     @NamedQuery(name = "Treatment.findByTreatmentid", query = "SELECT t FROM Treatment t WHERE t.treatmentid = :treatmentid"),
@@ -41,6 +44,7 @@ public class Treatment implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "treatmentid")
+    @XmlTransient
     private Long treatmentid;
     @Column(name = "concentration")
     private Double concentration;
@@ -54,6 +58,7 @@ public class Treatment implements Serializable {
     private Double drugSolventConcentration;
     @JoinColumn(name = "l_plate_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = true)
+    @XmlTransient
     private PlateCondition plateCondition;
     @JoinColumn(name = "l_treatment_typeid", referencedColumnName = "treatment_typeid")
     @ManyToOne(optional = true)
@@ -128,7 +133,6 @@ public class Treatment implements Serializable {
         this.drugSolventConcentration = drugSolventConcentration;
     }
 
-    @XmlTransient
     public PlateCondition getPlateCondition() {
         return plateCondition;
     }
