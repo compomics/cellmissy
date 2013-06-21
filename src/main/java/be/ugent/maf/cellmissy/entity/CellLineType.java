@@ -43,6 +43,7 @@ public class CellLineType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "cell_line_typeid")
+    @XmlTransient
     private Long cellLineTypeid;
     @Basic(optional = false)
     @NotNull

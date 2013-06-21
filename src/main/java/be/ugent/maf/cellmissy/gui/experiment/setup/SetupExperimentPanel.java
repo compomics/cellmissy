@@ -120,10 +120,10 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
         copySettingsButton.setToolTipText("Copy the set-up settings from another experiment from this project.");
 
         importTemplateButton.setText("Import template...");
-        importTemplateButton.setToolTipText("Import a text file and use it as template for the current experiment set-up");
+        importTemplateButton.setToolTipText("Import an XMLfile and use it as template for the current experiment set-up");
 
         exportTemplateButton.setText("Export template...");
-        exportTemplateButton.setToolTipText("Export the current experiment set-up to a file template");
+        exportTemplateButton.setToolTipText("Export the current experiment set-up to an XML file template");
 
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);

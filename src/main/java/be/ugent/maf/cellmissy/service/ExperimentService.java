@@ -99,17 +99,30 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
     /**
      * Copy the setup settings from an experiment to a new one.
      *
-     * @param experimentToCopy: the experiment from which settings need to be copied
+     * @param experimentToCopy: the experiment from which settings need to be
+     * copied
      * @param newExperiment: the experiment to which settings
      */
     public void copyExperimentSetup(Experiment experimentToCopy, Experiment newExperiment);
 
     /**
-     * Export the setup template to an external text file for a given
-     * experiment. The directory to save the file in must be specified as well.
+     * Export the setup template to an XML file for a given experiment. The
+     * directory to save the file in must be specified as well.
      *
-     * @param directory
      * @param experiment
+     * @param xmlFile 
+     * @throws FileNotFoundException
+     * @throws JAXBException
      */
-    public void exportSetupTemplateToXMLFile(File directory, Experiment experiment) throws JAXBException, FileNotFoundException;
+    public void exportExperimentSetupToXMLFile(Experiment experiment, File xmlFile) throws JAXBException, FileNotFoundException;
+
+    /**
+     * Import the experiment setup from an XML file: we parse the XML file and
+     * get the experiment back.
+     *
+     * @param xmlFile
+     * @return
+     * @throws JAXBException
+     */
+    public Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException;
 }

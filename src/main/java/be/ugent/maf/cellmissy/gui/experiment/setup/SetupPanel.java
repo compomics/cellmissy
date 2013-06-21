@@ -105,7 +105,7 @@ public class SetupPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
 
-        experimentMetadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment metadata", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        experimentMetadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment metadata", 0, 0, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
         experimentMetadataPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         experimentMetadataPanel.setOpaque(false);
         experimentMetadataPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -142,7 +142,7 @@ public class SetupPanel extends javax.swing.JPanel {
                             .addComponent(projNumberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(expNumberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap())
-                    .addComponent(expPurposeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)))
+                    .addComponent(expPurposeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         experimentMetadataPanelLayout.setVerticalGroup(
             experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,7 +172,7 @@ public class SetupPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
         add(experimentMetadataPanel, gridBagConstraints);
 
-        conditionsParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        conditionsParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Conditions", 0, 0, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
         conditionsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         conditionsParentPanel.setName(""); // NOI18N
         conditionsParentPanel.setOpaque(false);
@@ -188,7 +188,7 @@ public class SetupPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
         add(conditionsParentPanel, gridBagConstraints);
 
-        setupConditionsParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Conditions Setup", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        setupConditionsParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Conditions Setup", 0, 0, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
         setupConditionsParentPanel.setMinimumSize(new java.awt.Dimension(10, 10));
         setupConditionsParentPanel.setOpaque(false);
         setupConditionsParentPanel.setPreferredSize(new java.awt.Dimension(10, 10));
@@ -204,7 +204,7 @@ public class SetupPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 10);
         add(setupConditionsParentPanel, gridBagConstraints);
 
-        platePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Plate", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12), new java.awt.Color(0, 0, 0))); // NOI18N
+        platePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Plate", 0, 0, new java.awt.Font("Tahoma", 0, 12), new java.awt.Color(0, 0, 0))); // NOI18N
         platePanel.setMinimumSize(new java.awt.Dimension(20, 20));
         platePanel.setName(""); // NOI18N
         platePanel.setOpaque(false);
@@ -241,7 +241,7 @@ public class SetupPanel extends javax.swing.JPanel {
         buttonsPanelLayout.setVerticalGroup(
             buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, buttonsPanelLayout.createSequentialGroup()
-                .addContainerGap(377, Short.MAX_VALUE)
+                .addContainerGap(278, Short.MAX_VALUE)
                 .addComponent(randomButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(clearLastButton)
@@ -257,7 +257,7 @@ public class SetupPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.2;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 15, 0);
+        gridBagConstraints.insets = new java.awt.Insets(15, 0, 0, 0);
         platePanel.add(buttonsPanel, gridBagConstraints);
 
         setupPlateParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -283,12 +283,12 @@ public class SetupPanel extends javax.swing.JPanel {
                 .addComponent(selectFormatLabel)
                 .addGap(18, 18, 18)
                 .addComponent(plateFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(162, Short.MAX_VALUE))
+                .addContainerGap(125, Short.MAX_VALUE))
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, topPanelLayout.createSequentialGroup()
-                .addGap(0, 12, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(selectFormatLabel)
                     .addComponent(plateFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -302,7 +302,7 @@ public class SetupPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.03;
+        gridBagConstraints.weighty = 0.1;
         setupPlateParentPanel.add(topPanel, gridBagConstraints);
 
         bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -315,8 +315,8 @@ public class SetupPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.97;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        gridBagConstraints.weighty = 0.9;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 75);
         setupPlateParentPanel.add(bottomPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();

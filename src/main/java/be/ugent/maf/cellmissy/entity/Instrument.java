@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -52,7 +52,7 @@ public class Instrument implements Serializable {
     private double conversionFactor;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "instrument")
     @XmlTransient
-    private Collection<Experiment> experimentCollection;
+    private List<Experiment> experimentList;
 
     public Instrument() {
     }
@@ -90,8 +90,8 @@ public class Instrument implements Serializable {
         this.conversionFactor = conversionFactor;
     }
 
-    public Collection<Experiment> getExperimentCollection() {
-        return experimentCollection;
+    public List<Experiment> getExperimentList() {
+        return experimentList;
     }
 
     @Override

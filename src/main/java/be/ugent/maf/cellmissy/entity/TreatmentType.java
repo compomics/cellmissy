@@ -43,6 +43,7 @@ public class TreatmentType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "treatment_typeid")
+    @XmlTransient
     private Long treatmentTypeid;
     @Basic(optional = false)
     @NotNull
