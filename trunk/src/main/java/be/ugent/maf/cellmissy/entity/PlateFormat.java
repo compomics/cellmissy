@@ -45,6 +45,7 @@ public class PlateFormat implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "plate_formatid")
+    @XmlTransient
     private Long plateFormatid;
     @Basic(optional = false)
     @NotNull

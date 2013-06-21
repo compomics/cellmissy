@@ -144,13 +144,13 @@
         <Component class="javax.swing.JButton" name="importTemplateButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Import template..."/>
-            <Property name="toolTipText" type="java.lang.String" value="Import a text file and use it as template for the current experiment set-up"/>
+            <Property name="toolTipText" type="java.lang.String" value="Import an XMLfile and use it as template for the current experiment set-up"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="exportTemplateButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Export template..."/>
-            <Property name="toolTipText" type="java.lang.String" value="Export the current experiment set-up to a file template"/>
+            <Property name="toolTipText" type="java.lang.String" value="Export the current experiment set-up to an XML file template"/>
           </Properties>
         </Component>
       </SubComponents>

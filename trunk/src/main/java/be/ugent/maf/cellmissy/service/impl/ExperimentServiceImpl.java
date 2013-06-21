@@ -16,6 +16,7 @@ import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
+import be.ugent.maf.cellmissy.parser.XMLParser;
 import be.ugent.maf.cellmissy.repository.ExperimentRepository;
 import be.ugent.maf.cellmissy.repository.InstrumentRepository;
 import be.ugent.maf.cellmissy.repository.MagnificationRepository;
@@ -29,7 +30,6 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +52,8 @@ public class ExperimentServiceImpl implements ExperimentService {
     private WellHasImagingTypeRepository wellHasImagingTypeRepository;
     @Autowired
     private MagnificationRepository magnificationRepository;
+    @Autowired
+    private XMLParser xMLParser;
     private File projectFolder;
     private File experimentFolder;
     private File miaFolder;
@@ -405,13 +407,15 @@ public class ExperimentServiceImpl implements ExperimentService {
     }
 
     @Override
-    public void exportSetupTemplateToXMLFile(File directory, Experiment experiment) throws JAXBException, FileNotFoundException {
-        JAXBContext jc = JAXBContext.newInstance(Experiment.class);
-        //Create marshaller
-        Marshaller m = jc.createMarshaller();
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        //Marshal object into file.
-        File file = new File(directory, "Setup Template " + experiment + " - " + experiment.getProject() + ".xml");
-        m.marshal(experiment, new FileOutputStream(file));
+    public void exportExperimentSetupToXMLFile(Experiment experiment, File xmlFile) throws JAXBException, FileNotFoundException {
+        // we call the XML parser to marshal the object to a XML file
+        xMLParser.marshal(Experiment.class, experiment, xmlFile);
+    }
+
+    @Override
+    public Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException {
+        // we call the XML parser to unmarshal the XML file to an experiment
+        // we need to cast the result object to an experiment
+        return xMLParser.unmarshal(Experiment.class, xmlFile);
     }
 }

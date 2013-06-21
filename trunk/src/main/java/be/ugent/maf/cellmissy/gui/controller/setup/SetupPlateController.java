@@ -214,7 +214,7 @@ public class SetupPlateController {
                 // get the selected plate format
                 PlateFormat selectedPlateFormat = (PlateFormat) (setupExperimentController.getSetupPanel().getPlateFormatComboBox().getSelectedItem());
                 // if selection has not started yet, simply show the plate format
-                if (!selectionStarted()) {
+                if (!selectionStarted) {
                     Dimension parentDimension = setupExperimentController.getSetupPanel().getBottomPanel().getSize();
                     setupPlatePanel.initPanel(selectedPlateFormat, parentDimension);
                     setupPlatePanel.repaint();
