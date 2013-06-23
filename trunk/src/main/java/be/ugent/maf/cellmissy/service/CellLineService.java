@@ -13,12 +13,14 @@ import java.util.List;
  * @author Paola
  */
 public interface CellLineService extends GenericService<CellLine, Long> {
-    
+
     List<CellLineType> findAllCellLineTypes();
-    
+
+    CellLineType findByName(String cellLineName);
+
     void saveCellLineType(CellLineType entity);
-    
+
     List<String> findAllGrowthMedia();
-    
+
     List<String> findAllSera();
 }

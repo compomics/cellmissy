@@ -37,7 +37,6 @@ public class MatrixDimension implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "matrix_dimensionid")
-    @XmlTransient
     private Long matrixDimensionid;
     @Column(name = "dimension")
     private String dimension;

@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.setup;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
@@ -17,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import javax.persistence.PersistenceException;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -95,6 +97,35 @@ public class TreatmentsController {
 
     public ObservableList<Treatment> getTreatmentBindingList() {
         return treatmentBindingList;
+    }
+
+    public void addNewTreatmentTypes(List<TreatmentType> treatmentTypes) {
+        for (TreatmentType treatmentType : treatmentTypes) {
+            switch (treatmentType.getTreatmentCategory()) {
+                case 1:
+                    drugBindingList.add(treatmentType);
+                    break;
+                case 2:
+                    generalTreatmentBindingList.add(treatmentType);
+                    break;
+            }
+        }
+    }
+
+    public List<TreatmentType> findNewTreatmentTypes(Experiment experiment) {
+        List<TreatmentType> treatmentTypeList = new ArrayList<>();
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            List<Treatment> treatmentList = plateCondition.getTreatmentList();
+            for (Treatment treatment : treatmentList) {
+                TreatmentType treatmentType = treatment.getTreatmentType();
+                TreatmentType findByName = treatmentService.findByName(treatmentType.getName());
+                if (findByName == null) {
+                    treatmentTypeList.add(treatmentType);
+                }
+            }
+
+        }
+        return treatmentTypeList;
     }
 
     /**

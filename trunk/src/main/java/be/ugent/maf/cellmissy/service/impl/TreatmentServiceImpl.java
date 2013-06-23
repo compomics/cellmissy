@@ -20,46 +20,51 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("treatmentService")
 @Transactional
 public class TreatmentServiceImpl implements TreatmentService {
-    
+
     @Autowired
     private TreatmentRepository treatmentRepository;
-    
+
     @Override
     public Treatment findById(Long id) {
         return treatmentRepository.findById(id);
     }
-    
+
     @Override
     public List<Treatment> findAll() {
         return treatmentRepository.findAll();
     }
-    
+
     @Override
     public Treatment update(Treatment entity) {
         return treatmentRepository.update(entity);
     }
-    
+
     @Override
     public void delete(Treatment entity) {
         entity = treatmentRepository.findById(entity.getTreatmentid());
         treatmentRepository.delete(entity);
     }
-    
+
     @Override
     public List<TreatmentType> findByCategory(Integer treatmentCategory) {
         return treatmentRepository.findByCategory(treatmentCategory);
     }
-    
+
+    @Override
+    public TreatmentType findByName(String name){
+        return treatmentRepository.findByName(name);
+    }
+
     @Override
     public void saveTreatmentType(TreatmentType treatmentType) {
         treatmentRepository.saveTreatmentType(treatmentType);
     }
-    
+
     @Override
     public List<String> findAllDrugSolvents() {
         return treatmentRepository.findAllDrugSolvents();
     }
-    
+
     @Override
     public void save(Treatment entity) {
         treatmentRepository.save(entity);

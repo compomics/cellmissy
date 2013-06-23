@@ -14,9 +14,11 @@ import java.util.List;
  */
 public interface TreatmentService extends GenericService<Treatment, Long> {
 
-    List<TreatmentType> findByCategory(Integer treatmentCategory);
+    public List<TreatmentType> findByCategory(Integer treatmentCategory);
 
-    void saveTreatmentType(TreatmentType treatmentType);
-    
-    List<String> findAllDrugSolvents();
+    public TreatmentType findByName(String name);
+
+    public void saveTreatmentType(TreatmentType treatmentType);
+
+    public List<String> findAllDrugSolvents();
 }

@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "TreatmentType.findAll", query = "SELECT t FROM TreatmentType t"),
     @NamedQuery(name = "TreatmentType.findByTreatmentTypeid", query = "SELECT t FROM TreatmentType t WHERE t.treatmentTypeid = :treatmentTypeid"),
+    @NamedQuery(name = "TreatmentType.findByName", query = "SELECT t FROM TreatmentType t WHERE t.name = :name"),
     @NamedQuery(name = "TreatmentType.findByTreatmentCategory", query = "SELECT t FROM TreatmentType t WHERE t.treatmentCategory = :treatmentCategory")})
 public class TreatmentType implements Serializable {
 
