@@ -94,4 +94,19 @@ public class EcmServiceImpl implements EcmService {
     public void save(Ecm entity) {
         ecmRepository.save(entity);
     }
+
+    @Override
+    public BottomMatrix findBottomMatrixByType(String bottomMatrixType) {
+        return bottomMatrixRepository.findBottomMatrixByType(bottomMatrixType);
+    }
+
+    @Override
+    public EcmComposition findEcmCompositionsByType(String ecmCompositionType) {
+        return ecmCompositionRepository.findEcmCompositionsByType(ecmCompositionType);
+    }
+
+    @Override
+    public EcmDensity findByEcmDensity(Double ecmDensity) {
+        return ecmDensityRepository.findByEcmDensity(ecmDensity);
+    }
 }

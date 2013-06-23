@@ -53,4 +53,9 @@ public class AssayServiceImpl implements AssayService {
     public void save(Assay entity) {
         assayRepository.save(entity);
     }
+
+    @Override
+    public Assay findByAssayType(String assayType) {
+        return assayRepository.findByAssayType(assayType);
+    }
 }

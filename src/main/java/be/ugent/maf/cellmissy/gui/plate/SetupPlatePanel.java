@@ -139,20 +139,23 @@ public class SetupPlatePanel extends AbstractPlatePanel {
             int conditionIndex = plateCondition.getConditionIndex() - 1;
             int indexOfColor = conditionIndex % lenght;
             g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
-            for (Rectangle rectangle : rectangles.get(plateCondition)) {
+            List<Rectangle> rectList = rectangles.get(plateCondition);
+            if (rectList != null) {
+                for (Rectangle rectangle : rectList) {
 
-                for (WellGui wellGui : wellGuiList) {
-                    if (rectangle.contains(wellGui.getEllipsi().get(0).getX(), wellGui.getEllipsi().get(0).getY(), wellGui.getEllipsi().get(0).getWidth(), wellGui.getEllipsi().get(0).getHeight())) {
-                        int x = (int) wellGui.getEllipsi().get(0).getX() - SetupPlatePanel.pixelsGrid / 4;
-                        int y = (int) wellGui.getEllipsi().get(0).getY() - SetupPlatePanel.pixelsGrid / 4;
+                    for (WellGui wellGui : wellGuiList) {
+                        if (rectangle.contains(wellGui.getEllipsi().get(0).getX(), wellGui.getEllipsi().get(0).getY(), wellGui.getEllipsi().get(0).getWidth(), wellGui.getEllipsi().get(0).getHeight())) {
+                            int x = (int) wellGui.getEllipsi().get(0).getX() - SetupPlatePanel.pixelsGrid / 4;
+                            int y = (int) wellGui.getEllipsi().get(0).getY() - SetupPlatePanel.pixelsGrid / 4;
 
-                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + SetupPlatePanel.pixelsGrid / 2;
-                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + SetupPlatePanel.pixelsGrid / 2;
+                            int width = (int) wellGui.getEllipsi().get(0).getWidth() + SetupPlatePanel.pixelsGrid / 2;
+                            int height = (int) wellGui.getEllipsi().get(0).getHeight() + SetupPlatePanel.pixelsGrid / 2;
 
-                        //create rectangle that sorrounds the wellGui and draw it
-                        Rectangle rect = new Rectangle(x, y, width, height);
-                        g2d.draw(rect);
-                        wellGui.setRectangle(rect);
+                            //create rectangle that sorrounds the wellGui and draw it
+                            Rectangle rect = new Rectangle(x, y, width, height);
+                            g2d.draw(rect);
+                            wellGui.setRectangle(rect);
+                        }
                     }
                 }
             }

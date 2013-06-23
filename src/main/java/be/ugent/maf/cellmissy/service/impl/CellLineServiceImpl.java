@@ -54,6 +54,11 @@ public class CellLineServiceImpl implements CellLineService {
     }
 
     @Override
+    public CellLineType findByName(String cellLineName) {
+        return cellLineTypeRepository.findByName(cellLineName);
+    }
+
+    @Override
     public void saveCellLineType(CellLineType entity) {
         cellLineTypeRepository.save(entity);
     }

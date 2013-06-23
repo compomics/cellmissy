@@ -11,4 +11,6 @@ import be.ugent.maf.cellmissy.entity.CellLineType;
  * @author Paola Masuzzo
  */
 public interface CellLineTypeRepository extends GenericRepository<CellLineType, Long> {
+
+    CellLineType findByName(String cellLineName);
 }

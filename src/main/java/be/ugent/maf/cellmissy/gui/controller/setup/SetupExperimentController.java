@@ -5,6 +5,11 @@
 package be.ugent.maf.cellmissy.gui.controller.setup;
 
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
+import be.ugent.maf.cellmissy.entity.Assay;
+import be.ugent.maf.cellmissy.entity.BottomMatrix;
+import be.ugent.maf.cellmissy.entity.CellLineType;
+import be.ugent.maf.cellmissy.entity.EcmComposition;
+import be.ugent.maf.cellmissy.entity.EcmDensity;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.Instrument;
@@ -12,6 +17,7 @@ import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
@@ -22,6 +28,7 @@ import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.setup.ExperimentInfoPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.SetupExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.SetupPanel;
+import be.ugent.maf.cellmissy.gui.experiment.setup.SetupTemplateDialog;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.gui.project.NewProjectDialog;
@@ -54,6 +61,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
@@ -95,6 +103,7 @@ public class SetupExperimentController {
     private static final Logger LOG = Logger.getLogger(SetupExperimentController.class);
     //model
     private Experiment experiment;
+    private Experiment experimentFromXMLFile;
     private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
     private ObservableList<Instrument> instrumentBindingList;
@@ -108,6 +117,7 @@ public class SetupExperimentController {
     private NewProjectDialog newProjectDialog;
     private SetupPanel setupPanel;
     private CopyExperimentSettingsDialog copyExperimentSettingsDialog;
+    private SetupTemplateDialog setupTemplateDialog;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -144,7 +154,7 @@ public class SetupExperimentController {
         initSetupExperimentPanel();
         initNewProjectDialog();
         initCopySettingsDialog();
-
+        initSetupTemplateDialog();
         //init child controllers
         setupPlateController.init();
         setupConditionsController.init();
@@ -626,7 +636,7 @@ public class SetupExperimentController {
                         copyExperimentSettingsDialog.getPlateFormatLabel().setText(selectedExperiment.getPlateFormat().toString());
                         copyExperimentSettingsDialog.getNumberConditionsLabel().setText("" + selectedExperiment.getPlateConditionList().size());
                         // set the model of the conditions table
-                        updateConditionsTableModel(selectedExperiment);
+                        updateConditionsTableModel(copyExperimentSettingsDialog.getConditionsDetailsTable(), selectedExperiment);
                     }
                 }
             }
@@ -649,8 +659,8 @@ public class SetupExperimentController {
             }
         });
 
-
-        // add action listener
+        // add action listeners
+        // copy the settings for current experiment: execute the swing worker
         copyExperimentSettingsDialog.getCopySettingsButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -664,6 +674,58 @@ public class SetupExperimentController {
                     // tell the user that he needs to select an experiment!
                     JOptionPane.showMessageDialog(copyExperimentSettingsDialog, "Please select an experiment to copy settings from!", "no exp selected error", JOptionPane.WARNING_MESSAGE);
                 }
+            }
+        });
+
+        // cancel button
+        copyExperimentSettingsDialog.getCancelButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // cancel: hide the dialog
+                copyExperimentSettingsDialog.setVisible(false);
+            }
+        });
+    }
+
+    /**
+     * Initialize template dialog
+     */
+    private void initSetupTemplateDialog() {
+        // make a new dialog
+        setupTemplateDialog = new SetupTemplateDialog(cellMissyController.getCellMissyFrame(), true);
+        // customize table
+        setupTemplateDialog.getConditionsDetailsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        setupTemplateDialog.getConditionsDetailsTable().getTableHeader().setReorderingAllowed(false);
+
+        // close the dialog: just empty the text fields
+        setupTemplateDialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                // reset the information fields
+                setupTemplateDialog.getXmlFileLabel().setText("");
+                setupTemplateDialog.getPlateFormatLabel().setText("");
+                setupTemplateDialog.getNumberConditionsLabel().setText("");
+                // reset table model to a default one
+                setupTemplateDialog.getConditionsDetailsTable().setModel(new DefaultTableModel());
+            }
+        });
+        // add action listeners
+        // copy the settings for current experiment: execute the swing worker
+        setupTemplateDialog.getCopySettingsButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                CopyExpFromXMLSwingWorker copyExpFromXMLSwingWorker = new CopyExpFromXMLSwingWorker();
+                copyExpFromXMLSwingWorker.execute();
+            }
+        });
+
+        // cancel button
+        setupTemplateDialog.getCancelButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // cancel: hide the dialog
+                setupTemplateDialog.setVisible(false);
             }
         });
     }
@@ -874,8 +936,9 @@ public class SetupExperimentController {
                 int returnVal = fileChooser.showOpenDialog(setupExperimentPanel);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
-                    CopyExpFromXMLSwingWorker copyExpFromXMLSwingWorker = new CopyExpFromXMLSwingWorker(selectedFile);
-                    copyExpFromXMLSwingWorker.execute();
+                    // parse this selected XML file through the experiment service
+                    // according to what we find here, we update the dialog to show (in the same method!)
+                    parseXMLFile(selectedFile);
                 } else {
                     showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -912,25 +975,31 @@ public class SetupExperimentController {
      *
      * @param xmlFile
      */
-    private Experiment getExperimentFromXMLFile(File xmlFile) {
-        Experiment experimentFromXMLFile = null;
+    private void parseXMLFile(File xmlFile) {
         try {
+            // with the exp service get the EXPERIMENT object from the XML file
             experimentFromXMLFile = experimentService.getExperimentFromXMLFile(xmlFile);
+            // inform the user that parsing was OK
+            showMessage("Set up template was successfully imported!", "template imported", JOptionPane.INFORMATION_MESSAGE);
+            LOG.info("Template imported from XML file for experiment " + experiment + "_" + experiment.getProject());
+            // show the template dialog according to this XML file + experiment obtained
+            showTemplateDialog(xmlFile, experimentFromXMLFile);
+            // we need to catch exceptions in parsing the XML file
         } catch (JAXBException ex) {
             LOG.error(ex.getMessage(), ex);
-            // check for exceptions here
+            // check for exception's instance here
             if (ex instanceof UnmarshalException) {
                 if (ex.getCause() != null && ex.getCause() instanceof SAXParseException) {
-                    // a SAXParseException encapsulates an XML parse error or warning.
+                    // a SAXParseException encapsulates an XML parse error
                     SAXParseException sAXParseException = (SAXParseException) ex.getCause();
                     // get the  line number of the end of the text where the exception occurred
                     int lineNumber = sAXParseException.getLineNumber();
+                    // shiow a detailed exception error !
                     String errorMessage = "An error occurred while parsing " + xmlFile + "\n" + sAXParseException.getLocalizedMessage() + "\nCheck line number " + lineNumber + " in the XML file.";
                     showMessage(errorMessage, "not valid XML file", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
-        return experimentFromXMLFile;
     }
 
     /**
@@ -986,7 +1055,7 @@ public class SetupExperimentController {
      *
      * @param selectedExperiment
      */
-    private void updateConditionsTableModel(Experiment selectedExperiment) {
+    private void updateConditionsTableModel(JTable table, Experiment selectedExperiment) {
         List<PlateCondition> plateConditionList = selectedExperiment.getPlateConditionList();
         String[] columnNames = new String[7];
         columnNames[0] = "Condition";
@@ -1009,7 +1078,9 @@ public class SetupExperimentController {
         }
 
         DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnNames);
-        copyExperimentSettingsDialog.getConditionsDetailsTable().setModel(defaultTableModel);
+        table.setModel(defaultTableModel);
+
+
     }
 
     /**
@@ -1096,6 +1167,8 @@ public class SetupExperimentController {
 
         @Override
         protected Void doInBackground() throws Exception {
+            // we need to copy everything to new experiment
+            // we should update here the GUI
             copyExperiment(experimentToCopy);
             updateGUIOnCopying();
             return null;
@@ -1119,34 +1192,120 @@ public class SetupExperimentController {
     /**
      * This Swing Worker copies experiment from an XML.
      */
-    private class CopyExpFromXMLSwingWorker extends SwingWorker<Experiment, Void> {
-
-        private File xmlFile;
-
-        public CopyExpFromXMLSwingWorker(File xmlFile) {
-            this.xmlFile = xmlFile;
-        }
+    private class CopyExpFromXMLSwingWorker extends SwingWorker<Void, Void> {
 
         @Override
-        protected Experiment doInBackground() throws Exception {
-            Experiment experimentFromXMLFile = getExperimentFromXMLFile(xmlFile);
+        protected Void doInBackground() throws Exception {
             // we need to copy everything to new experiment
             // we should update here the GUI
-            return experimentFromXMLFile;
+            copyExperiment(experimentFromXMLFile);
+            // if new objects need to be created, they need to be added now to the GUI components
+            addNewObjectsToGuiComponents();
+            updateGUIOnCopying();
+            return null;
         }
 
         @Override
         protected void done() {
             try {
                 get();
-                showMessage("Template was imported and settings have been assigned to current experiment!\nYou can now continue with the layout.", "template imported", JOptionPane.INFORMATION_MESSAGE);
-                LOG.info("Template imported from XML file for experiment " + experiment + "_" + experiment.getProject());
-                setupPlateController.setSelectionStarted(true);
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 cellMissyController.handleUnexpectedError(ex);
             }
         }
+    }
+
+    /**
+     *
+     */
+    private void addNewObjectsToGuiComponents() {
+        PlateFormat newPlateFormat = setupPlateController.findByFormat(experimentFromXMLFile);
+        setupPlateController.addNewPlateFormat(newPlateFormat);
+        List<CellLineType> newCellLines = setupConditionsController.findNewCellLines(experimentFromXMLFile);
+        setupConditionsController.addNewCellLines(newCellLines);
+        List<Assay> newAssays = setupConditionsController.findNewAssays(experimentFromXMLFile);
+        setupConditionsController.addNewAssays(newAssays);
+        List<BottomMatrix> newBottomMatrices = setupConditionsController.findNewBottomMatrices(experimentFromXMLFile);
+        setupConditionsController.addNewBottomMatrices(newBottomMatrices);
+        List<EcmComposition> newEcmCompositions = setupConditionsController.findNewEcmCompositions(experimentFromXMLFile);
+        setupConditionsController.addNewEcmCompositions(newEcmCompositions);
+        List<EcmDensity> newEcmDensities = setupConditionsController.findNewEcmDensities(experimentFromXMLFile);
+        setupConditionsController.addNewEcmDensities(newEcmDensities);
+        List<TreatmentType> newTreatmentTypes = setupConditionsController.findNewTreatmentTypes(experimentFromXMLFile);
+        setupConditionsController.addNewTreatmentTypes(newTreatmentTypes);
+    }
+
+    /**
+     * Update the template dialog with the info that come from the XML file and
+     * the experiment object that we got from this file. We also pack and show
+     * the dialog here.
+     *
+     * @param xmlFile
+     * @param experimentFromXMLFile
+     */
+    private void showTemplateDialog(File xmlFile, Experiment experimentFromXMLFile) {
+        // update info and table in the dialog
+        setupTemplateDialog.getXmlFileLabel().setText(" " + xmlFile.getAbsolutePath());
+        setupTemplateDialog.getPlateFormatLabel().setText(" " + experimentFromXMLFile.getPlateFormat().toString());
+        setupTemplateDialog.getNumberConditionsLabel().setText(" " + experimentFromXMLFile.getPlateConditionList().size());
+        updateConditionsTableModel(setupTemplateDialog.getConditionsDetailsTable(), experimentFromXMLFile);
+        // we need, at last, to update the new parameters fields
+        // if a new parameter needs to be inserted to DB, we use its name for the label
+        // otherwise, we set the label to "none"
+        // PLATE FORMAT
+        PlateFormat newPlateFormat = setupPlateController.findByFormat(experimentFromXMLFile);
+        if (newPlateFormat == null) {
+            setupTemplateDialog.getNewPlateFormatLabel().setText(" " + experimentFromXMLFile.getPlateFormat());
+        } else {
+            setupTemplateDialog.getNewPlateFormatLabel().setText(" none");
+        }
+        // CELL LINES
+        List<CellLineType> newCellLines = setupConditionsController.findNewCellLines(experimentFromXMLFile);
+        if (!newCellLines.isEmpty()) {
+            setupTemplateDialog.getNewCellLineLabel().setText(" " + newCellLines);
+        } else {
+            setupTemplateDialog.getNewCellLineLabel().setText(" none");
+        }
+        // ASSAYS
+        List<Assay> newAssays = setupConditionsController.findNewAssays(experimentFromXMLFile);
+        if (!newAssays.isEmpty()) {
+            setupTemplateDialog.getNewAssayLabel().setText(" " + newAssays);
+        } else {
+            setupTemplateDialog.getNewAssayLabel().setText(" none");
+        }
+        // BOTTOM MATRICES
+        List<BottomMatrix> newBottomMatrices = setupConditionsController.findNewBottomMatrices(experimentFromXMLFile);
+        if (!newBottomMatrices.isEmpty()) {
+            setupTemplateDialog.getNewBottomMatrixLabel().setText(" " + newBottomMatrices);
+        } else {
+            setupTemplateDialog.getNewBottomMatrixLabel().setText(" none");
+        }
+        // ECM COMPOSITIONS
+        List<EcmComposition> newEcmCompositions = setupConditionsController.findNewEcmCompositions(experimentFromXMLFile);
+        if (!newEcmCompositions.isEmpty()) {
+            setupTemplateDialog.getNewEcmCompositionLabel().setText(" " + newEcmCompositions);
+        } else {
+            setupTemplateDialog.getNewEcmCompositionLabel().setText(" none");
+        }
+        // ECM DENSITIES
+        List<EcmDensity> newEcmDensities = setupConditionsController.findNewEcmDensities(experimentFromXMLFile);
+        if (!newEcmDensities.isEmpty()) {
+            setupTemplateDialog.getNewEcmDensityLabel().setText(" " + newEcmDensities);
+        } else {
+            setupTemplateDialog.getNewEcmDensityLabel().setText(" none");
+        }
+        // TREATMENTS TYPES
+        List<TreatmentType> newTreatmentTypes = setupConditionsController.findNewTreatmentTypes(experimentFromXMLFile);
+        if (!newTreatmentTypes.isEmpty()) {
+            setupTemplateDialog.getNewTreatmentLabel().setText(" " + newTreatmentTypes);
+        } else {
+            setupTemplateDialog.getNewTreatmentLabel().setText(" none");
+        }
+        // pack, center and show the template dialog
+        setupTemplateDialog.pack();
+        GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), setupTemplateDialog);
+        setupTemplateDialog.setVisible(true);
     }
 
     /**
@@ -1272,6 +1431,8 @@ public class SetupExperimentController {
         setupExperimentPanel.getExportTemplateButton().setVisible(false);
         setupExperimentPanel.getTopPanel().revalidate();
         setupExperimentPanel.getTopPanel().repaint();
+
+
     }
 
     /**
@@ -1344,6 +1505,8 @@ public class SetupExperimentController {
      */
     private void updateLastCondition() {
         setupConditionsController.updateCondition(setupConditionsController.getPlateConditionBindingList().size() - 1);
+
+
     }
 
     /**

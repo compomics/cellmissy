@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.setup;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -111,6 +112,16 @@ public class SetupPlateController {
     public void removeAllRectangleEntries() {
         for (PlateCondition plateCondition : setupExperimentController.getPlateConditionBindingList()) {
             removeRectangleEntry(plateCondition);
+        }
+    }
+
+    public PlateFormat findByFormat(Experiment experiment) {
+        return plateService.findByFormat(experiment.getPlateFormat().getFormat());
+    }
+
+    public void addNewPlateFormat(PlateFormat plateFormat) {
+        if (plateFormat != null && !plateFormatBindingList.contains(plateFormat)) {
+            plateFormatBindingList.add(plateFormat);
         }
     }
 

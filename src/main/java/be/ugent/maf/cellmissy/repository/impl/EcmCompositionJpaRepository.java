@@ -34,4 +34,17 @@ public class EcmCompositionJpaRepository extends GenericJpaRepository<EcmComposi
     public void saveEcmComposition(EcmComposition ecmComposition) {
         getEntityManager().persist(ecmComposition);
     }
+
+    @Override
+    public EcmComposition findEcmCompositionsByType(String ecmCompositionType) {
+        //annotated query
+        Query byNameQuery = getEntityManager().createNamedQuery("EcmComposition.findByCompositionType");
+        byNameQuery.setParameter("compositionType", ecmCompositionType);
+        List<EcmComposition> resultList = byNameQuery.getResultList();
+        if (!resultList.isEmpty()) {
+            return resultList.get(0);
+        } else {
+            return null;
+        }
+    }
 }

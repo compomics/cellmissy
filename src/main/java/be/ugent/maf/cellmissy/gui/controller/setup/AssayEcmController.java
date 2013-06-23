@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.Assay;
 import be.ugent.maf.cellmissy.entity.BottomMatrix;
 import be.ugent.maf.cellmissy.entity.EcmComposition;
 import be.ugent.maf.cellmissy.entity.EcmDensity;
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.experiment.setup.AssayEcm25DPanel;
@@ -16,6 +17,7 @@ import be.ugent.maf.cellmissy.gui.experiment.setup.AssayEcm2DPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.AssayEcm3DPanel;
 import be.ugent.maf.cellmissy.service.AssayService;
 import be.ugent.maf.cellmissy.service.EcmService;
+import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -31,7 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * AssayEcm Controller: according to matrix dimension (2D/3D) set up assay/ECM details during experiment design Parent Controller: Setup Conditions Controller
+ * AssayEcm Controller: according to matrix dimension (2D/3D) set up assay/ECM
+ * details during experiment design Parent Controller: Setup Conditions
+ * Controller
  *
  * @author Paola
  */
@@ -132,6 +136,98 @@ public class AssayEcmController {
 
     public ObservableList<EcmDensity> getEcmDensityBindingList() {
         return ecmDensityBindingList;
+    }
+
+    public List<Assay> findNewAssays(Experiment experiment) {
+        List<Assay> assayList = new ArrayList<>();
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            Assay assay = plateCondition.getAssay();
+            Assay findByName = assayService.findByAssayType(assay.getAssayType());
+            if (findByName == null) {
+                assayList.add(assay);
+            }
+        }
+        return assayList;
+    }
+
+    public void addNewAssays(List<Assay> assays) {
+        for (Assay assay : assays) {
+            switch (assay.getMatrixDimension().getDimension()) {
+                case "2D":
+                    assay2DBindingList.add(assay);
+                    break;
+                case "2.5D":
+                    assay25DBindingList.add(assay);
+                    break;
+                case "3D":
+                    assay3DBindingList.add(assay);
+                    break;
+            }
+        }
+    }
+
+    public void addNewBottomMatrices(List<BottomMatrix> bottomMatrices) {
+        bottomMatrixBindingList.addAll(bottomMatrices);
+    }
+
+    public void addNewEcmCompositions(List<EcmComposition> ecmCompositions) {
+        for (EcmComposition ecmComposition : ecmCompositions) {
+            switch (ecmComposition.getMatrixDimension().getDimension()) {
+                case "2D":
+                    ecm2DCompositionBindingList.add(ecmComposition);
+                    break;
+                case "2.5D":
+                    ecm25DCompositionBindingList.add(ecmComposition);
+                    break;
+                case "3D":
+                    ecm3DCompositionBindingList.add(ecmComposition);
+                    break;
+            }
+        }
+    }
+
+    public void addNewEcmDensities(List<EcmDensity> ecmDensities) {
+        ecmDensityBindingList.addAll(ecmDensities);
+    }
+
+    public List<BottomMatrix> findNewBottomMatrices(Experiment experiment) {
+        List<BottomMatrix> bottomMatrixList = new ArrayList<>();
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            BottomMatrix bottomMatrix = plateCondition.getEcm().getBottomMatrix();
+            if (bottomMatrix != null) {
+                BottomMatrix findByName = ecmService.findBottomMatrixByType(bottomMatrix.getType());
+                if (findByName == null) {
+                    bottomMatrixList.add(bottomMatrix);
+                }
+            }
+        }
+        return bottomMatrixList;
+    }
+
+    public List<EcmComposition> findNewEcmCompositions(Experiment experiment) {
+        List<EcmComposition> ecmCompositionList = new ArrayList<>();
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            EcmComposition ecmComposition = plateCondition.getEcm().getEcmComposition();
+            EcmComposition findByName = ecmService.findEcmCompositionsByType(ecmComposition.getCompositionType());
+            if (findByName == null) {
+                ecmCompositionList.add(ecmComposition);
+            }
+        }
+        return ecmCompositionList;
+    }
+
+    public List<EcmDensity> findNewEcmDensities(Experiment experiment) {
+        List<EcmDensity> ecmDensityList = new ArrayList<>();
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            EcmDensity ecmDensity = plateCondition.getEcm().getEcmDensity();
+            if (ecmDensity != null) {
+                EcmDensity findByName = ecmService.findByEcmDensity(ecmDensity.getEcmDensity());
+                if (findByName == null) {
+                    ecmDensityList.add(ecmDensity);
+                }
+            }
+        }
+        return ecmDensityList;
     }
 
     /**
@@ -263,7 +359,8 @@ public class AssayEcmController {
     }
 
     /**
-     * for a current selected condition, update input fields (components selected values and text fields)
+     * for a current selected condition, update input fields (components
+     * selected values and text fields)
      *
      * @param plateCondition
      */
@@ -534,7 +631,9 @@ public class AssayEcmController {
             }
         });
         /**
-         * If bottom matrix type is thin gel coating, the bottom volume must be left empty (and disabled) If bottom matrix type is gel, the bottom volume text field is enabled and set by default to 40
+         * If bottom matrix type is thin gel coating, the bottom volume must be
+         * left empty (and disabled) If bottom matrix type is gel, the bottom
+         * volume text field is enabled and set by default to 40
          */
         assayEcm3DPanel.getBottomMatrixTypeComboBox().addActionListener(new ActionListener() {
             @Override
@@ -611,7 +710,9 @@ public class AssayEcmController {
             }
         });
         /**
-         * If bottom matrix type is thin gel coating, the bottom volume must be left empty (and disabled) If bottom matrix type is gel, the bottom volume text field is enabled and set by default to 40
+         * If bottom matrix type is thin gel coating, the bottom volume must be
+         * left empty (and disabled) If bottom matrix type is gel, the bottom
+         * volume text field is enabled and set by default to 40
          */
         assayEcm25DPanel.getBottomMatrixTypeComboBox().addActionListener(new ActionListener() {
             @Override

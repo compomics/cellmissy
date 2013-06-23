@@ -10,6 +10,9 @@ import be.ugent.maf.cellmissy.entity.BottomMatrix;
 import be.ugent.maf.cellmissy.entity.CellLine;
 import be.ugent.maf.cellmissy.entity.CellLineType;
 import be.ugent.maf.cellmissy.entity.Ecm;
+import be.ugent.maf.cellmissy.entity.EcmComposition;
+import be.ugent.maf.cellmissy.entity.EcmDensity;
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
@@ -160,6 +163,62 @@ public class SetupConditionsController {
      */
     public CellMissyFrame getCellMissyFrame() {
         return setupExperimentController.getCellMissyFrame();
+    }
+
+    public List<CellLineType> findNewCellLines(Experiment experiment) {
+        List<CellLineType> cellLineTypeList = new ArrayList<>();
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            CellLineType cellLineType = plateCondition.getCellLine().getCellLineType();
+            CellLineType findByName = cellLineService.findByName(cellLineType.getName());
+            if (findByName == null) {
+                cellLineTypeList.add(cellLineType);
+            }
+        }
+        return cellLineTypeList;
+    }
+
+    public void addNewCellLines(List<CellLineType> cellLineTypes) {
+        cellLineTypeBindingList.addAll(cellLineTypes);
+    }
+
+    public List<Assay> findNewAssays(Experiment experiment) {
+        return assayEcmController.findNewAssays(experiment);
+    }
+
+    public void addNewAssays(List<Assay> assays) {
+        assayEcmController.addNewAssays(assays);
+    }
+
+    public void addNewBottomMatrices(List<BottomMatrix> bottomMatrices) {
+        assayEcmController.addNewBottomMatrices(bottomMatrices);
+    }
+
+    public void addNewEcmCompositions(List<EcmComposition> ecmCompositions) {
+        assayEcmController.addNewEcmCompositions(ecmCompositions);
+    }
+
+    public void addNewEcmDensities(List<EcmDensity> ecmDensities) {
+        assayEcmController.addNewEcmDensities(ecmDensities);
+    }
+
+    public void addNewTreatmentTypes(List<TreatmentType> treatmentTypes) {
+        treatmentsController.addNewTreatmentTypes(treatmentTypes);
+    }
+
+    public List<BottomMatrix> findNewBottomMatrices(Experiment experiment) {
+        return assayEcmController.findNewBottomMatrices(experiment);
+    }
+
+    public List<EcmComposition> findNewEcmCompositions(Experiment experiment) {
+        return assayEcmController.findNewEcmCompositions(experiment);
+    }
+
+    public List<EcmDensity> findNewEcmDensities(Experiment experiment) {
+        return assayEcmController.findNewEcmDensities(experiment);
+    }
+
+    public List<TreatmentType> findNewTreatmentTypes(Experiment experiment) {
+        return treatmentsController.findNewTreatmentTypes(experiment);
     }
 
     /**
@@ -549,7 +608,7 @@ public class SetupConditionsController {
                 ecm.setConcentrationUnit(assayEcmController.getAssayEcm2DPanel().getConcentrationUnitOfMeasure().getSelectedItem().toString());
                 break;
             case "3D":
-                //set assay    
+                //set assay
                 assay = assayEcmController.getAssay3DBindingList().get(assayEcmController.getAssayEcm3DPanel().getAssayComboBox().getSelectedIndex());
                 //3D matrix: set ecm 3D fields
                 ecm.setEcmComposition(assayEcmController.getEcm3DCompositionBindingList().get(assayEcmController.getAssayEcm3DPanel().getCompositionComboBox().getSelectedIndex()));
