@@ -6,10 +6,13 @@ package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -36,6 +39,7 @@ public class EcmDensity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ecm_densityid")
     @XmlTransient
@@ -79,19 +83,25 @@ public class EcmDensity implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (ecmDensityid != null ? ecmDensityid.hashCode() : 0);
+        int hash = 7;
+        hash = 11 * hash + Objects.hashCode(this.ecmDensityid);
+        hash = 11 * hash + Objects.hashCode(this.ecmDensity);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof EcmDensity)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        EcmDensity other = (EcmDensity) object;
-        if ((this.ecmDensityid == null && other.ecmDensityid != null) || (this.ecmDensityid != null && !this.ecmDensityid.equals(other.ecmDensityid))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final EcmDensity other = (EcmDensity) obj;
+        if (!Objects.equals(this.ecmDensityid, other.ecmDensityid)) {
+            return false;
+        }
+        if (!Objects.equals(this.ecmDensity, other.ecmDensity)) {
             return false;
         }
         return true;

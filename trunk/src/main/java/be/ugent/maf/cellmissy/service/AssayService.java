@@ -16,4 +16,6 @@ public interface AssayService extends GenericService<Assay, Long> {
     public List<Assay> findByMatrixDimensionName(String matrixDimensionName);
 
     public Assay findByAssayType(String assayType);
+
+    public Assay findByAssayTypeAndMatrixDimensionName(String assayType, String matrixDimensionName);
 }

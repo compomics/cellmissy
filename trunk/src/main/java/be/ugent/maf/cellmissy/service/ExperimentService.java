@@ -97,20 +97,22 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
     public void saveMigrationDataForExperiment(Experiment entity);
 
     /**
-     * Copy the setup settings from an experiment to a new one.
+     * Copy the setup settings from an experiment to a new one. This method is
+     * used only if the new experiment and the old one are inside the same
+     * database.
      *
      * @param experimentToCopy: the experiment from which settings need to be
      * copied
      * @param newExperiment: the experiment to which settings
      */
-    public void copyExperimentSetup(Experiment experimentToCopy, Experiment newExperiment);
+    public void copySetupSettingsFromOtherExperiment(Experiment experimentToCopy, Experiment newExperiment);
 
     /**
      * Export the setup template to an XML file for a given experiment. The
      * directory to save the file in must be specified as well.
      *
      * @param experiment
-     * @param xmlFile 
+     * @param xmlFile
      * @throws FileNotFoundException
      * @throws JAXBException
      */
@@ -125,4 +127,16 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @throws JAXBException
      */
     public Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException;
+
+    /**
+     * Copy the setup settings from an experiment to a new one. This method is
+     * used if the first experiment is obtained parsing an external XML file,
+     * i.e. it might very well be that the settings are not saved in the current
+     * database yet, so some checking are required before we can persist the
+     * experiment.
+     *
+     * @param xmlExperiment
+     * @param newExperiment
+     */
+    public void copySetupSettingsFromXMLExperiment(Experiment xmlExperiment, Experiment newExperiment);
 }

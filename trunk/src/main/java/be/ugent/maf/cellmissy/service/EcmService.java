@@ -23,16 +23,21 @@ public interface EcmService extends GenericService<Ecm, Long> {
 
     public void saveEcmComposition(EcmComposition ecmComposition);
 
+    public void saveBottomMatrix(BottomMatrix bottomMatrix);
+
+    public void saveEcmDensity(EcmDensity ecmDensity);
+
     public List<BottomMatrix> findAllBottomMatrix();
 
     public BottomMatrix findBottomMatrixByType(String bottomMatrixType);
 
-    public EcmComposition findEcmCompositionsByType(String ecmCompositionType);
+    public EcmComposition findEcmCompositionByType(String ecmCompositionType);
+
+    public EcmComposition findEcmCompositionByTypeAndMatrixDimensionName(String type, String matrixDimensionName);
 
     public List<EcmDensity> findAllEcmDensity();
 
     public EcmDensity findByEcmDensity(Double ecmDensity);
 
     public List<String> findAllPolimerysationPh();
-
 }

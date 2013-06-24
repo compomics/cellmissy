@@ -165,28 +165,43 @@ public class SetupConditionsController {
         return setupExperimentController.getCellMissyFrame();
     }
 
-    public List<CellLineType> findNewCellLines(Experiment experiment) {
-        List<CellLineType> cellLineTypeList = new ArrayList<>();
-        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
-            CellLineType cellLineType = plateCondition.getCellLine().getCellLineType();
-            CellLineType findByName = cellLineService.findByName(cellLineType.getName());
-            if (findByName == null) {
-                cellLineTypeList.add(cellLineType);
-            }
-        }
-        return cellLineTypeList;
+    /**
+     * Using the cellLine Service, persist a new cell line type to DB.
+     *
+     * @param cellLineType
+     */
+    public void saveCellLineType(CellLineType cellLineType) {
+        cellLineService.saveCellLineType(cellLineType);
     }
 
+    public void saveAssay(Assay assay) {
+        assayEcmController.saveAssay(assay);
+    }
+
+    public void saveBottomMatrix(BottomMatrix bottomMatrix) {
+        assayEcmController.saveBottomMatrix(bottomMatrix);
+    }
+
+    public void saveEcmComposition(EcmComposition ecmComposition) {
+        assayEcmController.saveEcmComposition(ecmComposition);
+    }
+
+    public void saveEcmDensity(EcmDensity ecmDensity) {
+        assayEcmController.saveEcmDensity(ecmDensity);
+    }
+
+    public void saveTreatmentType(TreatmentType treatmentType) {
+        treatmentsController.saveTreatmentType(treatmentType);
+    }
+
+    /**
+     * Given a list of new cell line types, add them to the GUI-model, i.e. a
+     * list.
+     *
+     * @param cellLineTypes
+     */
     public void addNewCellLines(List<CellLineType> cellLineTypes) {
         cellLineTypeBindingList.addAll(cellLineTypes);
-    }
-
-    public List<Assay> findNewAssays(Experiment experiment) {
-        return assayEcmController.findNewAssays(experiment);
-    }
-
-    public void addNewAssays(List<Assay> assays) {
-        assayEcmController.addNewAssays(assays);
     }
 
     public void addNewBottomMatrices(List<BottomMatrix> bottomMatrices) {
@@ -205,6 +220,52 @@ public class SetupConditionsController {
         treatmentsController.addNewTreatmentTypes(treatmentTypes);
     }
 
+    public void addNewAssays(List<Assay> assays) {
+        assayEcmController.addNewAssays(assays);
+    }
+
+    /**
+     * Given an experiment, we see for each condition if a new serum is
+     * associated to the cell line, and if new sera are found, these are added
+     * to the serum binding list.
+     *
+     * @param experiment
+     */
+    public void addNewSera(Experiment experiment) {
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            CellLine cellLine = plateCondition.getCellLine();
+            String serum = cellLine.getSerum();
+            if (!serumBindingList.contains(serum)) {
+                serumBindingList.add(serum);
+            }
+        }
+    }
+
+    /**
+     * Given an experiment, we see for each condition if a new growth medium is
+     * associated to the cell line, and if new media are found, these are added
+     * to the medium binding list.
+     *
+     * @param experiment
+     */
+    public void addNewMedia(Experiment experiment) {
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            CellLine cellLine = plateCondition.getCellLine();
+            String medium = cellLine.getGrowthMedium();
+            if (!mediumBindingList.contains(medium)) {
+                mediumBindingList.add(medium);
+            }
+        }
+    }
+
+    public void addNewDrugSolvents(Experiment experiment) {
+        treatmentsController.addNewDrugSolvents(experiment);
+    }
+
+    public List<Assay> findNewAssays(Experiment experiment) {
+        return assayEcmController.findNewAssays(experiment);
+    }
+
     public List<BottomMatrix> findNewBottomMatrices(Experiment experiment) {
         return assayEcmController.findNewBottomMatrices(experiment);
     }
@@ -219,6 +280,26 @@ public class SetupConditionsController {
 
     public List<TreatmentType> findNewTreatmentTypes(Experiment experiment) {
         return treatmentsController.findNewTreatmentTypes(experiment);
+    }
+
+    /**
+     * For a given experiment, this method is checking through all its
+     * conditions for new cell line types, i.e. cell line types that are not
+     * present in DB yet.
+     *
+     * @param experiment
+     * @return a List of these cell line types, if any.
+     */
+    public List<CellLineType> findNewCellLines(Experiment experiment) {
+        List<CellLineType> cellLineTypeList = new ArrayList<>();
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            CellLineType cellLineType = plateCondition.getCellLine().getCellLineType();
+            CellLineType foundCellLineType = cellLineService.findByName(cellLineType.getName());
+            if (foundCellLineType == null) {
+                cellLineTypeList.add(cellLineType);
+            }
+        }
+        return cellLineTypeList;
     }
 
     /**
@@ -345,7 +426,7 @@ public class SetupConditionsController {
                     newCellLineType.setName(setupConditionsPanel.getCellLineNameTextField().getText());
                     try {
                         //insert cell line to DB
-                        cellLineService.saveCellLineType(newCellLineType);
+                        saveCellLineType(newCellLineType);
                         //add the new cell line to the list
                         cellLineTypeBindingList.add(newCellLineType);
                         setupConditionsPanel.getCellLineNameTextField().setText("");

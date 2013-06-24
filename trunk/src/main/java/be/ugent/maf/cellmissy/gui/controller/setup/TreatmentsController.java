@@ -99,6 +99,12 @@ public class TreatmentsController {
         return treatmentBindingList;
     }
 
+    /**
+     * Taking a list of treatment type, we add them to the GUI-models; and we do
+     * it according to them category: drug or more general treatment,
+     *
+     * @param treatmentTypes
+     */
     public void addNewTreatmentTypes(List<TreatmentType> treatmentTypes) {
         for (TreatmentType treatmentType : treatmentTypes) {
             switch (treatmentType.getTreatmentCategory()) {
@@ -112,6 +118,33 @@ public class TreatmentsController {
         }
     }
 
+    /**
+     * Given an experiment, we see for each condition if a new drug solvent is
+     * associated to the treatment, and if new drug solvents are found, these
+     * are added to the drug solvent binding list.
+     *
+     * @param experiment
+     */
+    public void addNewDrugSolvents(Experiment experiment) {
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            List<Treatment> treatmentList = plateCondition.getTreatmentList();
+            for (Treatment treatment : treatmentList) {
+                String drugSolvent = treatment.getDrugSolvent();
+                if (!drugSolventList.contains(drugSolvent)) {
+                    drugSolventList.add(drugSolvent);
+                }
+            }
+        }
+    }
+
+    /**
+     * For an experiment, this method goes all over its conditions and check for
+     * new treatment types, i.e. treatment types that are not yet in the current
+     * DB.
+     *
+     * @param experiment
+     * @return a list with this new treatment types, if any.
+     */
     public List<TreatmentType> findNewTreatmentTypes(Experiment experiment) {
         List<TreatmentType> treatmentTypeList = new ArrayList<>();
         for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
@@ -120,12 +153,23 @@ public class TreatmentsController {
                 TreatmentType treatmentType = treatment.getTreatmentType();
                 TreatmentType findByName = treatmentService.findByName(treatmentType.getName());
                 if (findByName == null) {
-                    treatmentTypeList.add(treatmentType);
+                    if (!treatmentTypeList.contains(treatmentType)) {
+                        treatmentTypeList.add(treatmentType);
+                    }
                 }
             }
 
         }
         return treatmentTypeList;
+    }
+
+    /**
+     * USing the treatment service, save an entity to DB.
+     *
+     * @param treatmentType
+     */
+    public void saveTreatmentType(TreatmentType treatmentType) {
+        treatmentService.saveTreatmentType(treatmentType);
     }
 
     /**

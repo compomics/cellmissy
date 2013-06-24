@@ -73,6 +73,13 @@ public class PlateFormat implements Serializable {
         this.format = format;
     }
 
+    public PlateFormat(int format, Integer numberOfCols, Integer numberOfRows, Double wellSize) {
+        this.format = format;
+        this.numberOfCols = numberOfCols;
+        this.numberOfRows = numberOfRows;
+        this.wellSize = wellSize;
+    }
+
     public Long getPlateFormatid() {
         return plateFormatid;
     }
