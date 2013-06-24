@@ -13,7 +13,9 @@ import java.util.List;
  */
 public interface AssayRepository extends GenericRepository<Assay, Long> {
 
-    List<Assay> findByMatrixDimensionName(String matrixDimensionName);
+    public List<Assay> findByMatrixDimensionName(String matrixDimensionName);
 
-    Assay findByAssayType(String assayType);
+    public Assay findByAssayType(String assayType);
+
+    public Assay findByAssayTypeAndMatrixDimensionName(String assayType, String matrixDimensionName);
 }

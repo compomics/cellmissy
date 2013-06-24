@@ -17,7 +17,6 @@ import be.ugent.maf.cellmissy.gui.experiment.setup.AssayEcm2DPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.AssayEcm3DPanel;
 import be.ugent.maf.cellmissy.service.AssayService;
 import be.ugent.maf.cellmissy.service.EcmService;
-import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -138,18 +137,38 @@ public class AssayEcmController {
         return ecmDensityBindingList;
     }
 
+    /**
+     * For a given experiment, this method iterates through its conditions and
+     * check if the assay objects of these conditions are already present in the
+     * DB or not.
+     *
+     * @param experiment
+     * @return a List with the new assay not present in the DB yet, if any.
+     */
     public List<Assay> findNewAssays(Experiment experiment) {
         List<Assay> assayList = new ArrayList<>();
         for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
             Assay assay = plateCondition.getAssay();
-            Assay findByName = assayService.findByAssayType(assay.getAssayType());
-            if (findByName == null) {
-                assayList.add(assay);
+            String assayType = assay.getAssayType();
+            String dimension = assay.getMatrixDimension().getDimension();
+            Assay foundAssay = assayService.findByAssayTypeAndMatrixDimensionName(assayType, dimension);
+            if (foundAssay == null) {
+                if (!assayList.contains(assay)) {
+                    assayList.add(assay);
+                }
             }
         }
         return assayList;
     }
 
+    /**
+     * Add the assays from a list to the GUI-models. This adding needs to be
+     * done based on the matrix dimension of the assay, since we use 3 different
+     * models for the 3 different dimensions.
+     *
+     * @param assays: the list from which the assays are taken and added to the
+     * GUI-models.
+     */
     public void addNewAssays(List<Assay> assays) {
         for (Assay assay : assays) {
             switch (assay.getMatrixDimension().getDimension()) {
@@ -166,10 +185,21 @@ public class AssayEcmController {
         }
     }
 
+    /**
+     * Add to the GUI-model, i.e. a list., new Bottom Matrix objects.
+     *
+     * @param bottomMatrices
+     */
     public void addNewBottomMatrices(List<BottomMatrix> bottomMatrices) {
         bottomMatrixBindingList.addAll(bottomMatrices);
     }
 
+    /**
+     * Add to the GUI-models new ECM Composition objects. This is done according
+     * to the matrix dimension associated.
+     *
+     * @param ecmCompositions
+     */
     public void addNewEcmCompositions(List<EcmComposition> ecmCompositions) {
         for (EcmComposition ecmComposition : ecmCompositions) {
             switch (ecmComposition.getMatrixDimension().getDimension()) {
@@ -186,10 +216,21 @@ public class AssayEcmController {
         }
     }
 
+    /**
+     * Add new ECM density objects to the GUI-model, i.e. a list.
+     */
     public void addNewEcmDensities(List<EcmDensity> ecmDensities) {
         ecmDensityBindingList.addAll(ecmDensities);
     }
 
+    /**
+     * For a given experiment, this method iterates through its conditions and
+     * check if the bottom matrix objects of these conditions are already
+     * present in the DB or not.
+     *
+     * @param experiment
+     * @return a List with the new Bottom Matrix objects, if any.
+     */
     public List<BottomMatrix> findNewBottomMatrices(Experiment experiment) {
         List<BottomMatrix> bottomMatrixList = new ArrayList<>();
         for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
@@ -197,25 +238,47 @@ public class AssayEcmController {
             if (bottomMatrix != null) {
                 BottomMatrix findByName = ecmService.findBottomMatrixByType(bottomMatrix.getType());
                 if (findByName == null) {
-                    bottomMatrixList.add(bottomMatrix);
+                    if (!bottomMatrixList.contains(bottomMatrix)) {
+                        bottomMatrixList.add(bottomMatrix);
+                    }
                 }
             }
         }
         return bottomMatrixList;
     }
 
+    /**
+     * For a given experiment, this method iterates through its conditions and
+     * check if the ECM composition objects of these conditions are already
+     * present in the DB or not.
+     *
+     * @param experiment
+     * @return a list with the new ECM Composition, if any.
+     */
     public List<EcmComposition> findNewEcmCompositions(Experiment experiment) {
         List<EcmComposition> ecmCompositionList = new ArrayList<>();
         for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
             EcmComposition ecmComposition = plateCondition.getEcm().getEcmComposition();
-            EcmComposition findByName = ecmService.findEcmCompositionsByType(ecmComposition.getCompositionType());
+            String compositionType = ecmComposition.getCompositionType();
+            String dimension = ecmComposition.getMatrixDimension().getDimension();
+            EcmComposition findByName = ecmService.findEcmCompositionByTypeAndMatrixDimensionName(compositionType, dimension);
             if (findByName == null) {
-                ecmCompositionList.add(ecmComposition);
+                if (!ecmCompositionList.contains(ecmComposition)) {
+                    ecmCompositionList.add(ecmComposition);
+                }
             }
         }
         return ecmCompositionList;
     }
 
+    /**
+     * For a given experiment, this method iterates through its conditions and
+     * check if the ECM density objects of these conditions are already present
+     * in the DB or not.
+     *
+     * @param experiment
+     * @return a list with the new ECM density, if any.
+     */
     public List<EcmDensity> findNewEcmDensities(Experiment experiment) {
         List<EcmDensity> ecmDensityList = new ArrayList<>();
         for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
@@ -223,11 +286,49 @@ public class AssayEcmController {
             if (ecmDensity != null) {
                 EcmDensity findByName = ecmService.findByEcmDensity(ecmDensity.getEcmDensity());
                 if (findByName == null) {
-                    ecmDensityList.add(ecmDensity);
+                    if (!ecmDensityList.contains(ecmDensity)) {
+                        ecmDensityList.add(ecmDensity);
+                    }
                 }
             }
         }
         return ecmDensityList;
+    }
+
+    /**
+     * Using the assayService, save a new entity to DB.
+     *
+     * @param assay
+     */
+    public void saveAssay(Assay assay) {
+        assayService.save(assay);
+    }
+
+    /**
+     * Using the ecmService, save a new bottom matrix to DB.
+     *
+     * @param bottomMatrix
+     */
+    public void saveBottomMatrix(BottomMatrix bottomMatrix) {
+        ecmService.saveBottomMatrix(bottomMatrix);
+    }
+
+    /**
+     * Using the ecmService, save a new ECM composition to DB.
+     *
+     * @param ecmComposition
+     */
+    public void saveEcmComposition(EcmComposition ecmComposition) {
+        ecmService.saveEcmComposition(ecmComposition);
+    }
+
+    /**
+     * Using the ecmService, save a new ECM density to DB.
+     *
+     * @param ecmDensity
+     */
+    public void saveEcmDensity(EcmDensity ecmDensity) {
+        ecmService.saveEcmDensity(ecmDensity);
     }
 
     /**
@@ -554,7 +655,7 @@ public class AssayEcmController {
                     ecmComposition.setCompositionType(assayEcm2DPanel.getCompositionTextField().getText());
                     ecmComposition.setMatrixDimension(matrixDimensionBindingList.get(0));
                     ecm2DCompositionBindingList.add(ecmComposition);
-                    ecmService.saveEcmComposition(ecmComposition);
+                    saveEcmComposition(ecmComposition);
                     assayEcm2DPanel.getCompositionTextField().setText("");
                 } else {
                     String message = "Please insert a name for the new ECM composition!";

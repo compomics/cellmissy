@@ -86,6 +86,16 @@ public class EcmServiceImpl implements EcmService {
     }
 
     @Override
+    public void saveBottomMatrix(BottomMatrix bottomMatrix) {
+        bottomMatrixRepository.save(bottomMatrix);
+    }
+
+    @Override
+    public void saveEcmDensity(EcmDensity ecmDensity) {
+        ecmDensityRepository.save(ecmDensity);
+    }
+
+    @Override
     public List<String> findAllPolimerysationPh() {
         return ecmRepository.findAllPolimerysationPh();
     }
@@ -101,8 +111,13 @@ public class EcmServiceImpl implements EcmService {
     }
 
     @Override
-    public EcmComposition findEcmCompositionsByType(String ecmCompositionType) {
-        return ecmCompositionRepository.findEcmCompositionsByType(ecmCompositionType);
+    public EcmComposition findEcmCompositionByType(String ecmCompositionType) {
+        return ecmCompositionRepository.findEcmCompositionByType(ecmCompositionType);
+    }
+
+    @Override
+    public EcmComposition findEcmCompositionByTypeAndMatrixDimensionName(String type, String matrixDimensionName) {
+        return ecmCompositionRepository.findEcmCompositionByTypeAndMatrixDimensionName(type, matrixDimensionName);
     }
 
     @Override

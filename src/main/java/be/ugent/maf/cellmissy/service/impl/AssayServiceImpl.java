@@ -58,4 +58,9 @@ public class AssayServiceImpl implements AssayService {
     public Assay findByAssayType(String assayType) {
         return assayRepository.findByAssayType(assayType);
     }
+
+    @Override
+    public Assay findByAssayTypeAndMatrixDimensionName(String assayType, String matrixDimensionName) {
+        return assayRepository.findByAssayTypeAndMatrixDimensionName(assayType, matrixDimensionName);
+    }
 }

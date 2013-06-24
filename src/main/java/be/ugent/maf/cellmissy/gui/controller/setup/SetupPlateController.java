@@ -115,14 +115,39 @@ public class SetupPlateController {
         }
     }
 
+    /**
+     * Using the plate service, check if the plate format for given experiment
+     * is already present in DB.
+     *
+     * @param experiment
+     * @return
+     */
     public PlateFormat findByFormat(Experiment experiment) {
-        return plateService.findByFormat(experiment.getPlateFormat().getFormat());
+        int format = experiment.getPlateFormat().getFormat();
+        return plateService.findByFormat(format);
     }
 
-    public void addNewPlateFormat(PlateFormat plateFormat) {
-        if (plateFormat != null && !plateFormatBindingList.contains(plateFormat)) {
+    /**
+     * For an experiment, we get back the plate format, if this is not present
+     * in the DB, we just add it in the correspondent GUI-model.
+     *
+     * @param experiment
+     */
+    public void addNewPlateFormat(Experiment experiment) {
+        PlateFormat plateFormat = experiment.getPlateFormat();
+        PlateFormat foundFormat = findByFormat(experiment);
+        if (foundFormat == null) {
             plateFormatBindingList.add(plateFormat);
         }
+    }
+
+    /**
+     * Using the plate service, persist a new plate format to the DB.
+     *
+     * @param plateFormat
+     */
+    public void savePlateFormat(PlateFormat plateFormat) {
+        plateService.save(plateFormat);
     }
 
     /**

@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -82,19 +83,23 @@ public class BottomMatrix implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (bottomMatrixid != null ? bottomMatrixid.hashCode() : 0);
+        int hash = 3;
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof BottomMatrix)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        BottomMatrix other = (BottomMatrix) object;
-        if ((this.bottomMatrixid == null && other.bottomMatrixid != null) || (this.bottomMatrixid != null && !this.bottomMatrixid.equals(other.bottomMatrixid))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BottomMatrix other = (BottomMatrix) obj;
+        if (!Objects.equals(this.bottomMatrixid, other.bottomMatrixid)) {
+            return false;
+        }
+        if (!Objects.equals(this.type, other.type)) {
             return false;
         }
         return true;

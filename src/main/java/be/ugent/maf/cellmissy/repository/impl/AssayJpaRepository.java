@@ -43,4 +43,18 @@ public class AssayJpaRepository extends GenericJpaRepository<Assay, Long> implem
             return null;
         }
     }
+
+    @Override
+    public Assay findByAssayTypeAndMatrixDimensionName(String assayType, String matrixDimensionName) {
+        //annotated query
+        Query byNameQuery = getEntityManager().createNamedQuery("Assay.findByAssayTypeAndMatrixDimensionName");
+        byNameQuery.setParameter("matrixDimension", matrixDimensionName);
+        byNameQuery.setParameter("assayType", assayType);
+        List<Assay> resultList = byNameQuery.getResultList();
+        if (!resultList.isEmpty()) {
+            return resultList.get(0);
+        } else {
+            return null;
+        }
+    }
 }

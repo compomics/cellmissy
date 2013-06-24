@@ -38,6 +38,7 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -301,7 +302,7 @@ public class SetupExperimentController {
         // clear plate
         setupPlateController.onClearPlate();
         setupPlateController.removeAllRectangleEntries();
-
+        setupPlateController.setSelectionStarted(false);
         // and then empty plate condition list
         setupConditionsController.getPlateConditionBindingList().clear();
         // reset condition indexes
@@ -714,7 +715,7 @@ public class SetupExperimentController {
         setupTemplateDialog.getCopySettingsButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                // execute the swing worker
                 CopyExpFromXMLSwingWorker copyExpFromXMLSwingWorker = new CopyExpFromXMLSwingWorker();
                 copyExpFromXMLSwingWorker.execute();
             }
@@ -959,16 +960,6 @@ public class SetupExperimentController {
     }
 
     /**
-     * Given a certain experiment, get its settings, and use them to set the new
-     * designed experiment.
-     *
-     * @param experimentToCopy
-     */
-    private void copyExperiment(Experiment experimentToCopy) {
-        experimentService.copyExperimentSetup(experimentToCopy, experiment);
-    }
-
-    /**
      * Once you select an XML file, this method is using the experiment service
      * to get the experiment back from the XML file and use its settings for the
      * current experiment.
@@ -1076,11 +1067,67 @@ public class SetupExperimentController {
             data[i][5] = plateConditionList.get(i).getTreatmentList().toString();
             data[i][6] = plateConditionList.get(i).getAssayMedium().toString();
         }
-
+        // create a new table model
         DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnNames);
         table.setModel(defaultTableModel);
+        for (int i = 0; i < defaultTableModel.getColumnCount(); i++) {
+            GuiUtils.packColumn(table, i, 1);
+        }
+    }
 
-
+    /**
+     * If an experiment has been copied from an XML file, it might be that new
+     * objects need to be persisted to DB. This is done before the experiment is
+     * saved to DB.
+     */
+    private void persistNewObjects() {
+        // plate format
+        PlateFormat foundFormat = setupPlateController.findByFormat(experiment);
+        if (foundFormat == null) {
+            setupPlateController.savePlateFormat(experiment.getPlateFormat());
+        }
+        // cell line types
+        List<CellLineType> foundCellLines = setupConditionsController.findNewCellLines(experiment);
+        if (!foundCellLines.isEmpty()) {
+            for (CellLineType cellLineType : foundCellLines) {
+                setupConditionsController.saveCellLineType(cellLineType);
+            }
+        }
+        // assays
+        List<Assay> foundAssays = setupConditionsController.findNewAssays(experiment);
+        if (!foundAssays.isEmpty()) {
+            for (Assay assay : foundAssays) {
+                setupConditionsController.saveAssay(assay);
+            }
+        }
+        // bottom matrix
+        List<BottomMatrix> foundBottomMatrixs = setupConditionsController.findNewBottomMatrices(experiment);
+        if (!foundBottomMatrixs.isEmpty()) {
+            for (BottomMatrix bottomMatrix : foundBottomMatrixs) {
+                setupConditionsController.saveBottomMatrix(bottomMatrix);
+            }
+        }
+        // ecm composition
+        List<EcmComposition> foundCompositions = setupConditionsController.findNewEcmCompositions(experiment);
+        if (!foundCompositions.isEmpty()) {
+            for (EcmComposition ecmComposition : foundCompositions) {
+                setupConditionsController.saveEcmComposition(ecmComposition);
+            }
+        }
+        // ecm densities
+        List<EcmDensity> foundDensitys = setupConditionsController.findNewEcmDensities(experiment);
+        if (!foundDensitys.isEmpty()) {
+            for (EcmDensity ecmDensity : foundDensitys) {
+                setupConditionsController.saveEcmDensity(ecmDensity);
+            }
+        }
+        // treatment types
+        List<TreatmentType> foundTreatmentTypes = setupConditionsController.findNewTreatmentTypes(experiment);
+        if (!foundTreatmentTypes.isEmpty()) {
+            for (TreatmentType treatmentType : foundTreatmentTypes) {
+                setupConditionsController.saveTreatmentType(treatmentType);
+            }
+        }
     }
 
     /**
@@ -1095,6 +1142,8 @@ public class SetupExperimentController {
             // show waiting cursor
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             //save the new experiment to the DB
+            // first we need to check if other objects need to be stored, then we actually save the experiment
+            persistNewObjects();
             experimentService.save(experiment);
             return null;
         }
@@ -1121,8 +1170,8 @@ public class SetupExperimentController {
     private class ExportTemplateToXMLSwingWorker extends SwingWorker<Void, Void> {
 
         private File directory;
-        // constructor
 
+        // constructor
         public ExportTemplateToXMLSwingWorker(File directory) {
             this.directory = directory;
         }
@@ -1169,7 +1218,7 @@ public class SetupExperimentController {
         protected Void doInBackground() throws Exception {
             // we need to copy everything to new experiment
             // we should update here the GUI
-            copyExperiment(experimentToCopy);
+            experimentService.copySetupSettingsFromOtherExperiment(experimentToCopy, experiment);
             updateGUIOnCopying();
             return null;
         }
@@ -1198,9 +1247,9 @@ public class SetupExperimentController {
         protected Void doInBackground() throws Exception {
             // we need to copy everything to new experiment
             // we should update here the GUI
-            copyExperiment(experimentFromXMLFile);
+            experimentService.copySetupSettingsFromXMLExperiment(experimentFromXMLFile, experiment);
             // if new objects need to be created, they need to be added now to the GUI components
-            addNewObjectsToGuiComponents();
+            addNewObjectsToGui();
             updateGUIOnCopying();
             return null;
         }
@@ -1209,6 +1258,10 @@ public class SetupExperimentController {
         protected void done() {
             try {
                 get();
+                JOptionPane.showMessageDialog(setupTemplateDialog, "Template settings have been copied to new experiment.\nYou will now see the layout.", "settings copied", JOptionPane.INFORMATION_MESSAGE);
+                LOG.info("Template settings copied to Experiment: " + experiment + "_" + experiment.getProject());
+                setupTemplateDialog.setVisible(false);
+                setupPlateController.setSelectionStarted(true);
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 cellMissyController.handleUnexpectedError(ex);
@@ -1217,13 +1270,17 @@ public class SetupExperimentController {
     }
 
     /**
-     *
+     * When setting up an experiment from an XML file it might very well be that
+     * new objects need to be added to the GUI components before saving the
+     * experiment. We do it here through the child controllers.
      */
-    private void addNewObjectsToGuiComponents() {
-        PlateFormat newPlateFormat = setupPlateController.findByFormat(experimentFromXMLFile);
-        setupPlateController.addNewPlateFormat(newPlateFormat);
+    private void addNewObjectsToGui() {
+        setupPlateController.addNewPlateFormat(experimentFromXMLFile);
         List<CellLineType> newCellLines = setupConditionsController.findNewCellLines(experimentFromXMLFile);
         setupConditionsController.addNewCellLines(newCellLines);
+        setupConditionsController.addNewSera(experimentFromXMLFile);
+        setupConditionsController.addNewMedia(experimentFromXMLFile);
+        setupConditionsController.addNewDrugSolvents(experimentFromXMLFile);
         List<Assay> newAssays = setupConditionsController.findNewAssays(experimentFromXMLFile);
         setupConditionsController.addNewAssays(newAssays);
         List<BottomMatrix> newBottomMatrices = setupConditionsController.findNewBottomMatrices(experimentFromXMLFile);
@@ -1257,50 +1314,64 @@ public class SetupExperimentController {
         PlateFormat newPlateFormat = setupPlateController.findByFormat(experimentFromXMLFile);
         if (newPlateFormat == null) {
             setupTemplateDialog.getNewPlateFormatLabel().setText(" " + experimentFromXMLFile.getPlateFormat());
+            setupTemplateDialog.getNewPlateFormatLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewPlateFormatLabel().setText(" none");
+            setupTemplateDialog.getNewPlateFormatLabel().setText(" no new parameters to add");
+            setupTemplateDialog.getNewPlateFormatLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // CELL LINES
         List<CellLineType> newCellLines = setupConditionsController.findNewCellLines(experimentFromXMLFile);
         if (!newCellLines.isEmpty()) {
             setupTemplateDialog.getNewCellLineLabel().setText(" " + newCellLines);
+            setupTemplateDialog.getNewCellLineLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewCellLineLabel().setText(" none");
+            setupTemplateDialog.getNewCellLineLabel().setText(" no new parameters to add");
+            setupTemplateDialog.getNewCellLineLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // ASSAYS
         List<Assay> newAssays = setupConditionsController.findNewAssays(experimentFromXMLFile);
         if (!newAssays.isEmpty()) {
             setupTemplateDialog.getNewAssayLabel().setText(" " + newAssays);
+            setupTemplateDialog.getNewAssayLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewAssayLabel().setText(" none");
+            setupTemplateDialog.getNewAssayLabel().setText(" no new parameters to add");
+            setupTemplateDialog.getNewAssayLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // BOTTOM MATRICES
         List<BottomMatrix> newBottomMatrices = setupConditionsController.findNewBottomMatrices(experimentFromXMLFile);
         if (!newBottomMatrices.isEmpty()) {
             setupTemplateDialog.getNewBottomMatrixLabel().setText(" " + newBottomMatrices);
+            setupTemplateDialog.getNewBottomMatrixLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewBottomMatrixLabel().setText(" none");
+            setupTemplateDialog.getNewBottomMatrixLabel().setText(" no new parameters to add");
+            setupTemplateDialog.getNewBottomMatrixLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // ECM COMPOSITIONS
         List<EcmComposition> newEcmCompositions = setupConditionsController.findNewEcmCompositions(experimentFromXMLFile);
         if (!newEcmCompositions.isEmpty()) {
             setupTemplateDialog.getNewEcmCompositionLabel().setText(" " + newEcmCompositions);
+            setupTemplateDialog.getNewEcmCompositionLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewEcmCompositionLabel().setText(" none");
+            setupTemplateDialog.getNewEcmCompositionLabel().setText(" no new parameters to add");
+            setupTemplateDialog.getNewEcmCompositionLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // ECM DENSITIES
         List<EcmDensity> newEcmDensities = setupConditionsController.findNewEcmDensities(experimentFromXMLFile);
         if (!newEcmDensities.isEmpty()) {
             setupTemplateDialog.getNewEcmDensityLabel().setText(" " + newEcmDensities);
+            setupTemplateDialog.getNewEcmDensityLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewEcmDensityLabel().setText(" none");
+            setupTemplateDialog.getNewEcmDensityLabel().setText(" no new parameters to add");
+            setupTemplateDialog.getNewEcmDensityLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // TREATMENTS TYPES
         List<TreatmentType> newTreatmentTypes = setupConditionsController.findNewTreatmentTypes(experimentFromXMLFile);
         if (!newTreatmentTypes.isEmpty()) {
             setupTemplateDialog.getNewTreatmentLabel().setText(" " + newTreatmentTypes);
+            setupTemplateDialog.getNewTreatmentLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewTreatmentLabel().setText(" none");
+            setupTemplateDialog.getNewTreatmentLabel().setText(" no new parameters to add");
+            setupTemplateDialog.getNewTreatmentLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // pack, center and show the template dialog
         setupTemplateDialog.pack();
@@ -1431,8 +1502,6 @@ public class SetupExperimentController {
         setupExperimentPanel.getExportTemplateButton().setVisible(false);
         setupExperimentPanel.getTopPanel().revalidate();
         setupExperimentPanel.getTopPanel().repaint();
-
-
     }
 
     /**

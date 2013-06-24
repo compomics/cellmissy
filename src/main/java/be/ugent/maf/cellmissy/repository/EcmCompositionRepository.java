@@ -17,5 +17,7 @@ public interface EcmCompositionRepository extends GenericRepository<EcmCompositi
 
     public void saveEcmComposition(EcmComposition ecmComposition);
 
-    public EcmComposition findEcmCompositionsByType(String ecmCompositionType);
+    public EcmComposition findEcmCompositionByType(String ecmCompositionType);
+
+    public EcmComposition findEcmCompositionByTypeAndMatrixDimensionName(String type, String matrixDimensionName);
 }
