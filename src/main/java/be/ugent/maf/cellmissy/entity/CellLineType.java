@@ -21,8 +21,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -30,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "cell_line_type")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "CellLineType.findAll", query = "SELECT c FROM CellLineType c"),
@@ -48,6 +49,7 @@ public class CellLineType implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "name", unique = true)
+    @XmlAttribute(required=true)
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cellLineType")
     @XmlTransient

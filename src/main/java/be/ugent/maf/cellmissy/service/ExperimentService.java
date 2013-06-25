@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import javax.xml.bind.JAXBException;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -126,7 +127,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @return
      * @throws JAXBException
      */
-    public Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException;
+    public Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException, SAXException;
 
     /**
      * Copy the setup settings from an experiment to a new one. This method is

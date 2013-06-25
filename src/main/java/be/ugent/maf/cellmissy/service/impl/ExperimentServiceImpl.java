@@ -40,10 +40,13 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -433,7 +436,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     }
 
     @Override
-    public Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException {
+    public Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException, SAXException {
         // we call the XML parser to unmarshal the XML file to an experiment
         // we need to cast the result object to an experiment
         return xMLParser.unmarshal(Experiment.class, xmlFile);
@@ -455,10 +458,11 @@ public class ExperimentServiceImpl implements ExperimentService {
         // plate conditions
         List<PlateCondition> plateConditionList = xmlExperiment.getPlateConditionList();
         List<PlateCondition> conditions = new ArrayList<>();
-        for (PlateCondition plateCondition : plateConditionList) {
-            // create a new condition: the Conditions' names are already in the XML !
+        for (int i = 0; i < plateConditionList.size(); i++) {
+            PlateCondition plateCondition = plateConditionList.get(i);
+            // create a new condition
             PlateCondition newPlateCondition = new PlateCondition();
-            newPlateCondition.setName(plateCondition.getName());
+            newPlateCondition.setName("Condition " + (i + 1));
             // assay: we check in the DB for the assay as well: if it's there, we use it !
             Assay assay = plateCondition.getAssay();
             String assayType = assay.getAssayType();

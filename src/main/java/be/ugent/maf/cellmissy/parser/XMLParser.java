@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.parser;
 import java.io.File;
 import java.io.FileNotFoundException;
 import javax.xml.bind.JAXBException;
+import org.xml.sax.SAXException;
 
 /**
  * This interface takes care of XML Binding through the JAXB API, providing
@@ -37,5 +38,5 @@ public interface XMLParser {
      * @return the Object
      * @throws JAXBException
      */
-    public <T> T unmarshal(Class<T> clazz, File xmlFile) throws JAXBException;
+    public <T> T unmarshal(Class<T> clazz, File xmlFile) throws JAXBException, SAXException;
 }

@@ -32,10 +32,12 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Range;
@@ -46,7 +48,8 @@ import org.hibernate.validator.constraints.Range;
  */
 @Entity
 @Table(name = "experiment")
-@XmlRootElement
+@XmlRootElement(namespace = "http://maf.ugent.be/beans/cellmissy")
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Experiment.findAll", query = "SELECT e FROM Experiment e"),
@@ -72,34 +75,34 @@ public class Experiment implements Serializable {
     @Basic(optional = false)
     @Range(min = 1, max = 100, message = "Experiment number must be between 1 and 100")
     @Column(name = "experiment_number")
-    @XmlTransient
+    @XmlAttribute(required=true)
     private int experimentNumber;
     @Size(min = 3, max = 150, message = "Purpose field must have between 3 and 150 characters")
     @Column(name = "purpose")
-    @XmlTransient
+    @XmlAttribute(required=true)
     private String purpose;
     @Basic(optional = true)
     @Column(name = "experiment_date")
     @Temporal(TemporalType.TIMESTAMP)
-    @XmlTransient
+    @XmlAttribute
     private Date experimentDate;
     @Column(name = "duration")
-    @XmlTransient
+    @XmlAttribute
     private Double duration;
     @Column(name = "experiment_interval")
-    @XmlTransient
+    @XmlAttribute
     private Double experimentInterval;
     @Column(name = "time_frames")
-    @XmlTransient
+    @XmlAttribute
     private Integer timeFrames;
     @Basic(optional = false)
     @Column(name = "experiment_status")
     @Enumerated(EnumType.STRING)
-    @XmlTransient
+    @XmlElement(required = true)
     private ExperimentStatus experimentStatus;
     @JoinColumn(name = "l_magnificationid", referencedColumnName = "magnificationid")
     @ManyToOne(optional = false)
-    @XmlTransient
+    @XmlElement
     private Magnification magnification;
     @JoinColumn(name = "l_userid", referencedColumnName = "userid")
     @ManyToOne(optional = false)
@@ -107,28 +110,33 @@ public class Experiment implements Serializable {
     private User user;
     @JoinColumn(name = "l_instrumentid", referencedColumnName = "instrumentid")
     @ManyToOne(optional = false)
-    @XmlTransient
+    @XmlElement
     private Instrument instrument;
     @JoinColumn(name = "l_projectid", referencedColumnName = "projectid")
     @ManyToOne(optional = false)
-    @XmlTransient
+    @XmlElement
     private Project project;
     @JoinColumn(name = "l_plate_formatid", referencedColumnName = "plate_formatid")
     @ManyToOne(optional = false)
+    @XmlElement(required = true)
     private PlateFormat plateFormat;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
     @OrderBy("plateConditionid")
-    @XmlElementWrapper(name = "plateConditions")
-    @XmlElement(name = "plateCondition")
+    @XmlElementWrapper(name = "plateConditions", required = true)
+    @XmlElement(name = "plateCondition", required = true)
     private List<PlateCondition> plateConditionList;
     @Transient
+    @XmlTransient
     private File experimentFolder;
     @Transient
+    @XmlTransient
     private File setupFolder;
     @Transient
+    @XmlTransient
     private File obsepFile;
     @Transient
+    @XmlTransient
     private File miaFolder;
 
     public Experiment() {

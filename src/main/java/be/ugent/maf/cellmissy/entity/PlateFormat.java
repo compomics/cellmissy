@@ -20,8 +20,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -29,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "plate_format")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "PlateFormat.findAll", query = "SELECT p FROM PlateFormat p"),
@@ -50,12 +51,16 @@ public class PlateFormat implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "format")
+    @XmlAttribute(required=true)
     private int format;
     @Column(name = "number_of_cols")
+    @XmlAttribute(required=true)
     private Integer numberOfCols;
     @Column(name = "number_of_rows")
+    @XmlAttribute(required=true)
     private Integer numberOfRows;
     @Column(name = "well_size")
+    @XmlAttribute(required=true)
     private Double wellSize;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateFormat")
     @XmlTransient

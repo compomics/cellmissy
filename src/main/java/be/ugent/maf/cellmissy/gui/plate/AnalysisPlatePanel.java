@@ -12,6 +12,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.util.List;
 
 /**
@@ -24,6 +26,7 @@ import java.util.List;
 public class AnalysisPlatePanel extends AbstractPlatePanel {
 
     private Experiment experiment;
+    private PlateCondition currentCondition;
 
     /**
      * set Experiment
@@ -32,6 +35,15 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
      */
     public void setExperiment(Experiment experiment) {
         this.experiment = experiment;
+    }
+
+    /**
+     * Set current condition
+     *
+     * @param currentCondition
+     */
+    public void setCurrentCondition(PlateCondition currentCondition) {
+        this.currentCondition = currentCondition;
     }
 
     @Override
@@ -90,6 +102,7 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
     protected void reDrawWells(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
+        int lenght = GuiUtils.getAvailableColors().length;
 
         // draw all the wells
         for (WellGui wellGui : wellGuiList) {
@@ -116,6 +129,36 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
                                     g2d.setColor(GuiUtils.getNonImagedColor());
                                     g2d.fill(defaultWell);
                                 }
+                            }
+                        }
+                    }
+                }
+                //
+                if (plateCondition.equals(currentCondition)) {
+                    int conditionIndex = plateConditions.indexOf(currentCondition);
+                    int indexOfColor = conditionIndex % lenght;
+                    g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
+
+                    List<Well> wells = plateCondition.getWellList();
+                    for (Well well : wells) {
+                        for (WellGui wellGui : wellGuiList) {
+                            if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
+                                //get only the bigger default ellipse2D
+                                Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
+                                double height = defaultWell.getHeight();
+                                double width = defaultWell.getWidth();
+                                double upperLeftCornerX = defaultWell.getX();
+                                double upperLeftCornerY = defaultWell.getY();
+
+                                Point2D upperLeftPoint = new Point2D.Double(upperLeftCornerX, upperLeftCornerY);
+                                Point2D upperRightPoint = new Point2D.Double(upperLeftCornerX + width, upperLeftCornerY);
+                                Point2D lowerLeftPoint = new Point2D.Double(upperLeftCornerX, upperLeftCornerY + height);
+                                Point2D lowerRightPoint = new Point2D.Double(upperLeftCornerX + width, upperLeftCornerY + height);;
+
+                                Line2D firstLine2D = new Line2D.Double(upperLeftPoint, lowerRightPoint);
+                                g2d.draw(firstLine2D);
+                                Line2D secondLine2D = new Line2D.Double(upperRightPoint, lowerLeftPoint);
+                                g2d.draw(secondLine2D);
                             }
                         }
                     }

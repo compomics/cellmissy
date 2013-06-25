@@ -19,7 +19,7 @@ import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Role;
-import be.ugent.maf.cellmissy.entity.TimeInterval;
+import be.ugent.maf.cellmissy.entity.result.TimeInterval;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -32,6 +32,7 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.MetaDataAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.AnalysisGroupListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.AreaUnitOfMeasurementComboBoxRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsAnalysisListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
@@ -349,6 +350,11 @@ public class AreaController {
      */
     public void showNotImagedWells(PlateCondition plateCondition) {
         plateCondition.setLoaded(true);
+        analysisPlatePanel.repaint();
+    }
+
+    public void showWellsForCurrentCondition(PlateCondition plateCondition){
+        analysisPlatePanel.setCurrentCondition(plateCondition);
         analysisPlatePanel.repaint();
     }
 
@@ -671,7 +677,7 @@ public class AreaController {
         /**
          * add mouse listeners
          */
-        //when a project from the list is selected, show all experiments performed for that project     
+        //when a project from the list is selected, show all experiments performed for that project
         metaDataAnalysisPanel.getProjectsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -721,7 +727,7 @@ public class AreaController {
         // exp time frames
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metaDataAnalysisPanel.getExperimentsList(), BeanProperty.create("selectedElement.timeFrames"), metaDataAnalysisPanel.getTimeFramesTextField(), BeanProperty.create("text"), "experimentimeframesbinding");
         bindingGroup.addBinding(binding);
-        // do the binding       
+        // do the binding
         bindingGroup.bind();
 
         // button group for radio buttons
@@ -824,7 +830,7 @@ public class AreaController {
                     if (selectedIndex != -1) {
                         PlateCondition selectedCondition = plateConditionList.get(selectedIndex);
                         if (currentCondition == null || !currentCondition.equals(selectedCondition)) {
-                            // Execute Swing Worker to fetch Selected Condition: 
+                            // Execute Swing Worker to fetch Selected Condition:
                             FetchConditionSwingWorker fetchSelectedConditionSW = new FetchConditionSwingWorker();
                             fetchSelectedConditionSW.execute();
                         }
@@ -921,6 +927,8 @@ public class AreaController {
         analysisPlatePanel.repaint();
         //show conditions JList
         showConditionsList();
+        // cell renderer
+        areaAnalysisController.getLinearRegressionPanel().getGroupsList().setCellRenderer(new AnalysisGroupListRenderer(plateConditionList));
         // show algorithms and imaging types
         for (PlateCondition plateCondition : plateConditionList) {
             for (Well well : plateCondition.getWellList()) {
@@ -1000,8 +1008,9 @@ public class AreaController {
         @Override
         protected Void doInBackground() throws Exception {
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            dataAnalysisPanel.getConditionsList().setEnabled(false);
             List<Well> wellList = currentCondition.getWellList();
-            //fetch time steps for each well of condition 
+            //fetch time steps for each well of condition
             for (int i = 0; i < wellList.size(); i++) {
                 //fetch time step collection for the wellhasimagingtype of interest
                 Algorithm algorithm = algorithmBindingList.get(metaDataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex());
@@ -1022,6 +1031,7 @@ public class AreaController {
         protected void done() {
             try {
                 get();
+                dataAnalysisPanel.getConditionsList().setEnabled(true);
                 if (!areaPreProcessingController.getTimeStepsBindingList().isEmpty()) {
                     //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO look at motility track RESULTS
                     areaPreProcessingController.showTimeStepsInTable();
@@ -1045,7 +1055,7 @@ public class AreaController {
                         areaPreProcessingController.plotTransformedAreaReplicates(currentCondition, plotLines, plotPoints);
                     }
                     if (areaPreProcessingController.getAreaAnalysisPanel().getDeltaAreaButton().isSelected()) {
-                        //for current selected condition show delta area values 
+                        //for current selected condition show delta area values
                         areaPreProcessingController.showDeltaAreaInTable(currentCondition);
                     }
                     if (areaPreProcessingController.getAreaAnalysisPanel().getPercentageAreaIncreaseButton().isSelected()) {
@@ -1074,6 +1084,7 @@ public class AreaController {
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 // the condition is loaded, and plate view is refreshed
                 showNotImagedWells(currentCondition);
+                showWellsForCurrentCondition(currentCondition);
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 cellMissyController.handleUnexpectedError(ex);

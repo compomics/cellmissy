@@ -35,8 +35,8 @@ public class AnalysisGroup {
     private boolean[][] significances;
 
     public AnalysisGroup() {
-    }    
-    
+    }
+
     /**
      * Constructor
      *

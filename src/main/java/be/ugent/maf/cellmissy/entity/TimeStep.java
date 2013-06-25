@@ -16,7 +16,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -24,7 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "time_step")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "TimeStep.findAll", query = "SELECT t FROM TimeStep t"),
     @NamedQuery(name = "TimeStep.findByTimeStepid", query = "SELECT t FROM TimeStep t WHERE t.timeStepid = :timeStepid"),
@@ -36,35 +41,45 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "TimeStep.findByMajorAxis", query = "SELECT t FROM TimeStep t WHERE t.majorAxis = :majorAxis"),
     @NamedQuery(name = "TimeStep.findByMinorAxis", query = "SELECT t FROM TimeStep t WHERE t.minorAxis = :minorAxis")})
 public class TimeStep implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "time_stepid")
+    @XmlTransient
     private Long timeStepid;
     @Basic(optional = false)
     @Column(name = "time_step_sequence")
+    @XmlAttribute(required=true)
     private int timeStepSequence;
     @Basic(optional = false)
     @Column(name = "area")
+    @XmlAttribute(required=true)
     private double area;
     @Basic(optional = true)
     @Column(name = "centroid_x")
+    @XmlTransient
     private double centroidX;
     @Basic(optional = true)
     @Column(name = "centroid_y")
+    @XmlTransient
     private double centroidY;
     @Basic(optional = true)
     @Column(name = "eccentricity")
+    @XmlTransient
     private double eccentricity;
     @Basic(optional = true)
     @Column(name = "major_axis")
+    @XmlTransient
     private double majorAxis;
     @Basic(optional = true)
     @Column(name = "minor_axis")
+    @XmlTransient
     private double minorAxis;
     @JoinColumn(name = "l_well_has_imaging_typeid", referencedColumnName = "well_has_imaging_typeid")
     @ManyToOne(optional = false)
+    @XmlTransient
     private WellHasImagingType wellHasImagingType;
 
     public TimeStep() {
@@ -181,5 +196,4 @@ public class TimeStep implements Serializable {
     public String toString() {
         return "be.ugent.maf.cellmissy.entity.TimeStep[ timeStepid=" + timeStepid + " ]";
     }
-    
 }

@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -39,7 +39,7 @@ import org.hibernate.annotations.FetchMode;
  */
 @Entity
 @Table(name = "plate_condition")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "PlateCondition.findAll", query = "SELECT p FROM PlateCondition p"),
@@ -65,12 +65,15 @@ public class PlateCondition implements Serializable {
     private List<Treatment> treatmentList;
     @JoinColumn(name = "l_cell_lineid", referencedColumnName = "cell_lineid")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @XmlElement(required = true)
     private CellLine cellLine;
     @JoinColumn(name = "l_assayid", referencedColumnName = "assayid")
     @ManyToOne(optional = false)
+    @XmlElement(required = true)
     private Assay assay;
     @JoinColumn(name = "l_ecmid", referencedColumnName = "ecmid")
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @XmlElement(required = true)
     private Ecm ecm;
     @JoinColumn(name = "l_experimentid", referencedColumnName = "experimentid")
     @ManyToOne(optional = false)
@@ -80,6 +83,7 @@ public class PlateCondition implements Serializable {
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private AssayMedium assayMedium;
     @Transient
+    @XmlTransient
     private String name;
     @Transient
     @XmlTransient

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="http://maf.ugent.be/beans/cellmissy" xmlns:tns="http://maf.ugent.be/beans/cellmissy" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="experiment" type="tns:experiment"/>
+
+    <xs:complexType name="matrixDimension">
+        <xs:sequence/>
+        <xs:attribute name="dimension" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="timeStep">
+        <xs:sequence/>
+        <xs:attribute name="timeStepSequence" type="xs:int" use="required"/>
+        <xs:attribute name="area" type="xs:double" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ecmDensity">
+        <xs:sequence/>
+        <xs:attribute name="ecmDensity" type="xs:double" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="plateCondition">
+        <xs:sequence>
+            <xs:element name="wells" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="well" type="tns:well" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="treatments" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="treatment" type="tns:treatment" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="cellLine" type="tns:cellLine"/>
+            <xs:element name="assay" type="tns:assay"/>
+            <xs:element name="ecm" type="tns:ecm"/>
+            <xs:element name="assayMedium" type="tns:assayMedium" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="well">
+        <xs:sequence>
+            <xs:element name="wellHasImagingTypes" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="wellHasImagingType" type="tns:wellHasImagingType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="columnNumber" type="xs:int" use="required"/>
+        <xs:attribute name="rowNumber" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="wellHasImagingType">
+        <xs:sequence>
+            <xs:element name="well" type="tns:well"/>
+            <xs:element name="imagingType" type="tns:imagingType"/>
+            <xs:element name="timeSteps">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="timeStep" type="tns:timeStep" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="tracks" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="track" type="tns:track" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="algorithm" type="tns:algorithm"/>
+        </xs:sequence>
+        <xs:attribute name="sequenceNumber" type="xs:int" use="required"/>
+        <xs:attribute name="xCoordinate" type="xs:double"/>
+        <xs:attribute name="yCoordinate" type="xs:double"/>
+    </xs:complexType>
+
+    <xs:complexType name="imagingType">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="lightIntensity" type="xs:double" use="required"/>
+        <xs:attribute name="exposureTime" type="xs:double" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="track">
+        <xs:sequence>
+            <xs:element name="wellHasImagingType" type="tns:wellHasImagingType"/>
+            <xs:element name="trackPoints" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="trackPoint" type="tns:trackPoint" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="trackNumber" type="xs:int" use="required"/>
+        <xs:attribute name="trackLength" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="trackPoint">
+        <xs:sequence/>
+        <xs:attribute name="timeIndex" type="xs:int" use="required"/>
+        <xs:attribute name="cellRow" type="xs:double" use="required"/>
+        <xs:attribute name="cellCol" type="xs:double" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="algorithm">
+        <xs:sequence/>
+        <xs:attribute name="algorithmName" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="treatment">
+        <xs:sequence>
+            <xs:element name="treatmentType" type="tns:treatmentType"/>
+        </xs:sequence>
+        <xs:attribute name="concentration" type="xs:double"/>
+        <xs:attribute name="concentrationUnit" type="xs:string"/>
+        <xs:attribute name="timing" type="xs:string"/>
+        <xs:attribute name="drugSolvent" type="xs:string"/>
+        <xs:attribute name="drugSolventConcentration" type="xs:double"/>
+    </xs:complexType>
+
+    <xs:complexType name="treatmentType">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="treatmentCategory" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="cellLine">
+        <xs:sequence>
+            <xs:element name="cellLineType" type="tns:cellLineType"/>
+        </xs:sequence>
+        <xs:attribute name="seedingTime" type="xs:string"/>
+        <xs:attribute name="seedingDensity" type="xs:int"/>
+        <xs:attribute name="growthMedium" type="xs:string"/>
+        <xs:attribute name="serum" type="xs:string"/>
+        <xs:attribute name="serumConcentration" type="xs:double"/>
+    </xs:complexType>
+
+    <xs:complexType name="cellLineType">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="assay">
+        <xs:sequence>
+            <xs:element name="matrixDimension" type="tns:matrixDimension"/>
+        </xs:sequence>
+        <xs:attribute name="assayType" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ecm">
+        <xs:sequence>
+            <xs:element name="bottomMatrix" type="tns:bottomMatrix" minOccurs="0"/>
+            <xs:element name="ecmComposition" type="tns:ecmComposition"/>
+            <xs:element name="ecmDensity" type="tns:ecmDensity" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="concentration" type="xs:double"/>
+        <xs:attribute name="volume" type="xs:double"/>
+        <xs:attribute name="topMatrixVolume" type="xs:double"/>
+        <xs:attribute name="bottomMatrixVolume" type="xs:double"/>
+        <xs:attribute name="coatingTime" type="xs:string"/>
+        <xs:attribute name="coatingTemperature" type="xs:string"/>
+        <xs:attribute name="polymerisationTime" type="xs:string"/>
+        <xs:attribute name="polymerisationTemperature" type="xs:string"/>
+        <xs:attribute name="polymerisationPh" type="xs:string"/>
+        <xs:attribute name="concentrationUnit" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="bottomMatrix">
+        <xs:sequence/>
+        <xs:attribute name="type" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ecmComposition">
+        <xs:sequence>
+            <xs:element name="matrixDimension" type="tns:matrixDimension" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="compositionType" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="assayMedium">
+        <xs:sequence/>
+        <xs:attribute name="medium" type="xs:string" use="required"/>
+        <xs:attribute name="serum" type="xs:string"/>
+        <xs:attribute name="serumConcentration" type="xs:double"/>
+        <xs:attribute name="volume" type="xs:double"/>
+    </xs:complexType>
+
+    <xs:complexType name="magnification">
+        <xs:sequence/>
+        <xs:attribute name="magnificationNumber" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="plateFormat">
+        <xs:sequence/>
+        <xs:attribute name="format" type="xs:int" use="required"/>
+        <xs:attribute name="numberOfCols" type="xs:int" use="required"/>
+        <xs:attribute name="numberOfRows" type="xs:int" use="required"/>
+        <xs:attribute name="wellSize" type="xs:double" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="experiment">
+        <xs:sequence>
+            <xs:element name="experimentStatus" type="tns:experimentStatus"/>
+            <xs:element name="magnification" type="tns:magnification" minOccurs="0"/>
+            <xs:element name="instrument" type="tns:instrument" minOccurs="0"/>
+            <xs:element name="project" type="tns:project" minOccurs="0"/>
+            <xs:element name="plateFormat" type="tns:plateFormat"/>
+            <xs:element name="plateConditions">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="plateCondition" type="tns:plateCondition" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="experimentNumber" type="xs:int" use="required"/>
+        <xs:attribute name="purpose" type="xs:string" use="required"/>
+        <xs:attribute name="experimentDate" type="xs:dateTime"/>
+        <xs:attribute name="duration" type="xs:double"/>
+        <xs:attribute name="experimentInterval" type="xs:double"/>
+        <xs:attribute name="timeFrames" type="xs:int"/>
+    </xs:complexType>
+
+    <xs:complexType name="instrument">
+        <xs:sequence/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="conversionFactor" type="xs:double" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="project">
+        <xs:sequence/>
+        <xs:attribute name="projectNumber" type="xs:int" use="required"/>
+        <xs:attribute name="projectDescription" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:simpleType name="experimentStatus">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="IN_PROGRESS"/>
+            <xs:enumeration value="PERFORMED"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="treatmentCategory">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DRUG"/>
+            <xs:enumeration value="GENERAL_TREATMENT"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

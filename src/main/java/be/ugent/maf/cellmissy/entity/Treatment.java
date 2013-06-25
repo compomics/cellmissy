@@ -19,8 +19,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -28,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "treatment")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Treatment.findAll", query = "SELECT t FROM Treatment t"),
@@ -47,14 +49,19 @@ public class Treatment implements Serializable {
     @XmlTransient
     private Long treatmentid;
     @Column(name = "concentration")
+    @XmlAttribute
     private Double concentration;
     @Column(name = "concentration_unit")
+    @XmlAttribute
     private String concentrationUnit;
     @Column(name = "timing")
+    @XmlAttribute
     private String timing;
     @Column(name = "drug_solvent")
+    @XmlAttribute
     private String drugSolvent;
     @Column(name = "drug_solvent_concentration")
+    @XmlAttribute
     private Double drugSolventConcentration;
     @JoinColumn(name = "l_plate_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = true)
@@ -62,6 +69,7 @@ public class Treatment implements Serializable {
     private PlateCondition plateCondition;
     @JoinColumn(name = "l_treatment_typeid", referencedColumnName = "treatment_typeid")
     @ManyToOne(optional = true)
+    @XmlElement(required = true)
     private TreatmentType treatmentType;
 
     public Treatment() {

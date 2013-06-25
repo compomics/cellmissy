@@ -17,8 +17,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -26,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "assay_medium")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "AssayMedium.findAll", query = "SELECT a FROM AssayMedium a"),
@@ -44,12 +46,16 @@ public class AssayMedium implements Serializable {
     @XmlTransient
     private Long assayMediumid;
     @Column(name = "medium")
+    @XmlAttribute(required=true)
     private String medium;
     @Column(name = "serum")
+    @XmlAttribute
     private String serum;
     @Column(name = "serum_concentration")
+    @XmlAttribute
     private Double serumConcentration;
     @Column(name = "volume")
+    @XmlAttribute
     private Double volume;
     @OneToOne(mappedBy = "assayMedium")
     @XmlTransient
