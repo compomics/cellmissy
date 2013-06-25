@@ -20,8 +20,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -29,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "ecm_density")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "EcmDensity.findAll", query = "SELECT e FROM EcmDensity e"),
@@ -45,6 +46,7 @@ public class EcmDensity implements Serializable {
     @XmlTransient
     private Long ecmDensityid;
     @Column(name = "ecm_density")
+    @XmlAttribute(required=true)
     private Double ecmDensity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmDensity")
     @XmlTransient

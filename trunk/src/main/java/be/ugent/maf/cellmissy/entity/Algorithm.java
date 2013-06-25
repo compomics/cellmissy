@@ -21,8 +21,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -30,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "algorithm")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Algorithm.findAll", query = "SELECT a FROM Algorithm a"),
@@ -49,8 +50,10 @@ public class Algorithm implements Serializable {
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "algorithm_name")
+    @XmlAttribute(required=true)
     private String algorithmName;
     @OneToMany(mappedBy = "algorithm")
+    @XmlTransient
     private List<WellHasImagingType> wellHasImagingTypeList;
 
     public Algorithm() {

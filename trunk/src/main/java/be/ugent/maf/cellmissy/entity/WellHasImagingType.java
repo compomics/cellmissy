@@ -22,8 +22,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -31,7 +34,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "well_has_imaging_type")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "WellHasImagingType.findAll", query = "SELECT w FROM WellHasImagingType w"),
@@ -49,27 +52,37 @@ public class WellHasImagingType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "well_has_imaging_typeid")
+    @XmlTransient
     private Long wellHasImagingTypeid;
     @Column(name = "sequence_number")
+    @XmlAttribute(required=true)
     private Integer sequenceNumber;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "x_coordinate")
+    @XmlAttribute
     private Double xCoordinate;
     @Column(name = "y_coordinate")
+    @XmlAttribute
     private Double yCoordinate;
     @JoinColumn(name = "l_wellid", referencedColumnName = "wellid")
     @ManyToOne
-    @XmlTransient
+    @XmlElement(required = true)
     private Well well;
     @JoinColumn(name = "l_imaging_typeid", referencedColumnName = "imaging_typeid")
     @ManyToOne(cascade = CascadeType.ALL, optional = true)
+    @XmlElement(required = true)
     private ImagingType imagingType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "wellHasImagingType", orphanRemoval = true)
+    @XmlElementWrapper(name = "timeSteps", required = true)
+    @XmlElement(name = "timeStep")
     private List<TimeStep> timeStepList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "wellHasImagingType", orphanRemoval = true)
+    @XmlElementWrapper(name = "tracks", required = false)
+    @XmlElement(name = "track")
     private List<Track> trackList;
     @JoinColumn(name = "l_algorithmid", referencedColumnName = "algorithmid")
     @ManyToOne(cascade = CascadeType.ALL)
+    @XmlElement(required = true)
     private Algorithm algorithm;
 
     public WellHasImagingType() {

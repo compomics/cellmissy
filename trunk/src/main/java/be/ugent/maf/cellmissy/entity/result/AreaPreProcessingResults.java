@@ -4,8 +4,6 @@
  */
 package be.ugent.maf.cellmissy.entity.result;
 
-import be.ugent.maf.cellmissy.entity.TimeInterval;
-
 /**
  * This class is holding the results from the area-data pre-processing step.
  * Normalized Area, Corrected Normalized Area, Delta Area, Percentage of Area

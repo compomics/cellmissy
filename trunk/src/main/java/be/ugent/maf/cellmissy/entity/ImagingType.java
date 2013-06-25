@@ -20,7 +20,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -28,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "imaging_type")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "ImagingType.findAll", query = "SELECT i FROM ImagingType i"),
@@ -43,16 +45,22 @@ public class ImagingType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "imaging_typeid")
+    @XmlTransient
     private Long imagingTypeid;
     @Column(name = "name")
+    @XmlAttribute(required=true)
     private String name;
     @Column(name = "light_intensity")
+    @XmlAttribute(required=true)
     private Double lightIntensity;
     @Column(name = "exposure_time")
+    @XmlAttribute(required=true)
     private Double exposureTime;
     @OneToMany(mappedBy = "imagingType")
+    @XmlTransient
     private List<WellHasImagingType> wellHasImagingTypeList;
     @Transient
+    @XmlTransient
     private String exposureTimeUnit;
 
     public ImagingType() {

@@ -20,8 +20,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import org.hibernate.validator.constraints.Range;
 
 /**
@@ -30,7 +32,7 @@ import org.hibernate.validator.constraints.Range;
  */
 @Entity
 @Table(name = "cell_line")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "CellLine.findAll", query = "SELECT c FROM CellLine c"),
@@ -50,21 +52,27 @@ public class CellLine implements Serializable {
     @XmlTransient
     private Long cellLineid;
     @Column(name = "seeding_time")
+    @XmlAttribute
     private String seedingTime;
     @Column(name = "seeding_density")
     @Range(min = 3000, max = 90000, message = "Seeding density must be between 30000 and 90000")
+    @XmlAttribute
     private Integer seedingDensity;
     @Column(name = "growth_medium")
+    @XmlAttribute
     private String growthMedium;
     @Column(name = "serum")
+    @XmlAttribute
     private String serum;
     @Column(name = "serum_concentration")
+    @XmlAttribute
     private Double serumConcentration;
     @OneToOne(mappedBy = "cellLine")
     @XmlTransient
     private PlateCondition plateCondition;
     @JoinColumn(name = "l_cell_line_typeid", referencedColumnName = "cell_line_typeid")
     @ManyToOne(optional = false)
+    @XmlElement(required = true)
     private CellLineType cellLineType;
 
     public CellLine() {

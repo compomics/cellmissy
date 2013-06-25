@@ -21,7 +21,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -29,7 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "track")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Track.findAll", query = "SELECT t FROM Track t"),
@@ -43,17 +47,23 @@ public class Track implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "trackid")
+    @XmlTransient
     private Long trackid;
     @Basic(optional = false)
     @Column(name = "track_number")
+    @XmlAttribute(required=true)
     private int trackNumber;
     @Basic(optional = false)
     @Column(name = "track_length")
+    @XmlAttribute(required=true)
     private int trackLength;
     @JoinColumn(name = "l_well_has_imaging_typeid", referencedColumnName = "well_has_imaging_typeid")
     @ManyToOne(optional = false)
+    @XmlElement(required = true)
     private WellHasImagingType wellHasImagingType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "track", orphanRemoval = true)
+    @XmlElementWrapper(name = "trackPoints")
+    @XmlElement(name = "trackPoint")
     private List<TrackPoint> trackPointList;
 
     public Track() {

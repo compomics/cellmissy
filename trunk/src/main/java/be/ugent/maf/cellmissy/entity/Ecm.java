@@ -22,8 +22,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -31,7 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "ecm")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Ecm.findAll", query = "SELECT e FROM Ecm e"),
@@ -53,38 +55,52 @@ public class Ecm implements Serializable {
     @XmlTransient
     private Long ecmid;
     @Column(name = "concentration")
+    @XmlAttribute
     private Double concentration;
     @Column(name = "volume")
+    @XmlAttribute
     private Double volume;
     @Column(name = "top_matrix_volume")
+    @XmlAttribute
     private Double topMatrixVolume;
     @Column(name = "bottom_matrix_volume")
+    @XmlAttribute
     private Double bottomMatrixVolume;
     @Column(name = "coating_time")
+    @XmlAttribute
     private String coatingTime;
     @Column(name = "coating_temperature")
+    @XmlAttribute
     private String coatingTemperature;
     @Column(name = "polymerisation_time")
+    @XmlAttribute
     private String polymerisationTime;
     @Column(name = "polymerisation_temperature")
+    @XmlAttribute
     private String polymerisationTemperature;
     @Column(name = "polymerisation_ph")
+    @XmlAttribute
     private String polymerisationPh;
+    @Column(name = "concentration_unit")
+    @XmlAttribute
+    private String concentrationUnit;
     @JoinColumn(name = "l_bottom_matrixid", referencedColumnName = "bottom_matrixid")
     @ManyToOne(optional = true)
+    @XmlElement
     private BottomMatrix bottomMatrix;
     @JoinColumn(name = "l_composition_typeid", referencedColumnName = "composition_typeid")
     @ManyToOne(optional = false)
+    @XmlElement(required = true)
     private EcmComposition ecmComposition;
     @JoinColumn(name = "l_ecm_densityid", referencedColumnName = "ecm_densityid")
     @ManyToOne(optional = true)
+    @XmlElement
     private EcmDensity ecmDensity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecm")
     @XmlTransient
     private List<PlateCondition> plateConditionList;
-    @Column(name = "concentration_unit")
-    private String concentrationUnit;
     @Transient
+    @XmlTransient
     private String volumeUnit;
 
     public Ecm() {

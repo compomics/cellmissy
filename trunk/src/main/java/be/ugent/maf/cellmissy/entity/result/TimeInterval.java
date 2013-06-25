@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.entity;
+package be.ugent.maf.cellmissy.entity.result;
 
 /**
  * Time Frames interval used for Analysis int values form first and last time

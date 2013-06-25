@@ -13,7 +13,7 @@ import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import be.ugent.maf.cellmissy.analysis.OutliersHandlerFactory;
 import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.TimeInterval;
+import be.ugent.maf.cellmissy.entity.result.TimeInterval;
 import be.ugent.maf.cellmissy.gui.view.table.model.DistanceMatrixTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.List;

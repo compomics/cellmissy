@@ -20,8 +20,9 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -30,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "instrument", uniqueConstraints =
         @UniqueConstraint(columnNames = "name"))
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Instrument.findAll", query = "SELECT i FROM Instrument i"),
@@ -43,12 +44,15 @@ public class Instrument implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "instrumentid")
+    @XmlTransient
     private Long instrumentid;
     @Basic(optional = false)
     @Column(name = "name", unique = true)
+    @XmlAttribute(required=true)
     private String name;
     @Basic(optional = false)
     @Column(name = "conversion_factor", unique = true)
+    @XmlAttribute(required=true)
     private double conversionFactor;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "instrument")
     @XmlTransient

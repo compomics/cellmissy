@@ -89,6 +89,7 @@ public class StatisticsDialog extends javax.swing.JDialog {
         setAlwaysOnTop(true);
         setMinimumSize(new java.awt.Dimension(20, 20));
         setModal(true);
+        setPreferredSize(new java.awt.Dimension(750, 600));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         infoPanel.setOpaque(false);
@@ -213,10 +214,6 @@ public class StatisticsDialog extends javax.swing.JDialog {
         correctionPanel.setLayout(correctionPanelLayout);
         correctionPanelLayout.setHorizontalGroup(
             correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, correctionPanelLayout.createSequentialGroup()
-                .addContainerGap(248, Short.MAX_VALUE)
-                .addComponent(saveAnalysisButton)
-                .addGap(560, 560, 560))
             .addGroup(correctionPanelLayout.createSequentialGroup()
                 .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(correctionPanelLayout.createSequentialGroup()
@@ -227,17 +224,22 @@ public class StatisticsDialog extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(statisticalTestComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(significanceLevelComboBox, 0, 100, Short.MAX_VALUE)))
+                            .addComponent(significanceLevelComboBox, 0, 100, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(saveAnalysisButton))
                     .addGroup(correctionPanelLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(correctionPanelLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(correctionPanelLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(correctionMethodsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(correctionPanelLayout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(correctionPanelLayout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(correctionPanelLayout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(correctionMethodsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 550, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         correctionPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel2, jLabel4});
@@ -248,7 +250,8 @@ public class StatisticsDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(statisticalTestComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(statisticalTestComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(saveAnalysisButton))
                 .addGap(18, 18, 18)
                 .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -259,9 +262,7 @@ public class StatisticsDialog extends javax.swing.JDialog {
                 .addComponent(correctionMethodsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(saveAnalysisButton)
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -284,7 +285,7 @@ public class StatisticsDialog extends javax.swing.JDialog {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

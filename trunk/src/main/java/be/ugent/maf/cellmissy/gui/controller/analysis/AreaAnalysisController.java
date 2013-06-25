@@ -158,6 +158,10 @@ public class AreaAnalysisController {
         return areaController.getSelectedImagingType();
     }
 
+    public LinearRegressionPanel getLinearRegressionPanel() {
+        return linearRegressionPanel;
+    }
+
     /**
      * Show Results from Linear Regression Model in a table
      *
@@ -386,7 +390,7 @@ public class AreaAnalysisController {
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
         // add the NONE (default) correction method
-        // when the none is selected, the software does not correct for multiple hypotheses 
+        // when the none is selected, the software does not correct for multiple hypotheses
         statisticsDialog.getCorrectionMethodsComboBox().addItem("none");
         // fill in combo box: get all the correction methods from the factory
         Set<String> correctionBeanNames = MultipleComparisonsCorrectionFactory.getInstance().getCorrectionBeanNames();

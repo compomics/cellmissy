@@ -12,7 +12,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import org.springframework.stereotype.Service;
+import org.xml.sax.SAXException;
 
 /**
  * This class implements the XMLParser interface and takes care of
@@ -37,13 +40,17 @@ public class XMLParserImpl implements XMLParser {
     }
 
     @Override
-    public <T> T unmarshal(Class<T> clazz, File xmlFile) throws JAXBException {
+    public <T> T unmarshal(Class<T> clazz, File xmlFile) throws JAXBException, SAXException {
+
+        SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+        Schema schema = factory.newSchema(new File("C:\\Users\\paola\\Desktop\\schema1.xsd"));
         // we create a new JAXBContext object
         JAXBContext jAXBContext = JAXBContext.newInstance(clazz);
         // we then create an Unmarshaller object
         Unmarshaller unmarshaller = jAXBContext.createUnmarshaller();
+        unmarshaller.setSchema(schema);
         // unmarshal the XML file to the Object
-        T t = (T)unmarshaller.unmarshal(xmlFile);
+        T t = (T) unmarshaller.unmarshal(xmlFile);
         return t;
     }
 }

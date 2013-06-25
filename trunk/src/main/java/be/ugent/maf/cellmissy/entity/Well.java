@@ -21,8 +21,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -30,7 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "well")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Well.findAll", query = "SELECT w FROM Well w"),
@@ -47,11 +50,14 @@ public class Well implements Serializable {
     @XmlTransient
     private Long wellid;
     @Column(name = "column_number")
+    @XmlAttribute(required=true)
     private Integer columnNumber;
     @Column(name = "row_number")
+    @XmlAttribute(required=true)
     private Integer rowNumber;
     @OneToMany(mappedBy = "well", orphanRemoval = true)
-    @XmlTransient
+    @XmlElementWrapper(name = "wellHasImagingTypes")
+    @XmlElement(name = "wellHasImagingType", required = false)
     private List<WellHasImagingType> wellHasImagingTypeList;
     @JoinColumn(name = "l_conditionid", referencedColumnName = "plate_conditionid")
     @ManyToOne(optional = false)

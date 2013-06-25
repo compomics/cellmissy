@@ -21,8 +21,9 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -31,7 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "project", uniqueConstraints =
         @UniqueConstraint(columnNames = "project_number"))
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Project.findAll", query = "SELECT p FROM Project p"),
@@ -44,12 +45,15 @@ public class Project implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "projectid")
+    @XmlTransient
     private Long projectid;
     @Basic(optional = false)
     @Column(name = "project_number", unique = true)
+    @XmlAttribute(required=true)
     private int projectNumber;
     @Basic(optional = true)
     @Column(name = "description")
+    @XmlAttribute(required=true)
     private String projectDescription;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     @XmlTransient

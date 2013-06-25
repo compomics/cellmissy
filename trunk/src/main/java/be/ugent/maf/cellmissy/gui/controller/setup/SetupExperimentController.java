@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 import javax.persistence.PersistenceException;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -89,6 +90,7 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
@@ -990,6 +992,8 @@ public class SetupExperimentController {
                     showMessage(errorMessage, "not valid XML file", JOptionPane.ERROR_MESSAGE);
                 }
             }
+        } catch (SAXException ex) {
+            java.util.logging.Logger.getLogger(SetupExperimentController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -1388,7 +1392,7 @@ public class SetupExperimentController {
      */
     private void exportExperimentToXMLFile(File directory) {
         // we create the unique XML file using the experiment info
-        String fileName = "Setup_template_" + experiment + "_" + experiment.getProject() + ".xml";
+        String fileName = "setup_template_" + experiment + "_" + experiment.getProject() + ".xml";
         File xmlFile = new File(directory, fileName);
         try {
             boolean success;

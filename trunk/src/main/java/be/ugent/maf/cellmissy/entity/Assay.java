@@ -21,8 +21,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -30,7 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "assay")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Assay.findAll", query = "SELECT a FROM Assay a"),
@@ -48,9 +50,11 @@ public class Assay implements Serializable {
     @XmlTransient
     private Long assayid;
     @Column(name = "assay_type")
+    @XmlAttribute(required=true)
     private String assayType;
     @JoinColumn(name = "l_matrix_dimensionid", referencedColumnName = "matrix_dimensionid")
     @ManyToOne(optional = false)
+    @XmlElement(required = true)
     private MatrixDimension matrixDimension;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "assay")
     @XmlTransient
