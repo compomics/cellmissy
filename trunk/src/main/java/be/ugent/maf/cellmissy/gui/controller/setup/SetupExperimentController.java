@@ -972,12 +972,29 @@ public class SetupExperimentController {
         try {
             // with the exp service get the EXPERIMENT object from the XML file
             experimentFromXMLFile = experimentService.getExperimentFromXMLFile(xmlFile);
-            // inform the user that parsing was OK
-            showMessage("Set up template was successfully imported!", "template imported", JOptionPane.INFORMATION_MESSAGE);
-            LOG.info("Template imported from XML file for experiment " + experiment + "_" + experiment.getProject());
-            // show the template dialog according to this XML file + experiment obtained
-            showTemplateDialog(xmlFile, experimentFromXMLFile);
-            // we need to catch exceptions in parsing the XML file
+            // we check here for the validation errors
+            List<String> xmlValidationErrorMesages = experimentService.getXmlValidationErrorMesages();
+            // if no errors during unmarshal, continue, else, show the errors
+            if (xmlValidationErrorMesages.isEmpty()) {
+                // inform the user that parsing was OK
+                showMessage("Set up template was successfully imported!", "template imported", JOptionPane.INFORMATION_MESSAGE);
+                LOG.info("Template imported from XML file for experiment " + experiment + "_" + experiment.getProject());
+                // show the template dialog according to this XML file + experiment obtained
+                showTemplateDialog(xmlFile, experimentFromXMLFile);
+            } else {
+                // validation of the XML file was not successful: informm the user, collect the messages
+                String mainMessage = "Error in validating " + xmlFile.getAbsolutePath() + "\n";
+                String totalMessage = "";
+                for (String string : xmlValidationErrorMesages) {
+                    totalMessage += mainMessage.concat(string + "\n");
+                }
+                showMessage(totalMessage, "invalid xml file", JOptionPane.ERROR_MESSAGE);
+            }
+            // we still need to catch exceptions in parsing the XML file
+        } catch (SAXException ex) {
+            LOG.error(ex.getMessage(), ex);
+            String message = "Error occurred during parsing the xsd schema for CellMissy!";
+            showMessage(message, "xsd schema error", JOptionPane.ERROR_MESSAGE);
         } catch (JAXBException ex) {
             LOG.error(ex.getMessage(), ex);
             // check for exception's instance here
@@ -992,8 +1009,9 @@ public class SetupExperimentController {
                     showMessage(errorMessage, "not valid XML file", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        } catch (SAXException ex) {
-            java.util.logging.Logger.getLogger(SetupExperimentController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
+            showMessage("CellMissy did not find a valid xsd schema for the validation of the XML file.", "error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

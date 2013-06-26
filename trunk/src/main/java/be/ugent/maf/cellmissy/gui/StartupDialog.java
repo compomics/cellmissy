@@ -69,22 +69,22 @@ public class StartupDialog extends javax.swing.JDialog {
         setPreferredSize(new java.awt.Dimension(400, 200));
         setResizable(false);
 
-        createExpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/newIcon.png"))); // NOI18N
+        createExpButton.setIcon(new javax.swing.ImageIcon("C:\\Users\\paola\\Documents\\NetBeansProjects\\CellMissy\\src\\main\\resources\\icons\\newIcon.png")); // NOI18N
         createExpButton.setText("Create Experiment");
 
-        dataAnalysisButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dataAnalysisIcon.png"))); // NOI18N
+        dataAnalysisButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/dataAnalysisIcon.png"))); // NOI18N
         dataAnalysisButton.setText("Data Analysis");
 
-        genericInputButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/genericInputIcon.png"))); // NOI18N
+        genericInputButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/genericInputIcon.png"))); // NOI18N
         genericInputButton.setText("Generic Input");
 
-        cellMiaButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cellmia.png"))); // NOI18N
+        cellMiaButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/genericInputIcon.png"))); // NOI18N
         cellMiaButton.setText("CELLMIA");
 
-        overviewButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/overviewIcon.png"))); // NOI18N
+        overviewButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/overviewIcon.png"))); // NOI18N
         overviewButton.setText("Overview Projects");
 
-        aboutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/informationIcon.png"))); // NOI18N
+        aboutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/informationIcon.png"))); // NOI18N
         aboutButton.setText("About CellMissy");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -141,7 +141,7 @@ public class StartupDialog extends javax.swing.JDialog {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -163,6 +163,7 @@ public class StartupDialog extends javax.swing.JDialog {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 StartupDialog dialog = new StartupDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {

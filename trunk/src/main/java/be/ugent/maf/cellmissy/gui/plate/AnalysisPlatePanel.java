@@ -147,18 +147,27 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
                                 Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
                                 double height = defaultWell.getHeight();
                                 double width = defaultWell.getWidth();
-                                double upperLeftCornerX = defaultWell.getX();
-                                double upperLeftCornerY = defaultWell.getY();
+                                double upperLeftCornerX = defaultWell.getX() + AnalysisPlatePanel.pixelsGrid / 2;
+                                double upperLeftCornerY = defaultWell.getY() + AnalysisPlatePanel.pixelsGrid / 2;
 
                                 Point2D upperLeftPoint = new Point2D.Double(upperLeftCornerX, upperLeftCornerY);
-                                Point2D upperRightPoint = new Point2D.Double(upperLeftCornerX + width, upperLeftCornerY);
-                                Point2D lowerLeftPoint = new Point2D.Double(upperLeftCornerX, upperLeftCornerY + height);
-                                Point2D lowerRightPoint = new Point2D.Double(upperLeftCornerX + width, upperLeftCornerY + height);;
+                                Point2D upperRightPoint = new Point2D.Double(upperLeftCornerX + width - AnalysisPlatePanel.pixelsGrid, upperLeftCornerY);
+                                Point2D lowerLeftPoint = new Point2D.Double(upperLeftCornerX, upperLeftCornerY + height - AnalysisPlatePanel.pixelsGrid);
+                                Point2D lowerRightPoint = new Point2D.Double(upperLeftCornerX + width - AnalysisPlatePanel.pixelsGrid, upperLeftCornerY + height - AnalysisPlatePanel.pixelsGrid);
+
+                                Point2D verticalUpperPoint = new Point2D.Double(upperLeftCornerX + width / 2 - AnalysisPlatePanel.pixelsGrid / 2, upperLeftCornerY);
+                                Point2D verticalLowerPoint = new Point2D.Double(upperLeftCornerX + width / 2 - AnalysisPlatePanel.pixelsGrid / 2, upperLeftCornerY + height - AnalysisPlatePanel.pixelsGrid);
+                                Point2D horizontalLeftPoint = new Point2D.Double(upperLeftCornerX, upperLeftCornerY + height / 2 - AnalysisPlatePanel.pixelsGrid / 2);
+                                Point2D horizontalRightPoint = new Point2D.Double(upperLeftCornerX + width - AnalysisPlatePanel.pixelsGrid, upperLeftCornerY + height / 2 - AnalysisPlatePanel.pixelsGrid / 2);
 
                                 Line2D firstLine2D = new Line2D.Double(upperLeftPoint, lowerRightPoint);
                                 g2d.draw(firstLine2D);
                                 Line2D secondLine2D = new Line2D.Double(upperRightPoint, lowerLeftPoint);
                                 g2d.draw(secondLine2D);
+                                Line2D verticalLine2D = new Line2D.Double(verticalUpperPoint, verticalLowerPoint);
+                                g2d.draw(verticalLine2D);
+                                Line2D horizontalLine2D = new Line2D.Double(horizontalLeftPoint, horizontalRightPoint);
+                                g2d.draw(horizontalLine2D);
                             }
                         }
                     }

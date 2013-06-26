@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -42,6 +43,7 @@ public class MatrixDimension implements Serializable {
     private Long matrixDimensionid;
     @Column(name = "dimension")
     @XmlAttribute(required=true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String dimension;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matrixDimension")
     @XmlTransient

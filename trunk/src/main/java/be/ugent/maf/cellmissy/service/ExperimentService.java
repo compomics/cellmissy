@@ -11,6 +11,7 @@ import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import org.xml.sax.SAXException;
@@ -126,8 +127,16 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @param xmlFile
      * @return
      * @throws JAXBException
+     * @throws SAXException
+     * @throws IOException
      */
-    public Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException, SAXException;
+    public Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException, SAXException, IOException;
+
+    /**
+     *
+     * @return
+     */
+    public List<String> getXmlValidationErrorMesages();
 
     /**
      * Copy the setup settings from an experiment to a new one. This method is

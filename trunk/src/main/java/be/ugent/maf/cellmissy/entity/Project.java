@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -54,6 +55,7 @@ public class Project implements Serializable {
     @Basic(optional = true)
     @Column(name = "description")
     @XmlAttribute(required=true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String projectDescription;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     @XmlTransient

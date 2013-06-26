@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Range;
@@ -75,11 +76,12 @@ public class Experiment implements Serializable {
     @Basic(optional = false)
     @Range(min = 1, max = 100, message = "Experiment number must be between 1 and 100")
     @Column(name = "experiment_number")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private int experimentNumber;
     @Size(min = 3, max = 150, message = "Purpose field must have between 3 and 150 characters")
     @Column(name = "purpose")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String purpose;
     @Basic(optional = true)
     @Column(name = "experiment_date")

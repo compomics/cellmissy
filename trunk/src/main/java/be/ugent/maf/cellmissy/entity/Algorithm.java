@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -51,6 +52,7 @@ public class Algorithm implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "algorithm_name")
     @XmlAttribute(required=true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String algorithmName;
     @OneToMany(mappedBy = "algorithm")
     @XmlTransient

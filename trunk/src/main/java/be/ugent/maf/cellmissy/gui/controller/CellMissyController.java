@@ -142,7 +142,7 @@ public class CellMissyController {
         initMainFrame();
         // initialize start up dialog
         initStartupDialog();
-        // show login dialog 
+        // show login dialog
         loginController.showLoginDialog();
     }
 
@@ -339,9 +339,9 @@ public class CellMissyController {
         helpDialog.getHelpTextPane().setCaretPosition(0);
         styledDocument = helpDialog.getHelpTextPane().getStyledDocument();
         styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
-        Image helpImage = new ImageIcon(getClass().getResource("/helpIcon.png")).getImage();
+        Image helpImage = new ImageIcon(getClass().getResource("/icons/helpIcon.png")).getImage();
         helpDialog.setIconImage(helpImage);
-        Image aboutImage = new ImageIcon(getClass().getResource("/informationIcon.png")).getImage();
+        Image aboutImage = new ImageIcon(getClass().getResource("/icons/informationIcon.png")).getImage();
         aboutDialog.setIconImage(aboutImage);
     }
 

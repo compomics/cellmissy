@@ -296,7 +296,9 @@ public class SetupConditionsController {
             CellLineType cellLineType = plateCondition.getCellLine().getCellLineType();
             CellLineType foundCellLineType = cellLineService.findByName(cellLineType.getName());
             if (foundCellLineType == null) {
-                cellLineTypeList.add(cellLineType);
+                if (!cellLineTypeList.contains(cellLineType)) {
+                    cellLineTypeList.add(cellLineType);
+                }
             }
         }
         return cellLineTypeList;

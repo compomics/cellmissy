@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -46,6 +47,7 @@ public class Magnification implements Serializable {
     private Long magnificationid;
     @Column(name = "magnification_number")
     @XmlAttribute(required=true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String magnificationNumber;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "magnification")
     @XmlTransient
