@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -49,6 +50,7 @@ public class Instrument implements Serializable {
     @Basic(optional = false)
     @Column(name = "name", unique = true)
     @XmlAttribute(required=true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String name;
     @Basic(optional = false)
     @Column(name = "conversion_factor", unique = true)

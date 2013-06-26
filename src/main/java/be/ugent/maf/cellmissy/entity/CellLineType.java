@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -49,7 +50,8 @@ public class CellLineType implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "name", unique = true)
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cellLineType")
     @XmlTransient

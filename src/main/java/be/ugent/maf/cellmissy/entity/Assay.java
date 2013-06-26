@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -51,6 +52,7 @@ public class Assay implements Serializable {
     private Long assayid;
     @Column(name = "assay_type")
     @XmlAttribute(required=true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String assayType;
     @JoinColumn(name = "l_matrix_dimensionid", referencedColumnName = "matrix_dimensionid")
     @ManyToOne(optional = false)

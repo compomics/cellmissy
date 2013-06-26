@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -51,6 +52,7 @@ public class EcmComposition implements Serializable {
     private Long compositionTypeid;
     @Column(name = "composition_type")
     @XmlAttribute(required=true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String compositionType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmComposition")
     @XmlTransient

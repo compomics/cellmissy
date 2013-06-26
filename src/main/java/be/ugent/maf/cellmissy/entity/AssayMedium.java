@@ -18,9 +18,9 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -47,6 +47,7 @@ public class AssayMedium implements Serializable {
     private Long assayMediumid;
     @Column(name = "medium")
     @XmlAttribute(required=true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String medium;
     @Column(name = "serum")
     @XmlAttribute

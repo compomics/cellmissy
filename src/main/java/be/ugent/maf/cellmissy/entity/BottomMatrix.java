@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -47,6 +48,7 @@ public class BottomMatrix implements Serializable {
     private Long bottomMatrixid;
     @Column(name = "type")
     @XmlAttribute(required=true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String type;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bottomMatrix")
     @XmlTransient

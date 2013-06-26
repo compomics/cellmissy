@@ -37,11 +37,10 @@ import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.TreatmentService;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -436,10 +435,15 @@ public class ExperimentServiceImpl implements ExperimentService {
     }
 
     @Override
-    public Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException, SAXException {
+    public Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException, SAXException, IOException {
         // we call the XML parser to unmarshal the XML file to an experiment
         // we need to cast the result object to an experiment
         return xMLParser.unmarshal(Experiment.class, xmlFile);
+    }
+
+    @Override
+    public List<String> getXmlValidationErrorMesages() {
+        return xMLParser.getValidationErrorMesage();
     }
 
     @Override

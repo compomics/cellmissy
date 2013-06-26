@@ -6,6 +6,8 @@ package be.ugent.maf.cellmissy.parser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
 import javax.xml.bind.JAXBException;
 import org.xml.sax.SAXException;
 
@@ -38,5 +40,11 @@ public interface XMLParser {
      * @return the Object
      * @throws JAXBException
      */
-    public <T> T unmarshal(Class<T> clazz, File xmlFile) throws JAXBException, SAXException;
+    public <T> T unmarshal(Class<T> clazz, File xmlFile) throws JAXBException, SAXException, IOException;
+
+    /**
+     *
+     * @return
+     */
+    public List<String> getValidationErrorMesage();
 }
