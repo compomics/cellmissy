@@ -39,10 +39,14 @@ public interface XMLParser {
      * @param xmlFile
      * @return the Object
      * @throws JAXBException
+     * @throws SAXException
+     * @throws IOException
      */
     public <T> T unmarshal(Class<T> clazz, File xmlFile) throws JAXBException, SAXException, IOException;
 
     /**
+     * Get a list of error messages (if any) that are produced by the
+     * ValidationEventHandler is the XML validation was not successful.
      *
      * @return
      */

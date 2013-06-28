@@ -11,10 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -60,7 +57,8 @@ public class XMLParserImpl implements XMLParser {
         // we then create an Unmarshaller object
         Unmarshaller unmarshaller = jAXBContext.createUnmarshaller();
         unmarshaller.setSchema(cellmissySchema);
-        // set the event handler for the XML validation
+        // we set the event handler for the XML validation
+        // this will take care of eventual validation errors and warnings
         xmlValidator = new XmlValidator();
         unmarshaller.setEventHandler(xmlValidator);
         // finally unmarshal the XML file to the Object
@@ -71,7 +69,9 @@ public class XMLParserImpl implements XMLParser {
     @Override
     public List<String> getValidationErrorMesage() {
         List<String> validationErrorMessages = new ArrayList<>();
+        // get the validation events from the xml validator
         List<ValidationEvent> validationEvents = xmlValidator.getValidationEvents();
+        // from each event, we create a specific message with the line number where the error occurred
         for (ValidationEvent validationEvent : validationEvents) {
             int lineNumber = validationEvent.getLocator().getLineNumber();
             String message = validationEvent.getMessage() + "\nCheck line number " + lineNumber + " of xml file.";

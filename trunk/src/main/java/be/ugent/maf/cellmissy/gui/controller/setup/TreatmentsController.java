@@ -146,21 +146,7 @@ public class TreatmentsController {
      * @return a list with this new treatment types, if any.
      */
     public List<TreatmentType> findNewTreatmentTypes(Experiment experiment) {
-        List<TreatmentType> treatmentTypeList = new ArrayList<>();
-        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
-            List<Treatment> treatmentList = plateCondition.getTreatmentList();
-            for (Treatment treatment : treatmentList) {
-                TreatmentType treatmentType = treatment.getTreatmentType();
-                TreatmentType findByName = treatmentService.findByName(treatmentType.getName());
-                if (findByName == null) {
-                    if (!treatmentTypeList.contains(treatmentType)) {
-                        treatmentTypeList.add(treatmentType);
-                    }
-                }
-            }
-
-        }
-        return treatmentTypeList;
+        return treatmentService.findNewTreatmentTypes(experiment);
     }
 
     /**

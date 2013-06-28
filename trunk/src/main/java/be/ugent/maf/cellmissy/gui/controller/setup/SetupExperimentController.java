@@ -28,7 +28,7 @@ import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.setup.ExperimentInfoPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.SetupExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.SetupPanel;
-import be.ugent.maf.cellmissy.gui.experiment.setup.SetupTemplateDialog;
+import be.ugent.maf.cellmissy.gui.experiment.setup.ImportTemplateDialog;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.gui.project.NewProjectDialog;
@@ -55,7 +55,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 import javax.persistence.PersistenceException;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -120,7 +119,7 @@ public class SetupExperimentController {
     private NewProjectDialog newProjectDialog;
     private SetupPanel setupPanel;
     private CopyExperimentSettingsDialog copyExperimentSettingsDialog;
-    private SetupTemplateDialog setupTemplateDialog;
+    private ImportTemplateDialog importTemplateDialog;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -157,7 +156,7 @@ public class SetupExperimentController {
         initSetupExperimentPanel();
         initNewProjectDialog();
         initCopySettingsDialog();
-        initSetupTemplateDialog();
+        initImportTemplateDialog();
         //init child controllers
         setupPlateController.init();
         setupConditionsController.init();
@@ -693,28 +692,28 @@ public class SetupExperimentController {
     /**
      * Initialize template dialog
      */
-    private void initSetupTemplateDialog() {
+    private void initImportTemplateDialog() {
         // make a new dialog
-        setupTemplateDialog = new SetupTemplateDialog(cellMissyController.getCellMissyFrame(), true);
+        importTemplateDialog = new ImportTemplateDialog(cellMissyController.getCellMissyFrame(), true);
         // customize table
-        setupTemplateDialog.getConditionsDetailsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
-        setupTemplateDialog.getConditionsDetailsTable().getTableHeader().setReorderingAllowed(false);
+        importTemplateDialog.getConditionsDetailsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        importTemplateDialog.getConditionsDetailsTable().getTableHeader().setReorderingAllowed(false);
 
         // close the dialog: just empty the text fields
-        setupTemplateDialog.addWindowListener(new WindowAdapter() {
+        importTemplateDialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
                 // reset the information fields
-                setupTemplateDialog.getXmlFileLabel().setText("");
-                setupTemplateDialog.getPlateFormatLabel().setText("");
-                setupTemplateDialog.getNumberConditionsLabel().setText("");
+                importTemplateDialog.getXmlFileLabel().setText("");
+                importTemplateDialog.getPlateFormatLabel().setText("");
+                importTemplateDialog.getNumberConditionsLabel().setText("");
                 // reset table model to a default one
-                setupTemplateDialog.getConditionsDetailsTable().setModel(new DefaultTableModel());
+                importTemplateDialog.getConditionsDetailsTable().setModel(new DefaultTableModel());
             }
         });
         // add action listeners
         // copy the settings for current experiment: execute the swing worker
-        setupTemplateDialog.getCopySettingsButton().addActionListener(new ActionListener() {
+        importTemplateDialog.getCopySettingsButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // execute the swing worker
@@ -724,11 +723,17 @@ public class SetupExperimentController {
         });
 
         // cancel button
-        setupTemplateDialog.getCancelButton().addActionListener(new ActionListener() {
+        importTemplateDialog.getCancelButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // reset the information fields
+                importTemplateDialog.getXmlFileLabel().setText("");
+                importTemplateDialog.getPlateFormatLabel().setText("");
+                importTemplateDialog.getNumberConditionsLabel().setText("");
+                // reset table model to a default one
+                importTemplateDialog.getConditionsDetailsTable().setModel(new DefaultTableModel());
                 // cancel: hide the dialog
-                setupTemplateDialog.setVisible(false);
+                importTemplateDialog.setVisible(false);
             }
         });
     }
@@ -870,7 +875,7 @@ public class SetupExperimentController {
                                 File currentDirectory = chooseDirectory.getSelectedFile();
                                 setupReportWorker = new SetupReportWorker(currentDirectory);
                             } else {
-                                showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+                                showMessage("Command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
                             }
                         }
                         // check for the worker instance and execute it
@@ -913,7 +918,7 @@ public class SetupExperimentController {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setDialogTitle("Choose an XML file for the template to import");
-                // to select only txt files
+                // to select only xml files
                 fileChooser.setFileFilter(new FileFilter() {
                     @Override
                     public boolean accept(File f) {
@@ -963,26 +968,27 @@ public class SetupExperimentController {
 
     /**
      * Once you select an XML file, this method is using the experiment service
-     * to get the experiment back from the XML file and use its settings for the
-     * current experiment.
+     * to get the experiment back from the XML file. Then, if you click the copy
+     * settings button in the correspondent dialog, you can copy its settings to
+     * the current experiment.
      *
-     * @param xmlFile
+     * @param xmlFile: the file to parse, to get the template back
      */
     private void parseXMLFile(File xmlFile) {
         try {
             // with the exp service get the EXPERIMENT object from the XML file
             experimentFromXMLFile = experimentService.getExperimentFromXMLFile(xmlFile);
-            // we check here for the validation errors
+            // we check here for the validation errors (these are retrieved from the xml validator)
             List<String> xmlValidationErrorMesages = experimentService.getXmlValidationErrorMesages();
             // if no errors during unmarshal, continue, else, show the errors
             if (xmlValidationErrorMesages.isEmpty()) {
                 // inform the user that parsing was OK
-                showMessage("Set up template was successfully imported!", "template imported", JOptionPane.INFORMATION_MESSAGE);
+                showMessage("Set up template was successfully imported from " + xmlFile.getAbsolutePath() + " !", "template imported from XML file", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("Template imported from XML file for experiment " + experiment + "_" + experiment.getProject());
-                // show the template dialog according to this XML file + experiment obtained
+                // show the template dialog according to this XML file + experiment obtained from the file
                 showTemplateDialog(xmlFile, experimentFromXMLFile);
             } else {
-                // validation of the XML file was not successful: informm the user, collect the messages
+                // validation of the XML file was not successful: collect the validation messages and inform the user
                 String mainMessage = "Error in validating " + xmlFile.getAbsolutePath() + "\n";
                 String totalMessage = "";
                 for (String string : xmlValidationErrorMesages) {
@@ -990,12 +996,13 @@ public class SetupExperimentController {
                 }
                 showMessage(totalMessage, "invalid xml file", JOptionPane.ERROR_MESSAGE);
             }
-            // we still need to catch exceptions in parsing the XML file
+            // this error is related to the xsd schema: normally this is OK, but we need to catch this
         } catch (SAXException ex) {
             LOG.error(ex.getMessage(), ex);
             String message = "Error occurred during parsing the xsd schema for CellMissy!";
             showMessage(message, "xsd schema error", JOptionPane.ERROR_MESSAGE);
         } catch (JAXBException ex) {
+            // we still need to catch exceptions in parsing the XML file
             LOG.error(ex.getMessage(), ex);
             // check for exception's instance here
             if (ex instanceof UnmarshalException) {
@@ -1005,11 +1012,12 @@ public class SetupExperimentController {
                     // get the  line number of the end of the text where the exception occurred
                     int lineNumber = sAXParseException.getLineNumber();
                     // shiow a detailed exception error !
-                    String errorMessage = "An error occurred while parsing " + xmlFile + "\n" + sAXParseException.getLocalizedMessage() + "\nCheck line number " + lineNumber + " in the XML file.";
+                    String errorMessage = "An error occurred while importing template from " + xmlFile + "\n" + sAXParseException.getLocalizedMessage() + "\nCheck line number " + lineNumber + " in the XML file.";
                     showMessage(errorMessage, "not valid XML file", JOptionPane.ERROR_MESSAGE);
                 }
             }
         } catch (IOException ex) {
+            // this IO exception comes from using the resource for the xsd schema !
             LOG.error(ex.getMessage(), ex);
             showMessage("CellMissy did not find a valid xsd schema for the validation of the XML file.", "error", JOptionPane.ERROR_MESSAGE);
         }
@@ -1063,13 +1071,15 @@ public class SetupExperimentController {
     }
 
     /**
-     * Update the model of the conditions details with the current information
-     * from the selected experiment.
+     * For a certain table, this method creates a model from the given
+     * experiment with the conditions details and assign the model to the table.
      *
-     * @param selectedExperiment
+     *
+     * @param table
+     * @param exp
      */
-    private void updateConditionsTableModel(JTable table, Experiment selectedExperiment) {
-        List<PlateCondition> plateConditionList = selectedExperiment.getPlateConditionList();
+    private void updateConditionsTableModel(JTable table, Experiment exp) {
+        List<PlateCondition> plateConditionList = exp.getPlateConditionList();
         String[] columnNames = new String[7];
         columnNames[0] = "Condition";
         columnNames[1] = "Cell Line";
@@ -1178,6 +1188,7 @@ public class SetupExperimentController {
                 //show back default cursor
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 showMessage("Experiment was successfully saved to DB.\nPlease choose what you want to do next.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
+                LOG.info("Experiment " + experiment + "_" + experiment.getProject() + " saved; experiment is " + experiment.getExperimentStatus());
                 cellMissyController.onStartup();
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
@@ -1280,9 +1291,9 @@ public class SetupExperimentController {
         protected void done() {
             try {
                 get();
-                JOptionPane.showMessageDialog(setupTemplateDialog, "Template settings have been copied to new experiment.\nYou will now see the layout.", "settings copied", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(importTemplateDialog, "Template settings have been copied to new experiment.\nYou will now see the layout.", "settings copied", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("Template settings copied to Experiment: " + experiment + "_" + experiment.getProject());
-                setupTemplateDialog.setVisible(false);
+                importTemplateDialog.setVisible(false);
                 setupPlateController.setSelectionStarted(true);
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
@@ -1320,85 +1331,87 @@ public class SetupExperimentController {
      * the experiment object that we got from this file. We also pack and show
      * the dialog here.
      *
-     * @param xmlFile
-     * @param experimentFromXMLFile
+     * @param xmlFile: we need this to just show the name
+     * @param experimentFromXMLFile: we need this to show the conditions and see
+     * if some other parameters need to be persisted before the experiment can
+     * be saved
      */
     private void showTemplateDialog(File xmlFile, Experiment experimentFromXMLFile) {
         // update info and table in the dialog
-        setupTemplateDialog.getXmlFileLabel().setText(" " + xmlFile.getAbsolutePath());
-        setupTemplateDialog.getPlateFormatLabel().setText(" " + experimentFromXMLFile.getPlateFormat().toString());
-        setupTemplateDialog.getNumberConditionsLabel().setText(" " + experimentFromXMLFile.getPlateConditionList().size());
-        updateConditionsTableModel(setupTemplateDialog.getConditionsDetailsTable(), experimentFromXMLFile);
+        importTemplateDialog.getXmlFileLabel().setText(" " + xmlFile.getAbsolutePath());
+        importTemplateDialog.getPlateFormatLabel().setText(" " + experimentFromXMLFile.getPlateFormat().toString());
+        importTemplateDialog.getNumberConditionsLabel().setText(" " + experimentFromXMLFile.getPlateConditionList().size());
+        updateConditionsTableModel(importTemplateDialog.getConditionsDetailsTable(), experimentFromXMLFile);
         // we need, at last, to update the new parameters fields
         // if a new parameter needs to be inserted to DB, we use its name for the label
-        // otherwise, we set the label to "none"
+        // otherwise, we set the label to "no new parameters to add"
         // PLATE FORMAT
         PlateFormat newPlateFormat = setupPlateController.findByFormat(experimentFromXMLFile);
         if (newPlateFormat == null) {
-            setupTemplateDialog.getNewPlateFormatLabel().setText(" " + experimentFromXMLFile.getPlateFormat());
-            setupTemplateDialog.getNewPlateFormatLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importTemplateDialog.getNewPlateFormatLabel().setText(" " + experimentFromXMLFile.getPlateFormat());
+            importTemplateDialog.getNewPlateFormatLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewPlateFormatLabel().setText(" no new parameters to add");
-            setupTemplateDialog.getNewPlateFormatLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importTemplateDialog.getNewPlateFormatLabel().setText(" no new parameters to add");
+            importTemplateDialog.getNewPlateFormatLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // CELL LINES
         List<CellLineType> newCellLines = setupConditionsController.findNewCellLines(experimentFromXMLFile);
         if (!newCellLines.isEmpty()) {
-            setupTemplateDialog.getNewCellLineLabel().setText(" " + newCellLines);
-            setupTemplateDialog.getNewCellLineLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importTemplateDialog.getNewCellLineLabel().setText(" " + newCellLines);
+            importTemplateDialog.getNewCellLineLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewCellLineLabel().setText(" no new parameters to add");
-            setupTemplateDialog.getNewCellLineLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importTemplateDialog.getNewCellLineLabel().setText(" no new parameters to add");
+            importTemplateDialog.getNewCellLineLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // ASSAYS
         List<Assay> newAssays = setupConditionsController.findNewAssays(experimentFromXMLFile);
         if (!newAssays.isEmpty()) {
-            setupTemplateDialog.getNewAssayLabel().setText(" " + newAssays);
-            setupTemplateDialog.getNewAssayLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importTemplateDialog.getNewAssayLabel().setText(" " + newAssays);
+            importTemplateDialog.getNewAssayLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewAssayLabel().setText(" no new parameters to add");
-            setupTemplateDialog.getNewAssayLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importTemplateDialog.getNewAssayLabel().setText(" no new parameters to add");
+            importTemplateDialog.getNewAssayLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // BOTTOM MATRICES
         List<BottomMatrix> newBottomMatrices = setupConditionsController.findNewBottomMatrices(experimentFromXMLFile);
         if (!newBottomMatrices.isEmpty()) {
-            setupTemplateDialog.getNewBottomMatrixLabel().setText(" " + newBottomMatrices);
-            setupTemplateDialog.getNewBottomMatrixLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importTemplateDialog.getNewBottomMatrixLabel().setText(" " + newBottomMatrices);
+            importTemplateDialog.getNewBottomMatrixLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewBottomMatrixLabel().setText(" no new parameters to add");
-            setupTemplateDialog.getNewBottomMatrixLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importTemplateDialog.getNewBottomMatrixLabel().setText(" no new parameters to add");
+            importTemplateDialog.getNewBottomMatrixLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // ECM COMPOSITIONS
         List<EcmComposition> newEcmCompositions = setupConditionsController.findNewEcmCompositions(experimentFromXMLFile);
         if (!newEcmCompositions.isEmpty()) {
-            setupTemplateDialog.getNewEcmCompositionLabel().setText(" " + newEcmCompositions);
-            setupTemplateDialog.getNewEcmCompositionLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importTemplateDialog.getNewEcmCompositionLabel().setText(" " + newEcmCompositions);
+            importTemplateDialog.getNewEcmCompositionLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewEcmCompositionLabel().setText(" no new parameters to add");
-            setupTemplateDialog.getNewEcmCompositionLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importTemplateDialog.getNewEcmCompositionLabel().setText(" no new parameters to add");
+            importTemplateDialog.getNewEcmCompositionLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // ECM DENSITIES
         List<EcmDensity> newEcmDensities = setupConditionsController.findNewEcmDensities(experimentFromXMLFile);
         if (!newEcmDensities.isEmpty()) {
-            setupTemplateDialog.getNewEcmDensityLabel().setText(" " + newEcmDensities);
-            setupTemplateDialog.getNewEcmDensityLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importTemplateDialog.getNewEcmDensityLabel().setText(" " + newEcmDensities);
+            importTemplateDialog.getNewEcmDensityLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewEcmDensityLabel().setText(" no new parameters to add");
-            setupTemplateDialog.getNewEcmDensityLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importTemplateDialog.getNewEcmDensityLabel().setText(" no new parameters to add");
+            importTemplateDialog.getNewEcmDensityLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // TREATMENTS TYPES
         List<TreatmentType> newTreatmentTypes = setupConditionsController.findNewTreatmentTypes(experimentFromXMLFile);
         if (!newTreatmentTypes.isEmpty()) {
-            setupTemplateDialog.getNewTreatmentLabel().setText(" " + newTreatmentTypes);
-            setupTemplateDialog.getNewTreatmentLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importTemplateDialog.getNewTreatmentLabel().setText(" " + newTreatmentTypes);
+            importTemplateDialog.getNewTreatmentLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            setupTemplateDialog.getNewTreatmentLabel().setText(" no new parameters to add");
-            setupTemplateDialog.getNewTreatmentLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importTemplateDialog.getNewTreatmentLabel().setText(" no new parameters to add");
+            importTemplateDialog.getNewTreatmentLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // pack, center and show the template dialog
-        setupTemplateDialog.pack();
-        GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), setupTemplateDialog);
-        setupTemplateDialog.setVisible(true);
+        importTemplateDialog.pack();
+        GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), importTemplateDialog);
+        importTemplateDialog.setVisible(true);
     }
 
     /**
@@ -1435,7 +1448,7 @@ public class SetupExperimentController {
             showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
         }
         try {
-            experimentService.exportExperimentSetupToXMLFile(experiment, xmlFile);
+            experimentService.exportExperimentToXMLFile(experiment, xmlFile);
         } catch (JAXBException | FileNotFoundException ex) {
             LOG.error(ex.getMessage(), ex);
             showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);

@@ -10,6 +10,11 @@ import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 
 /**
+ * This class implements the ValidationEventhandler interface. We make the
+ * handle event return true, so if an error occurs, we collect the events and we
+ * can get back the error information. If a fatal error occurs, e.g. a
+ * SAXParseException is thrown because a wrong syntax in the xsd schema, this
+ * returns false and the unmarshaling stops.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */

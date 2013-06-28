@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.service;
 
 import be.ugent.maf.cellmissy.entity.Assay;
+import be.ugent.maf.cellmissy.entity.Experiment;
 import java.util.List;
 
 /**
@@ -18,4 +19,6 @@ public interface AssayService extends GenericService<Assay, Long> {
     public Assay findByAssayType(String assayType);
 
     public Assay findByAssayTypeAndMatrixDimensionName(String assayType, String matrixDimensionName);
+
+    public List<Assay> findNewAssays(Experiment experiment);
 }

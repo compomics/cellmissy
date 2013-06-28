@@ -6,9 +6,12 @@ package be.ugent.maf.cellmissy.service.impl;
 
 import be.ugent.maf.cellmissy.entity.CellLine;
 import be.ugent.maf.cellmissy.entity.CellLineType;
+import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.repository.CellLineRepository;
 import be.ugent.maf.cellmissy.repository.CellLineTypeRepository;
 import be.ugent.maf.cellmissy.service.CellLineService;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,5 +79,20 @@ public class CellLineServiceImpl implements CellLineService {
     @Override
     public void save(CellLine entity) {
         cellLineRepository.save(entity);
+    }
+
+    @Override
+    public List<CellLineType> findNewCellLines(Experiment experiment) {
+        List<CellLineType> cellLineTypeList = new ArrayList<>();
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            CellLineType cellLineType = plateCondition.getCellLine().getCellLineType();
+            CellLineType foundCellLineType = findByName(cellLineType.getName());
+            if (foundCellLineType == null) {
+                if (!cellLineTypeList.contains(cellLineType)) {
+                    cellLineTypeList.add(cellLineType);
+                }
+            }
+        }
+        return cellLineTypeList;
     }
 }

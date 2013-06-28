@@ -74,7 +74,7 @@ public class Experiment implements Serializable {
     @Column(name = "experimentid")
     private Long experimentid;
     @Basic(optional = false)
-    @Range(min = 1, max = 100, message = "Experiment number must be between 1 and 100")
+    @Range(min = 0, message = "Experiment number must be at least 0")
     @Column(name = "experiment_number")
     @XmlAttribute(required = true)
     private int experimentNumber;

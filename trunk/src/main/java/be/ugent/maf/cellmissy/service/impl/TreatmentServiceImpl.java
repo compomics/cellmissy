@@ -4,10 +4,13 @@
  */
 package be.ugent.maf.cellmissy.service.impl;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.repository.TreatmentRepository;
 import be.ugent.maf.cellmissy.service.TreatmentService;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,8 +54,27 @@ public class TreatmentServiceImpl implements TreatmentService {
     }
 
     @Override
-    public TreatmentType findByName(String name){
+    public TreatmentType findByName(String name) {
         return treatmentRepository.findByName(name);
+    }
+
+    @Override
+    public List<TreatmentType> findNewTreatmentTypes(Experiment experiment) {
+        List<TreatmentType> treatmentTypeList = new ArrayList<>();
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            List<Treatment> treatmentList = plateCondition.getTreatmentList();
+            for (Treatment treatment : treatmentList) {
+                TreatmentType treatmentType = treatment.getTreatmentType();
+                TreatmentType findByName = findByName(treatmentType.getName());
+                if (findByName == null) {
+                    if (!treatmentTypeList.contains(treatmentType)) {
+                        treatmentTypeList.add(treatmentType);
+                    }
+                }
+            }
+
+        }
+        return treatmentTypeList;
     }
 
     @Override

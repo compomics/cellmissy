@@ -59,7 +59,7 @@ public class Track implements Serializable {
     private int trackLength;
     @JoinColumn(name = "l_well_has_imaging_typeid", referencedColumnName = "well_has_imaging_typeid")
     @ManyToOne(optional = false)
-    @XmlElement(required = true)
+    @XmlTransient
     private WellHasImagingType wellHasImagingType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "track", orphanRemoval = true)
     @XmlElementWrapper(name = "trackPoints")

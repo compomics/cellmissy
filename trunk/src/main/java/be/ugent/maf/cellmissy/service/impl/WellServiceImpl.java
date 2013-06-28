@@ -266,6 +266,20 @@ public class WellServiceImpl implements WellService {
         }
     }
 
+    @Override
+    public Well fetchMigrationData(Long wellId) {
+        Well well = wellRepository.findById(wellId);
+        Hibernate.initialize(well.getWellHasImagingTypeList());
+        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+            Hibernate.initialize(wellHasImagingType.getTimeStepList());
+            Hibernate.initialize(wellHasImagingType.getTrackList());
+            for (Track track : wellHasImagingType.getTrackList()) {
+                Hibernate.initialize(track.getTrackPointList());
+            }
+        }
+        return well;
+    }
+
     /**
      * Get wellHasImagingTypes for some wells, for a certain algorithm and for a
      * certain imagingType
