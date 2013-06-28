@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.service.impl;
 
+import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Assay;
 import be.ugent.maf.cellmissy.entity.AssayMedium;
 import be.ugent.maf.cellmissy.entity.BottomMatrix;
@@ -14,11 +15,15 @@ import be.ugent.maf.cellmissy.entity.EcmComposition;
 import be.ugent.maf.cellmissy.entity.EcmDensity;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
+import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.Instrument;
 import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
+import be.ugent.maf.cellmissy.entity.TimeStep;
+import be.ugent.maf.cellmissy.entity.Track;
+import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -429,7 +434,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     }
 
     @Override
-    public void exportExperimentSetupToXMLFile(Experiment experiment, File xmlFile) throws JAXBException, FileNotFoundException {
+    public void exportExperimentToXMLFile(Experiment experiment, File xmlFile) throws JAXBException, FileNotFoundException {
         // we call the XML parser to marshal the object to a XML file
         xMLParser.marshal(Experiment.class, experiment, xmlFile);
     }
@@ -664,5 +669,282 @@ public class ExperimentServiceImpl implements ExperimentService {
             conditions.add(newPlateCondition);
         }
         newExperiment.setPlateConditionList(conditions);
+    }
+
+    @Override
+    public void copyExperimentFromXML(Experiment xmlExperiment) {
+        // get all the settings from the experiment to be copied
+        // plate format: we check in the DB for the plate format: if it's there, we use it !
+        PlateFormat plateFormat = xmlExperiment.getPlateFormat();
+        PlateFormat foundPlateFormat = plateService.findByFormat(plateFormat.getFormat());
+        if (foundPlateFormat != null) {
+            xmlExperiment.setPlateFormat(foundPlateFormat);
+        } else {
+            xmlExperiment.setPlateFormat(plateFormat);
+        }
+        // get all the matrix dimensions in the DB
+        List<MatrixDimension> findAllMatrixDimension = ecmService.findAllMatrixDimension();
+        // plate conditions
+        List<PlateCondition> plateConditionList = xmlExperiment.getPlateConditionList();
+        List<PlateCondition> conditions = new ArrayList<>();
+        for (int i = 0; i < plateConditionList.size(); i++) {
+            PlateCondition plateCondition = plateConditionList.get(i);
+            // create a new condition
+            PlateCondition newPlateCondition = new PlateCondition();
+            // assay: we check in the DB for the assay as well: if it's there, we use it !
+            Assay assay = plateCondition.getAssay();
+            String assayType = assay.getAssayType();
+            String dimension = assay.getMatrixDimension().getDimension();
+            Assay foundAssay = assayService.findByAssayTypeAndMatrixDimensionName(assayType, dimension);
+            if (foundAssay != null) {
+                newPlateCondition.setAssay(foundAssay); // foundAssay already has an id and a matrix dimension with an id
+            } else {
+                newPlateCondition.setAssay(assay); // assay has a null id, and a md with a null id as well, so we need to check for it
+                MatrixDimension matrixDimension = assay.getMatrixDimension();
+                for (MatrixDimension md : findAllMatrixDimension) {
+                    if (matrixDimension.getDimension().equals(md.getDimension())) {
+                        assay.setMatrixDimension(md); // md has an id !!
+                        break;
+                    }
+                }
+            }
+            // ecm
+            Ecm ecm = plateCondition.getEcm();
+            Ecm newEcm = new Ecm();
+            // composition type: we check in the DB for the ecm composition as well: if it's there, we use it !
+            EcmComposition ecmComposition = ecm.getEcmComposition();
+            String compositionType = ecmComposition.getCompositionType();
+            String ecmDimension = ecmComposition.getMatrixDimension().getDimension();
+            EcmComposition foundEcmComposition = ecmService.findEcmCompositionByTypeAndMatrixDimensionName(compositionType, ecmDimension);
+            if (foundEcmComposition != null) {
+                newEcm.setEcmComposition(foundEcmComposition);  // same issue for the matrix dimension as before: findEcmCompositionByType already has a md with an id
+            } else {
+                newEcm.setEcmComposition(ecmComposition);
+                MatrixDimension matrixDimension = ecmComposition.getMatrixDimension(); // ecmComposition has a md with a null id
+                for (MatrixDimension md : findAllMatrixDimension) {
+                    if (matrixDimension.getDimension().equals(md.getDimension())) {
+                        ecmComposition.setMatrixDimension(md); // md has an id !!
+                        break;
+                    }
+                }
+            }
+            // for other fields, no check is needed, but we need to swith between the 2D, 3D and 2.D cases
+            switch (newPlateCondition.getAssay().getMatrixDimension().getDimension()) {
+                case "2D":
+                    // concentration
+                    newEcm.setConcentration(ecm.getConcentration());
+                    newEcm.setConcentrationUnit(ecm.getConcentrationUnit());
+                    // volume
+                    newEcm.setVolume(ecm.getVolume());
+                    newEcm.setVolumeUnit(ecm.getVolumeUnit());
+                    // coating temperature
+                    newEcm.setCoatingTemperature(ecm.getCoatingTemperature());
+                    // coating time
+                    newEcm.setCoatingTime(ecm.getCoatingTime());
+                    break;
+                case "3D": // more parameters for the 3D !!
+                    // concentration
+                    newEcm.setConcentration(ecm.getConcentration());
+                    newEcm.setConcentrationUnit(ecm.getConcentrationUnit());
+                    // volume
+                    newEcm.setVolume(ecm.getVolume());
+                    newEcm.setVolumeUnit(ecm.getVolumeUnit());
+                    // coating temperature
+                    newEcm.setCoatingTemperature(ecm.getCoatingTemperature());
+                    // coating time
+                    newEcm.setCoatingTime(ecm.getCoatingTime());
+                    // polym temperature
+                    newEcm.setPolymerisationTemperature(ecm.getPolymerisationTemperature());
+                    // polym time
+                    newEcm.setPolymerisationTime(ecm.getPolymerisationTime());
+                    // polym ph
+                    newEcm.setPolymerisationPh(ecm.getPolymerisationPh());
+                    // bottom matrix volume
+                    newEcm.setBottomMatrixVolume(ecm.getBottomMatrixVolume());
+                    // top matrix volume
+                    newEcm.setTopMatrixVolume(ecm.getTopMatrixVolume());
+                    // bottom matrix type: we check in the DB for the bottom matrix type: if it's there, we use it !
+                    BottomMatrix bottomMatrix = ecm.getBottomMatrix();
+                    BottomMatrix foundBottomMatrix = ecmService.findBottomMatrixByType(bottomMatrix.getType());
+                    if (foundBottomMatrix != null) {
+                        newEcm.setBottomMatrix(foundBottomMatrix);
+                    } else {
+                        newEcm.setBottomMatrix(bottomMatrix);
+                    }
+                    // ecm density: we do the same for the ecm density
+                    EcmDensity foundEcmDensity = ecmService.findByEcmDensity(ecm.getEcmDensity().getEcmDensity());
+                    if (foundEcmDensity != null) {
+                        newEcm.setEcmDensity(foundEcmDensity);
+                    } else {
+                        newEcm.setEcmDensity(ecm.getEcmDensity());
+                    }
+                    break;
+                case "2.5D": // same as 3D, but NO top matrix volume is required
+                    // concentration
+                    newEcm.setConcentration(ecm.getConcentration());
+                    newEcm.setConcentrationUnit(ecm.getConcentrationUnit());
+                    // volume
+                    newEcm.setVolume(ecm.getVolume());
+                    newEcm.setVolumeUnit(ecm.getVolumeUnit());
+                    // coating temperature
+                    newEcm.setCoatingTemperature(ecm.getCoatingTemperature());
+                    // coating time
+                    newEcm.setCoatingTime(ecm.getCoatingTime());
+                    // polym temperature
+                    newEcm.setPolymerisationTemperature(ecm.getPolymerisationTemperature());
+                    // polym time
+                    newEcm.setPolymerisationTime(ecm.getPolymerisationTime());
+                    // polym ph
+                    newEcm.setPolymerisationPh(ecm.getPolymerisationPh());
+                    // bottom matrix volume
+                    newEcm.setBottomMatrixVolume(ecm.getBottomMatrixVolume());
+                    // top matrix volume
+                    newEcm.setTopMatrixVolume(ecm.getTopMatrixVolume());
+                    // bottom matrix type: we check in the DB for the bottom matrix type: if it's there, we use it !
+                    BottomMatrix bottomMatrix1 = ecm.getBottomMatrix();
+                    BottomMatrix foundBottomMatrix1 = ecmService.findBottomMatrixByType(bottomMatrix1.getType());
+                    if (foundBottomMatrix1 != null) {
+                        newEcm.setBottomMatrix(foundBottomMatrix1);
+                    } else {
+                        newEcm.setBottomMatrix(bottomMatrix1);
+                    }
+                    // ecm density
+                    EcmDensity foundEcmDensity1 = ecmService.findByEcmDensity(ecm.getEcmDensity().getEcmDensity());
+                    if (foundEcmDensity1 != null) {
+                        newEcm.setEcmDensity(foundEcmDensity1);
+                    } else {
+                        newEcm.setEcmDensity(ecm.getEcmDensity());
+                    }
+                    break;
+            }
+            newPlateCondition.setEcm(newEcm);
+            // cell line !
+            CellLine cellLine = plateCondition.getCellLine();
+            CellLine newCellLine = new CellLine();
+            CellLineType cellLineType = cellLine.getCellLineType();
+            // we need to check if the cell line type is already present in the DB !
+            CellLineType foundCellLineType = cellLineService.findByName(cellLineType.getName());
+            if (foundCellLineType != null) {
+                newCellLine.setCellLineType(foundCellLineType);
+            } else {
+                newCellLine.setCellLineType(cellLineType);
+            }
+            // other fiedls: no check is needed
+            // seeding time
+            newCellLine.setSeedingTime(cellLine.getSeedingTime());
+            // seeding density
+            newCellLine.setSeedingDensity(cellLine.getSeedingDensity());
+            // growth medium
+            newCellLine.setGrowthMedium(cellLine.getGrowthMedium());
+            // serum
+            newCellLine.setSerum(cellLine.getSerum());
+            // serum concentration
+            newCellLine.setSerumConcentration(cellLine.getSerumConcentration());
+            newPlateCondition.setCellLine(newCellLine);
+            // assay medium : no check is needed in the database !!
+            AssayMedium assayMedium = plateCondition.getAssayMedium();
+            AssayMedium newAssayMedium = new AssayMedium(assayMedium.getMedium(), assayMedium.getSerum(), assayMedium.getSerumConcentration(), assayMedium.getVolume());
+            newPlateCondition.setAssayMedium(newAssayMedium);
+            // treatments: here, we need to check for the tratment type !
+            List<Treatment> treatmentList = plateCondition.getTreatmentList();
+            List<Treatment> treatments = new ArrayList<>();
+            for (Treatment treatment : treatmentList) {
+                Treatment newTreatment = new Treatment();
+                // we check here for the treatment type
+                TreatmentType treatmentType = treatment.getTreatmentType();
+                TreatmentType foundTreatmentType = treatmentService.findByName(treatmentType.getName());
+                if (foundTreatmentType != null) {
+                    newTreatment.setTreatmentType(foundTreatmentType);
+                } else {
+                    newTreatment.setTreatmentType(treatmentType);
+                }
+                // no check is needed for other fields
+                // concentration
+                newTreatment.setConcentration(treatment.getConcentration());
+                // concentration unit
+                newTreatment.setConcentrationUnit(treatment.getConcentrationUnit());
+                // timing
+                newTreatment.setTiming(treatment.getTiming());
+                // drug solvent, if not null
+                String drugSolvent = treatment.getDrugSolvent();
+                if (drugSolvent != null) {
+                    newTreatment.setDrugSolvent(drugSolvent);
+                }
+                // drug solvent concentration
+                newTreatment.setDrugSolventConcentration(treatment.getDrugSolventConcentration());
+                newTreatment.setPlateCondition(newPlateCondition);
+                treatments.add(newTreatment);
+            }
+            newPlateCondition.setTreatmentList(treatments);
+            // wells : no check needed
+            List<Well> wellList = plateCondition.getWellList();
+            List<Well> wells = new ArrayList<>();
+            for (Well well : wellList) {
+                Well newWell = new Well(well.getColumnNumber(), well.getRowNumber());
+                newWell.setPlateCondition(newPlateCondition);
+                newWell.setWellHasImagingTypeList(well.getWellHasImagingTypeList());
+
+                //the other way around: set the well for each wellHasImagingType
+                for (WellHasImagingType wellHasImagingType : newWell.getWellHasImagingTypeList()) {
+                    // time steps
+                    for (TimeStep timeStep : wellHasImagingType.getTimeStepList()) {
+                        timeStep.setWellHasImagingType(wellHasImagingType);
+                    }
+                    // tracks
+                    for (Track track : wellHasImagingType.getTrackList()) {
+                        track.setWellHasImagingType(wellHasImagingType);
+                        // track points
+                        for (TrackPoint trackPoint : track.getTrackPointList()) {
+                            trackPoint.setTrack(track);
+                        }
+                    }
+                    wellHasImagingType.setWell(newWell);
+                }
+                wells.add(newWell);
+            }
+            newPlateCondition.setWellList(wells);
+            conditions.add(newPlateCondition);
+        }
+        xmlExperiment.setPlateConditionList(conditions);
+        // we set other fields
+        xmlExperiment.setDuration(xmlExperiment.getDuration());
+        xmlExperiment.setExperimentStatus(xmlExperiment.getExperimentStatus());
+        xmlExperiment.setTimeFrames(xmlExperiment.getTimeFrames());
+        xmlExperiment.setExperimentInterval(xmlExperiment.getExperimentInterval());
+        xmlExperiment.setPurpose(xmlExperiment.getPurpose());
+        xmlExperiment.setExperimentDate(xmlExperiment.getExperimentDate());
+        xmlExperiment.setExperimentNumber(xmlExperiment.getExperimentNumber());
+    }
+
+    @Override
+    public List<Algorithm> getAlgorithms(Experiment experiment) {
+        List<Algorithm> algorithms = new ArrayList<>();
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            for (Well well : plateCondition.getWellList()) {
+                for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                    Algorithm algorithm = wellHasImagingType.getAlgorithm();
+                    if (!algorithms.contains(algorithm)) {
+                        algorithms.add(algorithm);
+                    }
+                }
+            }
+        }
+        return algorithms;
+    }
+
+    @Override
+    public List<ImagingType> getImagingTypes(Experiment experiment) {
+        List<ImagingType> imagingTypes = new ArrayList<>();
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            for (Well well : plateCondition.getWellList()) {
+                for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                    ImagingType imagingType = wellHasImagingType.getImagingType();
+                    if (!imagingTypes.contains(imagingType)) {
+                        imagingTypes.add(imagingType);
+                    }
+                }
+            }
+        }
+        return imagingTypes;
     }
 }

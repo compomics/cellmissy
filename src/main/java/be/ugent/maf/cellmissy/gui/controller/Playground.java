@@ -4,12 +4,19 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
-import be.ugent.maf.cellmissy.parser.XMLParser;
+import be.ugent.maf.cellmissy.entity.ExperimentStatus;
+import be.ugent.maf.cellmissy.entity.ImagingType;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.service.ExperimentService;
+import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +25,6 @@ import org.hibernate.ejb.Ejb3Configuration;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.xml.sax.SAXException;
 
 /**
  * Playground class
@@ -31,26 +37,39 @@ public class Playground {
         // get the application context
         ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
 
-        XMLParser xMLParser = (XMLParser) context.getBean("xMLParser");
-        try {
-            xMLParser.unmarshal(Experiment.class, new File("C:\\Users\\paola\\Desktop\\wrong template.xml"));
-            //        LocalContainerEntityManagerFactoryBean fb = (LocalContainerEntityManagerFactoryBean) context.getBean("&entityManagerFactory");
-            //        Ejb3Configuration cfg = new Ejb3Configuration();
-            //        Ejb3Configuration configured = cfg.configure(fb.getPersistenceUnitInfo(), fb.getJpaPropertyMap());
-            //        // export the database schema
-            //        SchemaExport schemaExport = new SchemaExport(configured.getHibernateConfiguration());
-            //
-            //        schemaExport.setOutputFile("C:\\Users\\paola\\Desktop\\testing_schema.txt");
-            //        schemaExport.setFormat(true);
-            //        schemaExport.execute(true, false, false, true);
-            //        schemaExport.execute(true, false, false, true);
-        } catch (SAXException ex) {
-            System.out.println("SAXException" + ex.getMessage());
-        } catch (IOException ex) {
-            System.out.println("IOException" + ex.getMessage());
-        } catch (JAXBException ex) {
-            List<String> validationErrorMesage = xMLParser.getValidationErrorMesage();
-            System.out.println("JAXBException" + ex.getMessage());
+        ExperimentService experimentService = (ExperimentService) context.getBean("experimentService");
+        WellService wellService = (WellService) context.getBean("wellService");
+        Experiment experiment = experimentService.findById(1L);
+        ExperimentStatus experimentStatus = experiment.getExperimentStatus();
+        System.out.println("" + experimentStatus);
+
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            List<Well> wells = new ArrayList<>();
+            for (Well well : plateCondition.getWellList()) {
+                Well fetchedWell = wellService.fetchMigrationData(well.getWellid());
+                wells.add(fetchedWell);
+            }
+            plateCondition.setWellList(wells);
         }
+
+
+        try {
+            experimentService.exportExperimentToXMLFile(experiment, new File("C:\\Users\\paola\\Desktop\\test.xml"));
+        } catch (JAXBException | FileNotFoundException ex) {
+            Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
+        }
+ 
+
+        //        LocalContainerEntityManagerFactoryBean fb = (LocalContainerEntityManagerFactoryBean) context.getBean("&entityManagerFactory");
+        //        Ejb3Configuration cfg = new Ejb3Configuration();
+        //        Ejb3Configuration configured = cfg.configure(fb.getPersistenceUnitInfo(), fb.getJpaPropertyMap());
+        //        // export the database schema
+        //        SchemaExport schemaExport = new SchemaExport(configured.getHibernateConfiguration());
+        //
+        //        schemaExport.setOutputFile("C:\\Users\\paola\\Desktop\\testing_schema.txt");
+        //        schemaExport.setFormat(true);
+        //        schemaExport.execute(true, false, false, true);
+        //        schemaExport.execute(true, false, false, true);
+
     }
 }

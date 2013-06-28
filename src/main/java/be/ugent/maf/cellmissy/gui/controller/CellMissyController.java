@@ -74,6 +74,8 @@ public class CellMissyController {
     private LoadExperimentFromGenericInputController loadExperimentFromGenericInputController;
     @Autowired
     private AreaController areaController;
+    @Autowired
+    private ImportExportController importExportController;
 
     /**
      * Get main frame
@@ -94,6 +96,7 @@ public class CellMissyController {
     }
 
     public void onStartup() {
+        GuiUtils.centerDialogOnFrame(cellMissyFrame, startupDialog);
         startupDialog.setVisible(true);
     }
 
@@ -137,6 +140,7 @@ public class CellMissyController {
         overviewController.init();
         loginController.init();
         userManagementController.init();
+        importExportController.init();
 
         // initialize main frame
         initMainFrame();
@@ -330,6 +334,30 @@ public class CellMissyController {
             }
         });
 
+        // export experiment to XML file
+        cellMissyFrame.getExportExperimentMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onExportExperiment();
+            }
+        });
+
+        // import experiment from XML file
+        cellMissyFrame.getImportExperimentMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onImportExperiment();
+            }
+        });
+
+        // export experiment template to XML file
+        cellMissyFrame.getExportTemplateMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onExportTemplate();
+            }
+        });
+
         // format texts for the about and the help dialogs
         SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
         StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
@@ -425,7 +453,7 @@ public class CellMissyController {
     }
 
     /**
-     * Action performed on creating a new experiment
+     * Action performed on creating a new experiment.
      */
     private void onCreateExperiment() {
         if (!firstSetup) {
@@ -436,7 +464,7 @@ public class CellMissyController {
     }
 
     /**
-     * Action performed on loading data from generic input
+     * Action performed on loading data from generic input.
      */
     private void onLoadingFromGenericInput() {
         if (!firstLoadingFromGenericInput) {
@@ -448,7 +476,7 @@ public class CellMissyController {
     }
 
     /**
-     * Action performed on loading data from CELLMIA
+     * Action performed on loading data from CELLMIA.
      */
     private void onLoadingFromCellMia() {
         if (!firstLoadingFromCellMia) {
@@ -460,7 +488,7 @@ public class CellMissyController {
     }
 
     /**
-     * Action performed on data analysis
+     * Action performed on data analysis.
      */
     private void onDataAnalysis() {
         if (!firstDataAnalysis) {
@@ -472,7 +500,7 @@ public class CellMissyController {
     }
 
     /**
-     * Action performed on getting the overview projects/experiments
+     * Action performed on getting the overview projects/experiments.
      */
     private void onOverview() {
         // show a overviewProjectsDialog through child controller
@@ -480,7 +508,7 @@ public class CellMissyController {
     }
 
     /**
-     * Action performed on getting about information
+     * Action performed on about dialog.
      */
     private void onAbout() {
         aboutDialog.setLocationRelativeTo(cellMissyFrame);
@@ -488,11 +516,32 @@ public class CellMissyController {
     }
 
     /**
-     * Action performed on getting help information
+     * Action performed on help dialog.
      */
     private void onHelp() {
         helpDialog.setLocationRelativeTo(cellMissyFrame);
         helpDialog.setVisible(true);
+    }
+
+    /**
+     * Action performed on export experiment feature.
+     */
+    private void onExportExperiment() {
+        importExportController.showExportDialog();
+    }
+
+    /**
+     * Action performed on import experiment from external file.
+     */
+    private void onImportExperiment() {
+        importExportController.showImportDialog();
+    }
+
+    /**
+     * Action performed on export experiment template to file.
+     */
+    private void onExportTemplate() {
+        importExportController.showExportTemplateDialog();
     }
 
     /**

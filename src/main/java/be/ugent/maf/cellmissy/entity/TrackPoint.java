@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -59,10 +60,12 @@ public class TrackPoint implements Serializable {
     @Basic(optional = false)
     @Column(name = "cell_row")
     @XmlAttribute(required=true)
+    @XmlJavaTypeAdapter(value = EmptyDoubleXMLAdapter.class, type = double.class)
     private double cellRow;
     @Basic(optional = false)
     @Column(name = "cell_col")
     @XmlAttribute(required=true)
+    @XmlJavaTypeAdapter(value = EmptyDoubleXMLAdapter.class, type = double.class)
     private double cellCol;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "velocity_pixels")

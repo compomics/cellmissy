@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -55,18 +56,20 @@ public class WellHasImagingType implements Serializable {
     @XmlTransient
     private Long wellHasImagingTypeid;
     @Column(name = "sequence_number")
-    @XmlAttribute(required=true)
+    @XmlAttribute
     private Integer sequenceNumber;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "x_coordinate")
     @XmlAttribute
+    @XmlJavaTypeAdapter(EmptyDoubleXMLAdapter.class)
     private Double xCoordinate;
     @Column(name = "y_coordinate")
     @XmlAttribute
+    @XmlJavaTypeAdapter(EmptyDoubleXMLAdapter.class)
     private Double yCoordinate;
     @JoinColumn(name = "l_wellid", referencedColumnName = "wellid")
     @ManyToOne
-    @XmlElement(required = true)
+    @XmlTransient
     private Well well;
     @JoinColumn(name = "l_imaging_typeid", referencedColumnName = "imaging_typeid")
     @ManyToOne(cascade = CascadeType.ALL, optional = true)

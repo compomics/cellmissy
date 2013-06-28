@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -56,6 +57,7 @@ public class TimeStep implements Serializable {
     @Basic(optional = false)
     @Column(name = "area")
     @XmlAttribute(required=true)
+    @XmlJavaTypeAdapter(value = EmptyDoubleXMLAdapter.class, type = double.class)
     private double area;
     @Basic(optional = true)
     @Column(name = "centroid_x")

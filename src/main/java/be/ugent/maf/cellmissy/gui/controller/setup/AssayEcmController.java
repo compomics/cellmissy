@@ -146,19 +146,7 @@ public class AssayEcmController {
      * @return a List with the new assay not present in the DB yet, if any.
      */
     public List<Assay> findNewAssays(Experiment experiment) {
-        List<Assay> assayList = new ArrayList<>();
-        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
-            Assay assay = plateCondition.getAssay();
-            String assayType = assay.getAssayType();
-            String dimension = assay.getMatrixDimension().getDimension();
-            Assay foundAssay = assayService.findByAssayTypeAndMatrixDimensionName(assayType, dimension);
-            if (foundAssay == null) {
-                if (!assayList.contains(assay)) {
-                    assayList.add(assay);
-                }
-            }
-        }
-        return assayList;
+        return assayService.findNewAssays(experiment);
     }
 
     /**
@@ -232,19 +220,7 @@ public class AssayEcmController {
      * @return a List with the new Bottom Matrix objects, if any.
      */
     public List<BottomMatrix> findNewBottomMatrices(Experiment experiment) {
-        List<BottomMatrix> bottomMatrixList = new ArrayList<>();
-        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
-            BottomMatrix bottomMatrix = plateCondition.getEcm().getBottomMatrix();
-            if (bottomMatrix != null) {
-                BottomMatrix findByName = ecmService.findBottomMatrixByType(bottomMatrix.getType());
-                if (findByName == null) {
-                    if (!bottomMatrixList.contains(bottomMatrix)) {
-                        bottomMatrixList.add(bottomMatrix);
-                    }
-                }
-            }
-        }
-        return bottomMatrixList;
+        return ecmService.findNewBottomMatrices(experiment);
     }
 
     /**
@@ -256,19 +232,7 @@ public class AssayEcmController {
      * @return a list with the new ECM Composition, if any.
      */
     public List<EcmComposition> findNewEcmCompositions(Experiment experiment) {
-        List<EcmComposition> ecmCompositionList = new ArrayList<>();
-        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
-            EcmComposition ecmComposition = plateCondition.getEcm().getEcmComposition();
-            String compositionType = ecmComposition.getCompositionType();
-            String dimension = ecmComposition.getMatrixDimension().getDimension();
-            EcmComposition findByName = ecmService.findEcmCompositionByTypeAndMatrixDimensionName(compositionType, dimension);
-            if (findByName == null) {
-                if (!ecmCompositionList.contains(ecmComposition)) {
-                    ecmCompositionList.add(ecmComposition);
-                }
-            }
-        }
-        return ecmCompositionList;
+        return ecmService.findNewEcmCompositions(experiment);
     }
 
     /**
@@ -280,19 +244,7 @@ public class AssayEcmController {
      * @return a list with the new ECM density, if any.
      */
     public List<EcmDensity> findNewEcmDensities(Experiment experiment) {
-        List<EcmDensity> ecmDensityList = new ArrayList<>();
-        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
-            EcmDensity ecmDensity = plateCondition.getEcm().getEcmDensity();
-            if (ecmDensity != null) {
-                EcmDensity findByName = ecmService.findByEcmDensity(ecmDensity.getEcmDensity());
-                if (findByName == null) {
-                    if (!ecmDensityList.contains(ecmDensity)) {
-                        ecmDensityList.add(ecmDensity);
-                    }
-                }
-            }
-        }
-        return ecmDensityList;
+        return ecmService.findNewEcmDensities(experiment);
     }
 
     /**

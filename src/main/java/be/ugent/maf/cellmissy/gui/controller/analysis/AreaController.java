@@ -82,7 +82,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
+ * Main controller for the area analysis logic.
  *
  * @author Paola Masuzzo
  */
@@ -353,7 +353,7 @@ public class AreaController {
         analysisPlatePanel.repaint();
     }
 
-    public void showWellsForCurrentCondition(PlateCondition plateCondition){
+    public void showWellsForCurrentCondition(PlateCondition plateCondition) {
         analysisPlatePanel.setCurrentCondition(plateCondition);
         analysisPlatePanel.repaint();
     }
@@ -639,7 +639,7 @@ public class AreaController {
         metaDataAnalysisPanel.getProjectDescriptionTextArea().setLineWrap(true);
         metaDataAnalysisPanel.getProjectDescriptionTextArea().setWrapStyleWord(true);
 
-        //init projects combo box
+        //init projects list
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, metaDataAnalysisPanel.getProjectsList());
         bindingGroup.addBinding(jListBinding);

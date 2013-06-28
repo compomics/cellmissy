@@ -5,8 +5,11 @@
 package be.ugent.maf.cellmissy.service.impl;
 
 import be.ugent.maf.cellmissy.entity.Assay;
+import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.repository.AssayRepository;
 import be.ugent.maf.cellmissy.service.AssayService;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,5 +65,22 @@ public class AssayServiceImpl implements AssayService {
     @Override
     public Assay findByAssayTypeAndMatrixDimensionName(String assayType, String matrixDimensionName) {
         return assayRepository.findByAssayTypeAndMatrixDimensionName(assayType, matrixDimensionName);
+    }
+
+    @Override
+    public List<Assay> findNewAssays(Experiment experiment) {
+        List<Assay> assayList = new ArrayList<>();
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            Assay assay = plateCondition.getAssay();
+            String assayType = assay.getAssayType();
+            String dimension = assay.getMatrixDimension().getDimension();
+            Assay foundAssay = findByAssayTypeAndMatrixDimensionName(assayType, dimension);
+            if (foundAssay == null) {
+                if (!assayList.contains(assay)) {
+                    assayList.add(assay);
+                }
+            }
+        }
+        return assayList;
     }
 }

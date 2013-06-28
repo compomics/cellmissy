@@ -12,7 +12,7 @@ import javax.swing.JTable;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class SetupTemplateDialog extends javax.swing.JDialog {
+public class ImportTemplateDialog extends javax.swing.JDialog {
 
     public JButton getCancelButton() {
         return cancelButton;
@@ -67,9 +67,9 @@ public class SetupTemplateDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Creates new form SetupTemplateDialog
+     * Creates new form ImportTemplateDialog
      */
-    public SetupTemplateDialog(java.awt.Frame parent, boolean modal) {
+    public ImportTemplateDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
@@ -195,7 +195,7 @@ public class SetupTemplateDialog extends javax.swing.JDialog {
         tablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
         tablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("conditions details"));
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions details"));
 
         conditionsDetailsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -364,12 +364,15 @@ public class SetupTemplateDialog extends javax.swing.JDialog {
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addContainerGap(829, Short.MAX_VALUE)
+                .addContainerGap(795, Short.MAX_VALUE)
                 .addComponent(copySettingsButton)
                 .addGap(18, 18, 18)
                 .addComponent(cancelButton)
                 .addContainerGap())
         );
+
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, copySettingsButton});
+
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
@@ -409,20 +412,20 @@ public class SetupTemplateDialog extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SetupTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ImportTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SetupTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ImportTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SetupTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ImportTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SetupTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ImportTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                SetupTemplateDialog dialog = new SetupTemplateDialog(new javax.swing.JFrame(), true);
+                ImportTemplateDialog dialog = new ImportTemplateDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

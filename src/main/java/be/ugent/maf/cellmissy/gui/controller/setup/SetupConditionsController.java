@@ -291,17 +291,7 @@ public class SetupConditionsController {
      * @return a List of these cell line types, if any.
      */
     public List<CellLineType> findNewCellLines(Experiment experiment) {
-        List<CellLineType> cellLineTypeList = new ArrayList<>();
-        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
-            CellLineType cellLineType = plateCondition.getCellLine().getCellLineType();
-            CellLineType foundCellLineType = cellLineService.findByName(cellLineType.getName());
-            if (foundCellLineType == null) {
-                if (!cellLineTypeList.contains(cellLineType)) {
-                    cellLineTypeList.add(cellLineType);
-                }
-            }
-        }
-        return cellLineTypeList;
+        return cellLineService.findNewCellLines(experiment);
     }
 
     /**

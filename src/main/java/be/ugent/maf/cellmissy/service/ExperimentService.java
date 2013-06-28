@@ -4,8 +4,10 @@
  */
 package be.ugent.maf.cellmissy.service;
 
+import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
+import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.Instrument;
 import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
@@ -118,13 +120,12 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @throws FileNotFoundException
      * @throws JAXBException
      */
-    public void exportExperimentSetupToXMLFile(Experiment experiment, File xmlFile) throws JAXBException, FileNotFoundException;
+    public void exportExperimentToXMLFile(Experiment experiment, File xmlFile) throws JAXBException, FileNotFoundException;
 
     /**
-     * Import the experiment setup from an XML file: we parse the XML file and
-     * get the experiment back.
+     * Unmarshaling an XML file, we get the experiment back.
      *
-     * @param xmlFile
+     * @param xmlFile: the file to unmarshal
      * @return
      * @throws JAXBException
      * @throws SAXException
@@ -133,8 +134,10 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
     public Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException, SAXException, IOException;
 
     /**
+     * Get all the errors (if any) that come from a not successful
+     * XMLvalidation.
      *
-     * @return
+     * @return a List of Error Messages
      */
     public List<String> getXmlValidationErrorMesages();
 
@@ -149,4 +152,24 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @param newExperiment
      */
     public void copySetupSettingsFromXMLExperiment(Experiment xmlExperiment, Experiment newExperiment);
+
+    /**
+     *
+     * @param xmlExperiment
+     */
+    public void copyExperimentFromXML(Experiment xmlExperiment);
+
+    /**
+     *
+     * @param experiment
+     * @return
+     */
+    public List<Algorithm> getAlgorithms(Experiment experiment);
+
+    /**
+     * 
+     * @param experiment
+     * @return
+     */
+    public List<ImagingType> getImagingTypes(Experiment experiment);
 }

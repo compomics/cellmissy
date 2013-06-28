@@ -1,0 +1,1183 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package be.ugent.maf.cellmissy.gui.controller;
+
+import be.ugent.maf.cellmissy.entity.Algorithm;
+import be.ugent.maf.cellmissy.entity.Assay;
+import be.ugent.maf.cellmissy.entity.BottomMatrix;
+import be.ugent.maf.cellmissy.entity.CellLineType;
+import be.ugent.maf.cellmissy.entity.EcmComposition;
+import be.ugent.maf.cellmissy.entity.EcmDensity;
+import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.ExperimentStatus;
+import be.ugent.maf.cellmissy.entity.ImagingType;
+import be.ugent.maf.cellmissy.entity.Instrument;
+import be.ugent.maf.cellmissy.entity.Magnification;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.PlateFormat;
+import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.TreatmentType;
+import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.gui.experiment.exporting.ExportExperimentDialog;
+import be.ugent.maf.cellmissy.gui.experiment.exporting.ExportTemplateDialog;
+import be.ugent.maf.cellmissy.gui.experiment.importing.ImportExperimentDialog;
+import be.ugent.maf.cellmissy.gui.experiment.importing.SaveImportedExpDialog;
+import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsOverviewListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.service.AssayService;
+import be.ugent.maf.cellmissy.service.CellLineService;
+import be.ugent.maf.cellmissy.service.EcmService;
+import be.ugent.maf.cellmissy.service.ExperimentService;
+import be.ugent.maf.cellmissy.service.PlateService;
+import be.ugent.maf.cellmissy.service.ProjectService;
+import be.ugent.maf.cellmissy.service.TreatmentService;
+import be.ugent.maf.cellmissy.service.WellService;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
+import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
+import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.BindingGroup;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.observablecollections.ObservableList;
+import org.jdesktop.swingbinding.JComboBoxBinding;
+import org.jdesktop.swingbinding.JListBinding;
+import org.jdesktop.swingbinding.SwingBindings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+/**
+ *
+ * @author Paola Masuzzo <paola.masuzzo@ugent.be>
+ */
+@Controller("importExportController")
+public class ImportExportController {
+
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ImportExportController.class);
+    // model
+    private Experiment experimentToExport;
+    private Experiment importedExperiment;
+    private Experiment experimentTemplateToExport;
+    private ObservableList<Project> projectBindingList;
+    private ObservableList<Experiment> experimentBindingList;
+    private ObservableList<Instrument> instrumentBindingList;
+    private ObservableList<Magnification> magnificationBindingList;
+    private BindingGroup bindingGroup;
+    // view
+    private ExportExperimentDialog exportExperimentDialog;
+    private ImportExperimentDialog importExperimentDialog;
+    private SaveImportedExpDialog saveImportedExpDialog;
+    private ExportTemplateDialog exportTemplateDialog;
+    // parent controller
+    @Autowired
+    private CellMissyController cellMissyController;
+    // child controllers
+    // services
+    @Autowired
+    private ExperimentService experimentService;
+    @Autowired
+    private ProjectService projectService;
+    @Autowired
+    private WellService wellService;
+    @Autowired
+    private PlateService plateService;
+    @Autowired
+    private CellLineService cellLineService;
+    @Autowired
+    private AssayService assayService;
+    @Autowired
+    private EcmService ecmService;
+    @Autowired
+    private TreatmentService treatmentService;
+
+    /**
+     * Initialize controller
+     */
+    public void init() {
+        bindingGroup = new BindingGroup();
+        initExportExperimentDialog();
+        initImportExperimentDialog();
+        initSaveImportedExpDialog();
+        initExportTemplateDialog();
+    }
+
+    /**
+     * Method called from main controller: show the export dialog.
+     */
+    public void showExportDialog() {
+        exportExperimentDialog.pack();
+        GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), exportExperimentDialog);
+        exportExperimentDialog.setVisible(true);
+    }
+
+    /**
+     * Method called from main controller: show the import dialog.
+     */
+    public void showImportDialog() {
+        importExperimentDialog.pack();
+        GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), importExperimentDialog);
+        importExperimentDialog.setVisible(true);
+    }
+
+    /**
+     * Method called from main controller: show the export template dialog.
+     */
+    public void showExportTemplateDialog() {
+        exportTemplateDialog.pack();
+        GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), exportTemplateDialog);
+        exportTemplateDialog.setVisible(true);
+    }
+
+    /**
+     * Initialize Export Experiment Dialog
+     */
+    private void initExportExperimentDialog() {
+        // make a new dialog
+        exportExperimentDialog = new ExportExperimentDialog(cellMissyController.getCellMissyFrame(), true);
+        exportExperimentDialog.getProjectDescriptionTextArea().setLineWrap(true);
+        exportExperimentDialog.getProjectDescriptionTextArea().setWrapStyleWord(true);
+        // hide progress bar and its label
+        exportExperimentDialog.getProgressBarLabel().setVisible(false);
+        exportExperimentDialog.getExportProgressBar().setVisible(false);
+        // init projects list
+        projectBindingList = ObservableCollections.observableList(projectService.findAll());
+        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, exportExperimentDialog.getProjectsList());
+        bindingGroup.addBinding(jListBinding);
+        bindingGroup.bind();
+        // customize table
+        exportExperimentDialog.getConditionsDetailsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        exportExperimentDialog.getConditionsDetailsTable().getTableHeader().setReorderingAllowed(false);
+        // set the cell renderer for the experiments list: the experiments are selectable
+        exportExperimentDialog.getExperimentsList().setCellRenderer(new ExperimentsOverviewListRenderer(true));
+        //when a project from the list is selected, show all experiments performed for that project
+        exportExperimentDialog.getProjectsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // retrieve selected project
+                    int selectedIndex = exportExperimentDialog.getProjectsList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        Project selectedProject = projectBindingList.get(selectedIndex);
+                        if (experimentToExport == null || !selectedProject.equals(experimentToExport.getProject()) || experimentBindingList.isEmpty()) {
+                            // project is being selected for the first time
+                            onSelectedProject(selectedProject);
+                        }
+                    }
+                }
+            }
+        });
+        // update fields when an exp is selected
+        exportExperimentDialog.getExperimentsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    //init experimentJList
+                    Experiment selectedExperiment = (Experiment) exportExperimentDialog.getExperimentsList().getSelectedValue();
+                    if (selectedExperiment != null) {
+                        experimentToExport = selectedExperiment;
+                        // get the information and update the fields
+                        exportExperimentDialog.getUserLabel().setText(selectedExperiment.getUser().toString());
+                        exportExperimentDialog.getPurposeTextArea().setText(selectedExperiment.getPurpose());
+                        exportExperimentDialog.getTimeFramesLabel().setText(selectedExperiment.getTimeFrames().toString());
+                        exportExperimentDialog.getInstrumentLabel().setText(selectedExperiment.getInstrument().getName());
+                        exportExperimentDialog.getPlateFormatLabel().setText(selectedExperiment.getPlateFormat().toString());
+                        exportExperimentDialog.getNumberConditionsLabel().setText("" + selectedExperiment.getPlateConditionList().size());
+                        // set the model of the conditions table
+                        updateConditionsTableModel(exportExperimentDialog.getConditionsDetailsTable(), selectedExperiment);
+                    }
+                }
+            }
+        });
+
+        // close the dialog: just empty the text fields
+        exportExperimentDialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                // reset view when we close the dialog
+                resetViewOnExportDialog();
+            }
+        });
+
+        // add action listeners
+        // copy the settings for current experiment: execute the swing worker
+        exportExperimentDialog.getExportButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Experiment experimentToExport = (Experiment) exportExperimentDialog.getExperimentsList().getSelectedValue();
+                // be sure that one experiment is selected in the list
+                if (experimentToExport != null) {
+                    // show a jfile chooser to decide where to save the file
+                    JFileChooser chooseDirectory = new JFileChooser();
+                    chooseDirectory.setDialogTitle("Choose a directory to save the file");
+                    chooseDirectory.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    // in response to the button click, show open dialog
+                    int returnVal = chooseDirectory.showSaveDialog(exportExperimentDialog);
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        File currentDirectory = chooseDirectory.getSelectedFile();
+                        String fileName = "experiment_" + experimentToExport + "_" + experimentToExport.getProject() + ".xml";
+                        File xmlFile = createFile(fileName, currentDirectory, exportExperimentDialog);
+                        if (xmlFile != null) {
+                            ExportExperimentSwingWorker experimentSwingWorker = new ExportExperimentSwingWorker(xmlFile);
+                            experimentSwingWorker.execute();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(exportExperimentDialog, "Command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } else {
+                    // tell the user that he needs to select an experiment!
+                    JOptionPane.showMessageDialog(exportExperimentDialog, "Please select an experiment to export!", "no exp selected error", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+
+        // cancel button
+        exportExperimentDialog.getCancelButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // cancel: hide the dialog
+                exportExperimentDialog.setVisible(false);
+                // reset views
+                resetViewOnExportDialog();
+            }
+        });
+    }
+
+    /**
+     * Initialize import experiment dialog
+     */
+    private void initImportExperimentDialog() {
+        // create a new dialog
+        importExperimentDialog = new ImportExperimentDialog(cellMissyController.getCellMissyFrame(), true);
+        importExperimentDialog.getPurposeTextArea().setLineWrap(true);
+        importExperimentDialog.getPurposeTextArea().setWrapStyleWord(true);
+        // we first disable the save experiment button
+        importExperimentDialog.getGoToSaveExpButton().setEnabled(false);
+        // set icon for info label
+        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        importExperimentDialog.getInfoLabel().setIcon(scaledIcon);
+        // customize table
+        importExperimentDialog.getConditionsDetailsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        importExperimentDialog.getConditionsDetailsTable().getTableHeader().setReorderingAllowed(false);
+        // add action listeners
+        // choose an xml file
+        importExperimentDialog.getChooseFileButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Open a JFile Chooser
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Choose a file to import");
+                // to select only xml files
+                fileChooser.setFileFilter(new FileFilter() {
+                    @Override
+                    public boolean accept(File f) {
+                        if (f.isDirectory()) {
+                            return true;
+                        }
+                        int index = f.getName().lastIndexOf(".");
+                        String extension = f.getName().substring(index + 1);
+                        if (extension.equals("xml")) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return (".xml files");
+                    }
+                });
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                // in response to the button click, show open dialog
+                int returnVal = fileChooser.showOpenDialog(importExperimentDialog);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File chosenFile = fileChooser.getSelectedFile();
+                    // create and execute a new swing worker
+                    ImportExperimentSwingWorker importExperimentSwingWorker = new ImportExperimentSwingWorker(chosenFile);
+                    importExperimentSwingWorker.execute();
+                } else {
+                    JOptionPane.showMessageDialog(importExperimentDialog, "Command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
+
+        // close the dialog: just empty the text fields
+        importExperimentDialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                // reset view when we close the dialog
+                resetViewOnImportDialog();
+            }
+        });
+
+        // cancel button
+        importExperimentDialog.getCancelButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // cancel: hide the dialog
+                importExperimentDialog.setVisible(false);
+                // reset views
+                resetViewOnImportDialog();
+            }
+        });
+
+        // go to save the experiment: show the second dialog with the info updated
+        importExperimentDialog.getGoToSaveExpButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateInfoOnSaveImportedExpDialog();
+                saveImportedExpDialog.pack();
+                saveImportedExpDialog.setLocationRelativeTo(importExperimentDialog);
+                saveImportedExpDialog.setVisible(true);
+            }
+        });
+    }
+
+    /**
+     * Initialize the save imported dialog.
+     */
+    private void initSaveImportedExpDialog() {
+        // create a new dialog
+        saveImportedExpDialog = new SaveImportedExpDialog(importExperimentDialog, true);
+        // set icon for info label
+        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        saveImportedExpDialog.getInfoLabel().setIcon(scaledIcon);
+        // hide progress bar and its label
+        saveImportedExpDialog.getProgressBarLabel().setVisible(false);
+        saveImportedExpDialog.getSaveExperimentProgressBar().setVisible(false);
+        // instruments
+        //init instrument combo box
+        instrumentBindingList = ObservableCollections.observableList(experimentService.findAllInstruments());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, instrumentBindingList, saveImportedExpDialog.getInstrumentComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+        // magnifications
+        magnificationBindingList = ObservableCollections.observableList(experimentService.findAllMagnifications());
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, magnificationBindingList, saveImportedExpDialog.getMagnificationComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+        // projects
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, saveImportedExpDialog.getProjectComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+        bindingGroup.bind();
+        // add action listeners
+        // save the experiment
+        saveImportedExpDialog.getSaveExpButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                experimentService.copyExperimentFromXML(importedExperiment);
+                // assign user, project, instrument and magnification to the experiment
+                importedExperiment.setUser(cellMissyController.getCurrentUser());
+                importedExperiment.setInstrument((Instrument) saveImportedExpDialog.getInstrumentComboBox().getSelectedItem());
+                importedExperiment.setMagnification((Magnification) saveImportedExpDialog.getMagnificationComboBox().getSelectedItem());
+                // validate the experiment:
+                if (validateImportedExperiment()) {
+                    importedExperiment.setProject((Project) saveImportedExpDialog.getProjectComboBox().getSelectedItem());
+                    for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
+                        plateCondition.setExperiment(importedExperiment);
+                    }
+                    // make a new swing worker and execute it
+                    SaveExperimentSwingWorker saveExperimentSwingWorker = new SaveExperimentSwingWorker();
+                    saveExperimentSwingWorker.execute();
+                } else {
+                    String message = "Oooops! Imported experiment already exists for this project!\nYou can choose a different project.... or maybe you have already imported this experiment !!!";
+                    JOptionPane.showMessageDialog(saveImportedExpDialog, message, "experiment is present in DB", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+    }
+
+    /**
+     * Initialize export template dialog.
+     */
+    private void initExportTemplateDialog() {
+        // make a new dialog
+        exportTemplateDialog = new ExportTemplateDialog(cellMissyController.getCellMissyFrame(), true);
+        exportTemplateDialog.getProjectDescriptionTextArea().setLineWrap(true);
+        exportTemplateDialog.getProjectDescriptionTextArea().setWrapStyleWord(true);
+        // projects list
+        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, exportTemplateDialog.getProjectsList());
+        bindingGroup.addBinding(jListBinding);
+        bindingGroup.bind();
+        // customize table
+        exportTemplateDialog.getConditionsDetailsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        exportTemplateDialog.getConditionsDetailsTable().getTableHeader().setReorderingAllowed(false);
+        // set the cell renderer for the experiments list: the experiments are selectable
+        exportTemplateDialog.getExperimentsList().setCellRenderer(new ExperimentsOverviewListRenderer(true));
+        //when a project from the list is selected, show all experiments performed for that project
+        exportTemplateDialog.getProjectsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    // retrieve selected project
+                    int selectedIndex = exportTemplateDialog.getProjectsList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        Project selectedProject = projectBindingList.get(selectedIndex);
+                        if (experimentTemplateToExport == null || !selectedProject.equals(experimentTemplateToExport.getProject()) || experimentBindingList.isEmpty()) {
+                            // project is being selected for the first time
+                            // show project description
+                            String projectDescription = selectedProject.getProjectDescription();
+                            exportTemplateDialog.getProjectDescriptionTextArea().setText(projectDescription);
+                            // show relative experiments
+                            Long projectid = selectedProject.getProjectid();
+                            List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
+                            if (experimentList != null) {
+                                experimentBindingList = ObservableCollections.observableList(experimentList);
+                                JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, exportTemplateDialog.getExperimentsList());
+                                bindingGroup.addBinding(jListBinding);
+                                bindingGroup.bind();
+                            } else {
+                                String message = "There are no experiments performed yet for this project!";
+                                JOptionPane.showMessageDialog(exportTemplateDialog, message, "No experiments found", JOptionPane.INFORMATION_MESSAGE);
+                                resetViewOnExportDialog();
+                                if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                                    experimentBindingList.clear();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        // update fields when an exp is selected
+        exportTemplateDialog.getExperimentsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    //init experimentJList
+                    Experiment selectedExperiment = (Experiment) exportTemplateDialog.getExperimentsList().getSelectedValue();
+                    if (selectedExperiment != null) {
+                        experimentTemplateToExport = selectedExperiment;
+                        // get the information and update the fields
+                        exportTemplateDialog.getUserLabel().setText(" " + selectedExperiment.getUser().toString());
+                        exportTemplateDialog.getPurposeTextArea().setText(" " + selectedExperiment.getPurpose());
+                        exportTemplateDialog.getInstrumentLabel().setText(" " + selectedExperiment.getInstrument().getName());
+                        exportTemplateDialog.getPlateFormatLabel().setText(" " + selectedExperiment.getPlateFormat().toString());
+                        exportTemplateDialog.getNumberConditionsLabel().setText(" " + selectedExperiment.getPlateConditionList().size());
+                        // set the model of the conditions table
+                        updateConditionsTableModel(exportTemplateDialog.getConditionsDetailsTable(), selectedExperiment);
+                    }
+                }
+            }
+        });
+
+        // close the dialog: just empty the text fields
+        exportTemplateDialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                // reset view when we close the dialog
+                resetViewOnExportTemplateDialog();
+            }
+        });
+
+        // add action listeners
+        // copy the settings for current experiment: execute the swing worker
+        exportTemplateDialog.getExportButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Experiment experimentToExport = (Experiment) exportTemplateDialog.getExperimentsList().getSelectedValue();
+                // be sure that one experiment is selected in the list
+                if (experimentToExport != null) {
+                    // show a jfile chooser to decide where to save the file
+                    JFileChooser chooseDirectory = new JFileChooser();
+                    chooseDirectory.setDialogTitle("Choose a directory to save the file");
+                    chooseDirectory.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    // in response to the button click, show open dialog
+                    int returnVal = chooseDirectory.showSaveDialog(exportTemplateDialog);
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        File currentDirectory = chooseDirectory.getSelectedFile();
+                        String fileName = "template_experiment_" + experimentTemplateToExport + "_" + experimentTemplateToExport.getProject() + ".xml";
+                        File xmlFile = createFile(fileName, currentDirectory, exportTemplateDialog);
+                        if (xmlFile != null) {
+                            ExportTemplateSwingWorker exportTemplateSwingWorker = new ExportTemplateSwingWorker(xmlFile);
+                            exportTemplateSwingWorker.execute();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(exportTemplateDialog, "Command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } else {
+                    // tell the user that he needs to select an experiment!
+                    JOptionPane.showMessageDialog(exportExperimentDialog, "Please select an experiment to export!", "no exp selected error", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+
+        // cancel button
+        exportTemplateDialog.getCancelButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // cancel: hide the dialog
+                exportTemplateDialog.setVisible(false);
+                // reset views
+                resetViewOnExportTemplateDialog();
+            }
+        });
+    }
+
+    /**
+     *
+     * @return
+     */
+    private boolean validateImportedExperiment() {
+        boolean isValid = true;
+        //if the selected project does not have already the current experiment number, set the experiment number
+        if (projectHasExperiment(((Project) saveImportedExpDialog.getProjectComboBox().getSelectedItem()).getProjectid(), importedExperiment.getExperimentNumber())) {
+            isValid = false;
+        }
+        return isValid;
+    }
+
+    /**
+     * This method checks if a project already has a certain experiment
+     * (checking for experiment number)
+     *
+     * @param projectId
+     * @param experimentNumber
+     * @return
+     */
+    private boolean projectHasExperiment(Long projectId, Integer experimentNumber) {
+        boolean hasExperiment = false;
+        if (experimentService.findExperimentNumbersByProjectId(projectId) != null) {
+            for (Integer number : experimentService.findExperimentNumbersByProjectId(projectId)) {
+                if (number == experimentNumber) {
+                    hasExperiment = true;
+                }
+            }
+        }
+        return hasExperiment;
+    }
+
+    /**
+     * For a certain table, this method creates a model from the given
+     * experiment with the conditions details and assign the model to the table.
+     *
+     *
+     * @param table
+     * @param exp
+     */
+    private void updateConditionsTableModel(JTable table, Experiment exp) {
+        List<PlateCondition> plateConditionList = exp.getPlateConditionList();
+        String[] columnNames = new String[7];
+        columnNames[0] = "Condition";
+        columnNames[1] = "Cell Line";
+        columnNames[2] = "MD";
+        columnNames[3] = "Assay";
+        columnNames[4] = "ECM";
+        columnNames[5] = "Treatments";
+        columnNames[6] = "Assay(Medium, %Serum)";
+
+        Object[][] data = new Object[plateConditionList.size()][columnNames.length];
+        for (int i = 0; i < data.length; i++) {
+            data[i][0] = "Cond " + (i + 1);
+            data[i][1] = plateConditionList.get(i).getCellLine().toString();
+            data[i][2] = plateConditionList.get(i).getAssay().getMatrixDimension().getDimension();
+            data[i][3] = plateConditionList.get(i).getAssay().getAssayType();
+            data[i][4] = plateConditionList.get(i).getEcm().toString();
+            data[i][5] = plateConditionList.get(i).getTreatmentList().toString();
+            data[i][6] = plateConditionList.get(i).getAssayMedium().toString();
+        }
+        // create a new table model
+        DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnNames);
+        table.setModel(defaultTableModel);
+        for (int i = 0; i < defaultTableModel.getColumnCount(); i++) {
+            GuiUtils.packColumn(table, i, 1);
+        }
+    }
+
+    /**
+     * Action on selected project, find all relative performed experiments, if
+     * any
+     *
+     * @param selectedProject
+     */
+    private void onSelectedProject(Project selectedProject) {
+        // show project description
+        String projectDescription = selectedProject.getProjectDescription();
+        exportExperimentDialog.getProjectDescriptionTextArea().setText(projectDescription);
+        // show relative experiments
+        Long projectid = selectedProject.getProjectid();
+        List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.PERFORMED);
+        if (experimentList != null) {
+            experimentBindingList = ObservableCollections.observableList(experimentList);
+            JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, exportExperimentDialog.getExperimentsList());
+            bindingGroup.addBinding(jListBinding);
+            bindingGroup.bind();
+        } else {
+            String message = "There are no experiments performed yet for this project!";
+            JOptionPane.showMessageDialog(exportExperimentDialog, message, "No experiments found", JOptionPane.INFORMATION_MESSAGE);
+            resetViewOnExportDialog();
+            if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                experimentBindingList.clear();
+            }
+        }
+    }
+
+    /**
+     * Reset views.
+     */
+    private void resetViewOnExportDialog() {
+        // reset the information fields
+        exportExperimentDialog.getUserLabel().setText("");
+        exportExperimentDialog.getPurposeTextArea().setText("");
+        exportExperimentDialog.getTimeFramesLabel().setText("");
+        exportExperimentDialog.getInstrumentLabel().setText("");
+        exportExperimentDialog.getPlateFormatLabel().setText("");
+        exportExperimentDialog.getNumberConditionsLabel().setText("");
+        exportExperimentDialog.getProjectDescriptionTextArea().setText("");
+        // reset table model to a default one
+        exportExperimentDialog.getConditionsDetailsTable().setModel(new DefaultTableModel());
+        // clear selection on both projects and experiments lists
+        exportExperimentDialog.getExperimentsList().clearSelection();
+        exportExperimentDialog.getProjectsList().clearSelection();
+        // clear the experiments binding list
+        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+            experimentBindingList.clear();
+        }
+    }
+
+    /**
+     *
+     */
+    private void resetViewOnExportTemplateDialog() {
+        // reset the information fields
+        exportTemplateDialog.getUserLabel().setText("");
+        exportTemplateDialog.getPurposeTextArea().setText("");
+        exportTemplateDialog.getInstrumentLabel().setText("");
+        exportTemplateDialog.getPlateFormatLabel().setText("");
+        exportTemplateDialog.getNumberConditionsLabel().setText("");
+        exportTemplateDialog.getProjectDescriptionTextArea().setText("");
+        // reset table model to a default one
+        exportTemplateDialog.getConditionsDetailsTable().setModel(new DefaultTableModel());
+        // clear selection on both projects and experiments lists
+        exportTemplateDialog.getExperimentsList().clearSelection();
+        exportTemplateDialog.getProjectsList().clearSelection();
+        // clear the experiments binding list
+        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+            experimentBindingList.clear();
+        }
+    }
+
+    /**
+     * Reset views.
+     */
+    private void resetViewOnImportDialog() {
+        // reset the information fields
+        importExperimentDialog.getFileLabel().setText("");
+        importExperimentDialog.getPurposeTextArea().setText("");
+        importExperimentDialog.getTimeFramesLabel().setText("");
+        importExperimentDialog.getInstrumentLabel().setText("");
+        importExperimentDialog.getPlateFormatLabel().setText("");
+        importExperimentDialog.getNumberConditionsLabel().setText("");
+        importExperimentDialog.getIntervalLabel().setText("");
+        importExperimentDialog.getDurationLabel().setText("");
+        importExperimentDialog.getExpNumberLabel().setText("");
+        importExperimentDialog.getAlgoritmsLabel().setText("");
+        importExperimentDialog.getImagingTypesLabel().setText("");
+        // reset table model to a default one
+        importExperimentDialog.getConditionsDetailsTable().setModel(new DefaultTableModel());
+    }
+
+    /**
+     * Swing worker to export the experiment
+     */
+    private class ExportExperimentSwingWorker extends SwingWorker<Void, Void> {
+
+        private File xmlFile;
+
+        public ExportExperimentSwingWorker(File xmlFile) {
+            this.xmlFile = xmlFile;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            exportExperimentDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            // show progress bar and its label
+            exportExperimentDialog.getProgressBarLabel().setVisible(true);
+            exportExperimentDialog.getExportProgressBar().setVisible(true);
+            //disable buttons and show a waiting cursor
+            exportExperimentDialog.getExportButton().setEnabled(false);
+            // fetch the migration data
+            for (PlateCondition plateCondition : experimentToExport.getPlateConditionList()) {
+                List<Well> wells = new ArrayList<>();
+                for (Well well : plateCondition.getWellList()) {
+                    Well fetchedWell = wellService.fetchMigrationData(well.getWellid());
+                    wells.add(fetchedWell);
+                }
+                plateCondition.setWellList(wells);
+            }
+            // export the experiment to file !
+            exportExperimentToXMLFile(xmlFile);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                // hide progress bar and its label
+                exportExperimentDialog.getProgressBarLabel().setVisible(false);
+                exportExperimentDialog.getExportProgressBar().setVisible(false);
+                JOptionPane.showMessageDialog(exportExperimentDialog, "Experiment was successfully exported!", "experiment exported", JOptionPane.INFORMATION_MESSAGE);
+                LOG.info("experiment " + experimentToExport + "_" + experimentToExport.getProject() + " exported to file");
+                exportExperimentDialog.setVisible(false);
+                cellMissyController.onStartup();
+            } catch (InterruptedException | ExecutionException | CancellationException ex) {
+                LOG.error(ex.getMessage(), ex);
+            }
+            exportExperimentDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            // enable the button again
+            exportExperimentDialog.getExportButton().setEnabled(true);
+        }
+    }
+
+    /**
+     * Swing worker to export the experiment template
+     */
+    private class ExportTemplateSwingWorker extends SwingWorker<Void, Void> {
+
+        private File xmlFile;
+
+        public ExportTemplateSwingWorker(File xmlFile) {
+            this.xmlFile = xmlFile;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            exportTemplateDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            //disable buttons and show a waiting cursor
+            exportTemplateDialog.getExportButton().setEnabled(false);
+            // export the experiment to file !
+            exportExperimentTemplateToXMLFile(xmlFile);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                JOptionPane.showMessageDialog(exportTemplateDialog, "Experiment template was successfully exported!", "experiment template exported", JOptionPane.INFORMATION_MESSAGE);
+                LOG.info("experiment template " + experimentTemplateToExport + "_" + experimentTemplateToExport.getProject() + " exported to file");
+                exportTemplateDialog.setVisible(false);
+                cellMissyController.onStartup();
+            } catch (InterruptedException | ExecutionException | CancellationException ex) {
+                LOG.error(ex.getMessage(), ex);
+            }
+            exportTemplateDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            // enable the button again
+            exportTemplateDialog.getExportButton().setEnabled(true);
+        }
+    }
+
+    /**
+     * Swing worker to import an experiment from an XML file
+     */
+    private class ImportExperimentSwingWorker extends SwingWorker<Void, Void> {
+
+        private File xmlFile;
+
+        public ImportExperimentSwingWorker(File xmlFile) {
+            this.xmlFile = xmlFile;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            importExperimentDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            // parse xmlfile
+            parseXMLFile(xmlFile);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                // if parsing the XML file was successfull, the experiment is not null, and we can enable the save experiment button
+                if (importedExperiment != null) {
+                    importExperimentDialog.getGoToSaveExpButton().setEnabled(true);
+                }
+            } catch (InterruptedException | ExecutionException | CancellationException ex) {
+                JOptionPane.showMessageDialog(importExperimentDialog, "Unexpected error: " + ex.getMessage(), "unexpected error", JOptionPane.ERROR_MESSAGE);
+                LOG.error(ex.getMessage(), ex);
+            }
+            importExperimentDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+    }
+
+    /**
+     * Swing Worker to save the Imported Experiment to DB.
+     */
+    private class SaveExperimentSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            // finish disable button
+            saveImportedExpDialog.getSaveExpButton().setEnabled(false);
+            // show waiting cursor
+            saveImportedExpDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            // show also progress bar and its label
+            saveImportedExpDialog.getProgressBarLabel().setVisible(true);
+            saveImportedExpDialog.getSaveExperimentProgressBar().setVisible(true);
+            //save the new experiment to the DB
+            // first we need to check if other objects need to be stored, then we actually save the experiment
+            persistNewObjects();
+            // set collection for imaging types and algorithms
+            List<ImagingType> imagingTypes = experimentService.getImagingTypes(importedExperiment);
+            for (ImagingType imagingType : imagingTypes) {
+                List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
+                for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
+                    for (Well well : plateCondition.getWellList()) {
+                        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                            if (wellHasImagingType.getImagingType().equals(imagingType)) {
+                                wellHasImagingType.setImagingType(imagingType);
+                                wellHasImagingTypes.add(wellHasImagingType);
+                            }
+                        }
+                    }
+                }
+                imagingType.setWellHasImagingTypeList(wellHasImagingTypes);
+            }
+
+            List<Algorithm> algorithms = experimentService.getAlgorithms(importedExperiment);
+            for (Algorithm algorithm : algorithms) {
+                List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
+                for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
+                    for (Well well : plateCondition.getWellList()) {
+                        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                            if (wellHasImagingType.getAlgorithm().equals(algorithm)) {
+                                wellHasImagingType.setAlgorithm(algorithm);
+                                wellHasImagingTypes.add(wellHasImagingType);
+                            }
+                        }
+                    }
+                }
+                algorithm.setWellHasImagingTypeList(wellHasImagingTypes);
+            }
+
+            // save the experiment, save the migration data and update it
+            experimentService.save(importedExperiment);
+            experimentService.saveMigrationDataForExperiment(importedExperiment);
+            importedExperiment = experimentService.update(importedExperiment);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                //show back default cursor and hide progress bar and its label
+                saveImportedExpDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                saveImportedExpDialog.getProgressBarLabel().setVisible(false);
+                saveImportedExpDialog.getSaveExperimentProgressBar().setVisible(false);
+                saveImportedExpDialog.getSaveExpButton().setEnabled(true);
+                JOptionPane.showMessageDialog(saveImportedExpDialog, "Imported experiment was successfully saved to DB.", "imported experiment saved", JOptionPane.INFORMATION_MESSAGE);
+                // hide both dialogs
+                saveImportedExpDialog.setVisible(false);
+                resetViewOnImportDialog();
+                importExperimentDialog.setVisible(false);
+                cellMissyController.onStartup();
+                LOG.info("Experiment " + importedExperiment + "_" + importedExperiment.getProject() + " saved");
+            } catch (InterruptedException | ExecutionException ex) {
+                LOG.error(ex.getMessage(), ex);
+                cellMissyController.handleUnexpectedError(ex);
+            }
+        }
+    }
+
+    /**
+     * Given a certain directory chosen by the user, this method is exporting
+     * the experiment to an XML file that is saved in the directory. The XML
+     * file has as title information that comes from the experiment itself.
+     *
+     * @param directory
+     */
+    private File createFile(String fileName, File directory, JDialog dialog) {
+        // we create the unique XML file using the experiment info
+        File xmlFile = new File(directory, fileName);
+        try {
+            boolean success;
+            success = xmlFile.createNewFile();
+            if (!success) {
+                Object[] options = {"Yes", "No", "Cancel"};
+                int showOptionDialog = JOptionPane.showOptionDialog(dialog, "File already exists in this directory. Do you want to replace it?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+                // if YES, user wants to delete existing file and replace it
+                if (showOptionDialog == 0) {
+                    boolean delete = xmlFile.delete();
+                    if (delete) {
+                        JOptionPane.showMessageDialog(dialog, "XML file was replaced!", "file replaced", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        return null;
+                    }
+                    // if NO or CANCEL, returns already existing file
+                } else if (showOptionDialog == 1 || showOptionDialog == 2) {
+                    return null;
+                }
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(dialog, "Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return xmlFile;
+    }
+
+    /**
+     * Export the experiment to the XML file with the experiment service.
+     *
+     * @param xmlFile
+     */
+    private void exportExperimentToXMLFile(File xmlFile) {
+        try {
+            experimentService.exportExperimentToXMLFile(experimentToExport, xmlFile);
+        } catch (JAXBException | FileNotFoundException ex) {
+            LOG.error(ex.getMessage(), ex);
+            JOptionPane.showMessageDialog(exportExperimentDialog, "Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Export the experiment template to the XML file with the experiment
+     * service.
+     *
+     * @param xmlFile
+     */
+    private void exportExperimentTemplateToXMLFile(File xmlFile) {
+        Experiment experiment = new Experiment();
+        experimentService.copySetupSettingsFromOtherExperiment(experimentTemplateToExport, experiment);
+        try {
+            experimentService.exportExperimentToXMLFile(experiment, xmlFile);
+        } catch (JAXBException | FileNotFoundException ex) {
+            LOG.error(ex.getMessage(), ex);
+            JOptionPane.showMessageDialog(exportTemplateDialog, "Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Parse the XML file using the experiment service.
+     *
+     * @param xmlFile
+     */
+    private void parseXMLFile(File xmlFile) {
+        try {
+            // with the exp service get the EXPERIMENT object from the XML file
+            importedExperiment = experimentService.getExperimentFromXMLFile(xmlFile);
+            // we check here for the validation errors (these are retrieved from the xml validator)
+            List<String> xmlValidationErrorMesages = experimentService.getXmlValidationErrorMesages();
+            // if no errors during unmarshal, continue, else, show the errors
+            if (xmlValidationErrorMesages.isEmpty()) {
+                // inform the user that parsing was OK
+                JOptionPane.showMessageDialog(importExperimentDialog, "Experiment was successfully imported from " + xmlFile.getAbsolutePath() + " !", "experiment imported from XML file", JOptionPane.INFORMATION_MESSAGE);
+                LOG.info("Experiment imported from XML file " + xmlFile.getAbsolutePath());
+                // update info and condiitons table
+                updateInfoOnImportDialog(xmlFile);
+                updateConditionsTableModel(importExperimentDialog.getConditionsDetailsTable(), importedExperiment);
+            } else {
+                // validation of the XML file was not successful: collect the validation messages and inform the user
+                String mainMessage = "Error in validating " + xmlFile.getAbsolutePath() + "\n";
+                String totalMessage = "";
+                for (String string : xmlValidationErrorMesages) {
+                    totalMessage += mainMessage.concat(string + "\n");
+                }
+                JOptionPane.showMessageDialog(importExperimentDialog, totalMessage, "invalid xml file", JOptionPane.ERROR_MESSAGE);
+            }
+            // this error is related to the xsd schema: normally this is OK, but we need to catch this
+        } catch (SAXException ex) {
+            LOG.error(ex.getMessage(), ex);
+            String message = "Error occurred during parsing the xsd schema for CellMissy!";
+            JOptionPane.showMessageDialog(importExperimentDialog, message, "xsd schema error", JOptionPane.ERROR_MESSAGE);
+        } catch (JAXBException ex) {
+            // we still need to catch exceptions in parsing the XML file
+            LOG.error(ex.getMessage(), ex);
+            // check for exception's instance here
+            if (ex instanceof UnmarshalException) {
+                if (ex.getCause() != null && ex.getCause() instanceof SAXParseException) {
+                    // a SAXParseException encapsulates an XML parse error
+                    SAXParseException sAXParseException = (SAXParseException) ex.getCause();
+                    // get the  line number of the end of the text where the exception occurred
+                    int lineNumber = sAXParseException.getLineNumber();
+                    // shiow a detailed exception error !
+                    String errorMessage = "An error occurred while importing experiment from " + xmlFile + "\n" + sAXParseException.getLocalizedMessage() + "\nCheck line number " + lineNumber + " in the XML file.";
+                    JOptionPane.showMessageDialog(importExperimentDialog, errorMessage, "not valid XML file", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (IOException ex) {
+            // this IO exception comes from using the resource for the xsd schema !
+            LOG.error(ex.getMessage(), ex);
+            JOptionPane.showMessageDialog(importExperimentDialog, "CellMissy did not find a valid xsd schema for the validation of the XML file.", "error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Persist new objects to the DB, if any.
+     */
+    private void persistNewObjects() {
+        // plate format
+        PlateFormat plateFormat = importedExperiment.getPlateFormat();
+        PlateFormat foundFormat = plateService.findByFormat(plateFormat.getFormat());
+        if (foundFormat == null) {
+            plateService.save(plateFormat);
+        }
+        // cell line types
+        List<CellLineType> foundCellLines = cellLineService.findNewCellLines(importedExperiment);
+        if (!foundCellLines.isEmpty()) {
+            for (CellLineType cellLineType : foundCellLines) {
+                cellLineService.saveCellLineType(cellLineType);
+            }
+        }
+        // assays
+        List<Assay> foundAssays = assayService.findNewAssays(importedExperiment);
+        if (!foundAssays.isEmpty()) {
+            for (Assay assay : foundAssays) {
+                assayService.save(assay);
+            }
+        }
+        // bottom matrix
+        List<BottomMatrix> foundBottomMatrixs = ecmService.findNewBottomMatrices(importedExperiment);
+        if (!foundBottomMatrixs.isEmpty()) {
+            for (BottomMatrix bottomMatrix : foundBottomMatrixs) {
+                ecmService.saveBottomMatrix(bottomMatrix);
+            }
+        }
+        // ecm composition
+        List<EcmComposition> foundCompositions = ecmService.findNewEcmCompositions(importedExperiment);
+        if (!foundCompositions.isEmpty()) {
+            for (EcmComposition ecmComposition : foundCompositions) {
+                ecmService.saveEcmComposition(ecmComposition);
+            }
+        }
+        // ecm densities
+        List<EcmDensity> foundDensitys = ecmService.findNewEcmDensities(importedExperiment);
+        if (!foundDensitys.isEmpty()) {
+            for (EcmDensity ecmDensity : foundDensitys) {
+                ecmService.saveEcmDensity(ecmDensity);
+            }
+        }
+        // treatment types
+        List<TreatmentType> foundTreatmentTypes = treatmentService.findNewTreatmentTypes(importedExperiment);
+        if (!foundTreatmentTypes.isEmpty()) {
+            for (TreatmentType treatmentType : foundTreatmentTypes) {
+                treatmentService.saveTreatmentType(treatmentType);
+            }
+        }
+    }
+
+    /**
+     * Update the info on the import dialog.
+     *
+     * @param xmlFile
+     */
+    private void updateInfoOnImportDialog(File xmlFile) {
+        // file label
+        importExperimentDialog.getFileLabel().setText(" " + xmlFile.getAbsolutePath());
+        importExperimentDialog.getExpNumberLabel().setText(" " + importedExperiment);
+        importExperimentDialog.getInstrumentLabel().setText(" " + importedExperiment.getInstrument().getName());
+        importExperimentDialog.getTimeFramesLabel().setText(" " + importedExperiment.getTimeFrames());
+        importExperimentDialog.getNumberConditionsLabel().setText(" " + importedExperiment.getPlateConditionList().size());
+        importExperimentDialog.getPlateFormatLabel().setText(" " + importedExperiment.getPlateFormat());
+        importExperimentDialog.getPurposeTextArea().setText(" " + importedExperiment.getPurpose());
+        importExperimentDialog.getDurationLabel().setText(" " + importedExperiment.getDuration());
+        importExperimentDialog.getIntervalLabel().setText(" " + importedExperiment.getExperimentInterval());
+        importExperimentDialog.getAlgoritmsLabel().setText(" " + experimentService.getAlgorithms(importedExperiment).size());
+        importExperimentDialog.getImagingTypesLabel().setText(" " + experimentService.getImagingTypes(importedExperiment).size());
+    }
+
+    /**
+     *
+     */
+    private void updateInfoOnSaveImportedExpDialog() {
+        // if a new parameter needs to be inserted to DB, we use its name for the label
+        // otherwise, we set the label to "no new parameters to add"
+        // PLATE FORMAT
+        PlateFormat newPlateFormat = plateService.findByFormat(importedExperiment.getPlateFormat().getFormat());
+        if (newPlateFormat == null) {
+            saveImportedExpDialog.getNewPlateFormatLabel().setText(" " + importedExperiment.getPlateFormat());
+            saveImportedExpDialog.getNewPlateFormatLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+        } else {
+            saveImportedExpDialog.getNewPlateFormatLabel().setText(" no new parameters to add");
+            saveImportedExpDialog.getNewPlateFormatLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+        }
+        // CELL LINES
+        List<CellLineType> newCellLines = cellLineService.findNewCellLines(importedExperiment);
+        if (!newCellLines.isEmpty()) {
+            saveImportedExpDialog.getNewCellLineLabel().setText(" " + newCellLines);
+            saveImportedExpDialog.getNewCellLineLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+        } else {
+            saveImportedExpDialog.getNewCellLineLabel().setText(" no new parameters to add");
+            saveImportedExpDialog.getNewCellLineLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+        }
+        // ASSAYS
+        List<Assay> newAssays = assayService.findNewAssays(importedExperiment);
+        if (!newAssays.isEmpty()) {
+            saveImportedExpDialog.getNewAssayLabel().setText(" " + newAssays);
+            saveImportedExpDialog.getNewAssayLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+        } else {
+            saveImportedExpDialog.getNewAssayLabel().setText(" no new parameters to add");
+            saveImportedExpDialog.getNewAssayLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+        }
+        // BOTTOM MATRICES
+        List<BottomMatrix> newBottomMatrices = ecmService.findNewBottomMatrices(importedExperiment);
+        if (!newBottomMatrices.isEmpty()) {
+            saveImportedExpDialog.getNewBottomMatrixLabel().setText(" " + newBottomMatrices);
+            saveImportedExpDialog.getNewBottomMatrixLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+        } else {
+            saveImportedExpDialog.getNewBottomMatrixLabel().setText(" no new parameters to add");
+            saveImportedExpDialog.getNewBottomMatrixLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+        }
+        // ECM COMPOSITIONS
+        List<EcmComposition> newEcmCompositions = ecmService.findNewEcmCompositions(importedExperiment);
+        if (!newEcmCompositions.isEmpty()) {
+            saveImportedExpDialog.getNewEcmCompositionLabel().setText(" " + newEcmCompositions);
+            saveImportedExpDialog.getNewEcmCompositionLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+        } else {
+            saveImportedExpDialog.getNewEcmCompositionLabel().setText(" no new parameters to add");
+            saveImportedExpDialog.getNewEcmCompositionLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+        }
+        // ECM DENSITIES
+        List<EcmDensity> newEcmDensities = ecmService.findNewEcmDensities(importedExperiment);
+        if (!newEcmDensities.isEmpty()) {
+            saveImportedExpDialog.getNewEcmDensityLabel().setText(" " + newEcmDensities);
+            saveImportedExpDialog.getNewEcmDensityLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+        } else {
+            saveImportedExpDialog.getNewEcmDensityLabel().setText(" no new parameters to add");
+            saveImportedExpDialog.getNewEcmDensityLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+        }
+        // TREATMENTS TYPES
+        List<TreatmentType> newTreatmentTypes = treatmentService.findNewTreatmentTypes(importedExperiment);
+        if (!newTreatmentTypes.isEmpty()) {
+            saveImportedExpDialog.getNewTreatmentLabel().setText(" " + newTreatmentTypes);
+            saveImportedExpDialog.getNewTreatmentLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+        } else {
+            saveImportedExpDialog.getNewTreatmentLabel().setText(" no new parameters to add");
+            saveImportedExpDialog.getNewTreatmentLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+        }
+    }
+}

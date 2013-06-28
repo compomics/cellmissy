@@ -58,7 +58,6 @@
 
     <xs:complexType name="wellHasImagingType">
         <xs:sequence>
-            <xs:element name="well" type="tns:well"/>
             <xs:element name="imagingType" type="tns:imagingType"/>
             <xs:element name="timeSteps">
                 <xs:complexType>
@@ -76,7 +75,7 @@
             </xs:element>
             <xs:element name="algorithm" type="tns:algorithm"/>
         </xs:sequence>
-        <xs:attribute name="sequenceNumber" type="xs:int" use="required"/>
+        <xs:attribute name="sequenceNumber" type="xs:int"/>
         <xs:attribute name="xCoordinate" type="xs:double"/>
         <xs:attribute name="yCoordinate" type="xs:double"/>
     </xs:complexType>
@@ -90,7 +89,6 @@
 
     <xs:complexType name="track">
         <xs:sequence>
-            <xs:element name="wellHasImagingType" type="tns:wellHasImagingType"/>
             <xs:element name="trackPoints" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
@@ -255,4 +253,3 @@
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>
-
