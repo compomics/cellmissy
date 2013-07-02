@@ -24,7 +24,6 @@ import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.experiment.exporting.ExportExperimentDialog;
 import be.ugent.maf.cellmissy.gui.experiment.exporting.ExportTemplateDialog;
 import be.ugent.maf.cellmissy.gui.experiment.importing.ImportExperimentDialog;
-import be.ugent.maf.cellmissy.gui.experiment.importing.SaveImportedExpDialog;
 import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsOverviewListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.service.AssayService;
@@ -36,6 +35,7 @@ import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.TreatmentService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -96,7 +96,6 @@ public class ImportExportController {
     // view
     private ExportExperimentDialog exportExperimentDialog;
     private ImportExperimentDialog importExperimentDialog;
-    private SaveImportedExpDialog saveImportedExpDialog;
     private ExportTemplateDialog exportTemplateDialog;
     // parent controller
     @Autowired
@@ -127,7 +126,6 @@ public class ImportExportController {
         bindingGroup = new BindingGroup();
         initExportExperimentDialog();
         initImportExperimentDialog();
-        initSaveImportedExpDialog();
         initExportTemplateDialog();
     }
 
@@ -144,6 +142,8 @@ public class ImportExportController {
      * Method called from main controller: show the import dialog.
      */
     public void showImportDialog() {
+        CardLayout cardLayout = (CardLayout) importExperimentDialog.getTopPanel().getLayout();
+        cardLayout.first(importExperimentDialog.getTopPanel());
         importExperimentDialog.pack();
         GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), importExperimentDialog);
         importExperimentDialog.setVisible(true);
@@ -280,15 +280,36 @@ public class ImportExportController {
         importExperimentDialog = new ImportExperimentDialog(cellMissyController.getCellMissyFrame(), true);
         importExperimentDialog.getPurposeTextArea().setLineWrap(true);
         importExperimentDialog.getPurposeTextArea().setWrapStyleWord(true);
-        // we first disable the save experiment button
-        importExperimentDialog.getGoToSaveExpButton().setEnabled(false);
+        // we first disable the previous, next and the save buttons
+        importExperimentDialog.getSaveExperimentButton().setEnabled(false);
+        importExperimentDialog.getPreviousButton().setEnabled(false);
+        importExperimentDialog.getNextButton().setEnabled(false);
+        // we also hide the label and the progress bar
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
         ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         importExperimentDialog.getInfoLabel().setIcon(scaledIcon);
+        // set icon for info label
+        importExperimentDialog.getInfoLabel1().setIcon(scaledIcon);
+        // hide progress bar and its label
+        importExperimentDialog.getProgressBarLabel().setVisible(false);
+        importExperimentDialog.getSaveExperimentProgressBar().setVisible(false);
         // customize table
         importExperimentDialog.getConditionsDetailsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         importExperimentDialog.getConditionsDetailsTable().getTableHeader().setReorderingAllowed(false);
+        // instruments
+        //init instrument combo box
+        instrumentBindingList = ObservableCollections.observableList(experimentService.findAllInstruments());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, instrumentBindingList, importExperimentDialog.getInstrumentComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+        // magnifications
+        magnificationBindingList = ObservableCollections.observableList(experimentService.findAllMagnifications());
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, magnificationBindingList, importExperimentDialog.getMagnificationComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+        // projects
+        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, importExperimentDialog.getProjectComboBox());
+        bindingGroup.addBinding(jComboBoxBinding);
+        bindingGroup.bind();
         // add action listeners
         // choose an xml file
         importExperimentDialog.getChooseFileButton().addActionListener(new ActionListener() {
@@ -353,57 +374,43 @@ public class ImportExportController {
             }
         });
 
-        // go to save the experiment: show the second dialog with the info updated
-        importExperimentDialog.getGoToSaveExpButton().addActionListener(new ActionListener() {
+        // next/ we move to the next panel, but first we update the fields
+        importExperimentDialog.getNextButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateInfoOnSaveImportedExpDialog();
-                saveImportedExpDialog.pack();
-                saveImportedExpDialog.setLocationRelativeTo(importExperimentDialog);
-                saveImportedExpDialog.setVisible(true);
+                CardLayout cardLayout = (CardLayout) importExperimentDialog.getTopPanel().getLayout();
+                cardLayout.next(importExperimentDialog.getTopPanel());
+                importExperimentDialog.getNextButton().setEnabled(false);
+                importExperimentDialog.getPreviousButton().setEnabled(true);
+                importExperimentDialog.getSaveExperimentButton().setEnabled(true);
             }
         });
-    }
 
-    /**
-     * Initialize the save imported dialog.
-     */
-    private void initSaveImportedExpDialog() {
-        // create a new dialog
-        saveImportedExpDialog = new SaveImportedExpDialog(importExperimentDialog, true);
-        // set icon for info label
-        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
-        saveImportedExpDialog.getInfoLabel().setIcon(scaledIcon);
-        // hide progress bar and its label
-        saveImportedExpDialog.getProgressBarLabel().setVisible(false);
-        saveImportedExpDialog.getSaveExperimentProgressBar().setVisible(false);
-        // instruments
-        //init instrument combo box
-        instrumentBindingList = ObservableCollections.observableList(experimentService.findAllInstruments());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, instrumentBindingList, saveImportedExpDialog.getInstrumentComboBox());
-        bindingGroup.addBinding(jComboBoxBinding);
-        // magnifications
-        magnificationBindingList = ObservableCollections.observableList(experimentService.findAllMagnifications());
-        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, magnificationBindingList, saveImportedExpDialog.getMagnificationComboBox());
-        bindingGroup.addBinding(jComboBoxBinding);
-        // projects
-        jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, saveImportedExpDialog.getProjectComboBox());
-        bindingGroup.addBinding(jComboBoxBinding);
-        bindingGroup.bind();
-        // add action listeners
+        // previous
+        importExperimentDialog.getPreviousButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CardLayout cardLayout = (CardLayout) importExperimentDialog.getTopPanel().getLayout();
+                cardLayout.previous(importExperimentDialog.getTopPanel());
+                importExperimentDialog.getPreviousButton().setEnabled(false);
+                importExperimentDialog.getNextButton().setEnabled(true);
+                importExperimentDialog.getSaveExperimentButton().setEnabled(false);
+            }
+        });
+
         // save the experiment
-        saveImportedExpDialog.getSaveExpButton().addActionListener(new ActionListener() {
+        importExperimentDialog.getSaveExperimentButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 experimentService.copyExperimentFromXML(importedExperiment);
                 // assign user, project, instrument and magnification to the experiment
                 importedExperiment.setUser(cellMissyController.getCurrentUser());
-                importedExperiment.setInstrument((Instrument) saveImportedExpDialog.getInstrumentComboBox().getSelectedItem());
-                importedExperiment.setMagnification((Magnification) saveImportedExpDialog.getMagnificationComboBox().getSelectedItem());
+                importedExperiment.setInstrument((Instrument) importExperimentDialog.getInstrumentComboBox().getSelectedItem());
+                importedExperiment.setMagnification((Magnification) importExperimentDialog.getMagnificationComboBox().getSelectedItem());
                 // validate the experiment:
                 if (validateImportedExperiment()) {
-                    importedExperiment.setProject((Project) saveImportedExpDialog.getProjectComboBox().getSelectedItem());
+                    importedExperiment.setProject((Project) importExperimentDialog.getProjectComboBox().getSelectedItem());
                     for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
                         plateCondition.setExperiment(importedExperiment);
                     }
@@ -412,7 +419,7 @@ public class ImportExportController {
                     saveExperimentSwingWorker.execute();
                 } else {
                     String message = "Oooops! Imported experiment already exists for this project!\nYou can choose a different project.... or maybe you have already imported this experiment !!!";
-                    JOptionPane.showMessageDialog(saveImportedExpDialog, message, "experiment is present in DB", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(importExperimentDialog, message, "experiment is present in DB", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
@@ -517,7 +524,7 @@ public class ImportExportController {
                     int returnVal = chooseDirectory.showSaveDialog(exportTemplateDialog);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File currentDirectory = chooseDirectory.getSelectedFile();
-                        String fileName = "template_experiment_" + experimentTemplateToExport + "_" + experimentTemplateToExport.getProject() + ".xml";
+                        String fileName = "setup_template_" + experimentTemplateToExport + "_" + experimentTemplateToExport.getProject() + ".xml";
                         File xmlFile = createFile(fileName, currentDirectory, exportTemplateDialog);
                         if (xmlFile != null) {
                             ExportTemplateSwingWorker exportTemplateSwingWorker = new ExportTemplateSwingWorker(xmlFile);
@@ -552,7 +559,7 @@ public class ImportExportController {
     private boolean validateImportedExperiment() {
         boolean isValid = true;
         //if the selected project does not have already the current experiment number, set the experiment number
-        if (projectHasExperiment(((Project) saveImportedExpDialog.getProjectComboBox().getSelectedItem()).getProjectid(), importedExperiment.getExperimentNumber())) {
+        if (projectHasExperiment(((Project) importExperimentDialog.getProjectComboBox().getSelectedItem()).getProjectid(), importedExperiment.getExperimentNumber())) {
             isValid = false;
         }
         return isValid;
@@ -822,9 +829,9 @@ public class ImportExportController {
         protected void done() {
             try {
                 get();
-                // if parsing the XML file was successfull, the experiment is not null, and we can enable the save experiment button
+                // if parsing the XML file was successfull, the experiment is not null, and we can enable the next experiment button
                 if (importedExperiment != null) {
-                    importExperimentDialog.getGoToSaveExpButton().setEnabled(true);
+                    importExperimentDialog.getNextButton().setEnabled(true);
                 }
             } catch (InterruptedException | ExecutionException | CancellationException ex) {
                 JOptionPane.showMessageDialog(importExperimentDialog, "Unexpected error: " + ex.getMessage(), "unexpected error", JOptionPane.ERROR_MESSAGE);
@@ -842,12 +849,16 @@ public class ImportExportController {
         @Override
         protected Void doInBackground() throws Exception {
             // finish disable button
-            saveImportedExpDialog.getSaveExpButton().setEnabled(false);
+            importExperimentDialog.getSaveExperimentButton().setEnabled(false);
             // show waiting cursor
-            saveImportedExpDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            importExperimentDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             // show also progress bar and its label
-            saveImportedExpDialog.getProgressBarLabel().setVisible(true);
-            saveImportedExpDialog.getSaveExperimentProgressBar().setVisible(true);
+            importExperimentDialog.getProgressBarLabel().setVisible(true);
+            importExperimentDialog.getSaveExperimentProgressBar().setVisible(true);
+            // disable other buttons as well
+            importExperimentDialog.getPreviousButton().setEnabled(false);
+            importExperimentDialog.getNextButton().setEnabled(false);
+            importExperimentDialog.getCancelButton().setEnabled(false);
             //save the new experiment to the DB
             // first we need to check if other objects need to be stored, then we actually save the experiment
             persistNewObjects();
@@ -896,13 +907,11 @@ public class ImportExportController {
             try {
                 get();
                 //show back default cursor and hide progress bar and its label
-                saveImportedExpDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                saveImportedExpDialog.getProgressBarLabel().setVisible(false);
-                saveImportedExpDialog.getSaveExperimentProgressBar().setVisible(false);
-                saveImportedExpDialog.getSaveExpButton().setEnabled(true);
-                JOptionPane.showMessageDialog(saveImportedExpDialog, "Imported experiment was successfully saved to DB.", "imported experiment saved", JOptionPane.INFORMATION_MESSAGE);
-                // hide both dialogs
-                saveImportedExpDialog.setVisible(false);
+                importExperimentDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                importExperimentDialog.getProgressBarLabel().setVisible(false);
+                importExperimentDialog.getSaveExperimentProgressBar().setVisible(false);
+                JOptionPane.showMessageDialog(importExperimentDialog, "Imported experiment was successfully saved to DB.", "imported experiment saved", JOptionPane.INFORMATION_MESSAGE);
+                // hide dialog
                 resetViewOnImportDialog();
                 importExperimentDialog.setVisible(false);
                 cellMissyController.onStartup();
@@ -994,8 +1003,6 @@ public class ImportExportController {
             List<String> xmlValidationErrorMesages = experimentService.getXmlValidationErrorMesages();
             // if no errors during unmarshal, continue, else, show the errors
             if (xmlValidationErrorMesages.isEmpty()) {
-                // inform the user that parsing was OK
-                JOptionPane.showMessageDialog(importExperimentDialog, "Experiment was successfully imported from " + xmlFile.getAbsolutePath() + " !", "experiment imported from XML file", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("Experiment imported from XML file " + xmlFile.getAbsolutePath());
                 // update info and condiitons table
                 updateInfoOnImportDialog(xmlFile);
@@ -1119,65 +1126,65 @@ public class ImportExportController {
         // PLATE FORMAT
         PlateFormat newPlateFormat = plateService.findByFormat(importedExperiment.getPlateFormat().getFormat());
         if (newPlateFormat == null) {
-            saveImportedExpDialog.getNewPlateFormatLabel().setText(" " + importedExperiment.getPlateFormat());
-            saveImportedExpDialog.getNewPlateFormatLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importExperimentDialog.getNewPlateFormatLabel().setText(" " + importedExperiment.getPlateFormat());
+            importExperimentDialog.getNewPlateFormatLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            saveImportedExpDialog.getNewPlateFormatLabel().setText(" no new parameters to add");
-            saveImportedExpDialog.getNewPlateFormatLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importExperimentDialog.getNewPlateFormatLabel().setText(" no new parameters to add");
+            importExperimentDialog.getNewPlateFormatLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // CELL LINES
         List<CellLineType> newCellLines = cellLineService.findNewCellLines(importedExperiment);
         if (!newCellLines.isEmpty()) {
-            saveImportedExpDialog.getNewCellLineLabel().setText(" " + newCellLines);
-            saveImportedExpDialog.getNewCellLineLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importExperimentDialog.getNewCellLineLabel().setText(" " + newCellLines);
+            importExperimentDialog.getNewCellLineLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            saveImportedExpDialog.getNewCellLineLabel().setText(" no new parameters to add");
-            saveImportedExpDialog.getNewCellLineLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importExperimentDialog.getNewCellLineLabel().setText(" no new parameters to add");
+            importExperimentDialog.getNewCellLineLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // ASSAYS
         List<Assay> newAssays = assayService.findNewAssays(importedExperiment);
         if (!newAssays.isEmpty()) {
-            saveImportedExpDialog.getNewAssayLabel().setText(" " + newAssays);
-            saveImportedExpDialog.getNewAssayLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importExperimentDialog.getNewAssayLabel().setText(" " + newAssays);
+            importExperimentDialog.getNewAssayLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            saveImportedExpDialog.getNewAssayLabel().setText(" no new parameters to add");
-            saveImportedExpDialog.getNewAssayLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importExperimentDialog.getNewAssayLabel().setText(" no new parameters to add");
+            importExperimentDialog.getNewAssayLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // BOTTOM MATRICES
         List<BottomMatrix> newBottomMatrices = ecmService.findNewBottomMatrices(importedExperiment);
         if (!newBottomMatrices.isEmpty()) {
-            saveImportedExpDialog.getNewBottomMatrixLabel().setText(" " + newBottomMatrices);
-            saveImportedExpDialog.getNewBottomMatrixLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importExperimentDialog.getNewBottomMatrixLabel().setText(" " + newBottomMatrices);
+            importExperimentDialog.getNewBottomMatrixLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            saveImportedExpDialog.getNewBottomMatrixLabel().setText(" no new parameters to add");
-            saveImportedExpDialog.getNewBottomMatrixLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importExperimentDialog.getNewBottomMatrixLabel().setText(" no new parameters to add");
+            importExperimentDialog.getNewBottomMatrixLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // ECM COMPOSITIONS
         List<EcmComposition> newEcmCompositions = ecmService.findNewEcmCompositions(importedExperiment);
         if (!newEcmCompositions.isEmpty()) {
-            saveImportedExpDialog.getNewEcmCompositionLabel().setText(" " + newEcmCompositions);
-            saveImportedExpDialog.getNewEcmCompositionLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importExperimentDialog.getNewEcmCompositionLabel().setText(" " + newEcmCompositions);
+            importExperimentDialog.getNewEcmCompositionLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            saveImportedExpDialog.getNewEcmCompositionLabel().setText(" no new parameters to add");
-            saveImportedExpDialog.getNewEcmCompositionLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importExperimentDialog.getNewEcmCompositionLabel().setText(" no new parameters to add");
+            importExperimentDialog.getNewEcmCompositionLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // ECM DENSITIES
         List<EcmDensity> newEcmDensities = ecmService.findNewEcmDensities(importedExperiment);
         if (!newEcmDensities.isEmpty()) {
-            saveImportedExpDialog.getNewEcmDensityLabel().setText(" " + newEcmDensities);
-            saveImportedExpDialog.getNewEcmDensityLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importExperimentDialog.getNewEcmDensityLabel().setText(" " + newEcmDensities);
+            importExperimentDialog.getNewEcmDensityLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            saveImportedExpDialog.getNewEcmDensityLabel().setText(" no new parameters to add");
-            saveImportedExpDialog.getNewEcmDensityLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importExperimentDialog.getNewEcmDensityLabel().setText(" no new parameters to add");
+            importExperimentDialog.getNewEcmDensityLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
         // TREATMENTS TYPES
         List<TreatmentType> newTreatmentTypes = treatmentService.findNewTreatmentTypes(importedExperiment);
         if (!newTreatmentTypes.isEmpty()) {
-            saveImportedExpDialog.getNewTreatmentLabel().setText(" " + newTreatmentTypes);
-            saveImportedExpDialog.getNewTreatmentLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
+            importExperimentDialog.getNewTreatmentLabel().setText(" " + newTreatmentTypes);
+            importExperimentDialog.getNewTreatmentLabel().setFont(new Font("Tahoma", Font.PLAIN, 12));
         } else {
-            saveImportedExpDialog.getNewTreatmentLabel().setText(" no new parameters to add");
-            saveImportedExpDialog.getNewTreatmentLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
+            importExperimentDialog.getNewTreatmentLabel().setText(" no new parameters to add");
+            importExperimentDialog.getNewTreatmentLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
     }
 }

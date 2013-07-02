@@ -462,6 +462,10 @@ public class AreaController {
                 analysisExperimentPanel.getPreviousButton().setEnabled(false);
                 // enable next button
                 analysisExperimentPanel.getNextButton().setEnabled(true);
+                // enable conditions list
+                dataAnalysisPanel.getConditionsList().setEnabled(true);
+                analysisPlatePanel.setCurrentCondition(currentCondition);
+                analysisPlatePanel.repaint();
                 highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
@@ -471,6 +475,10 @@ public class AreaController {
             case "preprocessingPanel":
                 boolean proceedToAnalysis = areaPreProcessingController.isProceedToAnalysis();
                 analysisExperimentPanel.getNextButton().setEnabled(proceedToAnalysis);
+                // enable conditions list
+                dataAnalysisPanel.getConditionsList().setEnabled(true);
+                analysisPlatePanel.setCurrentCondition(currentCondition);
+                analysisPlatePanel.repaint();
                 // cell covered area radio button is not visible if area is already a cell covered one
                 if (areaAnalysisHolder.getMeasuredAreaType().equals(MeasuredAreaType.CELL_COVERED_AREA)) {
                     areaPreProcessingController.getAreaAnalysisPanel().getCellCoveredAreaRadioButton().setVisible(false);
@@ -487,6 +495,11 @@ public class AreaController {
                 areaPreProcessingController.onGlobalView();
                 // enable next button
                 analysisExperimentPanel.getNextButton().setEnabled(true);
+                // disable conditions list
+                dataAnalysisPanel.getConditionsList().setEnabled(false);
+                dataAnalysisPanel.getConditionsList().clearSelection();
+                analysisPlatePanel.setCurrentCondition(null);
+                analysisPlatePanel.repaint();
                 highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
@@ -496,6 +509,11 @@ public class AreaController {
             case "linearModelPanel":
                 // disable next button
                 analysisExperimentPanel.getNextButton().setEnabled(false);
+                // disable conditions list
+                dataAnalysisPanel.getConditionsList().setEnabled(false);
+                dataAnalysisPanel.getConditionsList().clearSelection();
+                analysisPlatePanel.setCurrentCondition(null);
+                analysisPlatePanel.repaint();
                 areaPreProcessingController.onLinearRegressionModel();
                 highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
