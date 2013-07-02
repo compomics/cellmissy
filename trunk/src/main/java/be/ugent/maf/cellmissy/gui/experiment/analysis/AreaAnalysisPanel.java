@@ -201,7 +201,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         topPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         resultsImportingLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        resultsImportingLabel.setText("1. Data Importing");
+        resultsImportingLabel.setText("1. Data Inspecting");
         resultsImportingLabel.setToolTipText("Data loaded from DB");
 
         preProcessingLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N

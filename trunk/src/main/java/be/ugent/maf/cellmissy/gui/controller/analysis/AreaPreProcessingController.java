@@ -12,7 +12,6 @@ import be.ugent.maf.cellmissy.entity.result.TimeInterval;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.view.table.model.ComputedDataTableModel;
-import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
 import static be.ugent.maf.cellmissy.analysis.MeasuredAreaType.CELL_COVERED_AREA;
 import static be.ugent.maf.cellmissy.analysis.MeasuredAreaType.OPEN_AREA;
@@ -1035,7 +1034,7 @@ public class AreaPreProcessingController {
             boolean[][] outliersMatrix = cellCoveredAreaPreProcessor.detectOutliers(distanceMatrix, outliersHandlerBeanName);
             boolean[][] transposedOutliersMatrix = AnalysisUtils.transposeBooleanMatrix(outliersMatrix);
             DistanceMatrixTableModel distanceMatrixTableModel = new DistanceMatrixTableModel(distanceMatrix, outliersMatrix, plateCondition);
-            // if user already had interaction through check boxes overwrite distance matrix table behavior 
+            // if user already had interaction through check boxes overwrite distance matrix table behavior
             if (areaPreProcessingResults.isUserSelectedReplicates()) {
                 distanceMatrixTableModel.setCheckboxOutliers(areaPreProcessingResults.getExcludeReplicates());
             }
@@ -1087,14 +1086,14 @@ public class AreaPreProcessingController {
     private Double[][] getAreaRawData(PlateCondition plateCondition) {
         // get processed time frames
         double[] processedTimeFrames = getProcessedTimeFrames(plateCondition);
-        // get number of samples 
+        // get number of samples
         int numberOfSamplesPerCondition = AnalysisUtils.getNumberOfSamplesPerCondition(plateCondition);
         boolean firstAreaIsZero = false;
         Double[][] areaRawData = new Double[processedTimeFrames.length][numberOfSamplesPerCondition];
         int counter = 0;
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
-                // check for first row: sometimes area raw data is already equal to zero at first time 
+                // check for first row: sometimes area raw data is already equal to zero at first time
                 if (rowIndex != 0) {
                     if (timeStepsBindingList.get(counter).getArea() != 0) {
                         areaRawData[rowIndex][columnIndex] = timeStepsBindingList.get(counter).getArea();
@@ -1296,7 +1295,7 @@ public class AreaPreProcessingController {
         areaAnalysisPanel.getTimeStepsTable().setRowSelectionAllowed(false);
         areaAnalysisPanel.getTimeStepsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
 
-        // set background to white 
+        // set background to white
         areaAnalysisPanel.getTimeStepsTableScrollPane().getViewport().setBackground(Color.white);
         //init dataTable
         dataTable = new JTable();
@@ -1309,7 +1308,7 @@ public class AreaPreProcessingController {
         dataTable.setColumnSelectionAllowed(true);
         dataTable.setRowSelectionAllowed(false);
         areaAnalysisPanel.getDataTablePanel().add(scrollPane);
-        //init timeStepsBindingList 
+        //init timeStepsBindingList
         timeStepsBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
         // set booleans
         globalPlotForFirstTime = true;
@@ -1336,7 +1335,7 @@ public class AreaPreProcessingController {
         timeFramesSelectionDialog = new TimeFramesSelectionDialog(areaController.getCellMissyFrame(), true);
         // do nothing on close the dialog
         timeFramesSelectionDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        // justify text info 
+        // justify text info
         SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
         StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
         StyledDocument styledDocument = timeFramesSelectionDialog.getInfoTextPane().getStyledDocument();
@@ -1419,7 +1418,7 @@ public class AreaPreProcessingController {
             public void actionPerformed(ActionEvent e) {
                 //check that a condition is selected
                 if (areaController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != - 1) {
-                    //show delta area values in the table            
+                    //show delta area values in the table
                     showDeltaAreaInTable(areaController.getCurrentCondition());
                     // remove other panels
                     rawAreaChartPanel.setChart(null);
@@ -1672,7 +1671,7 @@ public class AreaPreProcessingController {
                 List<PlateCondition> processedConditions = getProcessedConditions();
                 // clear selection from list
                 areaAnalysisPanel.getConditionsList().clearSelection();
-                // plot global area for all conditions, checking if error bars need to be shown or not, and if raw data or corrected data 
+                // plot global area for all conditions, checking if error bars need to be shown or not, and if raw data or corrected data
                 boolean plotErrorBars = areaAnalysisPanel.getPlotErrorBarsCheckBox().isSelected();
                 boolean useCorrectedData = areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
                 boolean plotLines = areaAnalysisPanel.getPlotLinesCheckBox().isSelected();
@@ -1838,7 +1837,7 @@ public class AreaPreProcessingController {
             boolean showTimeInterval = correctedAreaPanel.getShowTimeIntervalCheckBox().isSelected();
             // keep note of the fact that the user had interaction with check boxes
             preProcessingMap.get(plateCondition).setUserSelectedReplicates(true);
-            // recompute time interval 
+            // recompute time interval
             cellCoveredAreaPreProcessor.recomputeTimeInterval(areaPreProcessingResults);
             plotCorrectedArea(plateCondition, plotLines, plotPoints, showTimeInterval);
             // time interval info

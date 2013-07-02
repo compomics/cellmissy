@@ -78,7 +78,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="12" style="0"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="1. Data Importing"/>
+            <Property name="text" type="java.lang.String" value="1. Data Inspecting"/>
             <Property name="toolTipText" type="java.lang.String" value="Data loaded from DB"/>
           </Properties>
         </Component>

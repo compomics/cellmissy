@@ -196,7 +196,7 @@ public class JFreeChartUtils {
      * @param plotLines: show points on plot?
      */
     public static void setupReplicatesAreaChart(JFreeChart chart, List<Well> wellList, boolean plotLines, boolean plotPoints) {
-        // set title font 
+        // set title font
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         // put legend on the right edge
         chart.getLegend().setPosition(RectangleEdge.RIGHT);
@@ -231,7 +231,7 @@ public class JFreeChartUtils {
      * @param plotLines: show points on plot?
      */
     public static void setupGlobalAreaChart(JFreeChart chart, boolean plotLines, boolean plotPoints) {
-        // set title font 
+        // set title font
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         // get xyplot from the chart
         XYPlot xYPlot = chart.getXYPlot();
