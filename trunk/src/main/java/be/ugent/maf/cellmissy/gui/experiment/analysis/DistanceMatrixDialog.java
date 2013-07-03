@@ -44,8 +44,9 @@ public class DistanceMatrixDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Select replicates");
         setAlwaysOnTop(true);
+        setMinimumSize(new java.awt.Dimension(600, 300));
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
-        setPreferredSize(new java.awt.Dimension(900, 400));
+        setPreferredSize(new java.awt.Dimension(600, 300));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         distanceMatrixScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Distance Matrix"));
@@ -83,7 +84,7 @@ public class DistanceMatrixDialog extends javax.swing.JDialog {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

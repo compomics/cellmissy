@@ -38,10 +38,12 @@ public class AboutDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("CellMissy - About");
-        setPreferredSize(new java.awt.Dimension(350, 450));
+        setMinimumSize(new java.awt.Dimension(400, 400));
+        setPreferredSize(new java.awt.Dimension(400, 400));
 
         aboutTextPane.setEditable(false);
-        aboutTextPane.setText("CellMissy is a cross-platform data management system for cell migration/invasion data that simplifies and fully automates data management, storage and analysis, from experimental set-up to data visualization and exploration.\n\nCellMissy is being developed at Ghent University, Dept. Biochemistry, and VIB Medical Protein Research Dept., at the Computational Omics and Systems Biology Group (http://compomics.com/).\n\nNeed more information? Visit CellMissy homepage!\n\nIf you want to report a bug, please contact the developers!\n\nCellMissy homege: https://cellmissy.googlecode.com\n\n");
+        aboutTextPane.setContentType("text/html"); // NOI18N
+        aboutTextPane.setText("<html>\n  <head>\n<TITLE></TITLE>\n  </head>\n  <body>\n<a name=\"#top\"/>\n        <H2>CellMissy</H2>\n        <i>Cell Migration Invasion Storage System</i>\n        <hr>\n        <br>\n        <p align=\"justify\">\n            <b>CellMissy</b> is being developed by Paola Masuzzo, Niels Hulstaert and Lennart Martens.\n            <br><br>\n            Project home page: <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        </p>\n        <br><br>\n        <h3>Supported Platforms</h3>\n        <p align=\"justify\">\n            The tool has been developed on Windows 7 and Windows 8, but should also work on older\n            Windows versions and on other platforms, as long as Java 1.7.0 (or newer) is installed.\n        </p>\n        <br><br>\n        <h3>Questions?</h3>\n        Please contact the developers of the tool.\n        See <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        for details.\n\t\t<br>\n        <hr>\n  </body>\n</html>");
         aboutTextPane.setFocusable(false);
         aboutTextPane.setPreferredSize(new java.awt.Dimension(300, 400));
         jScrollPane1.setViewportView(aboutTextPane);
@@ -73,7 +75,7 @@ public class AboutDialog extends javax.swing.JDialog {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

@@ -154,6 +154,8 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
     public void copySetupSettingsFromXMLExperiment(Experiment xmlExperiment, Experiment newExperiment);
 
     /**
+     * Copy an experiment from XML file to another experiment: along with set-up
+     * settings and migration data as well.
      *
      * @param xmlExperiment
      */
@@ -167,7 +169,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
     public List<Algorithm> getAlgorithms(Experiment experiment);
 
     /**
-     * 
+     *
      * @param experiment
      * @return
      */

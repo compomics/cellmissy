@@ -527,14 +527,14 @@ public class CellMissyController {
      * Action performed on export experiment feature.
      */
     private void onExportExperiment() {
-        importExportController.showExportDialog();
+        importExportController.showExportExperimentDialog();
     }
 
     /**
      * Action performed on import experiment from external file.
      */
     private void onImportExperiment() {
-        importExportController.showImportDialog();
+        importExportController.showImportExperimentDialog();
     }
 
     /**

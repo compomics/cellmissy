@@ -418,7 +418,7 @@ public class AreaController {
      *
      * @param messageToShow
      */
-    private void showInfoMessage(String messageToShow) {
+    private void updateInfoMessage(String messageToShow) {
         cellMissyController.updateInfoLabel(analysisExperimentPanel.getInfoLabel(), messageToShow);
     }
 
@@ -464,19 +464,21 @@ public class AreaController {
                 analysisExperimentPanel.getNextButton().setEnabled(true);
                 // enable conditions list
                 dataAnalysisPanel.getConditionsList().setEnabled(true);
+                dataAnalysisPanel.getConditionsList().setSelectedIndex(plateConditionList.indexOf(currentCondition));
                 analysisPlatePanel.setCurrentCondition(currentCondition);
                 analysisPlatePanel.repaint();
                 highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
-                showInfoMessage("Area values are shown for each well, together with (column, row) coordinates");
+                updateInfoMessage("Area values are shown for each well, together with (column, row) coordinates");
                 break;
             case "preprocessingPanel":
                 boolean proceedToAnalysis = areaPreProcessingController.isProceedToAnalysis();
                 analysisExperimentPanel.getNextButton().setEnabled(proceedToAnalysis);
                 // enable conditions list
                 dataAnalysisPanel.getConditionsList().setEnabled(true);
+                dataAnalysisPanel.getConditionsList().setSelectedIndex(plateConditionList.indexOf(currentCondition));
                 analysisPlatePanel.setCurrentCondition(currentCondition);
                 analysisPlatePanel.repaint();
                 // cell covered area radio button is not visible if area is already a cell covered one
@@ -489,7 +491,7 @@ public class AreaController {
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
-                showInfoMessage("Data are normalized and outliers correction is performed");
+                updateInfoMessage("Area values are normalized and outliers correction is performed (see %Area increase)");
                 break;
             case "globalViewPanel":
                 areaPreProcessingController.onGlobalView();
@@ -504,7 +506,7 @@ public class AreaController {
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
-                showInfoMessage("Temporal evolution of the area is plotted for each condition");
+                updateInfoMessage("Temporal evolution of the area is plotted for each biological condition");
                 break;
             case "linearModelPanel":
                 // disable next button
@@ -519,7 +521,7 @@ public class AreaController {
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
                 resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
-                showInfoMessage("Choose conditions from the linerar regression table and assign them to a group to perform analysis");
+                updateInfoMessage("Choose conditions from the linear regression table and assign them to a group to perform statistics");
                 break;
         }
     }
@@ -536,8 +538,8 @@ public class AreaController {
         //hide progress bar at first time
         analysisExperimentPanel.getFetchAllConditionsProgressBar().setVisible(false);
         analysisExperimentPanel.getFetchAllConditionsProgressBar().setStringPainted(true);
-        String message = "Please select a project and an experiment to analyse motility data.";
-        showInfoMessage(message);
+        String message = "Select a project and an experiment to start with data analysis.";
+        updateInfoMessage(message);
         // action listener on start button: this is switching the views in order to start the analysis
         analysisExperimentPanel.getStartButton().addActionListener(new ActionListener() {
             @Override
@@ -555,7 +557,7 @@ public class AreaController {
                 dataAnalysisPanel.getTimeFramesNumberTextField().setText("" + experiment.getTimeFrames());
                 dataAnalysisPanel.getDatasetTextField().setText(algorithmBindingList.get(metaDataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex()).getAlgorithmName());
                 dataAnalysisPanel.getImagingTypeTextField().setText(imagingTypeBindingList.get(metaDataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex()).getName());
-                showInfoMessage("Select a condition to start with analysis");
+                updateInfoMessage("Select a condition to start with analysis");
             }
         });
 
@@ -605,7 +607,7 @@ public class AreaController {
     private void onCancel() {
         areaPreProcessingController.resetOnCancel();
         String message = "Please select a project and an experiment to analyse motility data.";
-        showInfoMessage(message);
+        updateInfoMessage(message);
         algorithmBindingList.clear();
         imagingTypeBindingList.clear();
         // clear plate conditions list, if not null

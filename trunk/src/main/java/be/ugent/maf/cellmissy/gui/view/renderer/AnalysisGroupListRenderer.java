@@ -6,12 +6,12 @@ package be.ugent.maf.cellmissy.gui.view.renderer;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
-import be.ugent.maf.cellmissy.gui.view.icon.RectIcon;
-import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Component;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -41,12 +41,13 @@ public class AnalysisGroupListRenderer extends DefaultListCellRenderer {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         AnalysisGroup analysisGroup = (AnalysisGroup) value;
         List<PlateCondition> plateConditions = analysisGroup.getPlateConditions();
-        String conditionsName = "";
+        List<String> conditionsName = new ArrayList<>();
         for (PlateCondition plateCondition : plateConditions) {
             int conditionIndex = plateConditionList.indexOf(plateCondition);
-            conditionsName = conditionsName.concat(", " + "C " + (conditionIndex + 1));
+            conditionsName.add("" + (conditionIndex + 1));
         }
-        setText(analysisGroup.getGroupName() + "(" + conditionsName + ")");
+        String join = StringUtils.join(conditionsName, ", ");
+        setText(analysisGroup.getGroupName() + " (" + join + ")");
         return this;
     }
 }

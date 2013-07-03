@@ -340,7 +340,7 @@ public class AreaPreProcessingController {
         columnBinding.setColumnName("Area " + "(" + areaUnitOfMeasurement + ")");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new FormatRenderer(areaController.getFormat()));
+        columnBinding.setRenderer(new FormatRenderer(areaController.getFormat(), SwingConstants.RIGHT));
 
         bindingGroup.addBinding(timeStepsTableBinding);
         bindingGroup.bind();
@@ -358,7 +358,7 @@ public class AreaPreProcessingController {
             Double[][] deltaArea = areaPreProcessingResults.getDeltaArea();
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
             dataTable.setModel(new ComputedDataTableModel(plateCondition, deltaArea, processedTimeFrames));
-            dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaController.getFormat()));
+            dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaController.getFormat(), SwingConstants.RIGHT));
             dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
         areaAnalysisPanel.getTableInfoLabel().setText("Area increments between time frame t(n) and t(n+1)");
@@ -378,7 +378,7 @@ public class AreaPreProcessingController {
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
             dataTable.setModel(new ComputedDataTableModel(plateCondition, percentageAreaIncrease, processedTimeFrames));
             //format first column
-            dataTable.getColumnModel().getColumn(0).setCellRenderer(new FormatRenderer(areaController.getFormat()));
+            dataTable.getColumnModel().getColumn(0).setCellRenderer(new FormatRenderer(areaController.getFormat(), SwingConstants.RIGHT));
             boolean[][] outliers = cellCoveredAreaPreProcessor.detectOutliers(percentageAreaIncrease, outliersHandlerBeanName);
             //show outliers in red from second column on
             OutliersRenderer outliersRenderer = new OutliersRenderer(outliers, areaController.getFormat());
@@ -402,7 +402,7 @@ public class AreaPreProcessingController {
             Double[][] normalizedArea = areaPreProcessingResults.getNormalizedArea();
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
             dataTable.setModel(new ComputedDataTableModel(plateCondition, normalizedArea, processedTimeFrames));
-            dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaController.getFormat()));
+            dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaController.getFormat(), SwingConstants.RIGHT));
             dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
         areaAnalysisPanel.getTableInfoLabel().setText("Area is normalized in terms of starting location at time zero");
@@ -444,7 +444,7 @@ public class AreaPreProcessingController {
             Double[][] transformedData = areaPreProcessingResults.getTransformedData();
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
             dataTable.setModel(new ComputedDataTableModel(plateCondition, transformedData, processedTimeFrames));
-            dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaController.getFormat()));
+            dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaController.getFormat(),SwingConstants.RIGHT));
             dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
         areaAnalysisPanel.getTableInfoLabel().setText("Open area is converted to (complementary) cell covered area");
@@ -462,7 +462,7 @@ public class AreaPreProcessingController {
             Double[][] normalizedCorrectedArea = areaPreProcessingResults.getNormalizedCorrectedArea();
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
             dataTable.setModel(new ComputedDataTableModel(plateCondition, normalizedCorrectedArea, processedTimeFrames));
-            dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaController.getFormat()));
+            dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaController.getFormat(), SwingConstants.RIGHT));
             dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
         areaAnalysisPanel.getTableInfoLabel().setText("Outliers are removed from distributions and new area values are shown");

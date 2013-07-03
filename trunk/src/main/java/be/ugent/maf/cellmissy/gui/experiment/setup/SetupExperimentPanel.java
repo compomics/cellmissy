@@ -96,19 +96,20 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.9;
+        gridBagConstraints.weighty = 0.95;
         add(topPanel, gridBagConstraints);
 
-        bottomPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
         bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         bottomPanel.setOpaque(false);
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        previousButton.setText("Previous");
+        previousButton.setText("<< Previous");
         previousButton.setToolTipText("Go back");
 
-        nextButton.setText("Next");
+        nextButton.setText("Next >>");
         nextButton.setToolTipText("Go next");
+
+        infolabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
 
         finishButton.setText("Finish");
         finishButton.setToolTipText("Finish the current set-up: save the experiment to the DB");
@@ -117,7 +118,7 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
         reportButton.setToolTipText("Create a PDF file with set-up for current experiment");
 
         copySettingsButton.setText("Copy settings...");
-        copySettingsButton.setToolTipText("Copy the set-up settings from another experiment from this project.");
+        copySettingsButton.setToolTipText("Copy the set-up settings from another experiment from this project");
 
         importTemplateButton.setText("Import template...");
         importTemplateButton.setToolTipText("Import an XMLfile and use it as template for the current experiment set-up");
@@ -131,7 +132,7 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(importTemplateButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -174,7 +175,7 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weighty = 0.05;
         add(bottomPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables

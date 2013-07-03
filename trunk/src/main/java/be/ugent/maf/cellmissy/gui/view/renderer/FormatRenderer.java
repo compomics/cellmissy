@@ -7,7 +7,6 @@ package be.ugent.maf.cellmissy.gui.view.renderer;
 import java.awt.Component;
 import java.text.Format;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
@@ -18,9 +17,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class FormatRenderer extends DefaultTableCellRenderer {
 
     private Format formatter;
+    private int alignment;
 
-    public FormatRenderer(Format formatter) {
+    public FormatRenderer(Format formatter, int alignment) {
         this.formatter = formatter;
+        this.alignment = alignment;
     }
 
     @Override
@@ -33,7 +34,7 @@ public class FormatRenderer extends DefaultTableCellRenderer {
             }
         }
         setValue(value);
-        setHorizontalAlignment(SwingConstants.RIGHT);
+        setHorizontalAlignment(alignment);
         setOpaque(true);
 
         if (isSelected) {
