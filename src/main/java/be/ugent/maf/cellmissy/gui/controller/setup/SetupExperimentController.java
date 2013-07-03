@@ -744,6 +744,7 @@ public class SetupExperimentController {
     private void initSetupExperimentPanel() {
         // show the next button only
         setupExperimentPanel.getNextButton().setVisible(true);
+        setupExperimentPanel.getNextButton().setEnabled(false);
         setupExperimentPanel.getPreviousButton().setVisible(false);
         //hide Report and Finish buttons
         setupExperimentPanel.getFinishButton().setVisible(false);

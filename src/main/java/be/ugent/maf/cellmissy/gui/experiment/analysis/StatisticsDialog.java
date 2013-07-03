@@ -87,9 +87,8 @@ public class StatisticsDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Statistics");
         setAlwaysOnTop(true);
-        setMinimumSize(new java.awt.Dimension(20, 20));
-        setModal(true);
-        setPreferredSize(new java.awt.Dimension(750, 600));
+        setMinimumSize(new java.awt.Dimension(560, 660));
+        setPreferredSize(new java.awt.Dimension(560, 660));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         infoPanel.setOpaque(false);
@@ -113,7 +112,7 @@ public class StatisticsDialog extends javax.swing.JDialog {
                 .addComponent(jLabel3)
                 .addGap(6, 6, 6)
                 .addComponent(groupNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(605, Short.MAX_VALUE))
+                .addContainerGap(246, Short.MAX_VALUE))
         );
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -228,17 +227,12 @@ public class StatisticsDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(saveAnalysisButton))
                     .addGroup(correctionPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
                         .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(correctionPanelLayout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(correctionPanelLayout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(correctionPanelLayout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(correctionMethodsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 550, Short.MAX_VALUE)))
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(correctionMethodsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 191, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -262,7 +256,7 @@ public class StatisticsDialog extends javax.swing.JDialog {
                 .addComponent(correctionMethodsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();

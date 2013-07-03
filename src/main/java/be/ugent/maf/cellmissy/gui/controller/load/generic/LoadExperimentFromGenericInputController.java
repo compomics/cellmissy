@@ -184,7 +184,7 @@ public class LoadExperimentFromGenericInputController {
         genericImagedPlateController.getLoadFromGenericInputPlatePanel().getPurposeTextArea().setLineWrap(true);
         genericImagedPlateController.getLoadFromGenericInputPlatePanel().getPurposeTextArea().setWrapStyleWord(true);
         //update info message
-        cellMissyController.updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Select project/experiment in progress to load motility data; provide experiment metadata to start with the import.");
+        cellMissyController.updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Select project/experiment in progress to load data; provide experiment metadata to start with the import.");
         // disable buttons
         loadFromGenericInputPanel.getResetButton().setEnabled(false);
         loadFromGenericInputPanel.getFinishButton().setEnabled(false);
@@ -324,7 +324,7 @@ public class LoadExperimentFromGenericInputController {
             loadFromGenericInputPanel.getSaveDataProgressBar().setVisible(true);
             loadFromGenericInputPanel.getSaveDataProgressBar().setIndeterminate(true);
             // update message
-            updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Please wait, data is being saved.");
+            updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Please wait, data is being saved!");
             // show a waiting cursor
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             // save motility data

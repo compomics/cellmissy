@@ -22,10 +22,11 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.StatisticsDialog;
 import be.ugent.maf.cellmissy.gui.view.table.model.PValuesTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.StatisticalSummaryTableModel;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.LinearRegressionTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.PValuesTableRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.RectIconCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.VelocityBarRenderer;
+import be.ugent.maf.cellmissy.gui.view.table.model.LinearRegressionTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
@@ -55,7 +56,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -186,15 +186,15 @@ public class AreaAnalysisController {
         // data for table model: number of rows equal to number of conditions, number of columns equal to maximum number of replicates + 3
         // first column with conditions, last two with mean and mad values
         int maximumNumberOfReplicates = AnalysisUtils.getMaximumNumberOfReplicates(processedConditions);
-        Object[][] data = new Object[processedConditions.size()][maximumNumberOfReplicates + 3];
+        Object[][] data = new Object[processedConditions.size()][maximumNumberOfReplicates + 4];
         for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-            for (int columnIndex = 1; columnIndex < slopesList.get(rowIndex).length + 1; columnIndex++) {
-                Double slope = slopesList.get(rowIndex)[columnIndex - 1];
-                Double coefficient = coefficientsList.get(rowIndex)[columnIndex - 1];
+            for (int columnIndex = 2; columnIndex < slopesList.get(rowIndex).length + 2; columnIndex++) {
+                Double slope = slopesList.get(rowIndex)[columnIndex - 2];
+                Double coefficient = coefficientsList.get(rowIndex)[columnIndex - 2];
                 if (slope != null && coefficient != null && !slope.isNaN() && !coefficient.isNaN()) {
                     // round to three decimals slopes and coefficients
-                    slope = AnalysisUtils.roundThreeDecimals(slopesList.get(rowIndex)[columnIndex - 1]);
-                    coefficient = AnalysisUtils.roundThreeDecimals(coefficientsList.get(rowIndex)[columnIndex - 1]);
+                    slope = AnalysisUtils.roundThreeDecimals(slopesList.get(rowIndex)[columnIndex - 2]);
+                    coefficient = AnalysisUtils.roundThreeDecimals(coefficientsList.get(rowIndex)[columnIndex - 2]);
                     // show in table slope + (coefficient)
                     data[rowIndex][columnIndex] = slope + " (" + coefficient + ")";
                 } else if (slope == null && coefficient == null) {
@@ -205,6 +205,7 @@ public class AreaAnalysisController {
             }
             // first column contains conditions names
             data[rowIndex][0] = rowIndex + 1;
+            // second column will show the icons with the colors
             // last 2 columns contain mean slopes, mad values
             data[rowIndex][data[0].length - 2] = meanSlopesList.get(rowIndex);
             data[rowIndex][data[0].length - 1] = madSlopesList.get(rowIndex);
@@ -212,17 +213,24 @@ public class AreaAnalysisController {
         // array of column names for table model
         String[] columnNames = new String[data[0].length];
         columnNames[0] = "Cond";
-        for (int i = 1; i < columnNames.length - 2; i++) {
-            columnNames[i] = "Repl " + i;
+        columnNames[1] = "";
+        for (int i = 2; i < columnNames.length - 2; i++) {
+            columnNames[i] = "Repl " + (i - 1);
         }
         columnNames[columnNames.length - 2] = "median";
         columnNames[columnNames.length - 1] = "MAD";
         JTable slopesTable = linearRegressionPanel.getSlopesTable();
         // set model of table
-        slopesTable.setModel(new DefaultTableModel(data, columnNames));
-        // set cell renderer
+        LinearRegressionTableModel linearRegressionTableModel = new LinearRegressionTableModel();
+        linearRegressionTableModel.setDataVector(data, columnNames);
+        slopesTable.setModel(linearRegressionTableModel);
+        // set cell renderer: rect icon in the second column
+        slopesTable.getColumnModel().getColumn(1).setCellRenderer(new RectIconCellRenderer());
         for (int columnIndex = 0; columnIndex < slopesTable.getColumnCount(); columnIndex++) {
-            slopesTable.getColumnModel().getColumn(columnIndex).setCellRenderer(new LinearRegressionTableRenderer(areaController.getFormat()));
+            if (columnIndex == columnNames.length - 1 | columnIndex == columnNames.length - 2) {
+                slopesTable.getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(areaController.getFormat(), SwingConstants.LEFT));
+            }
+            GuiUtils.packColumn(slopesTable, columnIndex, 1);
         }
         // select by default all conditions: to show all bars in the velocity chart
         slopesTable.setRowSelectionInterval(0, linearRegressionPanel.getSlopesTable().getRowCount() - 1);
@@ -363,7 +371,7 @@ public class AreaAnalysisController {
         // control opaque property of table
         linearRegressionPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
         JTable slopesTable = linearRegressionPanel.getSlopesTable();
-        slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
+        slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         slopesTable.getTableHeader().setReorderingAllowed(false);
         slopesTable.setFillsViewportHeight(true);
         // init chart panel
@@ -674,7 +682,7 @@ public class AreaAnalysisController {
         JTable statisticalSummaryTable = statisticsDialog.getStatisticalSummaryTable();
         statisticalSummaryTable.setModel(statisticalSummaryTableModel);
         for (int i = 1; i < statisticalSummaryTable.getColumnCount(); i++) {
-            statisticalSummaryTable.getColumnModel().getColumn(i).setCellRenderer(new FormatRenderer(new DecimalFormat("#.####")));
+            statisticalSummaryTable.getColumnModel().getColumn(i).setCellRenderer(new FormatRenderer(new DecimalFormat("#.####"), SwingConstants.CENTER));
         }
         statisticalSummaryTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
     }

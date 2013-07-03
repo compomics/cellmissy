@@ -41,11 +41,11 @@ public class HelpDialog extends javax.swing.JDialog {
         setAlwaysOnTop(true);
         setMinimumSize(new java.awt.Dimension(20, 20));
         setModal(true);
-        setPreferredSize(new java.awt.Dimension(400, 550));
         setResizable(false);
 
         helpTextPane.setEditable(false);
-        helpTextPane.setText("CellMissy is a cross-platform data management system for cell migration/invasion data that simplifies and fully automates data management, storage and analysis, from experimental set-up to data visualization and exploration.\n\nIt is composed of three modules:\n\n1. EXPERIMENT MANAGER -- to setup a new cell migration/invasion experiment on a multiwell plate, with detailed annotation on biological conditions and the choose of different technical replicates for each condition to study. A PDF report can be generated for use in the wet-lab.\n\n2. DATA LOADER -- to import the relevant cell migration data. In its current version, CellMissy is focused on wound-healing like assays, thus these data are values of the measured area in time. The loading is either based on CELLMIA image analysis software or on generic input.\n\n3. DATA ANALYZER -- to analyze your experiment; here you can perform data quality control, statistical analysis and generate a detailed PDF report with the results of such analysis, containing text, tables and plots.\n\nNeed more help? Visit CellMissy homepage; here you can download a PDF manual that better illustrates the modules of the tool and how to use them. Furthermore, example datasets are present as well, one dataset produced with a scratch wound assay performed in a 12-well plate, and one obtained with a cell exclusion zone assay performed in a 96-well plate. For more details, see the manual.\n\n\nCellMissy homege: https://cellmissy.googlecode.com");
+        helpTextPane.setContentType("text/html"); // NOI18N
+        helpTextPane.setText("<html>\n  <head>\n<TITLE></TITLE>\n  </head>\n  <body>\n<a name=\"#top\"/>\n        <H2>CellMissy</H2>\n        <i>Cell Migration Invasion Storage System</i>\n        <hr>\n        <br>\n        <p align=\"justify\">\n            <b>CellMissy</b> cross-platform data management system for cell migration/invasion data that simplifies and fully automates data management, storage and analysis, from experimental set-up to data visualization and exploration.\n            <br><br>\n            Project home page: <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        </p>\n        <br><br>\n        <h3>Supported Platforms</h3>\n        <p align=\"justify\">\n            The tool has been developed on Windows 7 and Windows 8, but should also work on older\n            Windows versions and on other platforms, as long as Java 1.7.0 (or newer) is installed.\n        </p>\n        <br><br>\n        <h3>Questions?</h3>\n        Please contact the developers of the tool.\n        See <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        for details.\n\t\t<p align=\"justify\">\n\t\tHere you can download a PDF manual that better illustrates the modules of the tool and how to use them. Furthermore, example datasets are present as well, one dataset produced with a scratch wound assay performed in a 12-well plate, and one obtained with a cell exclusion zone assay performed in a 96-well plate. For more details, see the manual.\n        </p>\n\t\t<br>\n        <hr>\n  </body>\n</html>\n\n");
         helpTextPane.setFocusable(false);
         jScrollPane1.setViewportView(helpTextPane);
 
@@ -76,7 +76,7 @@ public class HelpDialog extends javax.swing.JDialog {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

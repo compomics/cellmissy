@@ -204,7 +204,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.25;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(15, 15, 0, 0);
         leftPanel.add(experimentDataPanel, gridBagConstraints);
 
         analysisPlateParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -218,7 +218,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.55;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
         leftPanel.add(analysisPlateParentPanel, gridBagConstraints);
 
         conditionsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -236,11 +235,11 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         conditionsPanel.setLayout(conditionsPanelLayout);
         conditionsPanelLayout.setHorizontalGroup(
             conditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
         );
         conditionsPanelLayout.setVerticalGroup(
             conditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -250,7 +249,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.2;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
         leftPanel.add(conditionsPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();

@@ -77,6 +77,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
+ * This class is registered as a controller and takes care of
+ * importing/exporting experiment and template.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -124,6 +126,7 @@ public class ImportExportController {
      */
     public void init() {
         bindingGroup = new BindingGroup();
+        // init views
         initExportExperimentDialog();
         initImportExperimentDialog();
         initExportTemplateDialog();
@@ -132,7 +135,7 @@ public class ImportExportController {
     /**
      * Method called from main controller: show the export dialog.
      */
-    public void showExportDialog() {
+    public void showExportExperimentDialog() {
         exportExperimentDialog.pack();
         GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), exportExperimentDialog);
         exportExperimentDialog.setVisible(true);
@@ -141,7 +144,7 @@ public class ImportExportController {
     /**
      * Method called from main controller: show the import dialog.
      */
-    public void showImportDialog() {
+    public void showImportExperimentDialog() {
         CardLayout cardLayout = (CardLayout) importExperimentDialog.getTopPanel().getLayout();
         cardLayout.first(importExperimentDialog.getTopPanel());
         importExperimentDialog.pack();
@@ -169,6 +172,10 @@ public class ImportExportController {
         // hide progress bar and its label
         exportExperimentDialog.getProgressBarLabel().setVisible(false);
         exportExperimentDialog.getExportProgressBar().setVisible(false);
+        // set icon for info label
+        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        exportExperimentDialog.getInfoLabel().setIcon(scaledIcon);
         // init projects list
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, exportExperimentDialog.getProjectsList());
@@ -196,6 +203,7 @@ public class ImportExportController {
                 }
             }
         });
+
         // update fields when an exp is selected
         exportExperimentDialog.getExperimentsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -206,11 +214,11 @@ public class ImportExportController {
                     if (selectedExperiment != null) {
                         experimentToExport = selectedExperiment;
                         // get the information and update the fields
-                        exportExperimentDialog.getUserLabel().setText(selectedExperiment.getUser().toString());
-                        exportExperimentDialog.getPurposeTextArea().setText(selectedExperiment.getPurpose());
-                        exportExperimentDialog.getTimeFramesLabel().setText(selectedExperiment.getTimeFrames().toString());
-                        exportExperimentDialog.getInstrumentLabel().setText(selectedExperiment.getInstrument().getName());
-                        exportExperimentDialog.getPlateFormatLabel().setText(selectedExperiment.getPlateFormat().toString());
+                        exportExperimentDialog.getUserLabel().setText(" " + selectedExperiment.getUser().toString());
+                        exportExperimentDialog.getPurposeTextArea().setText(" " + selectedExperiment.getPurpose());
+                        exportExperimentDialog.getTimeFramesLabel().setText(" " + selectedExperiment.getTimeFrames().toString());
+                        exportExperimentDialog.getInstrumentLabel().setText(" " + selectedExperiment.getInstrument().getName());
+                        exportExperimentDialog.getPlateFormatLabel().setText(" " + selectedExperiment.getPlateFormat().toString());
                         exportExperimentDialog.getNumberConditionsLabel().setText("" + selectedExperiment.getPlateConditionList().size());
                         // set the model of the conditions table
                         updateConditionsTableModel(exportExperimentDialog.getConditionsDetailsTable(), selectedExperiment);
@@ -224,7 +232,7 @@ public class ImportExportController {
             @Override
             public void windowClosing(WindowEvent we) {
                 // reset view when we close the dialog
-                resetViewOnExportDialog();
+                resetViewOnExportExperimentDialog();
             }
         });
 
@@ -245,10 +253,11 @@ public class ImportExportController {
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File currentDirectory = chooseDirectory.getSelectedFile();
                         String fileName = "experiment_" + experimentToExport + "_" + experimentToExport.getProject() + ".xml";
-                        File xmlFile = createFile(fileName, currentDirectory, exportExperimentDialog);
+                        File xmlFile = createXmlFile(fileName, currentDirectory, exportExperimentDialog);
+                        // if the XML file was successfully created, we execute a swing worker and export the experiment to the file.
                         if (xmlFile != null) {
-                            ExportExperimentSwingWorker experimentSwingWorker = new ExportExperimentSwingWorker(xmlFile);
-                            experimentSwingWorker.execute();
+                            ExportExperimentSwingWorker exportExperimentSwingWorker = new ExportExperimentSwingWorker(xmlFile);
+                            exportExperimentSwingWorker.execute();
                         }
                     } else {
                         JOptionPane.showMessageDialog(exportExperimentDialog, "Command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
@@ -267,7 +276,7 @@ public class ImportExportController {
                 // cancel: hide the dialog
                 exportExperimentDialog.setVisible(false);
                 // reset views
-                resetViewOnExportDialog();
+                resetViewOnExportExperimentDialog();
             }
         });
     }
@@ -311,13 +320,13 @@ public class ImportExportController {
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
         // add action listeners
-        // choose an xml file
+        // choose an xml file: the chosen XML file will be parsed and the experment object will be created
         importExperimentDialog.getChooseFileButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Open a JFile Chooser
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setDialogTitle("Choose a file to import");
+                fileChooser.setDialogTitle("Choose an XML file for the import of the experiment");
                 // to select only xml files
                 fileChooser.setFileFilter(new FileFilter() {
                     @Override
@@ -345,7 +354,7 @@ public class ImportExportController {
                 int returnVal = fileChooser.showOpenDialog(importExperimentDialog);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File chosenFile = fileChooser.getSelectedFile();
-                    // create and execute a new swing worker
+                    // create and execute a new swing worker with the selected file for the import
                     ImportExperimentSwingWorker importExperimentSwingWorker = new ImportExperimentSwingWorker(chosenFile);
                     importExperimentSwingWorker.execute();
                 } else {
@@ -359,7 +368,7 @@ public class ImportExportController {
             @Override
             public void windowClosing(WindowEvent we) {
                 // reset view when we close the dialog
-                resetViewOnImportDialog();
+                resetViewOnImportExperimentDialog();
             }
         });
 
@@ -370,7 +379,7 @@ public class ImportExportController {
                 // cancel: hide the dialog
                 importExperimentDialog.setVisible(false);
                 // reset views
-                resetViewOnImportDialog();
+                resetViewOnImportExperimentDialog();
             }
         });
 
@@ -378,8 +387,9 @@ public class ImportExportController {
         importExperimentDialog.getNextButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateInfoOnSaveImportedExpDialog();
+                updateDetailsOnImportExperimentDialog();
                 CardLayout cardLayout = (CardLayout) importExperimentDialog.getTopPanel().getLayout();
+                // we move to next, disable the next button and enable the previous one, we enable as well the save experiment button
                 cardLayout.next(importExperimentDialog.getTopPanel());
                 importExperimentDialog.getNextButton().setEnabled(false);
                 importExperimentDialog.getPreviousButton().setEnabled(true);
@@ -392,6 +402,7 @@ public class ImportExportController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CardLayout cardLayout = (CardLayout) importExperimentDialog.getTopPanel().getLayout();
+                // we move to previous, disable the previous button and the save experiment button, and we enable the next button
                 cardLayout.previous(importExperimentDialog.getTopPanel());
                 importExperimentDialog.getPreviousButton().setEnabled(false);
                 importExperimentDialog.getNextButton().setEnabled(true);
@@ -418,7 +429,7 @@ public class ImportExportController {
                     SaveExperimentSwingWorker saveExperimentSwingWorker = new SaveExperimentSwingWorker();
                     saveExperimentSwingWorker.execute();
                 } else {
-                    String message = "Oooops! Imported experiment already exists for this project!\nYou can choose a different project.... or maybe you have already imported this experiment !!!";
+                    String message = "Oooops! Imported experiment already exists for this project!\nYou can choose a different project....\n\n...or maybe you have already imported this experiment !!!";
                     JOptionPane.showMessageDialog(importExperimentDialog, message, "experiment is present in DB", JOptionPane.WARNING_MESSAGE);
                 }
             }
@@ -433,6 +444,10 @@ public class ImportExportController {
         exportTemplateDialog = new ExportTemplateDialog(cellMissyController.getCellMissyFrame(), true);
         exportTemplateDialog.getProjectDescriptionTextArea().setLineWrap(true);
         exportTemplateDialog.getProjectDescriptionTextArea().setWrapStyleWord(true);
+        // set icon for info label
+        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        exportTemplateDialog.getInfoLabel().setIcon(scaledIcon);
         // projects list
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, exportTemplateDialog.getProjectsList());
         bindingGroup.addBinding(jListBinding);
@@ -467,7 +482,7 @@ public class ImportExportController {
                             } else {
                                 String message = "There are no experiments performed yet for this project!";
                                 JOptionPane.showMessageDialog(exportTemplateDialog, message, "No experiments found", JOptionPane.INFORMATION_MESSAGE);
-                                resetViewOnExportDialog();
+                                resetViewOnExportTemplateDialog();
                                 if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                                     experimentBindingList.clear();
                                 }
@@ -493,7 +508,7 @@ public class ImportExportController {
                         exportTemplateDialog.getPlateFormatLabel().setText(" " + selectedExperiment.getPlateFormat().toString());
                         exportTemplateDialog.getNumberConditionsLabel().setText(" " + selectedExperiment.getPlateConditionList().size());
                         // set the model of the conditions table
-                        updateConditionsTableModel(exportTemplateDialog.getConditionsDetailsTable(), selectedExperiment);
+                        updateConditionsTableModel(exportTemplateDialog.getConditionsDetailsTable(), experimentTemplateToExport);
                     }
                 }
             }
@@ -513,20 +528,19 @@ public class ImportExportController {
         exportTemplateDialog.getExportButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Experiment experimentToExport = (Experiment) exportTemplateDialog.getExperimentsList().getSelectedValue();
-                // be sure that one experiment is selected in the list
-                if (experimentToExport != null) {
+                if (experimentTemplateToExport != null) {
                     // show a jfile chooser to decide where to save the file
                     JFileChooser chooseDirectory = new JFileChooser();
-                    chooseDirectory.setDialogTitle("Choose a directory to save the file");
+                    chooseDirectory.setDialogTitle("Choose a directory to save the XML template file");
                     chooseDirectory.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                     // in response to the button click, show open dialog
                     int returnVal = chooseDirectory.showSaveDialog(exportTemplateDialog);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File currentDirectory = chooseDirectory.getSelectedFile();
                         String fileName = "setup_template_" + experimentTemplateToExport + "_" + experimentTemplateToExport.getProject() + ".xml";
-                        File xmlFile = createFile(fileName, currentDirectory, exportTemplateDialog);
+                        File xmlFile = createXmlFile(fileName, currentDirectory, exportTemplateDialog);
                         if (xmlFile != null) {
+                            // if the XML file was successfully created, we execute a new swing worker
                             ExportTemplateSwingWorker exportTemplateSwingWorker = new ExportTemplateSwingWorker(xmlFile);
                             exportTemplateSwingWorker.execute();
                         }
@@ -553,6 +567,7 @@ public class ImportExportController {
     }
 
     /**
+     * Check if the imported experiment already exists for the selected project.
      *
      * @return
      */
@@ -643,7 +658,7 @@ public class ImportExportController {
         } else {
             String message = "There are no experiments performed yet for this project!";
             JOptionPane.showMessageDialog(exportExperimentDialog, message, "No experiments found", JOptionPane.INFORMATION_MESSAGE);
-            resetViewOnExportDialog();
+            resetViewOnExportExperimentDialog();
             if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                 experimentBindingList.clear();
             }
@@ -653,7 +668,7 @@ public class ImportExportController {
     /**
      * Reset views.
      */
-    private void resetViewOnExportDialog() {
+    private void resetViewOnExportExperimentDialog() {
         // reset the information fields
         exportExperimentDialog.getUserLabel().setText("");
         exportExperimentDialog.getPurposeTextArea().setText("");
@@ -698,7 +713,7 @@ public class ImportExportController {
     /**
      * Reset views.
      */
-    private void resetViewOnImportDialog() {
+    private void resetViewOnImportExperimentDialog() {
         // reset the information fields
         importExperimentDialog.getFileLabel().setText("");
         importExperimentDialog.getPurposeTextArea().setText("");
@@ -757,6 +772,7 @@ public class ImportExportController {
                 exportExperimentDialog.getExportProgressBar().setVisible(false);
                 JOptionPane.showMessageDialog(exportExperimentDialog, "Experiment was successfully exported!", "experiment exported", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("experiment " + experimentToExport + "_" + experimentToExport.getProject() + " exported to file");
+                resetViewOnExportExperimentDialog();
                 exportExperimentDialog.setVisible(false);
                 cellMissyController.onStartup();
             } catch (InterruptedException | ExecutionException | CancellationException ex) {
@@ -795,6 +811,7 @@ public class ImportExportController {
                 get();
                 JOptionPane.showMessageDialog(exportTemplateDialog, "Experiment template was successfully exported!", "experiment template exported", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("experiment template " + experimentTemplateToExport + "_" + experimentTemplateToExport.getProject() + " exported to file");
+                resetViewOnExportTemplateDialog();
                 exportTemplateDialog.setVisible(false);
                 cellMissyController.onStartup();
             } catch (InterruptedException | ExecutionException | CancellationException ex) {
@@ -894,8 +911,7 @@ public class ImportExportController {
                 }
                 algorithm.setWellHasImagingTypeList(wellHasImagingTypes);
             }
-
-            // save the experiment, save the migration data and update it
+            // save the experiment, save the migration data and update the experiment
             experimentService.save(importedExperiment);
             experimentService.saveMigrationDataForExperiment(importedExperiment);
             importedExperiment = experimentService.update(importedExperiment);
@@ -912,7 +928,7 @@ public class ImportExportController {
                 importExperimentDialog.getSaveExperimentProgressBar().setVisible(false);
                 JOptionPane.showMessageDialog(importExperimentDialog, "Imported experiment was successfully saved to DB.", "imported experiment saved", JOptionPane.INFORMATION_MESSAGE);
                 // hide dialog
-                resetViewOnImportDialog();
+                resetViewOnImportExperimentDialog();
                 importExperimentDialog.setVisible(false);
                 cellMissyController.onStartup();
                 LOG.info("Experiment " + importedExperiment + "_" + importedExperiment.getProject() + " saved");
@@ -924,27 +940,24 @@ public class ImportExportController {
     }
 
     /**
-     * Given a certain directory chosen by the user, this method is exporting
-     * the experiment to an XML file that is saved in the directory. The XML
-     * file has as title information that comes from the experiment itself.
+     * Given a certain directory chosen by the user, this method attempts to
+     * create an XML file. The XML file has as title information that comes from
+     * the experiment itself.
      *
      * @param directory
      */
-    private File createFile(String fileName, File directory, JDialog dialog) {
+    private File createXmlFile(String fileName, File directory, JDialog dialog) {
         // we create the unique XML file using the experiment info
         File xmlFile = new File(directory, fileName);
         try {
-            boolean success;
-            success = xmlFile.createNewFile();
+            boolean success = xmlFile.createNewFile();
             if (!success) {
                 Object[] options = {"Yes", "No", "Cancel"};
-                int showOptionDialog = JOptionPane.showOptionDialog(dialog, "File already exists in this directory. Do you want to replace it?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+                int showOptionDialog = JOptionPane.showOptionDialog(dialog, "File already exists in this directory. Do you want to replace it?", "file already exists", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
                 // if YES, user wants to delete existing file and replace it
                 if (showOptionDialog == 0) {
                     boolean delete = xmlFile.delete();
-                    if (delete) {
-                        JOptionPane.showMessageDialog(dialog, "XML file was replaced!", "file replaced", JOptionPane.INFORMATION_MESSAGE);
-                    } else {
+                    if (!delete) {
                         return null;
                     }
                     // if NO or CANCEL, returns already existing file
@@ -953,9 +966,9 @@ public class ImportExportController {
                 }
             }
         } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
             JOptionPane.showMessageDialog(dialog, "Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
         }
-
         return xmlFile;
     }
 
@@ -980,10 +993,12 @@ public class ImportExportController {
      * @param xmlFile
      */
     private void exportExperimentTemplateToXMLFile(File xmlFile) {
-        Experiment experiment = new Experiment();
-        experimentService.copySetupSettingsFromOtherExperiment(experimentTemplateToExport, experiment);
+        // we create a new temporary experiment, we copy the set up settings to it
+        // and then we export this new experiment to the XML file
+        Experiment tempExperiment = new Experiment();
+        experimentService.copySetupSettingsFromOtherExperiment(experimentTemplateToExport, tempExperiment);
         try {
-            experimentService.exportExperimentToXMLFile(experiment, xmlFile);
+            experimentService.exportExperimentToXMLFile(tempExperiment, xmlFile);
         } catch (JAXBException | FileNotFoundException ex) {
             LOG.error(ex.getMessage(), ex);
             JOptionPane.showMessageDialog(exportTemplateDialog, "Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
@@ -1005,7 +1020,7 @@ public class ImportExportController {
             if (xmlValidationErrorMesages.isEmpty()) {
                 LOG.info("Experiment imported from XML file " + xmlFile.getAbsolutePath());
                 // update info and condiitons table
-                updateInfoOnImportDialog(xmlFile);
+                updateInfoOnImportExperimentDialog(xmlFile);
                 updateConditionsTableModel(importExperimentDialog.getConditionsDetailsTable(), importedExperiment);
             } else {
                 // validation of the XML file was not successful: collect the validation messages and inform the user
@@ -1102,7 +1117,7 @@ public class ImportExportController {
      *
      * @param xmlFile
      */
-    private void updateInfoOnImportDialog(File xmlFile) {
+    private void updateInfoOnImportExperimentDialog(File xmlFile) {
         // file label
         importExperimentDialog.getFileLabel().setText(" " + xmlFile.getAbsolutePath());
         importExperimentDialog.getExpNumberLabel().setText(" " + importedExperiment);
@@ -1120,7 +1135,7 @@ public class ImportExportController {
     /**
      *
      */
-    private void updateInfoOnSaveImportedExpDialog() {
+    private void updateDetailsOnImportExperimentDialog() {
         // if a new parameter needs to be inserted to DB, we use its name for the label
         // otherwise, we set the label to "no new parameters to add"
         // PLATE FORMAT

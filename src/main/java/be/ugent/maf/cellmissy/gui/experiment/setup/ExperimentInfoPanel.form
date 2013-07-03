@@ -46,7 +46,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="overviewPanel" pref="484" max="32767" attributes="0"/>
+              <Component id="overviewPanel" pref="396" max="32767" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="experimentDataPanel" min="-2" pref="276" max="-2" attributes="1"/>
