@@ -17,11 +17,14 @@ import static junit.framework.Assert.*;
  * @author Paola Masuzzo
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:myTestSpringXMLConfig.xml")
-public class StatisticsCalculatorTest {
-
+@ContextConfiguration("classpath:mySpringXMLConfig.xml")
+public class StatisticsCalculatorTest {    
+    
     private static double[] xData;
     private static double[] yData;
+    
+    @Autowired
+    private StatisticsCalculator mann_Whitney_Statistics; 
 
     /**
      * SetUp data for test
@@ -39,9 +42,7 @@ public class StatisticsCalculatorTest {
      */
     @Test
     public void testMannWhitney() {
-        StatisticsCalculator statisticsCalculator = StatisticsTestFactory.getInstance().getStatisticsCalculator("mann_Whitney_Statistics");
-        double pValue = statisticsCalculator.executeStatisticalTest(xData, yData);
-        assertNotNull(pValue);
-        System.out.println("pValue is:  " + pValue);
+        double pValue = mann_Whitney_Statistics.executeStatisticalTest(xData, yData);
+        assertEquals(0.855, pValue, 0.001);        
     }
 }

@@ -18,7 +18,7 @@ import static junit.framework.Assert.*;
  * @author Paola Masuzzo
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:myTestSpringXMLConfig.xml")
+@ContextConfiguration("classpath:mySpringXMLConfig.xml")
 public class AreaPreProcessorTest {
 
     private static Double[] data;
