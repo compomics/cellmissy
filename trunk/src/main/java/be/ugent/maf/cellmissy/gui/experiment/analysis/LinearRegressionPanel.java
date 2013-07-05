@@ -195,8 +195,6 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
 
         groupsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         groupsList.setMinimumSize(new java.awt.Dimension(20, 20));
-        groupsList.setPreferredSize(new java.awt.Dimension(20, 20));
-        groupsList.setSelectedIndex(0);
         jScrollPane3.setViewportView(groupsList);
 
         addGroupButton.setText("Add group");
