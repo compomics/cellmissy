@@ -114,6 +114,9 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib</classpathPrefix>
                         </manifest>
+                        <manifestEntries>
+                            <Class-Path>ext/</Class-Path>
+                        </manifestEntries>
                     </archive>
                     <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}
                     </outputDirectory>
@@ -146,6 +149,23 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>copy-ext-folder</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.directory}/${project.artifactId}-${project.version}/ext
+                            </outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/ext</directory>                                    
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>                    
+                    <execution>
                         <id>copy-package-resources</id>
                         <phase>package</phase>
                         <goals>
@@ -157,8 +177,10 @@
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
+                                    <filtering>true</filtering>
                                     <includes>
                                         <include>cell_missy.properties</include>
+                                        <include>mySpringXMLConfig.xml</include>
                                     </includes>
                                 </resource>
                             </resources>

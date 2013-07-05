@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Paola
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:myTestSpringXMLConfig.xml")
+@ContextConfiguration("classpath:mySpringXMLConfig.xml")
 public class ObsepFileParserTest {
     
     @Autowired
