@@ -105,11 +105,6 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="infoLabel">
-          <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="12" style="1"/>
-            </Property>
-          </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="previousButton">
           <Properties>

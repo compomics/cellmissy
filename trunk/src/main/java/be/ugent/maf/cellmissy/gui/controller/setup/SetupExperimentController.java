@@ -34,6 +34,7 @@ import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.gui.project.NewProjectDialog;
 import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsOverviewListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.awt.Cursor;
@@ -1101,9 +1102,10 @@ public class SetupExperimentController {
             data[i][6] = plateConditionList.get(i).getAssayMedium().toString();
         }
         // create a new table model
-        DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnNames);
-        table.setModel(defaultTableModel);
-        for (int i = 0; i < defaultTableModel.getColumnCount(); i++) {
+        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
+        nonEditableTableModel.setDataVector(data, columnNames);
+        table.setModel(nonEditableTableModel);
+        for (int i = 0; i < nonEditableTableModel.getColumnCount(); i++) {
             GuiUtils.packColumn(table, i, 1);
         }
     }

@@ -79,7 +79,7 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>
+            <!--            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
                 <version>1.5</version>
@@ -145,6 +145,12 @@
                                         <include>LICENSE-2.0.txt</include>
                                     </includes>
                                 </resource>
+                                <resource>
+                                    <directory>./</directory>
+                                    <includes>
+                                        <include>resources/conf/CellMissy.png</include>
+                                    </includes>
+                                </resource>
                             </resources>
                         </configuration>
                     </execution>
@@ -160,11 +166,11 @@
                             </outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/resources/ext</directory>                                    
+                                    <directory>src/main/resources/ext</directory>
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>                    
+                    </execution>
                     <execution>
                         <id>copy-package-resources</id>
                         <phase>package</phase>

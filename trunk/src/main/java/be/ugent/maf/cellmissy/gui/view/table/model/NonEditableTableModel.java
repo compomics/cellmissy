@@ -10,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class LinearRegressionTableModel extends DefaultTableModel {
+public class NonEditableTableModel extends DefaultTableModel {
 
     @Override
     public boolean isCellEditable(int row, int column) {

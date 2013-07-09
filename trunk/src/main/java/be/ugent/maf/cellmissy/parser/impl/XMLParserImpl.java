@@ -51,7 +51,7 @@ public class XMLParserImpl implements XMLParser {
     public <T> T unmarshal(Class<T> clazz, File xmlFile) throws JAXBException, SAXException, IOException {
         // we need to validate against our schema
         SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-        Schema cellmissySchema = factory.newSchema(new ClassPathResource("schema/cellmissySchema.xsd").getFile());
+        Schema cellmissySchema = factory.newSchema(new ClassPathResource("schema/cellmissySchema.xsd").getURL());
         // we create a new JAXBContext object
         JAXBContext jAXBContext = JAXBContext.newInstance(clazz);
         // we then create an Unmarshaller object

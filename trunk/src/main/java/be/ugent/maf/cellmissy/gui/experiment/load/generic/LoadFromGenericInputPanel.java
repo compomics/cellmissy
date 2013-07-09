@@ -88,8 +88,6 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
         bottomPanel.setOpaque(false);
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        infolabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-
         finishButton.setText("Finish");
 
         resetButton.setText("Reset plate view");

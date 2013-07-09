@@ -315,10 +315,8 @@ public class CellMissyFrame extends javax.swing.JFrame {
         fileMenu.add(exportTemplateMenuItem);
         fileMenu.add(jSeparator2);
 
-        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
         exitMenuItem.setMnemonic('X');
         exitMenuItem.setText("Exit");
-        exitMenuItem.setPreferredSize(new java.awt.Dimension(139, 31));
         fileMenu.add(exitMenuItem);
 
         cellMissyMenuBar.add(fileMenu);

@@ -37,39 +37,39 @@ public class Playground {
         // get the application context
         ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
 
-        ExperimentService experimentService = (ExperimentService) context.getBean("experimentService");
-        WellService wellService = (WellService) context.getBean("wellService");
-        Experiment experiment = experimentService.findById(1L);
-        ExperimentStatus experimentStatus = experiment.getExperimentStatus();
-        System.out.println("" + experimentStatus);
+//        ExperimentService experimentService = (ExperimentService) context.getBean("experimentService");
+//        WellService wellService = (WellService) context.getBean("wellService");
+//        Experiment experiment = experimentService.findById(1L);
+//        ExperimentStatus experimentStatus = experiment.getExperimentStatus();
+//        System.out.println("" + experimentStatus);
+//
+//        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+//            List<Well> wells = new ArrayList<>();
+//            for (Well well : plateCondition.getWellList()) {
+//                Well fetchedWell = wellService.fetchMigrationData(well.getWellid());
+//                wells.add(fetchedWell);
+//            }
+//            plateCondition.setWellList(wells);
+//        }
+//
+//
+//        try {
+//            experimentService.exportExperimentToXMLFile(experiment, new File("C:\\Users\\paola\\Desktop\\test.xml"));
+//        } catch (JAXBException | FileNotFoundException ex) {
+//            Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
-        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
-            List<Well> wells = new ArrayList<>();
-            for (Well well : plateCondition.getWellList()) {
-                Well fetchedWell = wellService.fetchMigrationData(well.getWellid());
-                wells.add(fetchedWell);
-            }
-            plateCondition.setWellList(wells);
-        }
 
+        LocalContainerEntityManagerFactoryBean fb = (LocalContainerEntityManagerFactoryBean) context.getBean("&entityManagerFactory");
+        Ejb3Configuration cfg = new Ejb3Configuration();
+        Ejb3Configuration configured = cfg.configure(fb.getPersistenceUnitInfo(), fb.getJpaPropertyMap());
+        // export the database schema
+        SchemaExport schemaExport = new SchemaExport(configured.getHibernateConfiguration());
 
-        try {
-            experimentService.exportExperimentToXMLFile(experiment, new File("C:\\Users\\paola\\Desktop\\test.xml"));
-        } catch (JAXBException | FileNotFoundException ex) {
-            Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
-        }
- 
-
-        //        LocalContainerEntityManagerFactoryBean fb = (LocalContainerEntityManagerFactoryBean) context.getBean("&entityManagerFactory");
-        //        Ejb3Configuration cfg = new Ejb3Configuration();
-        //        Ejb3Configuration configured = cfg.configure(fb.getPersistenceUnitInfo(), fb.getJpaPropertyMap());
-        //        // export the database schema
-        //        SchemaExport schemaExport = new SchemaExport(configured.getHibernateConfiguration());
-        //
-        //        schemaExport.setOutputFile("C:\\Users\\paola\\Desktop\\testing_schema.txt");
-        //        schemaExport.setFormat(true);
-        //        schemaExport.execute(true, false, false, true);
-        //        schemaExport.execute(true, false, false, true);
+        schemaExport.setOutputFile("C:\\Users\\paola\\Desktop\\testing_schema.sql");
+        schemaExport.setFormat(true);
+        schemaExport.execute(true, false, false, true);
+        schemaExport.execute(true, false, false, true);
 
     }
 }

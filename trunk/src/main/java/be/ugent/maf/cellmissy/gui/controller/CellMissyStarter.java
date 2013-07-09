@@ -26,7 +26,7 @@ public class CellMissyStarter {
             File jarFile = new File(CellMissyStarter.class.getProtectionDomain().getCodeSource().getLocation().toURI());
             String mainClass = "be.ugent.maf.cellmissy.gui.CellMissyFrame";
             CompomicsWrapper compomicsWrapper = new CompomicsWrapper();
-            compomicsWrapper.launchTool("CellMissy", jarFile, null, mainClass);
+            compomicsWrapper.launchTool("CellMissy", jarFile, "CellMissy.png", mainClass);
         } catch (URISyntaxException ex) {
             LOG.error(ex);
         }

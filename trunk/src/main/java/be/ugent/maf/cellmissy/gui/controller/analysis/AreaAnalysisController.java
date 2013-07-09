@@ -26,7 +26,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.PValuesTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.RectIconCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.VelocityBarRenderer;
-import be.ugent.maf.cellmissy.gui.view.table.model.LinearRegressionTableModel;
+import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
@@ -221,9 +221,9 @@ public class AreaAnalysisController {
         columnNames[columnNames.length - 1] = "MAD";
         JTable slopesTable = linearRegressionPanel.getSlopesTable();
         // set model of table
-        LinearRegressionTableModel linearRegressionTableModel = new LinearRegressionTableModel();
-        linearRegressionTableModel.setDataVector(data, columnNames);
-        slopesTable.setModel(linearRegressionTableModel);
+        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
+        nonEditableTableModel.setDataVector(data, columnNames);
+        slopesTable.setModel(nonEditableTableModel);
         // set cell renderer: rect icon in the second column
         slopesTable.getColumnModel().getColumn(1).setCellRenderer(new RectIconCellRenderer());
         for (int columnIndex = 0; columnIndex < slopesTable.getColumnCount(); columnIndex++) {

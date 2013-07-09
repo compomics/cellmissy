@@ -53,7 +53,7 @@ public class Instrument implements Serializable {
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String name;
     @Basic(optional = false)
-    @Column(name = "conversion_factor", unique = true)
+    @Column(name = "conversion_factor")
     @XmlAttribute(required=true)
     private double conversionFactor;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "instrument")

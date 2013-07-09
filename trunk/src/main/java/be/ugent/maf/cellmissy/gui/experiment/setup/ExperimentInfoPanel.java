@@ -209,9 +209,9 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
                 .addComponent(infoLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6)
-                .addGap(26, 26, 26)
+                .addGap(18, 18, 18)
                 .addComponent(newProjectButton)
-                .addContainerGap())
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         experimentDataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment Data"));
@@ -369,7 +369,7 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(overviewPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
+                .addComponent(overviewPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(experimentDataPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
