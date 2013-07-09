@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static junit.framework.Assert.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -22,6 +23,8 @@ import static junit.framework.Assert.*;
 public class AreaPreProcessorTest {
 
     private static Double[] data;
+    @Autowired
+    private KernelDensityEstimator normal_Kernel;
 
     /**
      * set up data for test
@@ -39,19 +42,10 @@ public class AreaPreProcessorTest {
      */
     @Test
     public void testKernelDensityEstimation() {
-        KernelDensityEstimator kernelDensityEstimator = KernelDensityEstimatorFactory.getInstance().getKernelDensityEstimator("normal_Kernel");
-        List<double[]> estimateDensityFunction = kernelDensityEstimator.estimateDensityFunction(data);
+        List<double[]> estimateDensityFunction = normal_Kernel.estimateDensityFunction(data);
         double[] randomSamples = estimateDensityFunction.get(0);
         double[] estimatedValues = estimateDensityFunction.get(1);
         assertTrue(randomSamples.length == 4096);
         assertTrue(estimatedValues.length == 4096);
-
-        for (int i = 0; i < estimatedValues.length; i++) {
-            System.out.println("Random sample: " + randomSamples[i]);
-            System.out.println("Density value: " + estimatedValues[i]);
-        }
-
-        System.out.println("Mean random sample: " + AnalysisUtils.computeMean(randomSamples));
-        System.out.println("Mean density function: " + AnalysisUtils.computeMean(estimatedValues));
     }
 }

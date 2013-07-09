@@ -94,8 +94,6 @@ public class AnalysisExperimentPanel extends javax.swing.JPanel {
 
         nextButton.setText("Next");
 
-        infoLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-
         previousButton.setText("Previous");
 
         startButton.setText("Start");

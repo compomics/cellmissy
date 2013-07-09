@@ -26,6 +26,7 @@ import be.ugent.maf.cellmissy.gui.experiment.exporting.ExportTemplateDialog;
 import be.ugent.maf.cellmissy.gui.experiment.importing.ImportExperimentDialog;
 import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsOverviewListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.service.AssayService;
 import be.ugent.maf.cellmissy.service.CellLineService;
 import be.ugent.maf.cellmissy.service.EcmService;
@@ -630,9 +631,10 @@ public class ImportExportController {
             data[i][6] = plateConditionList.get(i).getAssayMedium().toString();
         }
         // create a new table model
-        DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnNames);
-        table.setModel(defaultTableModel);
-        for (int i = 0; i < defaultTableModel.getColumnCount(); i++) {
+        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
+        nonEditableTableModel.setDataVector(data, columnNames);
+        table.setModel(nonEditableTableModel);
+        for (int i = 0; i < nonEditableTableModel.getColumnCount(); i++) {
             GuiUtils.packColumn(table, i, 1);
         }
     }
@@ -927,11 +929,11 @@ public class ImportExportController {
                 importExperimentDialog.getProgressBarLabel().setVisible(false);
                 importExperimentDialog.getSaveExperimentProgressBar().setVisible(false);
                 JOptionPane.showMessageDialog(importExperimentDialog, "Imported experiment was successfully saved to DB.", "imported experiment saved", JOptionPane.INFORMATION_MESSAGE);
+                LOG.info("Experiment " + importedExperiment + "_" + importedExperiment.getProject() + " saved");
                 // hide dialog
                 resetViewOnImportExperimentDialog();
                 importExperimentDialog.setVisible(false);
                 cellMissyController.onStartup();
-                LOG.info("Experiment " + importedExperiment + "_" + importedExperiment.getProject() + " saved");
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 cellMissyController.handleUnexpectedError(ex);
@@ -997,6 +999,9 @@ public class ImportExportController {
         // and then we export this new experiment to the XML file
         Experiment tempExperiment = new Experiment();
         experimentService.copySetupSettingsFromOtherExperiment(experimentTemplateToExport, tempExperiment);
+        tempExperiment.setPurpose(experimentTemplateToExport.getPurpose());
+        tempExperiment.setExperimentStatus(experimentTemplateToExport.getExperimentStatus());
+        tempExperiment.setExperimentNumber(experimentTemplateToExport.getExperimentNumber());
         try {
             experimentService.exportExperimentToXMLFile(tempExperiment, xmlFile);
         } catch (JAXBException | FileNotFoundException ex) {
