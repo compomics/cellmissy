@@ -14,6 +14,11 @@ import javax.swing.SwingConstants;
  */
 public class CheckBoxCellRenderer extends JCheckBox {
 
+    /**
+     * Constructor: the JCheckBox is selected according to the boolean.
+     *
+     * @param isSelected
+     */
     public CheckBoxCellRenderer(boolean isSelected) {
         setSelected(isSelected);
         setHorizontalAlignment(SwingConstants.RIGHT);

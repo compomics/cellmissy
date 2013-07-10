@@ -14,6 +14,7 @@ import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.HelpDialog;
 import be.ugent.maf.cellmissy.gui.StartupDialog;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.Image;
@@ -24,13 +25,14 @@ import java.awt.event.WindowEvent;
 import java.util.Iterator;
 import java.util.logging.Level;
 import javax.swing.ImageIcon;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkEvent.EventType;
+import javax.swing.event.HyperlinkListener;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.ELProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -358,15 +360,14 @@ public class CellMissyController {
             }
         });
 
-        // format texts for the about and the help dialogs
-        SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
-        StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
-        StyledDocument styledDocument = aboutDialog.getAboutTextPane().getStyledDocument();
-        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
-        aboutDialog.getAboutTextPane().setCaretPosition(0);
-        helpDialog.getHelpTextPane().setCaretPosition(0);
-        styledDocument = helpDialog.getHelpTextPane().getStyledDocument();
-        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
+
+        // add the hyperlink events
+        aboutDialog.getAboutEditorPane().addHyperlinkListener(new LinkListener(aboutDialog.getAboutEditorPane()));
+        helpDialog.getHelpEditorPane().addHyperlinkListener(new LinkListener(helpDialog.getHelpEditorPane()));
+
+        aboutDialog.getAboutEditorPane().setCaretPosition(0);
+        helpDialog.getHelpEditorPane().setCaretPosition(0);
+
         Image helpImage = new ImageIcon(getClass().getResource("/icons/helpIcon.png")).getImage();
         helpDialog.setIconImage(helpImage);
         Image aboutImage = new ImageIcon(getClass().getResource("/icons/informationIcon.png")).getImage();
@@ -604,5 +605,34 @@ public class CellMissyController {
      */
     private CardLayout getCardLayout() {
         return (CardLayout) cellMissyFrame.getBackgroundPanel().getLayout();
+    }
+
+    /**
+     * This private class implements the
+     */
+    private class LinkListener implements HyperlinkListener {
+
+        private JEditorPane editorPane;
+
+        public LinkListener(JEditorPane editorPane) {
+            this.editorPane = editorPane;
+        }
+
+        @Override
+        public void hyperlinkUpdate(HyperlinkEvent evt) {
+            if (evt.getEventType().toString().equalsIgnoreCase(EventType.ENTERED.toString())) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            } else if (evt.getEventType().toString().equalsIgnoreCase(EventType.EXITED.toString())) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            } else if (evt.getEventType().toString().equalsIgnoreCase(EventType.ACTIVATED.toString())) {
+                if (evt.getDescription().startsWith("#")) {
+                    editorPane.scrollToReference(evt.getDescription());
+                } else {
+                    editorPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    BareBonesBrowserLaunch.openURL(evt.getDescription());
+                    editorPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+        }
     }
 }

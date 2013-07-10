@@ -4,8 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui;
 
-import com.compomics.util.examples.BareBonesBrowserLaunch;
-import javax.swing.JTextPane;
+import javax.swing.JEditorPane;
 
 /**
  *
@@ -13,8 +12,8 @@ import javax.swing.JTextPane;
  */
 public class AboutDialog extends javax.swing.JDialog {
 
-    public JTextPane getAboutTextPane() {
-        return aboutTextPane;
+    public JEditorPane getAboutEditorPane() {
+        return aboutEditorPane;
     }
 
     /**
@@ -34,74 +33,38 @@ public class AboutDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        aboutTextPane = new javax.swing.JTextPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         aboutEditorPane = new javax.swing.JEditorPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("CellMissy - About");
         setMinimumSize(new java.awt.Dimension(400, 400));
+        setPreferredSize(new java.awt.Dimension(400, 349));
 
-        aboutTextPane.setEditable(false);
-        aboutTextPane.setContentType("text/html"); // NOI18N
-        aboutTextPane.setText("<html>\n  <head>\n<TITLE></TITLE>\n  </head>\n  <body>\n<a name=\"#top\"/>\n        <H2>CellMissy</H2>\n        <i>Cell Migration Invasion Storage System</i>\n        <hr>\n        <br>\n        <p align=\"justify\">\n            <b>CellMissy</b> is being developed by Paola Masuzzo, Niels Hulstaert and Lennart Martens.\n            <br><br>\n            Project home page: <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        </p>\n        <br><br>\n        <h3>Supported Platforms</h3>\n        <p align=\"justify\">\n            The tool has been developed on Windows 7 and Windows 8, but should also work on older\n            Windows versions and on other platforms, as long as Java 1.7.0 (or newer) is installed.\n        </p>\n        <br><br>\n        <h3>Questions?</h3>\n        Please contact the developers of the tool.\n        See <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        for details.\n\t\t<br>\n        <hr>\n  </body>\n</html>");
-        aboutTextPane.setFocusable(false);
-        aboutTextPane.setPreferredSize(new java.awt.Dimension(300, 400));
-        jScrollPane1.setViewportView(aboutTextPane);
-
+        aboutEditorPane.setEditable(false);
         aboutEditorPane.setContentType("text/html"); // NOI18N
-        aboutEditorPane.setText("<html>\n  <head>\n<TITLE></TITLE>\n  </head>\n  <body>\n<a name=\"#top\"/>\n        <H2>CellMissy</H2>\n        <i>Cell Migration Invasion Storage System</i>\n        <hr>\n        <br>\n        <p align=\"justify\">\n            <b>CellMissy</b> is being developed by Paola Masuzzo, Niels Hulstaert and Lennart Martens.\n            <br><br>\n            Project home page: <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        </p>\n        <br><br>\n        <h3>Supported Platforms</h3>\n        <p align=\"justify\">\n            The tool has been developed on Windows 7 and Windows 8, but should also work on older\n            Windows versions and on other platforms, as long as Java 1.7.0 (or newer) is installed.\n        </p>\n        <br><br>\n        <h3>Questions?</h3>\n        Please contact the developers of the tool.\n        See <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        for details.\n\t\t<br>\n        <hr>\n  </body>\n</html>");
-        aboutEditorPane.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
-            public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {
-                aboutEditorPaneHyperlinkUpdate(evt);
-            }
-        });
+        aboutEditorPane.setText("<html>\n  <head>\n<TITLE></TITLE>\n  </head>\n  <body>\n<a name=\"#top\"/>\n        <H2>CellMissy</H2>\n        <i>Cell Migration Invasion Storage System</i>\n        <hr>\n        <br>\n        <p align=\"left\">\n            Project home page: <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        </p>\n        <br>\n        <h3>Supported Platforms</h3>\n        <p align=\"left\">\n            The tool has been developed on Windows 7 and Windows 8, but should also work on older\n            Windows versions and on other platforms, as long as Java 1.7.0 (or newer) is installed.\n        </p>\n        <br><br>\n        <h3>Questions?</h3>\n        Please contact the developers of the tool.\n        See <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        for details.\n\t\t<br>\n        <hr>\n  </body>\n</html>");
         jScrollPane2.setViewportView(aboutEditorPane);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void aboutEditorPaneHyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {//GEN-FIRST:event_aboutEditorPaneHyperlinkUpdate
-        // TODO add your handling code here:
-        if (evt.getEventType().toString().equalsIgnoreCase(
-                javax.swing.event.HyperlinkEvent.EventType.ENTERED.toString())) {
-            setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        } else if (evt.getEventType().toString().equalsIgnoreCase(
-                javax.swing.event.HyperlinkEvent.EventType.EXITED.toString())) {
-            setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        } else if (evt.getEventType().toString().equalsIgnoreCase(
-                javax.swing.event.HyperlinkEvent.EventType.ACTIVATED.toString())) {
-            if (evt.getDescription().startsWith("#")) {
-                aboutEditorPane.scrollToReference(evt.getDescription());
-            } else {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                BareBonesBrowserLaunch.openURL(evt.getDescription());
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-            }
-        }
-    }//GEN-LAST:event_aboutEditorPaneHyperlinkUpdate
 
     /**
      * @param args the command line arguments
@@ -146,8 +109,6 @@ public class AboutDialog extends javax.swing.JDialog {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JEditorPane aboutEditorPane;
-    private javax.swing.JTextPane aboutTextPane;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 }

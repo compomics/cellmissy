@@ -4,7 +4,6 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis;
 
-import javax.swing.JComboBox;
 import javax.swing.JTable;
 
 /**
@@ -42,7 +41,7 @@ public class DistanceMatrixDialog extends javax.swing.JDialog {
         distanceMatrixTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Select replicates");
+        setTitle("Technical Precision");
         setAlwaysOnTop(true);
         setMinimumSize(new java.awt.Dimension(600, 300));
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);

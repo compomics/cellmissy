@@ -125,7 +125,7 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
         topPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel1.setText("Setup Template XML file");
+        jLabel1.setText("template XML file");
 
         xmlFileLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
 
@@ -133,11 +133,13 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
         jLabel6.setText("plate format");
 
         plateFormatLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
+        plateFormatLabel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel7.setText("# conditions");
 
         numberConditionsLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
+        numberConditionsLabel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);
@@ -151,11 +153,13 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(xmlFileLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(numberConditionsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
-                        .addComponent(plateFormatLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                    .addComponent(xmlFileLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                    .addGroup(topPanelLayout.createSequentialGroup()
+                        .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(numberConditionsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(plateFormatLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(219, 219, 219)))
+                .addGap(535, 535, 535))
         );
 
         topPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel6, jLabel7});
@@ -276,7 +280,7 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
         newParametersPanelLayout.setHorizontalGroup(
             newParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(newParametersPanelLayout.createSequentialGroup()
-                .addGroup(newParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(newParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(newParametersPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(infoLabel))
@@ -299,7 +303,7 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
                             .addComponent(newEcmCompositionLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(newEcmDensityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(newTreatmentLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(407, Short.MAX_VALUE))
+                .addGap(407, 407, 407))
         );
 
         newParametersPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel10, jLabel11, jLabel12, jLabel13, jLabel14, jLabel8, jLabel9});
@@ -355,16 +359,16 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
         bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        cancelButton.setText("cancel");
+        cancelButton.setText("Cancel");
 
-        copySettingsButton.setText("copy settings");
+        copySettingsButton.setText("Copy Settings");
 
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addContainerGap(795, Short.MAX_VALUE)
+                .addContainerGap(791, Short.MAX_VALUE)
                 .addComponent(copySettingsButton)
                 .addGap(18, 18, 18)
                 .addComponent(cancelButton)

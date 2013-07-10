@@ -20,7 +20,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,66,0,0,4,-110"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,62,0,0,3,-124"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
@@ -49,18 +49,11 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="jScrollPane1" max="32767" attributes="0"/>
-                          <EmptySpace pref="66" max="32767" attributes="0"/>
-                      </Group>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="selectReplicatesButton" linkSize="3" alignment="0" pref="194" max="32767" attributes="0"/>
-                              <Component id="excludedReplicatesLabel" alignment="0" min="-2" pref="218" max="-2" attributes="1"/>
-                              <Component id="chooseTimeFramesButton" linkSize="3" alignment="0" pref="192" max="32767" attributes="1"/>
                               <Component id="showTimeIntervalCheckBox" linkSize="4" alignment="0" min="-2" max="-2" attributes="1"/>
                               <Component id="plotPointsCheckBox" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="plotLinesCheckBox" linkSize="4" alignment="0" min="-2" pref="83" max="-2" attributes="0"/>
@@ -71,12 +64,21 @@
                                   </Group>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="firstTimeFrameTextField" max="32767" attributes="0"/>
-                                      <Component id="lastTimeFrameTextField" pref="93" max="32767" attributes="1"/>
+                                      <Component id="lastTimeFrameTextField" linkSize="10" pref="62" max="32767" attributes="1"/>
+                                      <Component id="firstTimeFrameTextField" linkSize="10" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
+                              <Component id="chooseTimeFramesButton" alignment="0" min="-2" pref="163" max="-2" attributes="1"/>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="excludedReplicatesLabel" alignment="0" max="32767" attributes="1"/>
+                              <Component id="selectReplicatesButton" alignment="0" min="-2" pref="166" max="-2" attributes="0"/>
+                              <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -137,7 +139,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="chooseTimeFramesButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="choose time frames..."/>
+            <Property name="text" type="java.lang.String" value="Choose Time Frames..."/>
             <Property name="toolTipText" type="java.lang.String" value="Choose first and last time frame to analyze"/>
           </Properties>
         </Component>
@@ -157,7 +159,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="selectReplicatesButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="exclude replicates..."/>
+            <Property name="text" type="java.lang.String" value="Exclude Replicates..."/>
             <Property name="toolTipText" type="java.lang.String" value="Compute Distance Matrix and exclude replicates from dataset"/>
           </Properties>
         </Component>
@@ -199,7 +201,7 @@
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="11" style="1"/>
+              <Font name="Tahoma" size="10" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" value="First time frame"/>
           </Properties>
@@ -217,7 +219,7 @@
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="11" style="1"/>
+              <Font name="Tahoma" size="10" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Last time frame"/>
           </Properties>
@@ -231,7 +233,7 @@
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[20, 20]"/>
+          <Dimension value="[600, 700]"/>
         </Property>
       </Properties>
       <Constraints>

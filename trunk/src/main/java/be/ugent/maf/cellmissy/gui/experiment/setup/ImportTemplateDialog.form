@@ -48,21 +48,24 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jLabel1" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel6" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel7" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="xmlFileLabel" alignment="0" min="-2" pref="330" max="-2" attributes="0"/>
-                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="numberConditionsLabel" alignment="0" pref="111" max="32767" attributes="0"/>
-                          <Component id="plateFormatLabel" alignment="0" max="32767" attributes="0"/>
+                      <Component id="xmlFileLabel" alignment="0" pref="368" max="32767" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="numberConditionsLabel" alignment="0" min="-2" pref="111" max="-2" attributes="0"/>
+                              <Component id="plateFormatLabel" alignment="0" min="-2" pref="111" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="219" pref="219" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="535" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -95,7 +98,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="11" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Setup Template XML file"/>
+            <Property name="text" type="java.lang.String" value="template XML file"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="xmlFileLabel">
@@ -126,6 +129,9 @@
                 </LineBorder>
               </Border>
             </Property>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[20, 20]"/>
+            </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel7">
@@ -144,6 +150,9 @@
                   <Color PropertyName="color" blue="66" green="66" red="66" type="rgb"/>
                 </LineBorder>
               </Border>
+            </Property>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[20, 20]"/>
             </Property>
           </Properties>
         </Component>
@@ -234,13 +243,13 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                           <Component id="infoLabel" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel8" linkSize="5" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel9" linkSize="5" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -250,7 +259,7 @@
                               <Component id="jLabel13" linkSize="5" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel14" linkSize="5" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="newPlateFormatLabel" alignment="0" max="32767" attributes="0"/>
                               <Component id="newCellLineLabel" alignment="0" max="32767" attributes="0"/>
@@ -262,7 +271,7 @@
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace pref="407" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="407" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -453,7 +462,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="795" max="32767" attributes="0"/>
+                  <EmptySpace pref="791" max="32767" attributes="0"/>
                   <Component id="copySettingsButton" linkSize="15" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="cancelButton" linkSize="15" min="-2" max="-2" attributes="0"/>
@@ -476,12 +485,12 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="cancelButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="cancel"/>
+            <Property name="text" type="java.lang.String" value="Cancel"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="copySettingsButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="copy settings"/>
+            <Property name="text" type="java.lang.String" value="Copy Settings"/>
           </Properties>
         </Component>
       </SubComponents>

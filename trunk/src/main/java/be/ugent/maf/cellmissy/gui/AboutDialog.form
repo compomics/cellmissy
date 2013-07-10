@@ -7,6 +7,9 @@
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
       <Dimension value="[400, 400]"/>
     </Property>
+    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[400, 349]"/>
+    </Property>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -27,11 +30,9 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" min="-2" pref="225" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane2" pref="279" max="32767" attributes="0"/>
+              <Component id="jScrollPane2" pref="272" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -40,36 +41,13 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jScrollPane2" pref="0" max="32767" attributes="0"/>
-                  <Component id="jScrollPane1" pref="327" max="32767" attributes="0"/>
-              </Group>
+              <Component id="jScrollPane2" pref="327" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
-      <AuxValues>
-        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-      </AuxValues>
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-      <SubComponents>
-        <Component class="javax.swing.JTextPane" name="aboutTextPane">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-            <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;  &lt;head&gt;&#xa;&lt;TITLE&gt;&lt;/TITLE&gt;&#xa;  &lt;/head&gt;&#xa;  &lt;body&gt;&#xa;&lt;a name=&quot;#top&quot;/&gt;&#xa;        &lt;H2&gt;CellMissy&lt;/H2&gt;&#xa;        &lt;i&gt;Cell Migration Invasion Storage System&lt;/i&gt;&#xa;        &lt;hr&gt;&#xa;        &lt;br&gt;&#xa;        &lt;p align=&quot;justify&quot;&gt;&#xa;            &lt;b&gt;CellMissy&lt;/b&gt; is being developed by Paola Masuzzo, Niels Hulstaert and Lennart Martens.&#xa;            &lt;br&gt;&lt;br&gt;&#xa;            Project home page: &lt;a href=&quot;http://cellmissy.googlecode.com&quot;&gt;http:/cellmissy.googlecode.com&lt;/a&gt;&#xa;        &lt;/p&gt;&#xa;        &lt;br&gt;&lt;br&gt;&#xa;        &lt;h3&gt;Supported Platforms&lt;/h3&gt;&#xa;        &lt;p align=&quot;justify&quot;&gt;&#xa;            The tool has been developed on Windows 7 and Windows 8, but should also work on older&#xa;            Windows versions and on other platforms, as long as Java 1.7.0 (or newer) is installed.&#xa;        &lt;/p&gt;&#xa;        &lt;br&gt;&lt;br&gt;&#xa;        &lt;h3&gt;Questions?&lt;/h3&gt;&#xa;        Please contact the developers of the tool.&#xa;        See &lt;a href=&quot;http://cellmissy.googlecode.com&quot;&gt;http:/cellmissy.googlecode.com&lt;/a&gt;&#xa;        for details.&#xa;&#x9;&#x9;&lt;br&gt;&#xa;        &lt;hr&gt;&#xa;  &lt;/body&gt;&#xa;&lt;/html&gt;"/>
-            <Property name="focusable" type="boolean" value="false"/>
-            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[300, 400]"/>
-            </Property>
-          </Properties>
-        </Component>
-      </SubComponents>
-    </Container>
     <Container class="javax.swing.JScrollPane" name="jScrollPane2">
       <AuxValues>
         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -79,12 +57,10 @@
       <SubComponents>
         <Component class="javax.swing.JEditorPane" name="aboutEditorPane">
           <Properties>
+            <Property name="editable" type="boolean" value="false"/>
             <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;  &lt;head&gt;&#xa;&lt;TITLE&gt;&lt;/TITLE&gt;&#xa;  &lt;/head&gt;&#xa;  &lt;body&gt;&#xa;&lt;a name=&quot;#top&quot;/&gt;&#xa;        &lt;H2&gt;CellMissy&lt;/H2&gt;&#xa;        &lt;i&gt;Cell Migration Invasion Storage System&lt;/i&gt;&#xa;        &lt;hr&gt;&#xa;        &lt;br&gt;&#xa;        &lt;p align=&quot;justify&quot;&gt;&#xa;            &lt;b&gt;CellMissy&lt;/b&gt; is being developed by Paola Masuzzo, Niels Hulstaert and Lennart Martens.&#xa;            &lt;br&gt;&lt;br&gt;&#xa;            Project home page: &lt;a href=&quot;http://cellmissy.googlecode.com&quot;&gt;http:/cellmissy.googlecode.com&lt;/a&gt;&#xa;        &lt;/p&gt;&#xa;        &lt;br&gt;&lt;br&gt;&#xa;        &lt;h3&gt;Supported Platforms&lt;/h3&gt;&#xa;        &lt;p align=&quot;justify&quot;&gt;&#xa;            The tool has been developed on Windows 7 and Windows 8, but should also work on older&#xa;            Windows versions and on other platforms, as long as Java 1.7.0 (or newer) is installed.&#xa;        &lt;/p&gt;&#xa;        &lt;br&gt;&lt;br&gt;&#xa;        &lt;h3&gt;Questions?&lt;/h3&gt;&#xa;        Please contact the developers of the tool.&#xa;        See &lt;a href=&quot;http://cellmissy.googlecode.com&quot;&gt;http:/cellmissy.googlecode.com&lt;/a&gt;&#xa;        for details.&#xa;&#x9;&#x9;&lt;br&gt;&#xa;        &lt;hr&gt;&#xa;  &lt;/body&gt;&#xa;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;  &lt;head&gt;&#xa;&lt;TITLE&gt;&lt;/TITLE&gt;&#xa;  &lt;/head&gt;&#xa;  &lt;body&gt;&#xa;&lt;a name=&quot;#top&quot;/&gt;&#xa;        &lt;H2&gt;CellMissy&lt;/H2&gt;&#xa;        &lt;i&gt;Cell Migration Invasion Storage System&lt;/i&gt;&#xa;        &lt;hr&gt;&#xa;        &lt;br&gt;&#xa;        &lt;p align=&quot;left&quot;&gt;&#xa;            Project home page: &lt;a href=&quot;http://cellmissy.googlecode.com&quot;&gt;http:/cellmissy.googlecode.com&lt;/a&gt;&#xa;        &lt;/p&gt;&#xa;        &lt;br&gt;&#xa;        &lt;h3&gt;Supported Platforms&lt;/h3&gt;&#xa;        &lt;p align=&quot;left&quot;&gt;&#xa;            The tool has been developed on Windows 7 and Windows 8, but should also work on older&#xa;            Windows versions and on other platforms, as long as Java 1.7.0 (or newer) is installed.&#xa;        &lt;/p&gt;&#xa;        &lt;br&gt;&lt;br&gt;&#xa;        &lt;h3&gt;Questions?&lt;/h3&gt;&#xa;        Please contact the developers of the tool.&#xa;        See &lt;a href=&quot;http://cellmissy.googlecode.com&quot;&gt;http:/cellmissy.googlecode.com&lt;/a&gt;&#xa;        for details.&#xa;&#x9;&#x9;&lt;br&gt;&#xa;        &lt;hr&gt;&#xa;  &lt;/body&gt;&#xa;&lt;/html&gt;"/>
           </Properties>
-          <Events>
-            <EventHandler event="hyperlinkUpdate" listener="javax.swing.event.HyperlinkListener" parameters="javax.swing.event.HyperlinkEvent" handler="aboutEditorPaneHyperlinkUpdate"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>

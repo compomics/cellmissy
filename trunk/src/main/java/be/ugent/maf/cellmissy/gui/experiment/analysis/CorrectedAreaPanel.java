@@ -109,7 +109,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         showTimeIntervalCheckBox.setToolTipText("Show the current time interval on plot");
         showTimeIntervalCheckBox.setOpaque(false);
 
-        chooseTimeFramesButton.setText("choose time frames...");
+        chooseTimeFramesButton.setText("Choose Time Frames...");
         chooseTimeFramesButton.setToolTipText("Choose first and last time frame to analyze");
 
         excludedReplicatesLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -117,7 +117,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         excludedReplicatesLabel.setMinimumSize(new java.awt.Dimension(20, 20));
         excludedReplicatesLabel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        selectReplicatesButton.setText("exclude replicates...");
+        selectReplicatesButton.setText("Exclude Replicates...");
         selectReplicatesButton.setToolTipText("Compute Distance Matrix and exclude replicates from dataset");
 
         excludedReplicatesTextArea.setEditable(false);
@@ -134,7 +134,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         plotLinesCheckBox.setText("plot lines");
         plotLinesCheckBox.setOpaque(false);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         jLabel1.setText("First time frame");
 
         firstTimeFrameTextField.setEditable(false);
@@ -142,7 +142,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
         firstTimeFrameTextField.setFocusable(false);
         firstTimeFrameTextField.setOpaque(false);
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         jLabel2.setText("Last time frame");
 
         javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
@@ -153,13 +153,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(leftPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap(66, Short.MAX_VALUE))
-                    .addGroup(leftPanelLayout.createSequentialGroup()
                         .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(selectReplicatesButton, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
-                            .addComponent(excludedReplicatesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(chooseTimeFramesButton, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
                             .addComponent(showTimeIntervalCheckBox)
                             .addComponent(plotPointsCheckBox)
                             .addComponent(plotLinesCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -169,16 +163,23 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
                                     .addComponent(jLabel2))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(firstTimeFrameTextField)
-                                    .addComponent(lastTimeFrameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                    .addComponent(lastTimeFrameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
+                                    .addComponent(firstTimeFrameTextField)))
+                            .addComponent(chooseTimeFramesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(27, 27, 27))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, leftPanelLayout.createSequentialGroup()
+                        .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(excludedReplicatesLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(selectReplicatesButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGap(24, 24, 24))))
         );
-
-        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {chooseTimeFramesButton, selectReplicatesButton});
 
         leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotLinesCheckBox, plotPointsCheckBox, showTimeIntervalCheckBox});
 
         leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel2});
+
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {firstTimeFrameTextField, lastTimeFrameTextField});
 
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -218,7 +219,7 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
 
         replicatesAreaChartParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         replicatesAreaChartParentPanel.setOpaque(false);
-        replicatesAreaChartParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        replicatesAreaChartParentPanel.setPreferredSize(new java.awt.Dimension(600, 700));
         replicatesAreaChartParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;

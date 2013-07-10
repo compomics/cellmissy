@@ -105,19 +105,19 @@ public class SetupPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
 
-        experimentMetadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment metadata", 0, 0, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        experimentMetadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment metadata", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
         experimentMetadataPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         experimentMetadataPanel.setOpaque(false);
         experimentMetadataPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel1.setText("Number:");
+        jLabel1.setText("Number");
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel2.setText("Project:");
+        jLabel2.setText("Project");
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel3.setText("Purpose:");
+        jLabel3.setText("Purpose");
 
         projNumberLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
@@ -172,7 +172,7 @@ public class SetupPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
         add(experimentMetadataPanel, gridBagConstraints);
 
-        conditionsParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Conditions", 0, 0, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        conditionsParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
         conditionsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         conditionsParentPanel.setName(""); // NOI18N
         conditionsParentPanel.setOpaque(false);
@@ -188,7 +188,7 @@ public class SetupPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
         add(conditionsParentPanel, gridBagConstraints);
 
-        setupConditionsParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Conditions Setup", 0, 0, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        setupConditionsParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Conditions Setup", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
         setupConditionsParentPanel.setMinimumSize(new java.awt.Dimension(10, 10));
         setupConditionsParentPanel.setOpaque(false);
         setupConditionsParentPanel.setPreferredSize(new java.awt.Dimension(10, 10));
@@ -204,7 +204,7 @@ public class SetupPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(10, 0, 10, 10);
         add(setupConditionsParentPanel, gridBagConstraints);
 
-        platePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Plate", 0, 0, new java.awt.Font("Tahoma", 0, 12), new java.awt.Color(0, 0, 0))); // NOI18N
+        platePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Plate", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12), new java.awt.Color(0, 0, 0))); // NOI18N
         platePanel.setMinimumSize(new java.awt.Dimension(20, 20));
         platePanel.setName(""); // NOI18N
         platePanel.setOpaque(false);

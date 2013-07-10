@@ -51,8 +51,8 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
         return reportButton;
     }
 
-    public JButton getCopySettingsButton() {
-        return copySettingsButton;
+    public JButton getImportSettingsButton() {
+        return importSettingsButton;
     }
 
     public JButton getImportTemplateButton() {
@@ -80,7 +80,7 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
         infolabel = new javax.swing.JLabel();
         finishButton = new javax.swing.JButton();
         reportButton = new javax.swing.JButton();
-        copySettingsButton = new javax.swing.JButton();
+        importSettingsButton = new javax.swing.JButton();
         importTemplateButton = new javax.swing.JButton();
         exportTemplateButton = new javax.swing.JButton();
 
@@ -115,13 +115,13 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
         reportButton.setText("PDF Report");
         reportButton.setToolTipText("Create a PDF file with set-up for current experiment");
 
-        copySettingsButton.setText("Copy settings...");
-        copySettingsButton.setToolTipText("Copy the set-up settings from another experiment from this project");
+        importSettingsButton.setText("Import Settings...");
+        importSettingsButton.setToolTipText("Copy the set-up settings from another experiment from this project");
 
-        importTemplateButton.setText("Import template...");
+        importTemplateButton.setText("Import Template...");
         importTemplateButton.setToolTipText("Import an XMLfile and use it as template for the current experiment set-up");
 
-        exportTemplateButton.setText("Export template...");
+        exportTemplateButton.setText("Export Template...");
         exportTemplateButton.setToolTipText("Export the current experiment set-up to an XML file template");
 
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
@@ -134,7 +134,7 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(importTemplateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(copySettingsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(importSettingsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(reportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -148,7 +148,7 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {copySettingsButton, finishButton, nextButton, previousButton, reportButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {finishButton, importSettingsButton, nextButton, previousButton, reportButton});
 
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,7 +160,7 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
                         .addComponent(nextButton)
                         .addComponent(finishButton)
                         .addComponent(reportButton)
-                        .addComponent(copySettingsButton)
+                        .addComponent(importSettingsButton)
                         .addComponent(importTemplateButton)
                         .addComponent(exportTemplateButton))
                     .addComponent(infolabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -178,9 +178,9 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
-    private javax.swing.JButton copySettingsButton;
     private javax.swing.JButton exportTemplateButton;
     private javax.swing.JButton finishButton;
+    private javax.swing.JButton importSettingsButton;
     private javax.swing.JButton importTemplateButton;
     private javax.swing.JLabel infolabel;
     private javax.swing.JButton nextButton;

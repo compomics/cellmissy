@@ -444,7 +444,7 @@ public class AreaPreProcessingController {
             Double[][] transformedData = areaPreProcessingResults.getTransformedData();
             double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
             dataTable.setModel(new ComputedDataTableModel(plateCondition, transformedData, processedTimeFrames));
-            dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaController.getFormat(),SwingConstants.RIGHT));
+            dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaController.getFormat(), SwingConstants.RIGHT));
             dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         }
         areaAnalysisPanel.getTableInfoLabel().setText("Open area is converted to (complementary) cell covered area");
@@ -1290,10 +1290,11 @@ public class AreaPreProcessingController {
         // show both lines and points
         areaAnalysisPanel.getPlotLinesCheckBox().setSelected(true);
         areaAnalysisPanel.getPlotPointsCheckBox().setSelected(true);
-        // time steps table can not be edit, but it can be selected through columns
+        // time steps table can not be edit, but it can be selected through columns, reordering is disabled
         areaAnalysisPanel.getTimeStepsTable().setColumnSelectionAllowed(true);
         areaAnalysisPanel.getTimeStepsTable().setRowSelectionAllowed(false);
         areaAnalysisPanel.getTimeStepsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+        areaAnalysisPanel.getTimeStepsTable().getTableHeader().setReorderingAllowed(false);
 
         // set background to white
         areaAnalysisPanel.getTimeStepsTableScrollPane().getViewport().setBackground(Color.white);
