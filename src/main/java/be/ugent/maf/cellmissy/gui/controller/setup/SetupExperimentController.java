@@ -287,7 +287,7 @@ public class SetupExperimentController {
         setupSaved = false;
         // disable finish button
         setupExperimentPanel.getFinishButton().setEnabled(false);
-        setupExperimentPanel.getCopySettingsButton().setEnabled(false);
+        setupExperimentPanel.getImportSettingsButton().setEnabled(false);
         // reset experiment info text fields
         experimentInfoPanel.getNumberTextField().setText("");
         experimentInfoPanel.getPurposeTextArea().setText("");
@@ -503,7 +503,7 @@ public class SetupExperimentController {
         nextButtonListener.registerDoc(experimentInfoPanel.getPurposeTextArea().getDocument());
         nextButtonListener.registerDoc(((JTextField) experimentInfoPanel.getDateChooser().getDateEditor().getUiComponent()).getDocument());
         // document listener for the copy settings button
-        ExperimentListener copySettingsButtonListener = new ExperimentListener(setupExperimentPanel.getCopySettingsButton());
+        ExperimentListener copySettingsButtonListener = new ExperimentListener(setupExperimentPanel.getImportSettingsButton());
         copySettingsButtonListener.registerDoc(experimentInfoPanel.getNumberTextField().getDocument());
         copySettingsButtonListener.registerDoc(experimentInfoPanel.getPurposeTextArea().getDocument());
         copySettingsButtonListener.registerDoc(((JTextField) experimentInfoPanel.getDateChooser().getDateEditor().getUiComponent()).getDocument());
@@ -752,7 +752,7 @@ public class SetupExperimentController {
         setupExperimentPanel.getFinishButton().setEnabled(false);
         setupExperimentPanel.getReportButton().setVisible(false);
         // hide also the button to copy experiment settings, and even the one to import/export the setup to a txt file
-        setupExperimentPanel.getCopySettingsButton().setVisible(false);
+        setupExperimentPanel.getImportSettingsButton().setVisible(false);
         setupExperimentPanel.getImportTemplateButton().setVisible(false);
         setupExperimentPanel.getExportTemplateButton().setVisible(false);
         cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and fill in experiment/microscope metadata.");
@@ -797,7 +797,7 @@ public class SetupExperimentController {
          * JDialog, with all the experiments for the current project. The user
          * can select an experiment and copy the settings from it.
          */
-        setupExperimentPanel.getCopySettingsButton().addActionListener(new ActionListener() {
+        setupExperimentPanel.getImportSettingsButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // fill in the lists of experiments
@@ -1509,7 +1509,7 @@ public class SetupExperimentController {
         setupExperimentPanel.getFinishButton().setEnabled(setupExperimentPanel.getFinishButton().isEnabled());
         setupExperimentPanel.getExportTemplateButton().setEnabled(setupExperimentPanel.getExportTemplateButton().isEnabled());
         // now show the copy settings button, as well as the ones for the export/import of template
-        setupExperimentPanel.getCopySettingsButton().setVisible(true);
+        setupExperimentPanel.getImportSettingsButton().setVisible(true);
         setupExperimentPanel.getExportTemplateButton().setVisible(true);
         // the export is still disabled, you can use it after having created the PDF report
         setupExperimentPanel.getExportTemplateButton().setEnabled(false);
@@ -1535,7 +1535,7 @@ public class SetupExperimentController {
         setupExperimentPanel.getNextButton().setVisible(true);
         setupExperimentPanel.getFinishButton().setVisible(false);
         setupExperimentPanel.getReportButton().setVisible(false);
-        setupExperimentPanel.getCopySettingsButton().setVisible(false);
+        setupExperimentPanel.getImportSettingsButton().setVisible(false);
         setupExperimentPanel.getImportTemplateButton().setVisible(false);
         setupExperimentPanel.getExportTemplateButton().setVisible(false);
         setupExperimentPanel.getTopPanel().revalidate();

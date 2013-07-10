@@ -90,7 +90,7 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
 
         finishButton.setText("Finish");
 
-        resetButton.setText("Reset plate view");
+        resetButton.setText("Reset Plate View");
 
         startButton.setText("Start");
 

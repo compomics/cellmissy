@@ -103,7 +103,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="resetButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Reset plate view"/>
+            <Property name="text" type="java.lang.String" value="Reset Plate View"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JProgressBar" name="saveDataProgressBar">

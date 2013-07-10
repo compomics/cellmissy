@@ -106,26 +106,25 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         imagingNameTextField = new javax.swing.JTextField();
         removeButton = new javax.swing.JButton();
         rawDataPanel = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         rawDataTable = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
 
-        experimentMetadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment metadata", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        experimentMetadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment metadata"));
         experimentMetadataPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         experimentMetadataPanel.setOpaque(false);
         experimentMetadataPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel1.setText("Number:");
+        jLabel1.setText("Number");
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel2.setText("Project:");
+        jLabel2.setText("Project");
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel3.setText("Purpose:");
+        jLabel3.setText("Purpose");
 
         projNumberLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
@@ -170,7 +169,7 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
                     .addGroup(experimentMetadataPanelLayout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -184,7 +183,7 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
         add(experimentMetadataPanel, gridBagConstraints);
 
-        conditionsOverviewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        conditionsOverviewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions Details"));
         conditionsOverviewPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         conditionsOverviewPanel.setName(""); // NOI18N
         conditionsOverviewPanel.setOpaque(false);
@@ -212,7 +211,7 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
             conditionsOverviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(conditionsOverviewPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -246,7 +245,7 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 10);
         rightPanel.add(plateParentPanel, gridBagConstraints);
 
-        userInputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Load data"));
+        userInputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Load Data"));
         userInputPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         userInputPanel.setOpaque(false);
         userInputPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -258,14 +257,14 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel4.setText("Dataset");
 
-        addDatasetButton.setText("Add dataset");
+        addDatasetButton.setText("Add Dataset");
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel5.setText("Imaging Type");
 
-        addImagingButton.setText("Add imaging type");
+        addImagingButton.setText("Add Imaging Type");
 
-        removeButton.setText("Remove dataset / imaging type");
+        removeButton.setText("Remove Dataset / Imaging Type");
 
         javax.swing.GroupLayout userInputPanelLayout = new javax.swing.GroupLayout(userInputPanel);
         userInputPanel.setLayout(userInputPanelLayout);
@@ -303,13 +302,14 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
                         .addComponent(datasetNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(addDatasetButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(imagingNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(addImagingButton))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(addImagingButton)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(removeButton)
                 .addContainerGap())
@@ -325,12 +325,10 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 10);
         rightPanel.add(userInputPanel, gridBagConstraints);
 
+        rawDataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Data imported (for current well)"));
         rawDataPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         rawDataPanel.setOpaque(false);
         rawDataPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        jLabel6.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        jLabel6.setText("Data imported (for selected well)");
 
         rawDataTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -351,18 +349,14 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
             rawDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rawDataPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(rawDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
-                    .addComponent(jLabel6))
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 810, Short.MAX_VALUE)
                 .addContainerGap())
         );
         rawDataPanelLayout.setVerticalGroup(
             rawDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(rawDataPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rawDataPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -402,7 +396,6 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;

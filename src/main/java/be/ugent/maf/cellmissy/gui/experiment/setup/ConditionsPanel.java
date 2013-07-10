@@ -58,9 +58,9 @@ public class ConditionsPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(30, 30));
 
-        addButton.setText("Add condition");
+        addButton.setText("Add Condition");
 
-        removeButton.setText("Remove condition");
+        removeButton.setText("Remove Condition");
 
         jScrollPane1.setBorder(null);
         jScrollPane1.setAutoscrolls(true);

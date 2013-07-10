@@ -13,6 +13,8 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
+ * Renderer to be used in a Table: renders a rectangular icon with a colour that
+ * depends on the index of the row.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -26,6 +28,14 @@ public class RectIconCellRenderer extends DefaultTableCellRenderer {
         setIcon(new RectIcon(color));
         setHorizontalAlignment(SwingConstants.CENTER);
         setText("");
+        // we need to specify that the background has to be the same as usually, the default
+        if (isSelected) {
+            setBackground(table.getSelectionBackground());
+            setForeground(table.getSelectionForeground());
+        } else {
+            setBackground(table.getBackground());
+            setForeground(table.getForeground());
+        }
         return this;
     }
 }

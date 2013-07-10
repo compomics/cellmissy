@@ -104,8 +104,8 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
         jPanel2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         infoTextPane = new javax.swing.JTextPane();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        infoTextPane = new javax.swing.JTextPane();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        infoTextPane1 = new javax.swing.JTextPane();
         tablePanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         conditionsDetailsTable = new javax.swing.JTable();
@@ -122,7 +122,7 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
 
         topPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        expOverviewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("selected experiment overview"));
+        expOverviewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Experiment Overiew"));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("exp date");
@@ -253,12 +253,12 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
         infoTextPane.setFocusable(false);
         jScrollPane3.setViewportView(infoTextPane);
 
-        jScrollPane3.setBorder(null);
+        jScrollPane5.setBorder(null);
 
-        infoTextPane.setEditable(false);
-        infoTextPane.setText("With this option, you can select a (conducted) experiment that belongs to the current project and retrieve all its settings, in order to use them as settings for the experiment you are now planning. When selecting an experiment, you see an overview of it; then click the \"copy settings\" button: this will assign the same settings to the current experiment. You can still change these settings in the layout view, once the setting have been copied.");
-        infoTextPane.setFocusable(false);
-        jScrollPane3.setViewportView(infoTextPane);
+        infoTextPane1.setEditable(false);
+        infoTextPane1.setText("With this option, you can select a (conducted) experiment that belongs to the current project and retrieve all its settings, in order to use them as settings for the experiment you are now planning. When selecting an experiment, you see an overview of it; then click the \"copy settings\" button: this will assign the same settings to the current experiment. You can still change these settings in the layout view, once the setting have been copied.");
+        infoTextPane1.setFocusable(false);
+        jScrollPane5.setViewportView(infoTextPane1);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -311,7 +311,7 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
         getContentPane().add(topPanel, gridBagConstraints);
 
-        tablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions"));
+        tablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions Details"));
         tablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         conditionsDetailsTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -357,16 +357,16 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
         bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        copySettingsButton.setText("copy settings");
+        copySettingsButton.setText("Copy Settings");
 
-        cancelButton.setText("cancel");
+        cancelButton.setText("Cancel");
 
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addContainerGap(577, Short.MAX_VALUE)
+                .addContainerGap(573, Short.MAX_VALUE)
                 .addComponent(copySettingsButton)
                 .addGap(18, 18, 18)
                 .addComponent(cancelButton)
@@ -448,6 +448,7 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
     private javax.swing.JLabel expPurposeLabel;
     private javax.swing.JList experimentsList;
     private javax.swing.JTextPane infoTextPane;
+    private javax.swing.JTextPane infoTextPane1;
     private javax.swing.JLabel instrumentLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -461,6 +462,7 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JLabel magnificationLabel;
     private javax.swing.JLabel numberConditionsLabel;
     private javax.swing.JLabel plateFormatLabel;

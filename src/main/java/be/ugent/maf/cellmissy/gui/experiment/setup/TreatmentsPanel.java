@@ -235,7 +235,7 @@ public class TreatmentsPanel extends javax.swing.JPanel {
 
         jLabel1.setText("%");
 
-        addNewButton.setText("Add new drugs/treatments...");
+        addNewButton.setText("Add new Drugs-Treatments...");
 
         serumLabel.setText("Serum");
 
@@ -306,7 +306,7 @@ public class TreatmentsPanel extends javax.swing.JPanel {
                         .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
                         .addComponent(addNewButton)
                         .addGap(13, 13, 13))))
         );

@@ -32,7 +32,7 @@ public class AddDrugsTreatmentsDialog extends javax.swing.JDialog {
     /**
      * Creates new form AddDrugsTreatmentsDialog
      * @param parent
-     * @param modal  
+     * @param modal
      */
     public AddDrugsTreatmentsDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -52,12 +52,12 @@ public class AddDrugsTreatmentsDialog extends javax.swing.JDialog {
         treatmentTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Add new drugs or treatments");
+        setTitle("Add new Drugs or Treatments");
         setAlwaysOnTop(true);
 
-        addDrugButton.setText("Add drug");
+        addDrugButton.setText("Add Drug");
 
-        addTreatmentButton.setText("Add treatment");
+        addTreatmentButton.setText("Add Treatment");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -72,7 +72,7 @@ public class AddDrugsTreatmentsDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(addDrugButton, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(addTreatmentButton, javax.swing.GroupLayout.Alignment.LEADING))
-                .addContainerGap(57, Short.MAX_VALUE))
+                .addContainerGap(55, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addDrugButton, addTreatmentButton});
@@ -101,7 +101,7 @@ public class AddDrugsTreatmentsDialog extends javax.swing.JDialog {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

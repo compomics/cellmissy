@@ -157,7 +157,7 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
 
         compositionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        addCompositionButton.setText("Add new composition");
+        addCompositionButton.setText("Add new Composition");
 
         volumeUnitLabel.setMinimumSize(new java.awt.Dimension(10, 10));
 

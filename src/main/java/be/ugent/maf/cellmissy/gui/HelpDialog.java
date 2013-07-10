@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui;
 
-import javax.swing.JTextPane;
+import javax.swing.JEditorPane;
 
 /**
  *
@@ -12,8 +12,8 @@ import javax.swing.JTextPane;
  */
 public class HelpDialog extends javax.swing.JDialog {
 
-    public JTextPane getHelpTextPane() {
-        return helpTextPane;
+    public JEditorPane getHelpEditorPane() {
+        return helpEditorPane;
     }
 
     /**
@@ -33,21 +33,20 @@ public class HelpDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        helpTextPane = new javax.swing.JTextPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        helpEditorPane = new javax.swing.JEditorPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("CellMissy - Help");
-        setAlwaysOnTop(true);
         setMinimumSize(new java.awt.Dimension(20, 20));
         setModal(true);
+        setPreferredSize(new java.awt.Dimension(400, 452));
         setResizable(false);
 
-        helpTextPane.setEditable(false);
-        helpTextPane.setContentType("text/html"); // NOI18N
-        helpTextPane.setText("<html>\n  <head>\n<TITLE></TITLE>\n  </head>\n  <body>\n<a name=\"#top\"/>\n        <H2>CellMissy</H2>\n        <i>Cell Migration Invasion Storage System</i>\n        <hr>\n        <br>\n        <p align=\"justify\">\n            <b>CellMissy</b> is a cross-platform data management system for cell migration/invasion data that simplifies and fully automates data management, storage and analysis, from experimental set-up to data visualization and exploration.\n            <br><br>\n            Project home page: <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        </p>\n        <br><br>\n        <h3>Supported Platforms</h3>\n        <p align=\"justify\">\n            The tool has been developed on Windows 7 and Windows 8, but should also work on older\n            Windows versions and on other platforms, as long as Java 1.7.0 (or newer) is installed.\n        </p>\n        <br><br>\n        <h3>Questions?</h3>\n        Please contact the developers of the tool.\n        See <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        for details.\n\t\t<p align=\"justify\">\n\t\tHere you can download a PDF manual that better illustrates the modules of the tool and how to use them. Furthermore, example datasets are present as well, one dataset produced with a scratch wound assay performed in a 12-well plate, and one obtained with a cell exclusion zone assay performed in a 96-well plate. For more details, see the manual.\n        </p>\n\t\t<br>\n        <hr>\n  </body>\n</html>");
-        helpTextPane.setFocusable(false);
-        jScrollPane1.setViewportView(helpTextPane);
+        helpEditorPane.setEditable(false);
+        helpEditorPane.setContentType("text/html"); // NOI18N
+        helpEditorPane.setText("<html>\n  <head>\n<TITLE></TITLE>\n  </head>\n  <body>\n<a name=\"#top\"/>\n        <H2>CellMissy</H2>\n        <i>Cell Migration Invasion Storage System</i>\n        <hr>\n        <br>\n        <p align=\"left\">\n            <b>CellMissy</b> is a cross-platform data management system for cell migration/invasion data that simplifies and fully automates data management, storage and analysis, from experimental set-up to data visualization and exploration.\n            <br><br>\n            Project home page: <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        </p>\n        <br>\n        <p align=\"left\">\n            The tool is designed to follow the steps encountered in a typical wound healing-like experiment, and it is mainly composed of three different modules:\n\t\t\t<br><br>\n\t\t\t<b>Experiment Manager</b>\n\t\t\t<p align=\"left\">\n            This module guides you through the set-up of a new cell migration/invasion experiment. Plate format, assay and more informative metadata can be chosen. A PDF report can be generated summarizing the experimental conditions to study, as well as presenting the plate lay-out.\n            </p>\n\t\t\t<br><br>\n\t\t\t<b>Data Loader</b>\n\t\t\t<p align=\"left\">\n            This module allows you to load the relevant cell migration data into the <b>CellMissy</b> system. Loading is either based on .txt files or automatically import from customized image analysis/management workflow (namely the CELLMIA package).\n            </p>\n\t\t\t<br><br>\n\t\t\t<b>Data Analyzer</b>\n\t\t\t<p align=\"left\">\n            This module allows you to explore and analyze the data; statistics can be performed, and a PDF report can be created summarizing the results of the analysis session through\n\t\t\ttables, text and graphs.\n            </p>\n\t\t\t<br>\n        </p>\n        <br>\n        <h3>Questions?</h3>\n        Please contact the developers of the tool.\n        See <a href=\"http://cellmissy.googlecode.com\">http:/cellmissy.googlecode.com</a>\n        for details.\n\t\t<p align=\"left\">\n\t\tHere you can download a PDF manual that better illustrates the modules of the tool and how to use them. Furthermore, example datasets are present as well, one dataset produced with a scratch wound assay performed in a 12-well plate, and one obtained with a cell exclusion zone assay performed in a 96-well plate. For more details, see the manual.\n        </p>\n\t\t<br>\n        <hr>\n  </body>\n</html>");
+        jScrollPane2.setViewportView(helpEditorPane);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -55,14 +54,14 @@ public class HelpDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -111,7 +110,7 @@ public class HelpDialog extends javax.swing.JDialog {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextPane helpTextPane;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JEditorPane helpEditorPane;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 }

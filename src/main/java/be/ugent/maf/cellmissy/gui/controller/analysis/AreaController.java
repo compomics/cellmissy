@@ -457,7 +457,7 @@ public class AreaController {
     private void onCardSwitch() {
         String currentCardName = GuiUtils.getCurrentCardName(areaPreProcessingController.getAreaAnalysisPanel().getBottomPanel());
         switch (currentCardName) {
-            case "resultsImporterPanel":
+            case "dataInspectingPanel":
                 // disable previous button
                 analysisExperimentPanel.getPreviousButton().setEnabled(false);
                 // enable next button
@@ -1052,6 +1052,7 @@ public class AreaController {
             try {
                 get();
                 dataAnalysisPanel.getConditionsList().setEnabled(true);
+                dataAnalysisPanel.getConditionsList().requestFocusInWindow();
                 if (!areaPreProcessingController.getTimeStepsBindingList().isEmpty()) {
                     //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO look at motility track RESULTS
                     areaPreProcessingController.showTimeStepsInTable();

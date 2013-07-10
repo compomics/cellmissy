@@ -66,19 +66,19 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
 
-        experimentMetadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment metadata", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        experimentMetadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment Metadata"));
         experimentMetadataPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         experimentMetadataPanel.setOpaque(false);
         experimentMetadataPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel1.setText("Number:");
+        jLabel1.setText("Number");
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel2.setText("Project:");
+        jLabel2.setText("Project");
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel3.setText("Purpose:");
+        jLabel3.setText("Purpose");
 
         projNumberLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
@@ -128,7 +128,8 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
+                .addGap(29, 29, 29))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -141,7 +142,7 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(60, 60, 0, 0);
         add(experimentMetadataPanel, gridBagConstraints);
 
-        conditionsOverviewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        conditionsOverviewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions Details"));
         conditionsOverviewPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         conditionsOverviewPanel.setName(""); // NOI18N
         conditionsOverviewPanel.setOpaque(false);
@@ -169,7 +170,7 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
             conditionsOverviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, conditionsOverviewPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -183,7 +184,7 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(10, 60, 60, 0);
         add(conditionsOverviewPanel, gridBagConstraints);
 
-        plateParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Plate", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12), new java.awt.Color(0, 0, 0))); // NOI18N
+        plateParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Plate", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, new java.awt.Color(0, 0, 0)));
         plateParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         plateParentPanel.setName(""); // NOI18N
         plateParentPanel.setOpaque(false);

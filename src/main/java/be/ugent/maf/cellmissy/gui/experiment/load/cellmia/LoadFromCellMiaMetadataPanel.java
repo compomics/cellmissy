@@ -106,7 +106,7 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
         infoLabel.setText("Click on a project to see the relative experiments in progress.");
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("project description");
+        jLabel8.setText("Project Description");
 
         projectDescriptionTextArea.setEditable(false);
         projectDescriptionTextArea.setColumns(20);

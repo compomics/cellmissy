@@ -398,7 +398,7 @@ public class AreaAnalysisController {
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
         // add the NONE (default) correction method
-        // when the none is selected, the software does not correct for multiple hypotheses
+        // when the none is selected, CellMissy does not correct for multiple hypotheses
         statisticsDialog.getCorrectionMethodsComboBox().addItem("none");
         // fill in combo box: get all the correction methods from the factory
         Set<String> correctionBeanNames = MultipleComparisonsCorrectionFactory.getInstance().getCorrectionBeanNames();
@@ -410,7 +410,6 @@ public class AreaAnalysisController {
         for (String testName : statisticsCalculatorBeanNames) {
             statisticsDialog.getStatisticalTestComboBox().addItem(testName);
         }
-
         //significance level to 0.05
         statisticsDialog.getSignificanceLevelComboBox().setSelectedIndex(1);
 
@@ -765,7 +764,8 @@ public class AreaAnalysisController {
     }
 
     /**
-     * Get conditions according to selected rows and add them to the groupsList
+     * Get conditions according to selected rows and add them to the Analysis
+     * Group
      */
     private void addGroupToAnalysis() {
         List<PlateCondition> plateConditionsList = new ArrayList<>();
@@ -777,21 +777,29 @@ public class AreaAnalysisController {
             AreaAnalysisResults areaAnalysisResults = analysisMap.get(selectedCondition);
             areaAnalysisResultsList.add(areaAnalysisResults);
         }
-        // make a new analysis group, with those conditions and those results
-        AnalysisGroup analysisGroup = new AnalysisGroup(plateConditionsList, areaAnalysisResultsList);
-        //set name for the group
-        if (!linearRegressionPanel.getGroupNameTextField().getText().isEmpty()) {
-            analysisGroup.setGroupName(linearRegressionPanel.getGroupNameTextField().getText());
-            // set correction method to NONE by default
-            analysisGroup.setCorrectionMethodName("none");
-            linearRegressionPanel.getGroupNameTextField().setText("");
-            // actually add the group to the analysis list
-            if (!groupsBindingList.contains(analysisGroup)) {
-                groupsBindingList.add(analysisGroup);
+        // we check here that at least two conditions have been selected to be part of the analysis group
+        // else, the analysis does not really make sense
+        if (plateConditionsList.size() > 1) {
+            // make a new analysis group, with those conditions and those results
+            AnalysisGroup analysisGroup = new AnalysisGroup(plateConditionsList, areaAnalysisResultsList);
+            //set name for the group
+            if (!linearRegressionPanel.getGroupNameTextField().getText().isEmpty()) {
+                analysisGroup.setGroupName(linearRegressionPanel.getGroupNameTextField().getText());
+                // set correction method to NONE by default
+                analysisGroup.setCorrectionMethodName("none");
+                linearRegressionPanel.getGroupNameTextField().setText("");
+                // actually add the group to the analysis list
+                if (!groupsBindingList.contains(analysisGroup)) {
+                    groupsBindingList.add(analysisGroup);
+                }
+            } else {
+                // ask the user to type a name for the group
+                areaController.showMessage("Please type a name for the analysis group.", "no name typed for the analysis group", JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
-            // ask the user to type a name for the group
-            areaController.showMessage("Please choose a name for the analysis group.", "", JOptionPane.INFORMATION_MESSAGE);
+            // we tell the user that statistics cannot be performed on only one condition !!
+            // the selection is basically ignored
+            areaController.showMessage("Sorry! It is not possible to perform analysis on one condition only!\nPlease select at least two conditions.", "at least two conditions need to be chosen for analysis", JOptionPane.WARNING_MESSAGE);
         }
     }
 
