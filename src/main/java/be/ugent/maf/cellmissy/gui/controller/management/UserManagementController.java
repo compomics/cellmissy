@@ -2,10 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller;
+package be.ugent.maf.cellmissy.gui.controller.management;
 
 import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.User;
+import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.user.UserManagementDialog;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.service.UserService;
@@ -33,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * User Panel Controller: user management (create, search and delete users from
+ * User Management Controller: user management (create, search and delete users from
  * DB) Parent Controller: CellMissy Controller (main controller)
  *
  * @author Paola
@@ -59,8 +60,8 @@ public class UserManagementController {
      */
     public void init() {
         bindingGroup = new BindingGroup();
-        //create a new user panel and init view
-        userManagementDialog = new UserManagementDialog(cellMissyController.cellMissyFrame, true);
+        //create a new user dialog and init view
+        userManagementDialog = new UserManagementDialog(cellMissyController.getCellMissyFrame(), true);
         // init main view
         initUserManagementDialog();
     }
@@ -80,7 +81,7 @@ public class UserManagementController {
      */
     public void showUserManagementDialog() {
         userManagementDialog.pack();
-        GuiUtils.centerDialogOnFrame(cellMissyController.cellMissyFrame, userManagementDialog);
+        GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), userManagementDialog);
         userManagementDialog.setVisible(true);
     }
 
@@ -94,7 +95,7 @@ public class UserManagementController {
     }
 
     /**
-     * initialize User Panel
+     * initialize User Dialog
      */
     private void initUserManagementDialog() {
         // init userJList
@@ -112,7 +113,7 @@ public class UserManagementController {
         // autobind email address
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, userManagementDialog.getUsersList(), BeanProperty.create("selectedElement.email"), userManagementDialog.getEmailTextField(), BeanProperty.create("text"), "emailbinding");
         bindingGroup.addBinding(binding);
-        // autobind role 
+        // autobind role
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, userManagementDialog.getUsersList(), BeanProperty.create("selectedElement.role"), userManagementDialog.getRoleComboBox(), BeanProperty.create("selectedItem"), "rolebinding");
         bindingGroup.addBinding(binding);
         // autobind password
@@ -148,7 +149,7 @@ public class UserManagementController {
             }
         });
 
-        //"search user" action
+        //"save user" action
         userManagementDialog.getSaveUserButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

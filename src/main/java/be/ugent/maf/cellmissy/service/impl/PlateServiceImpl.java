@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.repository.PlateFormatRepository;
 import be.ugent.maf.cellmissy.service.PlateService;
 import java.util.List;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,5 +53,12 @@ public class PlateServiceImpl implements PlateService {
     @Override
     public void save(PlateFormat entity) {
         plateFormatRepository.save(entity);
+    }
+
+    @Override
+    public PlateFormat fetchExperiments(PlateFormat plateFormat) {
+        PlateFormat findById = findById(plateFormat.getPlateFormatid());
+        Hibernate.initialize(findById.getExperimentList());
+        return findById;
     }
 }

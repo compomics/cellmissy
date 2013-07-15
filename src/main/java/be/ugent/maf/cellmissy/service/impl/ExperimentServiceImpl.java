@@ -16,8 +16,6 @@ import be.ugent.maf.cellmissy.entity.EcmDensity;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.ImagingType;
-import be.ugent.maf.cellmissy.entity.Instrument;
-import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
@@ -31,8 +29,6 @@ import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
 import be.ugent.maf.cellmissy.parser.XMLParser;
 import be.ugent.maf.cellmissy.repository.ExperimentRepository;
-import be.ugent.maf.cellmissy.repository.InstrumentRepository;
-import be.ugent.maf.cellmissy.repository.MagnificationRepository;
 import be.ugent.maf.cellmissy.repository.WellHasImagingTypeRepository;
 import be.ugent.maf.cellmissy.service.AssayService;
 import be.ugent.maf.cellmissy.service.CellLineService;
@@ -64,11 +60,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     @Autowired
     private ExperimentRepository experimentRepository;
     @Autowired
-    private InstrumentRepository instrumentRepository;
-    @Autowired
     private WellHasImagingTypeRepository wellHasImagingTypeRepository;
-    @Autowired
-    private MagnificationRepository magnificationRepository;
     @Autowired
     private PlateService plateService;
     @Autowired
@@ -335,16 +327,6 @@ public class ExperimentServiceImpl implements ExperimentService {
     public void delete(Experiment entity) {
         entity = experimentRepository.findById(entity.getExperimentid());
         experimentRepository.delete(entity);
-    }
-
-    @Override
-    public List<Instrument> findAllInstruments() {
-        return instrumentRepository.findAll();
-    }
-
-    @Override
-    public List<Magnification> findAllMagnifications() {
-        return magnificationRepository.findAll();
     }
 
     @Override

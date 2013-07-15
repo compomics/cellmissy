@@ -11,6 +11,8 @@ import be.ugent.maf.cellmissy.entity.PlateFormat;
  * @author Paola
  */
 public interface PlateService extends GenericService<PlateFormat, Long> {
-    
+
     PlateFormat findByFormat(int format);
+
+    public PlateFormat fetchExperiments(PlateFormat plateFormat);
 }
