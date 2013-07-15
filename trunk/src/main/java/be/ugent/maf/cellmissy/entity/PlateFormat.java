@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -51,16 +52,16 @@ public class PlateFormat implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "format")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private int format;
     @Column(name = "number_of_cols")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private Integer numberOfCols;
     @Column(name = "number_of_rows")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private Integer numberOfRows;
     @Column(name = "well_size")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private Double wellSize;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateFormat")
     @XmlTransient
@@ -135,19 +136,25 @@ public class PlateFormat implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (plateFormatid != null ? plateFormatid.hashCode() : 0);
+        int hash = 5;
+        hash = 79 * hash + Objects.hashCode(this.numberOfCols);
+        hash = 79 * hash + Objects.hashCode(this.numberOfRows);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PlateFormat)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        PlateFormat other = (PlateFormat) object;
-        if ((this.plateFormatid == null && other.plateFormatid != null) || (this.plateFormatid != null && !this.plateFormatid.equals(other.plateFormatid))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PlateFormat other = (PlateFormat) obj;
+        if (!Objects.equals(this.numberOfCols, other.numberOfCols)) {
+            return false;
+        }
+        if (!Objects.equals(this.numberOfRows, other.numberOfRows)) {
             return false;
         }
         return true;

@@ -89,7 +89,7 @@ public class UserManagementDialog extends javax.swing.JDialog {
         saveUserButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("User management");
+        setTitle("User Management");
 
         usersPanel.setBackground(new java.awt.Color(255, 255, 255));
         usersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Users"));
@@ -126,7 +126,7 @@ public class UserManagementDialog extends javax.swing.JDialog {
         );
 
         detailsPanel.setBackground(new java.awt.Color(255, 255, 255));
-        detailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Details for selected user"));
+        detailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected User Details"));
         detailsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
 
         firstNameLabel.setText("first name");
@@ -139,13 +139,13 @@ public class UserManagementDialog extends javax.swing.JDialog {
 
         jLabel1.setText("password");
 
-        addUserButton.setText("add user");
+        addUserButton.setText("Add User");
         addUserButton.setToolTipText("create a new user and add it to the list");
 
-        deleteUserButton.setText("delete user");
+        deleteUserButton.setText("Delete User");
         deleteUserButton.setToolTipText("delete the selected user both from DB and from the list");
 
-        saveUserButton.setText("save/update user");
+        saveUserButton.setText("Save/Update User");
         saveUserButton.setToolTipText("save or update the selected user");
 
         javax.swing.GroupLayout detailsPanelLayout = new javax.swing.GroupLayout(detailsPanel);
@@ -189,7 +189,6 @@ public class UserManagementDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(detailsPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, 0)
                         .addComponent(addUserButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deleteUserButton)
@@ -249,7 +248,7 @@ public class UserManagementDialog extends javax.swing.JDialog {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

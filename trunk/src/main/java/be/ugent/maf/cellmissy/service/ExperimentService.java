@@ -8,7 +8,6 @@ import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.ImagingType;
-import be.ugent.maf.cellmissy.entity.Instrument;
 import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
 import java.io.File;
@@ -19,6 +18,7 @@ import javax.xml.bind.JAXBException;
 import org.xml.sax.SAXException;
 
 /**
+ * Experiment Service interface
  *
  * @author Paola
  */
@@ -51,20 +51,6 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * Reset folders to null
      */
     public void resetFolders();
-
-    /**
-     * Find all instruments
-     *
-     * @return
-     */
-    public List<Instrument> findAllInstruments();
-
-    /**
-     * Find all magnifications
-     *
-     * @return
-     */
-    public List<Magnification> findAllMagnifications();
 
     /**
      * Finds all experiments numbers by id of a certain project

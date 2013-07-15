@@ -4,6 +4,8 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.gui.controller.management.InstrumentManagementController;
+import be.ugent.maf.cellmissy.gui.controller.management.UserManagementController;
 import be.ugent.maf.cellmissy.gui.controller.setup.SetupExperimentController;
 import be.ugent.maf.cellmissy.gui.controller.load.generic.LoadExperimentFromGenericInputController;
 import be.ugent.maf.cellmissy.gui.controller.load.cellmia.LoadExperimentFromCellMiaController;
@@ -13,6 +15,7 @@ import be.ugent.maf.cellmissy.gui.AboutDialog;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.HelpDialog;
 import be.ugent.maf.cellmissy.gui.StartupDialog;
+import be.ugent.maf.cellmissy.gui.controller.management.PlateManagementController;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import java.awt.CardLayout;
@@ -66,6 +69,10 @@ public class CellMissyController {
     private LoginController loginController;
     @Autowired
     private UserManagementController userManagementController;
+    @Autowired
+    private InstrumentManagementController instrumentManagementController;
+    @Autowired
+    private PlateManagementController plateManagementController;
     @Autowired
     private OverviewController overviewController;
     @Autowired
@@ -142,8 +149,9 @@ public class CellMissyController {
         overviewController.init();
         loginController.init();
         userManagementController.init();
+        instrumentManagementController.init();
+        plateManagementController.init();
         importExportController.init();
-
         // initialize main frame
         initMainFrame();
         // initialize start up dialog
@@ -239,8 +247,11 @@ public class CellMissyController {
      * Initialize section for ADMIN users
      */
     public void initAdminSection() {
-        // menu item and create project item are not enabled for standand users
+        // enable all the management sections
         cellMissyFrame.getUserMenuItem().setEnabled(true);
+        cellMissyFrame.getAssayMenuItem().setEnabled(true);
+        cellMissyFrame.getInstrumentMenuItem().setEnabled(true);
+        cellMissyFrame.getPlateMenuItem().setEnabled(true);
         setupExperimentController.getExperimentInfoPanel().getNewProjectButton().setEnabled(true);
         // user management
         cellMissyFrame.getUserMenuItem().addActionListener(new ActionListener() {
@@ -249,13 +260,32 @@ public class CellMissyController {
                 userManagementController.showUserManagementDialog();
             }
         });
+        // instrument management
+        cellMissyFrame.getInstrumentMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                instrumentManagementController.showInstrumentManagementDialog();
+            }
+        });
+        // plate management
+        cellMissyFrame.getPlateMenuItem().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                plateManagementController.showPlateManagementDialog();
+            }
+        });
     }
 
     /**
      * Disable ADMIN section for STANDARD users
      */
     public void disableAdminSection() {
+        // disable all the management sections
         cellMissyFrame.getUserMenuItem().setEnabled(false);
+        cellMissyFrame.getAssayMenuItem().setEnabled(false);
+        cellMissyFrame.getInstrumentMenuItem().setEnabled(false);
+        cellMissyFrame.getPlateMenuItem().setEnabled(false);
         // disable actions on experiments for standard users
         overviewController.disableAdminSection();
         setupExperimentController.disableAdminSection();

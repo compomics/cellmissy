@@ -36,6 +36,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsOverviewListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.service.ExperimentService;
+import be.ugent.maf.cellmissy.service.InstrumentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -136,6 +137,8 @@ public class SetupExperimentController {
     private ProjectService projectService;
     @Autowired
     private ExperimentService experimentService;
+    @Autowired
+    private InstrumentService instrumentService;
     private GridBagConstraints gridBagConstraints;
 
     /**
@@ -468,11 +471,11 @@ public class SetupExperimentController {
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectsList());
         bindingGroup.addBinding(jListBinding);
         //init instrument combo box
-        instrumentBindingList = ObservableCollections.observableList(experimentService.findAllInstruments());
+        instrumentBindingList = ObservableCollections.observableList(instrumentService.findAll());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, instrumentBindingList, experimentInfoPanel.getInstrumentComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         //init magnification combo box
-        magnificationBindingList = ObservableCollections.observableList(experimentService.findAllMagnifications());
+        magnificationBindingList = ObservableCollections.observableList(instrumentService.findAllMagnifications());
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, magnificationBindingList, experimentInfoPanel.getMagnificationComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         // do the binding

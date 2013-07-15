@@ -31,6 +31,7 @@ import be.ugent.maf.cellmissy.service.AssayService;
 import be.ugent.maf.cellmissy.service.CellLineService;
 import be.ugent.maf.cellmissy.service.EcmService;
 import be.ugent.maf.cellmissy.service.ExperimentService;
+import be.ugent.maf.cellmissy.service.InstrumentService;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.TreatmentService;
@@ -107,6 +108,8 @@ public class ImportExportController {
     // services
     @Autowired
     private ExperimentService experimentService;
+    @Autowired
+    private InstrumentService instrumentService;
     @Autowired
     private ProjectService projectService;
     @Autowired
@@ -309,11 +312,11 @@ public class ImportExportController {
         importExperimentDialog.getConditionsDetailsTable().getTableHeader().setReorderingAllowed(false);
         // instruments
         //init instrument combo box
-        instrumentBindingList = ObservableCollections.observableList(experimentService.findAllInstruments());
+        instrumentBindingList = ObservableCollections.observableList(instrumentService.findAll());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, instrumentBindingList, importExperimentDialog.getInstrumentComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         // magnifications
-        magnificationBindingList = ObservableCollections.observableList(experimentService.findAllMagnifications());
+        magnificationBindingList = ObservableCollections.observableList(instrumentService.findAllMagnifications());
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, magnificationBindingList, importExperimentDialog.getMagnificationComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         // projects
