@@ -15,6 +15,7 @@ import be.ugent.maf.cellmissy.gui.AboutDialog;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.HelpDialog;
 import be.ugent.maf.cellmissy.gui.StartupDialog;
+import be.ugent.maf.cellmissy.gui.controller.management.AssayManagementController;
 import be.ugent.maf.cellmissy.gui.controller.management.PlateManagementController;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
@@ -73,6 +74,8 @@ public class CellMissyController {
     private InstrumentManagementController instrumentManagementController;
     @Autowired
     private PlateManagementController plateManagementController;
+    @Autowired
+    private AssayManagementController assayManagementController;
     @Autowired
     private OverviewController overviewController;
     @Autowired
@@ -151,6 +154,7 @@ public class CellMissyController {
         userManagementController.init();
         instrumentManagementController.init();
         plateManagementController.init();
+        assayManagementController.init();
         importExportController.init();
         // initialize main frame
         initMainFrame();
@@ -269,10 +273,16 @@ public class CellMissyController {
         });
         // plate management
         cellMissyFrame.getPlateMenuItem().addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 plateManagementController.showPlateManagementDialog();
+            }
+        });
+        // assay management
+        cellMissyFrame.getAssayMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                assayManagementController.showAssayManagementDialog();
             }
         });
     }

@@ -70,7 +70,7 @@ public class InstrumentManagementController {
     }
 
     /**
-     * Show user management dialog
+     * Show instrument management dialog
      */
     public void showInstrumentManagementDialog() {
         instrumentManagementDialog.pack();
@@ -82,12 +82,12 @@ public class InstrumentManagementController {
      * Initialize Instrument Dialog
      */
     private void initInstrumentManagementDialog() {
-        // init userJList
+        // init instrumentJList
         instrumentBindingList = ObservableCollections.observableList(instrumentService.findAll());
         JListBinding instrumentListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, instrumentBindingList, instrumentManagementDialog.getInstrumentsList());
         bindingGroup.addBinding(instrumentListBinding);
 
-        // init user binding
+        // init instrument binding
         // autobind name
         Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, instrumentManagementDialog.getInstrumentsList(), BeanProperty.create("selectedElement.name"), instrumentManagementDialog.getNameTextField(), BeanProperty.create("text"), "namebinding");
         bindingGroup.addBinding(binding);
@@ -118,13 +118,13 @@ public class InstrumentManagementController {
                 instrumentBindingList.add(newInstrument);
                 // select the instrument in the list
                 instrumentManagementDialog.getInstrumentsList().setSelectedIndex(instrumentBindingList.indexOf(newInstrument));
-                // the user still has to be saved to DB!
+                // the instrument still has to be saved to DB!
                 cellMissyController.showMessage("The new instrument has been added to the list." + "\n" + "You can now choose a name and a conversion factor, and then save it to DB.", "instrument added, not saved yet", JOptionPane.INFORMATION_MESSAGE);
                 instrumentManagementDialog.getNameTextField().requestFocusInWindow();
             }
         });
 
-        //"save instrument" action
+        //"save / update instrument" action
         instrumentManagementDialog.getSaveInstrumentButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -182,7 +182,7 @@ public class InstrumentManagementController {
         instrumentManagementDialog.getDeleteInstrumentButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // check that a user has been selected first
+                // check that a instrument has been selected first
                 if (instrumentManagementDialog.getInstrumentsList().getSelectedValue() != null) {
                     Instrument instrumentToDelete = (Instrument) instrumentManagementDialog.getInstrumentsList().getSelectedValue();
                     // if instrument id is not null, delete the instrument from the Db, else only from the list
@@ -194,7 +194,7 @@ public class InstrumentManagementController {
                     } else {
                         // if the instrument does not have an id, we can delete it just from the list
                         // we do not need a swing worker to do so
-                        // remove user from users list
+                        // remove instrument from instruments list
                         instrumentBindingList.remove(instrumentToDelete);
                         resetInstrumentFields();
                         cellMissyController.showMessage("Instrument (" + instrumentToDelete + ")" + " was deleted from current list!", "instrument deleted", JOptionPane.INFORMATION_MESSAGE);
@@ -209,7 +209,7 @@ public class InstrumentManagementController {
         instrumentManagementDialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
-                // if user changes are pending, warn the user
+                // if instrument changes are pending, warn the user
                 if (instrumentNotSaved()) {
                     cellMissyController.showMessage("Instrument added to the list has not been saved!" + "\n" + "Save the instrument, or delete it from the list.", "instrument not saved", JOptionPane.WARNING_MESSAGE);
                 } else {
@@ -272,9 +272,9 @@ public class InstrumentManagementController {
                 message = "Instrument (" + instrument + ")" + " was deleted from DB!";
                 title = "instrument deleted";
                 optionMessage = JOptionPane.INFORMATION_MESSAGE;
-                // delete user from DB
+                // delete instrument from DB
                 instrumentService.delete(instrument);
-                // remove user from users list
+                // remove instrument from instruments list
                 instrumentBindingList.remove(instrument);
                 resetInstrumentFields();
             } else {

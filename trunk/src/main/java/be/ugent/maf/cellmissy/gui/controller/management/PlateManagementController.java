@@ -85,8 +85,8 @@ public class PlateManagementController {
     private void initPlateManagementDialog() {
         // init plate format list
         plateFormatBindingList = ObservableCollections.observableList(plateService.findAll());
-        JListBinding instrumentListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateFormatBindingList, plateManagementDialog.getPlateFormatsList());
-        bindingGroup.addBinding(instrumentListBinding);
+        JListBinding plateListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateFormatBindingList, plateManagementDialog.getPlateFormatsList());
+        bindingGroup.addBinding(plateListBinding);
         bindingGroup.bind();
         setupPlatePanel = new SetupPlatePanel();
         plateManagementDialog.getPlateFormatParentPanel().add(setupPlatePanel, gridBagConstraints);
@@ -117,7 +117,7 @@ public class PlateManagementController {
         plateManagementDialog.getAddPlateFormatButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // create a new user
+                // create a new plate format
                 PlateFormat newPlateFormat = new PlateFormat();
                 // set default nonsense values for it
                 // try to parse the values inserted for number of rows and number of columns
@@ -133,7 +133,7 @@ public class PlateManagementController {
                     // add the plate format to the current list, first check if its not present yet
                     if (!plateFormatBindingList.contains(newPlateFormat)) {
                         plateFormatBindingList.add(newPlateFormat);
-                        // select the user in the list
+                        // select the plate format in the list
                         plateManagementDialog.getPlateFormatsList().setSelectedIndex(plateFormatBindingList.indexOf(newPlateFormat));
                         resetPlateFormatFields();
                         // the plate format still has to be saved to DB!
@@ -155,7 +155,7 @@ public class PlateManagementController {
         plateManagementDialog.getDeletePlateFormatButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // check that a user has been selected first
+                // check that a plate format has been selected first
                 if (plateManagementDialog.getPlateFormatsList().getSelectedValue() != null) {
                     PlateFormat plateFormatToDelete = (PlateFormat) plateManagementDialog.getPlateFormatsList().getSelectedValue();
                     // if plate format id is not null, delete the plate format from the Db, else only from the list
@@ -201,7 +201,7 @@ public class PlateManagementController {
         plateManagementDialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
-                // if user changes are pending, warn the user
+                // if plate format changes are pending, warn the user
                 if (plateFormatNotSaved()) {
                     cellMissyController.showMessage("Plate Format added to the list has not been saved!" + "\n" + "Save the plate format, or delete it from the list.", "plate format not saved", JOptionPane.WARNING_MESSAGE);
                 } else {
@@ -265,9 +265,9 @@ public class PlateManagementController {
                 message = "Plate Format (" + plateFormat + ")" + " was deleted from DB!";
                 title = "plate format deleted";
                 optionMessage = JOptionPane.INFORMATION_MESSAGE;
-                // delete user from DB
+                // delete plate format from DB
                 plateService.delete(plateFormat);
-                // remove user from users list
+                // remove plate format from plate formats list
                 plateFormatBindingList.remove(plateFormat);
                 plateManagementDialog.getPlateFormatsList().setSelectedIndex(0);
             } else {

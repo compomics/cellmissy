@@ -144,10 +144,6 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="userMenuItem">
               <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+U"/>
-                </Property>
-                <Property name="mnemonic" type="int" value="85"/>
                 <Property name="text" type="java.lang.String" value="User Management"/>
                 <Property name="iconTextGap" type="int" value="2"/>
               </Properties>

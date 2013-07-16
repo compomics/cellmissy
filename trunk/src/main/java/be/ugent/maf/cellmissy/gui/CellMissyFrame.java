@@ -353,8 +353,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         editMenu.add(plateMenuItem);
         editMenu.add(jSeparator10);
 
-        userMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_MASK));
-        userMenuItem.setMnemonic('U');
         userMenuItem.setText("User Management");
         userMenuItem.setIconTextGap(2);
         editMenu.add(userMenuItem);

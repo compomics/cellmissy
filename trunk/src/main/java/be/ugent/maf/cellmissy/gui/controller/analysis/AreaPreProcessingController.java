@@ -192,7 +192,7 @@ public class AreaPreProcessingController {
      *
      * @return
      */
-    public List<PlateCondition> getProcessedConditions() {
+    public List<PlateCondition> getProcessedConditions() {  
         List<PlateCondition> processedConditions = new ArrayList<>();
         for (PlateCondition plateCondition : preProcessingMap.keySet()) {
             if (preProcessingMap.get(plateCondition) != null) {
