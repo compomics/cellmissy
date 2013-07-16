@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.view.renderer;
 import java.awt.Component;
 import java.text.Format;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 
 /**
  * CellRenderer for CheckBox
@@ -31,7 +32,7 @@ public class CheckBoxOutliersRenderer extends OutliersRenderer {
         Component result = null;
         // If we are at last row return a CheckBoxCellRenderer, that extends a JCheckbox
         if (row == table.getRowCount() - 1) {
-            result = new CheckBoxCellRenderer((boolean) value);
+            result = new CheckBoxCellRenderer((boolean) value, SwingConstants.RIGHT);
         } else {
             // else, call the super
             result = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);

@@ -63,20 +63,21 @@ public class PlateManagementDialog extends javax.swing.JDialog {
         platesPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         plateFormatsList = new javax.swing.JList();
-        addPlateFormatButton = new javax.swing.JButton();
-        savePlateFormatButton = new javax.swing.JButton();
         plateFormatParentPanel = new javax.swing.JPanel();
-        columnsTextField = new javax.swing.JTextField();
-        rowsTextField = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
         deletePlateFormatButton = new javax.swing.JButton();
         rowsLabel = new javax.swing.JLabel();
         columnsLabel = new javax.swing.JLabel();
+        rowsTextField = new javax.swing.JTextField();
+        columnsTextField = new javax.swing.JTextField();
+        savePlateFormatButton = new javax.swing.JButton();
+        addPlateFormatButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Plate Management");
-        setMinimumSize(new java.awt.Dimension(850, 650));
+        setMinimumSize(new java.awt.Dimension(750, 650));
         setModal(true);
-        setPreferredSize(new java.awt.Dimension(850, 650));
+        setPreferredSize(new java.awt.Dimension(750, 650));
 
         platesPanel.setBackground(new java.awt.Color(255, 255, 255));
         platesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plate Formats"));
@@ -112,17 +113,13 @@ public class PlateManagementDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        addPlateFormatButton.setText("Add Plate Format");
-        addPlateFormatButton.setToolTipText("create a new user and add it to the list");
-
-        savePlateFormatButton.setText("Save Plate Format");
-        savePlateFormatButton.setToolTipText("save or update the selected user");
-
         plateFormatParentPanel.setBackground(new java.awt.Color(255, 255, 255));
         plateFormatParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Plate Format"));
         plateFormatParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         plateFormatParentPanel.setPreferredSize(new java.awt.Dimension(200, 200));
         plateFormatParentPanel.setLayout(new java.awt.GridBagLayout());
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("New Plate Format"));
 
         deletePlateFormatButton.setText("Delete Plate Format");
         deletePlateFormatButton.setToolTipText("delete the selected user both from DB and from the list");
@@ -130,6 +127,50 @@ public class PlateManagementDialog extends javax.swing.JDialog {
         rowsLabel.setText("number of rows");
 
         columnsLabel.setText("number of columns");
+
+        savePlateFormatButton.setText("Save Plate Format");
+        savePlateFormatButton.setToolTipText("save or update the selected user");
+
+        addPlateFormatButton.setText("Add Plate Format");
+        addPlateFormatButton.setToolTipText("create a new user and add it to the list");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(rowsLabel)
+                    .addComponent(columnsLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(deletePlateFormatButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(savePlateFormatButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addPlateFormatButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rowsTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
+                    .addComponent(columnsTextField, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rowsLabel)
+                    .addComponent(rowsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(columnsLabel)
+                    .addComponent(columnsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(addPlateFormatButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(deletePlateFormatButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(savePlateFormatButton)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -139,47 +180,23 @@ public class PlateManagementDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(plateFormatParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(rowsLabel)
-                            .addComponent(columnsLabel))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(deletePlateFormatButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(savePlateFormatButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(addPlateFormatButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(rowsTextField)
-                            .addComponent(columnsTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(plateFormatParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(19, 19, 19))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(platesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(105, 105, 105))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(rowsLabel)
-                            .addComponent(rowsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(columnsLabel)
-                            .addComponent(columnsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(addPlateFormatButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(deletePlateFormatButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(savePlateFormatButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(platesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(plateFormatParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(platesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(plateFormatParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -232,6 +249,7 @@ public class PlateManagementDialog extends javax.swing.JDialog {
     private javax.swing.JLabel columnsLabel;
     private javax.swing.JTextField columnsTextField;
     private javax.swing.JButton deletePlateFormatButton;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel plateFormatParentPanel;
     private javax.swing.JList plateFormatsList;

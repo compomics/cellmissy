@@ -77,8 +77,9 @@ public class InstrumentManagementDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Instrument Management");
+        setMinimumSize(new java.awt.Dimension(550, 600));
         setModal(true);
-        setPreferredSize(new java.awt.Dimension(550, 500));
+        setPreferredSize(new java.awt.Dimension(550, 600));
 
         instrumentsPanel.setBackground(new java.awt.Color(255, 255, 255));
         instrumentsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Instruments"));
@@ -115,7 +116,7 @@ public class InstrumentManagementDialog extends javax.swing.JDialog {
         );
 
         detailsPanel.setBackground(new java.awt.Color(255, 255, 255));
-        detailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Instrument Details"));
+        detailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("New Instrument - Details"));
         detailsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
 
         nameLabel.setText("name");
@@ -201,8 +202,8 @@ public class InstrumentManagementDialog extends javax.swing.JDialog {
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(infoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -228,8 +229,8 @@ public class InstrumentManagementDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(detailsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(infoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(infoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();

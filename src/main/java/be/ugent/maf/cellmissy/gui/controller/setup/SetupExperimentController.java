@@ -1647,13 +1647,16 @@ public class SetupExperimentController {
                 file = get();
             } catch (InterruptedException | ExecutionException | CancellationException ex) {
                 LOG.error(ex.getMessage(), ex);
+                cellMissyController.handleUnexpectedError(ex);
             }
             try {
                 //if export to PDF was successfull, open the PDF file from the desktop
-                Desktop.getDesktop().open(file);
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().open(file);
+                }
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);
-                showMessage(ex.getMessage(), "Error while opening file", JOptionPane.ERROR_MESSAGE);
+                showMessage("Cannot open the file!" + "\n" + ex.getMessage(), "error while opening file", JOptionPane.ERROR_MESSAGE);
             }
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             // enable the report, finish and export template buttons

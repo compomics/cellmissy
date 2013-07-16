@@ -17,6 +17,7 @@ import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.LinearRegressionPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.StatisticsDialog;
 import be.ugent.maf.cellmissy.gui.view.table.model.PValuesTableModel;
@@ -120,6 +121,17 @@ public class AreaAnalysisController {
         analysisMap = new LinkedHashMap<>();
         //init views
         initLinearRegressionPanel();
+        // init child controller
+        areaAnalysisReportController.init();
+    }
+
+    /**
+     * Get main frame through parent controller
+     *
+     * @return
+     */
+    public CellMissyFrame getCellMissyFrame() {
+        return areaController.getCellMissyFrame();
     }
 
     public Experiment getExperiment() {
@@ -160,6 +172,18 @@ public class AreaAnalysisController {
 
     public LinearRegressionPanel getLinearRegressionPanel() {
         return linearRegressionPanel;
+    }
+
+    public double[] getAnalysisTimeFrames() {
+        return areaController.getAnalysisTimeFrames();
+    }
+
+    public StatisticsDialog getStatisticsDialog() {
+        return statisticsDialog;
+    }
+
+    public List<PlateCondition> getProcessedConditions() {
+        return areaController.getProcessedConditions();
     }
 
     /**
@@ -456,22 +480,24 @@ public class AreaAnalysisController {
                 // if every group has been analyzed
                 // create report
                 if (validateAnalysis()) {
-                    try {
-                        createPdfReport();
-                    } catch (IOException ex) {
-                        LOG.error(ex.getMessage(), ex);
-                    }
+                    areaAnalysisReportController.showCustomizeReportDialog();
+//                    try {
+//                        createPdfReport();
+//                    } catch (IOException ex) {
+//                        LOG.error(ex.getMessage(), ex);
+//                    }
                 } else {
                     // else, show a message warning the user
-                    // let him decide if continue with report creation or not
+                    // let the user decide if continue with report creation or not
                     int reply = JOptionPane.showConfirmDialog(areaController.getDataAnalysisPanel(), "Not every group was analyzed.\nContinue with report creation?", "", JOptionPane.OK_CANCEL_OPTION);
                     if (reply == JOptionPane.OK_OPTION) {
-                        try {
-                            // if OK, create report
-                            createPdfReport();
-                        } catch (IOException ex) {
-                            LOG.error(ex.getMessage(), ex);
-                        }
+                        areaAnalysisReportController.showCustomizeReportDialog();
+//                        try {
+//                            // if OK, create report
+//                            createPdfReport();
+//                        } catch (IOException ex) {
+//                            LOG.error(ex.getMessage(), ex);
+//                        }
                     }
                 }
             }
@@ -866,13 +892,16 @@ public class AreaAnalysisController {
                 file = get();
             } catch (InterruptedException | CancellationException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
+                areaController.handleUnexpectedError(ex);
             }
             try {
                 //if export to PDF was successfull, open the PDF file from the desktop
-                Desktop.getDesktop().open(file);
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().open(file);
+                }
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);
-                areaController.showMessage(ex.getMessage(), "Error while opening file", JOptionPane.ERROR_MESSAGE);
+                areaController.showMessage("Cannot open the file!" + "\n" + ex.getMessage(), "error while opening file", JOptionPane.ERROR_MESSAGE);
             }
             //set cursor back to default
             areaController.setCursor(Cursor.DEFAULT_CURSOR);
