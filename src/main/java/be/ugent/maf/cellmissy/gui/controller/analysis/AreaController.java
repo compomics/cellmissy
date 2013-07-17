@@ -210,6 +210,14 @@ public class AreaController {
         return areaPreProcessingController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
     }
 
+    public JFreeChart createRawAreaChart(PlateCondition plateCondition) {
+        return areaPreProcessingController.createRawAreaChart(plateCondition);
+    }
+
+    public JFreeChart createCorrectedAreaChart(PlateCondition plateCondition) {
+        return areaPreProcessingController.createCorrectedAreaChart(plateCondition);
+    }
+
     public List<PlateCondition> getProcessedConditions() {
         return areaPreProcessingController.getProcessedConditions();
     }

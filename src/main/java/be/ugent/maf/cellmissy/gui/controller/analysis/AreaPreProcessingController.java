@@ -192,7 +192,7 @@ public class AreaPreProcessingController {
      *
      * @return
      */
-    public List<PlateCondition> getProcessedConditions() {  
+    public List<PlateCondition> getProcessedConditions() {
         List<PlateCondition> processedConditions = new ArrayList<>();
         for (PlateCondition plateCondition : preProcessingMap.keySet()) {
             if (preProcessingMap.get(plateCondition) != null) {
@@ -766,6 +766,112 @@ public class AreaPreProcessingController {
     }
 
     /**
+     * CReate raw area chart for a given condition.
+     *
+     * @param plateCondition
+     * @return the JFreeChart
+     */
+    public JFreeChart createRawAreaChart(PlateCondition plateCondition) {
+        String measuredAreaTypeString = getMeasuredAreaTypeString();
+        int conditionIndex = areaController.getPlateConditionList().indexOf(plateCondition) + 1;
+        AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
+        double[] processedTimeFrames = areaPreProcessingResults.getProcessedTimeFrames();
+        // get raw data, not corrected yet but only normalized
+        Double[][] normalizedArea = areaPreProcessingResults.getNormalizedArea();
+        // Transpose Normalized Area
+        Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedArea);
+        List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
+        XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
+        // array for x axis
+        double[] xValues = processedTimeFrames;
+        int counter = 0;
+        for (Well well : processedWells) {
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+            if (numberOfSamplesPerWell == 1) {
+                for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
+                    double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
+                    XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                    xySeries.setKey("" + (well));
+                    xYSeriesCollection.addSeries(xySeries);
+                }
+            } else {
+                int label = 0;
+                for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
+                    double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
+                    XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                    xySeries.setKey("" + (well) + ", " + (label + 1));
+                    xYSeriesCollection.addSeries(xySeries);
+                    label++;
+                }
+            }
+            counter += numberOfSamplesPerWell;
+        }
+        // Plot Logic
+        String chartTitle = measuredAreaTypeString + "  - Condition " + conditionIndex + " (raw data)";
+        String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+        JFreeChart rawAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        JFreeChartUtils.setupReplicatesAreaChart(rawAreaChart, processedWells, true, false);
+        return rawAreaChart;
+    }
+
+    /**
+     * Create the corrected area chart for a given condition.
+     *
+     * @param plateCondition
+     * @return the JFreeChart
+     */
+    public JFreeChart createCorrectedAreaChart(PlateCondition plateCondition) {
+        int conditionIndex = areaController.getPlateConditionList().indexOf(plateCondition) + 1;
+        AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
+        Double[][] normalizedCorrectedArea = areaPreProcessingResults.getNormalizedCorrectedArea();
+        // Transpose Normalized Corrected Area
+        Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
+        List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
+        // check if some replicates need to be hidden from plot (this means these replicates are outliers)
+        boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
+        XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
+        // array for x axis
+        double[] xValues = areaPreProcessingResults.getProcessedTimeFrames();
+        int counter = 0;
+        for (Well well : processedWells) {
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSamplesPerWell(well);
+            if (numberOfSamplesPerWell == 1) {
+                for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
+                    // if boolean is false, replicate has to be considered in the plot
+                    if (!excludeReplicates[i]) {
+                        // array for y axis
+                        double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
+                        XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                        xySeries.setKey("" + (well));
+                        xYSeriesCollection.addSeries(xySeries);
+                    }
+                }
+            } else {
+                int label = 0;
+                for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
+                    // if boolean is false, replicate has to be considered in the plot
+                    if (!excludeReplicates[i]) {
+                        // array for y axis
+                        double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
+                        XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                        xySeries.setKey("" + (well) + ", " + (label + 1));
+                        xYSeriesCollection.addSeries(xySeries);
+                        label++;
+                    }
+                }
+            }
+            counter += numberOfSamplesPerWell;
+        }
+        // Plot Logic
+        String chartTitle = "Cell-covered area (wound closure) - Condition " + conditionIndex + " (corrected data)";
+        String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+        JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, processedWells, true, false);
+        correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
+        return correctedAreaChart;
+    }
+
+    /**
      *
      * @param plateConditionList
      * @param useCorrectedData
@@ -1043,10 +1149,10 @@ public class AreaPreProcessingController {
             // Renderer
             CheckBoxOutliersRenderer checkBoxOutliersRenderer = new CheckBoxOutliersRenderer(transposedOutliersMatrix, areaController.getFormat());
             // Cell Editor
-            CheckBoxCellEditor checkBoxCellEditor = new CheckBoxCellEditor(distanceMatrixTableModel, plateCondition);
+            CheckBoxOutliersCellEditor checkBoxOutliersCellEditor = new CheckBoxOutliersCellEditor(distanceMatrixTableModel, plateCondition);
             // set cell editor starting from column 1 and pack all columns
             for (int i = 1; i < distanceMatrixTable.getColumnCount(); i++) {
-                distanceMatrixTable.getColumnModel().getColumn(i).setCellEditor(checkBoxCellEditor);
+                distanceMatrixTable.getColumnModel().getColumn(i).setCellEditor(checkBoxOutliersCellEditor);
                 distanceMatrixTable.getColumnModel().getColumn(i).setCellRenderer(checkBoxOutliersRenderer);
             }
             distanceMatrixTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
@@ -1794,14 +1900,14 @@ public class AreaPreProcessingController {
      * I am keeping this Editor in this controller since it has to update area
      * image
      */
-    private final class CheckBoxCellEditor extends AbstractCellEditor implements TableCellEditor, ItemListener {
+    private final class CheckBoxOutliersCellEditor extends AbstractCellEditor implements TableCellEditor, ItemListener {
 
         private JCheckBox checkBox;
         private final PlateCondition plateCondition;
         private DistanceMatrixTableModel distanceMatrixTableModel;
 
         // Contructor
-        public CheckBoxCellEditor(DistanceMatrixTableModel distanceMatrixTableModel, PlateCondition plateCondition) {
+        private CheckBoxOutliersCellEditor(DistanceMatrixTableModel distanceMatrixTableModel, PlateCondition plateCondition) {
             this.plateCondition = plateCondition;
             this.distanceMatrixTableModel = distanceMatrixTableModel;
             checkBox = new JCheckBox();
