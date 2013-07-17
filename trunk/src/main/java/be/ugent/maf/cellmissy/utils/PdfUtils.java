@@ -177,7 +177,7 @@ public class PdfUtils {
     }
 
     /**
-     * Add a cell with colored border to a table
+     * Add a cell with coloured border to a table
      *
      * @param table
      * @param color

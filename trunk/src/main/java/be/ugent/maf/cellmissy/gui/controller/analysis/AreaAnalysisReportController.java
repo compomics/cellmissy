@@ -13,7 +13,10 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.CustomizeReportDialog;
 import be.ugent.maf.cellmissy.gui.plate.PdfPlatePanel;
-import be.ugent.maf.cellmissy.gui.view.table.model.ConditionsCheckBoxesTableModel;
+import be.ugent.maf.cellmissy.gui.view.renderer.CheckBoxConditionsRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.table.model.CheckBoxesConditionsTableModel;
+import be.ugent.maf.cellmissy.gui.view.table.model.CheckBoxesGlobalViewsTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.PValuesTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.StatisticalSummaryTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -27,18 +30,27 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.AbstractCellEditor;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.TableCellEditor;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jfree.chart.JFreeChart;
@@ -59,6 +71,8 @@ public class AreaAnalysisReportController {
     private Document document;
     private PdfWriter writer;
     private boolean useCorrectedData;
+    private Map<PlateCondition, Boolean> conditionsToPlotMap;
+    private Map<String, Boolean[]> globalViewsMap;
     private static Font bodyFont = new Font(Font.HELVETICA, 8);
     private static Font boldFont = new Font(Font.HELVETICA, 8, Font.BOLD);
     private static Font titleFont = new Font(Font.HELVETICA, 10, Font.BOLD);
@@ -92,13 +106,62 @@ public class AreaAnalysisReportController {
     }
 
     /**
+     * In the conditions map we first put all the processed conditions and a
+     * False for each of this condition: this means that by default no
+     * conditions plots are added in the REPORT. The user can change this
+     * behaviour just selecting or deselecting the relative checkBoxes.
+     */
+    public void initConditionsToPlotMap() {
+        if (conditionsToPlotMap == null) {
+            conditionsToPlotMap = new LinkedHashMap<>();
+            for (PlateCondition plateCondition : areaAnalysisController.getProcessedConditions()) {
+                conditionsToPlotMap.put(plateCondition, Boolean.FALSE);
+            }
+        }
+    }
+
+    /**
+     * In the Global Views map we first put a default global view, where we put
+     * to TRUE the three options for the plot: points, SEM and time interval.
+     */
+    public void initGlobalViewsMap() {
+        if (globalViewsMap == null) {
+            globalViewsMap = new LinkedHashMap<>();
+            String firstGlobalView = "Global View 1";
+            Boolean[] defaultOptions = new Boolean[]{Boolean.TRUE, Boolean.TRUE, Boolean.TRUE};
+            globalViewsMap.put(firstGlobalView, defaultOptions);
+        }
+    }
+
+    /**
      * Show the dialog.
      */
     public void showCustomizeReportDialog() {
-        List<PlateCondition> processedConditions = areaAnalysisController.getProcessedConditions();
-        ConditionsCheckBoxesTableModel conditionsCheckBoxesTableModel = new ConditionsCheckBoxesTableModel(processedConditions);
-        conditionsCheckBoxesTableModel.setCheckboxes(new boolean[processedConditions.size()]);
-        customizeReportDialog.getConditionsCheckBoxesTable().setModel(conditionsCheckBoxesTableModel);
+        // conditions to plot table
+        CheckBoxesConditionsTableModel checkBoxesConditionsTableModel = new CheckBoxesConditionsTableModel(conditionsToPlotMap);
+        customizeReportDialog.getConditionsCheckBoxesTable().setModel(checkBoxesConditionsTableModel);
+        // set cell renderer and cell editor
+        customizeReportDialog.getConditionsCheckBoxesTable().getColumnModel().getColumn(1).setCellRenderer(new CheckBoxConditionsRenderer());
+        customizeReportDialog.getConditionsCheckBoxesTable().getColumnModel().getColumn(1).setCellEditor(new CheckBoxConditionsCellEditor(checkBoxesConditionsTableModel));
+        // pack columns of table
+        for (int i = 0; i < customizeReportDialog.getConditionsCheckBoxesTable().getColumnCount(); i++) {
+            GuiUtils.packColumn(customizeReportDialog.getConditionsCheckBoxesTable(), i, 1);
+        }
+        // global views table
+        CheckBoxesGlobalViewsTableModel checkBoxesGlobalViewsTableModel = new CheckBoxesGlobalViewsTableModel(globalViewsMap);
+        customizeReportDialog.getGlobalViewsTable().setModel(checkBoxesGlobalViewsTableModel);
+        CheckBoxConditionsRenderer checkBoxConditionsRenderer = new CheckBoxConditionsRenderer();
+        CheckBoxGlobalViewsCellEditor checkBoxGlobalViewsCellEditor = new CheckBoxGlobalViewsCellEditor(checkBoxesGlobalViewsTableModel);
+        // set cell renderer and cell editor
+        for (int i = 1; i < customizeReportDialog.getGlobalViewsTable().getColumnModel().getColumnCount(); i++) {
+            customizeReportDialog.getGlobalViewsTable().getColumnModel().getColumn(i).setCellRenderer(checkBoxConditionsRenderer);
+            customizeReportDialog.getGlobalViewsTable().getColumnModel().getColumn(i).setCellEditor(checkBoxGlobalViewsCellEditor);
+        }
+        // pack columns of table
+        for (int i = 0; i < customizeReportDialog.getGlobalViewsTable().getColumnCount(); i++) {
+            GuiUtils.packColumn(customizeReportDialog.getGlobalViewsTable(), i, 1);
+        }
+        // pack the dialog, center it on screen and show it
         customizeReportDialog.pack();
         GuiUtils.centerDialogOnFrame(areaAnalysisController.getCellMissyFrame(), customizeReportDialog);
         customizeReportDialog.setVisible(true);
@@ -130,14 +193,47 @@ public class AreaAnalysisReportController {
     }
 
     /**
-     *
+     * Initialize the dialog.
      */
     private void initCustomizeReportDialog() {
         // create a new dialog
         customizeReportDialog = new CustomizeReportDialog(areaAnalysisController.getCellMissyFrame(), true);
+        // customize tables
+        customizeReportDialog.getConditionsCheckBoxesTable().getTableHeader().setReorderingAllowed(false);
+        customizeReportDialog.getConditionsCheckBoxesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        customizeReportDialog.getGlobalViewsTable().getTableHeader().setReorderingAllowed(false);
+        customizeReportDialog.getGlobalViewsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         /**
          * Add action listeners.
          */
+        // add a new global view to the report
+        customizeReportDialog.getAddGlobalViewButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int actualSizeOfGloBalViews = globalViewsMap.size();
+                String newGlobalView = "Global View" + (actualSizeOfGloBalViews + 1);
+                Boolean[] options = new Boolean[]{Boolean.TRUE, Boolean.TRUE, Boolean.TRUE};
+                globalViewsMap.put(newGlobalView, options);
+                // refresh table model
+                CheckBoxesGlobalViewsTableModel checkBoxesGlobalViewsTableModel = new CheckBoxesGlobalViewsTableModel(globalViewsMap);
+                customizeReportDialog.getGlobalViewsTable().setModel(checkBoxesGlobalViewsTableModel);
+                CheckBoxConditionsRenderer checkBoxConditionsRenderer = new CheckBoxConditionsRenderer();
+                CheckBoxGlobalViewsCellEditor checkBoxGlobalViewsCellEditor = new CheckBoxGlobalViewsCellEditor(checkBoxesGlobalViewsTableModel);
+                // set cell renderer and cell editor
+                for (int i = 1; i < customizeReportDialog.getGlobalViewsTable().getColumnModel().getColumnCount(); i++) {
+                    customizeReportDialog.getGlobalViewsTable().getColumnModel().getColumn(i).setCellRenderer(checkBoxConditionsRenderer);
+                    customizeReportDialog.getGlobalViewsTable().getColumnModel().getColumn(i).setCellEditor(checkBoxGlobalViewsCellEditor);
+                }
+            }
+        });
+
+        // delete a certain global view from the report
+        customizeReportDialog.getRemoveGlobalViewButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+
         // create a new report with the selected options
         customizeReportDialog.getCreateReportButton().addActionListener(new ActionListener() {
             @Override
@@ -220,27 +316,29 @@ public class AreaAnalysisReportController {
      * Add content to document.
      */
     private void addContent() {
-        // overview: title, dataset, imaging type, brief summary os biological conditions
+        // overview: title, dataset, imaging type, brief summary of the experiment biological conditions
         addOverview();
         // plate view with the experimental set-up
         addPlatePanel();
         // table with info from biological conditions
         addConditionsInfoTable();
-        // go to new page
+        // we go here to a new page
         document.newPage();
-        // global area chart: lines with SEM
-        addGlobalAreaChart(false);
-        PdfUtils.addEmptyLines(document, 2);
-        // global area chart: points and lines with SEM
-        addGlobalAreaChart(true);
+        // we check for the user selection: if conditions plots need to be added, we added them here
+        addConditionsCharts();
+        // then, we move to next page
+        document.newPage();
+//        // we move then to the global views
+//        addGlobalAreaChart(false);
 //        PdfUtils.addEmptyLines(document, 2);
+//        // global area chart: points and lines with SEM
+//        addGlobalAreaChart(true);
         // go to new page
         document.newPage();
         // linear regression table
         addLinearRegressionTable();
         // velocity bar chart
         addGlobalVelocityChart();
-//        PdfUtils.addEmptyLines(document, 2);
         // go to new page
         document.newPage();
         // analysis statistics paragraph
@@ -334,15 +432,50 @@ public class AreaAnalysisReportController {
     }
 
     /**
-     * Add global area chart
+     * We go through the map, we check for the Boolean, if it's true, we need to
+     * add 2 more charts for each conditions: one with the raw area data and one
+     * with the corrected area data.
+     */
+    private void addConditionsCharts() {
+        for (PlateCondition plateCondition : conditionsToPlotMap.keySet()) {
+            // if the user has decided to put the conditions in the report, this Boolean is TRUES
+            if (conditionsToPlotMap.get(plateCondition) == Boolean.TRUE) {
+                // add first a title with the description of the condition
+                PdfUtils.addTitle(document, plateCondition + " - raw (normalized) and corrected (normalized) area plots", titleFont);
+                // create the raw area chart and add the image to the document
+                JFreeChart rawChart = areaAnalysisController.createRawAreaChart(plateCondition);
+                addImageFromChart(rawChart, 500, 350);
+                // create the corrected area chart and add the image to the document
+                JFreeChart correctedChart = areaAnalysisController.createCorrectedAreaChart(plateCondition);
+                addImageFromChart(correctedChart, 500, 350);
+                // we go to a new page before we add next plot
+                document.newPage();
+            }
+        }
+    }
+
+    /**
+     * We look at the table in the dialog, and we count the total number of
+     * global views that need to be added to the PDF report. For each global
+     * view, we get the selected options for the plot and we generate the plot
+     * for the global area.
+     */
+    private void addGlobalViews() {
+        // for each row, we need one more global view
+        for (int i = 0; i < customizeReportDialog.getGlobalViewsTable().getRowCount(); i++) {
+        }
+    }
+
+    /**
+     * Add global area chart.
      *
      * @param plotPoints
      */
-    private void addGlobalAreaChart(boolean plotPoints) {
+    private void addGlobalAreaChart(boolean plotErrorBars, boolean plotPoints) {
         List<PlateCondition> plateConditonsList = experiment.getPlateConditionList();
         MeasuredAreaType measuredAreaType = areaAnalysisController.getMeasuredAreaType();
         // create chart (for all conditions, error bars on top, both lines and points)
-        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, useCorrectedData, true, true, plotPoints, measuredAreaType);
+        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, useCorrectedData, plotErrorBars, true, plotPoints, measuredAreaType);
         // add chart as image
         addImageFromChart(globalAreaChart, chartWidth, chartHeight);
     }
@@ -409,7 +542,6 @@ public class AreaAnalysisReportController {
         columnNames[columnNames.length - 2] = "median";
         columnNames[columnNames.length - 1] = "MAD";
         JTable table = new JTable(data, columnNames);
-
         PdfPTable linearRegressionTable = new PdfPTable(columnNames.length);
         PdfUtils.setUpPdfPTable(linearRegressionTable);
         // add 1st row: column names
@@ -488,11 +620,16 @@ public class AreaAnalysisReportController {
         PdfUtils.addCustomizedCell(dataTable, "MAX. TIME POINT", boldFont);
         PdfUtils.addCustomizedCell(dataTable, "ANALYZED TIME INTERVAL", boldFont);
 
+        int lenght = GuiUtils.getAvailableColors().length;
         // for each condition get results and add a cell
-        for (PlateCondition plateCondition : plateConditionList) {
+        for (int i = 0; i < plateConditionList.size(); i++) {
+            PlateCondition plateCondition = plateConditionList.get(i);
             AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
             // condition index
-            PdfUtils.addCustomizedCell(dataTable, "Condition " + (plateConditionList.indexOf(plateCondition) + 1), bodyFont);
+            int conditionIndex = plateConditionList.indexOf(plateCondition);
+            int indexOfColor = conditionIndex % lenght;
+            Color color = GuiUtils.getAvailableColors()[indexOfColor];
+            PdfUtils.addColoredCell(dataTable, color);
             // how many technical replicates?
             PdfUtils.addCustomizedCell(dataTable, "" + findNumberOfReplicates(areaPreProcessingResults), bodyFont);
             // techincal replicates were excluded, if Y, which ones?
@@ -696,6 +833,95 @@ public class AreaAnalysisReportController {
                 PdfUtils.addTitle(document, "Multiple comparisons correction: " + analysisGroup.getCorrectionMethodName(), boldFont);
                 // add corrected p values
                 addPValuesTable(analysisGroup, true);
+            }
+        }
+    }
+
+    /**
+     * Cell Editor for the check boxes conditions.
+     */
+    private final class CheckBoxConditionsCellEditor extends AbstractCellEditor implements TableCellEditor, ItemListener {
+
+        private JCheckBox checkBox;
+        private CheckBoxesConditionsTableModel conditionsCheckBoxesTableModel;
+
+        private CheckBoxConditionsCellEditor(CheckBoxesConditionsTableModel conditionsCheckBoxesTableModel) {
+            checkBox = new JCheckBox();
+            this.conditionsCheckBoxesTableModel = conditionsCheckBoxesTableModel;
+            checkBox.setHorizontalAlignment(SwingConstants.LEFT);
+            checkBox.addItemListener(this);
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return Boolean.valueOf(checkBox.isSelected());
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            // if value is true, select checkbox, else do nothing
+            checkBox.setSelected((boolean) value);
+            return checkBox;
+        }
+
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            fireEditingStopped();
+            updateCheckBoxes();
+        }
+
+        /**
+         *
+         */
+        private void updateCheckBoxes() {
+            List<PlateCondition> processedConditions = areaAnalysisController.getProcessedConditions();
+            boolean[] checkBoxes = conditionsCheckBoxesTableModel.getCheckBoxes();
+            for (int i = 0; i < checkBoxes.length; i++) {
+                conditionsToPlotMap.put(processedConditions.get(i), checkBoxes[i]);
+            }
+        }
+    }
+
+    /**
+     * Cell Editor for the CheckBoxes Global views.
+     */
+    private final class CheckBoxGlobalViewsCellEditor extends AbstractCellEditor implements TableCellEditor, ItemListener {
+
+        private JCheckBox checkBox;
+        private CheckBoxesGlobalViewsTableModel checkBoxesGlobalViewsTableModel;
+
+        private CheckBoxGlobalViewsCellEditor(CheckBoxesGlobalViewsTableModel conditionsCheckBoxesTableModel) {
+            checkBox = new JCheckBox();
+            this.checkBoxesGlobalViewsTableModel = conditionsCheckBoxesTableModel;
+            checkBox.setHorizontalAlignment(SwingConstants.LEFT);
+            checkBox.addItemListener(this);
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return Boolean.valueOf(checkBox.isSelected());
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            // if value is true, select checkbox, else do nothing
+            checkBox.setSelected((boolean) value);
+            return checkBox;
+        }
+
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            fireEditingStopped();
+            updateCheckBoxes();
+        }
+
+        /**
+         *
+         */
+        private void updateCheckBoxes() {
+            Boolean[][] checkBoxes = checkBoxesGlobalViewsTableModel.getCheckBoxes();
+            for (int i = 0; i < checkBoxes.length; i++) {
+                globalViewsMap.put("Global View " + (i + 1), checkBoxes[i]);
             }
         }
     }

@@ -154,6 +154,14 @@ public class AreaAnalysisController {
         return areaController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
     }
 
+    public JFreeChart createRawAreaChart(PlateCondition plateCondition) {
+        return areaController.createRawAreaChart(plateCondition);
+    }
+
+    public JFreeChart createCorrectedAreaChart(PlateCondition plateCondition) {
+        return areaController.createCorrectedAreaChart(plateCondition);
+    }
+
     public void showMessage(String message, String title, Integer messageType) {
         areaController.showMessage(message, title, messageType);
     }
@@ -479,6 +487,10 @@ public class AreaAnalysisController {
             public void actionPerformed(ActionEvent e) {
                 // if every group has been analyzed
                 // create report
+                // initialize map here
+                areaAnalysisReportController.initConditionsToPlotMap();
+                areaAnalysisReportController.initGlobalViewsMap();
+
                 if (validateAnalysis()) {
                     areaAnalysisReportController.showCustomizeReportDialog();
 //                    try {

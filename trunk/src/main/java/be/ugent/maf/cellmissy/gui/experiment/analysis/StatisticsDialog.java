@@ -161,7 +161,7 @@ public class StatisticsDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(summaryScrollPane, gridBagConstraints);
 
-        pValuesScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Mann-Whitney U test"));
+        pValuesScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Pairwise Comparisons"));
 
         pValuesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

@@ -10,7 +10,7 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 
 /**
- * CellRenderer for CheckBox
+ * CellRenderer for CheckBox - outliers
  *
  * @author Paola Masuzzo
  */
