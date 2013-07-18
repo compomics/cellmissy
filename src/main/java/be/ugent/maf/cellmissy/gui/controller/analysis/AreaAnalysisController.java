@@ -154,6 +154,10 @@ public class AreaAnalysisController {
         return areaController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
     }
 
+    public JFreeChart createGlobalAreaChartInTimeInterval(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType) {
+        return areaController.createGlobalAreaChartInTimeInterval(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+    }
+
     public JFreeChart createRawAreaChart(PlateCondition plateCondition) {
         return areaController.createRawAreaChart(plateCondition);
     }
@@ -192,6 +196,10 @@ public class AreaAnalysisController {
 
     public List<PlateCondition> getProcessedConditions() {
         return areaController.getProcessedConditions();
+    }
+
+    public void resetOnCancel() {
+        areaAnalysisReportController.resetOnCancel();
     }
 
     /**
@@ -480,36 +488,28 @@ public class AreaAnalysisController {
         });
 
         /**
-         * Create report from Analysis
+         * Create report from Analysis.
          */
         linearRegressionPanel.getCreateReportButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // if every group has been analyzed
                 // create report
-                // initialize map here
-                areaAnalysisReportController.initConditionsToPlotMap();
-                areaAnalysisReportController.initGlobalViewsMap();
-
+                // initialize maps here, if the maps are still null
+                if (areaAnalysisReportController.getConditionsToPlotMap() == null) {
+                    areaAnalysisReportController.initConditionsToPlotMap();
+                }
+                if (areaAnalysisReportController.getGlobalViewsMap() == null) {
+                    areaAnalysisReportController.initGlobalViewsMap();
+                }
                 if (validateAnalysis()) {
                     areaAnalysisReportController.showCustomizeReportDialog();
-//                    try {
-//                        createPdfReport();
-//                    } catch (IOException ex) {
-//                        LOG.error(ex.getMessage(), ex);
-//                    }
                 } else {
                     // else, show a message warning the user
                     // let the user decide if continue with report creation or not
                     int reply = JOptionPane.showConfirmDialog(areaController.getDataAnalysisPanel(), "Not every group was analyzed.\nContinue with report creation?", "", JOptionPane.OK_CANCEL_OPTION);
                     if (reply == JOptionPane.OK_OPTION) {
                         areaAnalysisReportController.showCustomizeReportDialog();
-//                        try {
-//                            // if OK, create report
-//                            createPdfReport();
-//                        } catch (IOException ex) {
-//                            LOG.error(ex.getMessage(), ex);
-//                        }
                     }
                 }
             }

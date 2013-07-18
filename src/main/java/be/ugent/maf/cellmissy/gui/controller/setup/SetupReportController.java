@@ -50,8 +50,8 @@ public class SetupReportController {
     private Experiment experiment;
     private Document document;
     private PdfWriter writer;
-    private static Font titleFont = new Font(Font.TIMES_ROMAN, 10, Font.BOLD);
-    private static Font bodyFont = new Font(Font.TIMES_ROMAN, 8);
+    private static Font bodyFont = new Font(Font.HELVETICA, 8);
+    private static Font titleFont = new Font(Font.HELVETICA, 10, Font.BOLD);
     // view
     // parent controller
     @Autowired
