@@ -49,8 +49,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableCellEditor;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jfree.chart.JFreeChart;
@@ -97,12 +101,29 @@ public class AreaAnalysisReportController {
     }
 
     /**
+     * Action performed on cancel button: all we have to do is to reset the maps for the conditions to plot and
+     */
+    public void resetOnCancel() {
+        // reset maps
+        conditionsToPlotMap = null;
+        globalViewsMap = null;
+    }
+
+    /**
      * getters and setters
      *
      * @param useCorrectedData
      */
     public void setUseCorrectedData(boolean useCorrectedData) {
         this.useCorrectedData = useCorrectedData;
+    }
+
+    public Map<PlateCondition, Boolean> getConditionsToPlotMap() {
+        return conditionsToPlotMap;
+    }
+
+    public Map<String, Boolean[]> getGlobalViewsMap() {
+        return globalViewsMap;
     }
 
     /**
@@ -112,11 +133,9 @@ public class AreaAnalysisReportController {
      * behaviour just selecting or deselecting the relative checkBoxes.
      */
     public void initConditionsToPlotMap() {
-        if (conditionsToPlotMap == null) {
-            conditionsToPlotMap = new LinkedHashMap<>();
-            for (PlateCondition plateCondition : areaAnalysisController.getProcessedConditions()) {
-                conditionsToPlotMap.put(plateCondition, Boolean.FALSE);
-            }
+        conditionsToPlotMap = new LinkedHashMap<>();
+        for (PlateCondition plateCondition : areaAnalysisController.getProcessedConditions()) {
+            conditionsToPlotMap.put(plateCondition, Boolean.FALSE);
         }
     }
 
@@ -125,18 +144,21 @@ public class AreaAnalysisReportController {
      * to TRUE the three options for the plot: points, SEM and time interval.
      */
     public void initGlobalViewsMap() {
-        if (globalViewsMap == null) {
-            globalViewsMap = new LinkedHashMap<>();
-            String firstGlobalView = "Global View 1";
-            Boolean[] defaultOptions = new Boolean[]{Boolean.TRUE, Boolean.TRUE, Boolean.TRUE};
-            globalViewsMap.put(firstGlobalView, defaultOptions);
-        }
+        globalViewsMap = new LinkedHashMap<>();
+        String firstGlobalView = "Global View 1";
+        Boolean[] defaultOptions = new Boolean[]{Boolean.TRUE, Boolean.TRUE, Boolean.TRUE};
+        globalViewsMap.put(firstGlobalView, defaultOptions);
     }
 
     /**
      * Show the dialog.
      */
     public void showCustomizeReportDialog() {
+        SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
+        StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
+        StyledDocument styledDocument = customizeReportDialog.getInfoTextPane().getStyledDocument();
+        styledDocument.setParagraphAttributes(0, styledDocument.getLength(), simpleAttributeSet, false);
+        customizeReportDialog.getInfoTextPane().setCaretPosition(0);
         // conditions to plot table
         CheckBoxesConditionsTableModel checkBoxesConditionsTableModel = new CheckBoxesConditionsTableModel(conditionsToPlotMap);
         customizeReportDialog.getConditionsCheckBoxesTable().setModel(checkBoxesConditionsTableModel);
@@ -203,6 +225,8 @@ public class AreaAnalysisReportController {
         customizeReportDialog.getConditionsCheckBoxesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         customizeReportDialog.getGlobalViewsTable().getTableHeader().setReorderingAllowed(false);
         customizeReportDialog.getGlobalViewsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        customizeReportDialog.getGlobalViewsTable().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
         /**
          * Add action listeners.
          */
@@ -211,7 +235,7 @@ public class AreaAnalysisReportController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int actualSizeOfGloBalViews = globalViewsMap.size();
-                String newGlobalView = "Global View" + (actualSizeOfGloBalViews + 1);
+                String newGlobalView = "Global View " + (actualSizeOfGloBalViews + 1);
                 Boolean[] options = new Boolean[]{Boolean.TRUE, Boolean.TRUE, Boolean.TRUE};
                 globalViewsMap.put(newGlobalView, options);
                 // refresh table model
@@ -227,10 +251,26 @@ public class AreaAnalysisReportController {
             }
         });
 
-        // delete a certain global view from the report
+        // delete a certain global view (or more) from the report customization
         customizeReportDialog.getRemoveGlobalViewButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // get the selected rows in the table
+                int[] selectedRows = customizeReportDialog.getGlobalViewsTable().getSelectedRows();
+                for (int i = 0; i < selectedRows.length; i++) {
+                    int indexToRemove = selectedRows[i] + 1;
+                    globalViewsMap.remove("Global View " + indexToRemove);
+                }
+                // refresh table model
+                CheckBoxesGlobalViewsTableModel checkBoxesGlobalViewsTableModel = new CheckBoxesGlobalViewsTableModel(globalViewsMap);
+                customizeReportDialog.getGlobalViewsTable().setModel(checkBoxesGlobalViewsTableModel);
+                CheckBoxConditionsRenderer checkBoxConditionsRenderer = new CheckBoxConditionsRenderer();
+                CheckBoxGlobalViewsCellEditor checkBoxGlobalViewsCellEditor = new CheckBoxGlobalViewsCellEditor(checkBoxesGlobalViewsTableModel);
+                // set cell renderer and cell editor
+                for (int i = 1; i < customizeReportDialog.getGlobalViewsTable().getColumnModel().getColumnCount(); i++) {
+                    customizeReportDialog.getGlobalViewsTable().getColumnModel().getColumn(i).setCellRenderer(checkBoxConditionsRenderer);
+                    customizeReportDialog.getGlobalViewsTable().getColumnModel().getColumn(i).setCellEditor(checkBoxGlobalViewsCellEditor);
+                }
             }
         });
 
@@ -328,11 +368,8 @@ public class AreaAnalysisReportController {
         addConditionsCharts();
         // then, we move to next page
         document.newPage();
-//        // we move then to the global views
-//        addGlobalAreaChart(false);
-//        PdfUtils.addEmptyLines(document, 2);
-//        // global area chart: points and lines with SEM
-//        addGlobalAreaChart(true);
+        // we move then to the global views
+        addGlobalViews();
         // go to new page
         document.newPage();
         // linear regression table
@@ -457,25 +494,56 @@ public class AreaAnalysisReportController {
     /**
      * We look at the table in the dialog, and we count the total number of
      * global views that need to be added to the PDF report. For each global
-     * view, we get the selected options for the plot and we generate the plot
-     * for the global area.
+     * view, we get the selected options for the plot and we generate the
+     * correspondent plot for the global area.
      */
     private void addGlobalViews() {
         // for each row, we need one more global view
         for (int i = 0; i < customizeReportDialog.getGlobalViewsTable().getRowCount(); i++) {
+            // we add first a title for the global view
+            String globalView = (String) customizeReportDialog.getGlobalViewsTable().getValueAt(i, 0);
+            PdfUtils.addTitle(document, globalView, titleFont);
+            Boolean points = (Boolean) customizeReportDialog.getGlobalViewsTable().getValueAt(i, 1);
+            Boolean sem = (Boolean) customizeReportDialog.getGlobalViewsTable().getValueAt(i, 2);
+            Boolean timeInterval = (Boolean) customizeReportDialog.getGlobalViewsTable().getValueAt(i, 3);
+            // then we get the selected options from the map
+            // we check first for the Time Interval
+            if (!timeInterval) {
+                addGlobalAreaChart(sem, points);
+            } else {
+                addGlobalAreaChartInTimeInterval(sem, points);
+            }
+            // we move to next page
+            document.newPage();
         }
     }
 
     /**
-     * Add global area chart.
+     * Add Global Area chart.
      *
+     * @param plotErrorBars
      * @param plotPoints
      */
     private void addGlobalAreaChart(boolean plotErrorBars, boolean plotPoints) {
-        List<PlateCondition> plateConditonsList = experiment.getPlateConditionList();
+        List<PlateCondition> plateConditonsList = areaAnalysisController.getProcessedConditions();
         MeasuredAreaType measuredAreaType = areaAnalysisController.getMeasuredAreaType();
         // create chart (for all conditions, error bars on top, both lines and points)
         JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, useCorrectedData, plotErrorBars, true, plotPoints, measuredAreaType);
+        // add chart as image
+        addImageFromChart(globalAreaChart, chartWidth, chartHeight);
+    }
+
+    /**
+     * Add Global Area chart showing the time interval.
+     *
+     * @param plotErrorBars
+     * @param plotPoints
+     */
+    private void addGlobalAreaChartInTimeInterval(boolean plotErrorBars, boolean plotPoints) {
+        List<PlateCondition> plateConditonsList = areaAnalysisController.getProcessedConditions();
+        MeasuredAreaType measuredAreaType = areaAnalysisController.getMeasuredAreaType();
+        // create chart (for all conditions, error bars on top, both lines and points)
+        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChartInTimeInterval(plateConditonsList, useCorrectedData, plotErrorBars, true, plotPoints, measuredAreaType);
         // add chart as image
         addImageFromChart(globalAreaChart, chartWidth, chartHeight);
     }
@@ -585,20 +653,24 @@ public class AreaAnalysisReportController {
     }
 
     /**
-     * add a paragraph for each analysis group
+     * Add a paragraph for each analysis group, if any analysis group is
+     * present.
      */
     private void addParagraphPerAnalysis() {
-        // add main title for section
-        PdfUtils.addTitle(document, "ANALYSIS GROUPS", titleFont);
         ObservableList<AnalysisGroup> groupsList = areaAnalysisController.getGroupsBindingList();
-        for (int i = 0; i < groupsList.size(); i++) {
-            Paragraph paragraph = new Paragraph("Analysis group: " + groupsList.get(i).getGroupName());
-            try {
-                document.add(paragraph);
-                addAnalysisInfo(groupsList.get(i));
-                PdfUtils.addEmptyLines(document, 2);
-            } catch (DocumentException ex) {
-                LOG.error(ex.getMessage(), ex);
+        if (!groupsList.isEmpty()) {
+            // add main title for section
+            PdfUtils.addTitle(document, "ANALYSIS GROUPS", titleFont);
+            for (int i = 0; i < groupsList.size(); i++) {
+                Paragraph paragraph = new Paragraph("Analysis group: " + groupsList.get(i).getGroupName());
+                try {
+                    document.add(paragraph);
+                    addAnalysisInfo(groupsList.get(i));
+                    // go to new page
+                    document.newPage();
+                } catch (DocumentException ex) {
+                    LOG.error(ex.getMessage(), ex);
+                }
             }
         }
     }
@@ -920,6 +992,7 @@ public class AreaAnalysisReportController {
          */
         private void updateCheckBoxes() {
             Boolean[][] checkBoxes = checkBoxesGlobalViewsTableModel.getCheckBoxes();
+            globalViewsMap.clear();
             for (int i = 0; i < checkBoxes.length; i++) {
                 globalViewsMap.put("Global View " + (i + 1), checkBoxes[i]);
             }

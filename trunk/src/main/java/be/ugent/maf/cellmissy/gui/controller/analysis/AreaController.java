@@ -210,6 +210,10 @@ public class AreaController {
         return areaPreProcessingController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
     }
 
+    public JFreeChart createGlobalAreaChartInTimeInterval(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType){
+        return areaPreProcessingController.createGlobalAreaChartInTimeInterval(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+    }
+
     public JFreeChart createRawAreaChart(PlateCondition plateCondition) {
         return areaPreProcessingController.createRawAreaChart(plateCondition);
     }
@@ -614,6 +618,7 @@ public class AreaController {
      */
     private void onCancel() {
         areaPreProcessingController.resetOnCancel();
+        areaAnalysisController.resetOnCancel();
         String message = "Please select a project and an experiment to analyse motility data.";
         updateInfoMessage(message);
         algorithmBindingList.clear();
