@@ -161,7 +161,7 @@ public class CustomizeReportDialog extends javax.swing.JDialog {
 
         infoTextPane.setEditable(false);
         infoTextPane.setBorder(null);
-        infoTextPane.setText("Analysis PDF Report will contain:\n - Dataset and Imaging Type analyzed in the session\n - List of Biolocal Conditions (with detailed description)\n - Measured Area Type (this can be cell-covered area or wound area)\n - Plate lay-out\n - Conditions Summary Table: this table will contain number of technical replicates for each condition, possible replicates excluded from the analysis, the user-selected time interval, the max. time point and the analyzed time interval\n\nYou can customize the Report choosing in the following tables:\n - Conditions for which you want to add area-plots\n - Global Views, i.e. plots reporting the overall set of biological conditions associated to the current experiment/analysis session");
+        infoTextPane.setText("Analysis PDF Report will contain:\n - Dataset and Imaging Type analyzed in the session\n - List of Biological Conditions (with detailed description)\n - Measured Area Type (this can be cell-covered area or wound area)\n - Plate lay-out\n - Conditions Summary Table: this table will contain number of technical replicates for each condition, possible replicates excluded from the analysis, the user-selected time interval, the max. time point and the analyzed time interval\n\nYou can customize the Report choosing in the following tables:\n - Conditions for which you want to add area-plots\n - Global Views, i.e. plots reporting the overall set of biological conditions associated to the current experiment/analysis session");
         infoTextPane.setFocusable(false);
         jScrollPane3.setViewportView(infoTextPane);
 
