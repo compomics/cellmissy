@@ -147,6 +147,22 @@ public class CellMissyFrame extends javax.swing.JFrame {
         genericInputMenuItem = new javax.swing.JMenuItem();
         cellMiaMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
+        jSeparator5 = new javax.swing.JPopupMenu.Separator();
+        overviewMenuItem = new javax.swing.JMenuItem();
+        jSeparator7 = new javax.swing.JPopupMenu.Separator();
+        importExperimentMenuItem = new javax.swing.JMenuItem();
+        exportExperimentMenuItem = new javax.swing.JMenuItem();
+        jSeparator6 = new javax.swing.JPopupMenu.Separator();
+        exportTemplateMenuItem = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        exitMenuItem = new javax.swing.JMenuItem();
+        editMenu = new javax.swing.JMenu();
+        assayMenuItem = new javax.swing.JMenuItem();
+        jSeparator8 = new javax.swing.JPopupMenu.Separator();
+        instrumentMenuItem = new javax.swing.JMenuItem();
+        jSeparator9 = new javax.swing.JPopupMenu.Separator();
+        plateMenuItem = new javax.swing.JMenuItem();
+        jSeparator10 = new javax.swing.JPopupMenu.Separator();
         dataAnalysisMenuItem = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         overviewMenuItem = new javax.swing.JMenuItem();
@@ -332,35 +348,37 @@ public class CellMissyFrame extends javax.swing.JFrame {
         fileMenu.add(exportTemplateMenuItem);
         fileMenu.add(jSeparator2);
 
-        exitMenuItem.setMnemonic('X');
+        importExperimentMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
+        importExperimentMenuItem.setText("Import Experiment...");
+        fileMenu.add(importExperimentMenuItem);
+
         exitMenuItem.setText("Exit");
         fileMenu.add(exitMenuItem);
 
         cellMissyMenuBar.add(fileMenu);
 
-        editMenu.setMnemonic('E');
+		editMenu.setMnemonic('E');
         editMenu.setText("Edit");
-
-        assayMenuItem.setText("Assay");
-        editMenu.add(assayMenuItem);
-        editMenu.add(jSeparator8);
 
         instrumentMenuItem.setText("Instrument");
         editMenu.add(instrumentMenuItem);
         editMenu.add(jSeparator9);
 
+        assayMenuItem.setText("Assay");
+        editMenu.add(assayMenuItem);
+        editMenu.add(jSeparator8);
+
         plateMenuItem.setText("Multiwell Plate");
         editMenu.add(plateMenuItem);
         editMenu.add(jSeparator10);
 
+        userMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_MASK));
+        userMenuItem.setMnemonic('U');
         userMenuItem.setText("User Management");
         userMenuItem.setIconTextGap(2);
         editMenu.add(userMenuItem);
 
         cellMissyMenuBar.add(editMenu);
-
-        helpMenu.setMnemonic('H');
-        helpMenu.setText("Help");
 
         helpMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
         helpMenuItem.setMnemonic('H');
