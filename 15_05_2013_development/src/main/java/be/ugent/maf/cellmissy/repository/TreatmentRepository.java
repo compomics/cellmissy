@@ -14,9 +14,11 @@ import java.util.List;
  */
 public interface TreatmentRepository extends GenericRepository<Treatment, Long> {
 
-    List<TreatmentType> findByCategory(Integer treatmentCategory);
+    public List<TreatmentType> findByCategory(Integer treatmentCategory);
 
-    void saveTreatmentType(TreatmentType treatmentType);
+    public TreatmentType findByName(String treatmentType);
 
-    List<String> findAllDrugSolvents();
+    public void saveTreatmentType(TreatmentType treatmentType);
+
+    public List<String> findAllDrugSolvents();
 }

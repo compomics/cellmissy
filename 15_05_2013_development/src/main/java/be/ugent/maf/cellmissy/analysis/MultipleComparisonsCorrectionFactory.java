@@ -4,39 +4,56 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.analysis.impl.BenjaminiCorrector;
-import be.ugent.maf.cellmissy.analysis.impl.BonferroniCorrector;
+import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+import java.util.Map;
+import java.util.Set;
+import org.springframework.context.ApplicationContext;
 
 /**
- * Factory for multiple test correction 
+ * Factory for multiple test correction algorithms.
+ *
  * @author Paola Masuzzo
  */
 public class MultipleComparisonsCorrectionFactory {
 
-    //implementations of Corrector
-    private static BonferroniCorrector bonferroniCorrector = new BonferroniCorrector();
-    private static BenjaminiCorrector benjaminiCorrector = new BenjaminiCorrector();
+    /**
+     * This is mapping the bean names with the respective implementations for
+     * the MultipleComparisonsCorrector.
+     */
+    private Map<String, MultipleComparisonsCorrector> correctors;
+    private static final MultipleComparisonsCorrectionFactory multipleComparisonsCorrectionFactory = new MultipleComparisonsCorrectionFactory();
 
     /**
-     * Correction method
+     * Private constructor.
      */
-    public enum CorrectionMethod {
-
-        BONFERRONI, BENJAMINI, NONE;
+    private MultipleComparisonsCorrectionFactory() {
+        ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
+        correctors = context.getBeansOfType(MultipleComparisonsCorrector.class);
     }
 
     /**
-     * Get the corrector according to correction method
-     * @param correctionMethod
-     * @return 
+     * Get an instance.
      */
-    public static MultipleComparisonsCorrector getCorrector(CorrectionMethod correctionMethod) {
-        MultipleComparisonsCorrector multipleComparisonsCorrector = null;
-        if (correctionMethod.equals(CorrectionMethod.BONFERRONI)) {
-            multipleComparisonsCorrector = bonferroniCorrector;
-        } else if (correctionMethod.equals(CorrectionMethod.BENJAMINI)) {
-            multipleComparisonsCorrector = benjaminiCorrector;
-        }
-        return multipleComparisonsCorrector;
+    public static MultipleComparisonsCorrectionFactory getInstance() {
+        return multipleComparisonsCorrectionFactory;
+    }
+
+    /**
+     * Get the corrector according to the correction bean name.
+     *
+     * @param String: the name of the bean for the corrector
+     * @return
+     */
+    public MultipleComparisonsCorrector getCorrector(String beanName) {
+        return correctors.get(beanName);
+    }
+
+    /**
+     * Get the all set of strings for the correction beans names.
+     *
+     * @return a set of strings from the map.
+     */
+    public Set<String> getCorrectionBeanNames() {
+        return correctors.keySet();
     }
 }

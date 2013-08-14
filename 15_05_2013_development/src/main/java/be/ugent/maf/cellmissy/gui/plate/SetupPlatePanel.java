@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class is used in the setup step: show wells and let the user select them, assigning conditions. Drawing the mouse on the plate view, we select conditions (group of wells).
+ * This class is used in the setup step: show wells and let the user select
+ * them, assigning conditions. Drawing the mouse on the plate view, we select
+ * conditions (group of wells).
  *
  * @author Paola
  */
@@ -32,7 +34,8 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     private PlateCondition currentCondition;
 
     /**
-     * Constructor: initialize map with rectangles and set to null start and end point
+     * Constructor: initialize map with rectangles and set to null start and end
+     * point
      */
     public SetupPlatePanel() {
         startPoint = null;
@@ -95,7 +98,8 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     }
 
     /**
-     * Render one Rectangle (for current condition) -- This is used when dragging on the plate panel and showing the current rectangle.
+     * Render one Rectangle (for current condition) -- This is used when
+     * dragging on the plate panel and showing the current rectangle.
      *
      * @param g
      */
@@ -122,7 +126,8 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     }
 
     /**
-     * Render all rectangles already drawn by the user (for all conditions in the map).
+     * Render all rectangles already drawn by the user (for all conditions in
+     * the map).
      *
      * @param g
      */
@@ -134,30 +139,32 @@ public class SetupPlatePanel extends AbstractPlatePanel {
             int conditionIndex = plateCondition.getConditionIndex() - 1;
             int indexOfColor = conditionIndex % lenght;
             g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
-            for (Rectangle rectangle : rectangles.get(plateCondition)) {
+            List<Rectangle> rectList = rectangles.get(plateCondition);
+            if (rectList != null) {
+                for (Rectangle rectangle : rectList) {
 
-                for (WellGui wellGui : wellGuiList) {
-                    if (rectangle.contains(wellGui.getEllipsi().get(0).getX(), wellGui.getEllipsi().get(0).getY(), wellGui.getEllipsi().get(0).getWidth(), wellGui.getEllipsi().get(0).getHeight())) {
-                        int x = (int) wellGui.getEllipsi().get(0).getX() - SetupPlatePanel.pixelsGrid / 4;
-                        int y = (int) wellGui.getEllipsi().get(0).getY() - SetupPlatePanel.pixelsGrid / 4;
+                    for (WellGui wellGui : wellGuiList) {
+                        if (rectangle.contains(wellGui.getEllipsi().get(0).getX(), wellGui.getEllipsi().get(0).getY(), wellGui.getEllipsi().get(0).getWidth(), wellGui.getEllipsi().get(0).getHeight())) {
+                            int x = (int) wellGui.getEllipsi().get(0).getX() - SetupPlatePanel.pixelsGrid / 4;
+                            int y = (int) wellGui.getEllipsi().get(0).getY() - SetupPlatePanel.pixelsGrid / 4;
 
-                        int width = (int) wellGui.getEllipsi().get(0).getWidth() + SetupPlatePanel.pixelsGrid / 2;
-                        int height = (int) wellGui.getEllipsi().get(0).getHeight() + SetupPlatePanel.pixelsGrid / 2;
+                            int width = (int) wellGui.getEllipsi().get(0).getWidth() + SetupPlatePanel.pixelsGrid / 2;
+                            int height = (int) wellGui.getEllipsi().get(0).getHeight() + SetupPlatePanel.pixelsGrid / 2;
 
-                        //create rectangle that sorrounds the wellGui and draw it
-                        Rectangle rect = new Rectangle(x, y, width, height);
-                        g2d.draw(rect);
-                        wellGui.setRectangle(rect);
+                            //create rectangle that sorrounds the wellGui and draw it
+                            Rectangle rect = new Rectangle(x, y, width, height);
+                            g2d.draw(rect);
+                            wellGui.setRectangle(rect);
+                        }
                     }
                 }
             }
         }
-
-
     }
 
     /**
-     * Render wells Override method from Abstract Plate Panel: if wells have already been rendered, just redraw them
+     * Render wells Override method from Abstract Plate Panel: if wells have
+     * already been rendered, just redraw them
      *
      * @param g
      */

@@ -5,19 +5,18 @@
 package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory;
-import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrector;
 import be.ugent.maf.cellmissy.analysis.StatisticsAnalyzer;
 import be.ugent.maf.cellmissy.analysis.StatisticsCalculator;
-import be.ugent.maf.cellmissy.entity.AnalysisGroup;
-import be.ugent.maf.cellmissy.entity.AreaAnalysisResults;
+import be.ugent.maf.cellmissy.analysis.StatisticsTestFactory;
+import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.result.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,11 +26,9 @@ import org.springframework.stereotype.Component;
 @Component("statisticsAnalyzer")
 public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
 
-    @Autowired
-    private StatisticsCalculator statisticsCalculator;
-
     @Override
-    public void generateSummaryStatistics(AnalysisGroup analysisGroup) {
+    public void generateSummaryStatistics(AnalysisGroup analysisGroup, String statisticalTestName) {
+        StatisticsCalculator statisticsCalculator = StatisticsTestFactory.getInstance().getStatisticsCalculator(statisticalTestName);
         List<StatisticalSummary> statisticalSummaries = new ArrayList<>();
         for (AreaAnalysisResults areaAnalysisResults : analysisGroup.getAnalysisResults()) {
             Double[] slopes = areaAnalysisResults.getSlopes();
@@ -42,7 +39,8 @@ public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
     }
 
     @Override
-    public void executePairwiseComparisons(AnalysisGroup analysisGroup) {
+    public void executePairwiseComparisons(AnalysisGroup analysisGroup, String statisticalTestName) {
+        StatisticsCalculator statisticsCalculator = StatisticsTestFactory.getInstance().getStatisticsCalculator(statisticalTestName);
         List<PlateCondition> plateConditions = analysisGroup.getPlateConditions();
         int sizeOfGroup = plateConditions.size();
         int maximumNumberOfReplicates = AnalysisUtils.getMaximumNumberOfReplicates(plateConditions);
@@ -53,7 +51,7 @@ public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
             for (int seq = 0; seq < sizeOfGroup; seq++) {
                 if (seq != i) {
                     double[] secondVector = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(slopesMatrix[seq]));
-                    double pValue = statisticsCalculator.executeMannWhitneyUTest(firstVector, secondVector);
+                    double pValue = statisticsCalculator.executeStatisticalTest(firstVector, secondVector);
                     pValuesMatrix[i][seq] = pValue;
                 }
             }
@@ -64,7 +62,8 @@ public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
     }
 
     @Override
-    public void detectSignificance(AnalysisGroup analysisGroup, double alpha, boolean isAdjusted) {
+    public void detectSignificance(AnalysisGroup analysisGroup, String statisticalTestName, double alpha, boolean isAdjusted) {
+        StatisticsCalculator statisticsCalculator = StatisticsTestFactory.getInstance().getStatisticsCalculator(statisticalTestName);
         Double[][] dataToLook = null;
         if (!isAdjusted) {
             dataToLook = analysisGroup.getpValuesMatrix();
@@ -76,17 +75,18 @@ public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
     }
 
     @Override
-    public void correctForMultipleComparisons(AnalysisGroup analysisGroup, CorrectionMethod correctionMethod) {
-        MultipleComparisonsCorrector corrector = MultipleComparisonsCorrectionFactory.getCorrector(correctionMethod);
+    public void correctForMultipleComparisons(AnalysisGroup analysisGroup, String correctionBeanName) {
+        MultipleComparisonsCorrector corrector = MultipleComparisonsCorrectionFactory.getInstance().getCorrector(correctionBeanName);
         corrector.correctForMultipleComparisons(analysisGroup);
     }
 
     /**
      * Put slopes in a matrix (data frame shape)
+     *
      * @param firstDimension
      * @param secondDimension
      * @param analysisResults
-     * @return 
+     * @return
      */
     private Double[][] generateSlopesMatrix(int firstDimension, int secondDimension, List<AreaAnalysisResults> analysisResults) {
 

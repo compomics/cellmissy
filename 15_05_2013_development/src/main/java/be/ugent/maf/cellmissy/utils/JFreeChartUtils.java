@@ -201,7 +201,7 @@ public class JFreeChartUtils {
      * @param plotLines: show points on plot?
      */
     public static void setupReplicatesAreaChart(JFreeChart chart, List<Well> wellList, boolean plotLines, boolean plotPoints) {
-        // set title font 
+        // set title font
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         // put legend on the right edge
         chart.getLegend().setPosition(RectangleEdge.RIGHT);
@@ -236,7 +236,7 @@ public class JFreeChartUtils {
      * @param plotLines: show points on plot?
      */
     public static void setupGlobalAreaChart(JFreeChart chart, boolean plotLines, boolean plotPoints) {
-        // set title font 
+        // set title font
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         // get xyplot from the chart
         XYPlot xYPlot = chart.getXYPlot();
@@ -271,7 +271,7 @@ public class JFreeChartUtils {
      * @param plotPoints
      */
     public static void setupTrackCoordinatesPlot(JFreeChart chart, int seriesToHighlight, boolean plotLines, boolean plotPoints) {
-        // set title font 
+        // set title font
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         XYPlot xYPlot = chart.getXYPlot();
         setupPlot(xYPlot);
@@ -337,22 +337,20 @@ public class JFreeChartUtils {
      * @param valuesCollection
      * @param verticalErrors
      */
-    public static void plotVerticalErrorBars(JFreeChart chart, List<Double[]> verticalErrors) {
+    public static void plotVerticalErrorBars(JFreeChart chart, XYSeriesCollection valuesCollection, List<Double[]> verticalErrors) {
         Stroke stroke = new BasicStroke();
         // get the plot from the chart
         XYPlot plot = chart.getXYPlot();
-        // get the xyseriescollection from the plot
-        XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) plot.getDataset();
-        for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
+        for (int i = 0; i < valuesCollection.getSeriesCount(); i++) {
             Double[] errors = verticalErrors.get(i);
-            XYSeries values = xYSeriesCollection.getSeries(i);
+            XYSeries values = valuesCollection.getSeries(i);
             for (int j = 0; j < values.getItemCount(); j++) {
                 double x = values.getX(j).doubleValue();
                 double y = values.getY(j).doubleValue();
                 double dy = errors[j];
                 // compute the right index of color to be used in the rendering
                 int lenght = GuiUtils.getAvailableColors().length;
-                String conditionName = xYSeriesCollection.getSeriesKey(i).toString();
+                String conditionName = valuesCollection.getSeriesKey(i).toString();
                 String subString = conditionName.substring(10);
                 int conditionIndex = Integer.parseInt(subString) - 1;
                 int indexOfColor = conditionIndex % lenght;
@@ -429,7 +427,7 @@ public class JFreeChartUtils {
         XYPlot xyPlot = chart.getXYPlot();
         xyPlot.getRangeAxis().setRange(range);
         JFreeChartUtils.setupPlot(xyPlot);
-        // set title font 
+        // set title font
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         // modify renderer
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xyPlot.getRenderer();

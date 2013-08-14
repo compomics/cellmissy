@@ -50,15 +50,15 @@ public class PdfPlatePanel extends AbstractPlatePanel {
         // set graphics
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
-        List<PlateCondition> plateConditionList = experiment.getPlateConditionList();
+        List<PlateCondition> plateConditions = experiment.getPlateConditionList();
         int lenght = GuiUtils.getAvailableColors().length;
 
-        for (PlateCondition plateCondition : plateConditionList) {
+        for (int i = 0; i < plateConditions.size(); i ++) {
+            PlateCondition plateCondition = plateConditions.get(i);
             for (Well well : plateCondition.getWellList()) {
                 for (WellGui wellGui : wellGuiList) {
                     if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
-                        int conditionIndex = plateCondition.getConditionIndex() - 1;
-                        int indexOfColor = conditionIndex % lenght;
+                        int indexOfColor = i % lenght;
                         g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
 
                         int x = (int) wellGui.getEllipsi().get(0).getX() - AnalysisPlatePanel.pixelsGrid / 4;

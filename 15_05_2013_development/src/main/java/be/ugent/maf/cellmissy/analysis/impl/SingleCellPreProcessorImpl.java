@@ -99,22 +99,6 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
-    public void generateOutliersVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-        boolean[] outliersVector = new boolean[dataStructure.length];
-        computeOutliers(singleCellPreProcessingResults);
-        int counter = 0;
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            boolean[] outliers = trackDataHolder.getOutliers();
-            for (int i = 0; i < outliers.length; i++) {
-                outliersVector[counter] = outliersVector[i];
-                counter++;
-            }
-        }
-        singleCellPreProcessingResults.setOutliersVector(outliersVector);
-    }
-
-    @Override
     public void generateInstantaneousVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
         Double[] instantaneousVelocitiesVector = new Double[dataStructure.length];
@@ -274,18 +258,6 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
             trackPointsNumber += trackDataHolder.getTrack().getTrackPointList().size();
         }
         return trackPointsNumber;
-    }
-
-    /**
-     * Filter non motile steps, using the given double value.
-     *
-     * @param singleCellPreProcessingResults
-     * @param motileCriterium
-     */
-    private void computeOutliers(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.filterNonMotileSteps(trackDataHolder);
-        }
     }
 
     /**

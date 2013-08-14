@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.entity.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
 
 /**
  *
@@ -13,7 +13,8 @@ import be.ugent.maf.cellmissy.entity.AnalysisGroup;
 public interface MultipleComparisonsCorrector {
 
     /**
-     * Correct for multiple Comparisons
+     * Correct for multiple Comparisons.
+     *
      * @param analysisGroup
      */
     public void correctForMultipleComparisons(AnalysisGroup analysisGroup);

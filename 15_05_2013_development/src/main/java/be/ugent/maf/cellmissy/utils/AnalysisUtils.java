@@ -113,8 +113,13 @@ public class AnalysisUtils {
      * @return
      */
     public static Double roundThreeDecimals(Double d) {
-        DecimalFormat threeDForm = new DecimalFormat("###.###");
-        return Double.valueOf(threeDForm.format(d));
+        DecimalFormat threeForm = new DecimalFormat("###.###");
+        return Double.valueOf(threeForm.format(d));
+    }
+
+      public static Double roundTwoDecimals(Double d) {
+        DecimalFormat twoDForm = new DecimalFormat("###.##");
+        return Double.valueOf(twoDForm.format(d));
     }
 
     /**
@@ -209,8 +214,8 @@ public class AnalysisUtils {
 
     /**
      * This method is using the Descriptive Statistics Class from
-     * org.apache.commons.math to estimate sample quantiles. Cfr algorithm type
-     * 6 in R, EXCEL, Minitab and SPSS. Continuous sample quantiles
+     * org.apache.commons.math to estimate sample quantiles Cfr algorithm type 6
+     * in R, EXCEL, Minitab and SPSS. Continuous sample quantiles
      *
      * @param data
      * @param p
@@ -228,7 +233,7 @@ public class AnalysisUtils {
     /**
      * This method is estimating quantiles making use of algorithm type 7 in R.
      * This is used by S as well. This implementation is more sensitive,
-     * especially with small datasets (less than 15 data points).
+     * especially with small datasets (less than 15 data points)
      *
      * @param data -- array of double (distribution of data points)
      * @param p -- percentile
@@ -254,25 +259,6 @@ public class AnalysisUtils {
             estimation = data[dataSize - 1];
         }
         return estimation;
-    }
-
-    /**
-     * Given two vectors A and B, this method is computing the Euclidean
-     * Distance between them.
-     *
-     * @param firstVector
-     * @param secondVector
-     * @return a double value for the distance
-     */
-    public static double computeEuclideanDistance(Double[] firstVector, Double[] secondVector) {
-        double distance = 0;
-        for (int i = 0; i < firstVector.length; i++) {
-            if (firstVector[i] != null && secondVector[i] != null) {
-                double temp = Math.pow((firstVector[i] - secondVector[i]), 2);
-                distance += temp;
-            }
-        }
-        return Math.sqrt(distance);
     }
 
     /**

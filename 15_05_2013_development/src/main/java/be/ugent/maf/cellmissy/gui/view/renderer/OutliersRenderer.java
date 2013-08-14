@@ -16,7 +16,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  *
  * @author Paola Masuzzo
  */
-public class AreaOutliersRenderer extends DefaultTableCellRenderer {
+public class OutliersRenderer extends DefaultTableCellRenderer {
 
     private boolean[][] outliers;
     private Format formatter;
@@ -28,7 +28,7 @@ public class AreaOutliersRenderer extends DefaultTableCellRenderer {
      * @param outliers
      * @param formatter
      */
-    public AreaOutliersRenderer(boolean[][] outliers, Format formatter) {
+    public OutliersRenderer(boolean[][] outliers, Format formatter) {
         this.outliers = outliers;
         this.formatter = formatter;
     }

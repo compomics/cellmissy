@@ -4,13 +4,13 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import java.util.List;
 
 /**
- * Interface for area data pre-processing: Normalise Area, Identify and Correct
- * for Outliers, compute Distances between replicates, set time interval or
- * analysis.
+ * Interface for area data pre-processing: Normalize Area, Identify and Correct
+ * for Outliers, compute Distances between replicates
  *
  * @author Paola Masuzzo
  */
@@ -40,36 +40,37 @@ public interface AreaPreProcessor {
     public void computeAreaIncrease(AreaPreProcessingResults areaPreProcessingResults);
 
     /**
-     * Compute Normalized Corrected Area values for a certain Condition
+     * Compute normalised Corrected Area values for a certain Condition
      *
      * @param areaPreProcessingResults
      */
-    public void normalizeCorrectedArea(AreaPreProcessingResults areaPreProcessingResults);
+    public void normalizeCorrectedArea(AreaPreProcessingResults areaPreProcessingResults, String outlierHandlerBeanName);
 
     /**
-     * For Normalized and Corrected Area, compute Euclidean Distances between
-     * one replicate and all the others
+     * For normalised and Corrected Area, compute distance matrix containing all
+     * the distances between one replicate and all the others.
      *
      * @param areaPreProcessingResults
      */
-    public void computeDistanceMatrix(AreaPreProcessingResults areaPreProcessingResults);
+    public void computeDistanceMatrix(AreaPreProcessingResults areaPreProcessingResults, String distanceMetricBeanName);
 
     /**
-     * Check if a replicate can be considered as an Outlier
+     * Check if a replicate can be considered as an Outlier.
      *
      * @param areaPreProcessingResults
      * @param plateCondition
      */
-    public void excludeReplicates(AreaPreProcessingResults areaPreProcessingResults, PlateCondition plateCondition);
+    public void excludeReplicates(AreaPreProcessingResults areaPreProcessingResults, PlateCondition plateCondition, String outliersHandlerBeanName);
 
     /**
      * Detect outliers for a 2D array of double (one condition)
      *
      * @param data
+     * @param outliersHandlerBeanName
      * @return a matrix of Boolean (true if the data point is detected as an
      * outlier, false if not)
      */
-    public boolean[][] detectOutliers(Double[][] data);
+    public boolean[][] detectOutliers(Double[][] data, String outliersHandlerBeanName);
 
     /**
      * Making use of the detect outliers method, correct data set for outliers
@@ -77,7 +78,14 @@ public interface AreaPreProcessor {
      * @param data
      * @return a matrix with corrected value
      */
-    public Double[][] correctForOutliers(Double[][] data);
+    public Double[][] correctForOutliers(Double[][] data, String outliersHandlerBeanName);
+
+    /**
+     *
+     * @param data
+     * @return
+     */
+    public List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName);
 
     /**
      * Set time frame interval for a condition

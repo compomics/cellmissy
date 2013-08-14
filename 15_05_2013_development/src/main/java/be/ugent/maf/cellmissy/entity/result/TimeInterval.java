@@ -1,0 +1,64 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package be.ugent.maf.cellmissy.entity.result;
+
+/**
+ * Time Frames interval used for Analysis int values form first and last time
+ * frame selected (or computed by default)
+ *
+ * @author Paola Masuzzo <paola.masuzzo@ugent.be>
+ */
+public class TimeInterval {
+    // first value of interval
+
+    private int firstTimeFrame;
+    // second value of interval
+    private int lastTimeFrame;
+    // default cutoff
+    private int proposedCutOff;
+
+    public TimeInterval() {
+    }
+
+    /**
+     * Constructor
+     *
+     * @param firstTimeFrame
+     * @param lastTimeFrame
+     */
+    public TimeInterval(int firstTimeFrame, int lastTimeFrame) {
+        this.firstTimeFrame = firstTimeFrame;
+        this.lastTimeFrame = lastTimeFrame;
+    }
+
+    public int getFirstTimeFrame() {
+        return firstTimeFrame;
+    }
+
+    public void setFirstTimeFrame(int firstTimeFrame) {
+        this.firstTimeFrame = firstTimeFrame;
+    }
+
+    public int getLastTimeFrame() {
+        return lastTimeFrame;
+    }
+
+    public void setLastTimeFrame(int lastTimeFrame) {
+        this.lastTimeFrame = lastTimeFrame;
+    }
+
+    public int getProposedCutOff() {
+        return proposedCutOff;
+    }
+
+    public void setProposedCutOff(int proposedCutOff) {
+        this.proposedCutOff = proposedCutOff;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + firstTimeFrame + ", " + lastTimeFrame + ")";
+    }
+}

@@ -19,8 +19,13 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -28,7 +33,8 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "track")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Track.findAll", query = "SELECT t FROM Track t"),
     @NamedQuery(name = "Track.findByTrackid", query = "SELECT t FROM Track t WHERE t.trackid = :trackid"),
@@ -41,17 +47,23 @@ public class Track implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "trackid")
+    @XmlTransient
     private Long trackid;
     @Basic(optional = false)
     @Column(name = "track_number")
+    @XmlAttribute(required=true)
     private int trackNumber;
     @Basic(optional = false)
     @Column(name = "track_length")
+    @XmlAttribute(required=true)
     private int trackLength;
     @JoinColumn(name = "l_well_has_imaging_typeid", referencedColumnName = "well_has_imaging_typeid")
     @ManyToOne(optional = false)
+    @XmlTransient
     private WellHasImagingType wellHasImagingType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "track", orphanRemoval = true)
+    @XmlElementWrapper(name = "trackPoints")
+    @XmlElement(name = "trackPoint")
     private List<TrackPoint> trackPointList;
 
     public Track() {
@@ -99,7 +111,6 @@ public class Track implements Serializable {
         this.wellHasImagingType = wellHasImagingType;
     }
 
-    @XmlTransient
     public List<TrackPoint> getTrackPointList() {
         return trackPointList;
     }

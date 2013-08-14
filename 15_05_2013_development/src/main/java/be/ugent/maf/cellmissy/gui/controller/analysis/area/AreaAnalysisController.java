@@ -6,25 +6,28 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
 import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
 import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
-import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory.CorrectionMethod;
+import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory;
 import be.ugent.maf.cellmissy.analysis.SignificanceLevel;
 import be.ugent.maf.cellmissy.analysis.StatisticsAnalyzer;
+import be.ugent.maf.cellmissy.analysis.StatisticsTestFactory;
 import be.ugent.maf.cellmissy.entity.Algorithm;
-import be.ugent.maf.cellmissy.entity.AnalysisGroup;
-import be.ugent.maf.cellmissy.entity.AreaAnalysisResults;
-import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.AreaAnalysisResults;
+import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.LinearRegressionPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.StatisticsDialog;
 import be.ugent.maf.cellmissy.gui.view.table.model.PValuesTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.StatisticalSummaryTableModel;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.LinearRegressionTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.PValuesTableRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.RectIconCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.VelocityBarRenderer;
+import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
@@ -37,8 +40,6 @@ import java.awt.GridBagConstraints;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -46,6 +47,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
@@ -55,7 +57,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -104,7 +105,7 @@ public class AreaAnalysisController {
     private AreaMainController areaMainController;
     // child controllers
     @Autowired
-    private AreaReportController areaReportController;
+    private AreaAnalysisReportController areaAnalysisReportController;
     //services
     @Autowired
     private AreaAnalyzer areaAnalyzer;
@@ -113,7 +114,7 @@ public class AreaAnalysisController {
     private GridBagConstraints gridBagConstraints;
 
     /**
-     * Initialize controller
+     * initialize controller
      */
     public void init() {
         bindingGroup = new BindingGroup();
@@ -121,6 +122,17 @@ public class AreaAnalysisController {
         analysisMap = new LinkedHashMap<>();
         //init views
         initLinearRegressionPanel();
+        // init child controller
+        areaAnalysisReportController.init();
+    }
+
+    /**
+     * Get main frame through parent controller
+     *
+     * @return
+     */
+    public CellMissyFrame getCellMissyFrame() {
+        return areaMainController.getCellMissyFrame();
     }
 
     public Experiment getExperiment() {
@@ -143,6 +155,18 @@ public class AreaAnalysisController {
         return areaMainController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
     }
 
+    public JFreeChart createGlobalAreaChartInTimeInterval(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType) {
+        return areaMainController.createGlobalAreaChartInTimeInterval(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+    }
+
+    public JFreeChart createRawAreaChart(PlateCondition plateCondition) {
+        return areaMainController.createRawAreaChart(plateCondition);
+    }
+
+    public JFreeChart createCorrectedAreaChart(PlateCondition plateCondition) {
+        return areaMainController.createCorrectedAreaChart(plateCondition);
+    }
+
     public void showMessage(String message, String title, Integer messageType) {
         areaMainController.showMessage(message, title, messageType);
     }
@@ -152,11 +176,31 @@ public class AreaAnalysisController {
     }
 
     public Algorithm getSelectedALgorithm() {
-        return areaMainController.getSelectedAlgorithm();
+        return areaMainController.getSelectedALgorithm();
     }
 
     public ImagingType getSelectedImagingType() {
         return areaMainController.getSelectedImagingType();
+    }
+
+    public LinearRegressionPanel getLinearRegressionPanel() {
+        return linearRegressionPanel;
+    }
+
+    public double[] getAnalysisTimeFrames() {
+        return areaMainController.getAnalysisTimeFrames();
+    }
+
+    public StatisticsDialog getStatisticsDialog() {
+        return statisticsDialog;
+    }
+
+    public List<PlateCondition> getProcessedConditions() {
+        return areaMainController.getProcessedConditions();
+    }
+
+    public void resetOnCancel() {
+        areaAnalysisReportController.resetOnCancel();
     }
 
     /**
@@ -183,15 +227,15 @@ public class AreaAnalysisController {
         // data for table model: number of rows equal to number of conditions, number of columns equal to maximum number of replicates + 3
         // first column with conditions, last two with mean and mad values
         int maximumNumberOfReplicates = AnalysisUtils.getMaximumNumberOfReplicates(processedConditions);
-        Object[][] data = new Object[processedConditions.size()][maximumNumberOfReplicates + 3];
+        Object[][] data = new Object[processedConditions.size()][maximumNumberOfReplicates + 4];
         for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-            for (int columnIndex = 1; columnIndex < slopesList.get(rowIndex).length + 1; columnIndex++) {
-                Double slope = slopesList.get(rowIndex)[columnIndex - 1];
-                Double coefficient = coefficientsList.get(rowIndex)[columnIndex - 1];
+            for (int columnIndex = 2; columnIndex < slopesList.get(rowIndex).length + 2; columnIndex++) {
+                Double slope = slopesList.get(rowIndex)[columnIndex - 2];
+                Double coefficient = coefficientsList.get(rowIndex)[columnIndex - 2];
                 if (slope != null && coefficient != null && !slope.isNaN() && !coefficient.isNaN()) {
                     // round to three decimals slopes and coefficients
-                    slope = AnalysisUtils.roundThreeDecimals(slopesList.get(rowIndex)[columnIndex - 1]);
-                    coefficient = AnalysisUtils.roundThreeDecimals(coefficientsList.get(rowIndex)[columnIndex - 1]);
+                    slope = AnalysisUtils.roundThreeDecimals(slopesList.get(rowIndex)[columnIndex - 2]);
+                    coefficient = AnalysisUtils.roundThreeDecimals(coefficientsList.get(rowIndex)[columnIndex - 2]);
                     // show in table slope + (coefficient)
                     data[rowIndex][columnIndex] = slope + " (" + coefficient + ")";
                 } else if (slope == null && coefficient == null) {
@@ -202,6 +246,7 @@ public class AreaAnalysisController {
             }
             // first column contains conditions names
             data[rowIndex][0] = rowIndex + 1;
+            // second column will show the icons with the colors
             // last 2 columns contain mean slopes, mad values
             data[rowIndex][data[0].length - 2] = meanSlopesList.get(rowIndex);
             data[rowIndex][data[0].length - 1] = madSlopesList.get(rowIndex);
@@ -209,17 +254,24 @@ public class AreaAnalysisController {
         // array of column names for table model
         String[] columnNames = new String[data[0].length];
         columnNames[0] = "Cond";
-        for (int i = 1; i < columnNames.length - 2; i++) {
-            columnNames[i] = "Repl " + i;
+        columnNames[1] = "";
+        for (int i = 2; i < columnNames.length - 2; i++) {
+            columnNames[i] = "Repl " + (i - 1);
         }
         columnNames[columnNames.length - 2] = "median";
         columnNames[columnNames.length - 1] = "MAD";
         JTable slopesTable = linearRegressionPanel.getSlopesTable();
         // set model of table
-        slopesTable.setModel(new DefaultTableModel(data, columnNames));
-        // set cell renderer
+        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
+        nonEditableTableModel.setDataVector(data, columnNames);
+        slopesTable.setModel(nonEditableTableModel);
+        // set cell renderer: rect icon in the second column
+        slopesTable.getColumnModel().getColumn(1).setCellRenderer(new RectIconCellRenderer());
         for (int columnIndex = 0; columnIndex < slopesTable.getColumnCount(); columnIndex++) {
-            slopesTable.getColumnModel().getColumn(columnIndex).setCellRenderer(new LinearRegressionTableRenderer(areaMainController.getFormat()));
+            if (columnIndex == columnNames.length - 1 | columnIndex == columnNames.length - 2) {
+                slopesTable.getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(areaMainController.getFormat(), SwingConstants.LEFT));
+            }
+            GuiUtils.packColumn(slopesTable, columnIndex, 1);
         }
         // select by default all conditions: to show all bars in the velocity chart
         slopesTable.setRowSelectionInterval(0, linearRegressionPanel.getSlopesTable().getRowCount() - 1);
@@ -360,7 +412,7 @@ public class AreaAnalysisController {
         // control opaque property of table
         linearRegressionPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
         JTable slopesTable = linearRegressionPanel.getSlopesTable();
-        slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
+        slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         slopesTable.getTableHeader().setReorderingAllowed(false);
         slopesTable.setFillsViewportHeight(true);
         // init chart panel
@@ -386,9 +438,18 @@ public class AreaAnalysisController {
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, significanceLevelsBindingList, statisticsDialog.getSignificanceLevelComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();
-        // fill in combo box
-        for (CorrectionMethod method : CorrectionMethod.values()) {
-            statisticsDialog.getCorrectionMethodsComboBox().addItem(method);
+        // add the NONE (default) correction method
+        // when the none is selected, CellMissy does not correct for multiple hypotheses
+        statisticsDialog.getCorrectionMethodsComboBox().addItem("none");
+        // fill in combo box: get all the correction methods from the factory
+        Set<String> correctionBeanNames = MultipleComparisonsCorrectionFactory.getInstance().getCorrectionBeanNames();
+        for (String correctionBeanName : correctionBeanNames) {
+            statisticsDialog.getCorrectionMethodsComboBox().addItem(correctionBeanName);
+        }
+        // do the same for the statistical tests
+        Set<String> statisticsCalculatorBeanNames = StatisticsTestFactory.getInstance().getStatisticsCalculatorBeanNames();
+        for (String testName : statisticsCalculatorBeanNames) {
+            statisticsDialog.getStatisticalTestComboBox().addItem(testName);
         }
         //significance level to 0.05
         statisticsDialog.getSignificanceLevelComboBox().setSelectedIndex(1);
@@ -428,30 +489,28 @@ public class AreaAnalysisController {
         });
 
         /**
-         * Create report from Analysis
+         * Create report from Analysis.
          */
         linearRegressionPanel.getCreateReportButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // if every group has been analyzed
                 // create report
+                // initialize maps here, if the maps are still null
+                if (areaAnalysisReportController.getConditionsToPlotMap() == null) {
+                    areaAnalysisReportController.initConditionsToPlotMap();
+                }
+                if (areaAnalysisReportController.getGlobalViewsMap() == null) {
+                    areaAnalysisReportController.initGlobalViewsMap();
+                }
                 if (validateAnalysis()) {
-                    try {
-                        createPdfReport();
-                    } catch (IOException ex) {
-                        LOG.error(ex.getMessage(), ex);
-                    }
+                    areaAnalysisReportController.showCustomizeReportDialog();
                 } else {
                     // else, show a message warning the user
-                    // let him decide if continue with report creation or not
+                    // let the user decide if continue with report creation or not
                     int reply = JOptionPane.showConfirmDialog(areaMainController.getDataAnalysisPanel(), "Not every group was analyzed.\nContinue with report creation?", "", JOptionPane.OK_CANCEL_OPTION);
                     if (reply == JOptionPane.OK_OPTION) {
-                        try {
-                            // if OK, create report
-                            createPdfReport();
-                        } catch (IOException ex) {
-                            LOG.error(ex.getMessage(), ex);
-                        }
+                        areaAnalysisReportController.showCustomizeReportDialog();
                     }
                 }
             }
@@ -464,16 +523,17 @@ public class AreaAnalysisController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
+                String statisticalTestName = statisticsDialog.getStatisticalTestComboBox().getSelectedItem().toString();
                 // check that an analysis group is being selected
                 if (selectedIndex != -1) {
                     AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
                     // compute statistics
-                    computeStatistics(selectedGroup);
+                    computeStatistics(selectedGroup, statisticalTestName);
                     // show statistics in tables
                     showSummary(selectedGroup);
                     // set the correction combobox to the one already chosen
-                    statisticsDialog.getCorrectionMethodsComboBox().setSelectedItem((Object) selectedGroup.getCorrectionMethod());
-                    if (selectedGroup.getCorrectionMethod() == CorrectionMethod.NONE) {
+                    statisticsDialog.getCorrectionMethodsComboBox().setSelectedItem((Object) selectedGroup.getCorrectionMethodName());
+                    if (selectedGroup.getCorrectionMethodName().equals("none")) {
                         // by default show p-values without adjustment
                         showPValues(selectedGroup, false);
                     } else {
@@ -495,15 +555,17 @@ public class AreaAnalysisController {
         /**
          * Update button text if analysis was already done
          */
-        linearRegressionPanel.getGroupsList().addMouseListener(new MouseAdapter() {
+        linearRegressionPanel.getGroupsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                int locationToIndex = linearRegressionPanel.getGroupsList().locationToIndex(e.getPoint());
-                if (locationToIndex != -1) {
-                    if (groupsBindingList.get(locationToIndex).getpValuesMatrix() == null) {
-                        linearRegressionPanel.getStatisticsButton().setText("Perform Statistical Analysis...");
-                    } else {
-                        linearRegressionPanel.getStatisticsButton().setText("Modify Statistical Analysis...");
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        if (groupsBindingList.get(selectedIndex).getpValuesMatrix() == null) {
+                            linearRegressionPanel.getStatisticsButton().setText("Perform Statistical Analysis...");
+                        } else {
+                            linearRegressionPanel.getStatisticsButton().setText("Modify Statistical Analysis...");
+                        }
                     }
                 }
             }
@@ -516,15 +578,16 @@ public class AreaAnalysisController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (statisticsDialog.getSignificanceLevelComboBox().getSelectedIndex() != -1) {
+                    String statisticalTest = statisticsDialog.getStatisticalTestComboBox().getSelectedItem().toString();
                     Double selectedSignLevel = (Double) statisticsDialog.getSignificanceLevelComboBox().getSelectedItem();
                     AnalysisGroup selectedGroup = groupsBindingList.get(linearRegressionPanel.getGroupsList().getSelectedIndex());
                     boolean isAdjusted;
-                    if (selectedGroup.getCorrectionMethod().equals(CorrectionMethod.NONE)) {
+                    if (selectedGroup.getCorrectionMethodName().equals("none")) {
                         isAdjusted = false;
                     } else {
                         isAdjusted = true;
                     }
-                    statisticsAnalyzer.detectSignificance(selectedGroup, selectedSignLevel, isAdjusted);
+                    statisticsAnalyzer.detectSignificance(selectedGroup, statisticalTest, selectedSignLevel, isAdjusted);
                     boolean[][] significances = selectedGroup.getSignificances();
                     JTable pValuesTable = statisticsDialog.getpValuesTable();
                     for (int i = 1; i < pValuesTable.getColumnCount(); i++) {
@@ -536,7 +599,7 @@ public class AreaAnalysisController {
         });
 
         /**
-         * Apply correction for multiple comparisons
+         * Apply correction for multiple comparisons: choose the algorithm!
          */
         statisticsDialog.getCorrectionMethodsComboBox().addActionListener(new ActionListener() {
             @Override
@@ -544,11 +607,11 @@ public class AreaAnalysisController {
                 int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
                 if (selectedIndex != -1) {
                     AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
-                    CorrectionMethod correctionMethod = (CorrectionMethod) statisticsDialog.getCorrectionMethodsComboBox().getSelectedItem();
+                    String correctionMethod = statisticsDialog.getCorrectionMethodsComboBox().getSelectedItem().toString();
                     // update test description
                     updateTestDescriptionPane(correctionMethod);
                     // if the correction method is not "NONE"
-                    if (correctionMethod != CorrectionMethod.NONE) {
+                    if (!correctionMethod.equals("none")) {
                         // adjust p values
                         statisticsAnalyzer.correctForMultipleComparisons(selectedGroup, correctionMethod);
                         // show p - values with the applied correction
@@ -560,9 +623,28 @@ public class AreaAnalysisController {
                 }
             }
         });
-        //multiple comparison correction: NONE
-        statisticsDialog.getCorrectionMethodsComboBox().setSelectedItem((Object) CorrectionMethod.NONE);
-        updateTestDescriptionPane(CorrectionMethod.NONE);
+
+        /**
+         * Perform statistical test: choose the test!!
+         */
+        statisticsDialog.getStatisticalTestComboBox().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // get the selected test to be executed
+                String selectedTest = statisticsDialog.getStatisticalTestComboBox().getSelectedItem().toString();
+                // analysis group
+                int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
+                if (selectedIndex != -1) {
+                    AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
+                    computeStatistics(selectedGroup, selectedTest);
+                }
+            }
+        });
+
+        //multiple comparison correction: set the default correction to none
+        statisticsDialog.getCorrectionMethodsComboBox().setSelectedIndex(0);
+        updateTestDescriptionPane("none");
+        statisticsDialog.getStatisticalTestComboBox().setSelectedIndex(0);
 
         /**
          * Save analysis
@@ -575,7 +657,7 @@ public class AreaAnalysisController {
                 if (selectedIndex != -1) {
                     AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
                     // set correction method (summary statistics, p-values and adjusted p-values are already set)
-                    selectedGroup.setCorrectionMethod((CorrectionMethod) statisticsDialog.getCorrectionMethodsComboBox().getSelectedItem());
+                    selectedGroup.setCorrectionMethodName(statisticsDialog.getCorrectionMethodsComboBox().getSelectedItem().toString());
                     //show message to the user
                     JOptionPane.showMessageDialog(statisticsDialog, "Analysis was saved!", "analysis saved", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -589,16 +671,23 @@ public class AreaAnalysisController {
     /**
      * Update text pane with description of statistical test
      *
-     * @param correctionMethod
+     * @param correctionMethodName
      */
-    private void updateTestDescriptionPane(CorrectionMethod correctionMethod) {
+    private void updateTestDescriptionPane(String correctionMethodName) {
         String testDescription = "";
-        if (correctionMethod == CorrectionMethod.NONE) {
-            testDescription = "No correction is applied.";
-        } else if (correctionMethod == CorrectionMethod.BONFERRONI) {
-            testDescription = "This correction is the most stringent one; p values are multiplied for number of pairwise comparisons.";
-        } else if (correctionMethod == CorrectionMethod.BENJAMINI) {
-            testDescription = "This correction is less stringent than the Bonferroni one; the p values are first ranked from the smallest to the largest. The largest p value remains as it is. The second largest p value is multiplied by the total number of comparisons divided by its rank. This is repeated for the third p value and so on.";
+        switch (correctionMethodName) {
+            case "none":
+                testDescription = "No correction is applied for multiple comparisons.";
+                break;
+            case "bonferroni":
+                testDescription = "This correction is the most stringent one; p values are multiplied for number of pairwise comparisons.";
+                break;
+            case "benjamini":
+                testDescription = "This correction is less stringent than the Bonferroni one; the p values are first ranked from the smallest to the largest. The largest p value remains as it is. The second largest p value is multiplied by the total number of comparisons divided by its rank. This is repeated for the third p value and so on.";
+                break;
+            default:
+                testDescription = "No information is available for the current selected correction method.";
+                break;
         }
         statisticsDialog.getTestDescriptionTextPane().setText(testDescription);
         SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
@@ -612,11 +701,11 @@ public class AreaAnalysisController {
      *
      * @param analysisGroup
      */
-    private void computeStatistics(AnalysisGroup analysisGroup) {
+    private void computeStatistics(AnalysisGroup analysisGroup, String statisticalTestName) {
         // generate summary statistics
-        statisticsAnalyzer.generateSummaryStatistics(analysisGroup);
+        statisticsAnalyzer.generateSummaryStatistics(analysisGroup, statisticalTestName);
         // execute mann whitney test --- set p values matrix (no adjustment)
-        statisticsAnalyzer.executePairwiseComparisons(analysisGroup);
+        statisticsAnalyzer.executePairwiseComparisons(analysisGroup, statisticalTestName);
     }
 
     /**
@@ -631,7 +720,7 @@ public class AreaAnalysisController {
         JTable statisticalSummaryTable = statisticsDialog.getStatisticalSummaryTable();
         statisticalSummaryTable.setModel(statisticalSummaryTableModel);
         for (int i = 1; i < statisticalSummaryTable.getColumnCount(); i++) {
-            statisticalSummaryTable.getColumnModel().getColumn(i).setCellRenderer(new FormatRenderer(SwingConstants.RIGHT, new DecimalFormat("#.####")));
+            statisticalSummaryTable.getColumnModel().getColumn(i).setCellRenderer(new FormatRenderer(new DecimalFormat("#.####"), SwingConstants.CENTER));
         }
         statisticalSummaryTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
     }
@@ -642,12 +731,13 @@ public class AreaAnalysisController {
      * @param analysisGroup
      */
     private void showPValues(AnalysisGroup analysisGroup, boolean isAdjusted) {
+        String statisticalTestName = statisticsDialog.getStatisticalTestComboBox().getSelectedItem().toString();
         PValuesTableModel pValuesTableModel = new PValuesTableModel(analysisGroup, areaMainController.getPlateConditionList(), isAdjusted);
         JTable pValuesTable = statisticsDialog.getpValuesTable();
         pValuesTable.setModel(pValuesTableModel);
         Double selectedSignLevel = (Double) statisticsDialog.getSignificanceLevelComboBox().getSelectedItem();
         // detect significances with selected alpha level
-        statisticsAnalyzer.detectSignificance(analysisGroup, selectedSignLevel, isAdjusted);
+        statisticsAnalyzer.detectSignificance(analysisGroup, statisticalTestName, selectedSignLevel, isAdjusted);
         boolean[][] significances = analysisGroup.getSignificances();
         for (int i = 1; i < pValuesTable.getColumnCount(); i++) {
             pValuesTable.getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(new DecimalFormat("#.####"), significances));
@@ -713,7 +803,8 @@ public class AreaAnalysisController {
     }
 
     /**
-     * Get conditions according to selected rows and add them to the groupsList
+     * Get conditions according to selected rows and add them to the Analysis
+     * Group
      */
     private void addGroupToAnalysis() {
         List<PlateCondition> plateConditionsList = new ArrayList<>();
@@ -725,21 +816,29 @@ public class AreaAnalysisController {
             AreaAnalysisResults areaAnalysisResults = analysisMap.get(selectedCondition);
             areaAnalysisResultsList.add(areaAnalysisResults);
         }
-        // make a new analysis group, with those conditions and those results
-        AnalysisGroup analysisGroup = new AnalysisGroup(plateConditionsList, areaAnalysisResultsList);
-        //set name for the group
-        if (!linearRegressionPanel.getGroupNameTextField().getText().isEmpty()) {
-            analysisGroup.setGroupName(linearRegressionPanel.getGroupNameTextField().getText());
-            // set correction method to NONE by default
-            analysisGroup.setCorrectionMethod(CorrectionMethod.NONE);
-            linearRegressionPanel.getGroupNameTextField().setText("");
-            // actually add the group to the analysis list
-            if (!groupsBindingList.contains(analysisGroup)) {
-                groupsBindingList.add(analysisGroup);
+        // we check here that at least two conditions have been selected to be part of the analysis group
+        // else, the analysis does not really make sense
+        if (plateConditionsList.size() > 1) {
+            // make a new analysis group, with those conditions and those results
+            AnalysisGroup analysisGroup = new AnalysisGroup(plateConditionsList, areaAnalysisResultsList);
+            //set name for the group
+            if (!linearRegressionPanel.getGroupNameTextField().getText().isEmpty()) {
+                analysisGroup.setGroupName(linearRegressionPanel.getGroupNameTextField().getText());
+                // set correction method to NONE by default
+                analysisGroup.setCorrectionMethodName("none");
+                linearRegressionPanel.getGroupNameTextField().setText("");
+                // actually add the group to the analysis list
+                if (!groupsBindingList.contains(analysisGroup)) {
+                    groupsBindingList.add(analysisGroup);
+                }
+            } else {
+                // ask the user to type a name for the group
+                areaMainController.showMessage("Please type a name for the analysis group.", "no name typed for the analysis group", JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
-            // ask the user to type a name for the group
-            areaMainController.showMessage("Please choose a name for the analysis group.", "", JOptionPane.INFORMATION_MESSAGE);
+            // we tell the user that statistics cannot be performed on only one condition !!
+            // the selection is basically ignored
+            areaMainController.showMessage("Sorry! It is not possible to perform analysis on one condition only!\nPlease select at least two conditions.", "at least two conditions need to be chosen for analysis", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -793,9 +892,9 @@ public class AreaAnalysisController {
             //set cursor to waiting one
             areaMainController.setCursor(Cursor.WAIT_CURSOR);
             boolean useCorrectedData = areaMainController.useCorrectedData();
-            areaReportController.setUseCorrectedData(useCorrectedData);
+            areaAnalysisReportController.setUseCorrectedData(useCorrectedData);
             //call the child controller to create report
-            File file = areaReportController.createAnalysisReport(directory, reportName);
+            File file = areaAnalysisReportController.createAnalysisReport(directory, reportName);
             return file;
         }
 
@@ -806,13 +905,16 @@ public class AreaAnalysisController {
                 file = get();
             } catch (InterruptedException | CancellationException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
+                areaMainController.handleUnexpectedError(ex);
             }
             try {
                 //if export to PDF was successfull, open the PDF file from the desktop
-                Desktop.getDesktop().open(file);
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().open(file);
+                }
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);
-                areaMainController.showMessage(ex.getMessage(), "Error while opening file", JOptionPane.ERROR_MESSAGE);
+                areaMainController.showMessage("Cannot open the file!" + "\n" + ex.getMessage(), "error while opening file", JOptionPane.ERROR_MESSAGE);
             }
             //set cursor back to default
             areaMainController.setCursor(Cursor.DEFAULT_CURSOR);

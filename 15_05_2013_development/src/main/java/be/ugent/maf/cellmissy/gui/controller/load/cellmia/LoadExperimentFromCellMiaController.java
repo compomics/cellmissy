@@ -18,6 +18,7 @@ import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -113,6 +114,10 @@ public class LoadExperimentFromCellMiaController {
         cellMissyController.showMessage(message, title, messageType);
     }
 
+    public void handleUnexpectedError(Exception ex) {
+        cellMissyController.handleUnexpectedError(ex);
+    }
+
     public int showConfirmDialog(String message, String title, Integer optionType) {
         return JOptionPane.showConfirmDialog(cellMissyController.getCellMissyFrame(), message, title, optionType);
     }
@@ -123,6 +128,10 @@ public class LoadExperimentFromCellMiaController {
 
     public User getCurrentUser() {
         return cellMissyController.getCurrentUser();
+    }
+
+    public void setExpListRenderer(User currentUser) {
+        cellMiaExperimentDataController.setExpListRenderer(currentUser);
     }
 
     /**
@@ -146,11 +155,12 @@ public class LoadExperimentFromCellMiaController {
         experiment = null;
         dataLoadingHasBeenSaved = false;
         // clear selection on project list
-        cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel().getProjectJList().clearSelection();
+        cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel().getProjectsList().clearSelection();
         if (cellMiaExperimentDataController.getExperimentBindingList() != null) {
             cellMiaExperimentDataController.getExperimentBindingList().clear();
         }
         cellMiaExperimentDataController.resetAfterUserInteraction();
+        loadFromCellMiaPanel.getInfolabel().setForeground(Color.black);
         // swap views
         GuiUtils.switchChildPanels(loadFromCellMiaPanel.getTopPanel(), cellMiaExperimentDataController.getLoadFromCellMiaMetadataPanel(), cellMiaImagedPlateController.getLoadFromCellMiaPlatePanel());
         cellMissyController.updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Select a project and then an experiment in progress to load CELLMIA data.");
@@ -381,7 +391,7 @@ public class LoadExperimentFromCellMiaController {
             // show a waiting cursor
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             // save motility data
-            experimentService.saveMotilityDataForExperiment(experiment);
+            experimentService.saveMigrationDataForExperiment(experiment);
             // update experiment
             experiment = experimentService.update(experiment);
             return null;
@@ -397,12 +407,12 @@ public class LoadExperimentFromCellMiaController {
                 loadFromCellMiaPanel.getSaveDataProgressBar().setVisible(false);
                 LOG.debug("Experiment was saved.");
                 //update info for the user
-                showMessage("Experiment was successfully saved to DB.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
+                showMessage("Experiment was successfully saved to DB.\nPlease choose what you want to do next.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
                 updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Experiment was successfully saved to DB.");
-            } catch (InterruptedException ex) {
+                cellMissyController.onStartup();
+            } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
-            } catch (ExecutionException ex) {
-                showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+                handleUnexpectedError(ex);
             }
         }
     }

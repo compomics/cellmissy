@@ -69,7 +69,7 @@ public class ApplicationValidator {
 
         //init bindings
         bindingGroup = new BindingGroup();
-        //table binding 
+        //table binding
         propertyGuiWrapperBindingList = ObservableCollections.observableList(new ArrayList<PropertyGuiWrapper>());
         initPropertyGuiWrappersBindingList();
         // table binding for properties
@@ -155,11 +155,11 @@ public class ApplicationValidator {
     /**
      * Handle exceptions when getting the application context
      */
-    public void getApplicationContext() {
+    public void startApplicationContext() {
         try {
             // try to get the application context
             ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
-            CellMissyController cellMissyController = (CellMissyController) context.getBean("cellMissyController");
+            CellMissyController cellMissyController = context.getBean("cellMissyController", CellMissyController.class);
             // init main controller, if application context was got properly
             cellMissyController.init();
             // catch TransactionException

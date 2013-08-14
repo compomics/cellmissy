@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.view.table.model;
 
-import be.ugent.maf.cellmissy.entity.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;

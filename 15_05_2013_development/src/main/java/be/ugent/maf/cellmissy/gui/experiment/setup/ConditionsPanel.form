@@ -56,12 +56,12 @@
   <SubComponents>
     <Component class="javax.swing.JButton" name="addButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Add condition"/>
+        <Property name="text" type="java.lang.String" value="Add Condition"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="removeButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Remove condition"/>
+        <Property name="text" type="java.lang.String" value="Remove Condition"/>
       </Properties>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">

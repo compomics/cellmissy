@@ -148,6 +148,7 @@ public class TreatmentsPanel extends javax.swing.JPanel {
         jScrollPane2.setMinimumSize(new java.awt.Dimension(20, 20));
         jScrollPane2.setOpaque(false);
 
+        sourceList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         sourceList1.setToolTipText("");
         jScrollPane2.setViewportView(sourceList1);
 
@@ -164,6 +165,7 @@ public class TreatmentsPanel extends javax.swing.JPanel {
         jScrollPane4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Treatments", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
         jScrollPane4.setOpaque(false);
 
+        sourceList2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         sourceList2.setToolTipText("");
         jScrollPane4.setViewportView(sourceList2);
 
@@ -233,7 +235,7 @@ public class TreatmentsPanel extends javax.swing.JPanel {
 
         jLabel1.setText("%");
 
-        addNewButton.setText("Add new drugs/treatments...");
+        addNewButton.setText("Add new Drugs-Treatments...");
 
         serumLabel.setText("Serum");
 
@@ -304,7 +306,7 @@ public class TreatmentsPanel extends javax.swing.JPanel {
                         .addGroup(treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
                         .addComponent(addNewButton)
                         .addGap(13, 13, 13))))
         );

@@ -60,15 +60,6 @@ public interface TrackOperator {
     public void computeInstantaneousVelocities(TrackDataHolder trackDataHolder);
 
     /**
-     * Compute motile steps: if the cell has been moved more than a certain
-     * amount of pixels, described by the motile criterium.
-     *
-     * @param trackDataHolder
-     * @param motileCriterium
-     */
-    public void filterNonMotileSteps(TrackDataHolder trackDataHolder);
-
-    /**
      * Generate the velocities filtered through the motile step criterium.
      *
      * @param trackDataHolder

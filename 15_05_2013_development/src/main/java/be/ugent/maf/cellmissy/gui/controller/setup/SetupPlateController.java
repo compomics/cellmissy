@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.setup;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -46,6 +47,7 @@ public class SetupPlateController {
     private Rectangle rectangle;
     private BindingGroup bindingGroup;
     private boolean configurationIsRandom;
+    private boolean selectionStarted;
     //view
     private SetupPlatePanel setupPlatePanel;
     //parent controller
@@ -75,6 +77,10 @@ public class SetupPlateController {
      */
     public SetupPlatePanel getSetupPlatePanel() {
         return setupPlatePanel;
+    }
+
+    public void setSelectionStarted(boolean selectionStarted) {
+        this.selectionStarted = selectionStarted;
     }
 
     /**
@@ -107,6 +113,41 @@ public class SetupPlateController {
         for (PlateCondition plateCondition : setupExperimentController.getPlateConditionBindingList()) {
             removeRectangleEntry(plateCondition);
         }
+    }
+
+    /**
+     * Using the plate service, check if the plate format for given experiment
+     * is already present in DB.
+     *
+     * @param experiment
+     * @return
+     */
+    public PlateFormat findByFormat(Experiment experiment) {
+        int format = experiment.getPlateFormat().getFormat();
+        return plateService.findByFormat(format);
+    }
+
+    /**
+     * For an experiment, we get back the plate format, if this is not present
+     * in the DB, we just add it in the correspondent GUI-model.
+     *
+     * @param experiment
+     */
+    public void addNewPlateFormat(Experiment experiment) {
+        PlateFormat plateFormat = experiment.getPlateFormat();
+        PlateFormat foundFormat = findByFormat(experiment);
+        if (foundFormat == null) {
+            plateFormatBindingList.add(plateFormat);
+        }
+    }
+
+    /**
+     * Using the plate service, persist a new plate format to the DB.
+     *
+     * @param plateFormat
+     */
+    public void savePlateFormat(PlateFormat plateFormat) {
+        plateService.save(plateFormat);
     }
 
     /**
@@ -209,7 +250,7 @@ public class SetupPlateController {
                 // get the selected plate format
                 PlateFormat selectedPlateFormat = (PlateFormat) (setupExperimentController.getSetupPanel().getPlateFormatComboBox().getSelectedItem());
                 // if selection has not started yet, simply show the plate format
-                if (!selectionStarted()) {
+                if (!selectionStarted) {
                     Dimension parentDimension = setupExperimentController.getSetupPanel().getBottomPanel().getSize();
                     setupPlatePanel.initPanel(selectedPlateFormat, parentDimension);
                     setupPlatePanel.repaint();
@@ -295,15 +336,14 @@ public class SetupPlateController {
      * @return
      */
     private boolean selectionStarted() {
-        boolean started = false;
         Collection<List<Rectangle>> values = setupPlatePanel.getRectangles().values();
         for (List<Rectangle> list : values) {
             if (!list.isEmpty()) {
-                started = true;
+                selectionStarted = true;
                 break;
             }
         }
-        return started;
+        return selectionStarted;
     }
 
     /**

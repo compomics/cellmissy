@@ -20,10 +20,6 @@ public class LoadFromGenericInputMetadataPanel extends javax.swing.JPanel {
         return durationTextField;
     }
 
-    public JList getExperimentJList() {
-        return experimentJList;
-    }
-
     public JLabel getInfoLabel() {
         return infoLabel;
     }
@@ -40,16 +36,20 @@ public class LoadFromGenericInputMetadataPanel extends javax.swing.JPanel {
         return intervalUnitComboBox;
     }
 
-    public JList getProjectJList() {
-        return projectJList;
-    }
-
     public JTextField getTimeFramesTextField() {
         return timeFramesTextField;
     }
 
     public JTextArea getProjectDescriptionTextArea() {
         return projectDescriptionTextArea;
+    }
+
+    public JList getExperimentsList() {
+        return experimentsList;
+    }
+
+    public JList getProjectsList() {
+        return projectsList;
     }
 
     /**
@@ -70,15 +70,15 @@ public class LoadFromGenericInputMetadataPanel extends javax.swing.JPanel {
 
         overviewPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        projectJList = new javax.swing.JList();
         jLabel4 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        experimentJList = new javax.swing.JList();
         infoLabel = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         projectDescriptionTextArea = new javax.swing.JTextArea();
         jLabel8 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        projectsList = new javax.swing.JList();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        experimentsList = new javax.swing.JList();
         metadataPanel = new javax.swing.JPanel();
         durationLabel = new javax.swing.JLabel();
         durationTextField = new javax.swing.JTextField();
@@ -101,19 +101,8 @@ public class LoadFromGenericInputMetadataPanel extends javax.swing.JPanel {
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel3.setText("Projects");
 
-        jScrollPane1.setBorder(null);
-        jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-
-        jScrollPane1.setViewportView(projectJList);
-
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel4.setText("Experiments in progress");
-
-        jScrollPane2.setBorder(null);
-        jScrollPane2.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-
-        experimentJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane2.setViewportView(experimentJList);
 
         infoLabel.setText("Click on a project to see the relative experiments in progress.");
 
@@ -125,7 +114,13 @@ public class LoadFromGenericInputMetadataPanel extends javax.swing.JPanel {
         jScrollPane4.setViewportView(projectDescriptionTextArea);
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("project description");
+        jLabel8.setText("Project Description");
+
+        projectsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(projectsList);
+
+        experimentsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(experimentsList);
 
         javax.swing.GroupLayout overviewPanelLayout = new javax.swing.GroupLayout(overviewPanel);
         overviewPanel.setLayout(overviewPanelLayout);
@@ -134,25 +129,22 @@ public class LoadFromGenericInputMetadataPanel extends javax.swing.JPanel {
             .addGroup(overviewPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(overviewPanelLayout.createSequentialGroup()
                         .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addGap(29, 29, 29)
-                        .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(31, 31, 31))
-                    .addGroup(overviewPanelLayout.createSequentialGroup()
-                        .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel8))
-                        .addContainerGap())))
+                            .addComponent(jLabel8)
+                            .addGroup(overviewPanelLayout.createSequentialGroup()
+                                .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3))
+                                .addGap(18, 18, 18)
+                                .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
-
-        overviewPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jScrollPane1, jScrollPane2});
-
         overviewPanelLayout.setVerticalGroup(
             overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, overviewPanelLayout.createSequentialGroup()
@@ -160,23 +152,21 @@ public class LoadFromGenericInputMetadataPanel extends javax.swing.JPanel {
                 .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 18, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(infoLabel)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        overviewPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jScrollPane1, jScrollPane2});
-
         metadataPanel.setBackground(new java.awt.Color(255, 255, 255));
-        metadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment metadata", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.black));
+        metadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment Metadata", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.black));
         metadataPanel.setMinimumSize(new java.awt.Dimension(20, 20));
 
         durationLabel.setText("Duration*");
@@ -211,7 +201,7 @@ public class LoadFromGenericInputMetadataPanel extends javax.swing.JPanel {
                             .addComponent(timeFramesLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(metadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(intervalTextField)
+                            .addComponent(intervalTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                             .addComponent(timeFramesTextField)
                             .addComponent(durationTextField))
                         .addGap(18, 18, 18)
@@ -251,17 +241,17 @@ public class LoadFromGenericInputMetadataPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(overviewPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
-                    .addComponent(metadataPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(82, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(overviewPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(metadataPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(64, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(overviewPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addComponent(overviewPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(metadataPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -269,7 +259,7 @@ public class LoadFromGenericInputMetadataPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel durationLabel;
     private javax.swing.JTextField durationTextField;
-    private javax.swing.JList experimentJList;
+    private javax.swing.JList experimentsList;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel infoLabel1;
     private javax.swing.JLabel intervalLabel;
@@ -285,7 +275,7 @@ public class LoadFromGenericInputMetadataPanel extends javax.swing.JPanel {
     private javax.swing.JPanel metadataPanel;
     private javax.swing.JPanel overviewPanel;
     private javax.swing.JTextArea projectDescriptionTextArea;
-    private javax.swing.JList projectJList;
+    private javax.swing.JList projectsList;
     private javax.swing.JLabel timeFramesLabel;
     private javax.swing.JTextField timeFramesTextField;
     // End of variables declaration//GEN-END:variables

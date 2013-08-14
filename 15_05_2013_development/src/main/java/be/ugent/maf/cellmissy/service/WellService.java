@@ -26,14 +26,14 @@ import java.util.Map;
 public interface WellService extends GenericService<Well, Long> {
 
     /**
-     * Initializes the service this method initializes also CellMiaDataService
-     * and MicroscopeDataService
+     * Initialize the service: initialize also CellMiaDataService and
+     * MicroscopeDataService
      *
      * @param experiment
      * @throws FileParserException
      * @throws PositionListMismatchException
      */
-    void init(Experiment experiment) throws FileParserException, PositionListMismatchException;
+    public void init(Experiment experiment) throws FileParserException, PositionListMismatchException;
 
     /**
      * This method uses the plate format and the first WellGui selected by the
@@ -44,7 +44,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @param firstWellGui
      * @param wellGUIList
      */
-    void updateWellGuiListWithImagingType(ImagingType imagingType, PlateFormat plateFormat, WellGui firstWellGui, List<WellGui> wellGUIList);
+    public void updateWellGuiListWithImagingType(ImagingType imagingType, PlateFormat plateFormat, WellGui firstWellGui, List<WellGui> wellGUIList);
 
     /**
      * This method gets a list of imaging types from the map in output from
@@ -52,7 +52,7 @@ public interface WellService extends GenericService<Well, Long> {
      *
      * @return a List of Imaging Types
      */
-    List<ImagingType> getImagingTypes();
+    public List<ImagingType> getImagingTypes();
 
     /**
      * This method gets a map between algorithms and samples (indexed by imaging
@@ -63,7 +63,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @throws PositionListMismatchException
      * @throws CellMiaDataLoadingException
      */
-    Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException, CellMiaDataLoadingException;
+    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException, CellMiaDataLoadingException;
 
     /**
      * Find all algorithms for one wellId
@@ -71,7 +71,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @param wellId
      * @return
      */
-    List<Algorithm> findAlgosByWellId(Long wellId);
+    public List<Algorithm> findAlgosByWellId(Long wellId);
 
     /**
      * Find all imaging types for one wellId
@@ -79,27 +79,27 @@ public interface WellService extends GenericService<Well, Long> {
      * @param wellId
      * @return
      */
-    List<ImagingType> findImagingTypesByWellId(Long wellId);
+    public List<ImagingType> findImagingTypesByWellId(Long wellId);
 
     /**
-     * Fetch time steps List only for some wellHasImagingTypes according
+     * Fetch time steps collection only for some wellHasImagingTypes according
      * to selected algorithm and imaging type
      *
      * @param well
      * @param AlgorithmId
      * @param ImagingTpeId
      */
-    void fetchTimeSteps(Well well, Long AlgorithmId, Long ImagingTpeId);
+    public void fetchTimeSteps(Well well, Long AlgorithmId, Long ImagingTpeId);
 
     /**
-     * Fetch tracks List only for some wellHasImagingTypes according to
+     * Fetch tracks collection only for some wellHasImagingTypes according to
      * selected algorithm and imaging type
      *
      * @param well
      * @param AlgorithmId
      * @param ImagingTpeId
      */
-    void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId);
+    public void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId);
 
     /**
      * Fetch track points only for some wellHasImagingTypes
@@ -108,7 +108,14 @@ public interface WellService extends GenericService<Well, Long> {
      * @param AlgorithmId
      * @param ImagingTpeId
      */
-    void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId);
+    public void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId);
+
+    /**
+     * Fetch both time steps and tracks (track points as well).
+     *
+     * @param well
+     */
+    public Well fetchMigrationData(Long wellId);
 
     /**
      * Get number of samples to parse

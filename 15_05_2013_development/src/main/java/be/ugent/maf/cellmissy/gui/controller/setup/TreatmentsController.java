@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.setup;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
@@ -15,13 +16,14 @@ import be.ugent.maf.cellmissy.service.TreatmentService;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import javax.persistence.PersistenceException;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -98,22 +100,81 @@ public class TreatmentsController {
     }
 
     /**
-     * update treatment List for previously selected condition
+     * Taking a list of treatment type, we add them to the GUI-models; and we do
+     * it according to them category: drug or more general treatment,
+     *
+     * @param treatmentTypes
+     */
+    public void addNewTreatmentTypes(List<TreatmentType> treatmentTypes) {
+        for (TreatmentType treatmentType : treatmentTypes) {
+            switch (treatmentType.getTreatmentCategory()) {
+                case 1:
+                    drugBindingList.add(treatmentType);
+                    break;
+                case 2:
+                    generalTreatmentBindingList.add(treatmentType);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Given an experiment, we see for each condition if a new drug solvent is
+     * associated to the treatment, and if new drug solvents are found, these
+     * are added to the drug solvent binding list.
+     *
+     * @param experiment
+     */
+    public void addNewDrugSolvents(Experiment experiment) {
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            List<Treatment> treatmentList = plateCondition.getTreatmentList();
+            for (Treatment treatment : treatmentList) {
+                String drugSolvent = treatment.getDrugSolvent();
+                if (!drugSolventList.contains(drugSolvent)) {
+                    drugSolventList.add(drugSolvent);
+                }
+            }
+        }
+    }
+
+    /**
+     * For an experiment, this method goes all over its conditions and check for
+     * new treatment types, i.e. treatment types that are not yet in the current
+     * DB.
+     *
+     * @param experiment
+     * @return a list with this new treatment types, if any.
+     */
+    public List<TreatmentType> findNewTreatmentTypes(Experiment experiment) {
+        return treatmentService.findNewTreatmentTypes(experiment);
+    }
+
+    /**
+     * USing the treatment service, save an entity to DB.
+     *
+     * @param treatmentType
+     */
+    public void saveTreatmentType(TreatmentType treatmentType) {
+        treatmentService.saveTreatmentType(treatmentType);
+    }
+
+    /**
+     * update treatment collection for previously selected condition
      *
      * @param plateCondition
      */
-    public void updateTreatmentList(PlateCondition plateCondition) {
-        // add to the List newly inserted treatments
+    public void updateTreatmentCollection(PlateCondition plateCondition) {
+        // add to the collection newly inserted treatments
         for (Treatment treatment : treatmentBindingList) {
             //set plate condition of the treatment
             treatment.setPlateCondition(plateCondition);
-            //update treatment List of the plate condition
+            //update treatment collection of the plate condition
             if (!plateCondition.getTreatmentList().contains(treatment)) {
                 plateCondition.getTreatmentList().add(treatment);
             }
         }
 
-        // remove form the List treatments not present anymore
+        // remove form the collection treatments not present anymore
         Iterator<Treatment> iterator = plateCondition.getTreatmentList().iterator();
         while (iterator.hasNext()) {
             if (!treatmentBindingList.contains(iterator.next())) {
@@ -246,17 +307,25 @@ public class TreatmentsController {
 
         //add mouse listeners
         //select drug OR general treatment
-        treatmentsPanel.getSourceList1().addMouseListener(new MouseAdapter() {
+        treatmentsPanel.getSourceList1().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                treatmentsPanel.getSourceList2().clearSelection();
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    if (treatmentsPanel.getSourceList1().getSelectedIndex() != -1) {
+                        treatmentsPanel.getSourceList2().clearSelection();
+                    }
+                }
             }
         });
 
-        treatmentsPanel.getSourceList2().addMouseListener(new MouseAdapter() {
+        treatmentsPanel.getSourceList2().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                treatmentsPanel.getSourceList1().clearSelection();
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    if (treatmentsPanel.getSourceList2().getSelectedIndex() != -1) {
+                        treatmentsPanel.getSourceList1().clearSelection();
+                    }
+                }
             }
         });
 

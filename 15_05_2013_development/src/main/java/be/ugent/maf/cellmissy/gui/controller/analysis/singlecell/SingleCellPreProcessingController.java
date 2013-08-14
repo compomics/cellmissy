@@ -268,7 +268,7 @@ public class SingleCellPreProcessingController {
         // init binding lists
         tracksBindingList = ObservableCollections.observableList(new ArrayList<Track>());
         trackPointsBindingList = ObservableCollections.observableList(new ArrayList<TrackPoint>());
-        // set background of tables scroll panes to white 
+        // set background of tables scroll panes to white
         singleCellAnalysisPanel.getTracksScrollPane().getViewport().setBackground(Color.white);
         singleCellAnalysisPanel.getTrackPointsScrollPane().getViewport().setBackground(Color.white);
         JTable tracksTable = singleCellAnalysisPanel.getTracksTable();
@@ -300,7 +300,7 @@ public class SingleCellPreProcessingController {
         });
 
         // add view to parent panel
-        singleCellMainController.getDataAnalysisPanel().getAnalysisParentPanel().add(singleCellAnalysisPanel, gridBagConstraints);
+        singleCellMainController.getDataAnalysisPanel().getAreaAnalysisParentPanel().add(singleCellAnalysisPanel, gridBagConstraints);
     }
 
     /**
@@ -328,13 +328,13 @@ public class SingleCellPreProcessingController {
         columnBinding.setColumnName("x" + " (" + unitOfMeasurementString + ")");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new FormatRenderer(SwingConstants.RIGHT, singleCellMainController.getFormat()));
+        columnBinding.setRenderer(new FormatRenderer(singleCellMainController.getFormat(), SwingConstants.RIGHT));
 
         columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${cellCol}"));
         columnBinding.setColumnName("y" + " (" + unitOfMeasurementString + ")");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new FormatRenderer(SwingConstants.RIGHT, singleCellMainController.getFormat()));
+        columnBinding.setRenderer(new FormatRenderer(singleCellMainController.getFormat(), SwingConstants.RIGHT));
 
         bindingGroup.addBinding(trackPointsTableBinding);
         bindingGroup.bind();

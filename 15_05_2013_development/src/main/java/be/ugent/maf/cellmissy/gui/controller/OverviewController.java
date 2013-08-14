@@ -14,8 +14,6 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.Icon;
@@ -23,6 +21,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -79,9 +79,10 @@ public class OverviewController {
     /**
      * Disable buttons for STANDARD users
      */
-    public void disableActionsOnExperiments() {
+    public void disableAdminSection() {
         // disable delete experiment button
         overviewDialog.getDeleteExperimentButton().setEnabled(false);
+        overviewDialog.getExperimentJList().setFocusable(false);
     }
 
     /**
@@ -106,13 +107,14 @@ public class OverviewController {
         // set icon for info label
         overviewDialog.getInfoLabel().setIcon(scaledIcon);
         //show experiments for the project selected
-        overviewDialog.getProjectJList().addMouseListener(new MouseAdapter() {
+        overviewDialog.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
                 //init experimentJList
-                int locationToIndex = overviewDialog.getProjectJList().locationToIndex(e.getPoint());
-                if (locationToIndex != -1) {
-                    Project selectedProject = projectBindingList.get(locationToIndex);
+                    int selectedIndex = overviewDialog.getProjectJList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        Project selectedProject = projectBindingList.get(selectedIndex);
                     // set text for project description
                     overviewDialog.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
                     Long projectid = selectedProject.getProjectid();
@@ -130,6 +132,7 @@ public class OverviewController {
                         }
                     }
                 }
+            }
             }
         });
 
@@ -191,10 +194,9 @@ public class OverviewController {
                 overviewDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 // show info message
                 cellMissyController.showMessage("Experiment was successfully deleted!", "experiment deleted", JOptionPane.INFORMATION_MESSAGE);
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
-            } catch (ExecutionException ex) {
-                cellMissyController.showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+                cellMissyController.handleUnexpectedError(ex);
             }
         }
     }

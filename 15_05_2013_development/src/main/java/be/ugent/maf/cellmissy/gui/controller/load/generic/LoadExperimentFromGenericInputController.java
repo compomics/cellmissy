@@ -96,6 +96,10 @@ public class LoadExperimentFromGenericInputController {
         cellMissyController.showMessage(message, title, messageType);
     }
 
+    public void handleUnexpectedError(Exception ex) {
+        cellMissyController.handleUnexpectedError(ex);
+    }
+
     public void updateInfoLabel(JLabel label, String message) {
         cellMissyController.updateInfoLabel(label, message);
     }
@@ -129,6 +133,10 @@ public class LoadExperimentFromGenericInputController {
         return cellMissyController.getCurrentUser();
     }
 
+    public void setExpListRenderer(User currentUser) {
+        genericExperimentDataController.setExpListRenderer(currentUser);
+    }
+
     /**
      * Check if current analysis has been saved before leaving the view
      *
@@ -150,7 +158,7 @@ public class LoadExperimentFromGenericInputController {
         experiment = null;
         dataLoadingHasBeenSaved = false;
         // clear selection on project list
-        genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getProjectJList().clearSelection();
+        genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getProjectsList().clearSelection();
         // clear experiment list
         if (genericExperimentDataController.getExperimentBindingList() != null) {
             genericExperimentDataController.getExperimentBindingList().clear();
@@ -176,7 +184,7 @@ public class LoadExperimentFromGenericInputController {
         genericImagedPlateController.getLoadFromGenericInputPlatePanel().getPurposeTextArea().setLineWrap(true);
         genericImagedPlateController.getLoadFromGenericInputPlatePanel().getPurposeTextArea().setWrapStyleWord(true);
         //update info message
-        cellMissyController.updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Select project/experiment in progress to load motility data; provide experiment metadata to start with the import.");
+        cellMissyController.updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Select project/experiment in progress to load data; provide experiment metadata to start with the import.");
         // disable buttons
         loadFromGenericInputPanel.getResetButton().setEnabled(false);
         loadFromGenericInputPanel.getFinishButton().setEnabled(false);
@@ -316,11 +324,11 @@ public class LoadExperimentFromGenericInputController {
             loadFromGenericInputPanel.getSaveDataProgressBar().setVisible(true);
             loadFromGenericInputPanel.getSaveDataProgressBar().setIndeterminate(true);
             // update message
-            updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Please wait, data is being saved.");
+            updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Please wait, data is being saved!");
             // show a waiting cursor
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             // save motility data
-            experimentService.saveMotilityDataForExperiment(experiment);
+            experimentService.saveMigrationDataForExperiment(experiment);
             // update experiment
             experiment = experimentService.update(experiment);
             return null;
@@ -335,12 +343,12 @@ public class LoadExperimentFromGenericInputController {
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 loadFromGenericInputPanel.getSaveDataProgressBar().setVisible(false);
                 //update info for the user
-                showMessage("Experiment was successfully saved to DB.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
+                showMessage("Experiment was successfully saved to DB.\nPlease choose what you want to do next.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
                 updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Experiment was successfully saved to DB.");
-            } catch (InterruptedException ex) {
+                cellMissyController.onStartup();
+            } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
-            } catch (ExecutionException ex) {
-                showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+                handleUnexpectedError(ex);
             }
         }
     }
@@ -362,7 +370,7 @@ public class LoadExperimentFromGenericInputController {
                     for (Well well : plateCondition.getWellList()) {
                         //check for coordinates
                         if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
-                            //set List of wellHasImagingType to the well of the plateCondition
+                            //set collection of wellHasImagingType to the well of the plateCondition
                             well.setWellHasImagingTypeList(wellGui.getWell().getWellHasImagingTypeList());
 
                             //the other way around: set the well for each wellHasImagingType

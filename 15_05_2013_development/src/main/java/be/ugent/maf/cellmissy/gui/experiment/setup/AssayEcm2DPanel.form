@@ -259,7 +259,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="addCompositionButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Add new composition"/>
+            <Property name="text" type="java.lang.String" value="Add new Composition"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="concentrationUnitOfMeasure">

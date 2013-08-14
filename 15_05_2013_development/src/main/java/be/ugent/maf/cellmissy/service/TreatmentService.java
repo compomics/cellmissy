@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.service;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
 import java.util.List;
@@ -14,9 +15,13 @@ import java.util.List;
  */
 public interface TreatmentService extends GenericService<Treatment, Long> {
 
-    List<TreatmentType> findByCategory(Integer treatmentCategory);
+    public List<TreatmentType> findByCategory(Integer treatmentCategory);
 
-    void saveTreatmentType(TreatmentType treatmentType);
-    
-    List<String> findAllDrugSolvents();
+    public TreatmentType findByName(String name);
+
+    public List<TreatmentType> findNewTreatmentTypes(Experiment experiment);
+
+    public void saveTreatmentType(TreatmentType treatmentType);
+
+    public List<String> findAllDrugSolvents();
 }

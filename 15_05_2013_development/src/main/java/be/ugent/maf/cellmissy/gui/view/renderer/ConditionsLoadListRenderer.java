@@ -19,8 +19,6 @@ import javax.swing.JList;
  * @author Paola Masuzzo
  */
 public class ConditionsLoadListRenderer extends DefaultListCellRenderer {
-    
-    // Plate Conditions List
     private List<PlateCondition> plateConditionList;
 
     /**

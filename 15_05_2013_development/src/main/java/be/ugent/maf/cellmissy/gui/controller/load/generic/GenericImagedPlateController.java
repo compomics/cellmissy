@@ -17,6 +17,7 @@ import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.gui.view.renderer.DataTreeCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.AlignedTableRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.parser.GenericInputFileParser;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -31,7 +32,6 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JFileChooser;
@@ -118,7 +118,9 @@ public class GenericImagedPlateController {
     }
 
     /**
-     * This is checking that each well on the plate that has a condition, contains a collection of WellhasImagingType not empty, i.e. with some data loaded
+     * This is checking that each well on the plate that has a condition,
+     * contains a collection of WellhasImagingType not empty, i.e. with some
+     * data loaded
      *
      * @return
      */
@@ -137,7 +139,9 @@ public class GenericImagedPlateController {
     }
 
     /**
-     * Reset data loading and plate view (e.g. if user was importing data from a wrong folder and so on..) The user is warned first, this should be used carefully!!
+     * Reset data loading and plate view (e.g. if user was importing data from a
+     * wrong folder and so on..) The user is warned first, this should be used
+     * carefully!!
      */
     public void resetData() {
         // empty timesteps list
@@ -198,7 +202,7 @@ public class GenericImagedPlateController {
                         if (validateSelection(selectedWellGui)) {
                             // new wellHasImagingType (for selected well and current imaging type/algorithm)
                             WellHasImagingType newWellHasImagingType = new WellHasImagingType(selectedWellGui.getWell(), currentImagingType, currentAlgorithm);
-                            // get the collection of WellHasImagingType for the selected well
+                            // get the list of WellHasImagingType for the selected well
                             List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
                             // 
                             reloadData(selectedWellGui);
@@ -281,12 +285,12 @@ public class GenericImagedPlateController {
     }
 
     /**
-     * Get unique algorithms from a collection of samples
+     * Get unique algorithms from a list of samples
      *
      * @param wellHasImagingTypes
      * @return
      */
-    private List<Algorithm> getUniqueAlgorithms(Collection<WellHasImagingType> wellHasImagingTypes) {
+    private List<Algorithm> getUniqueAlgorithms(List<WellHasImagingType> wellHasImagingTypes) {
         List<Algorithm> algorithms = new ArrayList<>();
 
         for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
@@ -298,7 +302,8 @@ public class GenericImagedPlateController {
     }
 
     /**
-     * Select a specific imaging type on the JTree, according to a certain algorithm
+     * Select a specific imaging type on the JTree, according to a certain
+     * algorithm
      *
      * @param imagingType
      * @param algorithm
@@ -326,7 +331,8 @@ public class GenericImagedPlateController {
     }
 
     /**
-     * This is parsing a certain file, for a certain selected well and a wellHasImagingType (i.e. dataset and imaging type are chosen)
+     * This is parsing a certain file, for a certain selected well and a
+     * wellHasImagingType (i.e. dataset and imaging type are chosen)
      *
      * @param bulkCellFile
      * @param newWellHasImagingType
@@ -337,7 +343,7 @@ public class GenericImagedPlateController {
         // parse raw data for selected well
         try {
             List<TimeStep> timeSteps = genericInputFileParser.parseBulkCellFile(bulkCellFile);
-            // set the timeStepCollection and add the wellHasImagingType to the List
+            // set the timeStepList and add the wellHasImagingType to the list
             newWellHasImagingType.setTimeStepList(timeSteps);
             wellHasImagingTypeList.add(newWellHasImagingType);
             for (TimeStep timeStep : timeSteps) {
@@ -355,7 +361,8 @@ public class GenericImagedPlateController {
     }
 
     /**
-     * Opening a dialog to select file to parse and load data parsing the selected file
+     * Opening a dialog to select file to parse and load data parsing the
+     * selected file
      *
      * @param rawDataChooser
      * @param newWellHasImagingType
@@ -415,7 +422,8 @@ public class GenericImagedPlateController {
     }
 
     /**
-     * remove timeSteps from List: this is called when the user wants to overwrite data or to clear data.
+     * remove timeSteps from List: this is called when the user wants to
+     * overwrite data or to clear data.
      *
      * @param wellHasImagingTypeToOverwrite
      */
@@ -505,7 +513,8 @@ public class GenericImagedPlateController {
     }
 
     /**
-     * Check if the imaging type the user is attempting to delete is the first one
+     * Check if the imaging type the user is attempting to delete is the first
+     * one
      *
      * @return
      */
@@ -522,13 +531,14 @@ public class GenericImagedPlateController {
     }
 
     /**
-     * Check if a collection of wellhasImagingTypes contains a certain imaging type
+     * Check if a collection of wellhasImagingTypes contains a certain imaging
+     * type
      *
      * @param wellHasImagingTypes
      * @param imagingType
      * @return
      */
-    private boolean containsImagingType(Collection<WellHasImagingType> wellHasImagingTypes, ImagingType imagingType) {
+    private boolean containsImagingType(List<WellHasImagingType> wellHasImagingTypes, ImagingType imagingType) {
         for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
             if (wellHasImagingType.getImagingType().equals(imagingType)) {
                 return true;
@@ -538,7 +548,8 @@ public class GenericImagedPlateController {
     }
 
     /**
-     * Initialize panel with datasets and imaging types information (user interaction is here required)
+     * Initialize panel with datasets and imaging types information (user
+     * interaction is here required)
      */
     private void initAlgoImagingPanel() {
         //init timeStepsBindingList
@@ -688,8 +699,8 @@ public class GenericImagedPlateController {
                 }
             }
         });
-
-
+        loadFromGenericInputPlatePanel.getRawDataTable().getTableHeader().setReorderingAllowed(false);
+        loadFromGenericInputPlatePanel.getRawDataTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
     }
 
     /**
@@ -818,7 +829,7 @@ public class GenericImagedPlateController {
         columnBinding.setColumnName("Area");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new FormatRenderer(SwingConstants.RIGHT, format));
+        columnBinding.setRenderer(new FormatRenderer(format, SwingConstants.RIGHT));
 
         bindingGroup.addBinding(timeStepsTableBinding);
         bindingGroup.bind();

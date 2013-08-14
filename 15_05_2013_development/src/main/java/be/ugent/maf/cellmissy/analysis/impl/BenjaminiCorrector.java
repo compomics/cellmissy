@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrector;
-import be.ugent.maf.cellmissy.entity.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,6 +14,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.stat.ranking.NaturalRanking;
 
 /**
+ * This is performing a multiple comparisons correction with the Benjamini
+ * algorithm.
  *
  * @author Paola Masuzzo
  */
@@ -23,8 +25,6 @@ public class BenjaminiCorrector implements MultipleComparisonsCorrector {
     public void correctForMultipleComparisons(AnalysisGroup analysisGroup) {
         Double[][] pValuesMatrix = analysisGroup.getpValuesMatrix();
         Double[][] adjustedPValuesMatrix = new Double[pValuesMatrix.length][pValuesMatrix.length];
-        // format the matrux since its symmetric
-        //Double[][] symmetricMatrix = AnalysisUtils.formatSymmetricMatrix(pValuesMatrix);
         double[] adjustedPValues = adjustPValues(pValuesMatrix);
         // put back pvalues in a matrix
         int counter = 0;
@@ -40,6 +40,7 @@ public class BenjaminiCorrector implements MultipleComparisonsCorrector {
     }
 
     /**
+     * This is actually adjusting the p-values with the Benjamini correction.
      *
      * @param matrix
      * @return

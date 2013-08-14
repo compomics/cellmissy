@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 
 /**
- * A utilities class for PDF files design - creation
+ * A utilities class for PDF files design - creation.
  *
  * @author Paola Masuzzo
  */
@@ -89,8 +89,8 @@ public class PdfUtils {
     /**
      * Add empty lines between one section and another one
      *
-     * @param document
-     * @param numberOfLines
+     * @param document: the document to which the lines need to be added
+     * @param numberOfLines: how many lines need to be added
      */
     public static void addEmptyLines(Document document, int numberOfLines) {
         for (int i = 0; i < numberOfLines; i++) {
@@ -105,11 +105,13 @@ public class PdfUtils {
     /**
      * Add text to document
      *
-     * @param document
-     * @param text
-     * @param isIndented
-     * @param alignment
-     * @param font
+     * @param document: the document to which the text needs to be added
+     * @param text: this is a List of String, the text to add, each String is
+     * added underneath each other.
+     * @param isIndented: a boolean to check if the text needs to be indented or
+     * not; if yes, indentation is set to 10
+     * @param alignment: an integer for the alignment
+     * @param font: the font to use to render the text
      */
     public static void addText(Document document, List<String> text, boolean isIndented, int alignment, Font font) {
         for (String string : text) {
@@ -129,7 +131,7 @@ public class PdfUtils {
     }
 
     /**
-     * Add a cell to a table, with customised font to display.
+     * Add a cell to a table, with customised font to display
      *
      * @param table
      * @param cellText
@@ -141,7 +143,8 @@ public class PdfUtils {
     }
 
     /**
-     * Set up the look of a PdfPTable
+     * Set up the look of a PdfPTable.
+     *
      *
      * @param dataTable
      */
@@ -150,7 +153,7 @@ public class PdfUtils {
         dataTable.getDefaultCell().setPadding(3);
         dataTable.getDefaultCell().setUseAscender(true);
         dataTable.getDefaultCell().setUseDescender(true);
-        dataTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+        dataTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
         dataTable.getDefaultCell().setColspan(1);
     }
 
@@ -175,7 +178,8 @@ public class PdfUtils {
     }
 
     /**
-     * Add a cell with colored border to a table
+     * Add a cell with coloured border to a table
+     *
      *
      * @param table
      * @param color

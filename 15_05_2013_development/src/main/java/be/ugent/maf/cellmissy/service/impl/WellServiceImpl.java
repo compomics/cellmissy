@@ -217,7 +217,7 @@ public class WellServiceImpl implements WellService {
                 wellHasImagingTypeList.add(wellHasImagingType);
             }
         }
-        // else, the collection stays empty
+        // else, the list stays empty
         well.setWellHasImagingTypeList(wellHasImagingTypeList);
     }
 
@@ -232,13 +232,13 @@ public class WellServiceImpl implements WellService {
     public void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId) {
         List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
         if (wellHasImagingTypes != null) {
-            List<WellHasImagingType> wellHasImagingTypeCollection = new ArrayList<>();
+            List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
             for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
-                //fetch time step collection of that wellHasImagingType
+                //fetch time step list of that wellHasImagingType
                 Hibernate.initialize(wellHasImagingType.getTrackList());
-                wellHasImagingTypeCollection.add(wellHasImagingType);
+                wellHasImagingTypeList.add(wellHasImagingType);
             }
-            well.setWellHasImagingTypeList(wellHasImagingTypeCollection);
+            well.setWellHasImagingTypeList(wellHasImagingTypeList);
         }
     }
 
@@ -255,8 +255,8 @@ public class WellServiceImpl implements WellService {
         if (wellHasImagingTypes != null) {
             List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
             for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
-                List<Track> trackList = wellHasImagingType.getTrackList();
-                for (Track track : trackList) {
+                List<Track> tracks = new ArrayList<>(wellHasImagingType.getTrackList());
+                for (Track track : tracks) {
                     // fetch track points
                     fetchTrackPointsForTrack(track);
                 }
@@ -264,6 +264,20 @@ public class WellServiceImpl implements WellService {
             }
             well.setWellHasImagingTypeList(wellHasImagingTypeList);
         }
+    }
+
+    @Override
+    public Well fetchMigrationData(Long wellId) {
+        Well well = wellRepository.findById(wellId);
+        Hibernate.initialize(well.getWellHasImagingTypeList());
+        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+            Hibernate.initialize(wellHasImagingType.getTimeStepList());
+            Hibernate.initialize(wellHasImagingType.getTrackList());
+            for (Track track : wellHasImagingType.getTrackList()) {
+                Hibernate.initialize(track.getTrackPointList());
+            }
+        }
+        return well;
     }
 
     /**

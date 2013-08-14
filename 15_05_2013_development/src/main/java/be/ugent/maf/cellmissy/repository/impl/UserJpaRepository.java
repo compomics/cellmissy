@@ -21,7 +21,6 @@ public class UserJpaRepository extends GenericJpaRepository<User, Long> implemen
     public User findByFullName(String firstName, String lastName) {
         //hibernate criteria
         //List<User> resultList = findByCriteria(Restrictions.eq("name", name));
-        
         //annotated query
         Query byNameQuery = getEntityManager().createNamedQuery("User.findByFullName");
         byNameQuery.setParameter("firstName",firstName);
@@ -33,12 +32,12 @@ public class UserJpaRepository extends GenericJpaRepository<User, Long> implemen
             return null;
         }
     }
-    
+
     @Override
     public User findByFirstName(String firstName) {
         //hibernate criteria
         //List<User> resultList = findByCriteria(Restrictions.eq("name", name));
-        
+
         //annotated query
         Query byNameQuery = getEntityManager().createNamedQuery("User.findByFirstName");
         byNameQuery.setParameter("firstName",firstName);
@@ -49,12 +48,12 @@ public class UserJpaRepository extends GenericJpaRepository<User, Long> implemen
             return null;
         }
     }
-    
+
     @Override
     public User findByLastName(String lastName) {
         //hibernate criteria
         //List<User> resultList = findByCriteria(Restrictions.eq("name", name));
-        
+
         //annotated query
         Query byNameQuery = getEntityManager().createNamedQuery("User.findByLastName");
         byNameQuery.setParameter("lastName",lastName);

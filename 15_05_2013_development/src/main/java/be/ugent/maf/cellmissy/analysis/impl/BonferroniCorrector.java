@@ -5,9 +5,11 @@
 package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrector;
-import be.ugent.maf.cellmissy.entity.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
 
 /**
+ * This is performing a multiple comparisons correction with the Bonferroni
+ * algorithm.
  *
  * @author Paola Masuzzo
  */

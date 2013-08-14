@@ -33,8 +33,12 @@ public class ExperimentsOverviewListRenderer extends DefaultListCellRenderer {
             super.getListCellRendererComponent(list, value, index, false, false);
         }
         Experiment experiment = (Experiment) value;
-        // what we'll see in the list is the number of the experiment, followed by its status
-        setText(experiment.toString() + ", " + experiment.getExperimentStatus());
+        if (experiment != null) {
+            // what we'll see in the list is the number of the experiment, followed by its status
+            setText(experiment.toString() + ", " + experiment.getExperimentStatus());
+        } else {
+            setText("");
+        }
         return this;
     }
 }

@@ -61,14 +61,18 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="dataAnalysisMenuItem">
               <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+A"/>
-                </Property>
-                <Property name="mnemonic" type="int" value="68"/>
-                <Property name="text" type="java.lang.String" value="Data Analysis"/>
-                <Property name="inheritsPopupMenu" type="boolean" value="true"/>
+                <Property name="mnemonic" type="int" value="76"/>
+                <Property name="text" type="java.lang.String" value="Data Analysis..."/>
+                <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
-            </MenuItem>
+			  </MenuItem>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="areaAnalysisMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Area Analysis"/>
+                  </Properties>
+                </MenuItem>
+				</SubComponents>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator5">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="overviewMenuItem">
@@ -113,8 +117,8 @@
                 <Property name="text" type="java.lang.String" value="Exit"/>
               </Properties>
             </MenuItem>
-          </SubComponents>
-        </Menu>
+              </SubComponents>
+            </Menu>
         <Menu class="javax.swing.JMenu" name="editMenu">
           <Properties>
             <Property name="mnemonic" type="int" value="69"/>

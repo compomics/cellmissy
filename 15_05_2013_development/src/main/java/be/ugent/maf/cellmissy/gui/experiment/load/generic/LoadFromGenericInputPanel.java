@@ -81,17 +81,16 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.9;
+        gridBagConstraints.weighty = 0.95;
         add(topPanel, gridBagConstraints);
 
-        bottomPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
         bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         bottomPanel.setOpaque(false);
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         finishButton.setText("Finish");
 
-        resetButton.setText("Reset plate view");
+        resetButton.setText("Reset Plate View");
 
         startButton.setText("Start");
 
@@ -101,7 +100,7 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                .addComponent(infolabel, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(saveDataProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -130,13 +129,15 @@ public class LoadFromGenericInputPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {saveDataProgressBar, startButton});
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weighty = 0.05;
         add(bottomPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables

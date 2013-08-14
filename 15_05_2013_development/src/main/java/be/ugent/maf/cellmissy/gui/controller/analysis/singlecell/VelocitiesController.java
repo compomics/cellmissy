@@ -72,7 +72,7 @@ public class VelocitiesController {
             Double[] instantaneousVelocitiesVector = singleCellPreProcessingResults.getInstantaneousVelocitiesVector();
             velocitiesTable.setModel(new VelocitiesTableModel(dataStructure, instantaneousVelocitiesVector));
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
-            FormatRenderer formatRenderer = new FormatRenderer(SwingConstants.CENTER, singleCellPreProcessingController.getFormat());
+            FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
             for (int i = 0; i < velocitiesTable.getColumnModel().getColumnCount(); i++) {
                 velocitiesTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
             }
@@ -96,7 +96,7 @@ public class VelocitiesController {
             TrackDataTableModel trackDataTableModel = new TrackDataTableModel(columnNames, singleCellPreProcessingResults, trackVelocitiesVector);
             velocitiesTable.setModel(trackDataTableModel);
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
-            FormatRenderer formatRenderer = new FormatRenderer(SwingConstants.CENTER, singleCellPreProcessingController.getFormat());
+            FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
             for (int i = 0; i < velocitiesTable.getColumnModel().getColumnCount(); i++) {
                 velocitiesTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
             }

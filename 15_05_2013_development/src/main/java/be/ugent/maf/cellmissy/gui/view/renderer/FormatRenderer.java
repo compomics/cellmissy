@@ -7,7 +7,6 @@ package be.ugent.maf.cellmissy.gui.view.renderer;
 import java.awt.Component;
 import java.text.Format;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
@@ -20,14 +19,9 @@ public class FormatRenderer extends DefaultTableCellRenderer {
     private int alignment;
     private Format formatter;
 
-    /**
-     * 
-     * @param alignment
-     * @param formatter 
-     */
-    public FormatRenderer(int alignment, Format formatter) {
-        this.alignment = alignment;
+    public FormatRenderer(Format formatter, int alignment) {
         this.formatter = formatter;
+        this.alignment = alignment;
     }
 
     @Override

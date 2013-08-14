@@ -4,8 +4,8 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.entity.AreaAnalysisResults;
-import be.ugent.maf.cellmissy.entity.AreaPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.AreaAnalysisResults;
+import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
 
 /**
  * Interface for Analysis of Area Data (after pre-processing step)

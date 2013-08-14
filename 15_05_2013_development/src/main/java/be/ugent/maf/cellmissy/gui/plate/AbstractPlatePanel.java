@@ -17,7 +17,8 @@ import java.util.List;
 import javax.swing.JPanel;
 
 /**
- * Abstract Class extending JPanel: Plate View Panel with a List of Well GUI and a plate format
+ * Abstract Class extending JPanel: Plate View Panel with a List of Well GUI and
+ * a plate format
  *
  * @author Paola
  */
@@ -65,10 +66,12 @@ public abstract class AbstractPlatePanel extends JPanel {
     }
 
     /**
-     * Given a plate format and a parent dimension, this methods computes the right space to show the plate panel
+     * Given a plate format and a parent dimension, this methods computes the
+     * right space to show the plate panel
      *
      * @param plateFormat :format, numbers of rows, number of columns
-     * @param parentDimension :Dimension of parent panel where the plate need to be added
+     * @param parentDimension :Dimension of parent panel where the plate need to
+     * be added
      */
     public void initPanel(PlateFormat plateFormat, Dimension parentDimension) {
         this.plateFormat = plateFormat;
@@ -141,7 +144,8 @@ public abstract class AbstractPlatePanel extends JPanel {
     }
 
     /**
-     * This method is called in the initPanel method: Compute plate panel sizes according to JFrame resize
+     * This method is called in the initPanel method: Compute plate panel sizes
+     * according to JFrame resize
      *
      * @param parentDimension
      */
@@ -177,7 +181,8 @@ public abstract class AbstractPlatePanel extends JPanel {
     }
 
     /**
-     * Abstract method to be implemented Redraw wells according to events: Show rectangles for conditions, show ellipsis for imaging types and so on.
+     * Abstract method to be implemented Redraw wells according to events: Show
+     * rectangles for conditions, show ellipsis for imaging types and so on.
      *
      * @param g
      */

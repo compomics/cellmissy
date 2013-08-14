@@ -80,10 +80,19 @@ public class LoginController {
     }
 
     /**
+     * 
+     */
+    public void showLoginDialog() {
+        //show login dialog
+        loginDialog.setLocationRelativeTo(null);
+        loginDialog.setVisible(true);
+    }
+
+    /**
      * Initialize main view
      */
     private void initLoginPanel() {
-        
+
         // request focus on user name text field
         loginDialog.getUserNameTextField().requestFocusInWindow();
 
@@ -116,14 +125,10 @@ public class LoginController {
                 cellMissyParamsController.editCellMissyParams();
             }
         });
-
-        //show login dialog
-        loginDialog.setLocationRelativeTo(null);
-        loginDialog.setVisible(true);
     }
 
     /**
-     * On login: attempt to connect
+     * On login: attempt to enter the application
      */
     private void onLogin() {
         //check if a user with given user name and password is found in the db    

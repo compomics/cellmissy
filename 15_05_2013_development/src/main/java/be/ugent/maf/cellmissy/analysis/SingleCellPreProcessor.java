@@ -54,16 +54,6 @@ public interface SingleCellPreProcessor {
     public void generateShiftedTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
-     * Generate a vector holding the information True or False: T if the step is
-     * motile, F if the step is not considered as motile (according to the
-     * motile criterium)
-     *
-     * @param singleCellPreProcessingResults
-     * @param motileCriterium
-     */
-    public void generateOutliersVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
      *
      * @param singleCellPreProcessingResults
      */
@@ -102,10 +92,10 @@ public interface SingleCellPreProcessor {
      * @param singleCellPreProcessingResults
      */
     public void generateTurningAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-    
+
     /**
-     * 
-     * @param singleCellPreProcessingResults 
+     *
+     * @param singleCellPreProcessingResults
      */
     public void generateTrackAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 }

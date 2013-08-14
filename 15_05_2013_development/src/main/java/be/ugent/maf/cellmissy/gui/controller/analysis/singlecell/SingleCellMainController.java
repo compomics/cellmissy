@@ -355,7 +355,7 @@ public class SingleCellMainController {
             }
         });
 
-        cellMissyController.getCellMissyFrame().getSingleCellAnalysisParentPanel().add(analysisExperimentPanel, gridBagConstraints);
+//        cellMissyController.getCellMissyFrame().getSingleCellAnalysisParentPanel().add(analysisExperimentPanel, gridBagConstraints);
     }
 
     /**
@@ -396,7 +396,7 @@ public class SingleCellMainController {
         /**
          * add mouse listeners
          */
-        //when a project from the list is selected, show all experiments performed for that project        
+        //when a project from the list is selected, show all experiments performed for that project
         overviewExperimentPanel.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -448,7 +448,7 @@ public class SingleCellMainController {
         // exp time frames
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, overviewExperimentPanel.getExperimentJList(), BeanProperty.create("selectedElement.timeFrames"), overviewExperimentPanel.getTimeFramesTextField(), BeanProperty.create("text"), "experimentimeframesbinding");
         bindingGroup.addBinding(binding);
-        // do the binding       
+        // do the binding
         bindingGroup.bind();
 
         overviewExperimentPanel.getMetadataParentPanel().add(metadataSingleCellPanel, gridBagConstraints);
@@ -472,7 +472,7 @@ public class SingleCellMainController {
                             if (!singleCellPreProcessingController.getTrackPointsBindingList().isEmpty()) {
                                 singleCellPreProcessingController.getTrackPointsBindingList().clear();
                             }
-                            // Execute Swing Worker to fetch Selected Condition: 
+                            // Execute Swing Worker to fetch Selected Condition:
                             FetchConditionSwingWorker fetchConditionSwingWorker = new FetchConditionSwingWorker();
                             fetchConditionSwingWorker.execute();
                         }
@@ -636,7 +636,7 @@ public class SingleCellMainController {
         @Override
         protected Void doInBackground() throws Exception {
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            //fetch tracks for each well of condition 
+            //fetch tracks for each well of condition
             for (int i = 0; i < currentCondition.getWellList().size(); i++) {
                 //fetch tracks collection for the wellhasimagingtype of interest
                 Algorithm algorithm = getSelectedAlgorithm();

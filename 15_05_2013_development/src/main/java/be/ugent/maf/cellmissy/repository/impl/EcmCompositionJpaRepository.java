@@ -34,4 +34,32 @@ public class EcmCompositionJpaRepository extends GenericJpaRepository<EcmComposi
     public void saveEcmComposition(EcmComposition ecmComposition) {
         getEntityManager().persist(ecmComposition);
     }
+
+    @Override
+    public EcmComposition findEcmCompositionByType(String ecmCompositionType) {
+        //annotated query
+        Query byNameQuery = getEntityManager().createNamedQuery("EcmComposition.findByCompositionType");
+        byNameQuery.setParameter("compositionType", ecmCompositionType);
+        List<EcmComposition> resultList = byNameQuery.getResultList();
+        if (!resultList.isEmpty()) {
+            return resultList.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public EcmComposition findEcmCompositionByTypeAndMatrixDimensionName(String type, String matrixDimensionName) {
+        //annotated query
+        Query byNameQuery = getEntityManager().createNamedQuery("EcmComposition.findByCompositionTypeAndMatrixDimensionName");
+        byNameQuery.setParameter("compositionType", type);
+        byNameQuery.setParameter("matrixDimension", matrixDimensionName);
+        List<EcmComposition> resultList = byNameQuery.getResultList();
+        if (!resultList.isEmpty()) {
+            return resultList.get(0);
+        } else {
+            return null;
+        }
+
+    }
 }

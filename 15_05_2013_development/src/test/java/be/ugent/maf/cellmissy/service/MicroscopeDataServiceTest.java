@@ -26,7 +26,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Paola
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:myTestSpringXMLConfig.xml")
+@ContextConfiguration("classpath:mySpringXMLConfig.xml")
 public class MicroscopeDataServiceTest {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(MicroscopeDataServiceTest.class);

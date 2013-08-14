@@ -10,6 +10,9 @@ import be.ugent.maf.cellmissy.entity.BottomMatrix;
 import be.ugent.maf.cellmissy.entity.CellLine;
 import be.ugent.maf.cellmissy.entity.CellLineType;
 import be.ugent.maf.cellmissy.entity.Ecm;
+import be.ugent.maf.cellmissy.entity.EcmComposition;
+import be.ugent.maf.cellmissy.entity.EcmDensity;
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
@@ -24,12 +27,12 @@ import be.ugent.maf.cellmissy.service.CellLineService;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.PersistenceException;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -122,8 +125,27 @@ public class SetupConditionsController {
         return previousConditionIndex;
     }
 
+    public void setPreviousConditionIndex(Integer previousConditionIndex) {
+        this.previousConditionIndex = previousConditionIndex;
+    }
+
     public ObservableList<Treatment> getTreatmentBindingList() {
         return treatmentsController.getTreatmentBindingList();
+    }
+
+    public Integer getConditionIndex() {
+        return conditionIndex;
+    }
+
+    public void setConditionIndex(Integer conditionIndex) {
+        this.conditionIndex = conditionIndex;
+    }
+
+    public void updateFields(PlateCondition plateCondition) {
+        assayEcmController.updateAssayEcmInputFields(plateCondition);
+        //assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
+        //keep source and destination lists sync: show actual treatment collection
+        treatmentsController.updateLists(plateCondition);
     }
 
     /**
@@ -141,6 +163,135 @@ public class SetupConditionsController {
      */
     public CellMissyFrame getCellMissyFrame() {
         return setupExperimentController.getCellMissyFrame();
+    }
+
+    /**
+     * Using the cellLine Service, persist a new cell line type to DB.
+     *
+     * @param cellLineType
+     */
+    public void saveCellLineType(CellLineType cellLineType) {
+        cellLineService.saveCellLineType(cellLineType);
+    }
+
+    public void saveAssay(Assay assay) {
+        assayEcmController.saveAssay(assay);
+    }
+
+    public void saveBottomMatrix(BottomMatrix bottomMatrix) {
+        assayEcmController.saveBottomMatrix(bottomMatrix);
+    }
+
+    public void saveEcmComposition(EcmComposition ecmComposition) {
+        assayEcmController.saveEcmComposition(ecmComposition);
+    }
+
+    public void saveEcmDensity(EcmDensity ecmDensity) {
+        assayEcmController.saveEcmDensity(ecmDensity);
+    }
+
+    public void saveTreatmentType(TreatmentType treatmentType) {
+        treatmentsController.saveTreatmentType(treatmentType);
+    }
+
+    /**
+     * Given a list of new cell line types, add them to the GUI-model, i.e. a
+     * list.
+     *
+     * @param cellLineTypes
+     */
+    public void addNewCellLines(List<CellLineType> cellLineTypes) {
+        cellLineTypeBindingList.addAll(cellLineTypes);
+    }
+
+    public void addNewBottomMatrices(List<BottomMatrix> bottomMatrices) {
+        assayEcmController.addNewBottomMatrices(bottomMatrices);
+    }
+
+    public void addNewEcmCompositions(List<EcmComposition> ecmCompositions) {
+        assayEcmController.addNewEcmCompositions(ecmCompositions);
+    }
+
+    public void addNewEcmDensities(List<EcmDensity> ecmDensities) {
+        assayEcmController.addNewEcmDensities(ecmDensities);
+    }
+
+    public void addNewTreatmentTypes(List<TreatmentType> treatmentTypes) {
+        treatmentsController.addNewTreatmentTypes(treatmentTypes);
+    }
+
+    public void addNewAssays(List<Assay> assays) {
+        assayEcmController.addNewAssays(assays);
+    }
+
+    /**
+     * Given an experiment, we see for each condition if a new serum is
+     * associated to the cell line, and if new sera are found, these are added
+     * to the serum binding list.
+     *
+     * @param experiment
+     */
+    public void addNewSera(Experiment experiment) {
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            CellLine cellLine = plateCondition.getCellLine();
+            String serum = cellLine.getSerum();
+            if (!serumBindingList.contains(serum)) {
+                serumBindingList.add(serum);
+            }
+        }
+    }
+
+    /**
+     * Given an experiment, we see for each condition if a new growth medium is
+     * associated to the cell line, and if new media are found, these are added
+     * to the medium binding list.
+     *
+     * @param experiment
+     */
+    public void addNewMedia(Experiment experiment) {
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            CellLine cellLine = plateCondition.getCellLine();
+            String medium = cellLine.getGrowthMedium();
+            if (!mediumBindingList.contains(medium)) {
+                mediumBindingList.add(medium);
+            }
+        }
+    }
+
+    public void addNewDrugSolvents(Experiment experiment) {
+        treatmentsController.addNewDrugSolvents(experiment);
+    }
+
+    public List<Assay> findNewAssays(Experiment experiment) {
+        return assayEcmController.findNewAssays(experiment);
+    }
+
+    public List<BottomMatrix> findNewBottomMatrices(Experiment experiment) {
+        return assayEcmController.findNewBottomMatrices(experiment);
+    }
+
+    public List<EcmComposition> findNewEcmCompositions(Experiment experiment) {
+        return assayEcmController.findNewEcmCompositions(experiment);
+    }
+
+    public List<EcmDensity> findNewEcmDensities(Experiment experiment) {
+        return assayEcmController.findNewEcmDensities(experiment);
+    }
+
+    public List<TreatmentType> findNewTreatmentTypes(Experiment experiment) {
+        return treatmentsController.findNewTreatmentTypes(experiment);
+    }
+
+    /**
+     * For a given experiment, this method is checking through all its
+     * conditions for new cell line types, i.e. cell line types that are not
+     * present in DB yet.
+     *
+     * @param experiment
+     * @return a List of these cell line types, if any.
+     */
+    public List<CellLineType> findNewCellLines(Experiment experiment) {
+        return cellLineService.findNewCellLines(experiment);
     }
 
     /**
@@ -179,7 +330,7 @@ public class SetupConditionsController {
      */
     public void updateCondition(Integer conditionIndex) {
         assayEcmController.updateAssayEcmConditionFields(plateConditionBindingList.get(conditionIndex));
-        treatmentsController.updateTreatmentList(plateConditionBindingList.get(conditionIndex));
+        treatmentsController.updateTreatmentCollection(plateConditionBindingList.get(conditionIndex));
     }
 
     /**
@@ -202,7 +353,7 @@ public class SetupConditionsController {
         if (!assayEcmController.validate3DEcm().isEmpty()) {
             messages.addAll(assayEcmController.validate3DEcm());
         }
-        //if validation was OK, validate the condition: check for wells List
+        //if validation was OK, validate the condition: check for wells collection
         if (messages.isEmpty()) {
             if (plateCondition.getWellList().isEmpty()) {
                 String message = "Conditions must have at least one well";
@@ -213,7 +364,7 @@ public class SetupConditionsController {
     }
 
     /**
-     * Create and initialize the first condition
+     * Create and initialise the first condition
      *
      * @return
      */
@@ -227,7 +378,7 @@ public class SetupConditionsController {
      * private methods and classes
      */
     /**
-     * initialize cell Line panel
+     * Initialize cell Line panel
      */
     private void initCellLinePanel() {
         //init cellLineJCombo
@@ -267,7 +418,7 @@ public class SetupConditionsController {
                     newCellLineType.setName(setupConditionsPanel.getCellLineNameTextField().getText());
                     try {
                         //insert cell line to DB
-                        cellLineService.saveCellLineType(newCellLineType);
+                        saveCellLineType(newCellLineType);
                         //add the new cell line to the list
                         cellLineTypeBindingList.add(newCellLineType);
                         setupConditionsPanel.getCellLineNameTextField().setText("");
@@ -357,29 +508,33 @@ public class SetupConditionsController {
          * add mouse listeners
          */
         //if Condition validation is OK, update previous condition and user input fields
-        conditionsPanel.getConditionsJList().addMouseListener(new MouseAdapter() {
+        conditionsPanel.getConditionsJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                conditionsPanel.getAddButton().setEnabled(true);
-                int locationToIndex = conditionsPanel.getConditionsJList().locationToIndex(e.getPoint());
-                //add mouse listener and enable tabbed pane on the right (only once, for Condition 1)
-                if (locationToIndex == 0) {
-                    setupExperimentController.addMouseListener();
-                    setupConditionsPanel.getjTabbedPane1().setEnabled(true);
-                }
-                if (previousConditionIndex < plateConditionBindingList.size() && previousConditionIndex != -1) {
-                    //check if validation of condition is OK
-                    if (setupExperimentController.validateCondition(plateConditionBindingList.get(previousConditionIndex))) {
-                        //update fields of previous condition
-                        updateCondition(previousConditionIndex);
-                        //update and reset fields for the assay-ecm panel
-                        assayEcmController.updateAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                        //assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
-                        //keep source and destination lists sync: show actual treatment List
-                        treatmentsController.updateLists(plateConditionBindingList.get(locationToIndex));
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    conditionsPanel.getAddButton().setEnabled(true);
+                    int selectedIndex = conditionsPanel.getConditionsJList().getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        //add mouse listener and enable tabbed pane on the right (only once, for Condition 1)
+                        if (selectedIndex == 0) {
+                            setupExperimentController.addMouseListener();
+                            setupConditionsPanel.getjTabbedPane1().setEnabled(true);
+                        }
+                        if (previousConditionIndex < plateConditionBindingList.size() && previousConditionIndex != -1) {
+                            //check if validation of condition is OK
+                            if (setupExperimentController.validateCondition(plateConditionBindingList.get(previousConditionIndex))) {
+                                //update fields of previous condition
+                                updateCondition(previousConditionIndex);
+                                //update and reset fields for the assay-ecm panel
+                                assayEcmController.updateAssayEcmInputFields(plateConditionBindingList.get(selectedIndex));
+                                //assayEcmPanelController.resetAssayEcmInputFields(plateConditionBindingList.get(locationToIndex));
+                                //keep source and destination lists sync: show actual treatment collection
+                                treatmentsController.updateLists(plateConditionBindingList.get(selectedIndex));
+                            }
+                        }
+                        previousConditionIndex = selectedIndex;
                     }
                 }
-                previousConditionIndex = locationToIndex;
             }
         });
 
@@ -476,10 +631,10 @@ public class SetupConditionsController {
         ecm.setVolumeUnit("\u00B5" + "l");
         ecm.setConcentrationUnit("mg/ml");
         firstCondition.setEcm(ecm);
-        //set an empty List of treatments
+        //set an empty collection of treatments
         List<Treatment> treatmentList = new ArrayList<>();
         firstCondition.setTreatmentList(treatmentList);
-        //set an empty List of wells
+        //set an empty collection of wells
         List<Well> wellList = new ArrayList<>();
         firstCondition.setWellList(wellList);
     }
@@ -526,7 +681,7 @@ public class SetupConditionsController {
                 ecm.setConcentrationUnit(assayEcmController.getAssayEcm2DPanel().getConcentrationUnitOfMeasure().getSelectedItem().toString());
                 break;
             case "3D":
-                //set assay    
+                //set assay
                 assay = assayEcmController.getAssay3DBindingList().get(assayEcmController.getAssayEcm3DPanel().getAssayComboBox().getSelectedIndex());
                 //3D matrix: set ecm 3D fields
                 ecm.setEcmComposition(assayEcmController.getEcm3DCompositionBindingList().get(assayEcmController.getAssayEcm3DPanel().getCompositionComboBox().getSelectedIndex()));
@@ -591,7 +746,7 @@ public class SetupConditionsController {
             treatmentList.add(newTreatment);
         }
         newCondition.setTreatmentList(treatmentList);
-        //set an empty List of wells (wells are not recalled from previous condition)
+        //set an empty collection of wells (wells are not recalled from previous condition)
         List<Well> wellList = new ArrayList<>();
         newCondition.setWellList(wellList);
     }

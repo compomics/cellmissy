@@ -160,7 +160,7 @@ public class AssayEcm25DPanel extends javax.swing.JPanel {
 
         densityComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        addCompositionButton.setText("Add new composition");
+        addCompositionButton.setText("Add new Composition");
 
         jLabel1.setText("Bottom matrix type");
 

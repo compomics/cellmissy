@@ -4,31 +4,39 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.gui.controller.management.InstrumentManagementController;
+import be.ugent.maf.cellmissy.gui.controller.management.UserManagementController;
 import be.ugent.maf.cellmissy.gui.controller.setup.SetupExperimentController;
 import be.ugent.maf.cellmissy.gui.controller.load.generic.LoadExperimentFromGenericInputController;
 import be.ugent.maf.cellmissy.gui.controller.load.cellmia.LoadExperimentFromCellMiaController;
 import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
 import be.ugent.maf.cellmissy.entity.User;
+import be.ugent.maf.cellmissy.gui.AboutDialog;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
-import be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.SingleCellMainController;
-import be.ugent.maf.cellmissy.gui.project.NewProjectDialog;
+import be.ugent.maf.cellmissy.gui.HelpDialog;
+import be.ugent.maf.cellmissy.gui.StartupDialog;
+import be.ugent.maf.cellmissy.gui.controller.management.AssayManagementController;
+import be.ugent.maf.cellmissy.gui.controller.management.PlateManagementController;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import java.awt.CardLayout;
 import java.awt.Cursor;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Iterator;
 import java.util.logging.Level;
-import javax.persistence.PersistenceException;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkEvent.EventType;
+import javax.swing.event.HyperlinkListener;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.ELProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,15 +60,24 @@ public class CellMissyController {
     //view
     //main frame
     CellMissyFrame cellMissyFrame;
+    // startup dialog with functionalities of the software
+    private StartupDialog startupDialog;
+    private HelpDialog helpDialog;
+    private AboutDialog aboutDialog;
     // subviews
-    private NewProjectDialog newProjectDialog;
     //child controllers
     @Autowired
     private LoginController loginController;
     @Autowired
-    private OverviewController overviewController;
-    @Autowired
     private UserManagementController userManagementController;
+    @Autowired
+    private InstrumentManagementController instrumentManagementController;
+    @Autowired
+    private PlateManagementController plateManagementController;
+    @Autowired
+    private AssayManagementController assayManagementController;
+    @Autowired
+    private OverviewController overviewController;
     @Autowired
     private SetupExperimentController setupExperimentController;
     @Autowired
@@ -70,8 +87,7 @@ public class CellMissyController {
     @Autowired
     private AreaMainController areaMainController;
     @Autowired
-    private SingleCellMainController singleCellMainController;
-    // services
+    private ImportExportController importExportController;
 
     /**
      * Get main frame
@@ -89,6 +105,11 @@ public class CellMissyController {
      */
     public User getCurrentUser() {
         return loginController.getCurrentUser();
+    }
+
+    public void onStartup() {
+        GuiUtils.centerDialogOnFrame(cellMissyFrame, startupDialog);
+        startupDialog.setVisible(true);
     }
 
     /**
@@ -112,6 +133,10 @@ public class CellMissyController {
         //create main frame and set its title
         cellMissyFrame = new CellMissyFrame();
         cellMissyFrame.setTitle("CellMissy - Cell Migration Invasion Storage System");
+        // create a new startup dialog
+        startupDialog = new StartupDialog(cellMissyFrame, true);
+        aboutDialog = new AboutDialog(cellMissyFrame, true);
+        helpDialog = new HelpDialog(cellMissyFrame, true);
         // at starter, show main panel with logo
         getCardLayout().first(cellMissyFrame.getBackgroundPanel());
         // init booleans to true
@@ -124,13 +149,19 @@ public class CellMissyController {
         loadExperimentFromCellMiaController.init();
         loadExperimentFromGenericInputController.init();
         areaMainController.init();
-        singleCellMainController.init();
         overviewController.init();
         loginController.init();
         userManagementController.init();
-
+        instrumentManagementController.init();
+        plateManagementController.init();
+        assayManagementController.init();
+        importExportController.init();
         // initialize main frame
         initMainFrame();
+        // initialize start up dialog
+        initStartupDialog();
+        // show login dialog
+        loginController.showLoginDialog();
     }
 
     /**
@@ -145,6 +176,16 @@ public class CellMissyController {
      */
     public void showMessage(String message, String title, Integer messageType) {
         JOptionPane.showMessageDialog(cellMissyFrame.getContentPane(), message, title, messageType);
+    }
+
+    /**
+     * Handle unexpected error: show an error message and exit the application.
+     *
+     * @param ex
+     */
+    public void handleUnexpectedError(Exception ex) {
+        JOptionPane.showMessageDialog(cellMissyFrame.getContentPane(), "Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+        System.exit(1);
     }
 
     /**
@@ -210,9 +251,12 @@ public class CellMissyController {
      * Initialize section for ADMIN users
      */
     public void initAdminSection() {
-        // menu item and create project item are not enabled for standand users
+        // enable all the management sections
         cellMissyFrame.getUserMenuItem().setEnabled(true);
-        cellMissyFrame.getNewProjectMenuItem().setEnabled(true);
+        cellMissyFrame.getAssayMenuItem().setEnabled(true);
+        cellMissyFrame.getInstrumentMenuItem().setEnabled(true);
+        cellMissyFrame.getPlateMenuItem().setEnabled(true);
+        setupExperimentController.getExperimentInfoPanel().getNewProjectButton().setEnabled(true);
         // user management
         cellMissyFrame.getUserMenuItem().addActionListener(new ActionListener() {
             @Override
@@ -220,15 +264,25 @@ public class CellMissyController {
                 userManagementController.showUserManagementDialog();
             }
         });
-        // create a new  project
-        cellMissyFrame.getNewProjectMenuItem().addActionListener(new ActionListener() {
+        // instrument management
+        cellMissyFrame.getInstrumentMenuItem().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                newProjectDialog.getProjectNumberTextField().setText("");
-                newProjectDialog.getDescriptionTextArea().setText("");
-                // show a newProjectDialog
-                newProjectDialog.pack();
-                newProjectDialog.setVisible(true);
+                instrumentManagementController.showInstrumentManagementDialog();
+            }
+        });
+        // plate management
+        cellMissyFrame.getPlateMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                plateManagementController.showPlateManagementDialog();
+            }
+        });
+        // assay management
+        cellMissyFrame.getAssayMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                assayManagementController.showAssayManagementDialog();
             }
         });
     }
@@ -237,9 +291,14 @@ public class CellMissyController {
      * Disable ADMIN section for STANDARD users
      */
     public void disableAdminSection() {
+        // disable all the management sections
         cellMissyFrame.getUserMenuItem().setEnabled(false);
+        cellMissyFrame.getAssayMenuItem().setEnabled(false);
+        cellMissyFrame.getInstrumentMenuItem().setEnabled(false);
+        cellMissyFrame.getPlateMenuItem().setEnabled(false);
         // disable actions on experiments for standard users
-        overviewController.disableActionsOnExperiments();
+        overviewController.disableAdminSection();
+        setupExperimentController.disableAdminSection();
     }
 
     /**
@@ -248,7 +307,11 @@ public class CellMissyController {
     public void enterTheApplication() {
         cellMissyFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         cellMissyFrame.setLocationRelativeTo(null);
+        // we show the main frame
         cellMissyFrame.setVisible(true);
+        GuiUtils.centerDialogOnFrame(cellMissyFrame, startupDialog);
+        // on top of this, we show the startup dialog
+        startupDialog.setVisible(true);
     }
 
     /**
@@ -261,7 +324,7 @@ public class CellMissyController {
         cellMissyFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
-                int option = JOptionPane.showConfirmDialog(cellMissyFrame, "Do you really want to close CellMissy?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int option = JOptionPane.showConfirmDialog(cellMissyFrame, "Do you really want to close CellMissy?", "exit CellMissy", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 switch (option) {
                     case JOptionPane.YES_OPTION:
                         System.exit(0);
@@ -277,72 +340,137 @@ public class CellMissyController {
         // import data from generic input
         cellMissyFrame.getGenericInputMenuItem().addActionListener(itemActionListener);
         // area analysis
-        cellMissyFrame.getAreaAnalysisMenuItem().addActionListener(itemActionListener);
+        cellMissyFrame.getDataAnalysisMenuItem().addActionListener(itemActionListener);
         // single cell analysis
-        cellMissyFrame.getSingleCellAnalysisMenuItem().addActionListener(itemActionListener);
+//        cellMissyFrame.getSingleCellAnalysisMenuItem().addActionListener(itemActionListener);
         // exit the application
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int option = JOptionPane.showConfirmDialog(cellMissyFrame, "Do you really want to close CellMissy?", "", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int option = JOptionPane.showConfirmDialog(cellMissyFrame, "Do you really want to close CellMissy?", "exit CellMissy", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 switch (option) {
                     case JOptionPane.YES_OPTION:
                         System.exit(0);
                 }
             }
         });
-
-        // view all projects/experiments
+        // get an overview of the projects
         cellMissyFrame.getOverviewMenuItem().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // show a overviewProjectsDialog through child controller
-                overviewController.showOverviewDialog();
+                onOverview();
             }
         });
 
-        // customize dialog
-        newProjectDialog = new NewProjectDialog(cellMissyFrame, true);
-        //center the dialog on the main screen
-        newProjectDialog.setLocationRelativeTo(cellMissyFrame);
-        // set icon for info label
-        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
-        newProjectDialog.getInfoLabel().setIcon(scaledIcon);
-
-        // create a new project
-        newProjectDialog.getCreateProjectButton().addActionListener(new ActionListener() {
+        // open an about dialog
+        cellMissyFrame.getAboutMenuItem().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //create new project: save it to DB and create folder on the server
-                if (!newProjectDialog.getProjectNumberTextField().getText().isEmpty()) {
-                    try {
-                        int projectNumber = Integer.parseInt(newProjectDialog.getProjectNumberTextField().getText());
-                        //project description is not mandatory
-                        String projectDescription = newProjectDialog.getDescriptionTextArea().getText();
-                        setupExperimentController.createNewProject(projectNumber, projectDescription);
-                        LOG.info("project " + projectNumber + " (" + projectDescription + ") " + "was created");
-                        // creation of new project was successfull
-                        showMessage("Project was created!", "Project created", JOptionPane.INFORMATION_MESSAGE);
-                        newProjectDialog.getProjectNumberTextField().setText("");
-                        newProjectDialog.getDescriptionTextArea().setText("");
-                        // close the dialog
-                        newProjectDialog.setVisible(false);
-                    } catch (PersistenceException exception) {
-                        showMessage("Project already present in the DB", "Error in persisting project", JOptionPane.WARNING_MESSAGE);
-                        LOG.error(exception.getMessage());
-                        newProjectDialog.getProjectNumberTextField().setText("");
-                        newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
-                    } catch (NumberFormatException exception) {
-                        showMessage("Please insert a valid number", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
-                        LOG.error(exception.getMessage());
-                        newProjectDialog.getProjectNumberTextField().setText("");
-                        newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
-                    }
-                } else {
-                    showMessage("Please insert a number for the project you want to create", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
-                    newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
-                }
+                onAbout();
+            }
+        });
+
+        // open an help dialog
+        cellMissyFrame.getHelpMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onHelp();
+            }
+        });
+
+        // export experiment to XML file
+        cellMissyFrame.getExportExperimentMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onExportExperiment();
+            }
+        });
+
+        // import experiment from XML file
+        cellMissyFrame.getImportExperimentMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onImportExperiment();
+            }
+        });
+
+        // export experiment template to XML file
+        cellMissyFrame.getExportTemplateMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onExportTemplate();
+            }
+        });
+
+
+        // add the hyperlink events
+        aboutDialog.getAboutEditorPane().addHyperlinkListener(new LinkListener(aboutDialog.getAboutEditorPane()));
+        helpDialog.getHelpEditorPane().addHyperlinkListener(new LinkListener(helpDialog.getHelpEditorPane()));
+
+        aboutDialog.getAboutEditorPane().setCaretPosition(0);
+        helpDialog.getHelpEditorPane().setCaretPosition(0);
+
+//        Image helpImage = new ImageIcon(getClass().getResource("/icons/helpIcon.png")).getImage();
+//        helpDialog.setIconImage(helpImage);
+//        Image aboutImage = new ImageIcon(getClass().getResource("/icons/informationIcon.png")).getImage();
+//        aboutDialog.setIconImage(aboutImage);
+    }
+
+    /**
+     * Initialize start up dialog
+     */
+    private void initStartupDialog() {
+        /**
+         * add action listeners
+         */
+        // create experiment
+        startupDialog.getCreateExpButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startupDialog.setVisible(false);
+                onCreateExperiment();
+            }
+        });
+
+        // load data from generic input
+        startupDialog.getGenericInputButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startupDialog.setVisible(false);
+                onLoadingFromGenericInput();
+            }
+        });
+
+        // load data from CELLMIA
+        startupDialog.getCellMiaButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startupDialog.setVisible(false);
+                onLoadingFromCellMia();
+            }
+        });
+
+        // data analysis
+        startupDialog.getDataAnalysisButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startupDialog.setVisible(false);
+                onDataAnalysis();
+            }
+        });
+        // overview
+        startupDialog.getOverviewButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onOverview();
+            }
+        });
+
+        // about CellMissy
+        startupDialog.getAboutButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onAbout();
             }
         });
     }
@@ -355,34 +483,108 @@ public class CellMissyController {
         @Override
         public void actionPerformed(ActionEvent e) {
             String menuItemText = ((JMenuItem) e.getSource()).getText();
-            if (menuItemText.equalsIgnoreCase("create experiment...") && switchCard(menuItemText)) {
-                if (!firstSetup) {
-                    setupExperimentController.resetAfterCardSwitch();
-                }
-                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getSetupExperimentParentPanel().getName());
-                firstSetup = false;
-            } else if (menuItemText.equalsIgnoreCase("area analysis") && switchCard(menuItemText)) {
-                if (!firstDataAnalysis) {
-                    areaMainController.resetAfterCardSwitch();
-                }
-                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAreaAnalysisParentPanel().getName());
-                firstDataAnalysis = false;
-            } else if (menuItemText.equalsIgnoreCase("single cell analysis") && switchCard(menuItemText)) {
-                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getSingleCellAnalysisParentPanel().getName());
+            if (menuItemText.equalsIgnoreCase("create experiment") && switchCard(menuItemText)) {
+                onCreateExperiment();
+            } else if (menuItemText.equalsIgnoreCase("data analysis") && switchCard(menuItemText)) {
+                onDataAnalysis();
             } else if (menuItemText.equalsIgnoreCase("... from CELLMIA") && switchCard(menuItemText)) {
-                if (!firstLoadingFromCellMia) {
-                    loadExperimentFromCellMiaController.resetAfterCardSwitch();
-                }
-                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromCellMiaParentPanel().getName());
-                firstLoadingFromCellMia = false;
+                onLoadingFromCellMia();
             } else if (menuItemText.equalsIgnoreCase("... from generic input") && switchCard(menuItemText)) {
-                if (!firstLoadingFromGenericInput) {
-                    loadExperimentFromGenericInputController.resetAfterCardSwitch();
-                }
-                getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromGenericInputParentPanel().getName());
-                firstLoadingFromGenericInput = false;
+                onLoadingFromGenericInput();
             }
         }
+    }
+
+    /**
+     * Action performed on creating a new experiment.
+     */
+    private void onCreateExperiment() {
+        if (!firstSetup) {
+            setupExperimentController.resetAfterCardSwitch();
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getSetupExperimentParentPanel().getName());
+        firstSetup = false;
+    }
+
+    /**
+     * Action performed on loading data from generic input.
+     */
+    private void onLoadingFromGenericInput() {
+        if (!firstLoadingFromGenericInput) {
+            loadExperimentFromGenericInputController.resetAfterCardSwitch();
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromGenericInputParentPanel().getName());
+        firstLoadingFromGenericInput = false;
+        loadExperimentFromGenericInputController.setExpListRenderer(getCurrentUser());
+    }
+
+    /**
+     * Action performed on loading data from CELLMIA.
+     */
+    private void onLoadingFromCellMia() {
+        if (!firstLoadingFromCellMia) {
+            loadExperimentFromCellMiaController.resetAfterCardSwitch();
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromCellMiaParentPanel().getName());
+        firstLoadingFromCellMia = false;
+        loadExperimentFromCellMiaController.setExpListRenderer(getCurrentUser());
+    }
+
+    /**
+     * Action performed on data analysis.
+     */
+    private void onDataAnalysis() {
+        if (!firstDataAnalysis) {
+            areaMainController.resetAfterCardSwitch();
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAnalysisExperimentParentPanel().getName());
+        firstDataAnalysis = false;
+        areaMainController.setExpListRenderer(getCurrentUser());
+    }
+
+    /**
+     * Action performed on getting the overview projects/experiments.
+     */
+    private void onOverview() {
+        // show a overviewProjectsDialog through child controller
+        overviewController.showOverviewDialog();
+    }
+
+    /**
+     * Action performed on about dialog.
+     */
+    private void onAbout() {
+        aboutDialog.setLocationRelativeTo(cellMissyFrame);
+        aboutDialog.setVisible(true);
+    }
+
+    /**
+     * Action performed on help dialog.
+     */
+    private void onHelp() {
+        helpDialog.setLocationRelativeTo(cellMissyFrame);
+        helpDialog.setVisible(true);
+    }
+
+    /**
+     * Action performed on export experiment feature.
+     */
+    private void onExportExperiment() {
+        importExportController.showExportExperimentDialog();
+    }
+
+    /**
+     * Action performed on import experiment from external file.
+     */
+    private void onImportExperiment() {
+        importExportController.showImportExperimentDialog();
+    }
+
+    /**
+     * Action performed on export experiment template to file.
+     */
+    private void onExportTemplate() {
+        importExportController.showExportTemplateDialog();
     }
 
     /**
@@ -445,5 +647,34 @@ public class CellMissyController {
      */
     private CardLayout getCardLayout() {
         return (CardLayout) cellMissyFrame.getBackgroundPanel().getLayout();
+    }
+
+    /**
+     * This private class implements the
+     */
+    private class LinkListener implements HyperlinkListener {
+
+        private JEditorPane editorPane;
+
+        public LinkListener(JEditorPane editorPane) {
+            this.editorPane = editorPane;
+        }
+
+        @Override
+        public void hyperlinkUpdate(HyperlinkEvent evt) {
+            if (evt.getEventType().toString().equalsIgnoreCase(EventType.ENTERED.toString())) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            } else if (evt.getEventType().toString().equalsIgnoreCase(EventType.EXITED.toString())) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            } else if (evt.getEventType().toString().equalsIgnoreCase(EventType.ACTIVATED.toString())) {
+                if (evt.getDescription().startsWith("#")) {
+                    editorPane.scrollToReference(evt.getDescription());
+                } else {
+                    editorPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    BareBonesBrowserLaunch.openURL(evt.getDescription());
+                    editorPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+        }
     }
 }

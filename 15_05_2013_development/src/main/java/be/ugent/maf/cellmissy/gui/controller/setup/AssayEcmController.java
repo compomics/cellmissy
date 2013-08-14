@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.Assay;
 import be.ugent.maf.cellmissy.entity.BottomMatrix;
 import be.ugent.maf.cellmissy.entity.EcmComposition;
 import be.ugent.maf.cellmissy.entity.EcmDensity;
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.MatrixDimension;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.experiment.setup.AssayEcm25DPanel;
@@ -31,7 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * AssayEcm Controller: according to matrix dimension (2D/3D) set up assay/ECM details during experiment design Parent Controller: Setup Conditions Controller
+ * AssayEcm Controller: according to matrix dimension (2D/3D) set up assay/ECM
+ * details during experiment design Parent Controller: Setup Conditions
+ * Controller
  *
  * @author Paola
  */
@@ -132,6 +135,152 @@ public class AssayEcmController {
 
     public ObservableList<EcmDensity> getEcmDensityBindingList() {
         return ecmDensityBindingList;
+    }
+
+    /**
+     * For a given experiment, this method iterates through its conditions and
+     * check if the assay objects of these conditions are already present in the
+     * DB or not.
+     *
+     * @param experiment
+     * @return a List with the new assay not present in the DB yet, if any.
+     */
+    public List<Assay> findNewAssays(Experiment experiment) {
+        return assayService.findNewAssays(experiment);
+    }
+
+    /**
+     * Add the assays from a list to the GUI-models. This adding needs to be
+     * done based on the matrix dimension of the assay, since we use 3 different
+     * models for the 3 different dimensions.
+     *
+     * @param assays: the list from which the assays are taken and added to the
+     * GUI-models.
+     */
+    public void addNewAssays(List<Assay> assays) {
+        for (Assay assay : assays) {
+            switch (assay.getMatrixDimension().getDimension()) {
+                case "2D":
+                    assay2DBindingList.add(assay);
+                    break;
+                case "2.5D":
+                    assay25DBindingList.add(assay);
+                    break;
+                case "3D":
+                    assay3DBindingList.add(assay);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Add to the GUI-model, i.e. a list., new Bottom Matrix objects.
+     *
+     * @param bottomMatrices
+     */
+    public void addNewBottomMatrices(List<BottomMatrix> bottomMatrices) {
+        bottomMatrixBindingList.addAll(bottomMatrices);
+    }
+
+    /**
+     * Add to the GUI-models new ECM Composition objects. This is done according
+     * to the matrix dimension associated.
+     *
+     * @param ecmCompositions
+     */
+    public void addNewEcmCompositions(List<EcmComposition> ecmCompositions) {
+        for (EcmComposition ecmComposition : ecmCompositions) {
+            switch (ecmComposition.getMatrixDimension().getDimension()) {
+                case "2D":
+                    ecm2DCompositionBindingList.add(ecmComposition);
+                    break;
+                case "2.5D":
+                    ecm25DCompositionBindingList.add(ecmComposition);
+                    break;
+                case "3D":
+                    ecm3DCompositionBindingList.add(ecmComposition);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Add new ECM density objects to the GUI-model, i.e. a list.
+     */
+    public void addNewEcmDensities(List<EcmDensity> ecmDensities) {
+        ecmDensityBindingList.addAll(ecmDensities);
+    }
+
+    /**
+     * For a given experiment, this method iterates through its conditions and
+     * check if the bottom matrix objects of these conditions are already
+     * present in the DB or not.
+     *
+     * @param experiment
+     * @return a List with the new Bottom Matrix objects, if any.
+     */
+    public List<BottomMatrix> findNewBottomMatrices(Experiment experiment) {
+        return ecmService.findNewBottomMatrices(experiment);
+    }
+
+    /**
+     * For a given experiment, this method iterates through its conditions and
+     * check if the ECM composition objects of these conditions are already
+     * present in the DB or not.
+     *
+     * @param experiment
+     * @return a list with the new ECM Composition, if any.
+     */
+    public List<EcmComposition> findNewEcmCompositions(Experiment experiment) {
+        return ecmService.findNewEcmCompositions(experiment);
+    }
+
+    /**
+     * For a given experiment, this method iterates through its conditions and
+     * check if the ECM density objects of these conditions are already present
+     * in the DB or not.
+     *
+     * @param experiment
+     * @return a list with the new ECM density, if any.
+     */
+    public List<EcmDensity> findNewEcmDensities(Experiment experiment) {
+        return ecmService.findNewEcmDensities(experiment);
+    }
+
+    /**
+     * Using the assayService, save a new entity to DB.
+     *
+     * @param assay
+     */
+    public void saveAssay(Assay assay) {
+        assayService.save(assay);
+    }
+
+    /**
+     * Using the ecmService, save a new bottom matrix to DB.
+     *
+     * @param bottomMatrix
+     */
+    public void saveBottomMatrix(BottomMatrix bottomMatrix) {
+        ecmService.saveBottomMatrix(bottomMatrix);
+    }
+
+    /**
+     * Using the ecmService, save a new ECM composition to DB.
+     *
+     * @param ecmComposition
+     */
+    public void saveEcmComposition(EcmComposition ecmComposition) {
+        ecmService.saveEcmComposition(ecmComposition);
+    }
+
+    /**
+     * Using the ecmService, save a new ECM density to DB.
+     *
+     * @param ecmDensity
+     */
+    public void saveEcmDensity(EcmDensity ecmDensity) {
+        ecmService.saveEcmDensity(ecmDensity);
     }
 
     /**
@@ -263,7 +412,8 @@ public class AssayEcmController {
     }
 
     /**
-     * for a current selected condition, update input fields (components selected values and text fields)
+     * for a current selected condition, update input fields (components
+     * selected values and text fields)
      *
      * @param plateCondition
      */
@@ -457,7 +607,7 @@ public class AssayEcmController {
                     ecmComposition.setCompositionType(assayEcm2DPanel.getCompositionTextField().getText());
                     ecmComposition.setMatrixDimension(matrixDimensionBindingList.get(0));
                     ecm2DCompositionBindingList.add(ecmComposition);
-                    ecmService.saveEcmComposition(ecmComposition);
+                    saveEcmComposition(ecmComposition);
                     assayEcm2DPanel.getCompositionTextField().setText("");
                 } else {
                     String message = "Please insert a name for the new ECM composition!";
@@ -534,7 +684,9 @@ public class AssayEcmController {
             }
         });
         /**
-         * If bottom matrix type is thin gel coating, the bottom volume must be left empty (and disabled) If bottom matrix type is gel, the bottom volume text field is enabled and set by default to 40
+         * If bottom matrix type is thin gel coating, the bottom volume must be
+         * left empty (and disabled) If bottom matrix type is gel, the bottom
+         * volume text field is enabled and set by default to 40
          */
         assayEcm3DPanel.getBottomMatrixTypeComboBox().addActionListener(new ActionListener() {
             @Override
@@ -611,7 +763,9 @@ public class AssayEcmController {
             }
         });
         /**
-         * If bottom matrix type is thin gel coating, the bottom volume must be left empty (and disabled) If bottom matrix type is gel, the bottom volume text field is enabled and set by default to 40
+         * If bottom matrix type is thin gel coating, the bottom volume must be
+         * left empty (and disabled) If bottom matrix type is gel, the bottom
+         * volume text field is enabled and set by default to 40
          */
         assayEcm25DPanel.getBottomMatrixTypeComboBox().addActionListener(new ActionListener() {
             @Override

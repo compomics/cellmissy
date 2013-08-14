@@ -5,7 +5,6 @@
 package be.ugent.maf.cellmissy.gui.view.renderer;
 
 import javax.swing.JCheckBox;
-import javax.swing.SwingConstants;
 
 /**
  * This renderer for the check box extends the component CheckBox.
@@ -14,8 +13,13 @@ import javax.swing.SwingConstants;
  */
 public class CheckBoxCellRenderer extends JCheckBox {
 
-    public CheckBoxCellRenderer(boolean isSelected) {
+    /**
+     * Constructor: the JCheckBox is selected according to the boolean.
+     *
+     * @param isSelected
+     */
+    public CheckBoxCellRenderer(boolean isSelected, int alignment) {
         setSelected(isSelected);
-        setHorizontalAlignment(SwingConstants.RIGHT);
+        setHorizontalAlignment(alignment);
     }
 }

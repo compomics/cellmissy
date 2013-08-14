@@ -4,7 +4,6 @@
  */
 package be.ugent.maf.cellmissy.analysis.impl;
 
-import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import be.ugent.maf.cellmissy.analysis.TrackOperator;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
@@ -14,7 +13,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,9 +22,6 @@ import org.springframework.stereotype.Component;
  */
 @Component("trackOperator")
 public class TrackOperatorImpl implements TrackOperator {
-
-    @Autowired
-    private OutliersHandler outliersHandler;
 
     @Override
     public void generateTimeIndexes(TrackDataHolder trackDataHolder) {
@@ -122,14 +117,6 @@ public class TrackOperatorImpl implements TrackOperator {
             }
         }
         trackDataHolder.setInstantaneousVelocities(instantaneousVelocities);
-    }
-
-    @Override
-    public void filterNonMotileSteps(TrackDataHolder trackDataHolder) {
-        // get velocities vector
-        Double[] instantaneousVelocities = trackDataHolder.getInstantaneousVelocities();
-        boolean[] outliers = outliersHandler.detectOutliers(instantaneousVelocities);
-        trackDataHolder.setOutliers(outliers);
     }
 
     @Override

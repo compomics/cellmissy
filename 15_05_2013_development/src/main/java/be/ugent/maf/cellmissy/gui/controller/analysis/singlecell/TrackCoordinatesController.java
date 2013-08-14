@@ -138,7 +138,7 @@ public class TrackCoordinatesController {
             Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
             Double[][] rawTrackCoordinatesMatrix = singleCellPreProcessingResults.getRawTrackCoordinatesMatrix();
             coordinatesTable.setModel(new TrackCoordinatesTableModel(dataStructure, rawTrackCoordinatesMatrix));
-            FormatRenderer formatRenderer = new FormatRenderer(SwingConstants.CENTER, singleCellPreProcessingController.getFormat());
+            FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             for (int i = 0; i < 3; i++) {
                 coordinatesTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
@@ -163,7 +163,7 @@ public class TrackCoordinatesController {
             Object[][] fixedDataStructure = singleCellPreProcessingResults.getDataStructure();
             Double[][] normalizedTrackCoordinatesMatrix = singleCellPreProcessingResults.getShiftedTrackCoordinatesMatrix();
             coordinatesTable.setModel(new TrackCoordinatesTableModel(fixedDataStructure, normalizedTrackCoordinatesMatrix));
-            FormatRenderer formatRenderer = new FormatRenderer(SwingConstants.CENTER, singleCellPreProcessingController.getFormat());
+            FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             for (int i = 0; i < 3; i++) {
                 coordinatesTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
@@ -623,7 +623,7 @@ public class TrackCoordinatesController {
         XYPlot xyPlot = chart.getXYPlot();
         xyPlot.getRangeAxis().setAutoRange(true);
         JFreeChartUtils.setupPlot(xyPlot);
-        // set title font 
+        // set title font
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         // modify renderer
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xyPlot.getRenderer();

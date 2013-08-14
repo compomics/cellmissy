@@ -20,10 +20,6 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
         return durationTextField;
     }
 
-    public JList getExperimentJList() {
-        return experimentJList;
-    }
-
     public JLabel getInfoLabel() {
         return infoLabel;
     }
@@ -40,16 +36,20 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
         return intervalUnitComboBox;
     }
 
-    public JList getProjectJList() {
-        return projectJList;
-    }
-
     public JTextField getTimeFramesTextField() {
         return timeFramesTextField;
     }
 
     public JTextArea getProjectDescriptionTextArea() {
         return projectDescriptionTextArea;
+    }
+
+    public JList getExperimentsList() {
+        return experimentsList;
+    }
+
+    public JList getProjectsList() {
+        return projectsList;
     }
 
     /**
@@ -70,15 +70,15 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
 
         overviewPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        projectJList = new javax.swing.JList();
         jLabel4 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        experimentJList = new javax.swing.JList();
         infoLabel = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         projectDescriptionTextArea = new javax.swing.JTextArea();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        experimentsList = new javax.swing.JList();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        projectsList = new javax.swing.JList();
         metadataPanel = new javax.swing.JPanel();
         durationLabel = new javax.swing.JLabel();
         durationTextField = new javax.swing.JTextField();
@@ -100,24 +100,13 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel3.setText("Projects");
 
-        jScrollPane1.setBorder(null);
-        jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-
-        jScrollPane1.setViewportView(projectJList);
-
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel4.setText("Experiments in progress");
-
-        jScrollPane2.setBorder(null);
-        jScrollPane2.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-
-        experimentJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane2.setViewportView(experimentJList);
 
         infoLabel.setText("Click on a project to see the relative experiments in progress.");
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("project description");
+        jLabel8.setText("Project Description");
 
         projectDescriptionTextArea.setEditable(false);
         projectDescriptionTextArea.setColumns(20);
@@ -126,6 +115,12 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
         projectDescriptionTextArea.setFocusable(false);
         jScrollPane4.setViewportView(projectDescriptionTextArea);
 
+        experimentsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(experimentsList);
+
+        projectsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(projectsList);
+
         javax.swing.GroupLayout overviewPanelLayout = new javax.swing.GroupLayout(overviewPanel);
         overviewPanel.setLayout(overviewPanelLayout);
         overviewPanelLayout.setHorizontalGroup(
@@ -133,25 +128,25 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
             .addGroup(overviewPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(overviewPanelLayout.createSequentialGroup()
                         .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addContainerGap())
+                    .addGroup(overviewPanelLayout.createSequentialGroup()
+                        .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8)
+                            .addComponent(jLabel3))
+                        .addGap(18, 18, 18)
+                        .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(overviewPanelLayout.createSequentialGroup()
-                                .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3))
-                                .addGap(18, 18, 18)
-                                .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel4))))
-                        .addGap(0, 0, 0)))
-                .addContainerGap())
+                                .addComponent(jLabel4)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(overviewPanelLayout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))))))
         );
-
-        overviewPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jScrollPane1, jScrollPane2});
-
         overviewPanelLayout.setVerticalGroup(
             overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, overviewPanelLayout.createSequentialGroup()
@@ -161,9 +156,9 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 18, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -171,8 +166,6 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
                 .addComponent(infoLabel)
                 .addContainerGap())
         );
-
-        overviewPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jScrollPane1, jScrollPane2});
 
         metadataPanel.setBackground(new java.awt.Color(255, 255, 255));
         metadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment metadata", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.black));
@@ -219,7 +212,7 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
                             .addComponent(jLabel1))
                         .addGap(41, 41, 41))
                     .addGroup(metadataPanelLayout.createSequentialGroup()
-                        .addComponent(infoLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+                        .addComponent(infoLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())))
         );
         metadataPanelLayout.setVerticalGroup(
@@ -253,7 +246,7 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(metadataPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(overviewPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -268,7 +261,7 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel durationLabel;
     private javax.swing.JTextField durationTextField;
-    private javax.swing.JList experimentJList;
+    private javax.swing.JList experimentsList;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel infoLabel1;
     private javax.swing.JLabel intervalLabel;
@@ -284,7 +277,7 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
     private javax.swing.JPanel metadataPanel;
     private javax.swing.JPanel overviewPanel;
     private javax.swing.JTextArea projectDescriptionTextArea;
-    private javax.swing.JList projectJList;
+    private javax.swing.JList projectsList;
     private javax.swing.JLabel timeFramesLabel;
     private javax.swing.JTextField timeFramesTextField;
     // End of variables declaration//GEN-END:variables

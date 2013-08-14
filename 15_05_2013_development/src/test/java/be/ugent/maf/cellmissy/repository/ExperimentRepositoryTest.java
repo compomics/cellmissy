@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Paola Masuzzo
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:myTestSpringXMLConfig.xml")
+@ContextConfiguration("classpath:mySpringXMLConfig.xml")
 @Transactional
 @TransactionConfiguration(defaultRollback = true)
 public class ExperimentRepositoryTest {

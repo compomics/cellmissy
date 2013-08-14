@@ -83,8 +83,7 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
 
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
-        List<PlateCondition> plateConditions = new ArrayList<>();
-        plateConditions.addAll(experiment.getPlateConditionList());
+        List<PlateCondition> plateConditions = experiment.getPlateConditionList();
 
         for (PlateCondition plateCondition : plateConditions) {
             for (Well well : plateCondition.getWellList()) {
@@ -141,8 +140,8 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
                     List<ImagingType> uniqueImagingTypes = getUniqueImagingTypes(wellGui.getWell().getWellHasImagingTypeList());
                     // how many imaging types we have?
                     int length = GuiUtils.getImagingTypeColors().length;
-                    ImagingType currentImagingType = uniqueImagingTypes.get(i);
-                    int indexOfImagingType = imagingTypeList.indexOf(currentImagingType);
+                    ImagingType currentIT = uniqueImagingTypes.get(i);
+                    int indexOfImagingType = imagingTypeList.indexOf(currentIT);
                     int indexOfColor = indexOfImagingType % length;
                     Color color = GuiUtils.getImagingTypeColors()[indexOfColor];
                     g2d.setColor(color);
