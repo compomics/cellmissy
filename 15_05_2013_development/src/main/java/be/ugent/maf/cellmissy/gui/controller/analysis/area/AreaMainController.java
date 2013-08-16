@@ -365,6 +365,12 @@ public class AreaMainController {
         analysisPlatePanel.repaint();
     }
 
+    /**
+     * Show the wells analysed for current condition: put a star inside each
+     * well.
+     *
+     * @param plateCondition
+     */
     public void showWellsForCurrentCondition(PlateCondition plateCondition) {
         analysisPlatePanel.setCurrentCondition(plateCondition);
         analysisPlatePanel.repaint();
@@ -610,7 +616,7 @@ public class AreaMainController {
             }
         });
 
-        cellMissyController.getCellMissyFrame().getAnalysisExperimentParentPanel().add(analysisExperimentPanel, gridBagConstraints);
+        cellMissyController.getCellMissyFrame().getAreaAnalysisParentPanel().add(analysisExperimentPanel, gridBagConstraints);
     }
 
     /**

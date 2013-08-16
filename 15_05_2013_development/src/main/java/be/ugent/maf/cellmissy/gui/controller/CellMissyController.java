@@ -15,6 +15,7 @@ import be.ugent.maf.cellmissy.gui.AboutDialog;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.HelpDialog;
 import be.ugent.maf.cellmissy.gui.StartupDialog;
+import be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.SingleCellMainController;
 import be.ugent.maf.cellmissy.gui.controller.management.AssayManagementController;
 import be.ugent.maf.cellmissy.gui.controller.management.PlateManagementController;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -54,7 +55,8 @@ public class CellMissyController {
     private static final Logger LOG = Logger.getLogger(CellMissyController.class);
     // model
     private boolean firstSetup;
-    private boolean firstDataAnalysis;
+    private boolean firstAreaAnalysis;
+    private boolean firstSingleCellAnalysis;
     private boolean firstLoadingFromCellMia;
     private boolean firstLoadingFromGenericInput;
     //view
@@ -86,6 +88,8 @@ public class CellMissyController {
     private LoadExperimentFromGenericInputController loadExperimentFromGenericInputController;
     @Autowired
     private AreaMainController areaMainController;
+    @Autowired
+    private SingleCellMainController singleCellMainController;
     @Autowired
     private ImportExportController importExportController;
 
@@ -141,7 +145,8 @@ public class CellMissyController {
         getCardLayout().first(cellMissyFrame.getBackgroundPanel());
         // init booleans to true
         firstSetup = true;
-        firstDataAnalysis = true;
+        firstAreaAnalysis = true;
+        firstSingleCellAnalysis = true;
         firstLoadingFromCellMia = true;
         firstLoadingFromGenericInput = true;
         //init child controllers
@@ -149,6 +154,7 @@ public class CellMissyController {
         loadExperimentFromCellMiaController.init();
         loadExperimentFromGenericInputController.init();
         areaMainController.init();
+        singleCellMainController.init();
         overviewController.init();
         loginController.init();
         userManagementController.init();
@@ -302,7 +308,8 @@ public class CellMissyController {
     }
 
     /**
-     * Make the frame visible and enter the application after user has logged in
+     * Make the frame visible and enter the application after user has logged
+     * in.
      */
     public void enterTheApplication() {
         cellMissyFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -340,9 +347,9 @@ public class CellMissyController {
         // import data from generic input
         cellMissyFrame.getGenericInputMenuItem().addActionListener(itemActionListener);
         // area analysis
-        cellMissyFrame.getDataAnalysisMenuItem().addActionListener(itemActionListener);
+        cellMissyFrame.getAreaMenuItem().addActionListener(itemActionListener);
         // single cell analysis
-//        cellMissyFrame.getSingleCellAnalysisMenuItem().addActionListener(itemActionListener);
+        cellMissyFrame.getSingleCellMenuItem().addActionListener(itemActionListener);
         // exit the application
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override
@@ -410,10 +417,10 @@ public class CellMissyController {
         aboutDialog.getAboutEditorPane().setCaretPosition(0);
         helpDialog.getHelpEditorPane().setCaretPosition(0);
 
-//        Image helpImage = new ImageIcon(getClass().getResource("/icons/helpIcon.png")).getImage();
-//        helpDialog.setIconImage(helpImage);
-//        Image aboutImage = new ImageIcon(getClass().getResource("/icons/informationIcon.png")).getImage();
-//        aboutDialog.setIconImage(aboutImage);
+        Image helpImage = new ImageIcon(getClass().getResource("/icons/helpIcon.png")).getImage();
+        helpDialog.setIconImage(helpImage);
+        Image aboutImage = new ImageIcon(getClass().getResource("/icons/informationIcon.png")).getImage();
+        aboutDialog.setIconImage(aboutImage);
     }
 
     /**
@@ -450,14 +457,25 @@ public class CellMissyController {
             }
         });
 
-        // data analysis
-        startupDialog.getDataAnalysisButton().addActionListener(new ActionListener() {
+        // area analysis
+        startupDialog.getAreaAnalysisButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 startupDialog.setVisible(false);
-                onDataAnalysis();
+                onAreaAnalysis();
             }
         });
+
+        // single cell analysis
+        startupDialog.getSingleCellAnalysisButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startupDialog.setVisible(false);
+                onSingleCellAnalysis();
+            }
+        });
+
+
         // overview
         startupDialog.getOverviewButton().addActionListener(new ActionListener() {
             @Override
@@ -485,8 +503,10 @@ public class CellMissyController {
             String menuItemText = ((JMenuItem) e.getSource()).getText();
             if (menuItemText.equalsIgnoreCase("create experiment") && switchCard(menuItemText)) {
                 onCreateExperiment();
-            } else if (menuItemText.equalsIgnoreCase("data analysis") && switchCard(menuItemText)) {
-                onDataAnalysis();
+            } else if (menuItemText.equalsIgnoreCase("...area") && switchCard(menuItemText)) {
+                onAreaAnalysis();
+            } else if (menuItemText.equalsIgnoreCase("...single cell") && switchCard(menuItemText)) {
+                onSingleCellAnalysis();
             } else if (menuItemText.equalsIgnoreCase("... from CELLMIA") && switchCard(menuItemText)) {
                 onLoadingFromCellMia();
             } else if (menuItemText.equalsIgnoreCase("... from generic input") && switchCard(menuItemText)) {
@@ -531,15 +551,25 @@ public class CellMissyController {
     }
 
     /**
-     * Action performed on data analysis.
+     * Action performed on area analysis.
      */
-    private void onDataAnalysis() {
-        if (!firstDataAnalysis) {
+    private void onAreaAnalysis() {
+        if (!firstAreaAnalysis) {
             areaMainController.resetAfterCardSwitch();
         }
-        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAnalysisExperimentParentPanel().getName());
-        firstDataAnalysis = false;
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAreaAnalysisParentPanel().getName());
+        firstAreaAnalysis = false;
         areaMainController.setExpListRenderer(getCurrentUser());
+    }
+
+    /**
+     * Action performed on single cell analysis.
+     */
+    private void onSingleCellAnalysis() {
+        if (!firstSingleCellAnalysis) {
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getSingleCellAnalysisParentPanel().getName());
+        firstSingleCellAnalysis = false;
     }
 
     /**
@@ -650,7 +680,8 @@ public class CellMissyController {
     }
 
     /**
-     * This private class implements the
+     * This private class implements the HyperlinkListener for the project's web
+     * page (Google code).
      */
     private class LinkListener implements HyperlinkListener {
 

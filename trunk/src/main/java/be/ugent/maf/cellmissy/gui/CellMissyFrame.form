@@ -59,20 +59,23 @@
             </Menu>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="dataAnalysisMenuItem">
+            <Menu class="javax.swing.JMenu" name="dataAnalysisMenu">
               <Properties>
-                <Property name="mnemonic" type="int" value="76"/>
                 <Property name="text" type="java.lang.String" value="Data Analysis..."/>
-                <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
-			  </MenuItem>
               <SubComponents>
-                <MenuItem class="javax.swing.JMenuItem" name="areaAnalysisMenuItem">
+                <MenuItem class="javax.swing.JMenuItem" name="areaMenuItem">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Area Analysis"/>
+                    <Property name="text" type="java.lang.String" value="...area"/>
                   </Properties>
                 </MenuItem>
-				</SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="singleCellMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="...single cell"/>
+                  </Properties>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator5">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="overviewMenuItem">
@@ -117,8 +120,8 @@
                 <Property name="text" type="java.lang.String" value="Exit"/>
               </Properties>
             </MenuItem>
-              </SubComponents>
-            </Menu>
+          </SubComponents>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="editMenu">
           <Properties>
             <Property name="mnemonic" type="int" value="69"/>
@@ -426,15 +429,15 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
         </Container>
-        <Container class="javax.swing.JPanel" name="analysisExperimentParentPanel">
+        <Container class="javax.swing.JPanel" name="areaAnalysisParentPanel">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="name" type="java.lang.String" value="analysisExperimentParentPanel" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="areaAnalysisParentPanel" noResource="true"/>
           </Properties>
           <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="analysisExperimentParentPanel"/>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="areaAnalysisParentPanel"/>
             <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value=""/>
           </AccessibilityProperties>
           <AuxValues>
@@ -442,7 +445,23 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-              <CardConstraints cardName="analysisExperimentParentPanel"/>
+              <CardConstraints cardName="areaAnalysisParentPanel"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+        </Container>
+        <Container class="javax.swing.JPanel" name="singleCellAnalysisParentPanel">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="singleCellAnalysisParentPanel" noResource="true"/>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
+          <AccessibilityProperties>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="singleCellAnalysisParentPanel"/>
+          </AccessibilityProperties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+              <CardConstraints cardName="singleCellAnalysisParentPanel"/>
             </Constraint>
           </Constraints>
 

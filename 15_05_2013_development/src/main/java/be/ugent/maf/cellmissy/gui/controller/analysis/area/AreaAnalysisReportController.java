@@ -11,7 +11,7 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.AreaAnalysisResults;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.CustomizeReportDialog;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.area.CustomizeReportDialog;
 import be.ugent.maf.cellmissy.gui.plate.PdfPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.CheckBoxConditionsRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;

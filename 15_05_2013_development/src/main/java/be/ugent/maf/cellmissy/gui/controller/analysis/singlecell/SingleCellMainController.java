@@ -22,7 +22,6 @@ import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.OverviewExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.MetadataSingleCellPanel;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsAnalysisListRenderer;
@@ -88,7 +87,6 @@ public class SingleCellMainController {
     private Format format;
     // view
     private AnalysisExperimentPanel analysisExperimentPanel;
-    private OverviewExperimentPanel overviewExperimentPanel;
     private MetadataSingleCellPanel metadataSingleCellPanel;
     private DataAnalysisPanel dataAnalysisPanel;
     private AnalysisPlatePanel analysisPlatePanel;
@@ -115,13 +113,12 @@ public class SingleCellMainController {
     public void init() {
         //init views
         analysisExperimentPanel = new AnalysisExperimentPanel();
-        overviewExperimentPanel = new OverviewExperimentPanel();
         metadataSingleCellPanel = new MetadataSingleCellPanel();
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
         ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
-        overviewExperimentPanel.getInfoLabel().setIcon(scaledIcon);
-        metadataSingleCellPanel.getInfoLabel().setIcon(scaledIcon);
+        metadataSingleCellPanel.getInfoLabel1().setIcon(scaledIcon);
+        metadataSingleCellPanel.getInfoLabel2().setIcon(scaledIcon);
         dataAnalysisPanel = new DataAnalysisPanel();
         analysisPlatePanel = new AnalysisPlatePanel();
         bindingGroup = new BindingGroup();
@@ -190,6 +187,21 @@ public class SingleCellMainController {
      */
     public void setCursor(Cursor cursor) {
         cellMissyController.setCursor(cursor);
+    }
+
+    public void handleUnexpectedError(Exception ex) {
+        cellMissyController.handleUnexpectedError(ex);
+    }
+
+    /**
+     * Show the wells analysed for current condition: put a star inside each
+     * well.
+     *
+     * @param plateCondition
+     */
+    public void showWellsForCurrentCondition(PlateCondition plateCondition) {
+        analysisPlatePanel.setCurrentCondition(plateCondition);
+        analysisPlatePanel.repaint();
     }
 
     /**
@@ -304,7 +316,7 @@ public class SingleCellMainController {
                 analysisExperimentPanel.getStartButton().setEnabled(false);
                 analysisExperimentPanel.getCancelButton().setEnabled(true);
                 // switch between the two panels
-                GuiUtils.switchChildPanels(analysisExperimentPanel.getTopPanel(), dataAnalysisPanel, overviewExperimentPanel);
+                GuiUtils.switchChildPanels(analysisExperimentPanel.getTopPanel(), dataAnalysisPanel, metadataSingleCellPanel);
                 analysisExperimentPanel.getTopPanel().repaint();
                 analysisExperimentPanel.getTopPanel().revalidate();
                 getCardLayout().first(singleCellPreProcessingController.getSingleCellAnalysisPanel().getBottomPanel());
@@ -355,21 +367,21 @@ public class SingleCellMainController {
             }
         });
 
-//        cellMissyController.getCellMissyFrame().getSingleCellAnalysisParentPanel().add(analysisExperimentPanel, gridBagConstraints);
+        cellMissyController.getCellMissyFrame().getSingleCellAnalysisParentPanel().add(analysisExperimentPanel, gridBagConstraints);
     }
 
     /**
      * Initialize metadata area panel
      */
     private void initMetadataSingleCellPanel() {
-        overviewExperimentPanel.getPurposeTextArea().setLineWrap(true);
-        overviewExperimentPanel.getPurposeTextArea().setWrapStyleWord(true);
-        overviewExperimentPanel.getProjectDescriptionTextArea().setLineWrap(true);
-        overviewExperimentPanel.getProjectDescriptionTextArea().setWrapStyleWord(true);
+        metadataSingleCellPanel.getPurposeTextArea().setLineWrap(true);
+        metadataSingleCellPanel.getPurposeTextArea().setWrapStyleWord(true);
+        metadataSingleCellPanel.getProjectDescriptionTextArea().setLineWrap(true);
+        metadataSingleCellPanel.getProjectDescriptionTextArea().setWrapStyleWord(true);
 
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
-        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, overviewExperimentPanel.getProjectJList());
+        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, metadataSingleCellPanel.getProjectsList());
         bindingGroup.addBinding(jListBinding);
 
         //init algorithms combobox
@@ -397,12 +409,12 @@ public class SingleCellMainController {
          * add mouse listeners
          */
         //when a project from the list is selected, show all experiments performed for that project
-        overviewExperimentPanel.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        metadataSingleCellPanel.getProjectsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     // retrieve selected project
-                    int selectedIndex = overviewExperimentPanel.getProjectJList().getSelectedIndex();
+                    int selectedIndex = metadataSingleCellPanel.getProjectsList().getSelectedIndex();
                     if (selectedIndex != -1) {
                         Project selectedProject = projectBindingList.get(selectedIndex);
                         if (experiment == null || !selectedProject.equals(experiment.getProject()) || experimentBindingList.isEmpty()) {
@@ -416,12 +428,12 @@ public class SingleCellMainController {
 
         //when an experiment is selected, show algorithms and imaging types used for that experiment
         //show also conditions in the Jlist behind and plate view according to the conditions setup
-        overviewExperimentPanel.getExperimentJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        metadataSingleCellPanel.getExperimentsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     // retrieve selected experiment
-                    int selectedIndex = overviewExperimentPanel.getExperimentJList().getSelectedIndex();
+                    int selectedIndex = metadataSingleCellPanel.getExperimentsList().getSelectedIndex();
                     if (selectedIndex != -1) {
                         Experiment selectedExperiment = experimentBindingList.get(selectedIndex);
                         if (experiment == null || !selectedExperiment.equals(experiment)) {
@@ -434,32 +446,31 @@ public class SingleCellMainController {
 
         // bind information fields
         // exp user
-        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, overviewExperimentPanel.getExperimentJList(), BeanProperty.create("selectedElement.user.firstName"), overviewExperimentPanel.getUserTextField(), BeanProperty.create("text"), "experimentuserbinding");
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metadataSingleCellPanel.getExperimentsList(), BeanProperty.create("selectedElement.user.firstName"), metadataSingleCellPanel.getUserTextField(), BeanProperty.create("text"), "experimentuserbinding");
         bindingGroup.addBinding(binding);
         // exp purpose
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, overviewExperimentPanel.getExperimentJList(), BeanProperty.create("selectedElement.purpose"), overviewExperimentPanel.getPurposeTextArea(), BeanProperty.create("text"), "experimentpurposebinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metadataSingleCellPanel.getExperimentsList(), BeanProperty.create("selectedElement.purpose"), metadataSingleCellPanel.getPurposeTextArea(), BeanProperty.create("text"), "experimentpurposebinding");
         bindingGroup.addBinding(binding);
         // instrument
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, overviewExperimentPanel.getExperimentJList(), BeanProperty.create("selectedElement.instrument.name"), overviewExperimentPanel.getInstrumentTextField(), BeanProperty.create("text"), "instrumentbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metadataSingleCellPanel.getExperimentsList(), BeanProperty.create("selectedElement.instrument.name"), metadataSingleCellPanel.getInstrumentTextField(), BeanProperty.create("text"), "instrumentbinding");
         bindingGroup.addBinding(binding);
         // resolution
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, overviewExperimentPanel.getExperimentJList(), BeanProperty.create("selectedElement.magnification.magnificationNumber"), overviewExperimentPanel.getMagnificationTextField(), BeanProperty.create("text"), "magnificationbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metadataSingleCellPanel.getExperimentsList(), BeanProperty.create("selectedElement.magnification.magnificationNumber"), metadataSingleCellPanel.getMagnificationTextField(), BeanProperty.create("text"), "magnificationbinding");
         bindingGroup.addBinding(binding);
         // exp time frames
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, overviewExperimentPanel.getExperimentJList(), BeanProperty.create("selectedElement.timeFrames"), overviewExperimentPanel.getTimeFramesTextField(), BeanProperty.create("text"), "experimentimeframesbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metadataSingleCellPanel.getExperimentsList(), BeanProperty.create("selectedElement.timeFrames"), metadataSingleCellPanel.getTimeFramesTextField(), BeanProperty.create("text"), "experimentimeframesbinding");
         bindingGroup.addBinding(binding);
         // do the binding
         bindingGroup.bind();
 
-        overviewExperimentPanel.getMetadataParentPanel().add(metadataSingleCellPanel, gridBagConstraints);
-        analysisExperimentPanel.getTopPanel().add(overviewExperimentPanel, gridBagConstraints);
+        analysisExperimentPanel.getTopPanel().add(metadataSingleCellPanel, gridBagConstraints);
     }
 
     /**
      * Initialize data analysis panel
      */
     private void initDataAnalysisPanel() {
-        //when a certain condition is selected, fetch time steps for each well of the condition
+        //when a certain condition is selected, fetch tracks for each well of the condition
         dataAnalysisPanel.getConditionsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -491,7 +502,7 @@ public class SingleCellMainController {
      */
     private void onSelectedProject(Project selectedProject) {
         ExperimentsListRenderer experimentsListRenderer = new ExperimentsListRenderer(cellMissyController.getCurrentUser());
-        overviewExperimentPanel.getExperimentJList().setCellRenderer(experimentsListRenderer);
+        metadataSingleCellPanel.getExperimentsList().setCellRenderer(experimentsListRenderer);
 
         if (!imagingTypeBindingList.isEmpty()) {
             imagingTypeBindingList.clear();
@@ -502,13 +513,13 @@ public class SingleCellMainController {
         }
         // show project description
         String projectDescription = selectedProject.getProjectDescription();
-        overviewExperimentPanel.getProjectDescriptionTextArea().setText(projectDescription);
+        metadataSingleCellPanel.getProjectDescriptionTextArea().setText(projectDescription);
         // show relative experiments
         Long projectid = selectedProject.getProjectid();
         List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.PERFORMED);
         if (experimentList != null) {
             experimentBindingList = ObservableCollections.observableList(experimentList);
-            JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, overviewExperimentPanel.getExperimentJList());
+            JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, metadataSingleCellPanel.getExperimentsList());
             bindingGroup.addBinding(jListBinding);
             bindingGroup.bind();
         } else {
@@ -659,12 +670,13 @@ public class SingleCellMainController {
                 if (!singleCellPreProcessingController.getTracksBindingList().isEmpty()) {
                     onCardSwitch();
                 }
-            } catch (InterruptedException ex) {
+                cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                // the condition is loaded and plate view is refreshed
+                showWellsForCurrentCondition(currentCondition);
+            } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
-            } catch (ExecutionException ex) {
-                showMessage("Unexpected error occured: " + ex.getMessage() + ", please try to restart the application.", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+                cellMissyController.handleUnexpectedError(ex);
             }
-            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
 

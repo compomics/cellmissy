@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.experiment.analysis;
+package be.ugent.maf.cellmissy.gui.experiment.analysis.area;
 
 import javax.swing.JButton;
 import javax.swing.JTable;
@@ -72,7 +72,6 @@ public class CustomizeReportDialog extends javax.swing.JDialog {
         setTitle("Customize Analysis Report");
         setMinimumSize(new java.awt.Dimension(800, 750));
         setModal(true);
-        setPreferredSize(new java.awt.Dimension(800, 750));
 
         createReportButton.setText("Create & Save PDF Report");
         createReportButton.setToolTipText("Create a PDF report for this analysis and save it");
