@@ -15,16 +15,20 @@ import be.ugent.maf.cellmissy.entity.SingleCellPreProcessingResults;
 public interface SingleCellPreProcessor {
 
     /**
+     * Put all together the track data holders for a certain plate condition.
      *
      * @param singleCellPreProcessingResults
-     * @param plateCondition
+     * @param plateCondition: we need here a plate condition because this can be
+     * done only on the single cell analysed wells. We'll get these wells having
+     * the condition.
      */
-    public void generateTrackResultsList(SingleCellPreProcessingResults singleCellPreProcessingResults, PlateCondition plateCondition);
+    public void generateTrackDataHolders(SingleCellPreProcessingResults singleCellPreProcessingResults, PlateCondition plateCondition);
 
     /**
+     * Generate the data structure: this will put together the well of the
+     * track, the track number and its time index.
      *
      * @param singleCellPreProcessingResults
-     * @param plateCondition
      */
     public void generateDataStructure(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
@@ -35,6 +39,7 @@ public interface SingleCellPreProcessor {
     public void generateTimeIndexes(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
+     * Generate the track coordinates matrix.
      *
      * @param singleCellPreProcessingResults
      * @param conversionFactor
@@ -42,58 +47,63 @@ public interface SingleCellPreProcessor {
     public void generateRawTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults, double conversionFactor);
 
     /**
+     * Compute the coordinates range.
      *
      * @param singleCellPreProcessingResults
      */
     public void computeCoordinatesRanges(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
+     * Generate the shifted track coordinates matrix.
      *
      * @param singleCellPreProcessingResults
      */
     public void generateShiftedTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
+     * Generate the instantaneous Speeds Vector.
      *
      * @param singleCellPreProcessingResults
      */
-    public void generateInstantaneousVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateInstantaneousSpeedsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
-     * Generate a vector with mean velocities per track.
+     * Generate a vector with mean speeds per track.
      *
      * @param singleCellPreProcessingResults
      */
-    public void generateTrackVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateTrackSpeedsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
-     * Compute cumulative distances for each track.
+     * Generate cumulative distances vector.
      *
      * @param singleCellPreProcessingResults
      */
     public void generateCumulativeDistancesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
-     * Compute Euclidean distances for each track.
+     * Generate Euclidean distances vector.
      *
      * @param singleCellPreProcessingResults
      */
     public void generateEuclideanDistancesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
-     * Compute directionality for each track.
+     * Generate directionality vector.
      *
      * @param singleCellPreProcessingResults
      */
     public void generateDirectionalitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
+     * Generate turning angles vector.
      *
      * @param singleCellPreProcessingResults
      */
     public void generateTurningAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
+     * Generate track angles vector.
      *
      * @param singleCellPreProcessingResults
      */

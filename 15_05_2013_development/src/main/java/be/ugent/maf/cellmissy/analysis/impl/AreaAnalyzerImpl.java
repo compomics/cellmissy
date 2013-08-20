@@ -17,8 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
+ * This class implements the AreaAnalyzer interface.
  *
- * @author Paola Masuzzo
+ * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Component("areaAnalyzer")
 public class AreaAnalyzerImpl implements AreaAnalyzer {
@@ -26,6 +27,20 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
     @Autowired
     private LinearRegressor linearRegressor;
 
+    /**
+     * The class makes use of the LinearRegressor interface to estimate a linear
+     * model in this method; having a certain areaAnalysisResults, this method
+     * will set the slopes, the R² coefficients, the mean slope and the mad
+     * slope of this object. Computation will depend as well on the type of the
+     * measured area (open area or cell-covered area) and will be different if
+     * corrected data or non corrected data need to be taken into consideration.
+     *
+     * @param areaPreProcessingResults
+     * @param areaAnalysisResults
+     * @param useCorrectedData
+     * @param measuredAreaTypes
+     * @param timeFrames
+     */
     @Override
     public void estimateLinearModel(AreaPreProcessingResults areaPreProcessingResults, AreaAnalysisResults areaAnalysisResults, boolean useCorrectedData, MeasuredAreaType measuredAreaTypes, double[] timeFrames) {
         Double[][] dataToUse = null;
@@ -73,7 +88,7 @@ public class AreaAnalyzerImpl implements AreaAnalyzer {
                 slopes[columnIndex] = slope;
                 goodnessOfFit[columnIndex] = coefficient;
             } else {
-                // set results to null if replicate is not taken into account 
+                // set results to null if replicate is not taken into account
                 slopes[columnIndex] = null;
                 goodnessOfFit[columnIndex] = null;
             }

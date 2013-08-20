@@ -64,7 +64,7 @@ public class TrackDataDialog extends javax.swing.JDialog {
     public JTextField getyMinTextField() {
         return yMinTextField;
     }
-    
+
     public JTextField getDirectionalityTextField() {
         return directionalityTextField;
     }
@@ -133,7 +133,6 @@ public class TrackDataDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Data for selected track");
-        setAlwaysOnTop(true);
         setMinimumSize(new java.awt.Dimension(1400, 800));
         setModal(true);
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -403,7 +402,7 @@ public class TrackDataDialog extends javax.swing.JDialog {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

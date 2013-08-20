@@ -731,12 +731,12 @@ public class SingleCellMainController {
                 highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocitiesLabel());
                 resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getInspectingDataLabel());
                 resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesLabel());
-                showInfoMessage("Single Cell Velocities");
+                showInfoMessage("Single Cell Speeds");
                 // check which button is selected for analysis
-                if (singleCellPreProcessingController.getVelocitiesPanel().getInstantaneousVelocitiesRadioButton().isSelected()) {
-                    singleCellPreProcessingController.showInstantaneousVelocitiesInTable(currentCondition);
+                if (singleCellPreProcessingController.getSpeedsPanel().getInstantaneousSpeedsRadioButton().isSelected()) {
+                    singleCellPreProcessingController.showInstantaneousSpeedsInTable(currentCondition);
                 } else {
-                    singleCellPreProcessingController.showTrackVelocitesInTable(currentCondition);
+                    singleCellPreProcessingController.showTrackSpeedsInTable(currentCondition);
                 }
                 break;
         }

@@ -18,7 +18,7 @@ public class TrackDataHolder {
     // the time interval in which the track has been detected and followed in the tracking step
     private double[] timeIndexes;
     // matrix for track coordinates (x, y)
-    // each row is a track point and contains couples (x, y)
+    // each row is a track point and contains couples of coordinates (x, y)
     private Double[][] trackCoordinatesMatrix;
     // minimum value for the x coordinate
     private double xMin;
@@ -29,37 +29,39 @@ public class TrackDataHolder {
     // maximum value for the y coordinate
     private double yMax;
     // matrix for shifted track coordinates
-    // same as the trackCoordinatesMatrix, but the origins of migration are superimposed at (0, 0) 
+    // same as the trackCoordinatesMatrix, but the origins of migration are superimposed at (0, 0)
     private Double[][] shiftedTrackCoordinates;
     // matrix for delta movements in (x, y) direction
     // differences between location (x[n], y[n]) and location (x[n-1], y[n-1])
     private Double[][] deltaMovements;
     // boolean for outliers: TRUE is data point is an outlier -----**** needs to be revisited
     private boolean[] outliers;
-    // array for  the instantaneous velocities
-    // for a track, the instantaneous velocities are derived from the displacement of the cell centroid between adjacent time points
-    private Double[] instantaneousVelocities;
-    // track velocity
-    // this is the median velocity computed from all time intervals throughout a track
-    private double trackVelocity;
+    // array for  the instantaneous speeds
+    // the speed does not contain direction information
+    // for a track, the minimal instantaneous speeds are derived from the displacement of the cell centroid between adjacent time points
+    // This is the minimal instantaneous cell displacement!
+    private Double[] instantaneousSpeeds;
+    // track speed
+    // this is the median speed computed from all time intervals throughout a track
+    private double trackSpeed;
     // double for cumulative distance (between first and last time point of the track)
     // this is the total path length travelled by the cell in its displacement
     private double cumulativeDistance;
     // double for euclidean distance (between first and last time point of the track)
-    // this is the real displacement of the cell in its motion, tipically smaller than the Euclidean distance
+    // this is the real displacement of the cell in its motion (the net distance traveled), tipically smaller than the cumulative distance
     private double euclideanDistance;
     // directionality: this is the ratio between the euclidean and the cumulative distance
     // this parameter is also known in literature as confinement ratio or meandering index
-    // since the path length is at least equal to the displacement, this coefficient can vary between zero and one
+    // since the path length is at least equal to the displacement, this coefficient can vary between 0 and 1
     private double directionality;
     // array for turning angles
-    // a turning angle is the observed turning angle of a cell between sequential time points
+    // a turning angle is the observed turning angle of a cell between sequential time points (it is an instantaneous angle)
     private Double[] turningAngles;
     // track angle: the median turning angle computed from all time intervals throughout a track
     private double trackAngle;
 
     /**
-     * Constructor
+     * Constructor, takes a track as argument.
      *
      * @param track
      */
@@ -147,20 +149,20 @@ public class TrackDataHolder {
         this.outliers = outliers;
     }
 
-    public Double[] getInstantaneousVelocities() {
-        return instantaneousVelocities;
+    public Double[] getInstantaneousSpeeds() {
+        return instantaneousSpeeds;
     }
 
-    public void setInstantaneousVelocities(Double[] instantaneousVelocities) {
-        this.instantaneousVelocities = instantaneousVelocities;
+    public void setInstantaneousSpeeds(Double[] instantaneousSpeeds) {
+        this.instantaneousSpeeds = instantaneousSpeeds;
     }
 
-    public double getTrackVelocity() {
-        return trackVelocity;
+    public double getTrackSpeed() {
+        return trackSpeed;
     }
 
-    public void setTrackVelocity(double trackVelocity) {
-        this.trackVelocity = trackVelocity;
+    public void setTrackSpeed(double trackSpeed) {
+        this.trackSpeed = trackSpeed;
     }
 
     public double getCumulativeDistance() {

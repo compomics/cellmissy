@@ -10,15 +10,16 @@ import java.util.List;
 
 /**
  * Interface for area data pre-processing: Normalize Area, Identify and Correct
- * for Outliers, compute Distances between replicates
+ * for Outliers, compute Distances between replicates, estimate the density
+ * function, compute time interval for the analysis. This interface is
+ * implemented separately for open area or cell-covered area.
  *
- * @author Paola Masuzzo
+ * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public interface AreaPreProcessor {
 
     /**
-     * Normalize Area values, this method is different according to the type of
-     * measured area: is it cell covered or open area?
+     * Normalize Area values relatively to area at time 0
      *
      * @param areaPreProcessingResults
      */
@@ -48,22 +49,29 @@ public interface AreaPreProcessor {
 
     /**
      * For normalised and Corrected Area, compute distance matrix containing all
-     * the distances between one replicate and all the others.
+     * the distances between one replicate and all the others. This depends on
+     * the ban of the distance matrix: could be Euclidean or anything else.
      *
      * @param areaPreProcessingResults
+     * @param distanceMetricBeanName
      */
     public void computeDistanceMatrix(AreaPreProcessingResults areaPreProcessingResults, String distanceMetricBeanName);
 
     /**
-     * Check if a replicate can be considered as an Outlier.
+     * Check if a replicate can be considered as an Outlier. This will depend on
+     * the bean of the outliers handler, could use R or Excel algorithms for
+     * example.
      *
      * @param areaPreProcessingResults
      * @param plateCondition
+     * @param outliersHandlerBeanName
      */
     public void excludeReplicates(AreaPreProcessingResults areaPreProcessingResults, PlateCondition plateCondition, String outliersHandlerBeanName);
 
     /**
-     * Detect outliers for a 2D array of double (one condition)
+     * Detect outliers for a 2D array of double (one condition). This will
+     * depend on the bean of the outliers handler, could use R or Excel
+     * algorithms for example.
      *
      * @param data
      * @param outliersHandlerBeanName
@@ -73,7 +81,9 @@ public interface AreaPreProcessor {
     public boolean[][] detectOutliers(Double[][] data, String outliersHandlerBeanName);
 
     /**
-     * Making use of the detect outliers method, correct data set for outliers
+     * Making use of the detect outliers method, correct data set for outliers.
+     * This will depend on the bean of the outliers handler, could use R or
+     * Excel algorithms for example.
      *
      * @param data
      * @return a matrix with corrected value
@@ -81,9 +91,12 @@ public interface AreaPreProcessor {
     public Double[][] correctForOutliers(Double[][] data, String outliersHandlerBeanName);
 
     /**
+     * Estimate the probability density function, according to name of the bean
+     * for the kernel density estimator; could use for example a Gaussian kernel
+     * or something else.
      *
      * @param data
-     * @return
+     * @return a list of doubles[] containing x and y values for the function.
      */
     public List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName);
 
@@ -95,8 +108,8 @@ public interface AreaPreProcessor {
     public void setTimeInterval(AreaPreProcessingResults areaPreProcessingResults);
 
     /**
-     * Recompute time interval for a condition: this is called if first a time
-     * interval has already been set
+     * Recompute time interval for a condition; this will recompute the interval
+     * according to the minimum first and last time points.
      *
      * @param areaPreProcessingResults
      */

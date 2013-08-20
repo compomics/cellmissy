@@ -5,6 +5,12 @@
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="ff" green="ff" red="ff" type="rgb"/>
     </Property>
+    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[300, 250]"/>
+    </Property>
+    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[600, 450]"/>
+    </Property>
   </Properties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -45,9 +51,9 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="tableInfoLabel" min="-2" pref="574" max="-2" attributes="1"/>
                       <Group type="102" attributes="0">
-                          <Component id="instantaneousVelocitiesRadioButton" min="-2" max="-2" attributes="0"/>
+                          <Component id="instantaneousSpeedsRadioButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="trackVelocitiesRadioButton" min="-2" max="-2" attributes="0"/>
+                          <Component id="trackSpeedsRadioButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace pref="498" max="32767" attributes="0"/>
@@ -59,8 +65,8 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="instantaneousVelocitiesRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="trackVelocitiesRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="instantaneousSpeedsRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="trackSpeedsRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="tableInfoLabel" min="-2" max="-2" attributes="0"/>
@@ -70,9 +76,9 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JRadioButton" name="instantaneousVelocitiesRadioButton">
+        <Component class="javax.swing.JRadioButton" name="instantaneousSpeedsRadioButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="instantaneous velocities"/>
+            <Property name="text" type="java.lang.String" value="instantaneous speeds"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
@@ -89,9 +95,9 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="trackVelocitiesRadioButton">
+        <Component class="javax.swing.JRadioButton" name="trackSpeedsRadioButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="track velocities"/>
+            <Property name="text" type="java.lang.String" value="track speeds"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>

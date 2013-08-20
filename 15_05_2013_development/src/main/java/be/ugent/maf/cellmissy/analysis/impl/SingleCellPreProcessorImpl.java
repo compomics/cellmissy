@@ -19,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
+ * Implementation of the single cell pre processor. It makes use of a track
+ * operator to perform basic operations. This class will also bring together the
+ * quantitative parameters of tracks on a plate condition level.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -29,12 +32,13 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     private TrackOperator trackOperator;
 
     @Override
-    public void generateTrackResultsList(SingleCellPreProcessingResults singleCellPreProcessingResults, PlateCondition plateCondition) {
+    public void generateTrackDataHolders(SingleCellPreProcessingResults singleCellPreProcessingResults, PlateCondition plateCondition) {
         List<TrackDataHolder> trackDataHolders = new ArrayList<>();
         List<Well> singleCellAnalyzedWells = plateCondition.getSingleCellAnalyzedWells();
-        for (Well well : singleCellAnalyzedWells) {
-            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+        for (Well singleCellAnalyzedWell : singleCellAnalyzedWells) {
+            for (WellHasImagingType wellHasImagingType : singleCellAnalyzedWell.getWellHasImagingTypeList()) {
                 for (Track track : wellHasImagingType.getTrackList()) {
+                    // generate a new track data holder for this track and add it to the list
                     TrackDataHolder trackDataHolder = new TrackDataHolder(track);
                     trackDataHolders.add(trackDataHolder);
                 }
@@ -45,11 +49,13 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
 
     @Override
     public void generateDataStructure(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        // for a single condition, compute first the total number of track points
         int trackPointsNumber = computeTotalTrackPointsNumber(singleCellPreProcessingResults);
         Object[][] dataStructure = new Object[trackPointsNumber][3];
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            for (TrackPoint trackPoint : trackDataHolder.getTrack().getTrackPointList()) {
+            List<TrackPoint> trackPointList = trackDataHolder.getTrack().getTrackPointList();
+            for (TrackPoint trackPoint : trackPointList) {
                 dataStructure[counter][0] = trackDataHolder.getTrack().getWellHasImagingType().getWell().toString();
                 dataStructure[counter][1] = trackPoint.getTrack().getTrackNumber();
                 dataStructure[counter][2] = trackPoint.getTimeIndex();
@@ -99,32 +105,32 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
-    public void generateInstantaneousVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void generateInstantaneousSpeedsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-        Double[] instantaneousVelocitiesVector = new Double[dataStructure.length];
-        computeVelocities(singleCellPreProcessingResults);
+        Double[] instantaneousSpeedsVector = new Double[dataStructure.length];
+        computeInstSpeeds(singleCellPreProcessingResults);
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            Double[] instantaneousVelocities = trackDataHolder.getInstantaneousVelocities();
-            for (int i = 0; i < instantaneousVelocities.length; i++) {
-                instantaneousVelocitiesVector[counter] = instantaneousVelocities[i];
+            Double[] instantaneousSpeeds = trackDataHolder.getInstantaneousSpeeds();
+            for (int i = 0; i < instantaneousSpeeds.length; i++) {
+                instantaneousSpeedsVector[counter] = instantaneousSpeeds[i];
                 counter++;
             }
         }
-        singleCellPreProcessingResults.setInstantaneousVelocitiesVector(instantaneousVelocitiesVector);
+        singleCellPreProcessingResults.setInstantaneousSpeedsVector(instantaneousSpeedsVector);
     }
 
     @Override
-    public void generateTrackVelocitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void generateTrackSpeedsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] trackVelocitiesVector = new Double[trackDataHolders.size()];
-        computeTrackVelocities(singleCellPreProcessingResults);
-        for (int i = 0; i < trackVelocitiesVector.length; i++) {
+        Double[] trackSpeedsVector = new Double[trackDataHolders.size()];
+        computeTrackSpeeds(singleCellPreProcessingResults);
+        for (int i = 0; i < trackSpeedsVector.length; i++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double trackVelocity = trackDataHolder.getTrackVelocity();
-            trackVelocitiesVector[i] = trackVelocity;
+            double trackSpeed = trackDataHolder.getTrackSpeed();
+            trackSpeedsVector[i] = trackSpeed;
         }
-        singleCellPreProcessingResults.setTrackVelocitiesVector(trackVelocitiesVector);
+        singleCellPreProcessingResults.setTrackSpeedsVector(trackSpeedsVector);
     }
 
     @Override
@@ -214,7 +220,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     /**
-     * Compute normalized track coordinates.
+     * Compute shifted track coordinates.
      *
      * @param singleCellPreProcessingResults
      */
@@ -229,18 +235,18 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    private void computeVelocities(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    private void computeInstSpeeds(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
             computeDeltaMovements(trackDataHolder);
-            trackOperator.computeInstantaneousVelocities(trackDataHolder);
+            trackOperator.computeInstantaneousSpeeds(trackDataHolder);
         }
     }
 
     /**
      * Compute delta movements in x and y direction for the specified
-     * trackDataHolder
+     * trackDataHolder.
      *
-     * @param singleCellPreProcessingResults
+     * @param trackDataHolder
      */
     private void computeDeltaMovements(TrackDataHolder trackDataHolder) {
         trackOperator.computeDeltaMovements(trackDataHolder);
@@ -250,7 +256,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      * Calculate the total number of track points.
      *
      * @param singleCellPreProcessingResults
-     * @return
+     * @return an integer with this number
      */
     private int computeTotalTrackPointsNumber(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         int trackPointsNumber = 0;
@@ -265,9 +271,9 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    private void computeTrackVelocities(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    private void computeTrackSpeeds(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeTrackVelocity(trackDataHolder);
+            trackOperator.computeTrackSpeed(trackDataHolder);
         }
     }
 

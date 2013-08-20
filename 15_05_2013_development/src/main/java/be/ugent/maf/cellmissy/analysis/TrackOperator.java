@@ -7,6 +7,8 @@ package be.ugent.maf.cellmissy.analysis;
 import be.ugent.maf.cellmissy.entity.TrackDataHolder;
 
 /**
+ * Interface: track operator. This performs basic operations on the track level,
+ * using the track data holder.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -31,15 +33,15 @@ public interface TrackOperator {
     public void generateTrackCoordinatesMatrix(TrackDataHolder trackDataHolder, double conversionFactor);
 
     /**
-     * Compute the min and max x + min and max y
+     * Compute the min and max x + min and max y.
      *
      * @param trackDataHolder
      */
     public void computeCoordinatesRange(TrackDataHolder trackDataHolder);
 
     /**
-     * Compute normalised track coordinates starting from the track point
-     * matrix.
+     * Compute shifted track coordinates starting from the track coordinates
+     * matrix; shifted means track coordinates are normalised to 0.
      *
      * @param trackDataHolder
      */
@@ -53,18 +55,18 @@ public interface TrackOperator {
     public void computeDeltaMovements(TrackDataHolder trackDataHolder);
 
     /**
-     * Compute velocities.
+     * Compute minimal instantaneous speeds.
      *
      * @param trackDataHolder
      */
-    public void computeInstantaneousVelocities(TrackDataHolder trackDataHolder);
+    public void computeInstantaneousSpeeds(TrackDataHolder trackDataHolder);
 
     /**
-     * Generate the velocities filtered through the motile step criterium.
+     * Compute track speed.
      *
      * @param trackDataHolder
      */
-    public void computeTrackVelocity(TrackDataHolder trackDataHolder);
+    public void computeTrackSpeed(TrackDataHolder trackDataHolder);
 
     /**
      * Compute cumulative distance between start and end point of track. This is

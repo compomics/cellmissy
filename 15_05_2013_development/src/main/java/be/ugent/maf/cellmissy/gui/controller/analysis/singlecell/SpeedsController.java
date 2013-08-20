@@ -6,7 +6,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.SingleCellPreProcessingResults;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.VelocitiesPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SpeedsPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
@@ -29,14 +29,14 @@ import org.springframework.stereotype.Component;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-@Component("velocitiesController")
-public class VelocitiesController {
+@Component("speedsController")
+public class SpeedsController {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(VelocitiesController.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SpeedsController.class);
     // model
-    private JTable velocitiesTable;
+    private JTable speedsTable;
     // view
-    private VelocitiesPanel velocitiesPanel;
+    private SpeedsPanel speedsPanel;
     // parent controller
     @Autowired
     private SingleCellPreProcessingController singleCellPreProcessingController;
@@ -50,14 +50,14 @@ public class VelocitiesController {
     public void init() {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         // init views
-        initVelocitiesPanel();
+        initSpeedsPanel();
     }
 
     /**
      * getters
      */
-    public VelocitiesPanel getVelocitiesPanel() {
-        return velocitiesPanel;
+    public SpeedsPanel getSpeedsPanel() {
+        return speedsPanel;
     }
 
     /**
@@ -65,21 +65,21 @@ public class VelocitiesController {
      *
      * @param plateCondition
      */
-    public void showInstantaneousVelocitiesInTable(PlateCondition plateCondition) {
+    public void showInstantaneousSpeedsInTable(PlateCondition plateCondition) {
         SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
         if (singleCellPreProcessingResults != null) {
             Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-            Double[] instantaneousVelocitiesVector = singleCellPreProcessingResults.getInstantaneousVelocitiesVector();
-            velocitiesTable.setModel(new VelocitiesTableModel(dataStructure, instantaneousVelocitiesVector));
+            Double[] instantaneousSpeedsVector = singleCellPreProcessingResults.getInstantaneousSpeedsVector();
+            speedsTable.setModel(new VelocitiesTableModel(dataStructure, instantaneousSpeedsVector));
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
-            for (int i = 0; i < velocitiesTable.getColumnModel().getColumnCount(); i++) {
-                velocitiesTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
+            for (int i = 0; i < speedsTable.getColumnModel().getColumnCount(); i++) {
+                speedsTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
             }
-            velocitiesTable.getColumnModel().getColumn(3).setCellRenderer(formatRenderer);
-            velocitiesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
+            speedsTable.getColumnModel().getColumn(3).setCellRenderer(formatRenderer);
+            speedsTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
         }
-        velocitiesPanel.getTableInfoLabel().setText("Instantaneous Single Cell Velocities (for each time step)");
+        speedsPanel.getTableInfoLabel().setText("Instantaneous Single Cell Speeds (for each time step)");
     }
 
     /**
@@ -88,77 +88,77 @@ public class VelocitiesController {
      *
      * @param plateCondition
      */
-    public void showTrackVelocitesInTable(PlateCondition plateCondition) {
+    public void showTrackSpeedsInTable(PlateCondition plateCondition) {
         SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
         if (singleCellPreProcessingResults != null) {
-            Double[] trackVelocitiesVector = singleCellPreProcessingResults.getTrackVelocitiesVector();
+            Double[] trackSpeedsVector = singleCellPreProcessingResults.getTrackSpeedsVector();
             String[] columnNames = {"well", "track", "track velocity (µm)"};
-            TrackDataTableModel trackDataTableModel = new TrackDataTableModel(columnNames, singleCellPreProcessingResults, trackVelocitiesVector);
-            velocitiesTable.setModel(trackDataTableModel);
+            TrackDataTableModel trackDataTableModel = new TrackDataTableModel(columnNames, singleCellPreProcessingResults, trackSpeedsVector);
+            speedsTable.setModel(trackDataTableModel);
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
-            for (int i = 0; i < velocitiesTable.getColumnModel().getColumnCount(); i++) {
-                velocitiesTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
+            for (int i = 0; i < speedsTable.getColumnModel().getColumnCount(); i++) {
+                speedsTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
             }
-            velocitiesTable.getColumnModel().getColumn(2).setCellRenderer(formatRenderer);
-            velocitiesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
+            speedsTable.getColumnModel().getColumn(2).setCellRenderer(formatRenderer);
+            speedsTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
         }
-        velocitiesPanel.getTableInfoLabel().setText("Track velocities (median of instantaneous velocities)");
+        speedsPanel.getTableInfoLabel().setText("Track speeds (median of instantaneous speeds)");
     }
 
     /**
      * Initialise main panel
      */
-    private void initVelocitiesPanel() {
+    private void initSpeedsPanel() {
         // create main view
-        velocitiesPanel = new VelocitiesPanel();
+        speedsPanel = new SpeedsPanel();
         //init dataTable
-        velocitiesTable = new JTable();
-        JScrollPane scrollPane = new JScrollPane(velocitiesTable);
+        speedsTable = new JTable();
+        JScrollPane scrollPane = new JScrollPane(speedsTable);
         //the table will take all the viewport height available
-        velocitiesTable.setFillsViewportHeight(true);
+        speedsTable.setFillsViewportHeight(true);
         scrollPane.getViewport().setBackground(Color.white);
-        velocitiesTable.getTableHeader().setReorderingAllowed(false);
+        speedsTable.getTableHeader().setReorderingAllowed(false);
         //row selection must be false && column selection true to be able to select through columns
-        velocitiesTable.setColumnSelectionAllowed(true);
-        velocitiesTable.setRowSelectionAllowed(false);
-        velocitiesPanel.getDataTablePanel().add(scrollPane);
+        speedsTable.setColumnSelectionAllowed(true);
+        speedsTable.setRowSelectionAllowed(false);
+        speedsPanel.getDataTablePanel().add(scrollPane);
         //create a ButtonGroup for the radioButtons used for analysis
         ButtonGroup radioButtonGroup = new ButtonGroup();
         //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
-        radioButtonGroup.add(velocitiesPanel.getInstantaneousVelocitiesRadioButton());
-        radioButtonGroup.add(velocitiesPanel.getTrackVelocitiesRadioButton());
+        radioButtonGroup.add(speedsPanel.getInstantaneousSpeedsRadioButton());
+        radioButtonGroup.add(speedsPanel.getTrackSpeedsRadioButton());
         //select as default first button (raw data track coordinates Computation)
-        velocitiesPanel.getInstantaneousVelocitiesRadioButton().setSelected(true);
+        speedsPanel.getInstantaneousSpeedsRadioButton().setSelected(true);
 
         /**
          * Add action listeners
          */
-        // show raw data velocities
-        velocitiesPanel.getInstantaneousVelocitiesRadioButton().addActionListener(new ActionListener() {
+        // show raw data speeds
+        speedsPanel.getInstantaneousSpeedsRadioButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
                 //check that a condition is selected
                 if (currentCondition != null) {
-                    showInstantaneousVelocitiesInTable(currentCondition);
+                    showInstantaneousSpeedsInTable(currentCondition);
                 }
             }
         });
 
-        // show track velocities
-        velocitiesPanel.getTrackVelocitiesRadioButton().addActionListener(new ActionListener() {
+        // show track speeds
+        speedsPanel.getTrackSpeedsRadioButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
                 //check that a condition is selected
                 if (currentCondition != null) {
-                    showTrackVelocitesInTable(currentCondition);
+                    showTrackSpeedsInTable(currentCondition);
                 }
             }
         });
 
         // add view to parent panel
-        singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocitiesParentPanel().add(velocitiesPanel, gridBagConstraints);
+        singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocitiesParentPanel().add(speedsPanel, gridBagConstraints);
     }
 }

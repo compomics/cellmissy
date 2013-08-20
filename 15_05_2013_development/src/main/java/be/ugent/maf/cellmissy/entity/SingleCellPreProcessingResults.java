@@ -18,8 +18,8 @@ public class SingleCellPreProcessingResults {
 
     // list of track data holders
     private List<TrackDataHolder> trackDataHolders;
-    // data structure containing wells, tracks numbers and time indexes 
-    // this data structure is on the track point level 
+    // data structure containing wells, tracks numbers and time indexes
+    // this data structure is on the track point level
     private Object[][] dataStructure;
     // raw data track coordinates
     private Double[][] rawTrackCoordinatesMatrix;
@@ -27,15 +27,15 @@ public class SingleCellPreProcessingResults {
     private Double[][] shiftedTrackCoordinatesMatrix;
     // boolean for the motile steps computation --- ******************* to be revisited
     private boolean[] outliersVector;
-    // array for instantaneous velocities
-    private Double[] instantaneousVelocitiesVector;
-    // array for track velocities
-    private Double[] trackVelocitiesVector;
+    // array for instantaneous speeds
+    private Double[] instantaneousSpeedsVector;
+    // array for track speeds
+    private Double[] trackSpeedsVector;
     // array for track cumulative distancse
     private Double[] cumulativeDistancesVector;
     // array for track Euclidean distancse
     private Double[] euclideanDistancesVector;
-    //array for directionalities 
+    //array for directionalities
     private Double[] directionalitiesVector;
     // array for turning angles
     private Double[] turningAnglesVector;
@@ -82,20 +82,20 @@ public class SingleCellPreProcessingResults {
         this.outliersVector = outliersVector;
     }
 
-    public Double[] getInstantaneousVelocitiesVector() {
-        return instantaneousVelocitiesVector;
+    public Double[] getInstantaneousSpeedsVector() {
+        return instantaneousSpeedsVector;
     }
 
-    public void setInstantaneousVelocitiesVector(Double[] instantaneousVelocitiesVector) {
-        this.instantaneousVelocitiesVector = instantaneousVelocitiesVector;
+    public void setInstantaneousSpeedsVector(Double[] instantaneousSpeedsVector) {
+        this.instantaneousSpeedsVector = instantaneousSpeedsVector;
     }
 
-    public Double[] getTrackVelocitiesVector() {
-        return trackVelocitiesVector;
+    public Double[] getTrackSpeedsVector() {
+        return trackSpeedsVector;
     }
 
-    public void setTrackVelocitiesVector(Double[] trackVelocitiesVector) {
-        this.trackVelocitiesVector = trackVelocitiesVector;
+    public void setTrackSpeedsVector(Double[] trackSpeedsVector) {
+        this.trackSpeedsVector = trackSpeedsVector;
     }
 
     public Double[] getCumulativeDistancesVector() {

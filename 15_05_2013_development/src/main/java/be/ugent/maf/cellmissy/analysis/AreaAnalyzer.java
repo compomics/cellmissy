@@ -9,17 +9,20 @@ import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
 
 /**
  * Interface for Analysis of Area Data (after pre-processing step)
- * @author Paola Masuzzo
+ *
+ * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public interface AreaAnalyzer {
 
     /**
-     * Estimate Linear Regression Model: compute slopes and R squared coefficients
+     * Estimate Linear Regression Model: compute slopes and R squared
+     * coefficients
+     *
      * @param areaPreProcessingResults
      * @param areaAnalysisResults
-     * @param useCorrectedData 
-     * @param measuredAreaType 
-     * @param timeFrames 
+     * @param useCorrectedData
+     * @param measuredAreaType
+     * @param timeFrames
      */
     public void estimateLinearModel(AreaPreProcessingResults areaPreProcessingResults, AreaAnalysisResults areaAnalysisResults, boolean useCorrectedData, MeasuredAreaType measuredAreaType, double[] timeFrames);
 }

@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Implementation of the area pre-processor for the open area values.
  *
- * @author Paola Masuzzo
+ * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Component("openAreaPreProcessor")
 public class OpenAreaPreProcessor implements AreaPreProcessor {
@@ -219,7 +219,7 @@ public class OpenAreaPreProcessor implements AreaPreProcessor {
         Double[][] transposedArea = AnalysisUtils.transpose2DArray(normalizedCorrectedArea);
         // check if some replicates need to be excluded from computation (this means these replicates are outliers)
         boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();// last time point for interval is set to cutoff time point: by default this is the entire time frame of experiment
-        // cutoff time point is intended to be the time point from which starting every replicates in the condition has only no null values. 
+        // cutoff time point is intended to be the time point from which starting every replicates in the condition has only no null values.
         int cutOff = normalizedCorrectedArea.length - 1;
         // for each replicate
         for (int columnIndex = 0; columnIndex < transposedArea.length; columnIndex++) {

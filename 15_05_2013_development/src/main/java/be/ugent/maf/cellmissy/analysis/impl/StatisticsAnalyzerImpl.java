@@ -20,8 +20,9 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.springframework.stereotype.Component;
 
 /**
+ * Implementation for the statistical analyzer.
  *
- * @author Paola Masuzzo
+ * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Component("statisticsAnalyzer")
 public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {

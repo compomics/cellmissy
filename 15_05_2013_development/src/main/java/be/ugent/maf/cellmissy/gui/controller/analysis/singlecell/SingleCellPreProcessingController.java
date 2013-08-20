@@ -15,7 +15,7 @@ import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.VelocitiesPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SpeedsPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -69,7 +69,7 @@ public class SingleCellPreProcessingController {
     @Autowired
     private TrackCoordinatesController trackCoordinatesController;
     @Autowired
-    private VelocitiesController velocitiesController;
+    private SpeedsController speedsController;
     //services
     @Autowired
     private SingleCellPreProcessor singleCellPreProcessor;
@@ -85,7 +85,7 @@ public class SingleCellPreProcessingController {
         initSingleCellAnalysisPanel();
         // init child controllers
         trackCoordinatesController.init();
-        velocitiesController.init();
+        speedsController.init();
     }
 
     /**
@@ -101,8 +101,8 @@ public class SingleCellPreProcessingController {
         return trackCoordinatesController.getTrackCoordinatesPanel();
     }
 
-    public VelocitiesPanel getVelocitiesPanel() {
-        return velocitiesController.getVelocitiesPanel();
+    public SpeedsPanel getSpeedsPanel() {
+        return speedsController.getSpeedsPanel();
     }
 
     public ObservableList<Track> getTracksBindingList() {
@@ -153,12 +153,12 @@ public class SingleCellPreProcessingController {
         trackCoordinatesController.resetTracksList();
     }
 
-    public void showInstantaneousVelocitiesInTable(PlateCondition plateCondition) {
-        velocitiesController.showInstantaneousVelocitiesInTable(plateCondition);
+    public void showInstantaneousSpeedsInTable(PlateCondition plateCondition) {
+        speedsController.showInstantaneousSpeedsInTable(plateCondition);
     }
 
-    public void showTrackVelocitesInTable(PlateCondition plateCondition) {
-        velocitiesController.showTrackVelocitesInTable(plateCondition);
+    public void showTrackSpeedsInTable(PlateCondition plateCondition) {
+        speedsController.showTrackSpeedsInTable(plateCondition);
     }
 
     public CellMissyFrame getMainFrame() {
@@ -208,14 +208,14 @@ public class SingleCellPreProcessingController {
             SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
             // do computations
             singleCellMainController.fetchTrackPoints(plateCondition);
-            singleCellPreProcessor.generateTrackResultsList(singleCellPreProcessingResults, plateCondition);
+            singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition);
             singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTimeIndexes(singleCellPreProcessingResults);
             singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, computeConversionFactor());
             singleCellPreProcessor.computeCoordinatesRanges(singleCellPreProcessingResults);
             singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateInstantaneousVelocitiesVector(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateTrackVelocitiesVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateInstantaneousSpeedsVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);

@@ -12,7 +12,7 @@ import javax.swing.JRadioButton;
  *
  * @author paola
  */
-public class VelocitiesPanel extends javax.swing.JPanel {
+public class SpeedsPanel extends javax.swing.JPanel {
 
     public JPanel getDataTablePanel() {
         return dataTablePanel;
@@ -22,12 +22,12 @@ public class VelocitiesPanel extends javax.swing.JPanel {
         return graphicsParentPanel;
     }
 
-    public JRadioButton getInstantaneousVelocitiesRadioButton() {
-        return instantaneousVelocitiesRadioButton;
+    public JRadioButton getInstantaneousSpeedsRadioButton() {
+        return instantaneousSpeedsRadioButton;
     }
 
-    public JRadioButton getTrackVelocitiesRadioButton() {
-        return trackVelocitiesRadioButton;
+    public JRadioButton getTrackSpeedsRadioButton() {
+        return trackSpeedsRadioButton;
     }
 
     public JLabel getTableInfoLabel() {
@@ -35,9 +35,9 @@ public class VelocitiesPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Creates new form VelocitiesPanel
+     * Creates new form SpeedsPanel
      */
-    public VelocitiesPanel() {
+    public SpeedsPanel() {
         initComponents();
     }
 
@@ -52,28 +52,30 @@ public class VelocitiesPanel extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         radioButtonsPanel = new javax.swing.JPanel();
-        instantaneousVelocitiesRadioButton = new javax.swing.JRadioButton();
+        instantaneousSpeedsRadioButton = new javax.swing.JRadioButton();
         tableInfoLabel = new javax.swing.JLabel();
-        trackVelocitiesRadioButton = new javax.swing.JRadioButton();
+        trackSpeedsRadioButton = new javax.swing.JRadioButton();
         dataTablePanel = new javax.swing.JPanel();
         graphicsParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setMinimumSize(new java.awt.Dimension(300, 250));
+        setPreferredSize(new java.awt.Dimension(600, 450));
         setLayout(new java.awt.GridBagLayout());
 
         radioButtonsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         radioButtonsPanel.setOpaque(false);
         radioButtonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        instantaneousVelocitiesRadioButton.setText("instantaneous velocities");
-        instantaneousVelocitiesRadioButton.setOpaque(false);
+        instantaneousSpeedsRadioButton.setText("instantaneous speeds");
+        instantaneousSpeedsRadioButton.setOpaque(false);
 
         tableInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         tableInfoLabel.setMinimumSize(new java.awt.Dimension(20, 20));
         tableInfoLabel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        trackVelocitiesRadioButton.setText("track velocities");
-        trackVelocitiesRadioButton.setOpaque(false);
+        trackSpeedsRadioButton.setText("track speeds");
+        trackSpeedsRadioButton.setOpaque(false);
 
         javax.swing.GroupLayout radioButtonsPanelLayout = new javax.swing.GroupLayout(radioButtonsPanel);
         radioButtonsPanel.setLayout(radioButtonsPanelLayout);
@@ -84,9 +86,9 @@ public class VelocitiesPanel extends javax.swing.JPanel {
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                        .addComponent(instantaneousVelocitiesRadioButton)
+                        .addComponent(instantaneousSpeedsRadioButton)
                         .addGap(18, 18, 18)
-                        .addComponent(trackVelocitiesRadioButton)))
+                        .addComponent(trackSpeedsRadioButton)))
                 .addContainerGap(498, Short.MAX_VALUE))
         );
         radioButtonsPanelLayout.setVerticalGroup(
@@ -94,8 +96,8 @@ public class VelocitiesPanel extends javax.swing.JPanel {
             .addGroup(radioButtonsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(instantaneousVelocitiesRadioButton)
-                    .addComponent(trackVelocitiesRadioButton))
+                    .addComponent(instantaneousSpeedsRadioButton)
+                    .addComponent(trackSpeedsRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -140,9 +142,9 @@ public class VelocitiesPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel dataTablePanel;
     private javax.swing.JPanel graphicsParentPanel;
-    private javax.swing.JRadioButton instantaneousVelocitiesRadioButton;
+    private javax.swing.JRadioButton instantaneousSpeedsRadioButton;
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JLabel tableInfoLabel;
-    private javax.swing.JRadioButton trackVelocitiesRadioButton;
+    private javax.swing.JRadioButton trackSpeedsRadioButton;
     // End of variables declaration//GEN-END:variables
 }

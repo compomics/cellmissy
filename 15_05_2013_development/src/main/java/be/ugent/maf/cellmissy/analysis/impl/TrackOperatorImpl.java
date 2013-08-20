@@ -68,32 +68,33 @@ public class TrackOperatorImpl implements TrackOperator {
 
     @Override
     public void computeShiftedTrackCoordinates(TrackDataHolder trackDataHolder) {
-        Double[][] trackPointMatrix = trackDataHolder.getTrackCoordinatesMatrix();
-        Double[][] normalizedTrackCoordinates = new Double[trackPointMatrix.length][trackPointMatrix[0].length];
-        Double[] firstTrackCoordinates = trackPointMatrix[0];
+        Double[][] trackCoordinatesMatrix = trackDataHolder.getTrackCoordinatesMatrix();
+        Double[][] shiftedTrackCoordinates = new Double[trackCoordinatesMatrix.length][trackCoordinatesMatrix[0].length];
+        Double[] firstTrackCoordinates = trackCoordinatesMatrix[0];
         // get x0 and y0
         Double x0 = firstTrackCoordinates[0];
         Double y0 = firstTrackCoordinates[1];
-        for (int row = 0; row < trackPointMatrix.length; row++) {
+        for (int row = 0; row < trackCoordinatesMatrix.length; row++) {
             // get current x and current y
-            double currentX = trackPointMatrix[row][0];
-            double currentY = trackPointMatrix[row][1];
-            normalizedTrackCoordinates[row] = new Double[]{currentX - x0, currentY - y0};
+            double currentX = trackCoordinatesMatrix[row][0];
+            double currentY = trackCoordinatesMatrix[row][1];
+            shiftedTrackCoordinates[row] = new Double[]{currentX - x0, currentY - y0};
         }
-        trackDataHolder.setShiftedTrackCoordinates(normalizedTrackCoordinates);
+        trackDataHolder.setShiftedTrackCoordinates(shiftedTrackCoordinates);
     }
 
     @Override
     public void computeDeltaMovements(TrackDataHolder trackDataHolder) {
-        Double[][] trackPointMatrix = trackDataHolder.getTrackCoordinatesMatrix();
-        Double[][] deltaMovements = new Double[trackPointMatrix.length][trackPointMatrix[0].length];
-        for (int row = 1; row < trackPointMatrix.length; row++) {
+        Double[][] trackCoordinatesMatrix = trackDataHolder.getTrackCoordinatesMatrix();
+        Double[][] deltaMovements = new Double[trackCoordinatesMatrix.length][trackCoordinatesMatrix[0].length];
+        // we need to start from the second row
+        for (int row = 1; row < trackCoordinatesMatrix.length; row++) {
             // get current coordinates
-            double currentX = trackPointMatrix[row][0];
-            double currentY = trackPointMatrix[row][1];
+            double currentX = trackCoordinatesMatrix[row][0];
+            double currentY = trackCoordinatesMatrix[row][1];
             // get previous coordinates
-            double previousX = trackPointMatrix[row - 1][0];
-            double previousY = trackPointMatrix[row - 1][1];
+            double previousX = trackCoordinatesMatrix[row - 1][0];
+            double previousY = trackCoordinatesMatrix[row - 1][1];
             // compute delta movements
             double deltaX = currentX - previousX;
             double deltaY = currentY - previousY;
@@ -103,37 +104,37 @@ public class TrackOperatorImpl implements TrackOperator {
     }
 
     @Override
-    public void computeInstantaneousVelocities(TrackDataHolder trackDataHolder) {
+    public void computeInstantaneousSpeeds(TrackDataHolder trackDataHolder) {
         // get delta movements
         Double[][] deltaMovements = trackDataHolder.getDeltaMovements();
-        Double[] instantaneousVelocities = new Double[deltaMovements.length];
-        for (int row = 0; row < instantaneousVelocities.length; row++) {
+        Double[] instantaneousSpeeds = new Double[deltaMovements.length];
+        for (int row = 0; row < instantaneousSpeeds.length; row++) {
             Double deltaX = deltaMovements[row][0];
             Double deltaY = deltaMovements[row][1];
             if (deltaX != null && deltaY != null) {
                 // deltaZ = sqrt(deltaX² + deltaY²)
-                Double velocity = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-                instantaneousVelocities[row] = velocity;
+                Double instantaneousSpeed = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+                instantaneousSpeeds[row] = instantaneousSpeed;
             }
         }
-        trackDataHolder.setInstantaneousVelocities(instantaneousVelocities);
+        trackDataHolder.setInstantaneousSpeeds(instantaneousSpeeds);
     }
 
     @Override
-    public void computeTrackVelocity(TrackDataHolder trackDataHolder) {
-        Double[] instantaneousVelocities = trackDataHolder.getInstantaneousVelocities();
-        Double[] excludeNullValues = AnalysisUtils.excludeNullValues(instantaneousVelocities);
-        double trackVelocity = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
-        trackDataHolder.setTrackVelocity(trackVelocity);
+    public void computeTrackSpeed(TrackDataHolder trackDataHolder) {
+        Double[] instantaneousSpeeds = trackDataHolder.getInstantaneousSpeeds();
+        Double[] excludeNullValues = AnalysisUtils.excludeNullValues(instantaneousSpeeds);
+        double trackSpeed = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
+        trackDataHolder.setTrackSpeed(trackSpeed);
     }
 
     @Override
     public void computeCumulativeDistance(TrackDataHolder trackDataHolder) {
         double cumulativeDistance = 0;
-        Double[] instantaneousVelocities = trackDataHolder.getInstantaneousVelocities();
-        for (int i = 0; i < instantaneousVelocities.length; i++) {
-            if (instantaneousVelocities[i] != null) {
-                cumulativeDistance += instantaneousVelocities[i];
+        Double[] instantaneousSpeeds = trackDataHolder.getInstantaneousSpeeds();
+        for (int i = 0; i < instantaneousSpeeds.length; i++) {
+            if (instantaneousSpeeds[i] != null) {
+                cumulativeDistance += instantaneousSpeeds[i];
             }
         }
         trackDataHolder.setCumulativeDistance(cumulativeDistance);
@@ -151,6 +152,7 @@ public class TrackOperatorImpl implements TrackOperator {
 
     @Override
     public void computeDirectionality(TrackDataHolder trackDataHolder) {
+        // this is the Euclidean distance divided by the cumulative one
         double directionality = trackDataHolder.getEuclideanDistance() / trackDataHolder.getCumulativeDistance();
         trackDataHolder.setDirectionality(directionality);
     }
@@ -167,8 +169,8 @@ public class TrackOperatorImpl implements TrackOperator {
                 // angle = degrees(atan(deltaY/deltaX))
                 Double angleRadians = Math.atan2(deltaY, deltaX);
                 // go from radians to degrees
-                Double angle = angleRadians * 180 / Math.PI;
-                turningAngles[row] = angle;
+                Double angleDegrees = angleRadians * 180 / Math.PI;
+                turningAngles[row] = angleDegrees;
             }
         }
         trackDataHolder.setTurningAngles(turningAngles);

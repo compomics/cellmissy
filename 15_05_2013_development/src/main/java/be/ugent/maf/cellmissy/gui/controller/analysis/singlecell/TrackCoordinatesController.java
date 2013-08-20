@@ -316,7 +316,7 @@ public class TrackCoordinatesController {
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.yMax"), trackDataDialog.getyMaxTextField(), BeanProperty.create("text"), "ymaxbinding");
         bindingGroup.addBinding(binding);
         // autobind track median velocity
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackVelocity"), trackDataDialog.getMedianVelocityTextField(), BeanProperty.create("text"), "trackmedianvelocitybinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackSpeed"), trackDataDialog.getMedianVelocityTextField(), BeanProperty.create("text"), "trackmedianvelocitybinding");
         bindingGroup.addBinding(binding);
         // autobind accumulative distance
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.cumulativeDistance"), trackDataDialog.getCumDistanceTextField(), BeanProperty.create("text"), "cumdistancebinding");

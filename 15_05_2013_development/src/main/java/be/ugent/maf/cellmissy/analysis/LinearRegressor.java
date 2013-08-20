@@ -8,12 +8,14 @@ import java.util.List;
 
 /**
  * Interface for Linear Regression Estimation
- * @author Paola Masuzzo
+ *
+ * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public interface LinearRegressor {
 
     /**
      * Given a 2D array of double, estimate linear model
+     *
      * @param data
      * @return a list of double containing: slopes and R2 coefficients
      */

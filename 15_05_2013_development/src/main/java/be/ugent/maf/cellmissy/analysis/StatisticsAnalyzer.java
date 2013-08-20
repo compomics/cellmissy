@@ -7,8 +7,9 @@ package be.ugent.maf.cellmissy.analysis;
 import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
 
 /**
+ * Interface for the statistical analysis.
  *
- * @author Paola Masuzzo
+ * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public interface StatisticsAnalyzer {
 
