@@ -4,15 +4,15 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
-import be.ugent.maf.cellmissy.analysis.AreaUnitOfMeasurement;
-import be.ugent.maf.cellmissy.analysis.DistanceMetricFactory;
-import be.ugent.maf.cellmissy.analysis.KernelDensityEstimatorFactory;
-import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
-import be.ugent.maf.cellmissy.analysis.OutliersHandlerFactory;
+import be.ugent.maf.cellmissy.analysis.area.AreaUnitOfMeasurement;
+import be.ugent.maf.cellmissy.analysis.factory.DistanceMetricFactory;
+import be.ugent.maf.cellmissy.analysis.factory.KernelDensityEstimatorFactory;
+import be.ugent.maf.cellmissy.analysis.area.MeasuredAreaType;
+import be.ugent.maf.cellmissy.analysis.factory.OutliersHandlerFactory;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Algorithm;
-import be.ugent.maf.cellmissy.entity.result.AreaAnalysisHolder;
-import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisHolder;
+import be.ugent.maf.cellmissy.entity.result.area.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.ImagingType;

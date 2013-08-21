@@ -2,15 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis.impl;
+package be.ugent.maf.cellmissy.analysis.singlecell.impl;
 
-import be.ugent.maf.cellmissy.analysis.SingleCellPreProcessor;
-import be.ugent.maf.cellmissy.analysis.TrackOperator;
+import be.ugent.maf.cellmissy.analysis.singlecell.SingleCellPreProcessor;
+import be.ugent.maf.cellmissy.analysis.singlecell.TrackOperator;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.SingleCellPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
-import be.ugent.maf.cellmissy.entity.TrackDataHolder;
+import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import java.util.ArrayList;
@@ -105,32 +105,32 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
-    public void generateInstantaneousSpeedsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void generateInstantaneousDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-        Double[] instantaneousSpeedsVector = new Double[dataStructure.length];
-        computeInstSpeeds(singleCellPreProcessingResults);
+        Double[] instantaneousDisplacementsVector = new Double[dataStructure.length];
+        computeInstantaneousDisplacements(singleCellPreProcessingResults);
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            Double[] instantaneousSpeeds = trackDataHolder.getInstantaneousSpeeds();
-            for (int i = 0; i < instantaneousSpeeds.length; i++) {
-                instantaneousSpeedsVector[counter] = instantaneousSpeeds[i];
+            Double[] instantaneousDisplacements = trackDataHolder.getInstantaneousDisplacements();
+            for (int i = 0; i < instantaneousDisplacements.length; i++) {
+                instantaneousDisplacementsVector[counter] = instantaneousDisplacements[i];
                 counter++;
             }
         }
-        singleCellPreProcessingResults.setInstantaneousSpeedsVector(instantaneousSpeedsVector);
+        singleCellPreProcessingResults.setInstantaneousDisplacementsVector(instantaneousDisplacementsVector);
     }
 
     @Override
-    public void generateTrackSpeedsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void generateTrackDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] trackSpeedsVector = new Double[trackDataHolders.size()];
-        computeTrackSpeeds(singleCellPreProcessingResults);
-        for (int i = 0; i < trackSpeedsVector.length; i++) {
+        Double[] trackDisplacementsVector = new Double[trackDataHolders.size()];
+        computeTrackMedianDisplacement(singleCellPreProcessingResults);
+        for (int i = 0; i < trackDisplacementsVector.length; i++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double trackSpeed = trackDataHolder.getTrackSpeed();
-            trackSpeedsVector[i] = trackSpeed;
+            double trackMedianDisplacement = trackDataHolder.getTrackMedianDisplacement();
+            trackDisplacementsVector[i] = trackMedianDisplacement;
         }
-        singleCellPreProcessingResults.setTrackSpeedsVector(trackSpeedsVector);
+        singleCellPreProcessingResults.setTrackDisplacementsVector(trackDisplacementsVector);
     }
 
     @Override
@@ -231,14 +231,14 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     /**
-     * Compute velocities.
+     * Compute instantaneous displacements.
      *
      * @param singleCellPreProcessingResults
      */
-    private void computeInstSpeeds(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    private void computeInstantaneousDisplacements(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
             computeDeltaMovements(trackDataHolder);
-            trackOperator.computeInstantaneousSpeeds(trackDataHolder);
+            trackOperator.computeInstantaneousDisplacements(trackDataHolder);
         }
     }
 
@@ -271,9 +271,9 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    private void computeTrackSpeeds(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    private void computeTrackMedianDisplacement(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeTrackSpeed(trackDataHolder);
+            trackOperator.computeTrackMedianDisplacement(trackDataHolder);
         }
     }
 

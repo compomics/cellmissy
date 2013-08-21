@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.analysis.impl;
 import be.ugent.maf.cellmissy.analysis.DistanceMetricOperator;
 
 /**
- * This is one implementation for the distance metric feature: compute the
+ * This is one implementation for the distance metric operator: it's using the
  * Euclidean distance
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>

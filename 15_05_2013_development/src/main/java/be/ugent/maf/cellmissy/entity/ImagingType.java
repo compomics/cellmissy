@@ -18,8 +18,12 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -27,7 +31,8 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "imaging_type")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "ImagingType.findAll", query = "SELECT i FROM ImagingType i"),
     @NamedQuery(name = "ImagingType.findByImagingTypeid", query = "SELECT i FROM ImagingType i WHERE i.imagingTypeid = :imagingTypeid"),
@@ -41,18 +46,25 @@ public class ImagingType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "imaging_typeid")
+    @XmlTransient
     private Long imagingTypeid;
     @Column(name = "name")
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String name;
     @Column(name = "light_intensity")
+    @XmlAttribute(required = true)
     private Double lightIntensity;
     @Column(name = "exposure_time")
+    @XmlAttribute(required = true)
     private Double exposureTime;
     @OneToMany(mappedBy = "imagingType")
+    @XmlTransient
     private List<WellHasImagingType> wellHasImagingTypeList;
     @Transient
+    @XmlTransient
     private String exposureTimeUnit;
-    
+
     public ImagingType() {
     }
 
@@ -92,7 +104,6 @@ public class ImagingType implements Serializable {
         this.exposureTime = exposureTime;
     }
 
-    @XmlTransient
     public List<WellHasImagingType> getWellHasImagingTypeList() {
         return wellHasImagingTypeList;
     }

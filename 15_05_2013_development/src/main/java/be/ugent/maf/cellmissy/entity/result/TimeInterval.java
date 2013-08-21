@@ -5,20 +5,20 @@
 package be.ugent.maf.cellmissy.entity.result;
 
 /**
- * Time Frames interval used for Analysis int values form first and last time
- * frame selected (or computed by default)
+ * Time Frames interval used for Analysis: integer values form first and last
+ * time frame selected (or computed by default)
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public class TimeInterval {
-    // first value of interval
 
-    private int firstTimeFrame;
-    // second value of interval
-    private int lastTimeFrame;
-    // default cutoff
-    private int proposedCutOff;
+    private int firstTimeFrame;// first value of interval
+    private int lastTimeFrame;// last value of interval
+    private int proposedCutOff;// default cutoff
 
+    /**
+     * Constructor
+     */
     public TimeInterval() {
     }
 
@@ -33,6 +33,11 @@ public class TimeInterval {
         this.lastTimeFrame = lastTimeFrame;
     }
 
+    /**
+     * Getters and Setters
+     *
+     * @return
+     */
     public int getFirstTimeFrame() {
         return firstTimeFrame;
     }

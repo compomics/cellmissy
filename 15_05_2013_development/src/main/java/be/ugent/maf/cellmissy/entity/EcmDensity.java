@@ -46,7 +46,7 @@ public class EcmDensity implements Serializable {
     @XmlTransient
     private Long ecmDensityid;
     @Column(name = "ecm_density")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private Double ecmDensity;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmDensity")
     @XmlTransient

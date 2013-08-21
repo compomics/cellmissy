@@ -2,14 +2,16 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis;
+package be.ugent.maf.cellmissy.analysis.factory;
 
+import be.ugent.maf.cellmissy.analysis.DistanceMetricOperator;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.context.ApplicationContext;
 
 /**
+ * Factory for the distance metric between two vectors.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -31,7 +33,7 @@ public class DistanceMetricFactory {
     }
 
     /**
-     * Get an instance
+     * Get an instance.
      *
      * @return
      */
@@ -40,7 +42,7 @@ public class DistanceMetricFactory {
     }
 
     /**
-     * Get the estimator according to the bean name
+     * Get the distance metric operator according to the bean name.
      *
      * @param beanName
      * @return

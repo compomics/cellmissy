@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.entity.result;
+package be.ugent.maf.cellmissy.entity.result.area;
 
 /**
  * This class is holding the results from the area-analysis step.

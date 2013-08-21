@@ -17,8 +17,12 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -26,7 +30,8 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "magnification")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Magnification.findAll", query = "SELECT m FROM Magnification m"),
     @NamedQuery(name = "Magnification.findByMagnificationid", query = "SELECT m FROM Magnification m WHERE m.magnificationid = :magnificationid"),
@@ -38,10 +43,14 @@ public class Magnification implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "magnificationid")
+    @XmlTransient
     private Long magnificationid;
     @Column(name = "magnification_number")
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String magnificationNumber;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "magnification")
+    @XmlTransient
     private List<Experiment> experimentList;
 
     public Magnification() {
@@ -59,7 +68,7 @@ public class Magnification implements Serializable {
         this.magnificationid = magnificationid;
     }
 
-    public String getMagnificationNumber() {
+    public String getMagnficationNumber() {
         return magnificationNumber;
     }
 
@@ -67,7 +76,6 @@ public class Magnification implements Serializable {
         this.magnificationNumber = magnificationNumber;
     }
 
-    @XmlTransient
     public List<Experiment> getExperimentList() {
         return experimentList;
     }

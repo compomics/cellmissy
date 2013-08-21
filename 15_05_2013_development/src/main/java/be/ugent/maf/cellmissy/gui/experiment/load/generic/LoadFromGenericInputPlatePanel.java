@@ -112,7 +112,7 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
 
-        experimentMetadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment metadata"));
+        experimentMetadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment Metadata"));
         experimentMetadataPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         experimentMetadataPanel.setOpaque(false);
         experimentMetadataPanel.setPreferredSize(new java.awt.Dimension(20, 20));

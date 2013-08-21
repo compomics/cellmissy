@@ -2,10 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.entity;
+package be.ugent.maf.cellmissy.entity.result.singlecell;
+
+import be.ugent.maf.cellmissy.entity.Track;
+import be.ugent.maf.cellmissy.entity.Well;
 
 /**
- * This object keeps pre processing results on the track level.
+ * This class keeps the pre-processing results on the track level.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -36,14 +39,13 @@ public class TrackDataHolder {
     private Double[][] deltaMovements;
     // boolean for outliers: TRUE is data point is an outlier -----**** needs to be revisited
     private boolean[] outliers;
-    // array for  the instantaneous speeds
+    // array for  the instantaneous cell displacements
     // the speed does not contain direction information
     // for a track, the minimal instantaneous speeds are derived from the displacement of the cell centroid between adjacent time points
-    // This is the minimal instantaneous cell displacement!
-    private Double[] instantaneousSpeeds;
-    // track speed
-    // this is the median speed computed from all time intervals throughout a track
-    private double trackSpeed;
+    private Double[] instantaneousDisplacements;
+    // track median displacement
+    // this is the median displacement computed from all time intervals throughout a track
+    private double trackMedianDisplacement;
     // double for cumulative distance (between first and last time point of the track)
     // this is the total path length travelled by the cell in its displacement
     private double cumulativeDistance;
@@ -149,20 +151,20 @@ public class TrackDataHolder {
         this.outliers = outliers;
     }
 
-    public Double[] getInstantaneousSpeeds() {
-        return instantaneousSpeeds;
+    public Double[] getInstantaneousDisplacements() {
+        return instantaneousDisplacements;
     }
 
-    public void setInstantaneousSpeeds(Double[] instantaneousSpeeds) {
-        this.instantaneousSpeeds = instantaneousSpeeds;
+    public void setInstantaneousDisplacements(Double[] instantaneousDisplacements) {
+        this.instantaneousDisplacements = instantaneousDisplacements;
     }
 
-    public double getTrackSpeed() {
-        return trackSpeed;
+    public double getTrackMedianDisplacement() {
+        return trackMedianDisplacement;
     }
 
-    public void setTrackSpeed(double trackSpeed) {
-        this.trackSpeed = trackSpeed;
+    public void setTrackMedianDisplacement(double trackMedianDisplacement) {
+        this.trackMedianDisplacement = trackMedianDisplacement;
     }
 
     public double getCumulativeDistance() {

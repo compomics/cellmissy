@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.view.renderer;
 
-import be.ugent.maf.cellmissy.analysis.AreaUnitOfMeasurement;
+import be.ugent.maf.cellmissy.analysis.area.AreaUnitOfMeasurement;
 import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;

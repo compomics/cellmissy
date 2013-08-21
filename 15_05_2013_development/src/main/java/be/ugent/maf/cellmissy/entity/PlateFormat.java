@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,8 +19,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -27,7 +31,8 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "plate_format")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "PlateFormat.findAll", query = "SELECT p FROM PlateFormat p"),
     @NamedQuery(name = "PlateFormat.findByPlateFormatid", query = "SELECT p FROM PlateFormat p WHERE p.plateFormatid = :plateFormatid"),
@@ -42,18 +47,24 @@ public class PlateFormat implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "plate_formatid")
+    @XmlTransient
     private Long plateFormatid;
     @Basic(optional = false)
     @NotNull
     @Column(name = "format")
+    @XmlAttribute(required = true)
     private int format;
     @Column(name = "number_of_cols")
+    @XmlAttribute(required = true)
     private Integer numberOfCols;
     @Column(name = "number_of_rows")
+    @XmlAttribute(required = true)
     private Integer numberOfRows;
     @Column(name = "well_size")
+    @XmlAttribute(required = true)
     private Double wellSize;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "plateFormat")
+    @XmlTransient
     private List<Experiment> experimentList;
 
     public PlateFormat() {
@@ -66,6 +77,13 @@ public class PlateFormat implements Serializable {
     public PlateFormat(Long plateFormatid, int format) {
         this.plateFormatid = plateFormatid;
         this.format = format;
+    }
+
+    public PlateFormat(int format, Integer numberOfCols, Integer numberOfRows, Double wellSize) {
+        this.format = format;
+        this.numberOfCols = numberOfCols;
+        this.numberOfRows = numberOfRows;
+        this.wellSize = wellSize;
     }
 
     public Long getPlateFormatid() {
@@ -108,7 +126,6 @@ public class PlateFormat implements Serializable {
         this.wellSize = wellSize;
     }
 
-    @XmlTransient
     public List<Experiment> getExperimentList() {
         return experimentList;
     }
@@ -119,19 +136,25 @@ public class PlateFormat implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (plateFormatid != null ? plateFormatid.hashCode() : 0);
+        int hash = 5;
+        hash = 79 * hash + Objects.hashCode(this.numberOfCols);
+        hash = 79 * hash + Objects.hashCode(this.numberOfRows);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PlateFormat)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        PlateFormat other = (PlateFormat) object;
-        if ((this.plateFormatid == null && other.plateFormatid != null) || (this.plateFormatid != null && !this.plateFormatid.equals(other.plateFormatid))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PlateFormat other = (PlateFormat) obj;
+        if (!Objects.equals(this.numberOfCols, other.numberOfCols)) {
+            return false;
+        }
+        if (!Objects.equals(this.numberOfRows, other.numberOfRows)) {
             return false;
         }
         return true;

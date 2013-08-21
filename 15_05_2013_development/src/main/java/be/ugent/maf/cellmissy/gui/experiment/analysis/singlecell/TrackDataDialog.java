@@ -37,8 +37,8 @@ public class TrackDataDialog extends javax.swing.JDialog {
         return euclDistanceTextField;
     }
 
-    public JTextField getMedianVelocityTextField() {
-        return medianVelocityTextField;
+    public JTextField getMedianDisplacementTextField() {
+        return medianDisplacementTextField;
     }
 
     public JTextField getTrackLengthTextField() {
@@ -47,6 +47,10 @@ public class TrackDataDialog extends javax.swing.JDialog {
 
     public JTextField getNumberOfPointsTextField() {
         return numberOfPointsTextField;
+    }
+
+    public JTextField getDurationTextField() {
+        return durationTextField;
     }
 
     public JTextField getxMaxTextField() {
@@ -107,7 +111,7 @@ public class TrackDataDialog extends javax.swing.JDialog {
         jLabel7 = new javax.swing.JLabel();
         trackLengthTextField = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        medianVelocityTextField = new javax.swing.JTextField();
+        medianDisplacementTextField = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         cumDistanceTextField = new javax.swing.JTextField();
         euclDistanceTextField = new javax.swing.JTextField();
@@ -130,9 +134,11 @@ public class TrackDataDialog extends javax.swing.JDialog {
         jLabel20 = new javax.swing.JLabel();
         xNetDisplacementTextField = new javax.swing.JTextField();
         yNetDisplacementTextField = new javax.swing.JTextField();
+        jLabel21 = new javax.swing.JLabel();
+        durationTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Data for selected track");
+        setTitle("Selected Track Data");
         setMinimumSize(new java.awt.Dimension(1400, 800));
         setModal(true);
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -201,11 +207,11 @@ public class TrackDataDialog extends javax.swing.JDialog {
         trackLengthTextField.setFocusable(false);
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("MV (µm)");
+        jLabel8.setText("MD (µm)");
 
-        medianVelocityTextField.setEditable(false);
-        medianVelocityTextField.setBackground(new java.awt.Color(255, 255, 255));
-        medianVelocityTextField.setFocusable(false);
+        medianDisplacementTextField.setEditable(false);
+        medianDisplacementTextField.setBackground(new java.awt.Color(255, 255, 255));
+        medianDisplacementTextField.setFocusable(false);
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel9.setText("CD (µm)");
@@ -284,6 +290,13 @@ public class TrackDataDialog extends javax.swing.JDialog {
         yNetDisplacementTextField.setBackground(new java.awt.Color(255, 255, 255));
         yNetDisplacementTextField.setFocusable(false);
 
+        jLabel21.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel21.setText("Duration (min)");
+
+        durationTextField.setEditable(false);
+        durationTextField.setBackground(new java.awt.Color(255, 255, 255));
+        durationTextField.setFocusable(false);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -303,27 +316,26 @@ public class TrackDataDialog extends javax.swing.JDialog {
                     .addComponent(jLabel11)
                     .addComponent(jLabel12)
                     .addComponent(jLabel19)
-                    .addComponent(jLabel20))
+                    .addComponent(jLabel20)
+                    .addComponent(jLabel21))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(trackLengthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(numberOfPointsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xMinTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xMaxTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(yMinTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(yMaxTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xNetDisplacementTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(yNetDisplacementTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(medianVelocityTextField)
-                    .addComponent(cumDistanceTextField)
-                    .addComponent(euclDistanceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(directionalityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(medianAngleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(56, Short.MAX_VALUE))
+                    .addComponent(durationTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(trackLengthTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(numberOfPointsTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(xMinTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(xMaxTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(yMinTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(yMaxTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(xNetDisplacementTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(yNetDisplacementTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(medianDisplacementTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(cumDistanceTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(euclDistanceTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(directionalityTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(medianAngleTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE))
+                .addGap(37, 37, 37))
         );
-
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cumDistanceTextField, directionalityTextField, euclDistanceTextField, medianAngleTextField, medianVelocityTextField, numberOfPointsTextField, trackLengthTextField, xMaxTextField, xMinTextField, xNetDisplacementTextField, yMaxTextField, yMinTextField, yNetDisplacementTextField});
-
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -335,6 +347,10 @@ public class TrackDataDialog extends javax.swing.JDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(numberOfPointsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel21))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(xMinTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -362,7 +378,7 @@ public class TrackDataDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(medianVelocityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(medianDisplacementTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
@@ -434,6 +450,7 @@ public class TrackDataDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField cumDistanceTextField;
     private javax.swing.JTextField directionalityTextField;
+    private javax.swing.JTextField durationTextField;
     private javax.swing.JTextField euclDistanceTextField;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -445,12 +462,13 @@ public class TrackDataDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField medianAngleTextField;
-    private javax.swing.JTextField medianVelocityTextField;
+    private javax.swing.JTextField medianDisplacementTextField;
     private javax.swing.JTextField numberOfPointsTextField;
     private javax.swing.JPanel shiftedParentPanel;
     private javax.swing.JTextField trackLengthTextField;

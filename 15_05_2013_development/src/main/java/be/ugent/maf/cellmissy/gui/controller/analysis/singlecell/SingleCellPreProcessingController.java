@@ -4,12 +4,12 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
-import be.ugent.maf.cellmissy.analysis.SingleCellPreProcessor;
-import be.ugent.maf.cellmissy.analysis.TrackCoordinatesUnitOfMeasurement;
+import be.ugent.maf.cellmissy.analysis.singlecell.SingleCellPreProcessor;
+import be.ugent.maf.cellmissy.analysis.singlecell.TrackCoordinatesUnitOfMeasurement;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.SingleCellPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
@@ -165,6 +165,10 @@ public class SingleCellPreProcessingController {
         return singleCellMainController.getCellMissyFrame();
     }
 
+    public Experiment getExperiment() {
+        return singleCellMainController.getExperiment();
+    }
+
     /**
      * Initialize map with plate conditions as keys and null objects as values
      */
@@ -214,8 +218,8 @@ public class SingleCellPreProcessingController {
             singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, computeConversionFactor());
             singleCellPreProcessor.computeCoordinatesRanges(singleCellPreProcessingResults);
             singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateInstantaneousSpeedsVector(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);

@@ -4,13 +4,13 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
-import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
-import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
-import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
+import be.ugent.maf.cellmissy.analysis.area.MeasuredAreaType;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.area.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
-import be.ugent.maf.cellmissy.entity.result.AreaAnalysisResults;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.CustomizeReportDialog;
 import be.ugent.maf.cellmissy.gui.plate.PdfPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.CheckBoxConditionsRenderer;
@@ -657,7 +657,7 @@ public class AreaAnalysisReportController {
      * present.
      */
     private void addParagraphPerAnalysis() {
-        ObservableList<AnalysisGroup> groupsList = areaAnalysisController.getGroupsBindingList();
+        ObservableList<AreaAnalysisGroup> groupsList = areaAnalysisController.getGroupsBindingList();
         if (!groupsList.isEmpty()) {
             // add main title for section
             PdfUtils.addTitle(document, "ANALYSIS GROUPS", titleFont);
@@ -733,7 +733,7 @@ public class AreaAnalysisReportController {
      * @param analysisGroup
      * @return Table
      */
-    private PdfPTable createStatisticalSummaryTable(AnalysisGroup analysisGroup) {
+    private PdfPTable createStatisticalSummaryTable(AreaAnalysisGroup analysisGroup) {
         // 7 columns
         PdfPTable dataTable = new PdfPTable(7);
         PdfUtils.setUpPdfPTable(dataTable);
@@ -760,7 +760,7 @@ public class AreaAnalysisReportController {
      * @param isAdjusted
      * @return
      */
-    private PdfPTable createPValuesTable(AnalysisGroup analysisGroup, boolean isAdjusted) {
+    private PdfPTable createPValuesTable(AreaAnalysisGroup analysisGroup, boolean isAdjusted) {
         // list of conditions that have been compared
         List<PlateCondition> plateConditions = analysisGroup.getPlateConditions();
         PdfPTable pValuesTable = new PdfPTable(plateConditions.size() + 1);
@@ -812,7 +812,7 @@ public class AreaAnalysisReportController {
      *
      * @param analysisGroup
      */
-    private void addSummaryStatisticsTable(AnalysisGroup analysisGroup) {
+    private void addSummaryStatisticsTable(AreaAnalysisGroup analysisGroup) {
         //add title before the table
         PdfUtils.addTitle(document, "SUMMARY STATISTICS", boldFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -827,7 +827,7 @@ public class AreaAnalysisReportController {
      * @param analysisGroup
      * @param isAdjusted
      */
-    private void addPValuesTable(AnalysisGroup analysisGroup, boolean isAdjusted) {
+    private void addPValuesTable(AreaAnalysisGroup analysisGroup, boolean isAdjusted) {
         PdfPTable pValuesTable = createPValuesTable(analysisGroup, isAdjusted);
         addTable(pValuesTable);
     }
@@ -883,7 +883,7 @@ public class AreaAnalysisReportController {
      *
      * @param analysisGroup
      */
-    private void addAnalysisInfo(AnalysisGroup analysisGroup) {
+    private void addAnalysisInfo(AreaAnalysisGroup analysisGroup) {
         List<String> lines = new ArrayList<>();
         String line = "Number of conditions: " + analysisGroup.getPlateConditions().size();
         lines.add(line);

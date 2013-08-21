@@ -157,10 +157,9 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         globalViewLabel = new javax.swing.JLabel();
         linearRegressionModelLabel = new javax.swing.JLabel();
         bottomPanel = new javax.swing.JPanel();
-        resultsImporterPanel = new javax.swing.JPanel();
+        dataInspectingPanel = new javax.swing.JPanel();
         timeStepsTableScrollPane = new javax.swing.JScrollPane();
         timeStepsTable = new javax.swing.JTable();
-        jLabel3 = new javax.swing.JLabel();
         preProcessingPanel = new javax.swing.JPanel();
         radioButtonsPanel = new javax.swing.JPanel();
         normalizeAreaButton = new javax.swing.JRadioButton();
@@ -201,7 +200,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         topPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         resultsImportingLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        resultsImportingLabel.setText("1. Data Importing");
+        resultsImportingLabel.setText("1. Data Inspecting");
         resultsImportingLabel.setToolTipText("Data loaded from DB");
 
         preProcessingLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -256,11 +255,13 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         bottomPanel.setLayout(new java.awt.CardLayout());
 
-        resultsImporterPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        resultsImporterPanel.setName("resultsImporterPanel"); // NOI18N
-        resultsImporterPanel.setOpaque(false);
+        dataInspectingPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Area Values from DB"));
+        dataInspectingPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        dataInspectingPanel.setName("dataInspectingPanel"); // NOI18N
+        dataInspectingPanel.setOpaque(false);
 
         timeStepsTableScrollPane.setBackground(new java.awt.Color(255, 255, 255));
+        timeStepsTableScrollPane.setBorder(null);
         timeStepsTableScrollPane.setMinimumSize(new java.awt.Dimension(20, 20));
         timeStepsTableScrollPane.setPreferredSize(new java.awt.Dimension(20, 20));
 
@@ -278,37 +279,28 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         timeStepsTable.setMinimumSize(new java.awt.Dimension(20, 20));
         timeStepsTableScrollPane.setViewportView(timeStepsTable);
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
-        jLabel3.setText("Area values from database");
-
-        javax.swing.GroupLayout resultsImporterPanelLayout = new javax.swing.GroupLayout(resultsImporterPanel);
-        resultsImporterPanel.setLayout(resultsImporterPanelLayout);
-        resultsImporterPanelLayout.setHorizontalGroup(
-            resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(resultsImporterPanelLayout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(725, Short.MAX_VALUE))
-            .addGroup(resultsImporterPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout dataInspectingPanelLayout = new javax.swing.GroupLayout(dataInspectingPanel);
+        dataInspectingPanel.setLayout(dataInspectingPanelLayout);
+        dataInspectingPanelLayout.setHorizontalGroup(
+            dataInspectingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dataInspectingPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 876, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        resultsImporterPanelLayout.setVerticalGroup(
-            resultsImporterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(resultsImporterPanelLayout.createSequentialGroup()
+        dataInspectingPanelLayout.setVerticalGroup(
+            dataInspectingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dataInspectingPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
+                .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        bottomPanel.add(resultsImporterPanel, "resultsImporterPanel");
-        resultsImporterPanel.getAccessibleContext().setAccessibleName("");
+        bottomPanel.add(dataInspectingPanel, "dataInspectingPanel");
+        dataInspectingPanel.getAccessibleContext().setAccessibleName("dataInspectingPanel");
 
         preProcessingPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        preProcessingPanel.setName("preProcessingPanel"); // NOI18N
+        preProcessingPanel.setName("preprocessingPanel"); // NOI18N
         preProcessingPanel.setOpaque(false);
         preProcessingPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         preProcessingPanel.setLayout(new java.awt.GridBagLayout());
@@ -593,6 +585,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton cellCoveredAreaRadioButton;
     private javax.swing.JList conditionsList;
     private javax.swing.JRadioButton correctedAreaButton;
+    private javax.swing.JPanel dataInspectingPanel;
     private javax.swing.JPanel dataTablePanel;
     private javax.swing.JRadioButton deltaAreaButton;
     private javax.swing.JTextField firstTimeFrameTextField;
@@ -602,7 +595,6 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel graphicsParentPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -621,7 +613,6 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JLabel preProcessingLabel;
     private javax.swing.JPanel preProcessingPanel;
     private javax.swing.JPanel radioButtonsPanel;
-    private javax.swing.JPanel resultsImporterPanel;
     private javax.swing.JLabel resultsImportingLabel;
     private javax.swing.JCheckBox showTimeIntervalCheckBox;
     private javax.swing.JLabel tableInfoLabel;

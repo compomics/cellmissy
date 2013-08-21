@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.gui.view.renderer;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisGroup;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class AnalysisGroupListRenderer extends DefaultListCellRenderer {
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        AnalysisGroup analysisGroup = (AnalysisGroup) value;
+        AreaAnalysisGroup analysisGroup = (AreaAnalysisGroup) value;
         List<PlateCondition> plateConditions = analysisGroup.getPlateConditions();
         List<String> conditionsName = new ArrayList<>();
         for (PlateCondition plateCondition : plateConditions) {

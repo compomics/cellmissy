@@ -87,9 +87,8 @@ public class StatisticsDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Statistics");
         setAlwaysOnTop(true);
-        setMinimumSize(new java.awt.Dimension(20, 20));
-        setModal(true);
-        setPreferredSize(new java.awt.Dimension(800, 500));
+        setMinimumSize(new java.awt.Dimension(560, 660));
+        setPreferredSize(new java.awt.Dimension(560, 660));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         infoPanel.setOpaque(false);
@@ -113,7 +112,7 @@ public class StatisticsDialog extends javax.swing.JDialog {
                 .addComponent(jLabel3)
                 .addGap(6, 6, 6)
                 .addComponent(groupNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(605, Short.MAX_VALUE))
+                .addContainerGap(246, Short.MAX_VALUE))
         );
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -162,7 +161,7 @@ public class StatisticsDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(summaryScrollPane, gridBagConstraints);
 
-        pValuesScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Mann-Whitney U test"));
+        pValuesScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Pairwise Comparisons"));
 
         pValuesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -192,8 +191,6 @@ public class StatisticsDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Significance Level*");
 
-        significanceLevelComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         label.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         label.setText("*p values smaller than significance level are shown in green");
         label.setMaximumSize(new java.awt.Dimension(20, 20));
@@ -202,62 +199,64 @@ public class StatisticsDialog extends javax.swing.JDialog {
 
         jScrollPane3.setBorder(null);
 
-        testDescriptionTextPane.setBorder(null);
+        testDescriptionTextPane.setEditable(false);
+        testDescriptionTextPane.setBorder(javax.swing.BorderFactory.createTitledBorder("correction algorithm description"));
         testDescriptionTextPane.setFocusable(false);
         jScrollPane3.setViewportView(testDescriptionTextPane);
 
         saveAnalysisButton.setText("Save Analysis");
         saveAnalysisButton.setToolTipText("Click here to assign the chosen correction method to current analysis and save computed statistics");
 
-        jLabel4.setText("Test");
-
-        statisticalTestComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jLabel4.setText("Statistical Test");
 
         javax.swing.GroupLayout correctionPanelLayout = new javax.swing.GroupLayout(correctionPanel);
         correctionPanel.setLayout(correctionPanelLayout);
         correctionPanelLayout.setHorizontalGroup(
             correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(correctionPanelLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(correctionPanelLayout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(correctionMethodsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(statisticalTestComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(correctionPanelLayout.createSequentialGroup()
-                                    .addComponent(jLabel2)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(significanceLevelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 550, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, correctionPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel4)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
+                        .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(statisticalTestComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(significanceLevelComboBox, 0, 100, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(saveAnalysisButton)))
+                        .addComponent(saveAnalysisButton))
+                    .addGroup(correctionPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(correctionMethodsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 191, Short.MAX_VALUE)))
                 .addContainerGap())
         );
+
+        correctionPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel2, jLabel4});
+
         correctionPanelLayout.setVerticalGroup(
             correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, correctionPanelLayout.createSequentialGroup()
-                .addGap(13, 13, 13)
+                .addContainerGap()
                 .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(saveAnalysisButton)
-                    .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel4)
-                        .addComponent(statisticalTestComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                    .addComponent(jLabel4)
+                    .addComponent(statisticalTestComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(saveAnalysisButton))
+                .addGap(18, 18, 18)
                 .addGroup(correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(significanceLevelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(correctionMethodsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();

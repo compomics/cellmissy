@@ -2,14 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.entity.result;
+package be.ugent.maf.cellmissy.entity.result.area;
 
 /**
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-import be.ugent.maf.cellmissy.analysis.AreaUnitOfMeasurement;
-import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
+import be.ugent.maf.cellmissy.analysis.area.AreaUnitOfMeasurement;
+import be.ugent.maf.cellmissy.analysis.area.MeasuredAreaType;
 
 /**
  * This class keeps some information on the Area Analysis. This information is

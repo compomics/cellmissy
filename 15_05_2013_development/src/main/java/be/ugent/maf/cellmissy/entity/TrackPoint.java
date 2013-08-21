@@ -16,7 +16,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -24,7 +29,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "track_point")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "TrackPoint.findAll", query = "SELECT t FROM TrackPoint t"),
     @NamedQuery(name = "TrackPoint.findByTrackPointid", query = "SELECT t FROM TrackPoint t WHERE t.trackPointid = :trackPointid"),
@@ -45,33 +51,47 @@ public class TrackPoint implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "track_pointid")
+    @XmlTransient
     private Long trackPointid;
     @Basic(optional = false)
     @Column(name = "time_index")
+    @XmlAttribute(required = true)
     private int timeIndex;
     @Basic(optional = false)
     @Column(name = "cell_row")
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(value = EmptyDoubleXMLAdapter.class, type = double.class)
     private double cellRow;
     @Basic(optional = false)
     @Column(name = "cell_col")
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(value = EmptyDoubleXMLAdapter.class, type = double.class)
     private double cellCol;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "velocity_pixels")
+    @XmlTransient
     private Double velocityPixels;
     @Column(name = "angle")
+    @XmlTransient
     private Double angle;
     @Column(name = "angle_delta")
+    @XmlTransient
     private Double angleDelta;
     @Column(name = "relative_angle")
+    @XmlTransient
     private Double relativeAngle;
     @Column(name = "motion_consistency")
+    @XmlTransient
     private Double motionConsistency;
     @Column(name = "cumulated_distance")
+    @XmlTransient
     private Double cumulatedDistance;
     @Column(name = "distance")
+    @XmlTransient
     private Double distance;
     @JoinColumn(name = "l_trackid", referencedColumnName = "trackid")
     @ManyToOne(optional = false)
+    @XmlTransient
     private Track track;
 
     public TrackPoint() {

@@ -41,9 +41,9 @@ public class DistanceMatrixDialog extends javax.swing.JDialog {
         distanceMatrixTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Select replicates");
+        setTitle("Technical Precision");
         setAlwaysOnTop(true);
-        setMinimumSize(new java.awt.Dimension(60, 40));
+        setMinimumSize(new java.awt.Dimension(600, 300));
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
         setPreferredSize(new java.awt.Dimension(600, 300));
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -64,7 +64,7 @@ public class DistanceMatrixDialog extends javax.swing.JDialog {
         distanceMatrixScrollPane.setViewportView(distanceMatrixTable);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;

@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis;
+package be.ugent.maf.cellmissy.analysis.singlecell;
 
-import be.ugent.maf.cellmissy.entity.TrackDataHolder;
+import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 
 /**
  * Interface: track operator. This performs basic operations on the track level,
@@ -55,18 +55,18 @@ public interface TrackOperator {
     public void computeDeltaMovements(TrackDataHolder trackDataHolder);
 
     /**
-     * Compute minimal instantaneous speeds.
+     * Compute minimal instantaneous cell displacements.
      *
      * @param trackDataHolder
      */
-    public void computeInstantaneousSpeeds(TrackDataHolder trackDataHolder);
+    public void computeInstantaneousDisplacements(TrackDataHolder trackDataHolder);
 
     /**
-     * Compute track speed.
+     * Compute track median displacement
      *
      * @param trackDataHolder
      */
-    public void computeTrackSpeed(TrackDataHolder trackDataHolder);
+    public void computeTrackMedianDisplacement(TrackDataHolder trackDataHolder);
 
     /**
      * Compute cumulative distance between start and end point of track. This is
@@ -94,7 +94,7 @@ public interface TrackOperator {
     public void computeDirectionality(TrackDataHolder trackDataHolder);
 
     /**
-     * Compute angles.
+     * Compute turning angles.
      *
      * @param trackDataHolder
      */

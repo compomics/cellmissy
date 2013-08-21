@@ -2,16 +2,16 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis.impl;
+package be.ugent.maf.cellmissy.analysis.area.impl;
 
-import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory;
+import be.ugent.maf.cellmissy.analysis.factory.MultipleComparisonsCorrectionFactory;
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrector;
-import be.ugent.maf.cellmissy.analysis.StatisticsAnalyzer;
+import be.ugent.maf.cellmissy.analysis.area.AreaStatisticsAnalyzer;
 import be.ugent.maf.cellmissy.analysis.StatisticsCalculator;
-import be.ugent.maf.cellmissy.analysis.StatisticsTestFactory;
-import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
+import be.ugent.maf.cellmissy.analysis.factory.StatisticsTestFactory;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.result.AreaAnalysisResults;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +24,14 @@ import org.springframework.stereotype.Component;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-@Component("statisticsAnalyzer")
-public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
+@Component("areaStatisticsAnalyzer")
+public class AreaStatisticsAnalyzerImpl implements AreaStatisticsAnalyzer {
 
     @Override
-    public void generateSummaryStatistics(AnalysisGroup analysisGroup, String statisticalTestName) {
+    public void generateSummaryStatistics(AreaAnalysisGroup analysisGroup, String statisticalTestName) {
         StatisticsCalculator statisticsCalculator = StatisticsTestFactory.getInstance().getStatisticsCalculator(statisticalTestName);
         List<StatisticalSummary> statisticalSummaries = new ArrayList<>();
-        for (AreaAnalysisResults areaAnalysisResults : analysisGroup.getAnalysisResults()) {
+        for (AreaAnalysisResults areaAnalysisResults : analysisGroup.getAreaAnalysisResults()) {
             Double[] slopes = areaAnalysisResults.getSlopes();
             StatisticalSummary statisticalSummary = statisticsCalculator.getSummaryStatistics(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(slopes)));
             statisticalSummaries.add(statisticalSummary);
@@ -40,12 +40,12 @@ public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
     }
 
     @Override
-    public void executePairwiseComparisons(AnalysisGroup analysisGroup, String statisticalTestName) {
+    public void executePairwiseComparisons(AreaAnalysisGroup analysisGroup, String statisticalTestName) {
         StatisticsCalculator statisticsCalculator = StatisticsTestFactory.getInstance().getStatisticsCalculator(statisticalTestName);
         List<PlateCondition> plateConditions = analysisGroup.getPlateConditions();
         int sizeOfGroup = plateConditions.size();
         int maximumNumberOfReplicates = AnalysisUtils.getMaximumNumberOfReplicates(plateConditions);
-        Double[][] slopesMatrix = generateSlopesMatrix(sizeOfGroup, maximumNumberOfReplicates, analysisGroup.getAnalysisResults());
+        Double[][] slopesMatrix = generateSlopesMatrix(sizeOfGroup, maximumNumberOfReplicates, analysisGroup.getAreaAnalysisResults());
         Double[][] pValuesMatrix = new Double[sizeOfGroup][sizeOfGroup];
         for (int i = 0; i < sizeOfGroup; i++) {
             double[] firstVector = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(slopesMatrix[i]));
@@ -63,7 +63,7 @@ public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
     }
 
     @Override
-    public void detectSignificance(AnalysisGroup analysisGroup, String statisticalTestName, double alpha, boolean isAdjusted) {
+    public void detectSignificance(AreaAnalysisGroup analysisGroup, String statisticalTestName, double alpha, boolean isAdjusted) {
         StatisticsCalculator statisticsCalculator = StatisticsTestFactory.getInstance().getStatisticsCalculator(statisticalTestName);
         Double[][] dataToLook = null;
         if (!isAdjusted) {
@@ -76,7 +76,7 @@ public class StatisticsAnalyzerImpl implements StatisticsAnalyzer {
     }
 
     @Override
-    public void correctForMultipleComparisons(AnalysisGroup analysisGroup, String correctionBeanName) {
+    public void correctForMultipleComparisons(AreaAnalysisGroup analysisGroup, String correctionBeanName) {
         MultipleComparisonsCorrector corrector = MultipleComparisonsCorrectionFactory.getInstance().getCorrector(correctionBeanName);
         corrector.correctForMultipleComparisons(analysisGroup);
     }

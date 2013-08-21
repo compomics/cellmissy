@@ -4,16 +4,16 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
-import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
-import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
-import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory;
+import be.ugent.maf.cellmissy.analysis.area.AreaAnalyzer;
+import be.ugent.maf.cellmissy.analysis.area.MeasuredAreaType;
+import be.ugent.maf.cellmissy.analysis.factory.MultipleComparisonsCorrectionFactory;
 import be.ugent.maf.cellmissy.analysis.SignificanceLevel;
-import be.ugent.maf.cellmissy.analysis.StatisticsAnalyzer;
-import be.ugent.maf.cellmissy.analysis.StatisticsTestFactory;
+import be.ugent.maf.cellmissy.analysis.area.AreaStatisticsAnalyzer;
+import be.ugent.maf.cellmissy.analysis.factory.StatisticsTestFactory;
 import be.ugent.maf.cellmissy.entity.Algorithm;
-import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
-import be.ugent.maf.cellmissy.entity.result.AreaAnalysisResults;
-import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
+import be.ugent.maf.cellmissy.entity.result.area.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
@@ -94,7 +94,7 @@ public class AreaAnalysisController {
     // model
     private BindingGroup bindingGroup;
     private Map<PlateCondition, AreaAnalysisResults> analysisMap;
-    private ObservableList<AnalysisGroup> groupsBindingList;
+    private ObservableList<AreaAnalysisGroup> groupsBindingList;
     private ObservableList<Double> significanceLevelsBindingList;
     // view
     private LinearRegressionPanel linearRegressionPanel;
@@ -110,7 +110,7 @@ public class AreaAnalysisController {
     @Autowired
     private AreaAnalyzer areaAnalyzer;
     @Autowired
-    private StatisticsAnalyzer statisticsAnalyzer;
+    private AreaStatisticsAnalyzer areaStatisticsAnalyzer;
     private GridBagConstraints gridBagConstraints;
 
     /**
@@ -143,7 +143,7 @@ public class AreaAnalysisController {
         return analysisMap;
     }
 
-    public ObservableList<AnalysisGroup> getGroupsBindingList() {
+    public ObservableList<AreaAnalysisGroup> getGroupsBindingList() {
         return groupsBindingList;
     }
 
@@ -426,7 +426,7 @@ public class AreaAnalysisController {
         statisticsDialog.getStatisticalSummaryTable().setFillsViewportHeight(true);
         statisticsDialog.getpValuesTable().setFillsViewportHeight(true);
         // init binding
-        groupsBindingList = ObservableCollections.observableList(new ArrayList<AnalysisGroup>());
+        groupsBindingList = ObservableCollections.observableList(new ArrayList<AreaAnalysisGroup>());
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, groupsBindingList, linearRegressionPanel.getGroupsList());
         bindingGroup.addBinding(jListBinding);
         // fill in combo box
@@ -526,7 +526,7 @@ public class AreaAnalysisController {
                 String statisticalTestName = statisticsDialog.getStatisticalTestComboBox().getSelectedItem().toString();
                 // check that an analysis group is being selected
                 if (selectedIndex != -1) {
-                    AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
+                    AreaAnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
                     // compute statistics
                     computeStatistics(selectedGroup, statisticalTestName);
                     // show statistics in tables
@@ -580,14 +580,14 @@ public class AreaAnalysisController {
                 if (statisticsDialog.getSignificanceLevelComboBox().getSelectedIndex() != -1) {
                     String statisticalTest = statisticsDialog.getStatisticalTestComboBox().getSelectedItem().toString();
                     Double selectedSignLevel = (Double) statisticsDialog.getSignificanceLevelComboBox().getSelectedItem();
-                    AnalysisGroup selectedGroup = groupsBindingList.get(linearRegressionPanel.getGroupsList().getSelectedIndex());
+                    AreaAnalysisGroup selectedGroup = groupsBindingList.get(linearRegressionPanel.getGroupsList().getSelectedIndex());
                     boolean isAdjusted;
                     if (selectedGroup.getCorrectionMethodName().equals("none")) {
                         isAdjusted = false;
                     } else {
                         isAdjusted = true;
                     }
-                    statisticsAnalyzer.detectSignificance(selectedGroup, statisticalTest, selectedSignLevel, isAdjusted);
+                    areaStatisticsAnalyzer.detectSignificance(selectedGroup, statisticalTest, selectedSignLevel, isAdjusted);
                     boolean[][] significances = selectedGroup.getSignificances();
                     JTable pValuesTable = statisticsDialog.getpValuesTable();
                     for (int i = 1; i < pValuesTable.getColumnCount(); i++) {
@@ -606,14 +606,14 @@ public class AreaAnalysisController {
             public void actionPerformed(ActionEvent e) {
                 int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
                 if (selectedIndex != -1) {
-                    AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
+                    AreaAnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
                     String correctionMethod = statisticsDialog.getCorrectionMethodsComboBox().getSelectedItem().toString();
                     // update test description
                     updateTestDescriptionPane(correctionMethod);
                     // if the correction method is not "NONE"
                     if (!correctionMethod.equals("none")) {
                         // adjust p values
-                        statisticsAnalyzer.correctForMultipleComparisons(selectedGroup, correctionMethod);
+                        areaStatisticsAnalyzer.correctForMultipleComparisons(selectedGroup, correctionMethod);
                         // show p - values with the applied correction
                         showPValues(selectedGroup, true);
                     } else {
@@ -635,7 +635,7 @@ public class AreaAnalysisController {
                 // analysis group
                 int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
                 if (selectedIndex != -1) {
-                    AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
+                    AreaAnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
                     computeStatistics(selectedGroup, selectedTest);
                 }
             }
@@ -655,7 +655,7 @@ public class AreaAnalysisController {
                 // analysis group
                 int selectedIndex = linearRegressionPanel.getGroupsList().getSelectedIndex();
                 if (selectedIndex != -1) {
-                    AnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
+                    AreaAnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
                     // set correction method (summary statistics, p-values and adjusted p-values are already set)
                     selectedGroup.setCorrectionMethodName(statisticsDialog.getCorrectionMethodsComboBox().getSelectedItem().toString());
                     //show message to the user
@@ -701,11 +701,11 @@ public class AreaAnalysisController {
      *
      * @param analysisGroup
      */
-    private void computeStatistics(AnalysisGroup analysisGroup, String statisticalTestName) {
+    private void computeStatistics(AreaAnalysisGroup analysisGroup, String statisticalTestName) {
         // generate summary statistics
-        statisticsAnalyzer.generateSummaryStatistics(analysisGroup, statisticalTestName);
+        areaStatisticsAnalyzer.generateSummaryStatistics(analysisGroup, statisticalTestName);
         // execute mann whitney test --- set p values matrix (no adjustment)
-        statisticsAnalyzer.executePairwiseComparisons(analysisGroup, statisticalTestName);
+        areaStatisticsAnalyzer.executePairwiseComparisons(analysisGroup, statisticalTestName);
     }
 
     /**
@@ -713,7 +713,7 @@ public class AreaAnalysisController {
      *
      * @param analysisGroup
      */
-    private void showSummary(AnalysisGroup analysisGroup) {
+    private void showSummary(AreaAnalysisGroup analysisGroup) {
         statisticsDialog.getGroupNameLabel().setText(analysisGroup.getGroupName());
         // set model and cell renderer for statistics summary table
         StatisticalSummaryTableModel statisticalSummaryTableModel = new StatisticalSummaryTableModel(analysisGroup, areaMainController.getPlateConditionList());
@@ -730,14 +730,14 @@ public class AreaAnalysisController {
      *
      * @param analysisGroup
      */
-    private void showPValues(AnalysisGroup analysisGroup, boolean isAdjusted) {
+    private void showPValues(AreaAnalysisGroup analysisGroup, boolean isAdjusted) {
         String statisticalTestName = statisticsDialog.getStatisticalTestComboBox().getSelectedItem().toString();
         PValuesTableModel pValuesTableModel = new PValuesTableModel(analysisGroup, areaMainController.getPlateConditionList(), isAdjusted);
         JTable pValuesTable = statisticsDialog.getpValuesTable();
         pValuesTable.setModel(pValuesTableModel);
         Double selectedSignLevel = (Double) statisticsDialog.getSignificanceLevelComboBox().getSelectedItem();
         // detect significances with selected alpha level
-        statisticsAnalyzer.detectSignificance(analysisGroup, statisticalTestName, selectedSignLevel, isAdjusted);
+        areaStatisticsAnalyzer.detectSignificance(analysisGroup, statisticalTestName, selectedSignLevel, isAdjusted);
         boolean[][] significances = analysisGroup.getSignificances();
         for (int i = 1; i < pValuesTable.getColumnCount(); i++) {
             pValuesTable.getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(new DecimalFormat("#.####"), significances));
@@ -750,7 +750,7 @@ public class AreaAnalysisController {
      * two conditions that were detected to be statistically different. If lines
      * from previous analysis are present, delete them.
      */
-    private void addAnnotationsOnVelocityChart(AnalysisGroup analysisGroup) {
+    private void addAnnotationsOnVelocityChart(AreaAnalysisGroup analysisGroup) {
         Stroke stroke = new BasicStroke(0.5f);
         CategoryPlot velocityPlot = velocityChartPanel.getChart().getCategoryPlot();
         DefaultStatisticalCategoryDataset dataset = (DefaultStatisticalCategoryDataset) velocityPlot.getDataset();
@@ -820,7 +820,7 @@ public class AreaAnalysisController {
         // else, the analysis does not really make sense
         if (plateConditionsList.size() > 1) {
             // make a new analysis group, with those conditions and those results
-            AnalysisGroup analysisGroup = new AnalysisGroup(plateConditionsList, areaAnalysisResultsList);
+            AreaAnalysisGroup analysisGroup = new AreaAnalysisGroup(plateConditionsList, areaAnalysisResultsList);
             //set name for the group
             if (!linearRegressionPanel.getGroupNameTextField().getText().isEmpty()) {
                 analysisGroup.setGroupName(linearRegressionPanel.getGroupNameTextField().getText());
@@ -864,7 +864,7 @@ public class AreaAnalysisController {
     private boolean validateAnalysis() {
         boolean isValid = true;
         // check if analysis was performed for each group
-        for (AnalysisGroup analysisGroup : groupsBindingList) {
+        for (AreaAnalysisGroup analysisGroup : groupsBindingList) {
             if (analysisGroup.getpValuesMatrix() == null) {
                 isValid = false;
             }

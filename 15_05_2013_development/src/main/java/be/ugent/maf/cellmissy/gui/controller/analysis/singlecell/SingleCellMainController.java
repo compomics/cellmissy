@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
-import be.ugent.maf.cellmissy.analysis.TrackCoordinatesUnitOfMeasurement;
+import be.ugent.maf.cellmissy.analysis.singlecell.TrackCoordinatesUnitOfMeasurement;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
@@ -615,7 +615,7 @@ public class SingleCellMainController {
     }
 
     /**
-     * Update track list with objects from actual selected condition
+     * Update track list with objects from actual selected condition.
      *
      * @param plateCondition
      */
@@ -647,6 +647,7 @@ public class SingleCellMainController {
         @Override
         protected Void doInBackground() throws Exception {
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            dataAnalysisPanel.getConditionsList().setEnabled(false);
             //fetch tracks for each well of condition
             for (int i = 0; i < currentCondition.getWellList().size(); i++) {
                 //fetch tracks collection for the wellhasimagingtype of interest
@@ -655,7 +656,7 @@ public class SingleCellMainController {
                 wellService.fetchTracks(currentCondition.getWellList().get(i), algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
             }
             // when all wells re fetched, update tracks list
-            updateTracksList(currentCondition);  // if time steps were actually fetched from DB, update map
+            updateTracksList(currentCondition);  // if tracks were actually fetched from DB, update map
             if (!singleCellPreProcessingController.getTracksBindingList().isEmpty()) {
                 //put the plate condition together with a pre-processing results holder in the map
                 singleCellPreProcessingController.updateMapWithCondition(currentCondition);
@@ -667,6 +668,8 @@ public class SingleCellMainController {
         protected void done() {
             try {
                 get();
+                dataAnalysisPanel.getConditionsList().setEnabled(true);
+                dataAnalysisPanel.getConditionsList().requestFocusInWindow();
                 if (!singleCellPreProcessingController.getTracksBindingList().isEmpty()) {
                     onCardSwitch();
                 }

@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis;
+package be.ugent.maf.cellmissy.analysis.factory;
 
+import be.ugent.maf.cellmissy.analysis.OutliersHandler;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.util.Map;
 import java.util.Set;

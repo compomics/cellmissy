@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,8 +18,12 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -26,21 +31,27 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "bottom_matrix")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "BottomMatrix.findAll", query = "SELECT b FROM BottomMatrix b"),
     @NamedQuery(name = "BottomMatrix.findByBottomMatrixid", query = "SELECT b FROM BottomMatrix b WHERE b.bottomMatrixid = :bottomMatrixid"),
     @NamedQuery(name = "BottomMatrix.findByType", query = "SELECT b FROM BottomMatrix b WHERE b.type = :type")})
 public class BottomMatrix implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "bottom_matrixid")
+    @XmlTransient
     private Long bottomMatrixid;
     @Column(name = "type")
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String type;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bottomMatrix")
+    @XmlTransient
     private List<Ecm> ecmList;
 
     public BottomMatrix() {
@@ -75,21 +86,25 @@ public class BottomMatrix implements Serializable {
         this.ecmList = ecmList;
     }
 
-    @Override
+   @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (bottomMatrixid != null ? bottomMatrixid.hashCode() : 0);
+        int hash = 3;
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof BottomMatrix)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        BottomMatrix other = (BottomMatrix) object;
-        if ((this.bottomMatrixid == null && other.bottomMatrixid != null) || (this.bottomMatrixid != null && !this.bottomMatrixid.equals(other.bottomMatrixid))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BottomMatrix other = (BottomMatrix) obj;
+        if (!Objects.equals(this.bottomMatrixid, other.bottomMatrixid)) {
+            return false;
+        }
+        if (!Objects.equals(this.type, other.type)) {
             return false;
         }
         return true;
@@ -99,5 +114,4 @@ public class BottomMatrix implements Serializable {
     public String toString() {
         return type;
     }
-    
 }

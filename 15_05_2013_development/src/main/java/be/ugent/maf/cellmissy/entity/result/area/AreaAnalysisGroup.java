@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.entity.result;
+package be.ugent.maf.cellmissy.entity.result.area;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import java.util.List;
@@ -11,18 +11,18 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 
 /**
  * This class contains list of conditions that were compared, together with
- * results from statistical analysis.
+ * results from statistical analysis. This is only used for the area analysis.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class AnalysisGroup {
+public class AreaAnalysisGroup {
     // name for the group
 
     private String groupName;
     // list of conditions
     private List<PlateCondition> plateConditions;
     // list of area analysis results to be used in statistical comparison
-    private List<AreaAnalysisResults> analysisResults;
+    private List<AreaAnalysisResults> areaAnalysisResults;
     // matrix with p-values
     private Double[][] pValuesMatrix;
     // matrix with adjusted p-values
@@ -34,18 +34,21 @@ public class AnalysisGroup {
     // boolean to keep significances
     private boolean[][] significances;
 
-    public AnalysisGroup() {
+    /**
+     * Constructor
+     */
+    public AreaAnalysisGroup() {
     }
 
     /**
      * Constructor
      *
      * @param plateConditions
-     * @param analysisResults
+     * @param areaAnalysisResults
      */
-    public AnalysisGroup(List<PlateCondition> plateConditions, List<AreaAnalysisResults> analysisResults) {
+    public AreaAnalysisGroup(List<PlateCondition> plateConditions, List<AreaAnalysisResults> areaAnalysisResults) {
         this.plateConditions = plateConditions;
-        this.analysisResults = analysisResults;
+        this.areaAnalysisResults = areaAnalysisResults;
     }
 
     public String getGroupName() {
@@ -64,12 +67,12 @@ public class AnalysisGroup {
         this.plateConditions = plateConditions;
     }
 
-    public List<AreaAnalysisResults> getAnalysisResults() {
-        return analysisResults;
+    public List<AreaAnalysisResults> getAreaAnalysisResults() {
+        return areaAnalysisResults;
     }
 
-    public void setAnalysisResults(List<AreaAnalysisResults> analysisResults) {
-        this.analysisResults = analysisResults;
+    public void setAreaAnalysisResults(List<AreaAnalysisResults> areaAnalysisResults) {
+        this.areaAnalysisResults = areaAnalysisResults;
     }
 
     public Double[][] getpValuesMatrix() {
@@ -120,11 +123,11 @@ public class AnalysisGroup {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AnalysisGroup other = (AnalysisGroup) obj;
+        final AreaAnalysisGroup other = (AreaAnalysisGroup) obj;
         if (!Objects.equals(this.plateConditions, other.plateConditions)) {
             return false;
         }
-        if (!Objects.equals(this.analysisResults, other.analysisResults)) {
+        if (!Objects.equals(this.areaAnalysisResults, other.areaAnalysisResults)) {
             return false;
         }
         if (!Objects.equals(this.correctionMethodName, other.correctionMethodName)) {
@@ -137,7 +140,7 @@ public class AnalysisGroup {
     public int hashCode() {
         int hash = 7;
         hash = 89 * hash + Objects.hashCode(this.plateConditions);
-        hash = 89 * hash + Objects.hashCode(this.analysisResults);
+        hash = 89 * hash + Objects.hashCode(this.areaAnalysisResults);
         hash = 89 * hash + (this.correctionMethodName != null ? this.correctionMethodName.hashCode() : 0);
         return hash;
     }

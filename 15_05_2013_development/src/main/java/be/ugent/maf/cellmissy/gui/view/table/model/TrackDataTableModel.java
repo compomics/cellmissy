@@ -4,9 +4,9 @@
  */
 package be.ugent.maf.cellmissy.gui.view.table.model;
 
-import be.ugent.maf.cellmissy.entity.SingleCellPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Track;
-import be.ugent.maf.cellmissy.entity.TrackDataHolder;
+import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;

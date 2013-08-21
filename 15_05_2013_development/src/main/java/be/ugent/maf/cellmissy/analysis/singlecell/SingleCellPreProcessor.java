@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis;
+package be.ugent.maf.cellmissy.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.SingleCellPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
 
 /**
  * Interface for single cell pre-processing.
@@ -65,14 +65,14 @@ public interface SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    public void generateInstantaneousSpeedsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateInstantaneousDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate a vector with mean speeds per track.
      *
      * @param singleCellPreProcessingResults
      */
-    public void generateTrackSpeedsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateTrackDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate cumulative distances vector.

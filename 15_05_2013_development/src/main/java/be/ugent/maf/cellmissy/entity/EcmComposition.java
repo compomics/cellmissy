@@ -19,8 +19,13 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -28,25 +33,33 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "ecm_composition")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "EcmComposition.findAll", query = "SELECT e FROM EcmComposition e"),
     @NamedQuery(name = "EcmComposition.findByCompositionTypeid", query = "SELECT e FROM EcmComposition e WHERE e.compositionTypeid = :compositionTypeid"),
     @NamedQuery(name = "EcmComposition.findByCompositionType", query = "SELECT e FROM EcmComposition e WHERE e.compositionType = :compositionType"),
+    @NamedQuery(name = "EcmComposition.findByCompositionTypeAndMatrixDimensionName", query = "SELECT e FROM EcmComposition e WHERE e.compositionType = :compositionType AND e.matrixDimension.dimension = :matrixDimension"),
     @NamedQuery(name = "EcmComposition.findByMatrixDimensionName", query = "SELECT e FROM EcmComposition e WHERE e.matrixDimension.dimension = :matrixDimension")})
 public class EcmComposition implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "composition_typeid")
+    @XmlTransient
     private Long compositionTypeid;
     @Column(name = "composition_type")
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String compositionType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmComposition")
+    @XmlTransient
     private List<Ecm> ecmList;
     @JoinColumn(name = "l_matrix_dimensionid", referencedColumnName = "matrix_dimensionid")
     @ManyToOne(optional = false)
+    @XmlElement
     private MatrixDimension matrixDimension;
 
     public EcmComposition() {
@@ -113,5 +126,4 @@ public class EcmComposition implements Serializable {
     public String toString() {
         return compositionType;
     }
-    
 }

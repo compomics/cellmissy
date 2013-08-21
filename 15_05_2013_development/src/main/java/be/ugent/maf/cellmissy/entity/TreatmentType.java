@@ -19,7 +19,12 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -27,10 +32,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "treatment_type")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "TreatmentType.findAll", query = "SELECT t FROM TreatmentType t"),
     @NamedQuery(name = "TreatmentType.findByTreatmentTypeid", query = "SELECT t FROM TreatmentType t WHERE t.treatmentTypeid = :treatmentTypeid"),
+    @NamedQuery(name = "TreatmentType.findByName", query = "SELECT t FROM TreatmentType t WHERE t.name = :name"),
     @NamedQuery(name = "TreatmentType.findByTreatmentCategory", query = "SELECT t FROM TreatmentType t WHERE t.treatmentCategory = :treatmentCategory")})
 public class TreatmentType implements Serializable {
 
@@ -39,15 +46,20 @@ public class TreatmentType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "treatment_typeid")
+    @XmlTransient
     private Long treatmentTypeid;
     @Basic(optional = false)
     @NotNull
     @Column(name = "name", unique = true)
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String name;
     @Basic(optional = false)
     @Column(name = "treatment_category")
+    @XmlAttribute(required = true)
     private Integer treatmentCategory;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "treatmentType")
+    @XmlTransient
     private List<Treatment> treatmentList;
 
     public TreatmentType() {

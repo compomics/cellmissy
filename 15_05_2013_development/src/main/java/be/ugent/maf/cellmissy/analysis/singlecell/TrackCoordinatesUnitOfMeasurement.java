@@ -2,37 +2,35 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis;
+package be.ugent.maf.cellmissy.analysis.singlecell;
 
 /**
- * Area Unit of measurement
+ * Track Coordinates Unit of measurement
  *
- * @author Paola Masuzzo
+ * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public enum AreaUnitOfMeasurement {
+public enum TrackCoordinatesUnitOfMeasurement {
 
-    MICRO_METERS(1), PIXELS(2), PERCENTAGE(3);
+    MICRO_METERS(1), PIXELS(2);
     private int unit;
 
-    private AreaUnitOfMeasurement(int unit) {
+    private TrackCoordinatesUnitOfMeasurement(int unit) {
         this.unit = unit;
     }
 
     /**
      * Decide how to show the unit
-     * @return 
+     *
+     * @return
      */
     public String getUnitOfMeasurementString() {
         String string = "";
         switch (unit) {
             case 1:
-                string = "\u00B5" + "m" + "\u00B2";
+                string = "\u00B5" + "m";
                 break;
             case 2:
                 string = "pixels";
-                break;
-            case 3:
-                string = "%";
                 break;
         }
         return string;

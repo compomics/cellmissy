@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.utils;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.TrackDataHolder;
+import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -426,7 +426,7 @@ public class JFreeChartUtils {
         // set up the plot
         XYPlot xyPlot = chart.getXYPlot();
         xyPlot.getRangeAxis().setRange(range);
-        JFreeChartUtils.setupPlot(xyPlot);
+        setupPlot(xyPlot);
         // set title font
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         // modify renderer

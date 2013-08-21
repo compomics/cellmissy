@@ -12,7 +12,7 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class VelocitiesTableModel extends AbstractTableModel {
+public class DisplacementsTableModel extends AbstractTableModel {
 
     private Object[][] data;
     private String columnNames[];
@@ -24,7 +24,7 @@ public class VelocitiesTableModel extends AbstractTableModel {
      * @param velocitiesVector: the extra data vector we add to the table as
      * last column
      */
-    public VelocitiesTableModel(Object[][] dataStructure, Object[] velocitiesVector) {
+    public DisplacementsTableModel(Object[][] dataStructure, Object[] velocitiesVector) {
         initTable(dataStructure, velocitiesVector);
     }
 
@@ -52,7 +52,7 @@ public class VelocitiesTableModel extends AbstractTableModel {
      * define structure for table
      */
     private void initTable(Object[][] dataStructure, Object[] velocitiesVector) {
-        columnNames = new String[]{"well", "track", "time index", "velocity (µm)"};
+        columnNames = new String[]{"well", "track", "time index", "displacement (µm)"};
         int firstLength = dataStructure[0].length;
         int secondLength = 1;
         int totalLength = firstLength + secondLength;

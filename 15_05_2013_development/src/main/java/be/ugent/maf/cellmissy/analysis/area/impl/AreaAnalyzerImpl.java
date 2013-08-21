@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis.impl;
+package be.ugent.maf.cellmissy.analysis.area.impl;
 
-import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
+import be.ugent.maf.cellmissy.analysis.area.AreaAnalyzer;
 import be.ugent.maf.cellmissy.analysis.LinearRegressor;
-import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
-import be.ugent.maf.cellmissy.entity.result.AreaAnalysisResults;
-import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
+import be.ugent.maf.cellmissy.analysis.area.MeasuredAreaType;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
+import be.ugent.maf.cellmissy.entity.result.area.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.List;

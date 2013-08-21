@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
-import be.ugent.maf.cellmissy.analysis.AreaUnitOfMeasurement;
+import be.ugent.maf.cellmissy.analysis.area.AreaUnitOfMeasurement;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache.DataCategory;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
@@ -12,13 +12,13 @@ import be.ugent.maf.cellmissy.entity.result.TimeInterval;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.view.table.model.AreaDataTableModel;
-import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
-import static be.ugent.maf.cellmissy.analysis.MeasuredAreaType.CELL_COVERED_AREA;
-import static be.ugent.maf.cellmissy.analysis.MeasuredAreaType.OPEN_AREA;
-import be.ugent.maf.cellmissy.analysis.impl.CellCoveredAreaPreProcessor;
-import be.ugent.maf.cellmissy.analysis.impl.OpenAreaPreProcessor;
+import be.ugent.maf.cellmissy.analysis.area.MeasuredAreaType;
+import static be.ugent.maf.cellmissy.analysis.area.MeasuredAreaType.CELL_COVERED_AREA;
+import static be.ugent.maf.cellmissy.analysis.area.MeasuredAreaType.OPEN_AREA;
+import be.ugent.maf.cellmissy.analysis.area.impl.CellCoveredAreaPreProcessor;
+import be.ugent.maf.cellmissy.analysis.area.impl.OpenAreaPreProcessor;
 import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache;
-import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.area.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.AreaAnalysisPanel;

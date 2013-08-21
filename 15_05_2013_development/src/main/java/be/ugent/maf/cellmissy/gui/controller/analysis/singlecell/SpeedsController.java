@@ -5,13 +5,13 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.SingleCellPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SpeedsPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataTableModel;
-import be.ugent.maf.cellmissy.gui.view.table.model.VelocitiesTableModel;
+import be.ugent.maf.cellmissy.gui.view.table.model.DisplacementsTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -69,8 +69,8 @@ public class SpeedsController {
         SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
         if (singleCellPreProcessingResults != null) {
             Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-            Double[] instantaneousSpeedsVector = singleCellPreProcessingResults.getInstantaneousSpeedsVector();
-            speedsTable.setModel(new VelocitiesTableModel(dataStructure, instantaneousSpeedsVector));
+            Double[] instantaneousDisplacementsVector = singleCellPreProcessingResults.getInstantaneousDisplacementsVector();
+            speedsTable.setModel(new DisplacementsTableModel(dataStructure, instantaneousDisplacementsVector));
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
             for (int i = 0; i < speedsTable.getColumnModel().getColumnCount(); i++) {
@@ -79,7 +79,7 @@ public class SpeedsController {
             speedsTable.getColumnModel().getColumn(3).setCellRenderer(formatRenderer);
             speedsTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
         }
-        speedsPanel.getTableInfoLabel().setText("Instantaneous Single Cell Speeds (for each time step)");
+        speedsPanel.getTableInfoLabel().setText("Instantaneous Single Cell Displacements (for each time step)");
     }
 
     /**
@@ -91,9 +91,9 @@ public class SpeedsController {
     public void showTrackSpeedsInTable(PlateCondition plateCondition) {
         SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
         if (singleCellPreProcessingResults != null) {
-            Double[] trackSpeedsVector = singleCellPreProcessingResults.getTrackSpeedsVector();
-            String[] columnNames = {"well", "track", "track velocity (µm)"};
-            TrackDataTableModel trackDataTableModel = new TrackDataTableModel(columnNames, singleCellPreProcessingResults, trackSpeedsVector);
+            Double[] trackDisplacementsVector = singleCellPreProcessingResults.getTrackDisplacementsVector();
+            String[] columnNames = {"well", "track", "track displacement (µm)"};
+            TrackDataTableModel trackDataTableModel = new TrackDataTableModel(columnNames, singleCellPreProcessingResults, trackDisplacementsVector);
             speedsTable.setModel(trackDataTableModel);
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
@@ -103,7 +103,7 @@ public class SpeedsController {
             speedsTable.getColumnModel().getColumn(2).setCellRenderer(formatRenderer);
             speedsTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
         }
-        speedsPanel.getTableInfoLabel().setText("Track speeds (median of instantaneous speeds)");
+        speedsPanel.getTableInfoLabel().setText("Track Displacements (median of instantaneous displacements)");
     }
 
     /**

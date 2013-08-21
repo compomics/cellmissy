@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.entity;
+package be.ugent.maf.cellmissy.entity.result.singlecell;
 
 import java.util.List;
 
@@ -27,10 +27,10 @@ public class SingleCellPreProcessingResults {
     private Double[][] shiftedTrackCoordinatesMatrix;
     // boolean for the motile steps computation --- ******************* to be revisited
     private boolean[] outliersVector;
-    // array for instantaneous speeds
-    private Double[] instantaneousSpeedsVector;
+    // array for instantaneous displacements
+    private Double[] instantaneousDisplacementsVector;
     // array for track speeds
-    private Double[] trackSpeedsVector;
+    private Double[] trackDisplacementsVector;
     // array for track cumulative distancse
     private Double[] cumulativeDistancesVector;
     // array for track Euclidean distancse
@@ -82,20 +82,20 @@ public class SingleCellPreProcessingResults {
         this.outliersVector = outliersVector;
     }
 
-    public Double[] getInstantaneousSpeedsVector() {
-        return instantaneousSpeedsVector;
+    public Double[] getInstantaneousDisplacementsVector() {
+        return instantaneousDisplacementsVector;
     }
 
-    public void setInstantaneousSpeedsVector(Double[] instantaneousSpeedsVector) {
-        this.instantaneousSpeedsVector = instantaneousSpeedsVector;
+    public void setInstantaneousDisplacementsVector(Double[] instantaneousDisplacementsVector) {
+        this.instantaneousDisplacementsVector = instantaneousDisplacementsVector;
     }
 
-    public Double[] getTrackSpeedsVector() {
-        return trackSpeedsVector;
+    public Double[] getTrackDisplacementsVector() {
+        return trackDisplacementsVector;
     }
 
-    public void setTrackSpeedsVector(Double[] trackSpeedsVector) {
-        this.trackSpeedsVector = trackSpeedsVector;
+    public void setTrackDisplacementsVector(Double[] trackDisplacementsVector) {
+        this.trackDisplacementsVector = trackDisplacementsVector;
     }
 
     public Double[] getCumulativeDistancesVector() {

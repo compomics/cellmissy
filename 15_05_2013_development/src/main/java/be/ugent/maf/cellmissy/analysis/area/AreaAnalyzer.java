@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis;
+package be.ugent.maf.cellmissy.analysis.area;
 
-import be.ugent.maf.cellmissy.entity.result.AreaAnalysisResults;
-import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
+import be.ugent.maf.cellmissy.entity.result.area.AreaPreProcessingResults;
 
 /**
  * Interface for Analysis of Area Data (after pre-processing step)

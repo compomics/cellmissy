@@ -14,20 +14,23 @@ import javax.swing.Icon;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class LineIcon implements Icon{
-    
+public class LineIcon implements Icon {
+
     // the stroke-width property
-    private final Integer lineHeigth = 10;
-    private final Integer lineWidth = 15;
+    private Integer lineHeight;
+    private Integer lineWidth;
     // the stroke-colour property
     private Color color;
 
     /**
-     * Constructor with a color
+     * Constructor: takes an integer for the line height, one per its width and
+     * a color.
      *
      * @param color
      */
-    public LineIcon(Color color) {
+    public LineIcon(Integer lineHeight, Integer lineWidth, Color color) {
+        this.lineHeight = lineHeight;
+        this.lineWidth = lineWidth;
         this.color = color;
     }
 
@@ -35,7 +38,7 @@ public class LineIcon implements Icon{
     public void paintIcon(Component c, Graphics g, int x, int y) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(color);
-        g2d.fillRect(x, y, lineHeigth, lineWidth);
+        g2d.fillRect(x, y, lineHeight, lineWidth);
     }
 
     @Override
@@ -45,7 +48,6 @@ public class LineIcon implements Icon{
 
     @Override
     public int getIconHeight() {
-        return lineHeigth;
+        return lineHeight;
     }
-    
 }

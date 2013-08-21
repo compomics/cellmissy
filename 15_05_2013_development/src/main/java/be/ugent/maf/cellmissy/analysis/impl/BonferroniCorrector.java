@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrector;
-import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisGroup;
 
 /**
  * This is performing a multiple comparisons correction with the Bonferroni
@@ -16,7 +16,7 @@ import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
 public class BonferroniCorrector implements MultipleComparisonsCorrector {
 
     @Override
-    public void correctForMultipleComparisons(AnalysisGroup analysisGroup) {
+    public void correctForMultipleComparisons(AreaAnalysisGroup analysisGroup) {
         Double[][] pValuesMatrix = analysisGroup.getpValuesMatrix();
         Double[][] adjustedPValues = new Double[pValuesMatrix.length][pValuesMatrix.length];
         int numberOfComparisons = (pValuesMatrix.length) * (pValuesMatrix.length - 1) / 2;

@@ -19,7 +19,12 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -27,12 +32,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "cell_line_type")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "CellLineType.findAll", query = "SELECT c FROM CellLineType c"),
     @NamedQuery(name = "CellLineType.findByCellLineTypeid", query = "SELECT c FROM CellLineType c WHERE c.cellLineTypeid = :cellLineTypeid"),
     @NamedQuery(name = "CellLineType.findByName", query = "SELECT c FROM CellLineType c WHERE c.name = :name")})
-
 public class CellLineType implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,12 +45,16 @@ public class CellLineType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "cell_line_typeid")
+    @XmlTransient
     private Long cellLineTypeid;
     @Basic(optional = false)
     @NotNull
     @Column(name = "name", unique = true)
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cellLineType")
+    @XmlTransient
     private List<CellLine> cellLineList;
 
     public CellLineType() {

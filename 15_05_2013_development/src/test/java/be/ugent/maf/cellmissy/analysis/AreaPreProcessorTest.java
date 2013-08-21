@@ -4,7 +4,6 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;

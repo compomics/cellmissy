@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis.impl;
+package be.ugent.maf.cellmissy.analysis.singlecell.impl;
 
-import be.ugent.maf.cellmissy.analysis.TrackOperator;
+import be.ugent.maf.cellmissy.analysis.singlecell.TrackOperator;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
-import be.ugent.maf.cellmissy.entity.TrackDataHolder;
+import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.Arrays;
 import java.util.Collections;
@@ -104,37 +104,39 @@ public class TrackOperatorImpl implements TrackOperator {
     }
 
     @Override
-    public void computeInstantaneousSpeeds(TrackDataHolder trackDataHolder) {
+    public void computeInstantaneousDisplacements(TrackDataHolder trackDataHolder) {
         // get delta movements
         Double[][] deltaMovements = trackDataHolder.getDeltaMovements();
-        Double[] instantaneousSpeeds = new Double[deltaMovements.length];
-        for (int row = 0; row < instantaneousSpeeds.length; row++) {
+        Double[] instantaneousDisplacements = new Double[deltaMovements.length];
+        for (int row = 0; row < instantaneousDisplacements.length; row++) {
             Double deltaX = deltaMovements[row][0];
             Double deltaY = deltaMovements[row][1];
             if (deltaX != null && deltaY != null) {
+                // this is simply the Euclidean distance between two consecutive time points
                 // deltaZ = sqrt(deltaX² + deltaY²)
-                Double instantaneousSpeed = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-                instantaneousSpeeds[row] = instantaneousSpeed;
+                // dividing this quantity for the time frame will give the speed information
+                Double instantaneousDisplacement = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+                instantaneousDisplacements[row] = instantaneousDisplacement;
             }
         }
-        trackDataHolder.setInstantaneousSpeeds(instantaneousSpeeds);
+        trackDataHolder.setInstantaneousDisplacements(instantaneousDisplacements);
     }
 
     @Override
-    public void computeTrackSpeed(TrackDataHolder trackDataHolder) {
-        Double[] instantaneousSpeeds = trackDataHolder.getInstantaneousSpeeds();
-        Double[] excludeNullValues = AnalysisUtils.excludeNullValues(instantaneousSpeeds);
-        double trackSpeed = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
-        trackDataHolder.setTrackSpeed(trackSpeed);
+    public void computeTrackMedianDisplacement(TrackDataHolder trackDataHolder) {
+        Double[] instantaneousDisplacements = trackDataHolder.getInstantaneousDisplacements();
+        Double[] excludeNullValues = AnalysisUtils.excludeNullValues(instantaneousDisplacements);
+        double trackMedianDisplacement = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
+        trackDataHolder.setTrackMedianDisplacement(trackMedianDisplacement);
     }
 
     @Override
     public void computeCumulativeDistance(TrackDataHolder trackDataHolder) {
         double cumulativeDistance = 0;
-        Double[] instantaneousSpeeds = trackDataHolder.getInstantaneousSpeeds();
-        for (int i = 0; i < instantaneousSpeeds.length; i++) {
-            if (instantaneousSpeeds[i] != null) {
-                cumulativeDistance += instantaneousSpeeds[i];
+        Double[] instantaneousDisplacements = trackDataHolder.getInstantaneousDisplacements();
+        for (int i = 0; i < instantaneousDisplacements.length; i++) {
+            if (instantaneousDisplacements[i] != null) {
+                cumulativeDistance += instantaneousDisplacements[i];
             }
         }
         trackDataHolder.setCumulativeDistance(cumulativeDistance);
@@ -180,6 +182,7 @@ public class TrackOperatorImpl implements TrackOperator {
     public void computeTrackAngle(TrackDataHolder trackDataHolder) {
         Double[] turningAngles = trackDataHolder.getTurningAngles();
         Double[] excludeNullValues = AnalysisUtils.excludeNullValues(turningAngles);
+        // simply compute the median of the turning angles
         double trackAngle = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
         trackDataHolder.setTrackAngle(trackAngle);
     }

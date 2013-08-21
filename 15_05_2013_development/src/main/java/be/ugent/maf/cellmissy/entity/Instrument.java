@@ -18,7 +18,12 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -27,7 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "instrument", uniqueConstraints =
         @UniqueConstraint(columnNames = "name"))
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "Instrument.findAll", query = "SELECT i FROM Instrument i"),
     @NamedQuery(name = "Instrument.findByInstrumentid", query = "SELECT i FROM Instrument i WHERE i.instrumentid = :instrumentid"),
@@ -39,14 +45,19 @@ public class Instrument implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "instrumentid")
+    @XmlTransient
     private Long instrumentid;
     @Basic(optional = false)
     @Column(name = "name", unique = true)
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String name;
     @Basic(optional = false)
-    @Column(name = "conversion_factor", unique = true)
+    @Column(name = "conversion_factor")
+    @XmlAttribute(required = true)
     private double conversionFactor;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "instrument")
+    @XmlTransient
     private List<Experiment> experimentList;
 
     public Instrument() {
@@ -59,11 +70,6 @@ public class Instrument implements Serializable {
     public Instrument(Long instrumentid, String name) {
         this.instrumentid = instrumentid;
         this.name = name;
-    }
-
-    public Instrument(String name, double conversionFactor) {
-        this.name = name;
-        this.conversionFactor = conversionFactor;
     }
 
     public Long getInstrumentid() {
@@ -92,10 +98,6 @@ public class Instrument implements Serializable {
 
     public List<Experiment> getExperimentList() {
         return experimentList;
-    }
-
-    public void setExperimentList(List<Experiment> experimentList) {
-        this.experimentList = experimentList;
     }
 
     @Override

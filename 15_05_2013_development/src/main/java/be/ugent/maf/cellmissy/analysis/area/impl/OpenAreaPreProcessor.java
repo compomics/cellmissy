@@ -2,16 +2,16 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis.impl;
+package be.ugent.maf.cellmissy.analysis.area.impl;
 
-import be.ugent.maf.cellmissy.analysis.AreaPreProcessor;
-import be.ugent.maf.cellmissy.analysis.DistanceMetricFactory;
+import be.ugent.maf.cellmissy.analysis.area.AreaPreProcessor;
+import be.ugent.maf.cellmissy.analysis.factory.DistanceMetricFactory;
 import be.ugent.maf.cellmissy.analysis.DistanceMetricOperator;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
-import be.ugent.maf.cellmissy.analysis.KernelDensityEstimatorFactory;
+import be.ugent.maf.cellmissy.analysis.factory.KernelDensityEstimatorFactory;
 import be.ugent.maf.cellmissy.analysis.OutliersHandler;
-import be.ugent.maf.cellmissy.analysis.OutliersHandlerFactory;
-import be.ugent.maf.cellmissy.entity.result.AreaPreProcessingResults;
+import be.ugent.maf.cellmissy.analysis.factory.OutliersHandlerFactory;
+import be.ugent.maf.cellmissy.entity.result.area.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.TimeInterval;
 import be.ugent.maf.cellmissy.gui.view.table.model.DistanceMatrixTableModel;

@@ -15,8 +15,12 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -24,23 +28,30 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "matrix_dimension")
-@XmlRootElement
+@XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
+@XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "MatrixDimension.findAll", query = "SELECT m FROM MatrixDimension m"),
     @NamedQuery(name = "MatrixDimension.findByMatrixDimensionid", query = "SELECT m FROM MatrixDimension m WHERE m.matrixDimensionid = :matrixDimensionid")})
 public class MatrixDimension implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @Column(name = "matrix_dimensionid")
+    @XmlTransient
     private Long matrixDimensionid;
     @Column(name = "dimension")
+    @XmlAttribute(required = true)
+    @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String dimension;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matrixDimension")
+    @XmlTransient
     private List<Assay> assayList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matrixDimension")
+    @XmlTransient
     private List<EcmComposition> ecmCompositionList;
-    
+
     public MatrixDimension() {
     }
 
@@ -64,7 +75,6 @@ public class MatrixDimension implements Serializable {
         this.dimension = matrixDimension;
     }
 
-    @XmlTransient
     public List<Assay> getAssayList() {
         return assayList;
     }
@@ -73,7 +83,6 @@ public class MatrixDimension implements Serializable {
         this.assayList = assayList;
     }
 
-    @XmlTransient
     public List<EcmComposition> getEcmCompositionList() {
         return ecmCompositionList;
     }
@@ -106,5 +115,4 @@ public class MatrixDimension implements Serializable {
     public String toString() {
         return dimension;
     }
-    
 }
