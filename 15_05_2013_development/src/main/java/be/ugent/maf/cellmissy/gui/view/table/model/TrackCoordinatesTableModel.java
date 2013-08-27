@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.gui.view.table.model;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Table Model for track coordinates data
+ * Table Model for track coordinates data.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -19,8 +19,9 @@ public class TrackCoordinatesTableModel extends AbstractTableModel {
     /**
      * Constructor
      *
-     * @param dataStructure
-     * @param coordinatesMatrix
+     * @param dataStructure: the fixed track point data information
+     * @param coordinatesMatrix: the coordinates matrix (2 vectors) we add at
+     * the end
      */
     public TrackCoordinatesTableModel(Object[][] dataStructure, Object[][] coordinatesMatrix) {
         initTable(dataStructure, coordinatesMatrix);

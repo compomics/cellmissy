@@ -5,7 +5,6 @@
 package be.ugent.maf.cellmissy.utils;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -379,50 +378,56 @@ public class JFreeChartUtils {
     }
 
     /**
+     * Add circle annotations on the track plot: an empty circle will annotate
+     * the starting point of the track, while a filled one will annotate the end
+     * point.
      *
-     * @param chart
-     * @param seriesIndex
+     * @param plot: the plot to add the annotations on
+     * @param seriesIndex: needed to get the right Color
      */
     public static void addCirclePointersOnTrackPlot(XYPlot plot, int seriesIndex) {
         Stroke stroke = new BasicStroke(1.5f);
         int length = GuiUtils.getAvailableColors().length;
         int colorIndex = seriesIndex % length;
         Color color = GuiUtils.getAvailableColors()[colorIndex];
-
         XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) plot.getDataset();
         XYSeries currentSeries = xYSeriesCollection.getSeries(seriesIndex);
         int itemCount = currentSeries.getItemCount();
-        // **************************************************//
+        // get the first data item: first (x, y)
         XYDataItem firstDataItem = currentSeries.getDataItem(0);
         double firstX = firstDataItem.getXValue();
         double firstY = firstDataItem.getYValue();
-        // *************************************************************//
+        // get the last data item: last (x, y)
         XYDataItem lastDataItem = currentSeries.getDataItem(itemCount - 1);
         double lastX = lastDataItem.getXValue();
         double lastY = lastDataItem.getYValue();
-
+        // size for the circle pointer
         double circleSize = 4;
-
+        // first top left x and y
         int firstTopLeftX = (int) Math.round(firstX - circleSize / 2);
         int firstTopLeftY = (int) Math.round(firstY - circleSize / 2);
+        // empty circle to annotate the starting point
         Ellipse2D emptyCircle = new Ellipse2D.Double(firstTopLeftX, firstTopLeftY, circleSize, circleSize);
         XYShapeAnnotation emptyCircleAnnotation = new XYShapeAnnotation(emptyCircle, stroke, color);
-
+        // last top left x and y
         int lastTopLeftX = (int) Math.round(lastX - circleSize / 2);
         int lastTopLeftY = (int) Math.round(lastY - circleSize / 2);
+        // filled circle to annotate the end point
         Ellipse2D filledCircle = new Ellipse2D.Double(lastTopLeftX, lastTopLeftY, circleSize, circleSize);
         XYShapeAnnotation filledCircleAnnotation = new XYShapeAnnotation(filledCircle, stroke, color, color);
-
+        // add the two annotations on the plot
         plot.getRenderer().addAnnotation(emptyCircleAnnotation);
         plot.getRenderer().addAnnotation(filledCircleAnnotation);
     }
 
     /**
+     * Set up the single track plot.
      *
-     * @param chart
-     * @param trackDataHolder
+     * @param chart: the chart to get the plot from
+     * @param trackIndex: we need this to get the right color
+     * @param range: the range for the plot
      */
-    public static void setupSingleTrackPlot(JFreeChart chart, TrackDataHolder trackDataHolder, int trackIndex, Range range) {
+    public static void setupSingleTrackPlot(JFreeChart chart, int trackIndex, Range range) {
         // set up the plot
         XYPlot xyPlot = chart.getXYPlot();
         xyPlot.getRangeAxis().setRange(range);

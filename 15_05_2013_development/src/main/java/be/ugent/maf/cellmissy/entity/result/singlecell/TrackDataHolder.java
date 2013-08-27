@@ -20,6 +20,8 @@ public class TrackDataHolder {
     // time indexes
     // the time interval in which the track has been detected and followed in the tracking step
     private double[] timeIndexes;
+    // track duration, in minutes
+    private double trackDuration;
     // matrix for track coordinates (x, y)
     // each row is a track point and contains couples of coordinates (x, y)
     private Double[][] trackCoordinatesMatrix;
@@ -40,12 +42,14 @@ public class TrackDataHolder {
     // boolean for outliers: TRUE is data point is an outlier -----**** needs to be revisited
     private boolean[] outliers;
     // array for  the instantaneous cell displacements
-    // the speed does not contain direction information
     // for a track, the minimal instantaneous speeds are derived from the displacement of the cell centroid between adjacent time points
     private Double[] instantaneousDisplacements;
     // track median displacement
     // this is the median displacement computed from all time intervals throughout a track
-    private double trackMedianDisplacement;
+    private double trackMeanDisplacement;
+    // track median speed
+    // this is the track median displacement divided by the track duration (time interval in which the cell has been tracked)
+    private double trackMeanSpeed;
     // double for cumulative distance (between first and last time point of the track)
     // this is the total path length travelled by the cell in its displacement
     private double cumulativeDistance;
@@ -85,6 +89,14 @@ public class TrackDataHolder {
 
     public void setTimeIndexes(double[] timeIndexes) {
         this.timeIndexes = timeIndexes;
+    }
+
+    public double getTrackDuration() {
+        return trackDuration;
+    }
+
+    public void setTrackDuration(double trackDuration) {
+        this.trackDuration = trackDuration;
     }
 
     public Double[][] getTrackCoordinatesMatrix() {
@@ -159,12 +171,20 @@ public class TrackDataHolder {
         this.instantaneousDisplacements = instantaneousDisplacements;
     }
 
-    public double getTrackMedianDisplacement() {
-        return trackMedianDisplacement;
+    public double getTrackMeanDisplacement() {
+        return trackMeanDisplacement;
     }
 
-    public void setTrackMedianDisplacement(double trackMedianDisplacement) {
-        this.trackMedianDisplacement = trackMedianDisplacement;
+    public void setTrackMeanDisplacement(double trackMeanDisplacement) {
+        this.trackMeanDisplacement = trackMeanDisplacement;
+    }
+
+    public double getTrackMeanSpeed() {
+        return trackMeanSpeed;
+    }
+
+    public void setTrackMeanSpeed(double trackMeanSpeed) {
+        this.trackMeanSpeed = trackMeanSpeed;
     }
 
     public double getCumulativeDistance() {

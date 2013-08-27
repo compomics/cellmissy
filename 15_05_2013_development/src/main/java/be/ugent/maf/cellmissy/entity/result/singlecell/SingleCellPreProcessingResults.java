@@ -29,8 +29,10 @@ public class SingleCellPreProcessingResults {
     private boolean[] outliersVector;
     // array for instantaneous displacements
     private Double[] instantaneousDisplacementsVector;
-    // array for track speeds
+    // array for track displacements
     private Double[] trackDisplacementsVector;
+    // array for track speeds
+    private Double[] trackSpeedsVector;
     // array for track cumulative distancse
     private Double[] cumulativeDistancesVector;
     // array for track Euclidean distancse
@@ -96,6 +98,14 @@ public class SingleCellPreProcessingResults {
 
     public void setTrackDisplacementsVector(Double[] trackDisplacementsVector) {
         this.trackDisplacementsVector = trackDisplacementsVector;
+    }
+
+    public Double[] getTrackSpeedsVector() {
+        return trackSpeedsVector;
+    }
+
+    public void setTrackSpeedsVector(Double[] trackSpeedsVector) {
+        this.trackSpeedsVector = trackSpeedsVector;
     }
 
     public Double[] getCumulativeDistancesVector() {

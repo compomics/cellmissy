@@ -222,7 +222,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
 
         totalTracksNumberLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
 
-        plotAllTracksForAConditionButton.setText("plot all tracks for this condition");
+        plotAllTracksForAConditionButton.setText("Plot All Tracks");
 
         javax.swing.GroupLayout conditionPanelLayout = new javax.swing.GroupLayout(conditionPanel);
         conditionPanel.setLayout(conditionPanelLayout);
@@ -245,12 +245,12 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addGroup(conditionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(totalTracksNumberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 105, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 144, Short.MAX_VALUE)
                 .addComponent(plotAllTracksForAConditionButton)
                 .addContainerGap())
         );
 
-        trackingPlotTabbedPane.addTab("For the selected condition", conditionPanel);
+        trackingPlotTabbedPane.addTab("For The Selected Condition", conditionPanel);
 
         wellPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         wellPanel.setOpaque(false);
@@ -264,7 +264,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
 
         jLabel4.setText("Select a well");
 
-        plotAllTracksForAWellButton.setText("plot all tracks for this well");
+        plotAllTracksForAWellButton.setText("Plot All Tracks");
 
         javax.swing.GroupLayout wellPanelLayout = new javax.swing.GroupLayout(wellPanel);
         wellPanel.setLayout(wellPanelLayout);
@@ -295,12 +295,12 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addGroup(wellPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(tracksNumberCurrentWellLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
                 .addComponent(plotAllTracksForAWellButton)
                 .addContainerGap())
         );
 
-        trackingPlotTabbedPane.addTab("For a well (sample)", wellPanel);
+        trackingPlotTabbedPane.addTab("For A Well (Sample)", wellPanel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -321,12 +321,12 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         plotPointsCheckBox.setText("plot points");
         plotPointsCheckBox.setOpaque(false);
 
-        plotButton.setText("randomize and replot");
+        plotButton.setText("Randomize & Replot");
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel6.setText("PLOT PROPERTIES");
 
-        jLabel2.setText("Number of tracks to include");
+        jLabel2.setText("Number Of Tracks To Include");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -353,7 +353,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
                 .addComponent(randomTracksNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(plotLinesCheckBox)
@@ -394,7 +394,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.55;
         add(graphicsParentPanel, gridBagConstraints);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Currently plotted tracks"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Currently Plotted Tracks"));
         jPanel1.setMinimumSize(new java.awt.Dimension(20, 20));
         jPanel1.setOpaque(false);
         jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -409,9 +409,9 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         plottedTracksJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(plottedTracksJList);
 
-        showPlotsTrackButton.setText("show data for selected track");
+        showPlotsTrackButton.setText("Show Data For Selected Track");
 
-        clearSelectionButton.setText("clear selection on list");
+        clearSelectionButton.setText("Clear Selection on List");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -429,7 +429,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(clearSelectionButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(showPlotsTrackButton)
                 .addContainerGap())
         );
@@ -441,7 +441,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 126, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -453,7 +453,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE))
                 .addContainerGap())
         );
 

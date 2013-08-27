@@ -28,7 +28,7 @@ public class TrackDataTableModel extends AbstractTableModel {
      * @param singleCellPreProcessingResults: the results holder from where to
      * get the track information
      * @param dataVector: the extra vector we want to add to the table as last
-     * column
+     * column (this can be the displacements vector or the speeds vector)
      */
     public TrackDataTableModel(String[] columnNames, SingleCellPreProcessingResults singleCellPreProcessingResults, Object[] dataVector) {
         this.columnNames = columnNames;
@@ -65,8 +65,11 @@ public class TrackDataTableModel extends AbstractTableModel {
             TrackDataHolder trackDataHolder = trackDataHolders.get(row);
             Track track = trackDataHolder.getTrack();
             Well well = track.getWellHasImagingType().getWell();
+            // first column: the well
             data[row][0] = well;
+            // second column: the track number
             data[row][1] = track.getTrackNumber();
+            // third column: the data we get at the row
             data[row][2] = dataVector[row];
         }
     }

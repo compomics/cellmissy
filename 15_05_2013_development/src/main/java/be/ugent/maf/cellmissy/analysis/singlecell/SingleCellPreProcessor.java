@@ -33,10 +33,19 @@ public interface SingleCellPreProcessor {
     public void generateDataStructure(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
+     * Generate time indexes.
      *
      * @param singleCellPreProcessingResults
      */
     public void generateTimeIndexes(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     * Generate track durations.
+     *
+     * @param timeLapse
+     * @param singleCellPreProcessingResults
+     */
+    public void generateTrackDurations(Double timeLapse, SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate the track coordinates matrix.
@@ -61,14 +70,14 @@ public interface SingleCellPreProcessor {
     public void generateShiftedTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
-     * Generate the instantaneous Speeds Vector.
+     * Generate the instantaneous displacement Vector.
      *
      * @param singleCellPreProcessingResults
      */
     public void generateInstantaneousDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
-     * Generate a vector with mean speeds per track.
+     * Generate a vector with track displacements.
      *
      * @param singleCellPreProcessingResults
      */
@@ -87,6 +96,13 @@ public interface SingleCellPreProcessor {
      * @param singleCellPreProcessingResults
      */
     public void generateEuclideanDistancesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     * Generate a vector with the median track speeds.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateTrackSpeedsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate directionality vector.

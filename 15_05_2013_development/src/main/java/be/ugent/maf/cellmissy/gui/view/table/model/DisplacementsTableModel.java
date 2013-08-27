@@ -7,8 +7,8 @@ package be.ugent.maf.cellmissy.gui.view.table.model;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Table model for velocities data --- this could be extended to a more general
- * table model to keep data from track points.
+ * Table model for the displacements data --- this could be extended to a more
+ * general table model to keep data from track points.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */

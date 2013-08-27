@@ -35,6 +35,14 @@ public class TrackOperatorImpl implements TrackOperator {
     }
 
     @Override
+    public void computeTrackDuration(Double timeLapse, TrackDataHolder trackDataHolder) {
+        double[] timeIndexes = trackDataHolder.getTimeIndexes();
+        int numberOfPoints = timeIndexes.length;
+        double trackDuration = (numberOfPoints - 1) * timeLapse;
+        trackDataHolder.setTrackDuration(trackDuration);
+    }
+
+    @Override
     public void generateTrackCoordinatesMatrix(TrackDataHolder trackDataHolder, double conversionFactor) {
         Track track = trackDataHolder.getTrack();
         List<TrackPoint> trackPointList = track.getTrackPointList();
@@ -123,11 +131,11 @@ public class TrackOperatorImpl implements TrackOperator {
     }
 
     @Override
-    public void computeTrackMedianDisplacement(TrackDataHolder trackDataHolder) {
+    public void computeTrackMeanDisplacement(TrackDataHolder trackDataHolder) {
         Double[] instantaneousDisplacements = trackDataHolder.getInstantaneousDisplacements();
         Double[] excludeNullValues = AnalysisUtils.excludeNullValues(instantaneousDisplacements);
-        double trackMedianDisplacement = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
-        trackDataHolder.setTrackMedianDisplacement(trackMedianDisplacement);
+        double trackMeanDisplacement = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(excludeNullValues));
+        trackDataHolder.setTrackMeanDisplacement(trackMeanDisplacement);
     }
 
     @Override
@@ -150,6 +158,14 @@ public class TrackOperatorImpl implements TrackOperator {
         Double deltaY = deltaMovements[deltaMovements.length - 2][1];
         double euclideanDistance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
         trackDataHolder.setEuclideanDistance(euclideanDistance);
+    }
+
+    @Override
+    public void computeTrackMeanSpeed(TrackDataHolder trackDataHolder) {
+        double cumulativeDistance = trackDataHolder.getCumulativeDistance();
+        double trackDuration = trackDataHolder.getTrackDuration();
+        double trackMeanSpeed = cumulativeDistance / trackDuration;
+        trackDataHolder.setTrackMeanSpeed(trackMeanSpeed);
     }
 
     @Override

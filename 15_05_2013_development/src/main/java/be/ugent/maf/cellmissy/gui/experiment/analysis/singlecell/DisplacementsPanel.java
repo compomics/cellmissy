@@ -12,7 +12,7 @@ import javax.swing.JRadioButton;
  *
  * @author paola
  */
-public class SpeedsPanel extends javax.swing.JPanel {
+public class DisplacementsPanel extends javax.swing.JPanel {
 
     public JPanel getDataTablePanel() {
         return dataTablePanel;
@@ -22,8 +22,12 @@ public class SpeedsPanel extends javax.swing.JPanel {
         return graphicsParentPanel;
     }
 
-    public JRadioButton getInstantaneousSpeedsRadioButton() {
-        return instantaneousSpeedsRadioButton;
+    public JRadioButton getInstantaneousDisplRadioButton() {
+        return instantaneousDisplRadioButton;
+    }
+
+    public JRadioButton getTrackDisplRadioButton() {
+        return trackDisplRadioButton;
     }
 
     public JRadioButton getTrackSpeedsRadioButton() {
@@ -35,9 +39,9 @@ public class SpeedsPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Creates new form SpeedsPanel
+     * Creates new form DisplacementsPanel
      */
-    public SpeedsPanel() {
+    public DisplacementsPanel() {
         initComponents();
     }
 
@@ -52,8 +56,9 @@ public class SpeedsPanel extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         radioButtonsPanel = new javax.swing.JPanel();
-        instantaneousSpeedsRadioButton = new javax.swing.JRadioButton();
+        instantaneousDisplRadioButton = new javax.swing.JRadioButton();
         tableInfoLabel = new javax.swing.JLabel();
+        trackDisplRadioButton = new javax.swing.JRadioButton();
         trackSpeedsRadioButton = new javax.swing.JRadioButton();
         dataTablePanel = new javax.swing.JPanel();
         graphicsParentPanel = new javax.swing.JPanel();
@@ -67,12 +72,15 @@ public class SpeedsPanel extends javax.swing.JPanel {
         radioButtonsPanel.setOpaque(false);
         radioButtonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        instantaneousSpeedsRadioButton.setText("instantaneous speeds");
-        instantaneousSpeedsRadioButton.setOpaque(false);
+        instantaneousDisplRadioButton.setText("instantaneous displacements");
+        instantaneousDisplRadioButton.setOpaque(false);
 
         tableInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         tableInfoLabel.setMinimumSize(new java.awt.Dimension(20, 20));
         tableInfoLabel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        trackDisplRadioButton.setText("track displacements");
+        trackDisplRadioButton.setOpaque(false);
 
         trackSpeedsRadioButton.setText("track speeds");
         trackSpeedsRadioButton.setOpaque(false);
@@ -86,7 +94,9 @@ public class SpeedsPanel extends javax.swing.JPanel {
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                        .addComponent(instantaneousSpeedsRadioButton)
+                        .addComponent(instantaneousDisplRadioButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(trackDisplRadioButton)
                         .addGap(18, 18, 18)
                         .addComponent(trackSpeedsRadioButton)))
                 .addContainerGap(498, Short.MAX_VALUE))
@@ -96,7 +106,8 @@ public class SpeedsPanel extends javax.swing.JPanel {
             .addGroup(radioButtonsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(instantaneousSpeedsRadioButton)
+                    .addComponent(instantaneousDisplRadioButton)
+                    .addComponent(trackDisplRadioButton)
                     .addComponent(trackSpeedsRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -142,9 +153,10 @@ public class SpeedsPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel dataTablePanel;
     private javax.swing.JPanel graphicsParentPanel;
-    private javax.swing.JRadioButton instantaneousSpeedsRadioButton;
+    private javax.swing.JRadioButton instantaneousDisplRadioButton;
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JLabel tableInfoLabel;
+    private javax.swing.JRadioButton trackDisplRadioButton;
     private javax.swing.JRadioButton trackSpeedsRadioButton;
     // End of variables declaration//GEN-END:variables
 }

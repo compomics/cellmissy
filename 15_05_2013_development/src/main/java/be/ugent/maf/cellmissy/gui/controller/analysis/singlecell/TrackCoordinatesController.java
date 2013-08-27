@@ -161,8 +161,8 @@ public class TrackCoordinatesController {
         SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
         if (singleCellPreProcessingResults != null) {
             Object[][] fixedDataStructure = singleCellPreProcessingResults.getDataStructure();
-            Double[][] normalizedTrackCoordinatesMatrix = singleCellPreProcessingResults.getShiftedTrackCoordinatesMatrix();
-            coordinatesTable.setModel(new TrackCoordinatesTableModel(fixedDataStructure, normalizedTrackCoordinatesMatrix));
+            Double[][] shiftedTrackCoordinatesMatrix = singleCellPreProcessingResults.getShiftedTrackCoordinatesMatrix();
+            coordinatesTable.setModel(new TrackCoordinatesTableModel(fixedDataStructure, shiftedTrackCoordinatesMatrix));
             FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             for (int i = 0; i < 3; i++) {
@@ -182,38 +182,47 @@ public class TrackCoordinatesController {
      * plot.r
      *
      *
-     * @param plateCondition
-     * @param useRawCoordinates
-     * @param plotLines
-     * @param plotPoints
+     * @param plateCondition: the plate condition to plot the tracks from
+     * @param useRawCoordinates: if TRUE, plot raw data, else take the shifted
+     * to zero coordinates.
+     * @param plotLines: if true, lines need to be rendered
+     * @param plotPoints: if true, points need to be rendered
      */
     public void plotRandomTrackCoordinates(PlateCondition plateCondition, boolean useRawCoordinates, boolean plotLines, boolean plotPoints) {
-        int selectedIndex = trackCoordinatesPanel.getTrackingPlotTabbedPane().getSelectedIndex();
+        // we get the selected index from the tabbed pane
+        // according to this, we generate the random tracks from the condition or from the well
+        int categoryToPlot = trackCoordinatesPanel.getTrackingPlotTabbedPane().getSelectedIndex();
         if (trackDataHolderBindingList.isEmpty()) {
-            generateRandomTrackDataHolders(selectedIndex);
+            generateRandomTrackDataHolders(categoryToPlot);
         }
+        // generate the xy collection for the plot
         XYSeriesCollection xYSeriesCollectionForPlot = generateXYSeriesCollectionForPlot(useRawCoordinates);
         // Plot Logic
         int conditionIndex = singleCellPreProcessingController.getPlateConditionList().indexOf(plateCondition) + 1;
+        int numberOfTracks = trackDataHolderBindingList.size();
+        // title of the chart depends on:
+        // 1. the category to plot (condition or well based?) and
+        // 2. the coordinates to plot (raw data or shifted coordinates?)
         String chartTitle = "";
-        switch (selectedIndex) {
+        switch (categoryToPlot) {
             case 0:
                 if (useRawCoordinates) {
-                    chartTitle = trackDataHolderBindingList.size() + " tracks - condition " + conditionIndex;
+                    chartTitle = numberOfTracks + " tracks - condition " + conditionIndex;
                 } else {
-                    chartTitle = trackDataHolderBindingList.size() + " tracks, coordinates shifted to (0, 0) - condition " + conditionIndex;
+                    chartTitle = numberOfTracks + " tracks, coordinates shifted to (0, 0) - condition " + conditionIndex;
                 }
                 break;
             case 1:
                 Well well = (Well) trackCoordinatesPanel.getWellsComboBox().getSelectedItem();
                 if (useRawCoordinates) {
-                    chartTitle = trackDataHolderBindingList.size() + " tracks - well " + well.toString();
+                    chartTitle = numberOfTracks + " tracks - well " + well.toString();
                 } else {
-                    chartTitle = trackDataHolderBindingList.size() + " tracks, coordinates shifted to (0, 0) - well " + well.toString();
+                    chartTitle = numberOfTracks + " tracks, coordinates shifted to (0, 0) - well " + well.toString();
                 }
                 break;
         }
-        JFreeChart coordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollectionForPlot, PlotOrientation.VERTICAL, false, true, false);
+        // we finally create the coordinates chart, no legend but yes tooltips
+        JFreeChart coordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x (µm)", "y (µm)", xYSeriesCollectionForPlot, PlotOrientation.VERTICAL, false, true, false);
         JFreeChartUtils.setupTrackCoordinatesPlot(coordinatesChart, trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex(), plotLines, plotPoints);
         coordinatesChartPanel.setChart(coordinatesChart);
         trackCoordinatesPanel.getGraphicsParentPanel().revalidate();
@@ -221,7 +230,7 @@ public class TrackCoordinatesController {
     }
 
     /**
-     *
+     * Empty the list with the track data holders.
      */
     public void resetTracksList() {
         if (!trackDataHolderBindingList.isEmpty()) {
@@ -231,6 +240,12 @@ public class TrackCoordinatesController {
 
     /**
      * private methods and classes
+     */
+    /**
+     * Generate the xySeries for a plot.
+     *
+     * @param coordinatesToPlot
+     * @return
      */
     private XYSeries generateXYSeries(Double[][] coordinatesToPlot) {
         // transpose the matrix
@@ -302,8 +317,14 @@ public class TrackCoordinatesController {
         trackDataDialog.getUnshiftedParentPanel().add(unshiftedTrackChartPanel, gridBagConstraints);
         trackDataDialog.getShiftedParentPanel().add(shiftedTrackChartPanel, gridBagConstraints);
         // other binding properties
+        // autobind track number
+        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.track.trackNumber"), trackDataDialog.getTrackNumberTextField(), BeanProperty.create("text"), "tracknumberbinding");
+        bindingGroup.addBinding(binding);
         // autobind track length
-        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.track.trackLength"), trackDataDialog.getTrackLengthTextField(), BeanProperty.create("text"), "tracklengthbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.track.trackLength"), trackDataDialog.getTrackLengthTextField(), BeanProperty.create("text"), "tracklengthbinding");
+        bindingGroup.addBinding(binding);
+        // autobind track duration
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackDuration"), trackDataDialog.getDurationTextField(), BeanProperty.create("text"), "trackdurationbinding");
         bindingGroup.addBinding(binding);
         // number of points is bounded manually
         // autobind xmin
@@ -318,8 +339,11 @@ public class TrackCoordinatesController {
         // autobind ymax
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.yMax"), trackDataDialog.getyMaxTextField(), BeanProperty.create("text"), "ymaxbinding");
         bindingGroup.addBinding(binding);
-        // autobind track median displacement
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackMedianDisplacement"), trackDataDialog.getMedianDisplacementTextField(), BeanProperty.create("text"), "trackdisplacementbinding");
+        // autobind track mean displacement
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackMeanDisplacement"), trackDataDialog.getMeanDisplacementTextField(), BeanProperty.create("text"), "trackdisplacementbinding");
+        bindingGroup.addBinding(binding);
+        // autobind track mean speed
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackMeanSpeed"), trackDataDialog.getMeanSpeedTextField(), BeanProperty.create("text"), "trackspeedbinding");
         bindingGroup.addBinding(binding);
         // autobind accumulative distance
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.cumulativeDistance"), trackDataDialog.getCumDistanceTextField(), BeanProperty.create("text"), "cumdistancebinding");
@@ -464,14 +488,7 @@ public class TrackCoordinatesController {
             public void actionPerformed(ActionEvent e) {
                 TrackDataHolder trackDataHolder = (TrackDataHolder) trackCoordinatesPanel.getPlottedTracksJList().getSelectedValue();
                 if (trackDataHolder != null) {
-                    // plot the data associated with the current track
-                    plotSingleTrackData(trackDataHolder);
-                    // add manually information that cannot be auto-bind
-                    updateSomeInfoFields(trackDataHolder);
-                    // pack and show the dialog with the plots
-                    trackDataDialog.pack();
-                    GuiUtils.centerDialogOnFrame(singleCellPreProcessingController.getMainFrame(), trackDataDialog);
-                    trackDataDialog.setVisible(true);
+                    showTrackDataDialog(trackDataHolder);
                 }
             }
         });
@@ -511,6 +528,22 @@ public class TrackCoordinatesController {
     }
 
     /**
+     * Show the track data dialog for a certain track data holder selected.
+     *
+     * @param trackDataHolder
+     */
+    private void showTrackDataDialog(TrackDataHolder trackDataHolder) {
+        // plot the data associated with the current track
+        plotSingleTrackData(trackDataHolder);
+        // add manually information that cannot be auto-bind
+        updateSomeInfoFields(trackDataHolder);
+        // pack and show the dialog with the plots
+        trackDataDialog.pack();
+        GuiUtils.centerDialogOnFrame(singleCellPreProcessingController.getMainFrame(), trackDataDialog);
+        trackDataDialog.setVisible(true);
+    }
+
+    /**
      * Make the plots for the single track.
      *
      * @param trackDataHolder
@@ -529,14 +562,13 @@ public class TrackCoordinatesController {
      * @param trackDataHolder
      */
     private void updateSomeInfoFields(TrackDataHolder trackDataHolder) {
+        // the well to which the track belongs
+        Well well = trackDataHolder.getTrack().getWellHasImagingType().getWell();
+        trackDataDialog.getWellTextField().setText("" + well);
         // number of points during which a cell has been tracked
         // this can be different (smaller) than the length of a track, in this case, missing points are present
         int numberOfPoints = trackDataHolder.getTimeIndexes().length;
         trackDataDialog.getNumberOfPointsTextField().setText("" + numberOfPoints);
-        // track duration: (N-1) * deltaT, with deltaT the interval of the time-lapse experiment
-        Double experimentInterval = singleCellPreProcessingController.getExperiment().getExperimentInterval();
-        double trackDuration = (numberOfPoints -1) * experimentInterval;
-        trackDataDialog.getDurationTextField().setText("" + trackDuration);
         // net displacement in the x direction: xMax - xMin
         double xNetDisplacement = trackDataHolder.getxMax() - trackDataHolder.getxMin();
         trackDataDialog.getxNetDisplacementTextField().setText("" + xNetDisplacement);
@@ -572,7 +604,7 @@ public class TrackCoordinatesController {
         JFreeChart xtCoordinatesChart = ChartFactory.createXYLineChart(seriesKey + " - x over time", "time index", "x (µm)", xtSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         // set up the plot of the chart
         Range xRange = new Range(trackDataHolder.getxMin() - 15, trackDataHolder.getxMax() + 15);
-        JFreeChartUtils.setupSingleTrackPlot(xtCoordinatesChart, trackDataHolder, trackDataHolderBindingList.indexOf(trackDataHolder), xRange);
+        JFreeChartUtils.setupSingleTrackPlot(xtCoordinatesChart, trackDataHolderBindingList.indexOf(trackDataHolder), xRange);
         xtCoordinatesChart.getXYPlot().setBackgroundPaint(Color.lightGray);
         xtCoordinateChartPanel.setChart(xtCoordinatesChart);
         // we repeat exactly the same with the y coordinates in time
@@ -583,7 +615,7 @@ public class TrackCoordinatesController {
         JFreeChart ytCoordinatesChart = ChartFactory.createXYLineChart(seriesKey + " - y over time", "time index", "y (µm)", ytSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         // set up the plot of the chart
         Range yRange = new Range(trackDataHolder.getyMin() - 15, trackDataHolder.getyMax() + 15);
-        JFreeChartUtils.setupSingleTrackPlot(ytCoordinatesChart, trackDataHolder, trackDataHolderBindingList.indexOf(trackDataHolder), yRange);
+        JFreeChartUtils.setupSingleTrackPlot(ytCoordinatesChart, trackDataHolderBindingList.indexOf(trackDataHolder), yRange);
         ytCoordinatesChart.getXYPlot().setBackgroundPaint(Color.lightGray);
         ytCoordinateChartPanel.setChart(ytCoordinatesChart);
     }
@@ -655,8 +687,11 @@ public class TrackCoordinatesController {
     }
 
     /**
-     * Generate randomly the tracks to put into the plot.
+     * Generate randomly the tracks to put into the plot. This depends on the
+     * category we want to generate the plot from: 0 is the condition level,
+     * while 1 is the well level.
      *
+     * @param category
      */
     private void generateRandomTrackDataHolders(int category) {
         // check if tracks need to be generated from within the same well or not
@@ -671,22 +706,24 @@ public class TrackCoordinatesController {
     }
 
     /**
-     * Generate XYSeriesCollection for the tracks plot, given certain tracks to
-     * plot.
+     * Generate XYSeriesCollection for the tracks plot. This will depend on the
+     * data to plot: the raw coordinates (boolean is true) or the shifted to
+     * zero coordinates (boolean is false)?
      *
-     * @return
+     * @param useRawCoordinates
+     * @return a XYSeriesCollection
      */
     private XYSeriesCollection generateXYSeriesCollectionForPlot(boolean useRawCoordinates) {
         XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
         // the matrix to use is either the raw coordinates matrix or the shifted matrix
-        Double[][] trackCoordinatesMatrix;
+        Double[][] coordinatesMatrix;
         for (TrackDataHolder trackDataHolder : trackDataHolderBindingList) {
             if (useRawCoordinates) {
-                trackCoordinatesMatrix = trackDataHolder.getTrackCoordinatesMatrix();
+                coordinatesMatrix = trackDataHolder.getTrackCoordinatesMatrix();
             } else {
-                trackCoordinatesMatrix = trackDataHolder.getShiftedTrackCoordinates();
+                coordinatesMatrix = trackDataHolder.getShiftedTrackCoordinates();
             }
-            XYSeries xySeries = generateXYSeries(trackCoordinatesMatrix);
+            XYSeries xySeries = generateXYSeries(coordinatesMatrix);
             Track track = trackDataHolder.getTrack();
             int trackNumber = track.getTrackNumber();
             Well well = track.getWellHasImagingType().getWell();
@@ -734,6 +771,7 @@ public class TrackCoordinatesController {
             Double random = Math.random() * numberTracksForCurrentWell;
             int intValue = random.intValue();
             TrackDataHolder randomTrackDataHolder = trackHoldersForCurrentWell.get(intValue);
+            // make sure we do not use twice the same random track
             if (!trackDataHolderBindingList.contains(randomTrackDataHolder)) {
                 trackDataHolderBindingList.add(randomTrackDataHolder);
             } else {
@@ -743,7 +781,8 @@ public class TrackCoordinatesController {
     }
 
     /**
-     * Generate the random track holders across the wells of a condition.
+     * Generate the random track holders across random wells of a particular
+     * condition.
      */
     private void generateRandomTrackHoldersForCondition() {
         // get track holders for current condition
@@ -774,6 +813,7 @@ public class TrackCoordinatesController {
             Double random = Math.random() * trackNumberForCondition;
             int intValue = random.intValue();
             TrackDataHolder randomTrackDataHolder = trackHoldersForCurrentCondition.get(intValue);
+            // make sure we do not use twice the same random track
             if (!trackDataHolderBindingList.contains(randomTrackDataHolder)) {
                 trackDataHolderBindingList.add(randomTrackDataHolder);
             } else {
@@ -783,8 +823,9 @@ public class TrackCoordinatesController {
     }
 
     /**
-     * The default number of tracks to be plotted is 10; if the maw available
-     * number of tracks is less than 10, the default is decreased.
+     * The default number of tracks to be plotted is 10; if the max available
+     * number of tracks is less than 10, the default is decreased, until we get
+     * the right number of tracks.
      *
      * @param maxTracks
      * @return the default number
@@ -825,6 +866,7 @@ public class TrackCoordinatesController {
      */
     private List<TrackDataHolder> getTrackHoldersForCurrentCondition() {
         PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+        // through the map, we get the pre processing results for the current condition
         SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(currentCondition);
         return singleCellPreProcessingResults.getTrackDataHolders();
     }

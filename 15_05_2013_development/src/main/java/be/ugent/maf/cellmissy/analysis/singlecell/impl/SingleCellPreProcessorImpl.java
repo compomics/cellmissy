@@ -66,6 +66,20 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
+    public void generateTimeIndexes(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.generateTimeIndexes(trackDataHolder);
+        }
+    }
+
+    @Override
+    public void generateTrackDurations(Double timeLapse, SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.computeTrackDuration(timeLapse, trackDataHolder);
+        }
+    }
+
+    @Override
     public void generateRawTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults, double conversionFactor) {
         Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
         Double[][] rawTrackCoordinatesMatrix = new Double[dataStructure.length][2];
@@ -124,20 +138,13 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     public void generateTrackDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
         Double[] trackDisplacementsVector = new Double[trackDataHolders.size()];
-        computeTrackMedianDisplacement(singleCellPreProcessingResults);
+        computeTrackMeanDisplacement(singleCellPreProcessingResults);
         for (int i = 0; i < trackDisplacementsVector.length; i++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double trackMedianDisplacement = trackDataHolder.getTrackMedianDisplacement();
-            trackDisplacementsVector[i] = trackMedianDisplacement;
+            double trackMeanDisplacement = trackDataHolder.getTrackMeanDisplacement();
+            trackDisplacementsVector[i] = trackMeanDisplacement;
         }
         singleCellPreProcessingResults.setTrackDisplacementsVector(trackDisplacementsVector);
-    }
-
-    @Override
-    public void generateTimeIndexes(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.generateTimeIndexes(trackDataHolder);
-        }
     }
 
     @Override
@@ -164,6 +171,20 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
             euclideanDistancesVector[i] = euclideanDistance;
         }
         singleCellPreProcessingResults.setEuclideanDistancesVector(euclideanDistancesVector);
+    }
+
+    @Override
+    public void generateTrackSpeedsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+        Double[] trackDisplacementsVector = singleCellPreProcessingResults.getTrackDisplacementsVector();
+        computeTrackMeanSpeed(singleCellPreProcessingResults);
+        Double[] trackSpeedsVector = new Double[trackDisplacementsVector.length];
+        for (int i = 0; i < trackDisplacementsVector.length; i++) {
+            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
+            double trackMeanSpeed = trackDataHolder.getTrackMeanSpeed();
+            trackSpeedsVector[i] = trackMeanSpeed;
+        }
+        singleCellPreProcessingResults.setTrackSpeedsVector(trackSpeedsVector);
     }
 
     @Override
@@ -267,13 +288,24 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     /**
-     * Compute the track velocity for each track data holder.
+     * Compute the median displacement for each track data holder.
      *
      * @param singleCellPreProcessingResults
      */
-    private void computeTrackMedianDisplacement(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    private void computeTrackMeanDisplacement(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeTrackMedianDisplacement(trackDataHolder);
+            trackOperator.computeTrackMeanDisplacement(trackDataHolder);
+        }
+    }
+
+    /**
+     * Compute the median track speed.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    private void computeTrackMeanSpeed(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.computeTrackMeanSpeed(trackDataHolder);
         }
     }
 

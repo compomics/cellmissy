@@ -454,7 +454,7 @@ public class SingleCellMainController {
         // instrument
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metadataSingleCellPanel.getExperimentsList(), BeanProperty.create("selectedElement.instrument.name"), metadataSingleCellPanel.getInstrumentTextField(), BeanProperty.create("text"), "instrumentbinding");
         bindingGroup.addBinding(binding);
-        // resolution
+        // magnification
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metadataSingleCellPanel.getExperimentsList(), BeanProperty.create("selectedElement.magnification.magnificationNumber"), metadataSingleCellPanel.getMagnificationTextField(), BeanProperty.create("text"), "magnificationbinding");
         bindingGroup.addBinding(binding);
         // exp time frames
@@ -734,11 +734,13 @@ public class SingleCellMainController {
                 highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocitiesLabel());
                 resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getInspectingDataLabel());
                 resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesLabel());
-                showInfoMessage("Single Cell Speeds");
+                showInfoMessage("Single Cell Displacements and Speeds");
                 // check which button is selected for analysis
-                if (singleCellPreProcessingController.getSpeedsPanel().getInstantaneousSpeedsRadioButton().isSelected()) {
+                if (singleCellPreProcessingController.getSpeedsPanel().getInstantaneousDisplRadioButton().isSelected()) {
                     singleCellPreProcessingController.showInstantaneousSpeedsInTable(currentCondition);
-                } else {
+                } else if (singleCellPreProcessingController.getSpeedsPanel().getTrackDisplRadioButton().isSelected()) {
+                    singleCellPreProcessingController.showTrackDisplInTable(currentCondition);
+                } else if (singleCellPreProcessingController.getSpeedsPanel().getTrackSpeedsRadioButton().isSelected()) {
                     singleCellPreProcessingController.showTrackSpeedsInTable(currentCondition);
                 }
                 break;

@@ -15,7 +15,7 @@ import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SpeedsPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplacementsPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -69,7 +69,7 @@ public class SingleCellPreProcessingController {
     @Autowired
     private TrackCoordinatesController trackCoordinatesController;
     @Autowired
-    private SpeedsController speedsController;
+    private DisplacementsController displacementsController;
     //services
     @Autowired
     private SingleCellPreProcessor singleCellPreProcessor;
@@ -85,7 +85,7 @@ public class SingleCellPreProcessingController {
         initSingleCellAnalysisPanel();
         // init child controllers
         trackCoordinatesController.init();
-        speedsController.init();
+        displacementsController.init();
     }
 
     /**
@@ -101,8 +101,8 @@ public class SingleCellPreProcessingController {
         return trackCoordinatesController.getTrackCoordinatesPanel();
     }
 
-    public SpeedsPanel getSpeedsPanel() {
-        return speedsController.getSpeedsPanel();
+    public DisplacementsPanel getSpeedsPanel() {
+        return displacementsController.getSpeedsPanel();
     }
 
     public ObservableList<Track> getTracksBindingList() {
@@ -154,11 +154,15 @@ public class SingleCellPreProcessingController {
     }
 
     public void showInstantaneousSpeedsInTable(PlateCondition plateCondition) {
-        speedsController.showInstantaneousSpeedsInTable(plateCondition);
+        displacementsController.showInstantaneousDisplInTable(plateCondition);
+    }
+
+    public void showTrackDisplInTable(PlateCondition plateCondition) {
+        displacementsController.showTrackDisplInTable(plateCondition);
     }
 
     public void showTrackSpeedsInTable(PlateCondition plateCondition) {
-        speedsController.showTrackSpeedsInTable(plateCondition);
+        displacementsController.showTrackSpeedsInTable(plateCondition);
     }
 
     public CellMissyFrame getMainFrame() {
@@ -210,11 +214,13 @@ public class SingleCellPreProcessingController {
         if (preProcessingMap.get(plateCondition) == null) {
             // create a new object to hold pre-processing results
             SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
-            // do computations
+            // fetch the track points from DB
             singleCellMainController.fetchTrackPoints(plateCondition);
+            // do computations
             singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition);
             singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTimeIndexes(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateTrackDurations(singleCellMainController.getExperiment().getExperimentInterval(), singleCellPreProcessingResults);
             singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, computeConversionFactor());
             singleCellPreProcessor.computeCoordinatesRanges(singleCellPreProcessingResults);
             singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
@@ -222,6 +228,7 @@ public class SingleCellPreProcessingController {
             singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTrackAnglesVector(singleCellPreProcessingResults);
@@ -359,7 +366,7 @@ public class SingleCellPreProcessingController {
         TrackCoordinatesUnitOfMeasurement coordinatesUnitOfMeasurement = singleCellMainController.getCoordinatesUnitOfMeasurement();
         if (coordinatesUnitOfMeasurement.equals(TrackCoordinatesUnitOfMeasurement.PIXELS)) {
             // conversion factor needs to be set according to conversion factor of instrument and magnification used
-            // actual conversion factor = instrument conversion factor x magnifiction / 10
+            // actual conversion factor = instrument conversion factor x magnification / 10
             Magnification magnification = currentExperiment.getMagnification();
             double instrumentConversionFactor = currentExperiment.getInstrument().getConversionFactor();
             double magnificationValue = magnification.getMagnificationValue();

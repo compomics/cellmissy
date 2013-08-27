@@ -370,9 +370,9 @@ public class AreaAnalysisController {
         for (int i = 0; i < meanSlopes.length; i++) {
             AreaAnalysisResults areaAnalysisResults = analysisMap.get(areaMainController.getPlateConditionList().get(conditionsToShow[i]));
             double meanSlope = areaAnalysisResults.getMeanSlope();
-            double madSlopes = areaAnalysisResults.getMadSlope();
+            double madSlope = areaAnalysisResults.getMadSlope();
             meanSlopes[i] = meanSlope;
-            semSlopes[i] = madSlopes;
+            semSlopes[i] = madSlope;
             dataset.add(meanSlopes[i], semSlopes[i], "Conditions", "Condition " + (conditionsToShow[i] + 1));
         }
         return dataset;

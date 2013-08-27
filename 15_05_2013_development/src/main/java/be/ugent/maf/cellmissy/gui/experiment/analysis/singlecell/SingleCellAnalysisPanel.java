@@ -78,9 +78,10 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         velocitiesLabel = new javax.swing.JLabel();
         bottomPanel = new javax.swing.JPanel();
         inspectingDataPanel = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
         tracksScrollPane = new javax.swing.JScrollPane();
         tracksTable = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
         trackPointsScrollPane = new javax.swing.JScrollPane();
         trackPointsTable = new javax.swing.JTable();
         trackCoordinatesParentPanel = new javax.swing.JPanel();
@@ -147,8 +148,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         inspectingDataPanel.setName("inspectingDataPanel"); // NOI18N
         inspectingDataPanel.setOpaque(false);
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
-        jLabel3.setText("Tracking results from DB");
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Tracks from DB"));
 
         tracksTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -163,6 +163,25 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         ));
         tracksScrollPane.setViewportView(tracksTable);
 
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tracksScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 985, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tracksScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Track Points for selected track"));
+
         trackPointsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -176,29 +195,41 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         ));
         trackPointsScrollPane.setViewportView(trackPointsTable);
 
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(trackPointsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 985, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(trackPointsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout inspectingDataPanelLayout = new javax.swing.GroupLayout(inspectingDataPanel);
         inspectingDataPanel.setLayout(inspectingDataPanelLayout);
         inspectingDataPanelLayout.setHorizontalGroup(
             inspectingDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, inspectingDataPanelLayout.createSequentialGroup()
+            .addGroup(inspectingDataPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(inspectingDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(tracksScrollPane)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, inspectingDataPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 860, Short.MAX_VALUE))
-                    .addComponent(trackPointsScrollPane, javax.swing.GroupLayout.Alignment.LEADING))
+                .addGroup(inspectingDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         inspectingDataPanelLayout.setVerticalGroup(
             inspectingDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(inspectingDataPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tracksScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(trackPointsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -234,7 +265,8 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JLabel inspectingDataLabel;
     private javax.swing.JPanel inspectingDataPanel;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel topPanel;
     private javax.swing.JLabel trackCoordinatesLabel;
     private javax.swing.JPanel trackCoordinatesParentPanel;

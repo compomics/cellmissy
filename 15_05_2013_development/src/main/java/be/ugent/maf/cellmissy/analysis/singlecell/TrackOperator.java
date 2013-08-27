@@ -22,6 +22,15 @@ public interface TrackOperator {
     public void generateTimeIndexes(TrackDataHolder trackDataHolder);
 
     /**
+     * Compute the duration of a track; this will depend on the time interval
+     * between successive frames in the time-lapse experiment.
+     *
+     * @param timeLapse
+     * @param trackDataHolder
+     */
+    public void computeTrackDuration(Double timeLapse, TrackDataHolder trackDataHolder);
+
+    /**
      * Generate Track Point Matrix for a track. This is already scaling
      * according to the conversion factor, going from pixels to micrometers. If
      * the conversion factor is equal to one, data was already in micrometers
@@ -66,7 +75,7 @@ public interface TrackOperator {
      *
      * @param trackDataHolder
      */
-    public void computeTrackMedianDisplacement(TrackDataHolder trackDataHolder);
+    public void computeTrackMeanDisplacement(TrackDataHolder trackDataHolder);
 
     /**
      * Compute cumulative distance between start and end point of track. This is
@@ -84,6 +93,13 @@ public interface TrackOperator {
      * @param trackDataHolder
      */
     public void computeEuclideanDistance(TrackDataHolder trackDataHolder);
+
+    /**
+     * Compute track median speed.F
+     *
+     * @param trackDataHolder
+     */
+    public void computeTrackMeanSpeed(TrackDataHolder trackDataHolder);
 
     /**
      * Compute directionality of a certain track as the ratio between the
