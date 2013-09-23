@@ -44,7 +44,6 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 public class Playground {
 
     public static void main(String[] args) {
-        Map<PlateCondition, SingleCellPreProcessingResults> preProcessingMap = new LinkedHashMap<>();
 
         // get the application context
         ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
@@ -52,117 +51,136 @@ public class Playground {
         ExperimentService experimentService = (ExperimentService) context.getBean("experimentService");
         WellService wellService = (WellService) context.getBean("wellService");
         SingleCellPreProcessor singleCellPreProcessor = (SingleCellPreProcessor) context.getBean("singleCellPreProcessor");
+        // get all the experiments from DB
+        List<Experiment> experiments = experimentService.findAll();
+        for (Experiment experiment : experiments) {
+//        Experiment experiment = experimentService.findById(21L);
+            Project project = experiment.getProject();
+            // make the folders
+            File file = new File("C:\\Users\\paola\\Desktop\\singleCell_outFiles\\median_displacements");
+            File trackFolder = new File(file, project + "_" + experiment + "_" + "trackFiles");
+            trackFolder.mkdir();
+            File globalFolder = new File(file, project + "_" + experiment + "_" + "globalFiles");
+            globalFolder.mkdir();
 
-        // get the experiment
-        Experiment experiment = experimentService.findById(50L);
-        Project project = experiment.getProject();
-
-        // make the folders
-        File file = new File("C:\\Users\\paola\\Desktop\\singleCell_outFiles");
-        File trackFolder = new File(file, project + "_" + experiment + "_" + "trackFiles");
-        trackFolder.mkdir();
-        File globalFolder = new File(file, project + "_" + experiment + "_" + "globalFiles");
-        globalFolder.mkdir();
-
-        // fetch the migration data
-        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
-            List<Well> wells = new ArrayList<>();
-            for (Well well : plateCondition.getWellList()) {
-                Well fetchedWell = wellService.fetchMigrationData(well.getWellid());
-                wells.add(fetchedWell);
-            }
-            plateCondition.setWellList(wells);
-            // create a new object to hold pre-processing results
-            SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
-            // do computations
-            singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition);
-            singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateTimeIndexes(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateTrackDurations(experiment.getExperimentInterval(), singleCellPreProcessingResults);
-            singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, 1.55038);
-            singleCellPreProcessor.computeCoordinatesRanges(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateTrackAnglesVector(singleCellPreProcessingResults);
-            preProcessingMap.put(plateCondition, singleCellPreProcessingResults);
-        }
-
-        // we create a file for each condition
-        for (PlateCondition plateCondition : preProcessingMap.keySet()) {
-            String name1 = "trackFile_" + project + "_" + experiment + "_" + plateCondition + ".txt";
-            SingleCellPreProcessingResults singleCellPreProcessingResults = preProcessingMap.get(plateCondition);
-            Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-            Double[][] rawTrackCoordinatesMatrix = singleCellPreProcessingResults.getRawTrackCoordinatesMatrix();
-            Double[][] shiftedTrackCoordinatesMatrix = singleCellPreProcessingResults.getShiftedTrackCoordinatesMatrix();
-            Double[] instantaneousDisplacementsVector = singleCellPreProcessingResults.getInstantaneousDisplacementsVector();
-            Double[] turningAnglesVector = singleCellPreProcessingResults.getTurningAnglesVector();
-            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(trackFolder, name1)))) {
-                // HEADER
-                bufferedWriter.append("well" + "\t" + "track" + "\t" + "timeIndex" + "\t" + "x" + "\t" + "y" + "\t" + "shiftX" + "\t" + "shiftY" + "\t" + "instDispl" + "\t" + "turningAngle");
-                bufferedWriter.newLine();
-                for (int row = 0; row < dataStructure.length; row++) {
-                    Object[] currentRow = dataStructure[row];
-                    for (int column = 0; column < currentRow.length; column++) {
-                        bufferedWriter.append(currentRow[column].toString());
-                        bufferedWriter.append("\t");
-                    }
-                    bufferedWriter.append(rawTrackCoordinatesMatrix[row][0].toString());
-                    bufferedWriter.append("\t");
-                    bufferedWriter.append(rawTrackCoordinatesMatrix[row][1].toString());
-                    bufferedWriter.append("\t");
-                    bufferedWriter.append(shiftedTrackCoordinatesMatrix[row][0].toString());
-                    bufferedWriter.append("\t");
-                    bufferedWriter.append(shiftedTrackCoordinatesMatrix[row][1].toString());
-                    bufferedWriter.append("\t");
-                    if (instantaneousDisplacementsVector[row] != null) {
-                        bufferedWriter.append(instantaneousDisplacementsVector[row].toString());
-                    }
-                    bufferedWriter.append("\t");
-                    if (turningAnglesVector[row] != null) {
-                        bufferedWriter.append(turningAnglesVector[row].toString());
-                    }
-                    bufferedWriter.newLine();
+            // fetch the migration data
+            for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+                List<Well> wells = new ArrayList<>();
+                for (Well well : plateCondition.getWellList()) {
+                    Well fetchedWell = wellService.fetchMigrationData(well.getWellid());
+                    wells.add(fetchedWell);
                 }
-            } catch (IOException ex) {
-                Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
+                plateCondition.setWellList(wells);
             }
-            String name2 = "globalFile_" + project + "_" + experiment + "_" + plateCondition + ".txt";
-            List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(globalFolder, name2)))) {
-                // HEADER
-                bufferedWriter.append("well" + "\t" + "track" + "\t" + "cumDist" + "\t" + "euclDist" + "\t" + "directionality" + "\t" + "meanDispl" + "\t" + "meanSpeed" + "\t" + "meanTurningAngle");
-                bufferedWriter.newLine();
-                for (TrackDataHolder trackDataHolder : trackDataHolders) {
-                    bufferedWriter.append(trackDataHolder.getTrack().getWellHasImagingType().getWell().toString());
-                    bufferedWriter.append("\t");
-                    bufferedWriter.append("" + trackDataHolder.getTrack().getTrackNumber());
-                    bufferedWriter.append("\t");
-                    bufferedWriter.append("" + trackDataHolder.getCumulativeDistance());
-                    bufferedWriter.append("\t");
-                    bufferedWriter.append("" + trackDataHolder.getEuclideanDistance());
-                    bufferedWriter.append("\t");
-                    bufferedWriter.append("" + trackDataHolder.getDirectionality());
-                    bufferedWriter.append("\t");
-                    bufferedWriter.append("" + trackDataHolder.getTrackMeanDisplacement());
-                    bufferedWriter.append("\t");
-                    bufferedWriter.append("" + trackDataHolder.getTrackMeanSpeed());
-                    bufferedWriter.append("\t");
-                    bufferedWriter.append("" + trackDataHolder.getTrackAngle());
-                    bufferedWriter.newLine();
+            List<Algorithm> algorithms = experimentService.getAlgorithms(experiment);
+            List<ImagingType> imagingTypes = experimentService.getImagingTypes(experiment);
+
+            for (Algorithm algorithm : algorithms) {
+                for (ImagingType imagingType : imagingTypes) {
+                    //**************************************************************************
+                    File trackDataFolder = new File(trackFolder, project + "_" + experiment + "_" + "trackFiles_" + algorithm + "_" + imagingType);
+                    trackDataFolder.mkdir();
+                    //**************************************************************************
+                    File globalDataFolder = new File(globalFolder, project + "_" + experiment + "_" + "globalFiles" + algorithm + "_" + imagingType);
+                    globalDataFolder.mkdir();
+
+                    for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+                        for (int i = 0; i < plateCondition.getWellList().size(); i++) {
+                            Well get = plateCondition.getWellList().get(i);
+                            //fetch tracks collection for the wellhasimagingtype of interest
+                            wellService.fetchTracks(get, algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
+                            wellService.fetchTrackPoints(get, algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
+                        }
+                        // create a new object to hold pre-processing results
+                        SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
+                        // do computations
+                        singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition);
+                        singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateTimeIndexes(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateTrackDurations(experiment.getExperimentInterval(), singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, 1.55038);
+                        singleCellPreProcessor.computeCoordinatesRanges(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateTrackAnglesVector(singleCellPreProcessingResults);
+
+                        // we create a file for each condition
+                        String name1 = project + "_" + experiment + "_" + plateCondition + ".txt";
+                        Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
+                        Double[][] rawTrackCoordinatesMatrix = singleCellPreProcessingResults.getRawTrackCoordinatesMatrix();
+                        Double[][] shiftedTrackCoordinatesMatrix = singleCellPreProcessingResults.getShiftedTrackCoordinatesMatrix();
+                        Double[] instantaneousDisplacementsVector = singleCellPreProcessingResults.getInstantaneousDisplacementsVector();
+                        Double[] turningAnglesVector = singleCellPreProcessingResults.getTurningAnglesVector();
+                        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(trackDataFolder, name1)))) {
+                            // HEADER
+                            bufferedWriter.append("well" + "\t" + "track" + "\t" + "timeIndex" + "\t" + "x" + "\t" + "y" + "\t" + "shiftX" + "\t" + "shiftY" + "\t" + "instDispl" + "\t" + "turningAngle");
+                            bufferedWriter.newLine();
+                            for (int row = 0; row < dataStructure.length; row++) {
+                                Object[] currentRow = dataStructure[row];
+                                for (int column = 0; column < currentRow.length; column++) {
+                                    bufferedWriter.append(currentRow[column].toString());
+                                    bufferedWriter.append("\t");
+                                }
+                                bufferedWriter.append(rawTrackCoordinatesMatrix[row][0].toString());
+                                bufferedWriter.append("\t");
+                                bufferedWriter.append(rawTrackCoordinatesMatrix[row][1].toString());
+                                bufferedWriter.append("\t");
+                                bufferedWriter.append(shiftedTrackCoordinatesMatrix[row][0].toString());
+                                bufferedWriter.append("\t");
+                                bufferedWriter.append(shiftedTrackCoordinatesMatrix[row][1].toString());
+                                bufferedWriter.append("\t");
+                                if (instantaneousDisplacementsVector[row] != null) {
+                                    bufferedWriter.append(instantaneousDisplacementsVector[row].toString());
+                                }
+                                bufferedWriter.append("\t");
+                                if (turningAnglesVector[row] != null) {
+                                    bufferedWriter.append(turningAnglesVector[row].toString());
+                                }
+                                bufferedWriter.newLine();
+                            }
+                        } catch (IOException ex) {
+                            Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        String name2 = project + "_" + experiment + "_" + plateCondition + ".txt";
+                        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+                        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(globalDataFolder, name2)))) {
+                            // HEADER
+                            bufferedWriter.append("well" + "\t" + "track" + "\t" + "cumDist" + "\t" + "euclDist" + "\t" + "directionality" + "\t" + "medianDispl" + "\t" + "meanSpeed" + "\t" + "meanTurningAngle");
+                            bufferedWriter.newLine();
+                            for (TrackDataHolder trackDataHolder : trackDataHolders) {
+                                bufferedWriter.append(trackDataHolder.getTrack().getWellHasImagingType().getWell().toString());
+                                bufferedWriter.append("\t");
+                                bufferedWriter.append("" + trackDataHolder.getTrack().getTrackNumber());
+                                bufferedWriter.append("\t");
+                                bufferedWriter.append("" + trackDataHolder.getCumulativeDistance());
+                                bufferedWriter.append("\t");
+                                bufferedWriter.append("" + trackDataHolder.getEuclideanDistance());
+                                bufferedWriter.append("\t");
+                                bufferedWriter.append("" + trackDataHolder.getDirectionality());
+                                bufferedWriter.append("\t");
+                                bufferedWriter.append("" + trackDataHolder.getTrackMedianDisplacement());
+                                bufferedWriter.append("\t");
+                                bufferedWriter.append("" + trackDataHolder.getTrackMeanSpeed());
+                                bufferedWriter.append("\t");
+                                bufferedWriter.append("" + trackDataHolder.getTrackAngle());
+                                bufferedWriter.newLine();
+                            }
+                        } catch (IOException ex) {
+                            Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.out.println(project + "_" + experiment + "_" + plateCondition + " processed");
+                    }
+                    System.out.println("****" + project + "_" + experiment + "_" + algorithm + ", " + imagingType + " processed");
                 }
-            } catch (IOException ex) {
-                Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+            System.out.println("*-*-*-*-*" + project + "_" + experiment + " processed");
         }
-
-
         //        WellService wellService = (WellService) context.getBean("wellService");
         //        Experiment experiment = experimentService.findById(1L);
         //        ExperimentStatus experimentStatus = experiment.getExperimentStatus();
@@ -193,6 +211,5 @@ public class Playground {
         //        schemaExport.setFormat(true);
         //        schemaExport.execute(true, false, false, true);
         //        schemaExport.execute(true, false, false, true);
-
     }
 }

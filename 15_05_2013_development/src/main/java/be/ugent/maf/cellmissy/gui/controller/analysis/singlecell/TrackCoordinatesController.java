@@ -340,7 +340,7 @@ public class TrackCoordinatesController {
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.yMax"), trackDataDialog.getyMaxTextField(), BeanProperty.create("text"), "ymaxbinding");
         bindingGroup.addBinding(binding);
         // autobind track mean displacement
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackMeanDisplacement"), trackDataDialog.getMeanDisplacementTextField(), BeanProperty.create("text"), "trackdisplacementbinding");
+        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackMedianDisplacement"), trackDataDialog.getMeanDisplacementTextField(), BeanProperty.create("text"), "trackdisplacementbinding");
         bindingGroup.addBinding(binding);
         // autobind track mean speed
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackMeanSpeed"), trackDataDialog.getMeanSpeedTextField(), BeanProperty.create("text"), "trackspeedbinding");
@@ -730,8 +730,25 @@ public class TrackCoordinatesController {
             xySeries.setKey("track " + trackNumber + ", well " + well);
             xYSeriesCollection.addSeries(xySeries);
         }
-
         return xYSeriesCollection;
+    }
+
+    /**
+     * Get the number of same tracks that come from the same technical
+     * replicate; if it's more than 1, this means that multiple imaging
+     * locations have been taken into account inside a well.
+     *
+     * @return
+     */
+    private int getNumberOfSameTracks() {
+        int numberOfSameTracks = 1;
+        for (TrackDataHolder trackDataHolder : trackDataHolderBindingList) {
+            Track track = trackDataHolder.getTrack();
+            Well well = track.getWellHasImagingType().getWell();
+            int trackNumber = track.getTrackNumber();
+        }
+
+        return numberOfSameTracks;
     }
 
     /**

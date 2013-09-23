@@ -107,7 +107,7 @@ public class AnalysisUtils {
     }
 
     /**
-     * Round up to two decimals
+     * Round up to three decimals
      *
      * @param d
      * @return
@@ -117,7 +117,13 @@ public class AnalysisUtils {
         return Double.valueOf(threeForm.format(d));
     }
 
-      public static Double roundTwoDecimals(Double d) {
+    /**
+     * Round up to two decimals
+     *
+     * @param d
+     * @return
+     */
+    public static Double roundTwoDecimals(Double d) {
         DecimalFormat twoDForm = new DecimalFormat("###.##");
         return Double.valueOf(twoDForm.format(d));
     }
@@ -355,6 +361,5 @@ public class AnalysisUtils {
             }
         }
         return numberOfSamplesPerWell;
-
     }
 }

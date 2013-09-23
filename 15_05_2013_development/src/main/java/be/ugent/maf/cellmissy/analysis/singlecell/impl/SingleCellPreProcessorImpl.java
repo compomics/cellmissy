@@ -13,6 +13,7 @@ import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,7 +142,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         computeTrackMeanDisplacement(singleCellPreProcessingResults);
         for (int i = 0; i < trackDisplacementsVector.length; i++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double trackMeanDisplacement = trackDataHolder.getTrackMeanDisplacement();
+            double trackMeanDisplacement = trackDataHolder.getTrackMedianDisplacement();
             trackDisplacementsVector[i] = trackMeanDisplacement;
         }
         singleCellPreProcessingResults.setTrackDisplacementsVector(trackDisplacementsVector);
@@ -294,7 +295,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      */
     private void computeTrackMeanDisplacement(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeTrackMeanDisplacement(trackDataHolder);
+            trackOperator.computeTrackMedianDisplacement(trackDataHolder);
         }
     }
 

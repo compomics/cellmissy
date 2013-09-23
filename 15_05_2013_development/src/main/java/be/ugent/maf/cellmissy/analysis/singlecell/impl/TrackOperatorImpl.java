@@ -131,11 +131,11 @@ public class TrackOperatorImpl implements TrackOperator {
     }
 
     @Override
-    public void computeTrackMeanDisplacement(TrackDataHolder trackDataHolder) {
+    public void computeTrackMedianDisplacement(TrackDataHolder trackDataHolder) {
         Double[] instantaneousDisplacements = trackDataHolder.getInstantaneousDisplacements();
         Double[] excludeNullValues = AnalysisUtils.excludeNullValues(instantaneousDisplacements);
-        double trackMeanDisplacement = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(excludeNullValues));
-        trackDataHolder.setTrackMeanDisplacement(trackMeanDisplacement);
+        double trackMedianDisplacement = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
+        trackDataHolder.setTrackMedianDisplacement(trackMedianDisplacement);
     }
 
     @Override

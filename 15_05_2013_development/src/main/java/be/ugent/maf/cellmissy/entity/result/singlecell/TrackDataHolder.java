@@ -46,7 +46,7 @@ public class TrackDataHolder {
     private Double[] instantaneousDisplacements;
     // track median displacement
     // this is the median displacement computed from all time intervals throughout a track
-    private double trackMeanDisplacement;
+    private double trackMedianDisplacement;
     // track median speed
     // this is the track median displacement divided by the track duration (time interval in which the cell has been tracked)
     private double trackMeanSpeed;
@@ -171,12 +171,12 @@ public class TrackDataHolder {
         this.instantaneousDisplacements = instantaneousDisplacements;
     }
 
-    public double getTrackMeanDisplacement() {
-        return trackMeanDisplacement;
+    public double getTrackMedianDisplacement() {
+        return trackMedianDisplacement;
     }
 
-    public void setTrackMeanDisplacement(double trackMeanDisplacement) {
-        this.trackMeanDisplacement = trackMeanDisplacement;
+    public void setTrackMedianDisplacement(double trackMedianDisplacement) {
+        this.trackMedianDisplacement = trackMedianDisplacement;
     }
 
     public double getTrackMeanSpeed() {

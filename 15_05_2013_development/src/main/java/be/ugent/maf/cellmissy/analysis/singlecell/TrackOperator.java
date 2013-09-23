@@ -75,7 +75,7 @@ public interface TrackOperator {
      *
      * @param trackDataHolder
      */
-    public void computeTrackMeanDisplacement(TrackDataHolder trackDataHolder);
+    public void computeTrackMedianDisplacement(TrackDataHolder trackDataHolder);
 
     /**
      * Compute cumulative distance between start and end point of track. This is

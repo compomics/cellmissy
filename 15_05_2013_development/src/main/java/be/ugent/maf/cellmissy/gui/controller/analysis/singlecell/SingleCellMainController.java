@@ -133,6 +133,11 @@ public class SingleCellMainController {
         initDataAnalysisPanel();
     }
 
+    /**
+     * Getters and setters
+     *
+     * @return
+     */
     public DataAnalysisPanel getDataAnalysisPanel() {
         return dataAnalysisPanel;
     }
@@ -189,8 +194,24 @@ public class SingleCellMainController {
         cellMissyController.setCursor(cursor);
     }
 
+    /**
+     * Handle unexpected errors through the main controller
+     *
+     * @param ex: the thrown exception
+     */
     public void handleUnexpectedError(Exception ex) {
         cellMissyController.handleUnexpectedError(ex);
+    }
+
+    /**
+     * The condition is loaded and plate view is refreshed with not imaged wells
+     * highlighted in gray
+     *
+     * @param plateCondition
+     */
+    public void showNotImagedWells(PlateCondition plateCondition) {
+        plateCondition.setLoaded(true);
+        analysisPlatePanel.repaint();
     }
 
     /**
@@ -220,7 +241,7 @@ public class SingleCellMainController {
 
     /**
      * Update track points list with objects from a selected track in upper
-     * table
+     * table.
      *
      * @param plateCondition
      * @param selectedTrack
@@ -230,7 +251,8 @@ public class SingleCellMainController {
         if (!singleCellPreProcessingController.getTrackPointsBindingList().isEmpty()) {
             singleCellPreProcessingController.getTrackPointsBindingList().clear();
         }
-        for (Well well : plateCondition.getWellList()) {
+        // get only the wells that have been imaged
+        for (Well well : plateCondition.getImagedWells()) {
             for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
                 for (Track track : wellHasImagingType.getTrackList()) {
                     if (track.equals(selectedTrack)) {
@@ -674,7 +696,8 @@ public class SingleCellMainController {
                     onCardSwitch();
                 }
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                // the condition is loaded and plate view is refreshed
+                // the condition is loaded, and plate view is refreshed
+                showNotImagedWells(currentCondition);
                 showWellsForCurrentCondition(currentCondition);
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);

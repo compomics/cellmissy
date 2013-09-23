@@ -239,6 +239,8 @@ public class WellServiceImpl implements WellService {
                 wellHasImagingTypeList.add(wellHasImagingType);
             }
             well.setWellHasImagingTypeList(wellHasImagingTypeList);
+        } else {
+            well.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
         }
     }
 
