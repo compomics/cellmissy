@@ -717,6 +717,8 @@ public class TrackCoordinatesController {
         XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
         // the matrix to use is either the raw coordinates matrix or the shifted matrix
         Double[][] coordinatesMatrix;
+        // this is not the best way to fix this multiple locations issue, but for the moment fair enough !!
+        int counter = 0;
         for (TrackDataHolder trackDataHolder : trackDataHolderBindingList) {
             if (useRawCoordinates) {
                 coordinatesMatrix = trackDataHolder.getTrackCoordinatesMatrix();
@@ -727,7 +729,32 @@ public class TrackCoordinatesController {
             Track track = trackDataHolder.getTrack();
             int trackNumber = track.getTrackNumber();
             Well well = track.getWellHasImagingType().getWell();
-            xySeries.setKey("track " + trackNumber + ", well " + well);
+            String key;
+//            // we check here for the key to assign
+//            int numberOfSameTracks = getNumberOfSameTracks(trackDataHolder);
+//            // if we only have one track with the same number inside the same well, we assign the key normally
+//            if (numberOfSameTracks == 1) {
+//                key = "track " + trackNumber + ", well " + well;
+//            } else {
+//                int label = 0;
+//                for (int i = counter; i < counter + numberOfSameTracks; i++) {
+//                    // otherwise, we need to count the tracks with the same number inside the same well
+//                    key = "track " + trackNumber + ", well " + well + ", " + (label + 1);
+//                    label++;
+//                }
+//                counter++;
+//            }
+            key = "track " + trackNumber + ", well " + well;
+            // we check here if the collection already contains this key
+            int seriesIndex = xYSeriesCollection.getSeriesIndex(key);
+            if (seriesIndex == -1) {
+                key = "track " + trackNumber + ", well " + well;
+            } else {
+                // should be able to get the number of the series already present !!
+                key = "track " + trackNumber + ", well " + well + ", " + (counter + 1);
+                counter++;
+            }
+            xySeries.setKey(key);
             xYSeriesCollection.addSeries(xySeries);
         }
         return xYSeriesCollection;
@@ -740,14 +767,18 @@ public class TrackCoordinatesController {
      *
      * @return
      */
-    private int getNumberOfSameTracks() {
-        int numberOfSameTracks = 1;
-        for (TrackDataHolder trackDataHolder : trackDataHolderBindingList) {
-            Track track = trackDataHolder.getTrack();
-            Well well = track.getWellHasImagingType().getWell();
-            int trackNumber = track.getTrackNumber();
+    private int getNumberOfSameTracks(TrackDataHolder trackDataHolderToCheckFor) {
+        // initialize the number to 0
+        int numberOfSameTracks = 0;
+        Track trackToCheckFor = trackDataHolderToCheckFor.getTrack();
+        // iterate through our list and check
+        for (TrackDataHolder currentTrackDataHolder : trackDataHolderBindingList) {
+            Track currentTrack = currentTrackDataHolder.getTrack();
+            // we check for the well and for the number of the track
+            if (currentTrack.getWellHasImagingType().getWell().equals(trackToCheckFor.getWellHasImagingType().getWell()) && currentTrack.getTrackNumber() == trackToCheckFor.getTrackNumber()) {
+                numberOfSameTracks++;
+            }
         }
-
         return numberOfSameTracks;
     }
 
