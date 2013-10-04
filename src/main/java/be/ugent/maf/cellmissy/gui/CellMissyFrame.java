@@ -72,12 +72,12 @@ public class CellMissyFrame extends javax.swing.JFrame {
         return genericInputMenuItem;
     }
 
-    public JPanel getAreaAnalysisParentPanel() {
-        return areaAnalysisParentPanel;
+    public JPanel getAnalysisExperimentParentPanel() {
+        return analysisExperimentParentPanel;
     }
 
-    public JPanel getSingleCellAnalysisParentPanel() {
-        return singleCellAnalysisParentPanel;
+    public JMenuItem getDataAnalysisMenuItem() {
+        return dataAnalysisMenuItem;
     }
 
     public JPanel getLoadFromCellMiaParentPanel() {
@@ -90,14 +90,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
     public JPanel getSetupExperimentParentPanel() {
         return setupExperimentParentPanel;
-    }
-
-    public JMenuItem getAreaMenuItem() {
-        return areaMenuItem;
-    }
-
-    public JMenuItem getSingleCellMenuItem() {
-        return singleCellMenuItem;
     }
 
     public JPanel getHomeParentPanel() {
@@ -146,8 +138,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
         setupExperimentParentPanel = new javax.swing.JPanel();
         loadFromCellMiaParentPanel = new javax.swing.JPanel();
         loadFromGenericInputParentPanel = new javax.swing.JPanel();
-        areaAnalysisParentPanel = new javax.swing.JPanel();
-        singleCellAnalysisParentPanel = new javax.swing.JPanel();
+        analysisExperimentParentPanel = new javax.swing.JPanel();
         cellMissyMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newExperimentMenuItem = new javax.swing.JMenuItem();
@@ -156,9 +147,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
         genericInputMenuItem = new javax.swing.JMenuItem();
         cellMiaMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
-        dataAnalysisMenu = new javax.swing.JMenu();
-        areaMenuItem = new javax.swing.JMenuItem();
-        singleCellMenuItem = new javax.swing.JMenuItem();
+        dataAnalysisMenuItem = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         overviewMenuItem = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
@@ -280,18 +269,12 @@ public class CellMissyFrame extends javax.swing.JFrame {
         loadFromGenericInputParentPanel.getAccessibleContext().setAccessibleName("loadFromGenericInputParentPanel");
         loadFromGenericInputParentPanel.getAccessibleContext().setAccessibleDescription("");
 
-        areaAnalysisParentPanel.setBackground(new java.awt.Color(255, 255, 255));
-        areaAnalysisParentPanel.setName("areaAnalysisParentPanel"); // NOI18N
-        areaAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
-        backgroundPanel.add(areaAnalysisParentPanel, "areaAnalysisParentPanel");
-        areaAnalysisParentPanel.getAccessibleContext().setAccessibleName("areaAnalysisParentPanel");
-        areaAnalysisParentPanel.getAccessibleContext().setAccessibleDescription("");
-
-        singleCellAnalysisParentPanel.setName("singleCellAnalysisParentPanel"); // NOI18N
-        singleCellAnalysisParentPanel.setOpaque(false);
-        singleCellAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
-        backgroundPanel.add(singleCellAnalysisParentPanel, "singleCellAnalysisParentPanel");
-        singleCellAnalysisParentPanel.getAccessibleContext().setAccessibleName("singleCellAnalysisParentPanel");
+        analysisExperimentParentPanel.setBackground(new java.awt.Color(255, 255, 255));
+        analysisExperimentParentPanel.setName("analysisExperimentParentPanel"); // NOI18N
+        analysisExperimentParentPanel.setLayout(new java.awt.GridBagLayout());
+        backgroundPanel.add(analysisExperimentParentPanel, "analysisExperimentParentPanel");
+        analysisExperimentParentPanel.getAccessibleContext().setAccessibleName("analysisExperimentParentPanel");
+        analysisExperimentParentPanel.getAccessibleContext().setAccessibleDescription("");
 
         cellMissyMenuBar.setBackground(java.awt.Color.white);
         cellMissyMenuBar.setAlignmentY(0.5F);
@@ -323,15 +306,8 @@ public class CellMissyFrame extends javax.swing.JFrame {
         fileMenu.add(loadDataMenu);
         fileMenu.add(jSeparator4);
 
-        dataAnalysisMenu.setText("Data Analysis...");
-
-        areaMenuItem.setText("...area");
-        dataAnalysisMenu.add(areaMenuItem);
-
-        singleCellMenuItem.setText("...single cell");
-        dataAnalysisMenu.add(singleCellMenuItem);
-
-        fileMenu.add(dataAnalysisMenu);
+        dataAnalysisMenuItem.setText("Data Analysis");
+        fileMenu.add(dataAnalysisMenuItem);
         fileMenu.add(jSeparator5);
 
         overviewMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
@@ -444,13 +420,12 @@ public class CellMissyFrame extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
-    private javax.swing.JPanel areaAnalysisParentPanel;
-    private javax.swing.JMenuItem areaMenuItem;
+    private javax.swing.JPanel analysisExperimentParentPanel;
     private javax.swing.JMenuItem assayMenuItem;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JMenuItem cellMiaMenuItem;
     private javax.swing.JMenuBar cellMissyMenuBar;
-    private javax.swing.JMenu dataAnalysisMenu;
+    private javax.swing.JMenuItem dataAnalysisMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenuItem exportExperimentMenuItem;
@@ -483,8 +458,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem overviewMenuItem;
     private javax.swing.JMenuItem plateMenuItem;
     private javax.swing.JPanel setupExperimentParentPanel;
-    private javax.swing.JPanel singleCellAnalysisParentPanel;
-    private javax.swing.JMenuItem singleCellMenuItem;
     private javax.swing.JMenuItem userMenuItem;
     // End of variables declaration//GEN-END:variables
 }
