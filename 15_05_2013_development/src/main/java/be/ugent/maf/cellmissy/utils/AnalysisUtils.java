@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.utils;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import java.text.DecimalFormat;
@@ -361,5 +362,25 @@ public class AnalysisUtils {
             }
         }
         return numberOfSamplesPerWell;
+    }
+
+    /**
+     *
+     * @param well
+     * @return
+     */
+    public static List<Integer> getNumbersOfTrackPoints(Well well) {
+        List<Integer> list = new ArrayList<>();
+        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+            List<Track> trackList = wellHasImagingType.getTrackList();
+            int number = 0;
+            if (!trackList.isEmpty()) {
+                for (Track track : trackList) {
+                    number += track.getTrackPointList().size();
+                }
+                list.add(number);
+            }
+        }
+        return list;
     }
 }

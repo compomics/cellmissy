@@ -18,6 +18,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -52,12 +53,14 @@ public class Playground {
         WellService wellService = (WellService) context.getBean("wellService");
         SingleCellPreProcessor singleCellPreProcessor = (SingleCellPreProcessor) context.getBean("singleCellPreProcessor");
         // get all the experiments from DB
-        List<Experiment> experiments = experimentService.findAll();
+//        List<Experiment> experiments = experimentService.findAll();
+        // find the experiments by project id
+        List<Experiment> experiments = experimentService.findExperimentsByProjectId(1L);
         for (Experiment experiment : experiments) {
 //        Experiment experiment = experimentService.findById(21L);
             Project project = experiment.getProject();
             // make the folders
-            File file = new File("C:\\Users\\paola\\Desktop\\singleCell_outFiles\\median_displacements");
+            File file = new File("C:\\Users\\paola\\Desktop\\playground_outfiles");
             File trackFolder = new File(file, project + "_" + experiment + "_" + "trackFiles");
             trackFolder.mkdir();
             File globalFolder = new File(file, project + "_" + experiment + "_" + "globalFiles");
@@ -85,11 +88,13 @@ public class Playground {
                     globalDataFolder.mkdir();
 
                     for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+                        List<List<Integer>> numbersOfTrackPoints = new ArrayList<>();
                         for (int i = 0; i < plateCondition.getWellList().size(); i++) {
-                            Well get = plateCondition.getWellList().get(i);
+                            Well currentWell = plateCondition.getWellList().get(i);
                             //fetch tracks collection for the wellhasimagingtype of interest
-                            wellService.fetchTracks(get, algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
-                            wellService.fetchTrackPoints(get, algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
+                            wellService.fetchTracks(currentWell, algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
+                            wellService.fetchTrackPoints(currentWell, algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
+                            numbersOfTrackPoints.add(AnalysisUtils.getNumbersOfTrackPoints(currentWell));
                         }
                         // create a new object to hold pre-processing results
                         SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
@@ -119,30 +124,40 @@ public class Playground {
                         Double[] turningAnglesVector = singleCellPreProcessingResults.getTurningAnglesVector();
                         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(trackDataFolder, name1)))) {
                             // HEADER
-                            bufferedWriter.append("well" + "\t" + "track" + "\t" + "timeIndex" + "\t" + "x" + "\t" + "y" + "\t" + "shiftX" + "\t" + "shiftY" + "\t" + "instDispl" + "\t" + "turningAngle");
+                            bufferedWriter.append("well" + "\t" + "track" + "\t" + "time" + "\t" + "location" + "\t" + "x" + "\t" + "y" + "\t" + "shiftX" + "\t" + "shiftY" + "\t" + "instDispl" + "\t" + "turningAngle");
                             bufferedWriter.newLine();
-                            for (int row = 0; row < dataStructure.length; row++) {
-                                Object[] currentRow = dataStructure[row];
-                                for (int column = 0; column < currentRow.length; column++) {
-                                    bufferedWriter.append(currentRow[column].toString());
-                                    bufferedWriter.append("\t");
+                            int counter = 0;
+                            for (List<Integer> list : numbersOfTrackPoints) {
+                                for (Integer currentNumber : list) {
+                                    for (int row = counter; row < counter + currentNumber; row++) {
+                                        // this is just the data structure
+                                        Object[] currentRow = dataStructure[row];
+                                        for (int column = 0; column < currentRow.length; column++) {
+                                            bufferedWriter.append(currentRow[column].toString());
+                                            bufferedWriter.append("\t");
+                                        }
+                                        bufferedWriter.append("" + (list.indexOf(currentNumber) + 1));
+                                        bufferedWriter.append("\t");
+                                        // this is the rest of the calculation
+                                        bufferedWriter.append(rawTrackCoordinatesMatrix[row][0].toString());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append(rawTrackCoordinatesMatrix[row][1].toString());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append(shiftedTrackCoordinatesMatrix[row][0].toString());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append(shiftedTrackCoordinatesMatrix[row][1].toString());
+                                        bufferedWriter.append("\t");
+                                        if (instantaneousDisplacementsVector[row] != null) {
+                                            bufferedWriter.append(instantaneousDisplacementsVector[row].toString());
+                                        }
+                                        bufferedWriter.append("\t");
+                                        if (turningAnglesVector[row] != null) {
+                                            bufferedWriter.append(turningAnglesVector[row].toString());
+                                        }
+                                        bufferedWriter.newLine();
+                                    }
+                                    counter += currentNumber;
                                 }
-                                bufferedWriter.append(rawTrackCoordinatesMatrix[row][0].toString());
-                                bufferedWriter.append("\t");
-                                bufferedWriter.append(rawTrackCoordinatesMatrix[row][1].toString());
-                                bufferedWriter.append("\t");
-                                bufferedWriter.append(shiftedTrackCoordinatesMatrix[row][0].toString());
-                                bufferedWriter.append("\t");
-                                bufferedWriter.append(shiftedTrackCoordinatesMatrix[row][1].toString());
-                                bufferedWriter.append("\t");
-                                if (instantaneousDisplacementsVector[row] != null) {
-                                    bufferedWriter.append(instantaneousDisplacementsVector[row].toString());
-                                }
-                                bufferedWriter.append("\t");
-                                if (turningAnglesVector[row] != null) {
-                                    bufferedWriter.append(turningAnglesVector[row].toString());
-                                }
-                                bufferedWriter.newLine();
                             }
                         } catch (IOException ex) {
                             Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
