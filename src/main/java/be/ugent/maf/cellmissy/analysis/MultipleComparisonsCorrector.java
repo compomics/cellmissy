@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisGroup;
 
 /**
  *
@@ -17,5 +17,5 @@ public interface MultipleComparisonsCorrector {
      *
      * @param analysisGroup
      */
-    public void correctForMultipleComparisons(AnalysisGroup analysisGroup);
+    public void correctForMultipleComparisons(AreaAnalysisGroup analysisGroup);
 }

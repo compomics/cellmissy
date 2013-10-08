@@ -52,11 +52,11 @@ public class TimeStep implements Serializable {
     private Long timeStepid;
     @Basic(optional = false)
     @Column(name = "time_step_sequence")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private int timeStepSequence;
     @Basic(optional = false)
     @Column(name = "area")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(value = EmptyDoubleXMLAdapter.class, type = double.class)
     private double area;
     @Basic(optional = true)

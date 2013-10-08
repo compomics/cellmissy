@@ -16,8 +16,8 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class FormatRenderer extends DefaultTableCellRenderer {
 
-    private Format formatter;
     private int alignment;
+    private Format formatter;
 
     public FormatRenderer(Format formatter, int alignment) {
         this.formatter = formatter;

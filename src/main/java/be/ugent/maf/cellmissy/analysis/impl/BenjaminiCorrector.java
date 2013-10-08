@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrector;
-import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisGroup;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,7 +22,7 @@ import org.apache.commons.math3.stat.ranking.NaturalRanking;
 public class BenjaminiCorrector implements MultipleComparisonsCorrector {
 
     @Override
-    public void correctForMultipleComparisons(AnalysisGroup analysisGroup) {
+    public void correctForMultipleComparisons(AreaAnalysisGroup analysisGroup) {
         Double[][] pValuesMatrix = analysisGroup.getpValuesMatrix();
         Double[][] adjustedPValuesMatrix = new Double[pValuesMatrix.length][pValuesMatrix.length];
         double[] adjustedPValues = adjustPValues(pValuesMatrix);

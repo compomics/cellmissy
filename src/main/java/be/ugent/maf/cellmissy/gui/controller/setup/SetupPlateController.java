@@ -212,16 +212,16 @@ public class SetupPlateController {
         //remove the rectangles from the map and call the repaint
         setupPlatePanel.getRectangles().get(plateCondition).clear();
         setupPlatePanel.repaint();
-        Collection<Well> wellCollection = plateCondition.getWellList();
+        List<Well> wellList = plateCondition.getWellList();
         // set to null the rectangles of the wellguis of this condition
         for (WellGui wellGui : setupPlatePanel.getWellGuiList()) {
-            for (Well well : wellCollection) {
+            for (Well well : wellList) {
                 if (wellGui.getWell().equals(well)) {
                     wellGui.setRectangle(null);
                 }
             }
         }
-        wellCollection.clear();
+        wellList.clear();
     }
 
     /**
@@ -439,7 +439,7 @@ public class SetupPlateController {
                 rectangle = new Rectangle(x, y, width, height);
                 if (rectangle.width != 0 || rectangle.height != 0) {
                     //if the selection of wells is valid (wells do not already have a condition set), add the rectangle to the map
-                    if (setupExperimentController.updateWellCollection(setupExperimentController.getCurrentCondition(), rectangle)) {
+                    if (setupExperimentController.updateWellList(setupExperimentController.getCurrentCondition(), rectangle)) {
                         setupPlatePanel.getRectangles().get(setupExperimentController.getCurrentCondition()).add(rectangle);
                         for (Well well : setupExperimentController.getCurrentCondition().getWellList()) {
                             if (well.getPlateCondition() == null) {

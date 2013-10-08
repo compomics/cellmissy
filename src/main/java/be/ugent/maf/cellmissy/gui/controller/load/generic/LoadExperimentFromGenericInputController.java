@@ -362,7 +362,7 @@ public class LoadExperimentFromGenericInputController {
         for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
             for (WellGui wellGui : genericImagedPlateController.getImagedPlatePanel().getWellGuiList()) {
 
-                //if the wellGui has a well with a NOT empty collection of wellHasImagingTypes, the well has been imaged
+                //if the wellGui has a well with a NOT empty List of wellHasImagingTypes, the well has been imaged
                 //if the wellGui has a rectangle, the well belongs to a certain condition
                 //only if these two conditions are true, motility data must be set and stored to DB
                 if (!wellGui.getWell().getWellHasImagingTypeList().isEmpty() && wellGui.getRectangle() != null) {
@@ -384,7 +384,7 @@ public class LoadExperimentFromGenericInputController {
                     for (Well well : plateCondition.getWellList()) {
                         //check for coordinates
                         if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
-                            //set collection of wellHasImagingType to the well of the plateCondition
+                            //set List of wellHasImagingType to the well of the plateCondition
                             List<WellHasImagingType> list = new ArrayList<>();
                             well.setWellHasImagingTypeList(list);
                         }

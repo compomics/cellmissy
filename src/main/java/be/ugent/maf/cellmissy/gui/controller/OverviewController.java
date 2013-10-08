@@ -41,7 +41,7 @@ import org.springframework.stereotype.Controller;
 public class OverviewController {
 
     private static final Logger LOG = Logger.getLogger(OverviewController.class);
-    // model
+    // model 
     private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
     private BindingGroup bindingGroup;
@@ -99,7 +99,7 @@ public class OverviewController {
         // customize dialog
         overviewDialog.setLocationRelativeTo(cellMissyController.getCellMissyFrame());
         // set cell renderer for experiments list
-        ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new ExperimentsOverviewListRenderer(true);
+        ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new  ExperimentsOverviewListRenderer(true);
         overviewDialog.getExperimentJList().setCellRenderer(experimentsOverviewListRenderer);
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
@@ -111,28 +111,28 @@ public class OverviewController {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    //init experimentJList
+                //init experimentJList
                     int selectedIndex = overviewDialog.getProjectJList().getSelectedIndex();
                     if (selectedIndex != -1) {
                         Project selectedProject = projectBindingList.get(selectedIndex);
-                        // set text for project description
-                        overviewDialog.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
-                        Long projectid = selectedProject.getProjectid();
-                        List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
-                        if (experimentNumbers != null) {
-                            List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
-                            experimentBindingList = (ObservableCollections.observableList(experimentList));
-                            JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, overviewDialog.getExperimentJList());
-                            bindingGroup.addBinding(jListBinding);
-                            bindingGroup.bind();
-                        } else {
-                            cellMissyController.showMessage("There are no experiments yet for this project!", "", JOptionPane.INFORMATION_MESSAGE);
-                            if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
-                                experimentBindingList.clear();
-                            }
+                    // set text for project description
+                    overviewDialog.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
+                    Long projectid = selectedProject.getProjectid();
+                    List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
+                    if (experimentNumbers != null) {
+                        List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
+                        experimentBindingList = (ObservableCollections.observableList(experimentList));
+                        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, overviewDialog.getExperimentJList());
+                        bindingGroup.addBinding(jListBinding);
+                        bindingGroup.bind();
+                    } else {
+                        cellMissyController.showMessage("There are no experiments yet for this project!", "", JOptionPane.INFORMATION_MESSAGE);
+                        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                            experimentBindingList.clear();
                         }
                     }
                 }
+            }
             }
         });
 
@@ -148,7 +148,7 @@ public class OverviewController {
                 if (selectedIndex != -1) {
                     // ask for confirmation
                     Object[] options = {"Yes", "No", "Cancel"};
-                    String message = "You are about to delete an experiment!" + "\n" + "Everything from this experiment will be deleted!" + " Continue?";
+                    String message = "You are about to delete an experiment!" + "\n" + "Everything from this experiment will be deleted!" + "Continue?";
                     int showOptionDialog = JOptionPane.showOptionDialog(overviewDialog, message, "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
                     // if YES, continue, else, do nothing
                     if (showOptionDialog == 0) {
@@ -190,7 +190,7 @@ public class OverviewController {
                 get();
                 // enable the delete button
                 overviewDialog.getDeleteExperimentButton().setEnabled(true);
-                //show back default cursor
+                //show back default cursor 
                 overviewDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 // show info message
                 cellMissyController.showMessage("Experiment was successfully deleted!", "experiment deleted", JOptionPane.INFORMATION_MESSAGE);

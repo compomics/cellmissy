@@ -50,11 +50,11 @@ public class Project implements Serializable {
     private Long projectid;
     @Basic(optional = false)
     @Column(name = "project_number", unique = true)
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private int projectNumber;
     @Basic(optional = true)
     @Column(name = "description")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String projectDescription;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")

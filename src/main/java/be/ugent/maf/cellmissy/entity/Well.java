@@ -50,10 +50,10 @@ public class Well implements Serializable {
     @XmlTransient
     private Long wellid;
     @Column(name = "column_number")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private Integer columnNumber;
     @Column(name = "row_number")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private Integer rowNumber;
     @OneToMany(mappedBy = "well", orphanRemoval = true)
     @XmlElementWrapper(name = "wellHasImagingTypes")

@@ -44,7 +44,7 @@ public class PdfUtils {
      * @param imageHeight
      * @return
      */
-    public static Image getImageFromChart(PdfWriter pdfWriter, JFreeChart chart, int imageWidth, int imageHeight) {
+    public static Image getImageFromJFreeChart(PdfWriter pdfWriter, JFreeChart chart, int imageWidth, int imageHeight) {
         Image imageFromChart = null;
         PdfContentByte contentByte = pdfWriter.getDirectContent();
         PdfTemplate template = contentByte.createTemplate(imageWidth, imageHeight);
@@ -77,7 +77,7 @@ public class PdfUtils {
         Graphics2D graphics = template.createGraphics(imageWidth, imageHeight);
         panel.printAll(graphics);
         graphics.dispose();
-        // wrap the pdfTemplate inside an image ensures better quality (pixels)
+        // wrap the pdfTemplate inside an image ensures better quality (pixels) 
         try {
             image = Image.getInstance(template);
         } catch (BadElementException ex) {
@@ -145,6 +145,7 @@ public class PdfUtils {
     /**
      * Set up the look of a PdfPTable.
      *
+     *
      * @param dataTable
      */
     public static void setUpPdfPTable(PdfPTable dataTable) {
@@ -178,6 +179,7 @@ public class PdfUtils {
 
     /**
      * Add a cell with coloured border to a table
+     *
      *
      * @param table
      * @param color

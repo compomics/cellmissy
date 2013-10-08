@@ -42,7 +42,7 @@ public class MatrixDimension implements Serializable {
     @XmlTransient
     private Long matrixDimensionid;
     @Column(name = "dimension")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String dimension;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "matrixDimension")

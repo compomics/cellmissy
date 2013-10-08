@@ -40,7 +40,6 @@ public class HelpDialog extends javax.swing.JDialog {
         setTitle("CellMissy - Help");
         setMinimumSize(new java.awt.Dimension(20, 20));
         setModal(true);
-        setPreferredSize(new java.awt.Dimension(400, 452));
         setResizable(false);
 
         helpEditorPane.setEditable(false);

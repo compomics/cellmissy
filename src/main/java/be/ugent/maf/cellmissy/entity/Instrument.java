@@ -49,12 +49,12 @@ public class Instrument implements Serializable {
     private Long instrumentid;
     @Basic(optional = false)
     @Column(name = "name", unique = true)
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String name;
     @Basic(optional = false)
     @Column(name = "conversion_factor")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private double conversionFactor;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "instrument")
     @XmlTransient

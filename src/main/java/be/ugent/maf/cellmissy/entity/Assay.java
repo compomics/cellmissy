@@ -51,7 +51,7 @@ public class Assay implements Serializable {
     @XmlTransient
     private Long assayid;
     @Column(name = "assay_type")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String assayType;
     @JoinColumn(name = "l_matrix_dimensionid", referencedColumnName = "matrix_dimensionid")
@@ -93,6 +93,7 @@ public class Assay implements Serializable {
         this.matrixDimension = matrixDimension;
     }
 
+    @XmlTransient
     public List<PlateCondition> getPlateConditionList() {
         return plateConditionList;
     }

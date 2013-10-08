@@ -47,7 +47,7 @@ public class BottomMatrix implements Serializable {
     @XmlTransient
     private Long bottomMatrixid;
     @Column(name = "type")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String type;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bottomMatrix")
@@ -77,6 +77,7 @@ public class BottomMatrix implements Serializable {
         this.type = type;
     }
 
+    @XmlTransient
     public List<Ecm> getEcmList() {
         return ecmList;
     }
@@ -85,7 +86,7 @@ public class BottomMatrix implements Serializable {
         this.ecmList = ecmList;
     }
 
-    @Override
+   @Override
     public int hashCode() {
         int hash = 3;
         return hash;

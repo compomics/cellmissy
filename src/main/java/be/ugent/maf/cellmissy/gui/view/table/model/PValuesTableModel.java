@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.view.table.model;
 
-import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -17,7 +17,7 @@ public class PValuesTableModel extends AbstractTableModel {
 
     private Object[][] data;
     private String columnNames[];
-    private AnalysisGroup analysisGroup;
+    private AreaAnalysisGroup analysisGroup;
     private List<PlateCondition> plateConditionList;
 
     /**
@@ -26,7 +26,7 @@ public class PValuesTableModel extends AbstractTableModel {
      * @param plateConditionList
      * @param isAdjusted  
      */
-    public PValuesTableModel(AnalysisGroup analysisGroup, List<PlateCondition> plateConditionList, boolean isAdjusted) {
+    public PValuesTableModel(AreaAnalysisGroup analysisGroup, List<PlateCondition> plateConditionList, boolean isAdjusted) {
         this.analysisGroup = analysisGroup;
         this.plateConditionList = plateConditionList;
         initTable(isAdjusted);

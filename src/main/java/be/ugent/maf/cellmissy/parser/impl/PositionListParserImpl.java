@@ -81,7 +81,7 @@ public class PositionListParserImpl implements PositionListParser {
                                 throw new FileParserException("Please make sure position list contains 2 columns: (x, y) coordinates!");
                             }
                         }
-                        // set the Collection of WellHasImagingTypes with the current List
+                        // set the List of WellHasImagingTypes with the current List
                         imagingType.setWellHasImagingTypeList(wellHasImagingTypeList);
 
                     } catch (FileNotFoundException e) {

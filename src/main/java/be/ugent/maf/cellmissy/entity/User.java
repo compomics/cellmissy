@@ -9,7 +9,9 @@ import java.util.List;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -41,7 +43,7 @@ import org.jasypt.hibernate.type.EncryptedStringType;
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email")})
 public class User implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -136,6 +138,7 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    @XmlTransient
     public List<Experiment> getExperimentList() {
         return experimentList;
     }

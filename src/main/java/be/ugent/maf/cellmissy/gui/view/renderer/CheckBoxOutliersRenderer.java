@@ -30,7 +30,7 @@ public class CheckBoxOutliersRenderer extends OutliersRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component result = null;
-        // If we are at last row return a CheckBoxCellRenderer, that extends a JCheckbox
+        // If we are at last row return a CheckBoxCellRenderer, that extends a JCheckbox 
         if (row == table.getRowCount() - 1) {
             result = new CheckBoxCellRenderer((boolean) value, SwingConstants.RIGHT);
         } else {

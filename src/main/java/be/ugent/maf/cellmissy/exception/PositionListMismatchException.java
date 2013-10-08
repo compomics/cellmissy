@@ -5,9 +5,7 @@
 package be.ugent.maf.cellmissy.exception;
 
 /**
- * Position List Mismatch Exception, thrown in case of mismatching between names
- * of position list in setup folder and names of those in obsep file.
- *
+ * Position List Mismatch Exception, thrown in case of mismatching between names of position list in setup folder and names of those in obsep file.
  * @author Paola Masuzzo
  */
 public class PositionListMismatchException extends Exception {

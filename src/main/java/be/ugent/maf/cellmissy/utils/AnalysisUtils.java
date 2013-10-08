@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.utils;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import java.text.DecimalFormat;
@@ -107,7 +108,7 @@ public class AnalysisUtils {
     }
 
     /**
-     * Round up to two decimals
+     * Round up to three decimals
      *
      * @param d
      * @return
@@ -117,7 +118,13 @@ public class AnalysisUtils {
         return Double.valueOf(threeForm.format(d));
     }
 
-      public static Double roundTwoDecimals(Double d) {
+    /**
+     * Round up to two decimals
+     *
+     * @param d
+     * @return
+     */
+    public static Double roundTwoDecimals(Double d) {
         DecimalFormat twoDForm = new DecimalFormat("###.##");
         return Double.valueOf(twoDForm.format(d));
     }
@@ -250,7 +257,7 @@ public class AnalysisUtils {
         int k = (int) criterium;
         // get the double part of this criterium
         double d = criterium - k;
-        //
+        // check for the range in which k falls
         if (k > 0 && k < dataSize) {
             estimation = data[k - 1] + d * (data[k] - data[k - 1]);
         } else if (k == 0) {
@@ -258,7 +265,6 @@ public class AnalysisUtils {
         } else if (k == dataSize) {
             estimation = data[dataSize - 1];
         }
-
         return estimation;
     }
 
@@ -289,7 +295,7 @@ public class AnalysisUtils {
     public static int getMaximumNumberOfReplicates(List<PlateCondition> plateConditions) {
         int max = 0;
         for (PlateCondition plateCondition : plateConditions) {
-            int numberOfSamplesPerCondition = getNumberOfSamplesPerCondition(plateCondition);
+            int numberOfSamplesPerCondition = getNumberOfAreaAnalyzedSamples(plateCondition);
             if (numberOfSamplesPerCondition > max) {
                 max = numberOfSamplesPerCondition;
             }
@@ -298,18 +304,33 @@ public class AnalysisUtils {
     }
 
     /**
-     * Get number of sample points for each condition
+     * Get number of samples that produced area results values.
      *
      * @param plateCondition
      * @return
      */
-    public static int getNumberOfSamplesPerCondition(PlateCondition plateCondition) {
-        int numberOfSamples = 0;
-        List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
-        for (Well well : processedWells) {
-            numberOfSamples += getNumberOfSamplesPerWell(well);
+    public static int getNumberOfAreaAnalyzedSamples(PlateCondition plateCondition) {
+        int areaAnalyzedSamples = 0;
+        List<Well> areaAnalyzedWells = plateCondition.getAreaAnalyzedWells();
+        for (Well well : areaAnalyzedWells) {
+            areaAnalyzedSamples += getNumberOfAreaAnalyzedSamplesPerWell(well);
         }
-        return numberOfSamples;
+        return areaAnalyzedSamples;
+    }
+
+    /**
+     * Get number of samples that produced single cell analysis results.
+     *
+     * @param plateCondition
+     * @return
+     */
+    public static int getNumberOfSingleCellAnalyzedSamples(PlateCondition plateCondition) {
+        int singleCellAnalyzedSamples = 0;
+        List<Well> singleCellAnalyzedWells = plateCondition.getSingleCellAnalyzedWells();
+        for (Well well : singleCellAnalyzedWells) {
+            singleCellAnalyzedSamples += getNumberOfSingleCellAnalyzedSamplesPerWell(well);
+        }
+        return singleCellAnalyzedSamples;
     }
 
     /**
@@ -318,7 +339,7 @@ public class AnalysisUtils {
      * @param well
      * @return
      */
-    public static int getNumberOfSamplesPerWell(Well well) {
+    public static int getNumberOfAreaAnalyzedSamplesPerWell(Well well) {
         int numberOfSamplesPerWell = 0;
         for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
             if (!wellHasImagingType.getTimeStepList().isEmpty()) {
@@ -326,5 +347,40 @@ public class AnalysisUtils {
             }
         }
         return numberOfSamplesPerWell;
+    }
+
+    /**
+     *
+     * @param well
+     * @return
+     */
+    public static int getNumberOfSingleCellAnalyzedSamplesPerWell(Well well) {
+        int numberOfSamplesPerWell = 0;
+        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+            if (!wellHasImagingType.getTrackList().isEmpty()) {
+                numberOfSamplesPerWell++;
+            }
+        }
+        return numberOfSamplesPerWell;
+    }
+
+    /**
+     *
+     * @param well
+     * @return
+     */
+    public static List<Integer> getNumbersOfTrackPoints(Well well) {
+        List<Integer> list = new ArrayList<>();
+        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+            List<Track> trackList = wellHasImagingType.getTrackList();
+            int number = 0;
+            if (!trackList.isEmpty()) {
+                for (Track track : trackList) {
+                    number += track.getTrackPointList().size();
+                }
+                list.add(number);
+            }
+        }
+        return list;
     }
 }

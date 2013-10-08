@@ -51,7 +51,7 @@ public class Algorithm implements Serializable {
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "algorithm_name")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String algorithmName;
     @OneToMany(mappedBy = "algorithm")

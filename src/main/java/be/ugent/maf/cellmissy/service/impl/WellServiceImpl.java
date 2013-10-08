@@ -239,6 +239,8 @@ public class WellServiceImpl implements WellService {
                 wellHasImagingTypeList.add(wellHasImagingType);
             }
             well.setWellHasImagingTypeList(wellHasImagingTypeList);
+        } else {
+            well.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
         }
     }
 
@@ -258,7 +260,7 @@ public class WellServiceImpl implements WellService {
                 List<Track> tracks = new ArrayList<>(wellHasImagingType.getTrackList());
                 for (Track track : tracks) {
                     // fetch track points
-                    fetchTrackPoints(track);
+                    fetchTrackPointsForTrack(track);
                 }
                 wellHasImagingTypeList.add(wellHasImagingType);
             }
@@ -298,7 +300,7 @@ public class WellServiceImpl implements WellService {
      *
      * @param track
      */
-    private void fetchTrackPoints(Track track) {
+    private void fetchTrackPointsForTrack(Track track) {
         Hibernate.initialize(track.getTrackPointList());
         List<Track> tracks = new ArrayList<>();
         tracks.add(track);

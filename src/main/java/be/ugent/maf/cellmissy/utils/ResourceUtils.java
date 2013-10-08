@@ -4,7 +4,6 @@
  */
 package be.ugent.maf.cellmissy.utils;
 
-import org.apache.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -15,10 +14,10 @@ import org.springframework.core.io.Resource;
  */
 public class ResourceUtils {
 
-    private static final Logger LOG = Logger.getLogger(ResourceUtils.class);
-
     /**
-     * Gets a resource by its relative path. If the resource is not found on the file system, the classpath is searched. If nothing is found, null is returned.
+     * Gets a resource by its relative path. If the resource is not found on the
+     * file system, the class path is searched. If nothing is found, null is
+     * returned.
      *
      * @param relativePath the relative path of the resource
      * @return the found resource
@@ -28,7 +27,6 @@ public class ResourceUtils {
         if (!resource.exists()) {
             //try to find it on the classpath
             resource = new ClassPathResource(relativePath);
-
             if (!resource.exists()) {
                 resource = null;
             }

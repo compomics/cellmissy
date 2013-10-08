@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.view.table.model;
 
-import be.ugent.maf.cellmissy.entity.result.AnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -19,7 +19,7 @@ public class StatisticalSummaryTableModel extends AbstractTableModel {
 
     private Object[][] data;
     private String columnNames[];
-    private AnalysisGroup analysisGroup;
+    private AreaAnalysisGroup analysisGroup;
     private List<PlateCondition> plateConditionList;
 
     /** 
@@ -27,7 +27,7 @@ public class StatisticalSummaryTableModel extends AbstractTableModel {
      * @param analysisGroup
      * @param plateConditionList  
      */
-    public StatisticalSummaryTableModel(AnalysisGroup analysisGroup, List<PlateCondition> plateConditionList) {
+    public StatisticalSummaryTableModel(AreaAnalysisGroup analysisGroup, List<PlateCondition> plateConditionList) {
         this.analysisGroup = analysisGroup;
         this.plateConditionList = plateConditionList;
         initTable();

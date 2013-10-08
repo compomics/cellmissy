@@ -46,7 +46,7 @@ public class AssayMedium implements Serializable {
     @XmlTransient
     private Long assayMediumid;
     @Column(name = "medium")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String medium;
     @Column(name = "serum")

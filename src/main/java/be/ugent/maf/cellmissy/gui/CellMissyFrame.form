@@ -13,19 +13,45 @@
         </Property>
       </Properties>
       <SubComponents>
-        <Menu class="javax.swing.JMenu" name="fileMenu">
+        <Menu class="javax.swing.JMenu" name="projectMenu">
           <Properties>
-            <Property name="mnemonic" type="int" value="70"/>
-            <Property name="text" type="java.lang.String" value="File"/>
+            <Property name="text" type="java.lang.String" value="Project"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="newProjectMenuItem">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/newIcon.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Create Project ..."/>
+                <Property name="iconTextGap" type="int" value="2"/>
+                <Property name="name" type="java.lang.String" value="" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="overviewMenuItem">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/overviewIcon.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Overview Projects ..."/>
+                <Property name="iconTextGap" type="int" value="2"/>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="experimentMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Experiment"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="newExperimentMenuItem">
               <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+N"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/newIcon.png"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="69"/>
-                <Property name="text" type="java.lang.String" value="Create Experiment"/>
+                <Property name="text" type="java.lang.String" value="Create Experiment..."/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
                 <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
@@ -34,23 +60,25 @@
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="loadDataMenu">
               <Properties>
-                <Property name="mnemonic" type="int" value="76"/>
-                <Property name="text" type="java.lang.String" value="Load Data..."/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/dataLoadingIcon.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Load Migration Data..."/>
                 <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
               <SubComponents>
                 <MenuItem class="javax.swing.JMenuItem" name="genericInputMenuItem">
                   <Properties>
-                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                      <KeyStroke key="Ctrl+G"/>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/genericInputIcon.png"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="... from generic input"/>
                   </Properties>
                 </MenuItem>
                 <MenuItem class="javax.swing.JMenuItem" name="cellMiaMenuItem">
                   <Properties>
-                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                      <KeyStroke key="Ctrl+C"/>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/cellmia.png"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="... from CELLMIA"/>
                   </Properties>
@@ -59,157 +87,51 @@
             </Menu>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="dataAnalysisMenuItem">
+            <Menu class="javax.swing.JMenu" name="jMenu1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Data Analysis"/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator5">
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="overviewMenuItem">
-              <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+O"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/dataAnalysisIcon.png"/>
                 </Property>
-                <Property name="mnemonic" type="int" value="79"/>
-                <Property name="text" type="java.lang.String" value="Overview"/>
+                <Property name="text" type="java.lang.String" value="Data Analysis..."/>
               </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator7">
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="importExperimentMenuItem">
-              <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+I"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Import Experiment..."/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="exportExperimentMenuItem">
-              <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+E"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Export Experiment..."/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator6">
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="exportTemplateMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Export Template..."/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="exitMenuItem">
-              <Properties>
-                <Property name="mnemonic" type="int" value="88"/>
-                <Property name="text" type="java.lang.String" value="Exit"/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator11">
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="overviewMenuItem1">
-              <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+O"/>
-                </Property>
-                <Property name="mnemonic" type="int" value="79"/>
-                <Property name="text" type="java.lang.String" value="Overview"/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator12">
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="importExperimentMenuItem1">
-              <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+I"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Import Experiment..."/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="exportExperimentMenuItem1">
-              <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Ctrl+E"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Export Experiment..."/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator13">
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="exportTemplateMenuItem1">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Export Template..."/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator14">
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="exitMenuItem1">
-              <Properties>
-                <Property name="mnemonic" type="int" value="88"/>
-                <Property name="text" type="java.lang.String" value="Exit"/>
-              </Properties>
-            </MenuItem>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="areaAnalysisMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="area analysis"/>
+                  </Properties>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="singleCellAnalysisMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="single cell analysis"/>
+                  </Properties>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="editMenu">
+        <Menu class="javax.swing.JMenu" name="miscMenu">
           <Properties>
-            <Property name="mnemonic" type="int" value="69"/>
-            <Property name="text" type="java.lang.String" value="Edit"/>
+            <Property name="text" type="java.lang.String" value="Miscellaneous"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="assayMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Assay"/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator8">
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="instrumentMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Instrument"/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator9">
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="plateMenuItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Multiwell Plate"/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator10">
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="userMenuItem">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/userManagementIcon.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="User Management"/>
                 <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
             </MenuItem>
-          </SubComponents>
-        </Menu>
-        <Menu class="javax.swing.JMenu" name="helpMenu">
-          <Properties>
-            <Property name="mnemonic" type="int" value="72"/>
-            <Property name="text" type="java.lang.String" value="Help"/>
-          </Properties>
-          <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="helpMenuItem">
-              <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="F1"/>
-                </Property>
-                <Property name="mnemonic" type="int" value="72"/>
-                <Property name="text" type="java.lang.String" value="Help"/>
-              </Properties>
-            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="aboutMenuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="exitMenuItem">
               <Properties>
-                <Property name="mnemonic" type="int" value="65"/>
-                <Property name="text" type="java.lang.String" value="About"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/exitApplicationIcon.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Quit CellMissy..."/>
+                <Property name="iconTextGap" type="int" value="2"/>
               </Properties>
             </MenuItem>
           </SubComponents>
@@ -461,15 +383,15 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
         </Container>
-        <Container class="javax.swing.JPanel" name="analysisExperimentParentPanel">
+        <Container class="javax.swing.JPanel" name="areaAnalysisParentPanel">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="name" type="java.lang.String" value="analysisExperimentParentPanel" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="areaAnalysisParentPanel" noResource="true"/>
           </Properties>
           <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="analysisExperimentParentPanel"/>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="areaAnalysisParentPanel"/>
             <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value=""/>
           </AccessibilityProperties>
           <AuxValues>
@@ -477,7 +399,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-              <CardConstraints cardName="analysisExperimentParentPanel"/>
+              <CardConstraints cardName="areaAnalysisParentPanel"/>
             </Constraint>
           </Constraints>
 
@@ -485,10 +407,11 @@
         </Container>
         <Container class="javax.swing.JPanel" name="singleCellAnalysisParentPanel">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[20, 20]"/>
             </Property>
             <Property name="name" type="java.lang.String" value="singleCellAnalysisParentPanel" noResource="true"/>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="singleCellAnalysisParentPanel"/>

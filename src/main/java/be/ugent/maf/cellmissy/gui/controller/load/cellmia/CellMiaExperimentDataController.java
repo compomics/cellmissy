@@ -157,19 +157,19 @@ public class CellMiaExperimentDataController {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    // retrieve selected project
+                // retrieve selected project
                     int selectedIndex = loadFromCellMiaMetadataPanel.getProjectsList().getSelectedIndex();
                     if (selectedIndex != -1) {
                         Project selectedProject = projectBindingList.get(selectedIndex);
-                        if (loadExperimentFromCellMiaController.getExperiment() == null) {
-                            // if experiment is still null, project is being selected for the first time
-                            onSelectedProject(selectedProject);
-                            // if experiment is not null and a different project is selected, reset redo on selected project
-                        } else if (loadExperimentFromCellMiaController.getExperiment() != null && !loadExperimentFromCellMiaController.getExperiment().getProject().equals(selectedProject)) {
-                            resetOnANewProject();
-                            onSelectedProject(selectedProject);
-                        }
-                    }
+                if (loadExperimentFromCellMiaController.getExperiment() == null) {
+                    // if experiment is still null, project is being selected for the first time
+                    onSelectedProject(selectedProject);
+                    // if experiment is not null and a different project is selected, reset redo on selected project
+                } else if (loadExperimentFromCellMiaController.getExperiment() != null && !loadExperimentFromCellMiaController.getExperiment().getProject().equals(selectedProject)) {
+                    resetOnANewProject();
+                    onSelectedProject(selectedProject);
+                }
+            }
                 }
             }
         });
@@ -179,19 +179,19 @@ public class CellMiaExperimentDataController {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    // retrieve selected experiment
+                // retrieve selected experiment
                     int selectedIndex = loadFromCellMiaMetadataPanel.getExperimentsList().getSelectedIndex();
                     if (selectedIndex != -1) {
                         Experiment selectedExperiment = experimentBindingList.get(selectedIndex);
-                        if (selectedExperiment != null && loadExperimentFromCellMiaController.getExperiment() == null) {
-                            // if the experiment is still null, it is being selected for the first time
-                            onSelectedExperiment(selectedExperiment);
-                            // otherwise, if a different experiment has being selected, reset and recall the onselected experiment
-                        } else if (selectedExperiment != null && !loadExperimentFromCellMiaController.getExperiment().equals(selectedExperiment)) {
-                            resetOnANewExperiment();
-                            onSelectedExperiment(selectedExperiment);
-                        }
-                    }
+                if (selectedExperiment != null && loadExperimentFromCellMiaController.getExperiment() == null) {
+                    // if the experiment is still null, it is being selected for the first time
+                    onSelectedExperiment(selectedExperiment);
+                    // otherwise, if a different experiment has being selected, reset and recall the onselected experiment
+                } else if (selectedExperiment != null && !loadExperimentFromCellMiaController.getExperiment().equals(selectedExperiment)) {
+                    resetOnANewExperiment();
+                    onSelectedExperiment(selectedExperiment);
+                }
+            }
                 }
             }
         });

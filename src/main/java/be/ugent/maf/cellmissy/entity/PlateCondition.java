@@ -215,7 +215,7 @@ public class PlateCondition implements Serializable {
 
     /**
      * Given a plate condition, get back only the wells that were imaged, i.e.
-     * with an non empty collection of WellHasImagingType objects
+     * with an non empty list of WellHasImagingType objects
      *
      * @return
      */
@@ -232,8 +232,8 @@ public class PlateCondition implements Serializable {
 
     /**
      * Given a plate condition, get back only the wells that have some area
-     * values processed, i.e. imaged wells with a non empty collection of
-     * TimeStep objects
+     * values processed, i.e. imaged wells with a non empty list of TimeStep
+     * objects
      *
      * @return
      */
@@ -251,5 +251,28 @@ public class PlateCondition implements Serializable {
             }
         }
         return areaAnalyzedWells;
+    }
+
+    /**
+     * Given a plate condition, get back only the wells that have some area
+     * values processed, i.e. imaged wells with a non empty list of TimeStep
+     * objects
+     *
+     * @return
+     */
+    public List<Well> getSingleCellAnalyzedWells() {
+        List<Well> singleCellAnalyzedWells = new ArrayList<>();
+        // look only in the imaged wells
+        for (Well well : this.getImagedWells()) {
+            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                // if single cell analysis was OK... the well was processed
+                if (!wellHasImagingType.getTrackList().isEmpty()) {
+                    if (!singleCellAnalyzedWells.contains(well)) {
+                        singleCellAnalyzedWells.add(well);
+                    }
+                }
+            }
+        }
+        return singleCellAnalyzedWells;
     }
 }

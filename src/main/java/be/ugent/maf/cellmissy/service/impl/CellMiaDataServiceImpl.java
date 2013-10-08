@@ -118,7 +118,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                                 }
                                 LOG.debug("Imaging type: " + imagingType + " processed");
                                 //***********************************************************************************************//
-                                //update collection of imaging type
+                                //update List of imaging type
                                 imagingType.setWellHasImagingTypeList(wellHasImagingTypeList);
                                 //start over through the other folders (next imaging type)
                                 imageTypeStartFolder += wellHasImagingTypeList.size();

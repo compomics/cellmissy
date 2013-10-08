@@ -55,16 +55,16 @@ public class TrackPoint implements Serializable {
     private Long trackPointid;
     @Basic(optional = false)
     @Column(name = "time_index")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private int timeIndex;
     @Basic(optional = false)
     @Column(name = "cell_row")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(value = EmptyDoubleXMLAdapter.class, type = double.class)
     private double cellRow;
     @Basic(optional = false)
     @Column(name = "cell_col")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(value = EmptyDoubleXMLAdapter.class, type = double.class)
     private double cellCol;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation

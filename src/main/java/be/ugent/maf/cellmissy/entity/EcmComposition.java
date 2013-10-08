@@ -51,7 +51,7 @@ public class EcmComposition implements Serializable {
     @XmlTransient
     private Long compositionTypeid;
     @Column(name = "composition_type")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String compositionType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecmComposition")
@@ -85,6 +85,7 @@ public class EcmComposition implements Serializable {
         this.compositionType = compositionType;
     }
 
+    @XmlTransient
     public List<Ecm> getEcmList() {
         return ecmList;
     }

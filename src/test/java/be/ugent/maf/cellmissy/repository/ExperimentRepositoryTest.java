@@ -22,7 +22,6 @@ import be.ugent.maf.cellmissy.parser.CellMiaFileParserTest;
 import be.ugent.maf.cellmissy.service.EcmService;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -201,7 +200,7 @@ public class ExperimentRepositoryTest {
         }
         // test plate format
         Assert.assertEquals(plateFormatRepository.findByFormat(6), savedExperiment.getPlateFormat());
-        // collection of the algorithm and the imaging type
+        // List of the algorithm and the imaging type
         Assert.assertEquals(6, algorithm.getWellHasImagingTypeList().size());
         Assert.assertEquals(6, firstImagingType.getWellHasImagingTypeList().size());
     }

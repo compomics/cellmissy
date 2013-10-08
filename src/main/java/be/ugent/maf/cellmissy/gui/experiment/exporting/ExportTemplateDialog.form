@@ -219,29 +219,18 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel7" linkSize="11" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                                  <Component id="numberConditionsLabel" pref="161" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                                   <Component id="jLabel6" linkSize="11" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                                  <Component id="plateFormatLabel" pref="161" max="32767" attributes="0"/>
                               </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace min="-2" pref="77" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="userLabel" alignment="0" pref="161" max="32767" attributes="0"/>
-                                              <Component id="instrumentLabel" alignment="0" pref="161" max="32767" attributes="0"/>
-                                          </Group>
-                                      </Group>
-                                      <Component id="jLabel11" linkSize="11" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel10" linkSize="11" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
+                          </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="userLabel" alignment="0" pref="161" max="32767" attributes="0"/>
+                              <Component id="instrumentLabel" alignment="0" pref="161" max="32767" attributes="0"/>
+                              <Component id="plateFormatLabel" alignment="0" pref="161" max="32767" attributes="0"/>
+                              <Component id="numberConditionsLabel" alignment="0" pref="161" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="59" pref="59" max="-2" attributes="0"/>
                       </Group>
@@ -251,6 +240,19 @@
                               <Component id="jScrollPane5" alignment="0" pref="297" max="32767" attributes="0"/>
                               <Component id="jLabel12" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
+                                  <Component id="jLabel10" linkSize="11" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
+                                  <Component id="jLabel11" linkSize="11" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>

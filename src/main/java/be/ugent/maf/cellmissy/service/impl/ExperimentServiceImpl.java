@@ -171,12 +171,12 @@ public class ExperimentServiceImpl implements ExperimentService {
 
         if (listFiles != null) {
             for (File file : listFiles) {
-                if (file.getName().contains(experiment.getProject().toString())) {
-                    //project folder
-                    projectFolder = file;
-                    break;
-                }
+            if (file.getName().contains(experiment.getProject().toString())) {
+                //project folder
+                projectFolder = file;
+                break;
             }
+        }
         } else {
             throw new CellMiaFoldersException("No folders found in main directory (M:\\CM)\nBe sure you are connected to the server!");
         }
@@ -399,7 +399,7 @@ public class ExperimentServiceImpl implements ExperimentService {
                 Treatment newTreatment = new Treatment(treatment.getConcentration(), treatment.getConcentrationUnit(), treatment.getTiming(), treatment.getDrugSolvent(), treatment.getDrugSolventConcentration(), treatment.getTreatmentType());
                 newTreatment.setPlateCondition(newPlateCondition);
                 treatments.add(newTreatment);
-            }
+}
             newPlateCondition.setTreatmentList(treatments);
             // wells
             List<Well> wellList = plateCondition.getWellList();

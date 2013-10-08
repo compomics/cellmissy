@@ -168,7 +168,7 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
         );
 
         metadataPanel.setBackground(new java.awt.Color(255, 255, 255));
-        metadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment metadata", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.black));
+        metadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment Metadata", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.black));
         metadataPanel.setMinimumSize(new java.awt.Dimension(20, 20));
 
         durationLabel.setText("Duration*");

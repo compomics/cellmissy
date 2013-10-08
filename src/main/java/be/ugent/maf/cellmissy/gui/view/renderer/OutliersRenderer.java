@@ -58,7 +58,6 @@ public class OutliersRenderer extends DefaultTableCellRenderer {
         }
         setValue(value);
         setHorizontalAlignment(SwingConstants.RIGHT);
-
         return this;
     }
 }

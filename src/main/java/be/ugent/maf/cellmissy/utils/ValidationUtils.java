@@ -13,7 +13,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 /**
- *
+ * Utilities class for entities validation.
  * @author Paola Masuzzo
  */
 public class ValidationUtils {

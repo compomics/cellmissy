@@ -6,7 +6,6 @@ package be.ugent.maf.cellmissy.exception;
 
 /**
  * File parser exception, thrown in case of wrong format for files to be parsed
- *
  * @author Paola Masuzzo
  */
 public class FileParserException extends Exception {

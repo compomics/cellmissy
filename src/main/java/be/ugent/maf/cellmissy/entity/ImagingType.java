@@ -49,14 +49,14 @@ public class ImagingType implements Serializable {
     @XmlTransient
     private Long imagingTypeid;
     @Column(name = "name")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String name;
     @Column(name = "light_intensity")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private Double lightIntensity;
     @Column(name = "exposure_time")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private Double exposureTime;
     @OneToMany(mappedBy = "imagingType")
     @XmlTransient

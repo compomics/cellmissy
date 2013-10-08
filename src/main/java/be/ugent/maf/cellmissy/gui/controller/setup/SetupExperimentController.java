@@ -324,14 +324,14 @@ public class SetupExperimentController {
 
     /**
      * When the mouse is released and the rectangle has been drawn, this method
-     * is called: set well collection of the current condition and set the
+     * is called: set well List of the current condition and set the
      * condition of the selected wells
      *
      * @param plateCondition
      * @param rectangle
      * @return true if the selection of wells is valid, else show a message
      */
-    public boolean updateWellCollection(PlateCondition plateCondition, Rectangle rectangle) {
+    public boolean updateWellList(PlateCondition plateCondition, Rectangle rectangle) {
         boolean isSelectionValid = true;
         List<Well> wellList = plateCondition.getWellList();
         outerloop:
@@ -374,12 +374,12 @@ public class SetupExperimentController {
             List<Rectangle> rectangles = setupPlateController.getSetupPlatePanel().getRectangles().get(plateCondition);
             if (rectangles != null) {
                 for (Rectangle rectangle : rectangles) {
-                    if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
-                        wellGui.getWell().setPlateCondition(null);
-                    }
+                if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
+                    wellGui.getWell().setPlateCondition(null);
                 }
             }
         }
+    }
     }
 
     /**
@@ -519,30 +519,30 @@ public class SetupExperimentController {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    //init experimentJList
+                //init experimentJList
                     int selectedIndex = experimentInfoPanel.getProjectsList().getSelectedIndex();
                     if (selectedIndex != -1) {
                         Project selectedProject = projectBindingList.get(selectedIndex);
-                        // set text for project description
-                        experimentInfoPanel.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
-                        // request focus on experiment number
-                        experimentInfoPanel.getNumberTextField().requestFocusInWindow();
-                        Long projectid = selectedProject.getProjectid();
-                        List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
-                        if (experimentNumbers != null) {
-                            List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
-                            experimentBindingList = ObservableCollections.observableList(experimentList);
+                    // set text for project description
+                    experimentInfoPanel.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
+                    // request focus on experiment number
+                    experimentInfoPanel.getNumberTextField().requestFocusInWindow();
+                    Long projectid = selectedProject.getProjectid();
+                    List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
+                    if (experimentNumbers != null) {
+                        List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
+                        experimentBindingList = ObservableCollections.observableList(experimentList);
                             JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, experimentInfoPanel.getExperimentsList());
-                            bindingGroup.addBinding(jListBinding);
-                            bindingGroup.bind();
-                        } else {
-                            cellMissyController.showMessage("There are no experiments yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
-                            if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
-                                experimentBindingList.clear();
-                            }
+                        bindingGroup.addBinding(jListBinding);
+                        bindingGroup.bind();
+                    } else {
+                        cellMissyController.showMessage("There are no experiments yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
+                        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                            experimentBindingList.clear();
                         }
                     }
                 }
+            }
             }
         });
 
@@ -555,7 +555,7 @@ public class SetupExperimentController {
                 // show a newProjectDialog
                 newProjectDialog.pack();
                 newProjectDialog.setVisible(true);
-            }
+    }
         });
     }
 
@@ -1191,7 +1191,7 @@ public class SetupExperimentController {
             try {
                 get();
                 setupSaved = true;
-                //show back default cursor
+                //show back default cursor 
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 showMessage("Experiment was successfully saved to DB.\nPlease choose what you want to do next.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("Experiment " + experiment + "_" + experiment.getProject() + " saved; experiment is " + experiment.getExperimentStatus());
@@ -1652,7 +1652,7 @@ public class SetupExperimentController {
             try {
                 //if export to PDF was successfull, open the PDF file from the desktop
                 if (Desktop.isDesktopSupported()) {
-                    Desktop.getDesktop().open(file);
+                Desktop.getDesktop().open(file);
                 }
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);

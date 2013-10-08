@@ -17,7 +17,6 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * In some entity classes, we make use of this adapter with the annotation:
  *
  * @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
- *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public class EmptyStringXMLAdapter extends XmlAdapter<String, String> {

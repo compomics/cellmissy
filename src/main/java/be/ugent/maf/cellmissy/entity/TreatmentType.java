@@ -51,12 +51,12 @@ public class TreatmentType implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "name", unique = true)
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String name;
     @Basic(optional = false)
     @Column(name = "treatment_category")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private Integer treatmentCategory;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "treatmentType")
     @XmlTransient

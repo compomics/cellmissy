@@ -9,12 +9,13 @@ import be.ugent.maf.cellmissy.gui.controller.management.UserManagementController
 import be.ugent.maf.cellmissy.gui.controller.setup.SetupExperimentController;
 import be.ugent.maf.cellmissy.gui.controller.load.generic.LoadExperimentFromGenericInputController;
 import be.ugent.maf.cellmissy.gui.controller.load.cellmia.LoadExperimentFromCellMiaController;
-import be.ugent.maf.cellmissy.gui.controller.analysis.AreaController;
+import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.AboutDialog;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.HelpDialog;
 import be.ugent.maf.cellmissy.gui.StartupDialog;
+import be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.SingleCellMainController;
 import be.ugent.maf.cellmissy.gui.controller.management.AssayManagementController;
 import be.ugent.maf.cellmissy.gui.controller.management.PlateManagementController;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -43,8 +44,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Main Controller Child Controllers: User Management, Setup Experiment, Load
- * Experiment, Data Analysis - controllers
+ * Main Controller; Child Controllers: User Management, Setup Experiment, Load
+ * Experiment, Data Analysis controllers.
  *
  * @author Paola
  */
@@ -54,7 +55,8 @@ public class CellMissyController {
     private static final Logger LOG = Logger.getLogger(CellMissyController.class);
     // model
     private boolean firstSetup;
-    private boolean firstDataAnalysis;
+    private boolean firstAreaAnalysis;
+    private boolean firstSingleCellAnalysis;
     private boolean firstLoadingFromCellMia;
     private boolean firstLoadingFromGenericInput;
     //view
@@ -85,7 +87,9 @@ public class CellMissyController {
     @Autowired
     private LoadExperimentFromGenericInputController loadExperimentFromGenericInputController;
     @Autowired
-    private AreaController areaController;
+    private AreaMainController areaMainController;
+    @Autowired
+    private SingleCellMainController singleCellMainController;
     @Autowired
     private ImportExportController importExportController;
 
@@ -141,14 +145,16 @@ public class CellMissyController {
         getCardLayout().first(cellMissyFrame.getBackgroundPanel());
         // init booleans to true
         firstSetup = true;
-        firstDataAnalysis = true;
+        firstAreaAnalysis = true;
+        firstSingleCellAnalysis = true;
         firstLoadingFromCellMia = true;
         firstLoadingFromGenericInput = true;
         //init child controllers
         setupExperimentController.init();
         loadExperimentFromCellMiaController.init();
         loadExperimentFromGenericInputController.init();
-        areaController.init();
+        areaMainController.init();
+        singleCellMainController.init();
         overviewController.init();
         loginController.init();
         userManagementController.init();
@@ -302,7 +308,8 @@ public class CellMissyController {
     }
 
     /**
-     * Make the frame visible and enter the application after user has logged in
+     * Make the frame visible and enter the application after user has logged
+     * in.
      */
     public void enterTheApplication() {
         cellMissyFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -339,8 +346,10 @@ public class CellMissyController {
         cellMissyFrame.getCellMiaMenuItem().addActionListener(itemActionListener);
         // import data from generic input
         cellMissyFrame.getGenericInputMenuItem().addActionListener(itemActionListener);
-        // data analysis
-        cellMissyFrame.getDataAnalysisMenuItem().addActionListener(itemActionListener);
+        // area analysis
+        cellMissyFrame.getAreaMenuItem().addActionListener(itemActionListener);
+        // single cell analysis
+        cellMissyFrame.getSingleCellMenuItem().addActionListener(itemActionListener);
         // exit the application
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override
@@ -448,14 +457,25 @@ public class CellMissyController {
             }
         });
 
-        // data analysis
-        startupDialog.getDataAnalysisButton().addActionListener(new ActionListener() {
+        // area analysis
+        startupDialog.getAreaAnalysisButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 startupDialog.setVisible(false);
-                onDataAnalysis();
+                onAreaAnalysis();
             }
         });
+
+        // single cell analysis
+        startupDialog.getSingleCellAnalysisButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startupDialog.setVisible(false);
+                onSingleCellAnalysis();
+            }
+        });
+
+
         // overview
         startupDialog.getOverviewButton().addActionListener(new ActionListener() {
             @Override
@@ -483,8 +503,10 @@ public class CellMissyController {
             String menuItemText = ((JMenuItem) e.getSource()).getText();
             if (menuItemText.equalsIgnoreCase("create experiment") && switchCard(menuItemText)) {
                 onCreateExperiment();
-            } else if (menuItemText.equalsIgnoreCase("data analysis") && switchCard(menuItemText)) {
-                onDataAnalysis();
+            } else if (menuItemText.equalsIgnoreCase("...area") && switchCard(menuItemText)) {
+                onAreaAnalysis();
+            } else if (menuItemText.equalsIgnoreCase("...single cell") && switchCard(menuItemText)) {
+                onSingleCellAnalysis();
             } else if (menuItemText.equalsIgnoreCase("... from CELLMIA") && switchCard(menuItemText)) {
                 onLoadingFromCellMia();
             } else if (menuItemText.equalsIgnoreCase("... from generic input") && switchCard(menuItemText)) {
@@ -529,15 +551,25 @@ public class CellMissyController {
     }
 
     /**
-     * Action performed on data analysis.
+     * Action performed on area analysis.
      */
-    private void onDataAnalysis() {
-        if (!firstDataAnalysis) {
-            areaController.resetAfterCardSwitch();
+    private void onAreaAnalysis() {
+        if (!firstAreaAnalysis) {
+            areaMainController.resetAfterCardSwitch();
         }
-        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAnalysisExperimentParentPanel().getName());
-        firstDataAnalysis = false;
-        areaController.setExpListRenderer(getCurrentUser());
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAreaAnalysisParentPanel().getName());
+        firstAreaAnalysis = false;
+        areaMainController.setExpListRenderer(getCurrentUser());
+    }
+
+    /**
+     * Action performed on single cell analysis.
+     */
+    private void onSingleCellAnalysis() {
+        if (!firstSingleCellAnalysis) {
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getSingleCellAnalysisParentPanel().getName());
+        firstSingleCellAnalysis = false;
     }
 
     /**
@@ -624,7 +656,7 @@ public class CellMissyController {
             case "analysisExperimentParentPanel":
                 if (menuItemText.equalsIgnoreCase("data analysis")) {
                     return false;
-                } else if (areaController.analysisWasStarted()) {
+                } else if (areaMainController.analysisWasStarted()) {
                     showOptionDialog = JOptionPane.showOptionDialog(null, "Do you really want to end this data analysis session?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                 } else {
                     return true;
@@ -648,7 +680,8 @@ public class CellMissyController {
     }
 
     /**
-     * This private class implements the
+     * This private class implements the HyperlinkListener for the project's web
+     * page (Google code).
      */
     private class LinkListener implements HyperlinkListener {
 

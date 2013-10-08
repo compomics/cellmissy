@@ -51,11 +51,11 @@ public class Track implements Serializable {
     private Long trackid;
     @Basic(optional = false)
     @Column(name = "track_number")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private int trackNumber;
     @Basic(optional = false)
     @Column(name = "track_length")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private int trackLength;
     @JoinColumn(name = "l_well_has_imaging_typeid", referencedColumnName = "well_has_imaging_typeid")
     @ManyToOne(optional = false)
