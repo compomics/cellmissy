@@ -347,9 +347,9 @@ public class CellMissyController {
         // import data from generic input
         cellMissyFrame.getGenericInputMenuItem().addActionListener(itemActionListener);
         // area analysis
-        cellMissyFrame.getAreaMenuItem().addActionListener(itemActionListener);
+        cellMissyFrame.getAreaAnalysisMenuItem().addActionListener(itemActionListener);
         // single cell analysis
-        cellMissyFrame.getSingleCellMenuItem().addActionListener(itemActionListener);
+        cellMissyFrame.getSingleCellAnalysisMenuItem().addActionListener(itemActionListener);
         // exit the application
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override
