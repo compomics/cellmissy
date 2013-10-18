@@ -22,6 +22,7 @@ import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -51,8 +52,12 @@ import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.entity.ChartEntity;
+import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -301,6 +306,26 @@ public class TrackCoordinatesController {
         //init chart panels
         coordinatesChartPanel = new ChartPanel(null);
         coordinatesChartPanel.setOpaque(false);
+        // add chart mouse listener to the chart panel
+        coordinatesChartPanel.addChartMouseListener(new ChartMouseListener() {
+            @Override
+            public void chartMouseClicked(ChartMouseEvent e) {
+                // get the entity on from which the chart mouse event has been generated
+                ChartEntity chartEntity = e.getEntity();
+                // check that we don't click just on the background of the plot
+                if (chartEntity instanceof XYItemEntity) {
+                    XYItemEntity xYItemEntity = (XYItemEntity) e.getEntity();
+                    // get the series to highlight in the list and in the plot
+                    int seriesIndex = xYItemEntity.getSeriesIndex();
+                    trackCoordinatesPanel.getPlottedTracksJList().setSelectedIndex(seriesIndex);
+                }
+            }
+
+            @Override
+            public void chartMouseMoved(ChartMouseEvent e) {
+            }
+        });
+
         trackCoordinatesPanel.getGraphicsParentPanel().add(coordinatesChartPanel, gridBagConstraints);
         xtCoordinateChartPanel = new ChartPanel(null);
         xtCoordinateChartPanel.setOpaque(false);
@@ -605,7 +630,6 @@ public class TrackCoordinatesController {
         // set up the plot of the chart
         Range xRange = new Range(trackDataHolder.getxMin() - 15, trackDataHolder.getxMax() + 15);
         JFreeChartUtils.setupSingleTrackPlot(xtCoordinatesChart, trackDataHolderBindingList.indexOf(trackDataHolder), xRange);
-        xtCoordinatesChart.getXYPlot().setBackgroundPaint(Color.lightGray);
         xtCoordinateChartPanel.setChart(xtCoordinatesChart);
         // we repeat exactly the same with the y coordinates in time
         double[] yCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transpose2DArray[1]));
@@ -616,7 +640,6 @@ public class TrackCoordinatesController {
         // set up the plot of the chart
         Range yRange = new Range(trackDataHolder.getyMin() - 15, trackDataHolder.getyMax() + 15);
         JFreeChartUtils.setupSingleTrackPlot(ytCoordinatesChart, trackDataHolderBindingList.indexOf(trackDataHolder), yRange);
-        ytCoordinatesChart.getXYPlot().setBackgroundPaint(Color.lightGray);
         ytCoordinateChartPanel.setChart(ytCoordinatesChart);
     }
 

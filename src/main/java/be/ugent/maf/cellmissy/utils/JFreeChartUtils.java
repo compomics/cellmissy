@@ -263,17 +263,29 @@ public class JFreeChartUtils {
     }
 
     /**
-     * Set up track coordinates plot
+     * Set up the track coordinates plot.
      *
-     * @param chart
-     * @param plotLines
-     * @param plotPoints
+     * @param chart: the chart to actually set up;
+     * @param seriesToHighlight: the series of tracks that need to be
+     * highlighted
+     * @param plotLines: ?plot lines
+     * @param plotPoints ? add points
      */
     public static void setupTrackCoordinatesPlot(JFreeChart chart, int seriesToHighlight, boolean plotLines, boolean plotPoints) {
         // set title font
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         XYPlot xYPlot = chart.getXYPlot();
         setupPlot(xYPlot);
+        xYPlot.setBackgroundPaint(new Color(177, 177, 60, 50));
+        xYPlot.setOutlinePaint(new Color(177, 177, 60, 100));
+        xYPlot.setOutlineStroke(new BasicStroke(1.5f));
+        xYPlot.setRangeGridlinePaint(Color.black);
+        xYPlot.setDomainGridlinePaint(Color.black);
+        Range domain = xYPlot.getDataRange(xYPlot.getDomainAxis());
+        Range range = xYPlot.getDataRange(xYPlot.getRangeAxis());
+        Range maxRange = computeMaxRange(domain, range);
+        xYPlot.getDomainAxis().setRange(maxRange);
+        xYPlot.getRangeAxis().setRange(maxRange);
         // get the xyseriescollection from the plot
         XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
         // modify renderer
@@ -432,6 +444,10 @@ public class JFreeChartUtils {
         XYPlot xyPlot = chart.getXYPlot();
         xyPlot.getRangeAxis().setRange(range);
         setupPlot(xyPlot);
+        xyPlot.setBackgroundPaint(new Color(177, 177, 60, 50));
+        xyPlot.setOutlinePaint(new Color(177, 177, 60, 100));
+        xyPlot.setRangeGridlinePaint(Color.black);
+        xyPlot.setDomainGridlinePaint(Color.black);
         // set title font
         chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         // modify renderer
@@ -443,5 +459,22 @@ public class JFreeChartUtils {
         renderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[colorIndex]);
         renderer.setSeriesLinesVisible(0, true);
         renderer.setSeriesShapesVisible(0, true);
+    }
+
+    /**
+     *
+     * @param domain
+     * @param range
+     * @return
+     */
+    private static Range computeMaxRange(Range domain, Range range) {
+        double domainLowerBound = domain.getLowerBound();
+        double domainUpperBound = domain.getUpperBound();
+        double rangeLowerBound = range.getLowerBound();
+        double rangeUpperBound = range.getUpperBound();
+        double lowerBound = Math.min(domainLowerBound, rangeLowerBound);
+        double upperdBound = Math.max(domainUpperBound, rangeUpperBound);
+        Range maxRange = new Range(lowerBound, upperdBound);
+        return maxRange;
     }
 }
