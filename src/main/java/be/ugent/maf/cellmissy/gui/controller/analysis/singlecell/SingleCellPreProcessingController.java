@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
@@ -22,8 +23,6 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.text.Format;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -32,6 +31,8 @@ import java.util.Map;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -173,6 +174,10 @@ public class SingleCellPreProcessingController {
         return singleCellMainController.getExperiment();
     }
 
+    public ObservableList<TrackDataHolder> getTrackDataHolderBindingList() {
+        return trackCoordinatesController.getTrackDataHolderBindingList();
+    }
+
     /**
      * Initialize map with plate conditions as keys and null objects as values
      */
@@ -204,6 +209,10 @@ public class SingleCellPreProcessingController {
         singleCellMainController.setCursor(cursor);
     }
 
+    public void generateRandomTrackDataHolders(int category) {
+        trackCoordinatesController.generateRandomTrackDataHolders(category);
+    }
+
     /**
      * When a condition is selected pre processing results are computed and
      * condition is put into the map together with its results holder object
@@ -211,11 +220,11 @@ public class SingleCellPreProcessingController {
      * @param plateCondition
      */
     public void updateMapWithCondition(PlateCondition plateCondition) {
+        // fetch the track points from DB
+        singleCellMainController.fetchTrackPoints(plateCondition);
         if (preProcessingMap.get(plateCondition) == null) {
             // create a new object to hold pre-processing results
             SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
-            // fetch the track points from DB
-            singleCellMainController.fetchTrackPoints(plateCondition);
             // do computations
             singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition);
             singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
@@ -232,7 +241,6 @@ public class SingleCellPreProcessingController {
             singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTrackAnglesVector(singleCellPreProcessingResults);
-//            singleCellPreProcessor.generateOutliersVector(singleCellPreProcessingResults);
             // fill in map
             preProcessingMap.put(plateCondition, singleCellPreProcessingResults);
         }
@@ -300,13 +308,17 @@ public class SingleCellPreProcessingController {
         preProcessingMap = new LinkedHashMap<>();
 
         // if you clisk on a row, the relative track points are fetched from Db and shown in another table
-        singleCellAnalysisPanel.getTracksTable().addMouseListener(new MouseAdapter() {
+        singleCellAnalysisPanel.getTracksTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                int selectedRow = singleCellAnalysisPanel.getTracksTable().getSelectedRow();
-                Track selectedTrack = tracksBindingList.get(selectedRow);
-                singleCellMainController.updateTrackPointsList(singleCellMainController.getCurrentCondition(), selectedTrack);
-                showTrackPointsInTable();
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    int selectedRow = singleCellAnalysisPanel.getTracksTable().getSelectedRow();
+                    if (selectedRow != -1) {
+                        Track selectedTrack = tracksBindingList.get(selectedRow);
+                        singleCellMainController.updateTrackPointsList(singleCellMainController.getCurrentCondition(), selectedTrack);
+                        showTrackPointsInTable();
+                    }
+                }
             }
         });
 

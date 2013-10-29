@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.Point;
@@ -19,6 +20,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableColumnModel;
@@ -36,23 +38,16 @@ public class GuiUtils {
     private static final Color defaultColor = new Color(0, 0, 0);
     // color for not-imaged wells
     private static final Color nonImagedColor = new Color(169, 169, 169);
-    //Available colors (for set-up the experiment)
+    // Available colors (for set-up the experiment)
     private static final Color[] availableColors = {new Color(0, 0, 139), new Color(255, 0, 0), new Color(34, 139, 34), new Color(148, 0, 211), new Color(255, 140, 0), new Color(30, 144, 255), new Color(255, 0, 255), new Color(0, 140, 140), new Color(128, 0, 0), new Color(128, 128, 0)};
-    //Colors used for Imaging Type Rendering 
+    // Colors used for Imaging Type Rendering
     private static final Color[] imagingTypeColors = {new Color(138, 43, 226), new Color(135, 206, 250), new Color(255, 0, 255)};
-
-    /**
-     * Get Default Grid Bag Constraints used for Grid Bag Layout GUI Structures
-     *
-     * @return GridBagConstraints
-     */
-    public static GridBagConstraints getDefaultGridBagConstraints() {
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        return gridBagConstraints;
-    }
+    // Font for highlighted labels
+    private static Font highlightFont = new Font("Tahoma", Font.BOLD, 14);
+    // Font for normal labels
+    private static Font defaultFont = new Font("Tahoma", Font.PLAIN, 12);
+    // Color for highlighted labels
+    private static Color highlightColor = new Color(72, 61, 169);
 
     /**
      * Getters
@@ -73,6 +68,19 @@ public class GuiUtils {
 
     public static Color[] getImagingTypeColors() {
         return imagingTypeColors;
+    }
+
+    /**
+     * Get Default Grid Bag Constraints used for Grid Bag Layout GUI Structures
+     *
+     * @return GridBagConstraints
+     */
+    public static GridBagConstraints getDefaultGridBagConstraints() {
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        return gridBagConstraints;
     }
 
     /**
@@ -172,7 +180,7 @@ public class GuiUtils {
         int scaledIconHeight = iconHeight / scale;
         // create the buffered image - 8-bit RGBA color components packed into integer pixels
         BufferedImage bufferedImage = new BufferedImage(scaledIconWidth, scaledIconHeight, BufferedImage.TYPE_INT_ARGB);
-        // create graphics from the image and scale it 
+        // create graphics from the image and scale it
         Graphics2D graphics2D = bufferedImage.createGraphics();
         setGraphics(graphics2D);
         graphics2D.scale(0.5, 0.5);
@@ -235,5 +243,25 @@ public class GuiUtils {
         width += 2 * margin;
         // set the width
         column.setPreferredWidth(width);
+    }
+
+    /**
+     * Highlight label (both color and size)
+     *
+     * @param label
+     */
+    public static void highlightLabel(JLabel label) {
+        label.setFont(highlightFont);
+        label.setForeground(highlightColor);
+    }
+
+    /**
+     * Reset label (both size and color)
+     *
+     * @param label
+     */
+    public static void resetLabel(JLabel label) {
+        label.setFont(defaultFont);
+        label.setForeground(defaultColor);
     }
 }
