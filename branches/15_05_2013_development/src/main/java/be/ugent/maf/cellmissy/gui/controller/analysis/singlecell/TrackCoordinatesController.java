@@ -22,7 +22,6 @@ import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -113,8 +112,12 @@ public class TrackCoordinatesController {
         return trackCoordinatesPanel;
     }
 
+    public ObservableList<TrackDataHolder> getTrackDataHolderBindingList() {
+        return trackDataHolderBindingList;
+    }
+
     /**
-     *
+     * Show the number of total tracks for the current selected condition.
      */
     public void updateTrackNumberLabel() {
         int trackNumber = getTrackNumberForCondition();
@@ -122,6 +125,8 @@ public class TrackCoordinatesController {
     }
 
     /**
+     * Update the binding list with the current wells (according to the current
+     * condition selected).
      *
      * @param plateCondition
      */
@@ -182,16 +187,35 @@ public class TrackCoordinatesController {
     }
 
     /**
+     * Generate randomly the tracks to put into the plot. This depends on the
+     * category we want to generate the plot from: 0 is the condition level,
+     * while 1 is the well level.
+     *
+     * @param category
+     */
+    public void generateRandomTrackDataHolders(int category) {
+        // check if tracks need to be generated from within the same well or not
+        switch (category) {
+            case 0:
+                generateRandomTrackHoldersForCondition();
+                break;
+            case 1:
+                generateRandomTrackDataHoldersForWell();
+                break;
+        }
+    }
+
+    /**
      * Plot raw data track coordinates for current condition, specifying if raw
      * data need to be used and if points and/or lines need to be shown on the
-     * plot.r
+     * plot.
      *
      *
      * @param plateCondition: the plate condition to plot the tracks from
-     * @param useRawCoordinates: if TRUE, plot raw data, else take the shifted
+     * @param useRawCoordinates: if true, plot raw data, else take the shifted
      * to zero coordinates.
-     * @param plotLines: if true, lines need to be rendered
-     * @param plotPoints: if true, points need to be rendered
+     * @param plotLines: if true, lines need to be rendered on the plot the plot
+     * @param plotPoints: if true, points need to be rendered on
      */
     public void plotRandomTrackCoordinates(PlateCondition plateCondition, boolean useRawCoordinates, boolean plotLines, boolean plotPoints) {
         // we get the selected index from the tabbed pane
@@ -710,25 +734,6 @@ public class TrackCoordinatesController {
     }
 
     /**
-     * Generate randomly the tracks to put into the plot. This depends on the
-     * category we want to generate the plot from: 0 is the condition level,
-     * while 1 is the well level.
-     *
-     * @param category
-     */
-    private void generateRandomTrackDataHolders(int category) {
-        // check if tracks need to be generated from within the same well or not
-        switch (category) {
-            case 0:
-                generateRandomTrackHoldersForCondition();
-                break;
-            case 1:
-                generateRandomTrackDataHoldersForWell();
-                break;
-        }
-    }
-
-    /**
      * Generate XYSeriesCollection for the tracks plot. This will depend on the
      * data to plot: the raw coordinates (boolean is true) or the shifted to
      * zero coordinates (boolean is false)?
@@ -825,14 +830,16 @@ public class TrackCoordinatesController {
                 randomTracksNumber = Integer.parseInt(text);
             } catch (NumberFormatException ex) {
                 LOG.error(ex.getMessage());
-                singleCellPreProcessingController.showMessage("Please insert a valid number of tracks!", "error setting number of tracks", JOptionPane.WARNING_MESSAGE);
+                String message = "Please insert a valid number of tracks!" + "\nDefault set back to: " + defaultNumberOfTracks + " tracks";
+                singleCellPreProcessingController.showMessage(message, "error setting number of tracks", JOptionPane.ERROR_MESSAGE);
             }
         }
         // the # of tracks that you want to plot need to be less or equal to # of tracks for the current well
         // else, show an info message and set the number back to default
         if (randomTracksNumber > numberTracksForCurrentWell) {
+            String message = "This well has " + numberTracksForCurrentWell + " tracks" + "\nI cannot plot " + randomTracksNumber + " tracks!" + "\nDefault set back to: " + defaultNumberOfTracks + " tracks";
+            singleCellPreProcessingController.showMessage(message, "error in setting number of tracks", JOptionPane.WARNING_MESSAGE);
             randomTracksNumber = defaultNumberOfTracks;
-            singleCellPreProcessingController.showMessage("Please insert a number of tracks to plot smaller or equal\nto the number of tracks for the selected well!", "error in choosing number of tracks", JOptionPane.WARNING_MESSAGE);
         }
         // update text field
         trackCoordinatesPanel.getRandomTracksNumberTextField().setText("" + randomTracksNumber);
@@ -858,30 +865,32 @@ public class TrackCoordinatesController {
     private void generateRandomTrackHoldersForCondition() {
         // get track holders for current condition
         List<TrackDataHolder> trackHoldersForCurrentCondition = getTrackHoldersForCurrentCondition();
-        int trackNumberForCondition = trackHoldersForCurrentCondition.size();
+        int tracksNumberForCondition = trackHoldersForCurrentCondition.size();
         // if the user does not write anything, number of tracks to be plotted is set to default
         String text = trackCoordinatesPanel.getRandomTracksNumberTextField().getText();
         // the default is set to 10, if possible, otherwise is less
-        int defaultNumberOfTracks = getDefaultNumberOfTracks(trackNumberForCondition);
+        int defaultNumberOfTracks = getDefaultNumberOfTracks(tracksNumberForCondition);
         int randomTracksNumber = defaultNumberOfTracks;
         if (!text.isEmpty()) {
             try {
                 randomTracksNumber = Integer.parseInt(text);
             } catch (NumberFormatException ex) {
                 LOG.error(ex.getMessage());
-                singleCellPreProcessingController.showMessage("Please insert a valid number of tracks!", "error setting number of tracks", JOptionPane.WARNING_MESSAGE);
+                String message = "Please insert a valid number of tracks!" + "\nDefault set back to: " + defaultNumberOfTracks + " tracks";
+                singleCellPreProcessingController.showMessage(message, "error setting number of tracks", JOptionPane.ERROR_MESSAGE);
             }
         }
-        if (randomTracksNumber > trackNumberForCondition) {
-            randomTracksNumber = 10;
-            singleCellPreProcessingController.showMessage("Please insert a number of tracks to plot smaller or equal\nto the number of tracks for the current condition!", "error in choosing number of tracks", JOptionPane.WARNING_MESSAGE);
+        if (randomTracksNumber > tracksNumberForCondition) {
+            String message = "This condition has " + tracksNumberForCondition + " tracks" + "\nI cannot plot " + randomTracksNumber + " tracks!" + "\nDefault set back to: " + defaultNumberOfTracks + " tracks";
+            singleCellPreProcessingController.showMessage(message, "error in setting number of tracks", JOptionPane.WARNING_MESSAGE);
+            randomTracksNumber = defaultNumberOfTracks;
         }
         // update text field
         trackCoordinatesPanel.getRandomTracksNumberTextField().setText("" + randomTracksNumber);
         // pick up randomly the track holders and add them to the list
         for (int j = 0; j < randomTracksNumber; j++) {
             // create a random number and take its int part
-            Double random = Math.random() * trackNumberForCondition;
+            Double random = Math.random() * tracksNumberForCondition;
             int intValue = random.intValue();
             TrackDataHolder randomTrackDataHolder = trackHoldersForCurrentCondition.get(intValue);
             // make sure we do not use twice the same random track
@@ -1000,7 +1009,7 @@ public class TrackCoordinatesController {
                 } else {
                     chartTitle = trackDataHolderBindingList.size() + " tracks, coordinates shifted to (0, 0) - condition " + conditionIndex;
                 }
-                JFreeChart coordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+                JFreeChart coordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x (µm)", "y (µm)", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
                 int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
                 JFreeChartUtils.setupTrackCoordinatesPlot(coordinatesChart, selectedTrackIndex, plotLines, plotPoints);
                 coordinatesChartPanel.setChart(coordinatesChart);
@@ -1046,7 +1055,7 @@ public class TrackCoordinatesController {
                 } else {
                     chartTitle = trackDataHolderBindingList.size() + " tracks,  coordinates shifted to (0, 0) - well " + selectedWell.toString();
                 }
-                JFreeChart coordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x", "y", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+                JFreeChart coordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x (µm)", "y (µm)", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
                 int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
                 JFreeChartUtils.setupTrackCoordinatesPlot(coordinatesChart, selectedTrackIndex, plotLines, plotPoints);
                 coordinatesChartPanel.setChart(coordinatesChart);

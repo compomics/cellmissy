@@ -41,10 +41,8 @@ import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,7 +58,6 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
@@ -450,26 +447,6 @@ public class AreaMainController {
     }
 
     /**
-     * Highlight label (both color and size)
-     *
-     * @param label
-     */
-    private void highlightLabel(JLabel label) {
-        label.setFont(new Font("Tahoma", Font.BOLD, 14));
-        label.setForeground(new Color(72, 61, 169));
-    }
-
-    /**
-     * Reset label (both size and color)
-     *
-     * @param label
-     */
-    private void resetLabel(JLabel label) {
-        label.setFont(new Font("Tahoma", Font.PLAIN, 12));
-        label.setForeground(GuiUtils.getDefaultColor());
-    }
-
-    /**
      * Check for card name when switching
      */
     private void onCardSwitch() {
@@ -485,10 +462,10 @@ public class AreaMainController {
                 dataAnalysisPanel.getConditionsList().setSelectedIndex(plateConditionList.indexOf(currentCondition));
                 analysisPlatePanel.setCurrentCondition(currentCondition);
                 analysisPlatePanel.repaint();
-                highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
-                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
-                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
-                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
+                GuiUtils.highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
                 updateInfoMessage("Area values are shown for each well, together with (column, row) coordinates");
                 break;
             case "preprocessingPanel":
@@ -505,10 +482,10 @@ public class AreaMainController {
                 } else {
                     areaPreProcessingController.getAreaAnalysisPanel().getCellCoveredAreaRadioButton().setVisible(true);
                 }
-                highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
-                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
-                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
-                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
+                GuiUtils.highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
                 updateInfoMessage("Area values are normalized and outliers correction is performed (see %Area increase)");
                 break;
             case "globalViewPanel":
@@ -520,10 +497,10 @@ public class AreaMainController {
                 dataAnalysisPanel.getConditionsList().clearSelection();
                 analysisPlatePanel.setCurrentCondition(null);
                 analysisPlatePanel.repaint();
-                highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
-                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
-                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
-                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
+                GuiUtils.highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
                 updateInfoMessage("Temporal evolution of the area is plotted for each biological condition");
                 break;
             case "linearModelPanel":
@@ -535,10 +512,10 @@ public class AreaMainController {
                 analysisPlatePanel.setCurrentCondition(null);
                 analysisPlatePanel.repaint();
                 areaPreProcessingController.onLinearRegressionModel();
-                highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
-                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
-                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
-                resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                GuiUtils.highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 updateInfoMessage("Choose conditions from the linear regression table and assign them to a group to perform statistics");
                 break;
         }

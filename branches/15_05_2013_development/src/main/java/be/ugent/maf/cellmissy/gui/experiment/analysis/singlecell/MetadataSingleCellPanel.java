@@ -64,10 +64,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
         return userTextField;
     }
 
-    public JTextField getMagnificationTextField() {
-        return magnificationTextField;
-    }
-
     /**
      * Creates new form MetadataSingleCellPanel
      */
@@ -90,14 +86,12 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
         infoLabel1 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         projectDescriptionTextArea = new javax.swing.JTextArea();
-        jLabel8 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         projectsList = new javax.swing.JList();
         jScrollPane2 = new javax.swing.JScrollPane();
         experimentsList = new javax.swing.JList();
         detailsPanel = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         purposeTextArea = new javax.swing.JTextArea();
@@ -105,8 +99,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
         timeFramesTextField = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
         instrumentTextField = new javax.swing.JTextField();
-        jLabel13 = new javax.swing.JLabel();
-        magnificationTextField = new javax.swing.JTextField();
         userSelectionPanel = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         algorithmComboBox = new javax.swing.JComboBox();
@@ -138,15 +130,14 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
 
         infoLabel1.setText("Click on a project to see the relative performed experiments.");
 
+        jScrollPane4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Project Description", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
+
         projectDescriptionTextArea.setEditable(false);
         projectDescriptionTextArea.setColumns(20);
         projectDescriptionTextArea.setRows(5);
         projectDescriptionTextArea.setBorder(null);
         projectDescriptionTextArea.setFocusable(false);
         jScrollPane4.setViewportView(projectDescriptionTextArea);
-
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("Project Description");
 
         projectsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(projectsList);
@@ -159,13 +150,9 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
         overviewPanelLayout.setHorizontalGroup(
             overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(overviewPanelLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(jLabel8)
-                .addGap(259, 259, 259))
-            .addGroup(overviewPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(infoLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(infoLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
                     .addGroup(overviewPanelLayout.createSequentialGroup()
                         .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,13 +175,11 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
                     .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(infoLabel1)
                 .addGap(38, 38, 38))
         );
@@ -206,12 +191,10 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel6.setText("Number of time frames");
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel7.setText("Purpose");
-
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel10.setText("User");
 
+        jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Purpose", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
         jScrollPane3.setOpaque(false);
 
         purposeTextArea.setEditable(false);
@@ -223,12 +206,12 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
         jScrollPane3.setViewportView(purposeTextArea);
 
         userTextField.setEditable(false);
-        userTextField.setBorder(null);
+        userTextField.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
         userTextField.setFocusable(false);
         userTextField.setOpaque(false);
 
         timeFramesTextField.setEditable(false);
-        timeFramesTextField.setBorder(null);
+        timeFramesTextField.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
         timeFramesTextField.setFocusable(false);
         timeFramesTextField.setOpaque(false);
 
@@ -236,17 +219,9 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
         jLabel11.setText("Instrument");
 
         instrumentTextField.setEditable(false);
-        instrumentTextField.setBorder(null);
+        instrumentTextField.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
         instrumentTextField.setFocusable(false);
         instrumentTextField.setOpaque(false);
-
-        jLabel13.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel13.setText("Magnification");
-
-        magnificationTextField.setEditable(false);
-        magnificationTextField.setBorder(null);
-        magnificationTextField.setFocusable(false);
-        magnificationTextField.setOpaque(false);
 
         javax.swing.GroupLayout detailsPanelLayout = new javax.swing.GroupLayout(detailsPanel);
         detailsPanel.setLayout(detailsPanelLayout);
@@ -257,19 +232,13 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(jLabel11)
-                    .addComponent(jLabel10)
-                    .addComponent(jLabel13))
+                    .addComponent(jLabel10))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(userTextField)
                     .addComponent(instrumentTextField)
-                    .addComponent(magnificationTextField)
                     .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
-            .addGroup(detailsPanelLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(jLabel7)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, detailsPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -282,23 +251,17 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(userTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
                     .addComponent(instrumentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
-                    .addComponent(magnificationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(timeFramesTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel7)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         userSelectionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Metadata"));
@@ -339,7 +302,7 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
                     .addGroup(userSelectionPanelLayout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(jLabel15)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(81, Short.MAX_VALUE))
         );
 
         userSelectionPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {algorithmComboBox, coordinatesUnitOfMeasurementComboBox, imagingTypeComboBox});
@@ -363,7 +326,7 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
                 .addComponent(infoLabel2)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel15)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         analysisPreferencesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Analysis Preferences"));
@@ -438,10 +401,10 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
                     .addComponent(analysisPreferencesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(overviewPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(userSelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE)
-                    .addComponent(detailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(detailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(userSelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -458,7 +421,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
@@ -467,15 +429,12 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JComboBox kernelDensityEstimatorsComboBox;
-    private javax.swing.JTextField magnificationTextField;
     private javax.swing.JComboBox outliersAlgorithmsComboBox;
     private javax.swing.JPanel overviewPanel;
     private javax.swing.JTextArea projectDescriptionTextArea;
