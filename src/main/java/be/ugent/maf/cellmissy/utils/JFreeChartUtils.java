@@ -42,36 +42,24 @@ import org.jfree.ui.RectangleEdge;
  */
 public class JFreeChartUtils {
 
-    // private methods
-    /**
-     * Given a list of wells and one well's coordinate, get the index of the
-     * well in the List.
-     *
-     * @param wellCoordinates
-     * @param wellList
-     * @return
-     */
-    private static int getWellIndex(String wellCoordinates, List<Well> wellList) {
-        int wellIndex = 0;
-        for (Well well : wellList) {
-            if (well.toString().equals(wellCoordinates)) {
-                wellIndex = wellList.indexOf(well);
-            }
-        }
-        return wellIndex;
-    }
+    // default basic stroke: normal line
+    private static BasicStroke normalLine = new BasicStroke(1.3f);
+    // ticker basic stroke: wide line
+    private static BasicStroke wideLine = new BasicStroke(2.5f);
+    // font for the chart elements
+    private static Font chartFont = new Font("Tahoma", Font.BOLD, 12);
 
     /**
-     * Get well coordinates from series in oder to render the lines colour
+     * Getters
      *
-     * @param xYSeriesCollection
-     * @param indexOfSeries
      * @return
      */
-    private static String getWellCoordinates(XYSeriesCollection xYSeriesCollection, int indexOfSeries) {
-        String toString = xYSeriesCollection.getSeriesKey(indexOfSeries).toString();
-        int lastIndexOf = toString.lastIndexOf(")");
-        return toString.substring(0, lastIndexOf + 1);
+    public static BasicStroke getNormalLine() {
+        return normalLine;
+    }
+
+    public static BasicStroke getWideLine() {
+        return wideLine;
     }
 
     // public methods
@@ -89,7 +77,7 @@ public class JFreeChartUtils {
     public static JFreeChart generateDensityFunctionChart(PlateCondition plateCondition, int conditionIndex, XYSeriesCollection xYSeriesCollection, String chartTitle) {
         String specificChartTitle = chartTitle + " Condition " + conditionIndex + " (replicates)";
         JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, "% increase (Area)", "Density", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
-        densityChart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
+        densityChart.getTitle().setFont(chartFont);
         //XYplot
         XYPlot xYPlot = densityChart.getXYPlot();
         //disable autorange for the axes
@@ -102,7 +90,6 @@ public class JFreeChartUtils {
         xYPlot.setBackgroundPaint(Color.white);
         //renderer for wide line
         XYItemRenderer renderer = xYPlot.getRenderer();
-        BasicStroke wideLine = new BasicStroke(1.3f);
         // get imaged wells and number of samples for each one
         List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
         int counter = 0;
@@ -110,7 +97,7 @@ public class JFreeChartUtils {
             int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(well);
             for (int i = counter; i < xYSeriesCollection.getSeriesCount(); i++) {
                 // wide line
-                renderer.setSeriesStroke(i, wideLine);
+                renderer.setSeriesStroke(i, normalLine);
                 String wellCoordinates = getWellCoordinates(xYSeriesCollection, i);
                 int wellIndex = getWellIndex(wellCoordinates, processedWells);
                 int length = GuiUtils.getAvailableColors().length;
@@ -169,8 +156,8 @@ public class JFreeChartUtils {
         domainAxis.setLabelPaint(Color.black);
         rangeAxis.setLabelPaint(Color.black);
         // set font for labels, both on domain and range axes
-        domainAxis.setLabelFont(new Font("Tahoma", Font.BOLD, 12));
-        rangeAxis.setLabelFont(new Font("Tahoma", Font.BOLD, 12));
+        domainAxis.setLabelFont(chartFont);
+        rangeAxis.setLabelFont(chartFont);
     }
 
     /**
@@ -201,7 +188,7 @@ public class JFreeChartUtils {
      */
     public static void setupReplicatesAreaChart(JFreeChart chart, List<Well> wellList, boolean plotLines, boolean plotPoints) {
         // set title font
-        chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
+        chart.getTitle().setFont(chartFont);
         // put legend on the right edge
         chart.getLegend().setPosition(RectangleEdge.RIGHT);
         XYPlot xYPlot = chart.getXYPlot();
@@ -210,10 +197,9 @@ public class JFreeChartUtils {
         XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
         // modify renderer
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xYPlot.getRenderer();
-        BasicStroke wideLine = new BasicStroke(1.3f);
         for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
             // wide line
-            renderer.setSeriesStroke(i, wideLine);
+            renderer.setSeriesStroke(i, normalLine);
             // plot lines with colors according to well (replicate) index
             String wellCoordinates = getWellCoordinates(xYSeriesCollection, i);
             int wellIndex = getWellIndex(wellCoordinates, wellList);
@@ -236,7 +222,7 @@ public class JFreeChartUtils {
      */
     public static void setupGlobalAreaChart(JFreeChart chart, boolean plotLines, boolean plotPoints) {
         // set title font
-        chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
+        chart.getTitle().setFont(chartFont);
         // get xyplot from the chart
         XYPlot xYPlot = chart.getXYPlot();
         setupPlot(xYPlot);
@@ -244,10 +230,9 @@ public class JFreeChartUtils {
         XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
         // modify renderer
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xYPlot.getRenderer();
-        BasicStroke wideLine = new BasicStroke(1.3f);
         for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
             // wide line
-            renderer.setSeriesStroke(i, wideLine);
+            renderer.setSeriesStroke(i, normalLine);
             // plot lines according to conditions indexes
             int length = GuiUtils.getAvailableColors().length;
             String conditionName = xYSeriesCollection.getSeriesKey(i).toString();
@@ -263,58 +248,25 @@ public class JFreeChartUtils {
     }
 
     /**
-     * Set up the track coordinates plot.
+     * Set up a plot for track coordinates. Given the chart, set font for the
+     * title, set outline and background paint and compute max range. The max
+     * range is used to set both the axes and maintain the plot squared.
      *
-     * @param chart: the chart to actually set up;
-     * @param seriesToHighlight: the series of tracks that need to be
-     * highlighted
-     * @param plotLines: ?plot lines
-     * @param plotPoints ? add points
+     * @param chart: the chart to get the plot from.
      */
-    public static void setupTrackCoordinatesPlot(JFreeChart chart, int seriesToHighlight, boolean plotLines, boolean plotPoints) {
+    public static void setupTrackChart(JFreeChart chart) {
         // set title font
-        chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
+        chart.getTitle().setFont(chartFont);
         XYPlot xYPlot = chart.getXYPlot();
         setupPlot(xYPlot);
         xYPlot.setBackgroundPaint(new Color(177, 177, 60, 50));
         xYPlot.setOutlinePaint(new Color(177, 177, 60, 100));
-        xYPlot.setOutlineStroke(new BasicStroke(1.5f));
+        xYPlot.setOutlineStroke(wideLine);
         xYPlot.setRangeGridlinePaint(Color.black);
         xYPlot.setDomainGridlinePaint(Color.black);
-        Range domain = xYPlot.getDataRange(xYPlot.getDomainAxis());
-        Range range = xYPlot.getDataRange(xYPlot.getRangeAxis());
-        Range maxRange = computeMaxRange(domain, range);
+        Range maxRange = computeMaxRange(xYPlot);
         xYPlot.getDomainAxis().setRange(maxRange);
         xYPlot.getRangeAxis().setRange(maxRange);
-        // get the xyseriescollection from the plot
-        XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
-        // modify renderer
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xYPlot.getRenderer();
-        renderer.removeAnnotations();
-        int length = GuiUtils.getAvailableColors().length;
-        BasicStroke normalLine = new BasicStroke(1.5f);
-        BasicStroke wideLine = new BasicStroke(2.5f);
-        for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
-            if (seriesToHighlight != -1) {
-                if (i == seriesToHighlight) {
-                    int colorIndex = seriesToHighlight % length;
-                    renderer.setSeriesPaint(seriesToHighlight, GuiUtils.getAvailableColors()[colorIndex]);
-                    renderer.setSeriesStroke(seriesToHighlight, wideLine);
-                    addCirclePointersOnTrackPlot(xYPlot, seriesToHighlight);
-                } else {
-                    renderer.setSeriesPaint(i, GuiUtils.getNonImagedColor());
-                    renderer.setSeriesStroke(i, normalLine);
-                }
-            } else {
-                renderer.setSeriesStroke(i, normalLine);
-                int colorIndex = i % length;
-                renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
-            }
-            // show lines?
-            renderer.setSeriesLinesVisible(i, plotLines);
-            // show points?
-            renderer.setSeriesShapesVisible(i, plotPoints);
-        }
     }
 
     /**
@@ -437,44 +389,77 @@ public class JFreeChartUtils {
      *
      * @param chart: the chart to get the plot from
      * @param trackIndex: we need this to get the right color
-     * @param range: the range for the plot
+     * @param inTime: if true, the plot is in time, thus background is set to
+     * white and range does not have to be kept squared
      */
-    public static void setupSingleTrackPlot(JFreeChart chart, int trackIndex, Range range) {
+    public static void setupSingleTrackPlot(JFreeChart chart, int trackIndex, boolean inTime) {
         // set up the plot
         XYPlot xyPlot = chart.getXYPlot();
-        xyPlot.getRangeAxis().setRange(range);
         setupPlot(xyPlot);
-        xyPlot.setBackgroundPaint(new Color(177, 177, 60, 50));
-        xyPlot.setOutlinePaint(new Color(177, 177, 60, 100));
-        xyPlot.setRangeGridlinePaint(Color.black);
-        xyPlot.setDomainGridlinePaint(Color.black);
+        if (!inTime) {
+            setupTrackChart(chart);
+        }
+        xyPlot.setOutlineStroke(wideLine);
         // set title font
-        chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
+        chart.getTitle().setFont(chartFont);
         // modify renderer
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xyPlot.getRenderer();
-        BasicStroke wideLine = new BasicStroke(2.5f);
         renderer.setSeriesStroke(0, wideLine);
         int length = GuiUtils.getAvailableColors().length;
         int colorIndex = trackIndex % length;
         renderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[colorIndex]);
+        // show only line and no points
         renderer.setSeriesLinesVisible(0, true);
-        renderer.setSeriesShapesVisible(0, true);
+        renderer.setSeriesShapesVisible(0, false);
     }
 
     /**
+     * Given a plot, compute the greatest range between the domain and the range
+     * axes.
      *
-     * @param domain
-     * @param range
-     * @return
+     * @param plot
+     * @return the Range
      */
-    private static Range computeMaxRange(Range domain, Range range) {
+    private static Range computeMaxRange(XYPlot plot) {
+        Range domain = plot.getDataRange(plot.getDomainAxis());
+        Range range = plot.getDataRange(plot.getRangeAxis());
         double domainLowerBound = domain.getLowerBound();
         double domainUpperBound = domain.getUpperBound();
         double rangeLowerBound = range.getLowerBound();
         double rangeUpperBound = range.getUpperBound();
         double lowerBound = Math.min(domainLowerBound, rangeLowerBound);
         double upperdBound = Math.max(domainUpperBound, rangeUpperBound);
-        Range maxRange = new Range(lowerBound, upperdBound);
-        return maxRange;
+        return new Range(lowerBound, upperdBound);
+    }
+
+    /**
+     * Given a list of wells and one well's coordinate, get the index of the
+     * well in the List.
+     *
+     * @param wellCoordinates
+     * @param wellList
+     * @return
+     */
+    private static int getWellIndex(String wellCoordinates, List<Well> wellList) {
+        int wellIndex = 0;
+        for (Well well : wellList) {
+            if (well.toString().equals(wellCoordinates)) {
+                wellIndex = wellList.indexOf(well);
+            }
+        }
+        return wellIndex;
+    }
+
+    /**
+     * Get well coordinates from series in oder to render the lines colour
+     *
+     * @param xYSeriesCollection
+     * @param indexOfSeries
+     * @return
+     */
+    private static String getWellCoordinates(XYSeriesCollection xYSeriesCollection, int indexOfSeries) {
+        String toString = xYSeriesCollection.getSeriesKey(indexOfSeries).toString();
+        int lastIndexOf = toString.lastIndexOf(")");
+        return toString.substring(0, lastIndexOf + 1);
     }
 }

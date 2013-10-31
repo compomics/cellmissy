@@ -43,9 +43,9 @@ public class GuiUtils {
     // Colors used for Imaging Type Rendering
     private static final Color[] imagingTypeColors = {new Color(138, 43, 226), new Color(135, 206, 250), new Color(255, 0, 255)};
     // Font for highlighted labels
-    private static Font highlightFont = new Font("Tahoma", Font.BOLD, 14);
+    private static Font boldFont = new Font("Tahoma", Font.BOLD, 14);
     // Font for normal labels
-    private static Font defaultFont = new Font("Tahoma", Font.PLAIN, 12);
+    private static Font plainFont = new Font("Tahoma", Font.PLAIN, 12);
     // Color for highlighted labels
     private static Color highlightColor = new Color(72, 61, 169);
 
@@ -251,7 +251,7 @@ public class GuiUtils {
      * @param label
      */
     public static void highlightLabel(JLabel label) {
-        label.setFont(highlightFont);
+        label.setFont(boldFont);
         label.setForeground(highlightColor);
     }
 
@@ -261,7 +261,7 @@ public class GuiUtils {
      * @param label
      */
     public static void resetLabel(JLabel label) {
-        label.setFont(defaultFont);
+        label.setFont(plainFont);
         label.setForeground(defaultColor);
     }
 }
