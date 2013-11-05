@@ -92,8 +92,8 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         return plottedTracksJList;
     }
 
-    public JButton getShowPlotsTrackButton() {
-        return showPlotsTrackButton;
+    public JButton getShowDataForSelectedTrackButton() {
+        return showDataForSelectedTrackButton;
     }
 
     public JButton getClearSelectionButton() {
@@ -148,7 +148,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         jScrollPane2 = new javax.swing.JScrollPane();
         plottedTracksJList = new javax.swing.JList();
         jPanel2 = new javax.swing.JPanel();
-        showPlotsTrackButton = new javax.swing.JButton();
+        showDataForSelectedTrackButton = new javax.swing.JButton();
         clearSelectionButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         randomTracksNumberTextField = new javax.swing.JTextField();
@@ -370,7 +370,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         plottedTracksJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(plottedTracksJList);
 
-        showPlotsTrackButton.setText("Show Data For Selected Track");
+        showDataForSelectedTrackButton.setText("Show Data For Selected Track");
 
         clearSelectionButton.setText("Clear Selection on List");
 
@@ -414,7 +414,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                             .addComponent(yTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(xTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(clearSelectionButton, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
-                    .addComponent(showPlotsTrackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(showDataForSelectedTrackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -446,7 +446,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(clearSelectionButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(showPlotsTrackButton)
+                .addComponent(showDataForSelectedTrackButton)
                 .addContainerGap())
         );
 
@@ -466,14 +466,11 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(currentTracksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(plotPointsCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(plotPointsCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
                     .addComponent(plotLinesCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-
-        currentTracksPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotLinesCheckBox, plotPointsCheckBox});
-
         currentTracksPanelLayout.setVerticalGroup(
             currentTracksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, currentTracksPanelLayout.createSequentialGroup()
@@ -523,7 +520,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
     private javax.swing.JButton randomAndPlotButton;
     private javax.swing.JTextField randomTracksNumberTextField;
     private javax.swing.JRadioButton shiftedCoordinatesRadioButton;
-    private javax.swing.JButton showPlotsTrackButton;
+    private javax.swing.JButton showDataForSelectedTrackButton;
     private javax.swing.JLabel tableInfoLabel;
     private javax.swing.JSlider timeSlider;
     private javax.swing.JLabel totalTracksNumberLabel;

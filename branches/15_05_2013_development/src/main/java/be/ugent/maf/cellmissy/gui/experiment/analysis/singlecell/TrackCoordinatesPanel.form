@@ -378,8 +378,8 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jScrollPane2" min="-2" pref="210" max="-2" attributes="0"/>
-                      <Component id="plotPointsCheckBox" linkSize="1" max="32767" attributes="0"/>
-                      <Component id="plotLinesCheckBox" linkSize="1" max="32767" attributes="0"/>
+                      <Component id="plotPointsCheckBox" pref="218" max="32767" attributes="0"/>
+                      <Component id="plotLinesCheckBox" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
@@ -464,7 +464,7 @@
                               </Group>
                           </Group>
                           <Component id="clearSelectionButton" linkSize="1" alignment="0" pref="208" max="32767" attributes="0"/>
-                          <Component id="showPlotsTrackButton" alignment="0" min="-2" pref="208" max="-2" attributes="0"/>
+                          <Component id="showDataForSelectedTrackButton" alignment="0" min="-2" pref="208" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -497,14 +497,14 @@
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="clearSelectionButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="showPlotsTrackButton" min="-2" max="-2" attributes="0"/>
+                      <Component id="showDataForSelectedTrackButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JButton" name="showPlotsTrackButton">
+            <Component class="javax.swing.JButton" name="showDataForSelectedTrackButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Show Data For Selected Track"/>
               </Properties>
