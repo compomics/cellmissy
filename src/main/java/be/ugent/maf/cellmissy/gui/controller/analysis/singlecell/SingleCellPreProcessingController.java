@@ -178,6 +178,10 @@ public class SingleCellPreProcessingController {
         return trackCoordinatesController.getTrackDataHolderBindingList();
     }
 
+    public void handleUnexpectedError(Exception exception) {
+        singleCellMainController.handleUnexpectedError(exception);
+    }
+
     /**
      * Initialize map with plate conditions as keys and null objects as values
      */

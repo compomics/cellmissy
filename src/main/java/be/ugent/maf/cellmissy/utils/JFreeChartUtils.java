@@ -43,7 +43,7 @@ import org.jfree.ui.RectangleEdge;
 public class JFreeChartUtils {
 
     // default basic stroke: normal line
-    private static BasicStroke normalLine = new BasicStroke(1.3f);
+    private static BasicStroke normalLine = new BasicStroke(1.5f);
     // ticker basic stroke: wide line
     private static BasicStroke wideLine = new BasicStroke(2.5f);
     // font for the chart elements

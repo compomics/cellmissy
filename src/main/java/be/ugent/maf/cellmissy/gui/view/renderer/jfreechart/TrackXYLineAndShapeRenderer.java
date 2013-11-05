@@ -5,30 +5,30 @@
 package be.ugent.maf.cellmissy.gui.view.renderer.jfreechart;
 
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.Paint;
-import java.awt.Stroke;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 /**
+ * This class extends a JFreeChart XYLineAndShapeRenderer and it is used to
+ * customise the tracks plot. If a certain track is selected in the tracks list,
+ * the correspondent series paint is set to a certain color, and all the tracks
+ * left in the background are simply in shadow (coloured in gray). Also, the
+ * lines and points are controlled depending on check box selections.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
 
-    // show the lines?
     private boolean plotLines;
-    // show the points?
     private boolean plotPoints;
-    // this is the index for the current series (i.e. the track to highlight in the plot)
     private int trackSeriesIndex;
 
     /**
      * Constructor
      *
-     * @param plotLines
-     * @param plotPoints
-     * @param trackSeriesIndex
+     * @param plotLines: render lines on the plot?
+     * @param plotPoints: render points on the plot?
+     * @param trackSeriesIndex: index for the current series (i.e. the track to highlight in the plot)
      */
     public TrackXYLineAndShapeRenderer(boolean plotLines, boolean plotPoints, int trackSeriesIndex) {
         this.plotLines = plotLines;
@@ -59,18 +59,5 @@ public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
     @Override
     public Boolean getSeriesShapesVisible(int series) {
         return plotPoints;
-    }
-
-    @Override
-    public Stroke getSeriesStroke(int series) {
-        if (trackSeriesIndex != -1) {
-            if (trackSeriesIndex == series) {
-                return JFreeChartUtils.getWideLine();
-            } else {
-                return JFreeChartUtils.getNormalLine();
-            }
-        } else {
-            return JFreeChartUtils.getNormalLine();
-        }
     }
 }
