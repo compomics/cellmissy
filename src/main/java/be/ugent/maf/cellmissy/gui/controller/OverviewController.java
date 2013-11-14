@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.gui.project.OverviewDialog;
-import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsOverviewListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.list.ExperimentsOverviewListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;

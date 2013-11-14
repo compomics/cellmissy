@@ -11,7 +11,7 @@ import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.gui.experiment.setup.AddDrugsTreatmentsDialog;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.setup.TreatmentsPanel;
-import be.ugent.maf.cellmissy.gui.view.renderer.TreatmentsRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.list.TreatmentsRenderer;
 import be.ugent.maf.cellmissy.service.TreatmentService;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
