@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.view.renderer;
+package be.ugent.maf.cellmissy.gui.view.renderer.list;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.view.icon.RectIcon;
@@ -13,12 +13,14 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
 /**
- * This renderer is used in the loading step. Conditions were set up, but we
- * only need to display them, so JList is not focusable, either selectable.
+ * This renderer is used in the analysis step Conditions were already set up; we
+ * click on a condition and fetch data to analyse.
  *
  * @author Paola Masuzzo
  */
-public class ConditionsLoadListRenderer extends DefaultListCellRenderer {
+public class ConditionsAnalysisListRenderer extends DefaultListCellRenderer {
+
+    // Plate Conditions List
     private List<PlateCondition> plateConditionList;
 
     /**
@@ -26,7 +28,7 @@ public class ConditionsLoadListRenderer extends DefaultListCellRenderer {
      *
      * @param plateConditionList
      */
-    public ConditionsLoadListRenderer(List<PlateCondition> plateConditionList) {
+    public ConditionsAnalysisListRenderer(List<PlateCondition> plateConditionList) {
         this.plateConditionList = plateConditionList;
         setOpaque(true);
         // set the gap between the icon and the text on the list
@@ -45,7 +47,7 @@ public class ConditionsLoadListRenderer extends DefaultListCellRenderer {
      */
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        super.getListCellRendererComponent(list, value, index, false, false);
+        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         int conditionIndex = plateConditionList.indexOf((PlateCondition) value);
         int lenght = GuiUtils.getAvailableColors().length;
         int indexOfColor = conditionIndex % lenght;

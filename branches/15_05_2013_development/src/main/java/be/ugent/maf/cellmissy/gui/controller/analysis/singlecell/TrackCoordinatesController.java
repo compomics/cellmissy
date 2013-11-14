@@ -11,13 +11,14 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackDataDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
-import be.ugent.maf.cellmissy.gui.view.renderer.AlignedTableRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.PlottedTracksListRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.list.PlottedTracksListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TimePointTrackXYLineAndShapeRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TrackXYLineAndShapeRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackCoordinatesTableModel;
+import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataHolderTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
@@ -39,7 +40,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -47,10 +47,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.Binding;
 import org.jdesktop.beansbinding.BindingGroup;
-import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
@@ -377,50 +374,9 @@ public class TrackCoordinatesController {
         trackDataDialog.getYtCoordinateParentPanel().add(ytCoordinateChartPanel, gridBagConstraints);
         trackDataDialog.getUnshiftedParentPanel().add(unshiftedTrackChartPanel, gridBagConstraints);
         trackDataDialog.getShiftedParentPanel().add(shiftedTrackChartPanel, gridBagConstraints);
-        // other binding properties
-        // autobind track number
-        Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.track.trackNumber"), trackDataDialog.getTrackNumberTextField(), BeanProperty.create("text"), "tracknumberbinding");
-        bindingGroup.addBinding(binding);
-        // autobind track length
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.track.trackLength"), trackDataDialog.getTrackLengthTextField(), BeanProperty.create("text"), "tracklengthbinding");
-        bindingGroup.addBinding(binding);
-        // autobind track duration
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackDuration"), trackDataDialog.getDurationTextField(), BeanProperty.create("text"), "trackdurationbinding");
-        bindingGroup.addBinding(binding);
-        // number of points is bounded manually
-        // autobind xmin
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.xMin"), trackDataDialog.getxMinTextField(), BeanProperty.create("text"), "xminbinding");
-        bindingGroup.addBinding(binding);
-        // autobind xmax
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.xMax"), trackDataDialog.getxMaxTextField(), BeanProperty.create("text"), "xmaxbinding");
-        bindingGroup.addBinding(binding);
-        // autobind ymin
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.yMin"), trackDataDialog.getyMinTextField(), BeanProperty.create("text"), "yminbinding");
-        bindingGroup.addBinding(binding);
-        // autobind ymax
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.yMax"), trackDataDialog.getyMaxTextField(), BeanProperty.create("text"), "ymaxbinding");
-        bindingGroup.addBinding(binding);
-        // autobind track mean displacement
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackMedianDisplacement"), trackDataDialog.getMeanDisplacementTextField(), BeanProperty.create("text"), "trackdisplacementbinding");
-        bindingGroup.addBinding(binding);
-        // autobind track mean speed
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackMeanSpeed"), trackDataDialog.getMeanSpeedTextField(), BeanProperty.create("text"), "trackspeedbinding");
-        bindingGroup.addBinding(binding);
-        // autobind accumulative distance
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.cumulativeDistance"), trackDataDialog.getCumDistanceTextField(), BeanProperty.create("text"), "cumdistancebinding");
-        bindingGroup.addBinding(binding);
-        // autobind euclidean distance
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.euclideanDistance"), trackDataDialog.getEuclDistanceTextField(), BeanProperty.create("text"), "eucldistancebinding");
-        bindingGroup.addBinding(binding);
-        // autobind directionality
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.directionality"), trackDataDialog.getDirectionalityTextField(), BeanProperty.create("text"), "directionalitybinding");
-        bindingGroup.addBinding(binding);
-        // autobind median turning angle
-        binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackCoordinatesPanel.getPlottedTracksJList(), BeanProperty.create("selectedElement.trackAngle"), trackDataDialog.getMedianAngleTextField(), BeanProperty.create("text"), "mediananglebinding");
-        bindingGroup.addBinding(binding);
-        // do the binding
-        bindingGroup.bind();
-
+        trackDataDialog.getTrackDataTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        trackDataDialog.getTrackDataTable().getTableHeader().setReorderingAllowed(false);
+        
         /**
          * add action listeners
          */
@@ -620,16 +576,6 @@ public class TrackCoordinatesController {
             }
         });
 
-        // Play button: follow track in time
-        trackCoordinatesPanel.getPlayButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
-                if (selectedTrackIndex != -1) {
-                    followTrackInTime(selectedTrackIndex);
-                }
-            }
-        });
         // disable the time slider at first, only enable it when a single track is being selected in the plot or in the tracks list
         trackCoordinatesPanel.getTimeSlider().setEnabled(false);
         // add view to parent panel
@@ -712,86 +658,6 @@ public class TrackCoordinatesController {
     }
 
     /**
-     *
-     * @param selectedTrackIndex
-     */
-    private void followTrackInTime(final int selectedTrackIndex) {
-//       JFreeChartUtils.setupTrackChart(coordinatesChartPanel.getChart());
-        final TrackDataHolder selectedTrack = trackDataHolderBindingList.get(selectedTrackIndex);
-        double[] timeIndexes = selectedTrack.getTimeIndexes();
-        for (double timeIndex : timeIndexes) {
-            final int timePoint = (int) timeIndex;
-//            // create a new renderer and use it for the plot
-//            showTrackPointInTime(selectedTrackIndex, timePoint);
-
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    while (true) {
-
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                showTrackPointInTime(selectedTrackIndex, timePoint);
-
-                            }
-                        });
-
-                        try {
-                            Thread.sleep(5000);
-                        } catch (InterruptedException e) {
-
-                        }
-
-                    }
-                }
-            };
-
-            Thread t = new Thread(r);
-            t.start();
-
-//            updateCoordinatesInfoInTime(selectedTrackIndex, timePoint);
-//            SwingUtilities.invokeLater(new TrackSimulator(selectedTrackIndex, timePoint));
-//            TrackSimulator trackSimulator = new TrackSimulator(selectedTrackIndex, timePoint);
-//            new Thread(trackSimulator).start();
-        }
-    }
-
-    private class TrackSimulator implements Runnable {
-
-        int selectedTrackIndex;
-        int timePoint;
-
-        public TrackSimulator(int selectedTrackIndex, int timePoint) {
-            this.selectedTrackIndex = selectedTrackIndex;
-            this.timePoint = timePoint;
-        }
-
-        @Override
-        public void run() {
-            JFreeChart chart = coordinatesChartPanel.getChart();
-            final XYPlot xyPlot = chart.getXYPlot();
-            TrackDataHolder selectedTrackDataHolder = trackDataHolderBindingList.get(selectedTrackIndex);
-            double[] timeIndexes = selectedTrackDataHolder.getTimeIndexes();
-            int lastTimePoint = (int) timeIndexes[timeIndexes.length - 1];
-
-
-            while (timePoint != lastTimePoint) {
-                TimePointTrackXYLineAndShapeRenderer timePointTrackXYLineAndShapeRenderer = new TimePointTrackXYLineAndShapeRenderer(selectedTrackIndex, timePoint);
-                xyPlot.setRenderer(timePointTrackXYLineAndShapeRenderer);
-//            updateCoordinatesInfoInTime(selectedTrackIndex, timePoint);
-                try {
-                    Double experimentInterval = singleCellPreProcessingController.getExperiment().getExperimentInterval();
-                    System.out.println("exp int: " + experimentInterval);
-                    Thread.sleep(1440);
-                } catch (InterruptedException ex) {
-                    System.out.println(ex);
-                }
-            }
-        }
-    }
-
-    /**
      * Show the track data dialog for a certain track data holder selected.
      *
      * @param trackDataHolder
@@ -799,8 +665,9 @@ public class TrackCoordinatesController {
     private void showTrackDataDialog(TrackDataHolder trackDataHolder) {
         // plot the data associated with the current track
         plotSingleTrackData(trackDataHolder);
-        // add manually information that cannot be auto-bind
-        updateSomeInfoFields(trackDataHolder);
+        // update model for the track table
+        trackDataDialog.getTrackDataTable().setModel(new TrackDataHolderTableModel(trackDataHolder));
+        trackDataDialog.getTrackDataTable().getColumnModel().getColumn(1).setCellRenderer(new AlignedTableRenderer(SwingConstants.LEFT));
         // pack and show the dialog with the plots
         trackDataDialog.pack();
         GuiUtils.centerDialogOnFrame(singleCellPreProcessingController.getMainFrame(), trackDataDialog);
@@ -818,27 +685,6 @@ public class TrackCoordinatesController {
         // plot the unshifted and the shifted track coordinates
         plotUnshiftedCoordinates(trackDataHolder);
         plotShiftedCoordinates(trackDataHolder);
-    }
-
-    /**
-     * Update some fields that cannot be bind automatically
-     *
-     * @param trackDataHolder
-     */
-    private void updateSomeInfoFields(TrackDataHolder trackDataHolder) {
-        // the well to which the track belongs
-        Well well = trackDataHolder.getTrack().getWellHasImagingType().getWell();
-        trackDataDialog.getWellTextField().setText("" + well);
-        // number of points during which a cell has been tracked
-        // this can be different (smaller) than the length of a track, in this case, missing points are present
-        int numberOfPoints = trackDataHolder.getTimeIndexes().length;
-        trackDataDialog.getNumberOfPointsTextField().setText("" + numberOfPoints);
-        // net displacement in the x direction: xMax - xMin
-        double xNetDisplacement = trackDataHolder.getxMax() - trackDataHolder.getxMin();
-        trackDataDialog.getxNetDisplacementTextField().setText("" + xNetDisplacement);
-        // net displacement in the y direction: yMax - yMin
-        double yNetDisplacement = trackDataHolder.getyMax() - trackDataHolder.getyMin();
-        trackDataDialog.getyNetDisplacementTextField().setText("" + yNetDisplacement);
     }
 
     /**

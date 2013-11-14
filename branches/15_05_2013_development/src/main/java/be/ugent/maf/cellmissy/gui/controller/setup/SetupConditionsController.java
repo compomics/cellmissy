@@ -22,7 +22,7 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.gui.experiment.setup.ConditionsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.SetupConditionsPanel;
-import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsSetupListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.list.ConditionsSetupListRenderer;
 import be.ugent.maf.cellmissy.service.CellLineService;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;

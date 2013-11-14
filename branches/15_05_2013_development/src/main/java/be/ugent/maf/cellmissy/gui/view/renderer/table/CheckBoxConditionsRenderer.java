@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.view.renderer;
+package be.ugent.maf.cellmissy.gui.view.renderer.table;
 
+import be.ugent.maf.cellmissy.gui.view.renderer.CheckBoxCellRenderer;
 import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;

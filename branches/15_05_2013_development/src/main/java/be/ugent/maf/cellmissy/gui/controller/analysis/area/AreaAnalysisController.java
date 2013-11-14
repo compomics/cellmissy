@@ -22,11 +22,11 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.area.LinearRegressionPanel
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.StatisticsDialog;
 import be.ugent.maf.cellmissy.gui.view.table.model.PValuesTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.StatisticalSummaryTableModel;
-import be.ugent.maf.cellmissy.gui.view.renderer.FormatRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.PValuesTableRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.RectIconCellRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.VelocityBarRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.PValuesTableRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.RectIconCellRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.VelocityBarRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;

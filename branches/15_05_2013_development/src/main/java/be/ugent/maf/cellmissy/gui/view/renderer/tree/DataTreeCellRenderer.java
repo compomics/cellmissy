@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.view.renderer;
+package be.ugent.maf.cellmissy.gui.view.renderer.tree;
 
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.gui.view.icon.CircleIcon;

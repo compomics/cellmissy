@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JTable;
 
 /**
  *
@@ -29,72 +29,8 @@ public class TrackDataDialog extends javax.swing.JDialog {
         return ytCoordinateParentPanel;
     }
 
-    public JTextField getTrackNumberTextField() {
-        return trackNumberTextField;
-    }
-
-    public JTextField getWellTextField() {
-        return wellTextField;
-    }
-
-    public JTextField getCumDistanceTextField() {
-        return cumDistanceTextField;
-    }
-
-    public JTextField getEuclDistanceTextField() {
-        return euclDistanceTextField;
-    }
-
-    public JTextField getMeanDisplacementTextField() {
-        return meanDisplacementTextField;
-    }
-
-    public JTextField getMeanSpeedTextField() {
-        return meanSpeedTextField;
-    }
-
-    public JTextField getTrackLengthTextField() {
-        return trackLengthTextField;
-    }
-
-    public JTextField getNumberOfPointsTextField() {
-        return numberOfPointsTextField;
-    }
-
-    public JTextField getDurationTextField() {
-        return durationTextField;
-    }
-
-    public JTextField getxMaxTextField() {
-        return xMaxTextField;
-    }
-
-    public JTextField getxMinTextField() {
-        return xMinTextField;
-    }
-
-    public JTextField getyMaxTextField() {
-        return yMaxTextField;
-    }
-
-    public JTextField getyMinTextField() {
-        return yMinTextField;
-    }
-
-    public JTextField getDirectionalityTextField() {
-        return directionalityTextField;
-    }
-
-    public JTextField getMedianAngleTextField() {
-        return medianAngleTextField;
-    }
-
-    public JTextField getxNetDisplacementTextField() {
-        return xNetDisplacementTextField;
-    }
-
-    public JTextField getyNetDisplacementTextField() {
-        return yNetDisplacementTextField;
+    public JTable getTrackDataTable() {
+        return trackDataTable;
     }
 
     /**
@@ -120,40 +56,8 @@ public class TrackDataDialog extends javax.swing.JDialog {
         unshiftedParentPanel = new javax.swing.JPanel();
         shiftedParentPanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
-        trackLengthTextField = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
-        meanDisplacementTextField = new javax.swing.JTextField();
-        jLabel9 = new javax.swing.JLabel();
-        cumDistanceTextField = new javax.swing.JTextField();
-        euclDistanceTextField = new javax.swing.JTextField();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        numberOfPointsTextField = new javax.swing.JTextField();
-        jLabel15 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        xMinTextField = new javax.swing.JTextField();
-        xMaxTextField = new javax.swing.JTextField();
-        yMinTextField = new javax.swing.JTextField();
-        yMaxTextField = new javax.swing.JTextField();
-        jLabel11 = new javax.swing.JLabel();
-        directionalityTextField = new javax.swing.JTextField();
-        jLabel12 = new javax.swing.JLabel();
-        medianAngleTextField = new javax.swing.JTextField();
-        jLabel19 = new javax.swing.JLabel();
-        jLabel20 = new javax.swing.JLabel();
-        xNetDisplacementTextField = new javax.swing.JTextField();
-        yNetDisplacementTextField = new javax.swing.JTextField();
-        jLabel21 = new javax.swing.JLabel();
-        durationTextField = new javax.swing.JTextField();
-        meanSpeedTextField = new javax.swing.JTextField();
-        jLabel13 = new javax.swing.JLabel();
-        trackNumberTextField = new javax.swing.JTextField();
-        jLabel22 = new javax.swing.JLabel();
-        jLabel23 = new javax.swing.JLabel();
-        wellTextField = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        trackDataTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Selected Track Data");
@@ -217,247 +121,34 @@ public class TrackDataDialog extends javax.swing.JDialog {
         jPanel1.setMinimumSize(new java.awt.Dimension(20, 20));
         jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel7.setText("Length");
-
-        trackLengthTextField.setEditable(false);
-        trackLengthTextField.setBackground(new java.awt.Color(255, 255, 255));
-        trackLengthTextField.setFocusable(false);
-
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("MD (µm)");
-
-        meanDisplacementTextField.setEditable(false);
-        meanDisplacementTextField.setBackground(new java.awt.Color(255, 255, 255));
-        meanDisplacementTextField.setFocusable(false);
-
-        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel9.setText("CD (µm)");
-
-        cumDistanceTextField.setEditable(false);
-        cumDistanceTextField.setBackground(new java.awt.Color(255, 255, 255));
-        cumDistanceTextField.setFocusable(false);
-
-        euclDistanceTextField.setEditable(false);
-        euclDistanceTextField.setBackground(new java.awt.Color(255, 255, 255));
-        euclDistanceTextField.setFocusable(false);
-
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel10.setText("ED (µm)");
-
-        jLabel14.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel14.setText("Nr of points");
-
-        numberOfPointsTextField.setEditable(false);
-        numberOfPointsTextField.setBackground(new java.awt.Color(255, 255, 255));
-        numberOfPointsTextField.setFocusable(false);
-
-        jLabel15.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel15.setText("x min (µm)");
-
-        jLabel16.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel16.setText("x max (µm)");
-
-        jLabel17.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel17.setText("y min (µm)");
-
-        jLabel18.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel18.setText("y max (µm)");
-
-        xMinTextField.setEditable(false);
-        xMinTextField.setBackground(new java.awt.Color(255, 255, 255));
-        xMinTextField.setFocusable(false);
-
-        xMaxTextField.setEditable(false);
-        xMaxTextField.setBackground(new java.awt.Color(255, 255, 255));
-        xMaxTextField.setFocusable(false);
-
-        yMinTextField.setEditable(false);
-        yMinTextField.setBackground(new java.awt.Color(255, 255, 255));
-        yMinTextField.setFocusable(false);
-
-        yMaxTextField.setEditable(false);
-        yMaxTextField.setBackground(new java.awt.Color(255, 255, 255));
-        yMaxTextField.setFocusable(false);
-
-        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel11.setText("Directionality");
-
-        directionalityTextField.setEditable(false);
-        directionalityTextField.setBackground(new java.awt.Color(255, 255, 255));
-        directionalityTextField.setFocusable(false);
-
-        jLabel12.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel12.setText("MTA (deg)");
-
-        medianAngleTextField.setEditable(false);
-        medianAngleTextField.setBackground(new java.awt.Color(255, 255, 255));
-        medianAngleTextField.setFocusable(false);
-
-        jLabel19.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel19.setText("x ND (µm)");
-
-        jLabel20.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel20.setText("y ND (µm)");
-
-        xNetDisplacementTextField.setEditable(false);
-        xNetDisplacementTextField.setBackground(new java.awt.Color(255, 255, 255));
-        xNetDisplacementTextField.setFocusable(false);
-
-        yNetDisplacementTextField.setEditable(false);
-        yNetDisplacementTextField.setBackground(new java.awt.Color(255, 255, 255));
-        yNetDisplacementTextField.setFocusable(false);
-
-        jLabel21.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel21.setText("Duration (min)");
-
-        durationTextField.setEditable(false);
-        durationTextField.setBackground(new java.awt.Color(255, 255, 255));
-        durationTextField.setFocusable(false);
-
-        meanSpeedTextField.setEditable(false);
-        meanSpeedTextField.setBackground(new java.awt.Color(255, 255, 255));
-        meanSpeedTextField.setFocusable(false);
-
-        jLabel13.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel13.setText("MS (µm/min)");
-
-        trackNumberTextField.setEditable(false);
-        trackNumberTextField.setBackground(new java.awt.Color(255, 255, 255));
-        trackNumberTextField.setFocusable(false);
-
-        jLabel22.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel22.setText("Track Number");
-
-        jLabel23.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel23.setText("Well");
-
-        wellTextField.setEditable(false);
-        wellTextField.setBackground(new java.awt.Color(255, 255, 255));
-        wellTextField.setFocusable(false);
+        trackDataTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(trackDataTable);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel23)
-                            .addComponent(jLabel22)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel14)
-                            .addComponent(jLabel21))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(medianAngleTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(wellTextField)
-                            .addComponent(trackNumberTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(trackLengthTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(numberOfPointsTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(durationTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(xMinTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(xMaxTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(yMinTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(yMaxTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(xNetDisplacementTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(yNetDisplacementTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(meanDisplacementTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(meanSpeedTextField)
-                            .addComponent(cumDistanceTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(euclDistanceTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(directionalityTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel13)
-                            .addComponent(jLabel20)
-                            .addComponent(jLabel19)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel11)
-                            .addComponent(jLabel10)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel16)
-                            .addComponent(jLabel17)
-                            .addComponent(jLabel18)
-                            .addComponent(jLabel15))))
-                .addGap(37, 37, 37))
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(wellTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel23))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(trackNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel22))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(trackLengthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(numberOfPointsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel21))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(xMinTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel15))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(xMaxTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel16))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(yMinTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel17))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(yMaxTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel18))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel19)
-                    .addComponent(xNetDisplacementTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel20)
-                    .addComponent(yNetDisplacementTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(meanDisplacementTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
-                    .addComponent(meanSpeedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(cumDistanceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(euclDistanceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
-                    .addComponent(directionalityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12)
-                    .addComponent(medianAngleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(71, 71, 71))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -510,44 +201,12 @@ public class TrackDataDialog extends javax.swing.JDialog {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField cumDistanceTextField;
-    private javax.swing.JTextField directionalityTextField;
-    private javax.swing.JTextField durationTextField;
-    private javax.swing.JTextField euclDistanceTextField;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel22;
-    private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField meanDisplacementTextField;
-    private javax.swing.JTextField meanSpeedTextField;
-    private javax.swing.JTextField medianAngleTextField;
-    private javax.swing.JTextField numberOfPointsTextField;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel shiftedParentPanel;
-    private javax.swing.JTextField trackLengthTextField;
-    private javax.swing.JTextField trackNumberTextField;
+    private javax.swing.JTable trackDataTable;
     private javax.swing.JPanel unshiftedParentPanel;
-    private javax.swing.JTextField wellTextField;
-    private javax.swing.JTextField xMaxTextField;
-    private javax.swing.JTextField xMinTextField;
-    private javax.swing.JTextField xNetDisplacementTextField;
     private javax.swing.JPanel xtCoordinateParentPanel;
-    private javax.swing.JTextField yMaxTextField;
-    private javax.swing.JTextField yMinTextField;
-    private javax.swing.JTextField yNetDisplacementTextField;
     private javax.swing.JPanel ytCoordinateParentPanel;
     // End of variables declaration//GEN-END:variables
 }

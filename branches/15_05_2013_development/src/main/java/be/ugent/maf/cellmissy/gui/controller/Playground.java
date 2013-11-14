@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.ImagingType;
+import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -55,8 +56,13 @@ public class Playground {
         // get all the experiments from DB
 //        List<Experiment> experiments = experimentService.findAll();
         // find the experiments by project id
-        List<Experiment> experiments = experimentService.findExperimentsByProjectId(1L);
+        List<Experiment> experiments = experimentService.findExperimentsByProjectId(5L); // immune cells, project id 5
         for (Experiment experiment : experiments) {
+            Magnification magnification = experiment.getMagnification();
+            double instrumentConversionFactor = experiment.getInstrument().getConversionFactor();
+            double magnificationValue = magnification.getMagnificationValue();
+            double conversionFactor = instrumentConversionFactor * magnificationValue / 10;
+            System.out.println("$$$ C.F. is: " + conversionFactor);
 //        Experiment experiment = experimentService.findById(21L);
             Project project = experiment.getProject();
             // make the folders
@@ -103,7 +109,7 @@ public class Playground {
                         singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateTimeIndexes(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateTrackDurations(experiment.getExperimentInterval(), singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, 1.55038);
+                        singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, conversionFactor);
                         singleCellPreProcessor.computeCoordinatesRanges(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);

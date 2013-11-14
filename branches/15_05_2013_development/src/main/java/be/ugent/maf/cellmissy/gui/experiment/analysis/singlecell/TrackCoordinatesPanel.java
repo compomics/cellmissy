@@ -112,10 +112,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         return yTextField;
     }
 
-    public JButton getPlayButton() {
-        return playButton;
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -158,7 +154,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         xTextField = new javax.swing.JTextField();
         yTextField = new javax.swing.JTextField();
-        playButton = new javax.swing.JButton();
         plotLinesCheckBox = new javax.swing.JCheckBox();
         plotPointsCheckBox = new javax.swing.JCheckBox();
 
@@ -388,8 +383,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         yTextField.setEditable(false);
         yTextField.setFocusable(false);
 
-        playButton.setText("Play");
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -402,7 +395,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                             .addComponent(jLabel2)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(randomTracksNumberTextField))
-                        .addComponent(playButton, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(randomAndPlotButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(timeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -441,9 +433,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(yTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
-                .addComponent(playButton)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
                 .addComponent(clearSelectionButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(showDataForSelectedTrackButton)
@@ -510,7 +500,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JButton playButton;
     private javax.swing.JButton plotAllTracksForAConditionButton;
     private javax.swing.JButton plotAllTracksForAWellButton;
     private javax.swing.JCheckBox plotLinesCheckBox;

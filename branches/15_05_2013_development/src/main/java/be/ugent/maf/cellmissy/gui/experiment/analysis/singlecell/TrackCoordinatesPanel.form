@@ -448,7 +448,6 @@
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="randomTracksNumberTextField" max="32767" attributes="0"/>
                               </Group>
-                              <Component id="playButton" alignment="0" min="-2" pref="208" max="-2" attributes="0"/>
                               <Component id="randomAndPlotButton" linkSize="1" max="32767" attributes="0"/>
                           </Group>
                           <Component id="timeSlider" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -492,9 +491,7 @@
                           <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="yTextField" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="93" max="32767" attributes="0"/>
-                      <Component id="playButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace pref="134" max="32767" attributes="0"/>
                       <Component id="clearSelectionButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="showDataForSelectedTrackButton" min="-2" max="-2" attributes="0"/>
@@ -548,11 +545,6 @@
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="focusable" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JButton" name="playButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Play"/>
               </Properties>
             </Component>
           </SubComponents>
