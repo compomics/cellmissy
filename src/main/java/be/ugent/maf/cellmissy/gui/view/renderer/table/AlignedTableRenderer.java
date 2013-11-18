@@ -9,6 +9,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
+ * Renderer with alignment specified.
  *
  * @author Paola Masuzzo
  */

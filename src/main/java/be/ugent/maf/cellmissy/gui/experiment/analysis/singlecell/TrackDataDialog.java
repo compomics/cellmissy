@@ -65,7 +65,7 @@ public class TrackDataDialog extends javax.swing.JDialog {
         setModal(true);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        xtCoordinateParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("x over time"));
+        xtCoordinateParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("x(t)"));
         xtCoordinateParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         xtCoordinateParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         xtCoordinateParentPanel.setLayout(new java.awt.GridBagLayout());
@@ -78,7 +78,7 @@ public class TrackDataDialog extends javax.swing.JDialog {
         gridBagConstraints.weighty = 0.5;
         getContentPane().add(xtCoordinateParentPanel, gridBagConstraints);
 
-        ytCoordinateParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("y over time"));
+        ytCoordinateParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("y(t)"));
         ytCoordinateParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         ytCoordinateParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         ytCoordinateParentPanel.setLayout(new java.awt.GridBagLayout());
