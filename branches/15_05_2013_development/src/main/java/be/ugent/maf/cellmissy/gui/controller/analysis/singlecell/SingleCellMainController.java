@@ -746,7 +746,7 @@ public class SingleCellMainController {
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocitiesLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getInspectingDataLabel());
                 showInfoMessage("Track Coordinates are shown for each well");
-                singleCellPreProcessingController.updateTrackNumberLabel();
+                singleCellPreProcessingController.updateTracksNumberInfo();
                 singleCellPreProcessingController.updateWellBindingList(currentCondition);
                 boolean plotLines = singleCellPreProcessingController.getTrackCoordinatesPanel().getPlotLinesCheckBox().isSelected();
                 boolean plotPoints = singleCellPreProcessingController.getTrackCoordinatesPanel().getPlotPointsCheckBox().isSelected();

@@ -17,6 +17,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.list.PlottedTracksListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TimePointTrackXYLineAndShapeRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TrackXYLineAndShapeRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.TrackDataHolderTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackCoordinatesTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataHolderTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -29,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -121,9 +123,9 @@ public class TrackCoordinatesController {
     /**
      * Show the number of total tracks for the current selected condition.
      */
-    public void updateTrackNumberLabel() {
+    public void updateTracksNumberInfo() {
         int trackNumber = getTrackNumberForCondition();
-        trackCoordinatesPanel.getTotalTracksNumberLabel().setText("" + trackNumber);
+        trackCoordinatesPanel.getTracksNumberConditionTextField().setText("" + trackNumber);
     }
 
     /**
@@ -374,9 +376,9 @@ public class TrackCoordinatesController {
         trackDataDialog.getYtCoordinateParentPanel().add(ytCoordinateChartPanel, gridBagConstraints);
         trackDataDialog.getUnshiftedParentPanel().add(unshiftedTrackChartPanel, gridBagConstraints);
         trackDataDialog.getShiftedParentPanel().add(shiftedTrackChartPanel, gridBagConstraints);
-        trackDataDialog.getTrackDataTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        trackDataDialog.getTrackDataTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         trackDataDialog.getTrackDataTable().getTableHeader().setReorderingAllowed(false);
-        
+
         /**
          * add action listeners
          */
@@ -487,30 +489,27 @@ public class TrackCoordinatesController {
                 List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForWell(selectedWell);
                 int numberTracksForCurrentWell = trackHoldersForCurrentWell.size();
                 // update info with number of tracks for current selected well
-                trackCoordinatesPanel.getTracksNumberCurrentWellLabel().setText(" " + numberTracksForCurrentWell);
+                trackCoordinatesPanel.getTracksNumberWellTextField().setText(" " + numberTracksForCurrentWell);
             }
         });
 
         // plot all tracks for current condition: we use a swing worker
-        trackCoordinatesPanel.getPlotAllTracksForAConditionButton().addActionListener(new ActionListener() {
+        trackCoordinatesPanel.getPlotAllTracksButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PlotAllTracksConditionSwingWorker plotAllTracksConditionSwingWorker = new PlotAllTracksConditionSwingWorker();
-                plotAllTracksConditionSwingWorker.execute();
-            }
-        });
-
-        // plot all tracks for current well: we use a swing worker
-        trackCoordinatesPanel.getPlotAllTracksForAWellButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PlotAllTracksWellSwingWorker plotAllTracksWellSwingWorker = new PlotAllTracksWellSwingWorker();
-                plotAllTracksWellSwingWorker.execute();
+                // we check for the selected tabbed pane and execute a swing worker to plot all tracks together
+                if (trackCoordinatesPanel.getTrackingPlotTabbedPane().getSelectedIndex() == 0) {
+                    PlotAllTracksConditionSwingWorker plotAllTracksConditionSwingWorker = new PlotAllTracksConditionSwingWorker();
+                    plotAllTracksConditionSwingWorker.execute();
+                } else {
+                    PlotAllTracksWellSwingWorker plotAllTracksWellSwingWorker = new PlotAllTracksWellSwingWorker();
+                    plotAllTracksWellSwingWorker.execute();
+                }
             }
         });
 
         // show dialog with the currently selected track data + plots
-        trackCoordinatesPanel.getShowDataForSelectedTrackButton().addActionListener(new ActionListener() {
+        trackCoordinatesPanel.getExploreTrackButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TrackDataHolder trackDataHolder = (TrackDataHolder) trackCoordinatesPanel.getPlottedTracksJList().getSelectedValue();
@@ -667,7 +666,10 @@ public class TrackCoordinatesController {
         plotSingleTrackData(trackDataHolder);
         // update model for the track table
         trackDataDialog.getTrackDataTable().setModel(new TrackDataHolderTableModel(trackDataHolder));
-        trackDataDialog.getTrackDataTable().getColumnModel().getColumn(1).setCellRenderer(new AlignedTableRenderer(SwingConstants.LEFT));
+        TrackDataHolderTableRenderer trackDataHolderTableRenderer = new TrackDataHolderTableRenderer(new DecimalFormat("###.###"));
+        for (int i = 0; i < trackDataDialog.getTrackDataTable().getColumnCount(); i++) {
+            trackDataDialog.getTrackDataTable().getColumnModel().getColumn(i).setCellRenderer(trackDataHolderTableRenderer);
+        }
         // pack and show the dialog with the plots
         trackDataDialog.pack();
         GuiUtils.centerDialogOnFrame(singleCellPreProcessingController.getMainFrame(), trackDataDialog);
@@ -818,7 +820,7 @@ public class TrackCoordinatesController {
         List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForWell(selectedWell);
         int numberTracksForCurrentWell = trackHoldersForCurrentWell.size();
         // update info with number of tracks for current selected well
-        trackCoordinatesPanel.getTracksNumberCurrentWellLabel().setText("" + numberTracksForCurrentWell);
+        trackCoordinatesPanel.getTracksNumberWellTextField().setText("" + numberTracksForCurrentWell);
         // if the user does not write anything, number of tracks to be plotted is set to default
         String text = trackCoordinatesPanel.getRandomTracksNumberTextField().getText();
         // the default is set to 10, if possible, otherwise is less

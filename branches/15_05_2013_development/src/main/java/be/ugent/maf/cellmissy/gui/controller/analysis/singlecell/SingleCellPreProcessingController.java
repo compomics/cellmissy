@@ -134,8 +134,8 @@ public class SingleCellPreProcessingController {
         trackCoordinatesController.showRawTrackCoordinatesInTable(plateCondition);
     }
 
-    public void updateTrackNumberLabel() {
-        trackCoordinatesController.updateTrackNumberLabel();
+    public void updateTracksNumberInfo() {
+        trackCoordinatesController.updateTracksNumberInfo();
     }
 
     public void updateWellBindingList(PlateCondition plateCondition) {
