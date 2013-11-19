@@ -8,7 +8,8 @@ import be.ugent.maf.cellmissy.analysis.AreaUnitOfMeasurement;
 import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
 
 /**
- * This class keeps some information on the Area Analysis. This information is on the experiment level.
+ * This class keeps some information on the Area Analysis. This information is
+ * on the experiment level.
  *
  * @author Paola Masuzzo
  */

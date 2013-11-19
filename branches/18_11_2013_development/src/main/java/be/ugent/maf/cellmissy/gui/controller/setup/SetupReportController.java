@@ -50,8 +50,6 @@ public class SetupReportController {
     private Experiment experiment;
     private Document document;
     private PdfWriter writer;
-    private static Font bodyFont = new Font(Font.HELVETICA, 8);
-    private static Font titleFont = new Font(Font.HELVETICA, 10, Font.BOLD);
     // view
     // parent controller
     @Autowired
@@ -161,7 +159,7 @@ public class SetupReportController {
         String expNumber = df.format(experiment.getExperimentNumber());
         String projNumber = df.format(experiment.getProject().getProjectNumber());
         String title = "Setup report of Experiment " + expNumber + " - " + "Project " + projNumber;
-        PdfUtils.addTitle(document, title, titleFont);
+        PdfUtils.addTitle(document, title, PdfUtils.getTitleFont());
         PdfUtils.addEmptyLines(document, 1);
     }
 
@@ -176,7 +174,7 @@ public class SetupReportController {
         lines.add(line);
         line = "Instrument: " + experiment.getInstrument() + ", magnification: " + experiment.getMagnification();
         lines.add(line);
-        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, PdfUtils.getBodyFont());
     }
 
     /**
@@ -228,8 +226,9 @@ public class SetupReportController {
      * Add a paragraph for each condition
      */
     private void addParagraphPerCondition() {
+        Font titleFont = PdfUtils.getTitleFont();
         // add main title for section
-        PdfUtils.addTitle(document, "BIOLOGICAL CONDITIONS", titleFont);
+        PdfUtils.addTitle(document, "BIOLOGICAL CONDITIONS", PdfUtils.getTitleFont());
         List<PlateCondition> plateConditions = new ArrayList(experiment.getPlateConditionList());
         for (int i = 0; i < plateConditions.size(); i++) {
             Paragraph paragraph = new Paragraph("" + plateConditions.get(i).getName(), titleFont);
@@ -254,6 +253,7 @@ public class SetupReportController {
      * @param plateCondition
      */
     private void addConditionInfo(PlateCondition plateCondition) {
+        Font titleFont = PdfUtils.getTitleFont();
         // strings for text
         List<String> lines = new ArrayList<>();
         // set font color back to BLACK
@@ -268,7 +268,7 @@ public class SetupReportController {
         lines.add(line);
         line = "Wells (column, row): " + wellList;
         lines.add(line);
-        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, PdfUtils.getBodyFont());
         lines.clear();
         // cell line: name, seeding density, seeding time, growth medium, serum, serum concentration
         line = "CELL LINE";
@@ -288,7 +288,7 @@ public class SetupReportController {
         lines.add(line);
         line = "Serum concentration: " + cellLine.getSerumConcentration() + " %";
         lines.add(line);
-        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, PdfUtils.getBodyFont());
         lines.clear();
         // Assay
         line = "ASSAY";
@@ -307,7 +307,7 @@ public class SetupReportController {
         lines.add(line);
         line = "Medium volume: " + assayMedium.getVolume() + "  " + "\u00B5" + "l";
         lines.add(line);
-        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, PdfUtils.getBodyFont());
         lines.clear();
         // ECM
         line = "ECM";
@@ -375,7 +375,7 @@ public class SetupReportController {
                 lines.add(line);
                 break;
         }
-        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, PdfUtils.getBodyFont());
         lines.clear();
         // drugs/treatments
         line = "DRUGS/TREATMENTS";
@@ -398,7 +398,7 @@ public class SetupReportController {
                 lines.add(line);
             }
         }
-        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, PdfUtils.getBodyFont());
     }
 
     /**
@@ -410,13 +410,13 @@ public class SetupReportController {
         // 7 columns
         PdfPTable dataTable = new PdfPTable(7);
         PdfUtils.setUpPdfPTable(dataTable);
-        PdfUtils.addCustomizedCell(dataTable, "Condition", titleFont);
-        PdfUtils.addCustomizedCell(dataTable, "Cell Line", titleFont);
-        PdfUtils.addCustomizedCell(dataTable, "MD", titleFont);
-        PdfUtils.addCustomizedCell(dataTable, "Assay", titleFont);
-        PdfUtils.addCustomizedCell(dataTable, "ECM", titleFont);
-        PdfUtils.addCustomizedCell(dataTable, "Treatments", titleFont);
-        PdfUtils.addCustomizedCell(dataTable, "Assay(Medium, %Serum)", titleFont);
+        PdfUtils.addCustomizedCell(dataTable, "Condition", PdfUtils.getTitleFont());
+        PdfUtils.addCustomizedCell(dataTable, "Cell Line", PdfUtils.getTitleFont());
+        PdfUtils.addCustomizedCell(dataTable, "MD", PdfUtils.getTitleFont());
+        PdfUtils.addCustomizedCell(dataTable, "Assay", PdfUtils.getTitleFont());
+        PdfUtils.addCustomizedCell(dataTable, "ECM", PdfUtils.getTitleFont());
+        PdfUtils.addCustomizedCell(dataTable, "Treatments", PdfUtils.getTitleFont());
+        PdfUtils.addCustomizedCell(dataTable, "Assay(Medium, %Serum)", PdfUtils.getTitleFont());
         List<PlateCondition> plateConditions = experiment.getPlateConditionList();
         int lenght = GuiUtils.getAvailableColors().length;
         for (int i = 0; i < plateConditions.size(); i++) {
@@ -425,12 +425,12 @@ public class SetupReportController {
             int indexOfColor = conditionIndex % lenght;
             Color color = GuiUtils.getAvailableColors()[indexOfColor];
             PdfUtils.addColoredCell(dataTable, color);
-            PdfUtils.addCustomizedCell(dataTable, plateCondition.getCellLine().toString(), bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssay().getMatrixDimension().getDimension(), bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssay().getAssayType(), bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, plateCondition.getEcm().toString(), bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, plateCondition.getTreatmentList().toString(), bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssayMedium().toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getCellLine().toString(), PdfUtils.getBodyFont());
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssay().getMatrixDimension().getDimension(), PdfUtils.getBodyFont());
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssay().getAssayType(), PdfUtils.getBodyFont());
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getEcm().toString(), PdfUtils.getBodyFont());
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getTreatmentList().toString(), PdfUtils.getBodyFont());
+            PdfUtils.addCustomizedCell(dataTable, plateCondition.getAssayMedium().toString(), PdfUtils.getBodyFont());
         }
         return dataTable;
     }

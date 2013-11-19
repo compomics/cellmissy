@@ -27,6 +27,7 @@ import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisExperimentPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.AreaAnalysisInfoDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AreaAnalysisPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
@@ -86,10 +87,10 @@ import org.springframework.stereotype.Controller;
  *
  * @author Paola Masuzzo
  */
-@Controller("areaController")
-public class AreaController {
+@Controller("areaMainController")
+public class AreaMainController {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaController.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaMainController.class);
     //model
     private Experiment experiment;
     private AreaAnalysisHolder areaAnalysisHolder;
@@ -110,6 +111,7 @@ public class AreaController {
     private MetaDataAnalysisPanel metaDataAnalysisPanel;
     private DataAnalysisPanel dataAnalysisPanel;
     private AnalysisPlatePanel analysisPlatePanel;
+    private AreaAnalysisInfoDialog areaAnalysisInfoDialog;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -136,11 +138,15 @@ public class AreaController {
         //init view
         analysisExperimentPanel = new AnalysisExperimentPanel();
         metaDataAnalysisPanel = new MetaDataAnalysisPanel();
+        areaAnalysisInfoDialog = new AreaAnalysisInfoDialog(cellMissyController.getCellMissyFrame(), true);
         // set icon for info label
-        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
-        metaDataAnalysisPanel.getInfoLabel().setIcon(scaledIcon);
-        metaDataAnalysisPanel.getInfoLabel1().setIcon(scaledIcon);
+        Icon informationIcon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledInfoIcon = GuiUtils.getScaledIcon(informationIcon);
+        metaDataAnalysisPanel.getInfoLabel().setIcon(scaledInfoIcon);
+        metaDataAnalysisPanel.getInfoLabel1().setIcon(scaledInfoIcon);
+        Icon questionIcon = UIManager.getIcon("OptionPane.questionIcon");
+        ImageIcon scaledQuestionIcon = GuiUtils.getScaledIcon(questionIcon);
+        metaDataAnalysisPanel.getQuestionButton().setIcon(scaledQuestionIcon);
         dataAnalysisPanel = new DataAnalysisPanel();
         analysisPlatePanel = new AnalysisPlatePanel();
         bindingGroup = new BindingGroup();
@@ -210,7 +216,7 @@ public class AreaController {
         return areaPreProcessingController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
     }
 
-    public JFreeChart createGlobalAreaChartInTimeInterval(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType){
+    public JFreeChart createGlobalAreaChartInTimeInterval(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType) {
         return areaPreProcessingController.createGlobalAreaChartInTimeInterval(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
     }
 
@@ -232,12 +238,6 @@ public class AreaController {
 
     public CellMissyFrame getCellMissyFrame() {
         return cellMissyController.getCellMissyFrame();
-    }
-
-    public void onButtonsState(boolean isEnable) {
-        analysisExperimentPanel.getPreviousButton().setEnabled(isEnable);
-        analysisExperimentPanel.getNextButton().setEnabled(isEnable);
-        analysisExperimentPanel.getCancelButton().setEnabled(isEnable);
     }
 
     public Algorithm getSelectedALgorithm() {
@@ -474,6 +474,12 @@ public class AreaController {
                 analysisExperimentPanel.getPreviousButton().setEnabled(false);
                 // enable next button
                 analysisExperimentPanel.getNextButton().setEnabled(true);
+                // enable or disable the converted table in the tabbed pane
+                if (areaAnalysisHolder.getAreaUnitOfMeasurement().equals(AreaUnitOfMeasurement.PIXELS) | areaAnalysisHolder.getAreaUnitOfMeasurement().equals(AreaUnitOfMeasurement.SPECIAL_MICRO_METERS)) {
+                    areaPreProcessingController.getAreaAnalysisPanel().getDataInspectingTabbedPane().setEnabledAt(1, true);
+                } else {
+                    areaPreProcessingController.getAreaAnalysisPanel().getDataInspectingTabbedPane().setEnabledAt(1, false);
+                }
                 // enable conditions list
                 dataAnalysisPanel.getConditionsList().setEnabled(true);
                 dataAnalysisPanel.getConditionsList().setSelectedIndex(plateConditionList.indexOf(currentCondition));
@@ -847,6 +853,16 @@ public class AreaController {
 
         // select cell covered area as default
         metaDataAnalysisPanel.getCellCoveredAreaRadioButton().setSelected(true);
+        // add action Listener to the question/info button
+        metaDataAnalysisPanel.getQuestionButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // pack and show info dialog
+                GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), areaAnalysisInfoDialog);
+                areaAnalysisInfoDialog.setVisible(true);
+            }
+        });
+
         analysisExperimentPanel.getTopPanel().add(metaDataAnalysisPanel, gridBagConstraints);
     }
 
@@ -1042,6 +1058,7 @@ public class AreaController {
         protected Void doInBackground() throws Exception {
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             dataAnalysisPanel.getConditionsList().setEnabled(false);
+            // disable buttons as well
             List<Well> wellList = currentCondition.getWellList();
             //fetch time steps for each well of condition
             for (int i = 0; i < wellList.size(); i++) {
@@ -1069,6 +1086,10 @@ public class AreaController {
                 if (!areaPreProcessingController.getTimeStepsBindingList().isEmpty()) {
                     //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO look at motility track RESULTS
                     areaPreProcessingController.showTimeStepsInTable();
+                    // if the area unit of measurement is pixel or cellM µm², we show also the converted area values
+                    if (areaAnalysisHolder.getAreaUnitOfMeasurement().equals(AreaUnitOfMeasurement.PIXELS) | areaAnalysisHolder.getAreaUnitOfMeasurement().equals(AreaUnitOfMeasurement.SPECIAL_MICRO_METERS)) {
+                        areaPreProcessingController.showConvertedAreaInTable();
+                    }
                     onCardSwitch();
                     //check which button is selected for analysis:
                     if (areaPreProcessingController.getAreaAnalysisPanel().getNormalizeAreaButton().isSelected()) {

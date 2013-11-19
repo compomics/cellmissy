@@ -46,7 +46,7 @@ public class Magnification implements Serializable {
     @XmlTransient
     private Long magnificationid;
     @Column(name = "magnification_number")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String magnificationNumber;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "magnification")
@@ -107,5 +107,9 @@ public class Magnification implements Serializable {
     @Override
     public String toString() {
         return magnificationNumber;
+    }
+
+    public double getMagnificationValue() {
+        return Double.parseDouble(magnificationNumber.split("x")[0]);
     }
 }

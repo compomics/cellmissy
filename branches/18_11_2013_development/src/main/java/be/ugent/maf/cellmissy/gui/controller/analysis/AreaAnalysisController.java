@@ -101,7 +101,7 @@ public class AreaAnalysisController {
     private StatisticsDialog statisticsDialog;
     // parent controller
     @Autowired
-    private AreaController areaController;
+    private AreaMainController areaMainController;
     // child controllers
     @Autowired
     private AreaAnalysisReportController areaAnalysisReportController;
@@ -131,11 +131,11 @@ public class AreaAnalysisController {
      * @return
      */
     public CellMissyFrame getCellMissyFrame() {
-        return areaController.getCellMissyFrame();
+        return areaMainController.getCellMissyFrame();
     }
 
     public Experiment getExperiment() {
-        return areaController.getExperiment();
+        return areaMainController.getExperiment();
     }
 
     public Map<PlateCondition, AreaAnalysisResults> getAnalysisMap() {
@@ -147,39 +147,39 @@ public class AreaAnalysisController {
     }
 
     public Map<PlateCondition, AreaPreProcessingResults> getPreProcessingMap() {
-        return areaController.getPreProcessingMap();
+        return areaMainController.getPreProcessingMap();
     }
 
     public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType) {
-        return areaController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+        return areaMainController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
     }
 
     public JFreeChart createGlobalAreaChartInTimeInterval(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType) {
-        return areaController.createGlobalAreaChartInTimeInterval(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+        return areaMainController.createGlobalAreaChartInTimeInterval(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
     }
 
     public JFreeChart createRawAreaChart(PlateCondition plateCondition) {
-        return areaController.createRawAreaChart(plateCondition);
+        return areaMainController.createRawAreaChart(plateCondition);
     }
 
     public JFreeChart createCorrectedAreaChart(PlateCondition plateCondition) {
-        return areaController.createCorrectedAreaChart(plateCondition);
+        return areaMainController.createCorrectedAreaChart(plateCondition);
     }
 
     public void showMessage(String message, String title, Integer messageType) {
-        areaController.showMessage(message, title, messageType);
+        areaMainController.showMessage(message, title, messageType);
     }
 
     public MeasuredAreaType getMeasuredAreaType() {
-        return areaController.getAreaAnalysisHolder().getMeasuredAreaType();
+        return areaMainController.getAreaAnalysisHolder().getMeasuredAreaType();
     }
 
     public Algorithm getSelectedALgorithm() {
-        return areaController.getSelectedALgorithm();
+        return areaMainController.getSelectedALgorithm();
     }
 
     public ImagingType getSelectedImagingType() {
-        return areaController.getSelectedImagingType();
+        return areaMainController.getSelectedImagingType();
     }
 
     public LinearRegressionPanel getLinearRegressionPanel() {
@@ -187,7 +187,7 @@ public class AreaAnalysisController {
     }
 
     public double[] getAnalysisTimeFrames() {
-        return areaController.getAnalysisTimeFrames();
+        return areaMainController.getAnalysisTimeFrames();
     }
 
     public StatisticsDialog getStatisticsDialog() {
@@ -195,7 +195,7 @@ public class AreaAnalysisController {
     }
 
     public List<PlateCondition> getProcessedConditions() {
-        return areaController.getProcessedConditions();
+        return areaMainController.getProcessedConditions();
     }
 
     public void resetOnCancel() {
@@ -214,7 +214,7 @@ public class AreaAnalysisController {
         List<Double[]> coefficientsList = new ArrayList();
         List<Double> meanSlopesList = new ArrayList();
         List<Double> madSlopesList = new ArrayList();
-        List<PlateCondition> processedConditions = areaController.getProcessedConditions();
+        List<PlateCondition> processedConditions = areaMainController.getProcessedConditions();
         // go through all conditions in map and estimate linear model for each of them
         for (PlateCondition plateCondition : processedConditions) {
             estimateLinearModel(plateCondition, useCorrectedData);
@@ -268,7 +268,7 @@ public class AreaAnalysisController {
         slopesTable.getColumnModel().getColumn(1).setCellRenderer(new RectIconCellRenderer());
         for (int columnIndex = 0; columnIndex < slopesTable.getColumnCount(); columnIndex++) {
             if (columnIndex == columnNames.length - 1 | columnIndex == columnNames.length - 2) {
-                slopesTable.getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(areaController.getFormat(), SwingConstants.LEFT));
+                slopesTable.getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(areaMainController.getFormat(), SwingConstants.LEFT));
             }
             GuiUtils.packColumn(slopesTable, columnIndex, 1);
         }
@@ -280,11 +280,11 @@ public class AreaAnalysisController {
      * Update information on time frames and corrected data in analysis
      */
     public void updateAnalysisInfo() {
-        double[] analysisTimeFrames = areaController.getAnalysisTimeFrames();
+        double[] analysisTimeFrames = areaMainController.getAnalysisTimeFrames();
         linearRegressionPanel.getFirstTimeFrameTextField().setText("" + analysisTimeFrames[0]);
         linearRegressionPanel.getLastTimeFrameTextField().setText("" + analysisTimeFrames[analysisTimeFrames.length - 1]);
         String correctedData;
-        if (areaController.useCorrectedData()) {
+        if (areaMainController.useCorrectedData()) {
             correctedData = "YES";
         } else {
             correctedData = "NO";
@@ -311,7 +311,7 @@ public class AreaAnalysisController {
         velocityPlot.setRenderer(velocityBarRenderer);
         // set CategoryTextAnnotation to show number of replicates on top of bars
         for (int i = 0; i < velocityDataset.getColumnCount(); i++) {
-            Double[] numberOfReplicates = AnalysisUtils.excludeNullValues(analysisMap.get(areaController.getPlateConditionList().get(i)).getSlopes());
+            Double[] numberOfReplicates = AnalysisUtils.excludeNullValues(analysisMap.get(areaMainController.getPlateConditionList().get(i)).getSlopes());
             CategoryAnnotation annotation = new CategoryTextAnnotation("N " + numberOfReplicates.length, velocityDataset.getColumnKey(i), 10);
             velocityPlot.addAnnotation(annotation);
         }
@@ -327,20 +327,20 @@ public class AreaAnalysisController {
      * @throws IOException
      */
     public void createPdfReport() throws IOException {
-        Experiment experiment = areaController.getExperiment();
+        Experiment experiment = areaMainController.getExperiment();
         // choose directory to save pdf file
         JFileChooser chooseDirectory = new JFileChooser();
         chooseDirectory.setDialogTitle("Choose a directory to save the report");
         chooseDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooseDirectory.setSelectedFile(new File("Analysis Report " + experiment.toString() + " - " + experiment.getProject().toString() + ".pdf"));
         // in response to the button click, show open dialog
-        int returnVal = chooseDirectory.showSaveDialog(areaController.getDataAnalysisPanel());
+        int returnVal = chooseDirectory.showSaveDialog(areaMainController.getDataAnalysisPanel());
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File directory = chooseDirectory.getCurrentDirectory();
             AnalysisReportSwingWorker analysisReportSwingWorker = new AnalysisReportSwingWorker(directory, chooseDirectory.getSelectedFile().getName());
             analysisReportSwingWorker.execute();
         } else {
-            areaController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+            areaMainController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -353,7 +353,7 @@ public class AreaAnalysisController {
      * @return
      */
     private String getAreaUnitOfMeasurement() {
-        return areaController.getAreaUnitOfMeasurement();
+        return areaMainController.getAreaUnitOfMeasurement();
     }
 
     /**
@@ -367,7 +367,7 @@ public class AreaAnalysisController {
         double[] meanSlopes = new double[conditionsToShow.length];
         double[] semSlopes = new double[conditionsToShow.length];
         for (int i = 0; i < meanSlopes.length; i++) {
-            AreaAnalysisResults areaAnalysisResults = analysisMap.get(areaController.getPlateConditionList().get(conditionsToShow[i]));
+            AreaAnalysisResults areaAnalysisResults = analysisMap.get(areaMainController.getPlateConditionList().get(conditionsToShow[i]));
             double meanSlope = areaAnalysisResults.getMeanSlope();
             double madSlopes = areaAnalysisResults.getMadSlope();
             meanSlopes[i] = meanSlope;
@@ -395,11 +395,11 @@ public class AreaAnalysisController {
      */
     private void estimateLinearModel(PlateCondition plateCondition, boolean useCorrectedData) {
         // get the pre-processing results from main controller
-        Map<PlateCondition, AreaPreProcessingResults> preProcessingMap = areaController.getPreProcessingMap();
+        Map<PlateCondition, AreaPreProcessingResults> preProcessingMap = areaMainController.getPreProcessingMap();
         AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
         AreaAnalysisResults areaAnalysisResults = analysisMap.get(plateCondition);
-        MeasuredAreaType measuredAreaType = areaController.getAreaAnalysisHolder().getMeasuredAreaType();
-        double[] analysisTimeFrames = areaController.getAnalysisTimeFrames();
+        MeasuredAreaType measuredAreaType = areaMainController.getAreaAnalysisHolder().getMeasuredAreaType();
+        double[] analysisTimeFrames = areaMainController.getAnalysisTimeFrames();
         areaAnalyzer.estimateLinearModel(areaPreProcessingResults, areaAnalysisResults, useCorrectedData, measuredAreaType, analysisTimeFrames);
     }
 
@@ -418,7 +418,7 @@ public class AreaAnalysisController {
         velocityChartPanel = new ChartPanel(null);
         velocityChartPanel.setOpaque(false);
         // init statistics panel
-        statisticsDialog = new StatisticsDialog(areaController.getCellMissyFrame(), true);
+        statisticsDialog = new StatisticsDialog(areaMainController.getCellMissyFrame(), true);
         // customize tables
         statisticsDialog.getStatisticalSummaryTable().getTableHeader().setReorderingAllowed(false);
         statisticsDialog.getpValuesTable().getTableHeader().setReorderingAllowed(false);
@@ -507,7 +507,7 @@ public class AreaAnalysisController {
                 } else {
                     // else, show a message warning the user
                     // let the user decide if continue with report creation or not
-                    int reply = JOptionPane.showConfirmDialog(areaController.getDataAnalysisPanel(), "Not every group was analyzed.\nContinue with report creation?", "", JOptionPane.OK_CANCEL_OPTION);
+                    int reply = JOptionPane.showConfirmDialog(areaMainController.getDataAnalysisPanel(), "Not every group was analyzed.\nContinue with report creation?", "", JOptionPane.OK_CANCEL_OPTION);
                     if (reply == JOptionPane.OK_OPTION) {
                         areaAnalysisReportController.showCustomizeReportDialog();
                     }
@@ -541,12 +541,12 @@ public class AreaAnalysisController {
                     }
                     statisticsDialog.pack();
                     // center the dialog on the main frame
-                    GuiUtils.centerDialogOnFrame(areaController.getCellMissyFrame(), statisticsDialog);
+                    GuiUtils.centerDialogOnFrame(areaMainController.getCellMissyFrame(), statisticsDialog);
                     // show the dialog
                     statisticsDialog.setVisible(true);
                 } else {
                     // ask user to select a group
-                    areaController.showMessage("Please select a group to perform analysis on.", "You must select a group first", JOptionPane.INFORMATION_MESSAGE);
+                    areaMainController.showMessage("Please select a group to perform analysis on.", "You must select a group first", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -664,7 +664,7 @@ public class AreaAnalysisController {
         });
 
         // add view to parent panel
-        areaController.getAreaAnalysisPanel().getLinearModelParentPanel().add(linearRegressionPanel, gridBagConstraints);
+        areaMainController.getAreaAnalysisPanel().getLinearModelParentPanel().add(linearRegressionPanel, gridBagConstraints);
     }
 
     /**
@@ -715,7 +715,7 @@ public class AreaAnalysisController {
     private void showSummary(AnalysisGroup analysisGroup) {
         statisticsDialog.getGroupNameLabel().setText(analysisGroup.getGroupName());
         // set model and cell renderer for statistics summary table
-        StatisticalSummaryTableModel statisticalSummaryTableModel = new StatisticalSummaryTableModel(analysisGroup, areaController.getPlateConditionList());
+        StatisticalSummaryTableModel statisticalSummaryTableModel = new StatisticalSummaryTableModel(analysisGroup, areaMainController.getPlateConditionList());
         JTable statisticalSummaryTable = statisticsDialog.getStatisticalSummaryTable();
         statisticalSummaryTable.setModel(statisticalSummaryTableModel);
         for (int i = 1; i < statisticalSummaryTable.getColumnCount(); i++) {
@@ -731,7 +731,7 @@ public class AreaAnalysisController {
      */
     private void showPValues(AnalysisGroup analysisGroup, boolean isAdjusted) {
         String statisticalTestName = statisticsDialog.getStatisticalTestComboBox().getSelectedItem().toString();
-        PValuesTableModel pValuesTableModel = new PValuesTableModel(analysisGroup, areaController.getPlateConditionList(), isAdjusted);
+        PValuesTableModel pValuesTableModel = new PValuesTableModel(analysisGroup, areaMainController.getPlateConditionList(), isAdjusted);
         JTable pValuesTable = statisticsDialog.getpValuesTable();
         pValuesTable.setModel(pValuesTableModel);
         Double selectedSignLevel = (Double) statisticsDialog.getSignificanceLevelComboBox().getSelectedItem();
@@ -784,7 +784,7 @@ public class AreaAnalysisController {
         }
         // add again annotation for number of replicates
         for (int i = 0; i < dataset.getColumnCount(); i++) {
-            Double[] numberOfReplicates = AnalysisUtils.excludeNullValues(analysisMap.get(areaController.getPlateConditionList().get(i)).getSlopes());
+            Double[] numberOfReplicates = AnalysisUtils.excludeNullValues(analysisMap.get(areaMainController.getPlateConditionList().get(i)).getSlopes());
             CategoryAnnotation annotation = new CategoryTextAnnotation("N " + numberOfReplicates.length, dataset.getColumnKey(i), 10);
             velocityPlot.addAnnotation(annotation);
         }
@@ -796,7 +796,7 @@ public class AreaAnalysisController {
      * Initialize map with new values
      */
     private void initMap() {
-        for (PlateCondition plateCondition : areaController.getPlateConditionList()) {
+        for (PlateCondition plateCondition : areaMainController.getPlateConditionList()) {
             analysisMap.put(plateCondition, new AreaAnalysisResults());
         }
     }
@@ -810,7 +810,7 @@ public class AreaAnalysisController {
         List<AreaAnalysisResults> areaAnalysisResultsList = new ArrayList<>();
         int[] selectedRows = linearRegressionPanel.getSlopesTable().getSelectedRows();
         for (int i = 0; i < selectedRows.length; i++) {
-            PlateCondition selectedCondition = areaController.getPlateConditionList().get(selectedRows[i]);
+            PlateCondition selectedCondition = areaMainController.getPlateConditionList().get(selectedRows[i]);
             plateConditionsList.add(selectedCondition);
             AreaAnalysisResults areaAnalysisResults = analysisMap.get(selectedCondition);
             areaAnalysisResultsList.add(areaAnalysisResults);
@@ -832,12 +832,12 @@ public class AreaAnalysisController {
                 }
             } else {
                 // ask the user to type a name for the group
-                areaController.showMessage("Please type a name for the analysis group.", "no name typed for the analysis group", JOptionPane.INFORMATION_MESSAGE);
+                areaMainController.showMessage("Please type a name for the analysis group.", "no name typed for the analysis group", JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
             // we tell the user that statistics cannot be performed on only one condition !!
             // the selection is basically ignored
-            areaController.showMessage("Sorry! It is not possible to perform analysis on one condition only!\nPlease select at least two conditions.", "at least two conditions need to be chosen for analysis", JOptionPane.WARNING_MESSAGE);
+            areaMainController.showMessage("Sorry! It is not possible to perform analysis on one condition only!\nPlease select at least two conditions.", "at least two conditions need to be chosen for analysis", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -889,8 +889,8 @@ public class AreaAnalysisController {
             // disable button
             linearRegressionPanel.getCreateReportButton().setEnabled(false);
             //set cursor to waiting one
-            areaController.setCursor(Cursor.WAIT_CURSOR);
-            boolean useCorrectedData = areaController.useCorrectedData();
+            areaMainController.setCursor(Cursor.WAIT_CURSOR);
+            boolean useCorrectedData = areaMainController.useCorrectedData();
             areaAnalysisReportController.setUseCorrectedData(useCorrectedData);
             //call the child controller to create report
             File file = areaAnalysisReportController.createAnalysisReport(directory, reportName);
@@ -904,7 +904,7 @@ public class AreaAnalysisController {
                 file = get();
             } catch (InterruptedException | CancellationException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
-                areaController.handleUnexpectedError(ex);
+                areaMainController.handleUnexpectedError(ex);
             }
             try {
                 //if export to PDF was successfull, open the PDF file from the desktop
@@ -913,10 +913,10 @@ public class AreaAnalysisController {
                 }
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);
-                areaController.showMessage("Cannot open the file!" + "\n" + ex.getMessage(), "error while opening file", JOptionPane.ERROR_MESSAGE);
+                areaMainController.showMessage("Cannot open the file!" + "\n" + ex.getMessage(), "error while opening file", JOptionPane.ERROR_MESSAGE);
             }
             //set cursor back to default
-            areaController.setCursor(Cursor.DEFAULT_CURSOR);
+            areaMainController.setCursor(Cursor.DEFAULT_CURSOR);
             // enable button
             linearRegressionPanel.getCreateReportButton().setEnabled(true);
         }
