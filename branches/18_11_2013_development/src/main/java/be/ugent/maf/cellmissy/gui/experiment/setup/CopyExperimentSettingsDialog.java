@@ -83,6 +83,14 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
         java.awt.GridBagConstraints gridBagConstraints;
 
         topPanel = new javax.swing.JPanel();
+        infoPanel = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        infoTextPane = new javax.swing.JTextPane();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        infoTextPane1 = new javax.swing.JTextPane();
+        experimentsPanel = new javax.swing.JPanel();
+        experimentsScrollPane = new javax.swing.JScrollPane();
+        experimentsList = new javax.swing.JList();
         expOverviewPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -98,14 +106,6 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
         numberConditionsLabel = new javax.swing.JLabel();
         expPurposeLabel = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        experimentsList = new javax.swing.JList();
-        jPanel2 = new javax.swing.JPanel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        infoTextPane = new javax.swing.JTextPane();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        infoTextPane1 = new javax.swing.JTextPane();
         tablePanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         conditionsDetailsTable = new javax.swing.JTable();
@@ -115,12 +115,66 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Copy settings from other experiment");
-        setAlwaysOnTop(true);
         setMinimumSize(new java.awt.Dimension(1000, 650));
         setModal(true);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         topPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        infoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
+
+        jScrollPane3.setBorder(null);
+
+        infoTextPane.setEditable(false);
+        infoTextPane.setText("With this option, you can select a (conducted) experiment that belongs to the current project and retrieve all its settings, in order to use them as settings for the experiment you are now planning. When selecting an experiment, you see an overview of it; then click the \"copy settings\" button: this will assign the same settings to the current experiment. You can still change these settings in the layout view, once the setting have been copied.");
+        infoTextPane.setFocusable(false);
+        jScrollPane3.setViewportView(infoTextPane);
+
+        jScrollPane5.setBorder(null);
+
+        infoTextPane1.setEditable(false);
+        infoTextPane1.setText("With this option, you can select a (conducted) experiment that belongs to the current project and retrieve all its settings, in order to use them as settings for the experiment you are now planning. When selecting an experiment, you see an overview of it; then click the \"copy settings\" button: this will assign the same settings to the current experiment. You can still change these settings in the layout view, once the setting have been copied.");
+        infoTextPane1.setFocusable(false);
+        jScrollPane5.setViewportView(infoTextPane1);
+
+        javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
+        infoPanel.setLayout(infoPanelLayout);
+        infoPanelLayout.setHorizontalGroup(
+            infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(infoPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        infoPanelLayout.setVerticalGroup(
+            infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(infoPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3)
+                .addContainerGap())
+        );
+
+        experimentsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiments"));
+
+        experimentsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        experimentsScrollPane.setViewportView(experimentsList);
+
+        javax.swing.GroupLayout experimentsPanelLayout = new javax.swing.GroupLayout(experimentsPanel);
+        experimentsPanel.setLayout(experimentsPanelLayout);
+        experimentsPanelLayout.setHorizontalGroup(
+            experimentsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(experimentsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(experimentsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        experimentsPanelLayout.setVerticalGroup(
+            experimentsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, experimentsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(experimentsScrollPane)
+                .addContainerGap())
+        );
 
         expOverviewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Experiment Overiew"));
 
@@ -222,70 +276,15 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
 
         expOverviewPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabel1, jLabel2, jLabel3, jLabel5, jLabel6, jLabel7, jLabel9});
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiments"));
-
-        experimentsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane4.setViewportView(experimentsList);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane4)
-                .addContainerGap())
-        );
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
-
-        jScrollPane3.setBorder(null);
-
-        infoTextPane.setEditable(false);
-        infoTextPane.setText("With this option, you can select a (conducted) experiment that belongs to the current project and retrieve all its settings, in order to use them as settings for the experiment you are now planning. When selecting an experiment, you see an overview of it; then click the \"copy settings\" button: this will assign the same settings to the current experiment. You can still change these settings in the layout view, once the setting have been copied.");
-        infoTextPane.setFocusable(false);
-        jScrollPane3.setViewportView(infoTextPane);
-
-        jScrollPane5.setBorder(null);
-
-        infoTextPane1.setEditable(false);
-        infoTextPane1.setText("With this option, you can select a (conducted) experiment that belongs to the current project and retrieve all its settings, in order to use them as settings for the experiment you are now planning. When selecting an experiment, you see an overview of it; then click the \"copy settings\" button: this will assign the same settings to the current experiment. You can still change these settings in the layout view, once the setting have been copied.");
-        infoTextPane1.setFocusable(false);
-        jScrollPane5.setViewportView(infoTextPane1);
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane3)
-                .addContainerGap())
-        );
-
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);
         topPanelLayout.setHorizontalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(topPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(infoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(10, 10, 10)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(experimentsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(expOverviewPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -295,8 +294,8 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
             .addGroup(topPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(infoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(experimentsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(expOverviewPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -447,6 +446,9 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
     private javax.swing.JPanel expOverviewPanel;
     private javax.swing.JLabel expPurposeLabel;
     private javax.swing.JList experimentsList;
+    private javax.swing.JPanel experimentsPanel;
+    private javax.swing.JScrollPane experimentsScrollPane;
+    private javax.swing.JPanel infoPanel;
     private javax.swing.JTextPane infoTextPane;
     private javax.swing.JTextPane infoTextPane1;
     private javax.swing.JLabel instrumentLabel;
@@ -457,11 +459,8 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JLabel magnificationLabel;
     private javax.swing.JLabel numberConditionsLabel;

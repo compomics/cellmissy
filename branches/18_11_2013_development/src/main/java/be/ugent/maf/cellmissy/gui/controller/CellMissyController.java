@@ -320,6 +320,10 @@ public class CellMissyController {
     private void initMainFrame() {
         // do nothing on closing the main frame; ask user for the OK to proceed
         cellMissyFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        // we disable these menu items, will be enabled only under ceratin conditions in the setup phase
+        cellMissyFrame.getImportSettingsMenuItem().setEnabled(false);
+        cellMissyFrame.getImportTemplateMenuItem().setEnabled(false);
+
         // ask the user if he wants to actually exit from the application
         cellMissyFrame.addWindowListener(new WindowAdapter() {
             @Override
@@ -400,14 +404,27 @@ public class CellMissyController {
             }
         });
 
+        // import setup settings
+        cellMissyFrame.getImportSettingsMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onImportSettings();
+            }
+        });
+
+        // import setup template
+        cellMissyFrame.getImportTemplateMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onImportTemplate();
+            }
+        });
 
         // add the hyperlink events
         aboutDialog.getAboutEditorPane().addHyperlinkListener(new LinkListener(aboutDialog.getAboutEditorPane()));
         helpDialog.getHelpEditorPane().addHyperlinkListener(new LinkListener(helpDialog.getHelpEditorPane()));
-
         aboutDialog.getAboutEditorPane().setCaretPosition(0);
         helpDialog.getHelpEditorPane().setCaretPosition(0);
-
         Image helpImage = new ImageIcon(getClass().getResource("/icons/helpIcon.png")).getImage();
         helpDialog.setIconImage(helpImage);
         Image aboutImage = new ImageIcon(getClass().getResource("/icons/informationIcon.png")).getImage();
@@ -579,10 +596,35 @@ public class CellMissyController {
     }
 
     /**
-     * Action performed on export experiment template to file.
+     * Action performed on export experiment template to file. If we are setting
+     * up an experiment, the current template will be exported. If the user is
+     * performing other tasks in CellMissy, a specific dialog will be shown,
+     * through the import-export controller. In this last case, the user has to
+     * select an experiment and export the template from it.
      */
     private void onExportTemplate() {
-        importExportController.showExportTemplateDialog();
+        String currentCardName = GuiUtils.getCurrentCardName(cellMissyFrame.getBackgroundPanel());
+        if (currentCardName.equalsIgnoreCase("setupExperimentParentPanel")) {
+            setupExperimentController.onExportTemplateForCurrentExperiment();
+        } else {
+            // in any other case, use a dialog: select an experiment to export the template from
+            importExportController.showExportTemplateDialog();
+        }
+    }
+
+    /**
+     * Action performed on importing settings from another experiment.
+     */
+    private void onImportSettings() {
+        setupExperimentController.onImportSettings();
+    }
+
+    /**
+     * Action performed on importing a template from another experiment to the
+     * one that is currently being set up.
+     */
+    private void onImportTemplate() {
+        setupExperimentController.onImportTemplateToCurrentExperiment();
     }
 
     /**

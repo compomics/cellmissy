@@ -233,7 +233,6 @@ public class ImportExperimentDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Import Experiment");
-        setAlwaysOnTop(true);
         setMinimumSize(new java.awt.Dimension(850, 650));
         setModal(true);
         setPreferredSize(new java.awt.Dimension(850, 650));
