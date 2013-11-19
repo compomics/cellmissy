@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis;
 
 import be.ugent.maf.cellmissy.analysis.AreaAnalyzer;
+import be.ugent.maf.cellmissy.analysis.AreaUnitOfMeasurement;
 import be.ugent.maf.cellmissy.analysis.MeasuredAreaType;
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrectionFactory;
 import be.ugent.maf.cellmissy.analysis.SignificanceLevel;
@@ -300,8 +301,9 @@ public class AreaAnalysisController {
      */
     public JFreeChart createVelocityChart(int[] conditionsToShow) {
         DefaultStatisticalCategoryDataset velocityDataset = getVelocityDataset(conditionsToShow);
-        String areaUnitOfMeasurement = getAreaUnitOfMeasurement();
-        JFreeChart velocityChart = ChartFactory.createLineChart("Median Velocity", "", "Velocity " + "(" + areaUnitOfMeasurement + "\\min)", velocityDataset, PlotOrientation.VERTICAL, false, false, false);
+        AreaUnitOfMeasurement areaUnitOfMeasurement = getAreaUnitOfMeasurement();
+        String areaUnitOfMeasurementString = areaUnitOfMeasurement.getUnitOfMeasurementString();
+        JFreeChart velocityChart = ChartFactory.createLineChart("Median Velocity", "", "Velocity " + "(" + areaUnitOfMeasurementString + "\\min)", velocityDataset, PlotOrientation.VERTICAL, false, false, false);
         velocityChart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
         CategoryPlot velocityPlot = velocityChart.getCategoryPlot();
         velocityPlot.setBackgroundPaint(Color.white);
@@ -352,7 +354,7 @@ public class AreaAnalysisController {
      *
      * @return
      */
-    private String getAreaUnitOfMeasurement() {
+    private AreaUnitOfMeasurement getAreaUnitOfMeasurement() {
         return areaMainController.getAreaUnitOfMeasurement();
     }
 

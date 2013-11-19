@@ -180,8 +180,8 @@ public class AreaMainController {
         return experiment;
     }
 
-    public String getAreaUnitOfMeasurement() {
-        return areaAnalysisHolder.getAreaUnitOfMeasurement().getUnitOfMeasurementString();
+    public AreaUnitOfMeasurement getAreaUnitOfMeasurement() {
+        return areaAnalysisHolder.getAreaUnitOfMeasurement();
     }
 
     public String getMeasuredAreaType() {
@@ -275,6 +275,10 @@ public class AreaMainController {
 
     public void setDistanceMetricBeanName(String distanceMetricBeanName) {
         this.distanceMetricBeanName = distanceMetricBeanName;
+    }
+
+    public MetaDataAnalysisPanel getMetaDataAnalysisPanel() {
+        return metaDataAnalysisPanel;
     }
 
     /**
@@ -475,7 +479,8 @@ public class AreaMainController {
                 // enable next button
                 analysisExperimentPanel.getNextButton().setEnabled(true);
                 // enable or disable the converted table in the tabbed pane
-                if (areaAnalysisHolder.getAreaUnitOfMeasurement().equals(AreaUnitOfMeasurement.PIXELS) | areaAnalysisHolder.getAreaUnitOfMeasurement().equals(AreaUnitOfMeasurement.SPECIAL_MICRO_METERS)) {
+                AreaUnitOfMeasurement areaUnitOfMeasurement = (AreaUnitOfMeasurement) metaDataAnalysisPanel.getAreaUnitOfMeasurementComboBox().getSelectedItem();
+                if (areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.PIXELS) | areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.SPECIAL_MICRO_METERS)) {
                     areaPreProcessingController.getAreaAnalysisPanel().getDataInspectingTabbedPane().setEnabledAt(1, true);
                 } else {
                     areaPreProcessingController.getAreaAnalysisPanel().getDataInspectingTabbedPane().setEnabledAt(1, false);
@@ -706,6 +711,9 @@ public class AreaMainController {
             public void actionPerformed(ActionEvent e) {
                 AreaUnitOfMeasurement areaUnitOfMeasurement = (AreaUnitOfMeasurement) metaDataAnalysisPanel.getAreaUnitOfMeasurementComboBox().getSelectedItem();
                 areaAnalysisHolder.setAreaUnitOfMeasurement(areaUnitOfMeasurement);
+                if (areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.PIXELS) | areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.SPECIAL_MICRO_METERS)) {
+                    areaAnalysisHolder.setAreaUnitOfMeasurement(AreaUnitOfMeasurement.MICRO_METERS);
+                }
             }
         });
 
@@ -870,6 +878,7 @@ public class AreaMainController {
      * Initialize data analysis panel
      */
     private void initDataAnalysisPanel() {
+
         //when a certain condition is selected, fetch time steps for each well of the condition
         dataAnalysisPanel.getConditionsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -1058,6 +1067,9 @@ public class AreaMainController {
         protected Void doInBackground() throws Exception {
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             dataAnalysisPanel.getConditionsList().setEnabled(false);
+            analysisExperimentPanel.getNextButton().setEnabled(false);
+            analysisExperimentPanel.getCancelButton().setEnabled(false);
+            analysisExperimentPanel.getPreviousButton().setEnabled(false);
             // disable buttons as well
             List<Well> wellList = currentCondition.getWellList();
             //fetch time steps for each well of condition
@@ -1083,11 +1095,15 @@ public class AreaMainController {
                 get();
                 dataAnalysisPanel.getConditionsList().setEnabled(true);
                 dataAnalysisPanel.getConditionsList().requestFocusInWindow();
+                analysisExperimentPanel.getNextButton().setEnabled(areaPreProcessingController.isProceedToAnalysis());
+                analysisExperimentPanel.getCancelButton().setEnabled(true);
+                analysisExperimentPanel.getPreviousButton().setEnabled(true);
                 if (!areaPreProcessingController.getTimeStepsBindingList().isEmpty()) {
                     //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO look at motility track RESULTS
                     areaPreProcessingController.showTimeStepsInTable();
                     // if the area unit of measurement is pixel or cellM µm², we show also the converted area values
-                    if (areaAnalysisHolder.getAreaUnitOfMeasurement().equals(AreaUnitOfMeasurement.PIXELS) | areaAnalysisHolder.getAreaUnitOfMeasurement().equals(AreaUnitOfMeasurement.SPECIAL_MICRO_METERS)) {
+                    AreaUnitOfMeasurement areaUnitOfMeasurement = (AreaUnitOfMeasurement) metaDataAnalysisPanel.getAreaUnitOfMeasurementComboBox().getSelectedItem();
+                    if (areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.PIXELS) | areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.SPECIAL_MICRO_METERS)) {
                         areaPreProcessingController.showConvertedAreaInTable();
                     }
                     onCardSwitch();

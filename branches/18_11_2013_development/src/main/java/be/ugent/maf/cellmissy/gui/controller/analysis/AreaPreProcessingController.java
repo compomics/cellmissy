@@ -338,8 +338,11 @@ public class AreaPreProcessingController {
         columnBinding.setColumnClass(Integer.class);
 
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${area}"));
-        String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-        columnBinding.setColumnName("Area " + "(" + areaUnitOfMeasurement + ")");
+//        AreaUnitOfMeasurement areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+//        String areaUnitOfMeasurementString = areaUnitOfMeasurement.getUnitOfMeasurementString();
+        AreaUnitOfMeasurement areaUnitOfMeasurement = (AreaUnitOfMeasurement) areaMainController.getMetaDataAnalysisPanel().getAreaUnitOfMeasurementComboBox().getSelectedItem();
+        String areaUnitOfMeasurementString = areaUnitOfMeasurement.getUnitOfMeasurementString();
+        columnBinding.setColumnName("Area " + "(" + areaUnitOfMeasurementString + ")");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
         columnBinding.setRenderer(new FormatRenderer(areaMainController.getFormat(), SwingConstants.RIGHT));
@@ -349,7 +352,8 @@ public class AreaPreProcessingController {
     }
 
     /**
-     *
+     * Show area values, but converted from pixels or cellM micrometers squared
+     * to micrometer squared.
      */
     public void showConvertedAreaInTable() {
         double conversionFactor = computeConversionFactor();
@@ -549,8 +553,9 @@ public class AreaPreProcessingController {
             }
             // Plot Logic
             String chartTitle = measuredAreaTypeString + "  - Condition " + conditionIndex + " (replicates)";
-            String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-            JFreeChart rawAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+            AreaUnitOfMeasurement areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+            String areaUnitOfMeasurementString = areaUnitOfMeasurement.getUnitOfMeasurementString();
+            JFreeChart rawAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurementString + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(rawAreaChart, processedWells, plotLines, plotPoints);
             rawAreaChartPanel.setChart(rawAreaChart);
             rawAreaPanel.getReplicatesAreaChartParentPanel().add(rawAreaChartPanel, gridBagConstraints);
@@ -620,8 +625,9 @@ public class AreaPreProcessingController {
             }
             // Plot Logic
             String chartTitle = "Cell-covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
-            String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-            JFreeChart transformedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+            AreaUnitOfMeasurement areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+            String areaUnitOfMeasurementString = areaUnitOfMeasurement.getUnitOfMeasurementString();
+            JFreeChart transformedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurementString + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(transformedAreaChart, processedWells, plotLines, plotPoints);
             transformedAreaChartPanel.setChart(transformedAreaChart);
             transformedAreaPanel.getReplicatesAreaChartParentPanel().add(transformedAreaChartPanel, gridBagConstraints);
@@ -686,8 +692,9 @@ public class AreaPreProcessingController {
             }
             // Plot Logic
             String chartTitle = "Cell-covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
-            String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-            JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+            AreaUnitOfMeasurement areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+            String areaUnitOfMeasurementString = areaUnitOfMeasurement.getUnitOfMeasurementString();
+            JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurementString + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, processedWells, plotLines, plotPoints);
             correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
             correctedAreaChartPanel.setChart(correctedAreaChart);
@@ -775,8 +782,9 @@ public class AreaPreProcessingController {
             }
             // Plot Logic
             String chartTitle = "Cell-covered area (wound closure) - Condition " + conditionIndex + " (replicates)";
-            String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-            JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+            AreaUnitOfMeasurement areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+            String areaUnitOfMeasurementString = areaUnitOfMeasurement.getUnitOfMeasurementString();
+            JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurementString + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
             JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, processedWells, plotLines, plotPoints);
             correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
             correctedAreaChartPanel.setChart(correctedAreaChart);
@@ -845,8 +853,9 @@ public class AreaPreProcessingController {
         }
         // Plot Logic
         String chartTitle = measuredAreaTypeString + "  - Condition " + conditionIndex + " (raw data)";
-        String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-        JFreeChart rawAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        AreaUnitOfMeasurement areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+        String areaUnitOfMeasurementString = areaUnitOfMeasurement.getUnitOfMeasurementString();
+        JFreeChart rawAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurementString + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         JFreeChartUtils.setupReplicatesAreaChart(rawAreaChart, processedWells, true, false);
         return rawAreaChart;
     }
@@ -901,8 +910,9 @@ public class AreaPreProcessingController {
         }
         // Plot Logic
         String chartTitle = "Cell-covered area (wound closure) - Condition " + conditionIndex + " (corrected data)";
-        String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-        JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        AreaUnitOfMeasurement areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+        String areaUnitOfMeasurementString = areaUnitOfMeasurement.getUnitOfMeasurementString();
+        JFreeChart correctedAreaChart = ChartFactory.createXYLineChart(chartTitle, "time (min)", "Area " + "(" + areaUnitOfMeasurementString + ")", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         JFreeChartUtils.setupReplicatesAreaChart(correctedAreaChart, processedWells, true, false);
         correctedAreaChart.getXYPlot().getDomainAxis().setRange(new Range(timeFramesBindingList.get(0), timeFramesBindingList.get(timeFramesBindingList.size() - 1) + 50));
         return correctedAreaChart;
@@ -982,8 +992,9 @@ public class AreaPreProcessingController {
                 xySeriesCollection.addSeries(values);
             }
         }
-        String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-        JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        AreaUnitOfMeasurement areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+        String areaUnitOfMeasurementString = areaUnitOfMeasurement.getUnitOfMeasurementString();
+        JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "time (min)", "Area " + "(" + areaUnitOfMeasurementString + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         if (plotErrorBars) {
             JFreeChartUtils.plotVerticalErrorBars(globalAreaChart, xySeriesCollection, yErrorsList);
             globalAreaChart.getXYPlot().getRangeAxis().setUpperBound(JFreeChartUtils.computeMaxY(xySeriesCollection) + AnalysisUtils.getMaxOfAList(yErrorsList));
@@ -1066,8 +1077,9 @@ public class AreaPreProcessingController {
                 xySeriesCollection.addSeries(values);
             }
         }
-        String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-        JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "time (min)", "Area " + "(" + areaUnitOfMeasurement + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        AreaUnitOfMeasurement areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
+        String areaUnitOfMeasurementString = areaUnitOfMeasurement.getUnitOfMeasurementString();
+        JFreeChart globalAreaChart = ChartFactory.createXYLineChart("Area", "time (min)", "Area " + "(" + areaUnitOfMeasurementString + ")", xySeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         if (plotErrorBars) {
             JFreeChartUtils.plotVerticalErrorBars(globalAreaChart, xySeriesCollection, yErrorsList);
             globalAreaChart.getXYPlot().getRangeAxis().setUpperBound(JFreeChartUtils.computeMaxY(xySeriesCollection) + AnalysisUtils.getMaxOfAList(yErrorsList));
@@ -1155,7 +1167,7 @@ public class AreaPreProcessingController {
      *
      * @return
      */
-    private String getAreaUnitOfMeasurementString() {
+    private AreaUnitOfMeasurement getAreaUnitOfMeasurementString() {
         return areaMainController.getAreaUnitOfMeasurement();
     }
 
@@ -1274,7 +1286,7 @@ public class AreaPreProcessingController {
         double conversionFactor = 1;
         Experiment currentExperiment = areaMainController.getExperiment();
         // get the actual unit of measurement: if its pixels, override the conversion factor
-        AreaUnitOfMeasurement areaUnitOfMeasurement = areaMainController.getAreaAnalysisHolder().getAreaUnitOfMeasurement();
+        AreaUnitOfMeasurement areaUnitOfMeasurement = (AreaUnitOfMeasurement) areaMainController.getMetaDataAnalysisPanel().getAreaUnitOfMeasurementComboBox().getSelectedItem();
         if (areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.PIXELS)) {
             // conversion factor needs to be set according to conversion factor of instrument and magnification used
             // also, keep in mind this is done from pixel to micrometers square!

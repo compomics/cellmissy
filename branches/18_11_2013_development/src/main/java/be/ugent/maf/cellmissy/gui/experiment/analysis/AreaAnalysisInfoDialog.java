@@ -32,14 +32,14 @@ public class AreaAnalysisInfoDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Info - Area Analysis");
-        setPreferredSize(new java.awt.Dimension(360, 370));
+        setPreferredSize(new java.awt.Dimension(360, 420));
 
         jScrollPane2.setMinimumSize(new java.awt.Dimension(350, 370));
         jScrollPane2.setPreferredSize(new java.awt.Dimension(2966, 370));
 
         infoEditorPane.setEditable(false);
         infoEditorPane.setContentType("text/html"); // NOI18N
-        infoEditorPane.setText("<html>\n  <head>\n<TITLE></TITLE>\n  </head>\n  <body>\n<a name=\"#top\"/>\n        <i>CellMissy, area raw data and units of measurement...</i>\n        <hr>\n        <br>\n        <p align=\"left\">\n          Please specify whether the measured area in the wound healing-like assay is the cell-covered area (i.e. related to the wound closure) or the open area (i.e. the wound area).\n          </br>\n\n         <br>\n         You can choose here the unit of measurement for the raw data (µm², pixels or %).\n          In case \"pixels\" is selected, CellMissy converts the raw data into µm², and the conversion factor of the instrument associated with the current experiment is used. Please keep in mind that this conversion factor is, by default, the one calculated for a magnification of 10x. If other magnifications are used, the conversion factor is properly scaled.\n          If the raw data is expressed in \"%\" or \"µm²\", no conversion is carried out by the software.\n       </br>\n\n         <br>\n         Furthermore, if the raw data is of type \"open area\", these will be expressed in percentage of cell-covered area, no matter which  unit of measurement you have selected. \n         </br>\n        </p>\n  </body>\n</html>");
+        infoEditorPane.setText("<html>\n   <head>\n      <TITLE></TITLE>\n   </head>\n   <body>\n      <a name=\"#top\"/>\n      <i>CellMissy, area raw data and units of measurement...</i>\n      <hr>\n      <br>\n      <p align=\"left\">\n         Please specify whether the measured area in the wound healing-like assay is the cell-covered area (i.e. related to the wound closure) or the open area (i.e. the wound area).\n         </br>\n         <br>\n         </br>\n         <br>\n         You can choose here the unit of measurement for the raw data (µm², pixels or %).\n         In case \"pixels\" is selected, CellMissy converts the raw data into µm², and the conversion factor of the instrument associated with the current experiment is used. Please keep in mind that this conversion factor is, by default, the one calculated for a magnification of 10x. If other magnifications are used, the conversion factor is properly scaled.\n         If the raw data is expressed in \"%\" or \"µm²\", no conversion is carried out by the software.\n         </br>\n         <br>\n         </br>\n         <br>\n         Furthermore, if the raw data is of type \"open area\", these will be expressed in percentage of cell-covered area, no matter which  unit of measurement you have selected. \n         </br>\n      </p>\n   </body>\n</html>");
         infoEditorPane.setPreferredSize(new java.awt.Dimension(2964, 370));
         jScrollPane2.setViewportView(infoEditorPane);
 
@@ -51,7 +51,7 @@ public class AreaAnalysisInfoDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 359, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
         );
 
         pack();
