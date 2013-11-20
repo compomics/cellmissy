@@ -339,6 +339,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         cellMissyMenuBar.add(fileMenu);
 
+        exportMenu.setMnemonic('X');
         exportMenu.setText("Export");
 
         exportExperimentMenuItem.setText("Export Experiment...");
@@ -349,6 +350,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         cellMissyMenuBar.add(exportMenu);
 
+        importMenu.setMnemonic('I');
         importMenu.setText("Import");
 
         importExperimentMenuItem.setText("Import Experiment...");

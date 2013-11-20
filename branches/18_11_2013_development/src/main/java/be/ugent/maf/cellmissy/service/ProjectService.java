@@ -14,11 +14,18 @@ import java.io.File;
 public interface ProjectService extends GenericService<Project, Long> {
 
     /**
-     * this method set up a new project 
+     * this method set up a new project
+     *
      * @param projectNumber
-     * @param description 
+     * @param description
      * @param projectDirectory
-     * @return 
+     * @return
      */
-    Project setupProject(int projectNumber, String description, File projectDirectory);
+    public Project setupProject(int projectNumber, String description, File projectDirectory);
+
+    /**
+     * 
+     * @param entity
+     */
+    public void saveProjectUsers(Project entity);
 }

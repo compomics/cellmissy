@@ -31,7 +31,6 @@ import be.ugent.maf.cellmissy.gui.experiment.setup.SetupPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.ImportTemplateDialog;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
-import be.ugent.maf.cellmissy.gui.project.NewProjectDialog;
 import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsOverviewListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
@@ -57,7 +56,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import javax.persistence.PersistenceException;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -97,7 +95,8 @@ import org.xml.sax.SAXParseException;
 /**
  * SetupExperiment Panel Controller: set up a new experiment. Parent controller:
  * CellMissy Controller (main controller) Child controllers: Conditions
- * Controller, Setup Plate Controller
+ * Controller, Setup Plate Controller, Setup Report Controller, Treatment
+ * Controller, AssayECM Controller and ProjectController.
  *
  * @author Paola
  */
@@ -118,7 +117,6 @@ public class SetupExperimentController {
     //view
     private SetupExperimentPanel setupExperimentPanel;
     private ExperimentInfoPanel experimentInfoPanel;
-    private NewProjectDialog newProjectDialog;
     private SetupPanel setupPanel;
     private CopyExperimentSettingsDialog copyExperimentSettingsDialog;
     private ImportTemplateDialog importTemplateDialog;
@@ -132,6 +130,8 @@ public class SetupExperimentController {
     private SetupPlateController setupPlateController;
     @Autowired
     private SetupReportController setupReportController;
+    @Autowired
+    private SetupProjectController setupProjectController;
     //services
     @Autowired
     private ProjectService projectService;
@@ -158,12 +158,12 @@ public class SetupExperimentController {
         //init views
         initExperimentInfoPanel();
         initSetupExperimentPanel();
-        initNewProjectDialog();
         initCopySettingsDialog();
         initImportTemplateDialog();
         //init child controllers
         setupPlateController.init();
         setupConditionsController.init();
+        setupProjectController.init();
     }
 
     /**
@@ -246,17 +246,6 @@ public class SetupExperimentController {
 
     public void disableAdminSection() {
         experimentInfoPanel.getNewProjectButton().setEnabled(false);
-    }
-
-    /**
-     * Create a new Project
-     *
-     * @param projectNumber
-     * @param projectDescription
-     */
-    public void createNewProject(int projectNumber, String projectDescription) {
-        Project savedProject = projectService.setupProject(projectNumber, projectDescription, mainDirectory);
-        projectBindingList.add(savedProject);
     }
 
     public ObservableList<PlateCondition> getPlateConditionBindingList() {
@@ -626,61 +615,7 @@ public class SetupExperimentController {
         experimentInfoPanel.getNewProjectButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                newProjectDialog.getProjectNumberTextField().setText("");
-                newProjectDialog.getDescriptionTextArea().setText("");
-                // show a newProjectDialog
-                newProjectDialog.pack();
-                newProjectDialog.setVisible(true);
-            }
-        });
-    }
-
-    /**
-     * Initialize new project dialog
-     */
-    private void initNewProjectDialog() {
-        // customize dialog
-        newProjectDialog = new NewProjectDialog(getCellMissyFrame(), true);
-        //center the dialog on the main screen
-        newProjectDialog.setLocationRelativeTo(getCellMissyFrame());
-        // set icon for info label
-        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
-        newProjectDialog.getInfoLabel().setIcon(scaledIcon);
-
-        // create a new project
-        newProjectDialog.getCreateProjectButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //create new project: save it to DB and create folder on the server
-                if (!newProjectDialog.getProjectNumberTextField().getText().isEmpty()) {
-                    try {
-                        int projectNumber = Integer.parseInt(newProjectDialog.getProjectNumberTextField().getText());
-                        //project description is not mandatory
-                        String projectDescription = newProjectDialog.getDescriptionTextArea().getText();
-                        createNewProject(projectNumber, projectDescription);
-                        LOG.info("project " + projectNumber + " (" + projectDescription + ") " + "was created");
-                        // creation of new project was successfull
-                        showMessage("Project was created!", "Project created", JOptionPane.INFORMATION_MESSAGE);
-                        newProjectDialog.getProjectNumberTextField().setText("");
-                        newProjectDialog.getDescriptionTextArea().setText("");
-                        // close the dialog
-                        newProjectDialog.setVisible(false);
-                    } catch (PersistenceException exception) {
-                        showMessage("Project already present in the DB", "Error in persisting project", JOptionPane.WARNING_MESSAGE);
-                        LOG.error(exception.getMessage());
-                        newProjectDialog.getProjectNumberTextField().setText("");
-                        newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
-                    } catch (NumberFormatException exception) {
-                        showMessage("Please insert a valid number", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
-                        LOG.error(exception.getMessage());
-                        newProjectDialog.getProjectNumberTextField().setText("");
-                        newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
-                    }
-                } else {
-                    showMessage("Please insert a number for the project you want to create", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
-                    newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
-                }
+                setupProjectController.showNewProjectDialog();
             }
         });
     }
@@ -1402,6 +1337,17 @@ public class SetupExperimentController {
         importTemplateDialog.pack();
         GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), importTemplateDialog);
         importTemplateDialog.setVisible(true);
+    }
+
+    /**
+     * Create a new Project
+     *
+     * @param projectNumber
+     * @param projectDescription
+     */
+    private void createNewProject(int projectNumber, String projectDescription) {
+        Project savedProject = projectService.setupProject(projectNumber, projectDescription, mainDirectory);
+        projectBindingList.add(savedProject);
     }
 
     /**

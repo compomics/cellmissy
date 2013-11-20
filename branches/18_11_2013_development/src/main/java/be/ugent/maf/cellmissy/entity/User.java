@@ -9,7 +9,10 @@ import java.util.List;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -71,6 +74,9 @@ public class User implements Serializable {
     private String email;
     @OneToMany(mappedBy = "user")
     private List<Experiment> experimentList;
+    @OneToMany(mappedBy = "user")
+    @XmlTransient
+    private List<ProjectHasUser> projectHasUserList;
 
     public User() {
     }
@@ -142,6 +148,14 @@ public class User implements Serializable {
 
     public void setExperimentList(List<Experiment> experimentList) {
         this.experimentList = experimentList;
+    }
+
+    public List<ProjectHasUser> getProjectHasUserList() {
+        return projectHasUserList;
+    }
+
+    public void setProjectHasUserList(List<ProjectHasUser> projectHasUserList) {
+        this.projectHasUserList = projectHasUserList;
     }
 
     @Override

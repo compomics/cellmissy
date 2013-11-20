@@ -5,6 +5,8 @@
 package be.ugent.maf.cellmissy.service.impl;
 
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.ProjectHasUser;
+import be.ugent.maf.cellmissy.repository.ProjectHasUserRepository;
 import be.ugent.maf.cellmissy.repository.ProjectRepository;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.io.File;
@@ -22,12 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("projectService")
 @Transactional
 public class ProjectServiceImpl implements ProjectService {
-    
+
     private static final Logger LOG = Logger.getLogger(ProjectService.class);
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private ProjectHasUserRepository projectHasUserRepository;
     private String projectFolderName;
-    
+
     @Override
     public Project setupProject(int projectNumber, String description, File microscopeDirectory) {
 
@@ -35,7 +39,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project newProject = new Project();
         newProject.setProjectNumber(projectNumber);
         newProject.setProjectDescription(description);
-        
+
         newProject = projectRepository.update(newProject);
 
         //create project folder on the server
@@ -45,7 +49,7 @@ public class ProjectServiceImpl implements ProjectService {
         } else {
             projectFolderName = "CM_P" + df.format(projectNumber) + "_" + newProject.getProjectDescription();
         }
-        
+
         File subDirectory = new File(microscopeDirectory, projectFolderName);
         // mkdir() returns true if and only if the directory was created; false otherwise
         boolean mkdir = subDirectory.mkdir();
@@ -54,30 +58,38 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return newProject;
     }
-    
+
     @Override
     public Project findById(Long id) {
         return projectRepository.findById(id);
     }
-    
+
     @Override
     public List<Project> findAll() {
         return projectRepository.findAll();
     }
-    
+
     @Override
     public Project update(Project entity) {
         return projectRepository.update(entity);
     }
-    
+
     @Override
     public void delete(Project entity) {
         entity = projectRepository.findById(entity.getProjectid());
         projectRepository.delete(entity);
     }
-    
+
     @Override
     public void save(Project entity) {
         projectRepository.save(entity);
+    }
+
+    @Override
+    public void saveProjectUsers(Project entity) {
+        for (ProjectHasUser projectHasUser : entity.getProjectHasUserList()) {
+
+            projectHasUserRepository.save(projectHasUser);
+        }
     }
 }

@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.entity;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,6 +23,8 @@ import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -50,16 +53,20 @@ public class Project implements Serializable {
     private Long projectid;
     @Basic(optional = false)
     @Column(name = "project_number", unique = true)
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     private int projectNumber;
     @Basic(optional = true)
     @Column(name = "description")
-    @XmlAttribute(required=true)
+    @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String projectDescription;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     @XmlTransient
     private List<Experiment> experimentList;
+    @OneToMany(mappedBy = "project", orphanRemoval = true)
+    @XmlElementWrapper(name = "projectHasUsers")
+    @XmlElement(name = "projectHasUser", required = false)
+    private List<ProjectHasUser> projectHasUserList;
 
     public Project() {
     }
@@ -71,6 +78,12 @@ public class Project implements Serializable {
     public Project(Long projectid, int projectNumber) {
         this.projectid = projectid;
         this.projectNumber = projectNumber;
+    }
+
+    public Project(int projectNumber, String projectDescription, List<ProjectHasUser> projectHasUserList) {
+        this.projectNumber = projectNumber;
+        this.projectDescription = projectDescription;
+        this.projectHasUserList = projectHasUserList;
     }
 
     public Long getProjectid() {
@@ -105,21 +118,52 @@ public class Project implements Serializable {
         this.experimentList = experimentList;
     }
 
+    public List<ProjectHasUser> getProjectHasUserList() {
+        return projectHasUserList;
+    }
+
+    public void setProjectHasUserList(List<ProjectHasUser> projectHasUserList) {
+        this.projectHasUserList = projectHasUserList;
+    }
+
+//    @Override
+//    public int hashCode() {
+//        int hash = 0;
+//        hash += (projectid != null ? projectid.hashCode() : 0);
+//        return hash;
+//    }
+//
+//    @Override
+//    public boolean equals(Object object) {
+//        // TODO: Warning - this method won't work in the case the id fields are not set
+//        if (!(object instanceof Project)) {
+//            return false;
+//        }
+//        Project other = (Project) object;
+//        if ((this.projectid == null && other.projectid != null) || (this.projectid != null && !this.projectid.equals(other.projectid))) {
+//            return false;
+//        }
+//        return true;
+//    }
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (projectid != null ? projectid.hashCode() : 0);
+        int hash = 3;
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Project)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        Project other = (Project) object;
-        if ((this.projectid == null && other.projectid != null) || (this.projectid != null && !this.projectid.equals(other.projectid))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Project other = (Project) obj;
+        if (!Objects.equals(this.projectid, other.projectid)) {
+            return false;
+        }
+        if (this.projectNumber != other.projectNumber) {
             return false;
         }
         return true;

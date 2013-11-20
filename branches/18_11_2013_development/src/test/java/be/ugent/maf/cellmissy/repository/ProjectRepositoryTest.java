@@ -5,6 +5,9 @@
 package be.ugent.maf.cellmissy.repository;
 
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.ProjectHasUser;
+import be.ugent.maf.cellmissy.entity.User;
+import java.util.ArrayList;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -27,10 +30,12 @@ public class ProjectRepositoryTest {
 
     @Autowired
     ProjectRepository projectRepository;
+    @Autowired
+    UserRepository userRepository;
 
     @Test
     public void testRepository() {
-        // use import sql file        
+        // use import sql file
         // test find all
         List<Project> projects = projectRepository.findAll();
         Assert.assertTrue(!projects.isEmpty());
@@ -40,13 +45,17 @@ public class ProjectRepositoryTest {
         Long projectId = projects.get(0).getProjectid();
         Project found = projectRepository.findById(projectId);
         Assert.assertNotNull(found);
-//        String projectDescription = projects.get(1).getProjectDescription();
-//        Assert.assertTrue(projectDescription.equals("test2"));
+        User userById = userRepository.findById(1L);
 
         // use generic repository
         Project project = new Project();
         project.setProjectNumber(4);
         project.setProjectDescription("This is a test");
+        List<ProjectHasUser> projectHasUsers = new ArrayList<>();
+        ProjectHasUser projectHasUser = new ProjectHasUser(project, userById);
+        projectHasUsers.add(projectHasUser);
+
+        project.setProjectHasUserList(projectHasUsers);
         projectRepository.save(project);
         Assert.assertNotNull(project.getProjectid());
     }

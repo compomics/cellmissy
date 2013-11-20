@@ -87,6 +87,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="exportMenu">
           <Properties>
+            <Property name="mnemonic" type="int" value="88"/>
             <Property name="text" type="java.lang.String" value="Export"/>
           </Properties>
           <SubComponents>
@@ -104,6 +105,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="importMenu">
           <Properties>
+            <Property name="mnemonic" type="int" value="73"/>
             <Property name="text" type="java.lang.String" value="Import"/>
           </Properties>
           <SubComponents>
