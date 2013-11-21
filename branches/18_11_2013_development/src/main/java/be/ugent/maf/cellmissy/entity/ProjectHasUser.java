@@ -20,7 +20,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -34,7 +33,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
     @NamedQuery(name = "ProjectHasUser.findAll", query = "SELECT p FROM ProjectHasUser p"),
-    @NamedQuery(name = "ProjectHasUser.findByProjectHasUserid", query = "SELECT p FROM ProjectHasUser p WHERE p.projectHasUserid = :projectHasUserid")})
+    @NamedQuery(name = "ProjectHasUser.findByProjectHasUserid", query = "SELECT p FROM ProjectHasUser p WHERE p.projectHasUserid = :projectHasUserid"),
+    @NamedQuery(name = "ProjectHasUser.findByUserid", query = "SELECT p FROM ProjectHasUser p WHERE p.user.userid = :userid")})
 public class ProjectHasUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,7 +50,7 @@ public class ProjectHasUser implements Serializable {
     private Project project;
     @JoinColumn(name = "l_userid", referencedColumnName = "userid")
     @ManyToOne(cascade = CascadeType.ALL, optional = true)
-    @XmlElement(required = true)
+    @XmlTransient
     private User user;
 
     public ProjectHasUser() {
@@ -59,6 +59,14 @@ public class ProjectHasUser implements Serializable {
     public ProjectHasUser(Project project, User user) {
         this.project = project;
         this.user = user;
+    }
+
+    public Long getProjectHasUserid() {
+        return projectHasUserid;
+    }
+
+    public void setProjectHasUserid(Long projectHasUserid) {
+        this.projectHasUserid = projectHasUserid;
     }
 
     public Project getProject() {

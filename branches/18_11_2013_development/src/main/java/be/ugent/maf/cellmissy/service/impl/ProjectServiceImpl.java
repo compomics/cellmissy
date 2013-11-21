@@ -88,8 +88,12 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void saveProjectUsers(Project entity) {
         for (ProjectHasUser projectHasUser : entity.getProjectHasUserList()) {
-
             projectHasUserRepository.save(projectHasUser);
         }
+    }
+
+    @Override
+    public List<Project> findProjectsByUserid(Long userid) {
+        return projectHasUserRepository.findProjectsByUserid(userid);
     }
 }

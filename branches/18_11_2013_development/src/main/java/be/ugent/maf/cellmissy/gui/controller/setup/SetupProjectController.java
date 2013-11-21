@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.ProjectHasUser;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.project.NewProjectDialog;
+import be.ugent.maf.cellmissy.gui.project.ProjectInfoDialog;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.UserService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -48,6 +49,7 @@ public class SetupProjectController {
     private BindingGroup bindingGroup;
     // view
     private NewProjectDialog newProjectDialog;
+    private ProjectInfoDialog projectInfoDialog;
     // parent controller
     @Autowired
     private SetupExperimentController setupExperimentController;
@@ -63,6 +65,7 @@ public class SetupProjectController {
      */
     public void init() {
         bindingGroup = new BindingGroup();
+        projectInfoDialog = new ProjectInfoDialog(setupExperimentController.getCellMissyFrame(), true);
         // init views
         initNewProjectDialog();
     }
@@ -96,9 +99,13 @@ public class SetupProjectController {
         //center the dialog on the main screen
         newProjectDialog.setLocationRelativeTo(setupExperimentController.getCellMissyFrame());
         // set icon for info label
-        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
-        newProjectDialog.getInfoLabel().setIcon(scaledIcon);
+        Icon infoIcon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledInfoIcon = GuiUtils.getScaledIcon(infoIcon);
+        newProjectDialog.getInfoLabel().setIcon(scaledInfoIcon);
+        // set icon for question button
+        Icon questionIcon = UIManager.getIcon("OptionPane.questionIcon");
+        ImageIcon scaledQuestionIcon = GuiUtils.getScaledIcon(questionIcon);
+        newProjectDialog.getQuestionButton().setIcon(scaledQuestionIcon);
         // users binding lists: source is filled in with all users from the database
         sourceUsersBindingList = ObservableCollections.observableList(userService.findAll());
         // destination list is empty at first place
@@ -126,6 +133,17 @@ public class SetupProjectController {
                     setupExperimentController.showMessage("Please insert a number for the project you want to create", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
                     newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
                 }
+            }
+        });
+
+        // add action Listener to the question/info button
+        newProjectDialog.getQuestionButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                projectInfoDialog.pack();
+                // pack and show info dialog
+                GuiUtils.centerDialogOnFrame(setupExperimentController.getCellMissyFrame(), projectInfoDialog);
+                projectInfoDialog.setVisible(true);
             }
         });
 
@@ -195,25 +213,26 @@ public class SetupProjectController {
             // project number and project description
             int projectNumber = Integer.parseInt(newProjectDialog.getProjectNumberTextField().getText());
             String projectDescription = newProjectDialog.getDescriptionTextArea().getText();
+            // set number, description
+            newProject.setProjectNumber(projectNumber);
+            newProject.setProjectDescription(projectDescription);
             // get the list of the users here and assign them to the project
             List<ProjectHasUser> projectHasUsersList = new ArrayList<>();
             for (User destinationUser : destinationUsersBindingList) {
                 ProjectHasUser projectHasUser = new ProjectHasUser(newProject, destinationUser);
                 projectHasUsersList.add(projectHasUser);
             }
-            for(User destinationUser : destinationUsersBindingList){
+            newProject.setProjectHasUserList(projectHasUsersList);
+            for (User destinationUser : destinationUsersBindingList) {
                 destinationUser.setProjectHasUserList(projectHasUsersList);
             }
-            // set number, description and users, and save entity to DB
-            newProject.setProjectNumber(projectNumber);
-            newProject.setProjectDescription(projectDescription);
-            newProject.setProjectHasUserList(projectHasUsersList);
+
             // save the users
             projectService.saveProjectUsers(newProject);
             projectService.save(newProject);
             LOG.info(newProject + "was created");
             // creation of new project was successfull
-            setupExperimentController.showMessage("Project was created!", "Project created", JOptionPane.INFORMATION_MESSAGE);
+            setupExperimentController.showMessage(newProject + "was created", "project created", JOptionPane.INFORMATION_MESSAGE);
             newProjectDialog.getProjectNumberTextField().setText("");
             newProjectDialog.getDescriptionTextArea().setText("");
             // close the dialog

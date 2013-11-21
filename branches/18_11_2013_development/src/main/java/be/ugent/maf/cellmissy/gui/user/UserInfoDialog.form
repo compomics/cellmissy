@@ -3,10 +3,7 @@
 <Form version="1.3" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
-    <Property name="title" type="java.lang.String" value="Info - Area Analysis"/>
-    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[360, 420]"/>
-    </Property>
+    <Property name="title" type="java.lang.String" value="Info - User Management"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -27,12 +24,12 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="infoScrollPane" alignment="0" pref="360" max="32767" attributes="0"/>
+          <Component id="infoScrollPane" alignment="0" pref="400" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="infoScrollPane" pref="390" max="32767" attributes="0"/>
+          <Component id="infoScrollPane" min="-2" pref="261" max="-2" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -57,7 +54,7 @@
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;   &lt;head&gt;&#xa;      &lt;TITLE&gt;&lt;/TITLE&gt;&#xa;   &lt;/head&gt;&#xa;   &lt;body&gt;&#xa;      &lt;a name=&quot;#top&quot;/&gt;&#xa;      &lt;i&gt;CellMissy, area raw data and units of measurement...&lt;/i&gt;&#xa;      &lt;hr&gt;&#xa;      &lt;br&gt;&#xa;      &lt;p align=&quot;left&quot;&gt;&#xa;         Please specify whether the measured area in the wound healing-like assay is the cell-covered area (i.e. related to the wound closure) or the open area (i.e. the wound area).&#xa;         &lt;/br&gt;&#xa;         &lt;br&gt;&#xa;         &lt;/br&gt;&#xa;         &lt;br&gt;&#xa;         You can choose here the unit of measurement for the raw data (&#xb5;m&#xb2;, pixels or %).&#xa;         In case &quot;pixels&quot; is selected, CellMissy converts the raw data into &#xb5;m&#xb2;, and the conversion factor of the instrument associated with the current experiment is used. Please keep in mind that this conversion factor is, by default, the one calculated for a magnification of 10x. If other magnifications are used, the conversion factor is properly scaled.&#xa;         If the raw data is expressed in &quot;%&quot; or &quot;&#xb5;m&#xb2;&quot;, no conversion is carried out by the software.&#xa;         &lt;/br&gt;&#xa;         &lt;br&gt;&#xa;         &lt;/br&gt;&#xa;         &lt;br&gt;&#xa;         Furthermore, if the raw data is of type &quot;open area&quot;, these will be expressed in percentage of cell-covered area, no matter which  unit of measurement you have selected. &#xa;         &lt;/br&gt;&#xa;      &lt;/p&gt;&#xa;   &lt;/body&gt;&#xa;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;   &lt;head&gt;&#xa;      &lt;TITLE&gt;&lt;/TITLE&gt;&#xa;   &lt;/head&gt;&#xa;   &lt;body&gt;&#xa;      &lt;a name=&quot;#top&quot;/&gt;&#xa;      &lt;i&gt;Create a new project in CellMissy...&lt;/i&gt;&#xa;      &lt;hr&gt;&#xa;      &lt;br&gt;&#xa;      &lt;p align=&quot;left&quot;&gt;&#xa;&#x9;&#x9; Selecting an user in the list will show the current projects associated with this user, and its details in the below panel. &#xa;         &lt;/br&gt;&#xa;         &lt;br&gt;&#xa;&#x9;&#x9; &lt;/br&gt;&#xa;&#x9;&#x9; &lt;br&gt;&#xa;&#x9;&#x9; Add a new CellMissy user using the &quot;Add User&quot; button: the new user will first add to the list, and you can then edit the data of this user and finally save it to the DB (using the &quot;Save/Update User&quot; button). If a certain user is already present in the DB, and you modify some of its field, the user will be updated as well (through the same &quot;Save/Update User&quot; button).&#xa;         &lt;/br&gt;&#xa;&#x9;&#x9; &lt;br&gt;&#xa;&#x9;&#x9; &lt;/br&gt;&#xa;         &lt;br&gt;&#xa;         Note that only ADMIN users can delete users from a CellMissy DB.&#xa;         &lt;/br&gt;&#xa;      &lt;/p&gt;&#xa;   &lt;/body&gt;&#xa;&lt;/html&gt;"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[2964, 370]"/>

@@ -84,10 +84,8 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
 
         topPanel = new javax.swing.JPanel();
         infoPanel = new javax.swing.JPanel();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        infoScrollPane = new javax.swing.JScrollPane();
         infoTextPane = new javax.swing.JTextPane();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        infoTextPane1 = new javax.swing.JTextPane();
         experimentsPanel = new javax.swing.JPanel();
         experimentsScrollPane = new javax.swing.JScrollPane();
         experimentsList = new javax.swing.JList();
@@ -123,19 +121,12 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
 
         infoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
 
-        jScrollPane3.setBorder(null);
+        infoScrollPane.setBorder(null);
 
         infoTextPane.setEditable(false);
         infoTextPane.setText("With this option, you can select a (conducted) experiment that belongs to the current project and retrieve all its settings, in order to use them as settings for the experiment you are now planning. When selecting an experiment, you see an overview of it; then click the \"copy settings\" button: this will assign the same settings to the current experiment. You can still change these settings in the layout view, once the setting have been copied.");
         infoTextPane.setFocusable(false);
-        jScrollPane3.setViewportView(infoTextPane);
-
-        jScrollPane5.setBorder(null);
-
-        infoTextPane1.setEditable(false);
-        infoTextPane1.setText("With this option, you can select a (conducted) experiment that belongs to the current project and retrieve all its settings, in order to use them as settings for the experiment you are now planning. When selecting an experiment, you see an overview of it; then click the \"copy settings\" button: this will assign the same settings to the current experiment. You can still change these settings in the layout view, once the setting have been copied.");
-        infoTextPane1.setFocusable(false);
-        jScrollPane5.setViewportView(infoTextPane1);
+        infoScrollPane.setViewportView(infoTextPane);
 
         javax.swing.GroupLayout infoPanelLayout = new javax.swing.GroupLayout(infoPanel);
         infoPanel.setLayout(infoPanelLayout);
@@ -143,14 +134,14 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(infoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                .addComponent(infoScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
                 .addContainerGap())
         );
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(infoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3)
+                .addComponent(infoScrollPane)
                 .addContainerGap())
         );
 
@@ -449,8 +440,8 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
     private javax.swing.JPanel experimentsPanel;
     private javax.swing.JScrollPane experimentsScrollPane;
     private javax.swing.JPanel infoPanel;
+    private javax.swing.JScrollPane infoScrollPane;
     private javax.swing.JTextPane infoTextPane;
-    private javax.swing.JTextPane infoTextPane1;
     private javax.swing.JLabel instrumentLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -460,8 +451,6 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JLabel magnificationLabel;
     private javax.swing.JLabel numberConditionsLabel;
     private javax.swing.JLabel plateFormatLabel;

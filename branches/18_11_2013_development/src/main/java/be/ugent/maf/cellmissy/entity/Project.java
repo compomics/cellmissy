@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,11 +24,11 @@ import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 /**
  *
@@ -63,9 +64,9 @@ public class Project implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     @XmlTransient
     private List<Experiment> experimentList;
-    @OneToMany(mappedBy = "project", orphanRemoval = true)
-    @XmlElementWrapper(name = "projectHasUsers")
-    @XmlElement(name = "projectHasUser", required = false)
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Fetch(value = FetchMode.SELECT)
+    @XmlTransient
     private List<ProjectHasUser> projectHasUserList;
 
     public Project() {

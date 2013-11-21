@@ -27,6 +27,10 @@ public class OverviewDialog extends javax.swing.JDialog {
         return projectJList;
     }
 
+    public JList getUsersJList() {
+        return usersJList;
+    }
+
     public JButton getDeleteExperimentButton() {
         return deleteExperimentButton;
     }
@@ -55,60 +59,119 @@ public class OverviewDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        projectsPanel = new javax.swing.JPanel();
+        projectsScrollPane = new javax.swing.JScrollPane();
         projectJList = new javax.swing.JList();
-        jLabel2 = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        experimentsPanel = new javax.swing.JPanel();
+        experimentsScrollPane = new javax.swing.JScrollPane();
         experimentJList = new javax.swing.JList();
         infoLabel = new javax.swing.JLabel();
         deleteExperimentButton = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
+        usersPanel = new javax.swing.JPanel();
+        usersScrollPane = new javax.swing.JScrollPane();
+        usersJList = new javax.swing.JList();
+        jPanel1 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         projectDescriptionTextArea = new javax.swing.JTextArea();
+        deleteUserFromProjectButton = new javax.swing.JButton();
+        AddUserToProjectButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("CellMissy - Overview");
-        setResizable(false);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel1.setText("Projects");
+        projectsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Projects"));
 
-        jScrollPane1.setBorder(null);
-        jScrollPane1.setAutoscrolls(true);
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(10, 10));
-        jScrollPane1.setOpaque(false);
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(10, 10));
+        projectsScrollPane.setBorder(null);
+        projectsScrollPane.setAutoscrolls(true);
+        projectsScrollPane.setMinimumSize(new java.awt.Dimension(10, 10));
+        projectsScrollPane.setOpaque(false);
+        projectsScrollPane.setPreferredSize(new java.awt.Dimension(10, 10));
 
-        projectJList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         projectJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         projectJList.setMinimumSize(new java.awt.Dimension(10, 10));
         projectJList.setName(""); // NOI18N
         projectJList.setPreferredSize(new java.awt.Dimension(10, 10));
         projectJList.setVisibleRowCount(1);
-        jScrollPane1.setViewportView(projectJList);
+        projectsScrollPane.setViewportView(projectJList);
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel2.setText("Experiments (status)");
+        javax.swing.GroupLayout projectsPanelLayout = new javax.swing.GroupLayout(projectsPanel);
+        projectsPanel.setLayout(projectsPanelLayout);
+        projectsPanelLayout.setHorizontalGroup(
+            projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(projectsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(projectsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        projectsPanelLayout.setVerticalGroup(
+            projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(projectsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
-        jScrollPane3.setBorder(null);
-        jScrollPane3.setMinimumSize(new java.awt.Dimension(10, 10));
-        jScrollPane3.setOpaque(false);
-        jScrollPane3.setPreferredSize(new java.awt.Dimension(10, 10));
+        experimentsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiments"));
+
+        experimentsScrollPane.setBorder(null);
+        experimentsScrollPane.setMinimumSize(new java.awt.Dimension(10, 10));
+        experimentsScrollPane.setOpaque(false);
+        experimentsScrollPane.setPreferredSize(new java.awt.Dimension(10, 10));
 
         experimentJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane3.setViewportView(experimentJList);
+        experimentsScrollPane.setViewportView(experimentJList);
 
-        infoLabel.setText("Click on a project to see the relative experiments and their status.");
+        javax.swing.GroupLayout experimentsPanelLayout = new javax.swing.GroupLayout(experimentsPanel);
+        experimentsPanel.setLayout(experimentsPanelLayout);
+        experimentsPanelLayout.setHorizontalGroup(
+            experimentsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(experimentsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(experimentsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        experimentsPanelLayout.setVerticalGroup(
+            experimentsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(experimentsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(experimentsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
-        deleteExperimentButton.setText("Delete experiment");
+        infoLabel.setText("Click on a project to see the relative experiments and involved users.");
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel5.setText("project description");
+        deleteExperimentButton.setText("Delete Experiment");
+
+        usersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Users"));
+
+        usersScrollPane.setBorder(null);
+        usersScrollPane.setMinimumSize(new java.awt.Dimension(10, 10));
+        usersScrollPane.setOpaque(false);
+        usersScrollPane.setPreferredSize(new java.awt.Dimension(10, 10));
+
+        usersJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        usersScrollPane.setViewportView(usersJList);
+
+        javax.swing.GroupLayout usersPanelLayout = new javax.swing.GroupLayout(usersPanel);
+        usersPanel.setLayout(usersPanelLayout);
+        usersPanelLayout.setHorizontalGroup(
+            usersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(usersPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(usersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        usersPanelLayout.setVerticalGroup(
+            usersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(usersPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(usersScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Description"));
+
+        jScrollPane4.setBorder(null);
 
         projectDescriptionTextArea.setEditable(false);
         projectDescriptionTextArea.setColumns(20);
@@ -117,6 +180,27 @@ public class OverviewDialog extends javax.swing.JDialog {
         projectDescriptionTextArea.setFocusable(false);
         jScrollPane4.setViewportView(projectDescriptionTextArea);
 
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        deleteUserFromProjectButton.setText("Delete User From Project");
+
+        AddUserToProjectButton.setText("Add User To Project");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -124,51 +208,54 @@ public class OverviewDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane4)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
                             .addComponent(infoLabel)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel1)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel2)
-                                    .addGap(50, 50, 50))
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(projectsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(usersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(experimentsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(deleteExperimentButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(deleteExperimentButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(deleteUserFromProjectButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(AddUserToProjectButton, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jScrollPane1, jScrollPane3});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {experimentsPanel, usersPanel});
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {AddUserToProjectButton, deleteExperimentButton, deleteUserFromProjectButton});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(experimentsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(usersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(projectsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(infoLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(deleteExperimentButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(deleteUserFromProjectButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(AddUserToProjectButton)
+                .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jScrollPane1, jScrollPane3});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {experimentsPanel, usersPanel});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -210,16 +297,21 @@ public class OverviewDialog extends javax.swing.JDialog {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AddUserToProjectButton;
     private javax.swing.JButton deleteExperimentButton;
+    private javax.swing.JButton deleteUserFromProjectButton;
     private javax.swing.JList experimentJList;
+    private javax.swing.JPanel experimentsPanel;
+    private javax.swing.JScrollPane experimentsScrollPane;
     private javax.swing.JLabel infoLabel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTextArea projectDescriptionTextArea;
     private javax.swing.JList projectJList;
+    private javax.swing.JPanel projectsPanel;
+    private javax.swing.JScrollPane projectsScrollPane;
+    private javax.swing.JList usersJList;
+    private javax.swing.JPanel usersPanel;
+    private javax.swing.JScrollPane usersScrollPane;
     // End of variables declaration//GEN-END:variables
 }

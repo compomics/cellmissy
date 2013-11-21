@@ -6,6 +6,8 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.ProjectHasUser;
+import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.project.OverviewDialog;
 import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsOverviewListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
@@ -14,6 +16,7 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.Icon;
@@ -44,6 +47,7 @@ public class OverviewController {
     // model
     private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
+    private ObservableList<User> userBindingList;
     private BindingGroup bindingGroup;
     // view
     private OverviewDialog overviewDialog;
@@ -64,7 +68,7 @@ public class OverviewController {
         bindingGroup = new BindingGroup();
         // initialize main view component
         overviewDialog = new OverviewDialog(cellMissyController.getCellMissyFrame(), true);
-        initDialog();
+        initOverviewDialog();
     }
 
     /**
@@ -88,7 +92,7 @@ public class OverviewController {
     /**
      * Initialize dialog
      */
-    private void initDialog() {
+    private void initOverviewDialog() {
         overviewDialog.getProjectDescriptionTextArea().setLineWrap(true);
         overviewDialog.getProjectDescriptionTextArea().setWrapStyleWord(true);
         //init projectJList
@@ -102,10 +106,19 @@ public class OverviewController {
         ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new ExperimentsOverviewListRenderer(true);
         overviewDialog.getExperimentJList().setCellRenderer(experimentsOverviewListRenderer);
         // set icon for info label
-        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        Icon infoIcon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledInfoIcon = GuiUtils.getScaledIcon(infoIcon);
         // set icon for info label
-        overviewDialog.getInfoLabel().setIcon(scaledIcon);
+        overviewDialog.getInfoLabel().setIcon(scaledInfoIcon);
+        // set warning icon for the delete experiment Button
+        Icon warningIcon = UIManager.getIcon("OptionPane.warningIcon");
+        ImageIcon scaledWarningIcon = GuiUtils.getScaledIcon(warningIcon);
+        overviewDialog.getDeleteExperimentButton().setIcon(scaledWarningIcon);
+        
+
+        /**
+         * add list selection listeners
+         */
         //show experiments for the project selected
         overviewDialog.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -131,6 +144,29 @@ public class OverviewController {
                                 experimentBindingList.clear();
                             }
                         }
+                    }
+                }
+            }
+        });
+
+        // show users for the selected project
+        overviewDialog.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    Project selectedProject = (Project) overviewDialog.getProjectJList().getSelectedValue();
+                    if (selectedProject != null) {
+                        List<User> selectedProjectUsers = new ArrayList<>();
+                        List<ProjectHasUser> projectHasUsers = selectedProject.getProjectHasUserList();
+                        for (ProjectHasUser projectHasUser : projectHasUsers) {
+                            User user = projectHasUser.getUser();
+                            selectedProjectUsers.add(user);
+                        }
+                        // init usersJList binding
+                        userBindingList = ObservableCollections.observableList(selectedProjectUsers);
+                        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, userBindingList, overviewDialog.getUsersJList());
+                        bindingGroup.addBinding(jListBinding);
+                        bindingGroup.bind();
                     }
                 }
             }

@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.service;
 
 import be.ugent.maf.cellmissy.entity.Project;
 import java.io.File;
+import java.util.List;
 
 /**
  *
@@ -24,8 +25,15 @@ public interface ProjectService extends GenericService<Project, Long> {
     public Project setupProject(int projectNumber, String description, File projectDirectory);
 
     /**
-     * 
+     *
      * @param entity
      */
     public void saveProjectUsers(Project entity);
+
+    /**
+     * 
+     * @param userid
+     * @return
+     */
+    public List<Project> findProjectsByUserid(Long userid);
 }

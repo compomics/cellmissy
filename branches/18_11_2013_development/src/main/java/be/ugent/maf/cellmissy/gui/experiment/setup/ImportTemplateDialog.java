@@ -115,7 +115,7 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
         copySettingsButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Setup template - details");
+        setTitle("Import Template - Setup Details");
         setModal(true);
         setPreferredSize(new java.awt.Dimension(750, 650));
         getContentPane().setLayout(new java.awt.GridBagLayout());

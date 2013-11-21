@@ -29,9 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProjectRepositoryTest {
 
     @Autowired
-    ProjectRepository projectRepository;
+    private ProjectRepository projectRepository;
     @Autowired
-    UserRepository userRepository;
+    private ProjectHasUserRepository projectHasUserRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     public void testRepository() {
@@ -40,23 +42,41 @@ public class ProjectRepositoryTest {
         List<Project> projects = projectRepository.findAll();
         Assert.assertTrue(!projects.isEmpty());
         // test count all from generic repository
-       // Assert.assertEquals(3, projectRepository.countAll());
+        // Assert.assertEquals(3, projectRepository.countAll());
         // test other methods from generic repository
         Long projectId = projects.get(0).getProjectid();
         Project found = projectRepository.findById(projectId);
         Assert.assertNotNull(found);
-        User userById = userRepository.findById(1L);
-
+        User user1 = userRepository.findById(1L);
+        User user2 = userRepository.findByFullName("user2", "user2");
         // use generic repository
         Project project = new Project();
         project.setProjectNumber(4);
         project.setProjectDescription("This is a test");
+        // project has users list
         List<ProjectHasUser> projectHasUsers = new ArrayList<>();
-        ProjectHasUser projectHasUser = new ProjectHasUser(project, userById);
-        projectHasUsers.add(projectHasUser);
-
+        ProjectHasUser projectHasUser1 = new ProjectHasUser(project, user1);
+        projectHasUsers.add(projectHasUser1);
+        ProjectHasUser projectHasUser2 = new ProjectHasUser(project, user2);
+        projectHasUsers.add(projectHasUser2);
+        // set the other side of the relationship
         project.setProjectHasUserList(projectHasUsers);
+        user1.setProjectHasUserList(projectHasUsers);
+        user2.setProjectHasUserList(projectHasUsers);
+        // save the project has users
+        for (ProjectHasUser projectHasUser : projectHasUsers) {
+            projectHasUserRepository.save(projectHasUser);
+        }
+        // finally save the project
         projectRepository.save(project);
+        // check for the id of the entities
         Assert.assertNotNull(project.getProjectid());
+        for (ProjectHasUser projectHasUser : projectHasUsers) {
+            Assert.assertNotNull(projectHasUser.getProjectHasUserid());
+        }
+        // count back the entitites from DB
+        Assert.assertEquals(2, projectHasUserRepository.countAll());
+        List<ProjectHasUser> findAll = projectHasUserRepository.findAll();
+        System.out.println("" + findAll.get(0) + "; " + findAll.get(1));
     }
 }

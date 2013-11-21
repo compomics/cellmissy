@@ -144,6 +144,7 @@ public class AreaMainController {
         ImageIcon scaledInfoIcon = GuiUtils.getScaledIcon(informationIcon);
         metaDataAnalysisPanel.getInfoLabel().setIcon(scaledInfoIcon);
         metaDataAnalysisPanel.getInfoLabel1().setIcon(scaledInfoIcon);
+        // set icon for question button
         Icon questionIcon = UIManager.getIcon("OptionPane.questionIcon");
         ImageIcon scaledQuestionIcon = GuiUtils.getScaledIcon(questionIcon);
         metaDataAnalysisPanel.getQuestionButton().setIcon(scaledQuestionIcon);

@@ -2,18 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.experiment.analysis;
+package be.ugent.maf.cellmissy.gui.user;
 
 /**
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class AreaAnalysisInfoDialog extends javax.swing.JDialog {
+public class UserInfoDialog extends javax.swing.JDialog {
 
     /**
-     * Creates new form AreaAnalysisInfoDialog
+     * Creates new form UserInfoDialog
      */
-    public AreaAnalysisInfoDialog(java.awt.Frame parent, boolean modal) {
+    public UserInfoDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
@@ -31,8 +31,7 @@ public class AreaAnalysisInfoDialog extends javax.swing.JDialog {
         infoEditorPane = new javax.swing.JEditorPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Info - Area Analysis");
-        setPreferredSize(new java.awt.Dimension(360, 420));
+        setTitle("Info - User Management");
 
         infoScrollPane.setFocusable(false);
         infoScrollPane.setMinimumSize(new java.awt.Dimension(350, 370));
@@ -40,7 +39,7 @@ public class AreaAnalysisInfoDialog extends javax.swing.JDialog {
 
         infoEditorPane.setEditable(false);
         infoEditorPane.setContentType("text/html"); // NOI18N
-        infoEditorPane.setText("<html>\n   <head>\n      <TITLE></TITLE>\n   </head>\n   <body>\n      <a name=\"#top\"/>\n      <i>CellMissy, area raw data and units of measurement...</i>\n      <hr>\n      <br>\n      <p align=\"left\">\n         Please specify whether the measured area in the wound healing-like assay is the cell-covered area (i.e. related to the wound closure) or the open area (i.e. the wound area).\n         </br>\n         <br>\n         </br>\n         <br>\n         You can choose here the unit of measurement for the raw data (µm², pixels or %).\n         In case \"pixels\" is selected, CellMissy converts the raw data into µm², and the conversion factor of the instrument associated with the current experiment is used. Please keep in mind that this conversion factor is, by default, the one calculated for a magnification of 10x. If other magnifications are used, the conversion factor is properly scaled.\n         If the raw data is expressed in \"%\" or \"µm²\", no conversion is carried out by the software.\n         </br>\n         <br>\n         </br>\n         <br>\n         Furthermore, if the raw data is of type \"open area\", these will be expressed in percentage of cell-covered area, no matter which  unit of measurement you have selected. \n         </br>\n      </p>\n   </body>\n</html>");
+        infoEditorPane.setText("<html>\n   <head>\n      <TITLE></TITLE>\n   </head>\n   <body>\n      <a name=\"#top\"/>\n      <i>Create a new project in CellMissy...</i>\n      <hr>\n      <br>\n      <p align=\"left\">\n\t\t Selecting an user in the list will show the current projects associated with this user, and its details in the below panel. \n         </br>\n         <br>\n\t\t </br>\n\t\t <br>\n\t\t Add a new CellMissy user using the \"Add User\" button: the new user will first add to the list, and you can then edit the data of this user and finally save it to the DB (using the \"Save/Update User\" button). If a certain user is already present in the DB, and you modify some of its field, the user will be updated as well (through the same \"Save/Update User\" button).\n         </br>\n\t\t <br>\n\t\t </br>\n         <br>\n         Note that only ADMIN users can delete users from a CellMissy DB.\n         </br>\n      </p>\n   </body>\n</html>");
         infoEditorPane.setFocusable(false);
         infoEditorPane.setPreferredSize(new java.awt.Dimension(2964, 370));
         infoScrollPane.setViewportView(infoEditorPane);
@@ -49,11 +48,11 @@ public class AreaAnalysisInfoDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(infoScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+            .addComponent(infoScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(infoScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+            .addComponent(infoScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -76,20 +75,20 @@ public class AreaAnalysisInfoDialog extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AreaAnalysisInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UserInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AreaAnalysisInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UserInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AreaAnalysisInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UserInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AreaAnalysisInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UserInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AreaAnalysisInfoDialog dialog = new AreaAnalysisInfoDialog(new javax.swing.JFrame(), true);
+                UserInfoDialog dialog = new UserInfoDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
