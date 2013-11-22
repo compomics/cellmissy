@@ -64,7 +64,7 @@ public class Project implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     @XmlTransient
     private List<Experiment> experimentList;
-    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.EAGER, orphanRemoval = true)
     @Fetch(value = FetchMode.SELECT)
     @XmlTransient
     private List<ProjectHasUser> projectHasUserList;

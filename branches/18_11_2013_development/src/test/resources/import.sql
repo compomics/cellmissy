@@ -4,6 +4,9 @@ INSERT INTO `project` (`projectid`, `project_number`, `description`) VALUES ('1'
 INSERT INTO `project` (`projectid`, `project_number`, `description`) VALUES ('2', '2', 'test2');
 INSERT INTO `project` (`projectid`, `project_number`) VALUES ('3', '3');
 
+INSERT INTO `project_has_user` (`project_has_userid`, `l_projectid`, `l_userid`) VALUES ('1', '1', '1');
+INSERT INTO `project_has_user` (`project_has_userid`, `l_projectid`, `l_userid`) VALUES ('2', '1', '2');
+
 INSERT INTO matrix_dimension VALUES (1,'2D'),(2,'3D'),(3, '2.5D');
 INSERT INTO `instrument` (`instrumentid`,`conversion_factor`,`name`) VALUES ('1', '1.55038','generic microscope');
 INSERT INTO `magnification` VALUES (1, '10x');

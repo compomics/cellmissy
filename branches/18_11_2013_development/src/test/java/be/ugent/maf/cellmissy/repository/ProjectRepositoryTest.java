@@ -36,24 +36,29 @@ public class ProjectRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    public void testRepository() {
+    public void testProjectRepository() {
         // use import sql file
         // test find all
         List<Project> projects = projectRepository.findAll();
         Assert.assertTrue(!projects.isEmpty());
         // test count all from generic repository
-        // Assert.assertEquals(3, projectRepository.countAll());
+        Assert.assertEquals(3, projectRepository.countAll());
         // test other methods from generic repository
         Long projectId = projects.get(0).getProjectid();
         Project found = projectRepository.findById(projectId);
         Assert.assertNotNull(found);
+    }
+
+    @Test
+    public void testNewProject() {
+        // look up for two users in the DB
         User user1 = userRepository.findById(1L);
         User user2 = userRepository.findByFullName("user2", "user2");
-        // use generic repository
+        // create a new project
         Project project = new Project();
         project.setProjectNumber(4);
         project.setProjectDescription("This is a test");
-        // project has users list
+        // create the users for the project
         List<ProjectHasUser> projectHasUsers = new ArrayList<>();
         ProjectHasUser projectHasUser1 = new ProjectHasUser(project, user1);
         projectHasUsers.add(projectHasUser1);
@@ -75,8 +80,6 @@ public class ProjectRepositoryTest {
             Assert.assertNotNull(projectHasUser.getProjectHasUserid());
         }
         // count back the entitites from DB
-        Assert.assertEquals(2, projectHasUserRepository.countAll());
-        List<ProjectHasUser> findAll = projectHasUserRepository.findAll();
-        System.out.println("" + findAll.get(0) + "; " + findAll.get(1));
+        Assert.assertEquals(4, projectHasUserRepository.countAll());
     }
 }

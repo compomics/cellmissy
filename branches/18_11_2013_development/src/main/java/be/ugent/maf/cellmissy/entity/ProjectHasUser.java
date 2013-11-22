@@ -45,7 +45,7 @@ public class ProjectHasUser implements Serializable {
     @XmlTransient
     private Long projectHasUserid;
     @JoinColumn(name = "l_projectid", referencedColumnName = "projectid")
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @XmlTransient
     private Project project;
     @JoinColumn(name = "l_userid", referencedColumnName = "userid")

@@ -34,7 +34,6 @@ public class UserRepositoryTest {
     @Test
     public void testFindAllUsers() {
         List<User> users = userRepository.findAll();
-
         Assert.assertTrue(!users.isEmpty());
         Assert.assertEquals(2, users.size());
     }

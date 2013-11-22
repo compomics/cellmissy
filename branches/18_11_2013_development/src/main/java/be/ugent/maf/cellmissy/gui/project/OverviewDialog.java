@@ -39,6 +39,14 @@ public class OverviewDialog extends javax.swing.JDialog {
         return projectDescriptionTextArea;
     }
 
+    public JButton getAddUserToProjectButton() {
+        return addUserToProjectButton;
+    }
+
+    public JButton getDeleteUserFromProjectButton() {
+        return deleteUserFromProjectButton;
+    }
+
     /**
      * Creates new form OverviewDialog
      *
@@ -74,7 +82,7 @@ public class OverviewDialog extends javax.swing.JDialog {
         jScrollPane4 = new javax.swing.JScrollPane();
         projectDescriptionTextArea = new javax.swing.JTextArea();
         deleteUserFromProjectButton = new javax.swing.JButton();
-        AddUserToProjectButton = new javax.swing.JButton();
+        addUserToProjectButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("CellMissy - Overview");
@@ -149,7 +157,6 @@ public class OverviewDialog extends javax.swing.JDialog {
         usersScrollPane.setOpaque(false);
         usersScrollPane.setPreferredSize(new java.awt.Dimension(10, 10));
 
-        usersJList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         usersScrollPane.setViewportView(usersJList);
 
         javax.swing.GroupLayout usersPanelLayout = new javax.swing.GroupLayout(usersPanel);
@@ -197,9 +204,9 @@ public class OverviewDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        deleteUserFromProjectButton.setText("Delete User From Project");
+        deleteUserFromProjectButton.setText("Delete User(s) From Project");
 
-        AddUserToProjectButton.setText("Add User To Project");
+        addUserToProjectButton.setText("Add User(s) To Project...");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -224,13 +231,13 @@ public class OverviewDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(deleteExperimentButton, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(deleteUserFromProjectButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(AddUserToProjectButton, javax.swing.GroupLayout.Alignment.TRAILING))))
+                            .addComponent(addUserToProjectButton, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {experimentsPanel, usersPanel});
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {AddUserToProjectButton, deleteExperimentButton, deleteUserFromProjectButton});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addUserToProjectButton, deleteExperimentButton, deleteUserFromProjectButton});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -243,15 +250,15 @@ public class OverviewDialog extends javax.swing.JDialog {
                         .addComponent(usersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(projectsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(infoLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(deleteExperimentButton)
                 .addGap(18, 18, 18)
                 .addComponent(deleteUserFromProjectButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(AddUserToProjectButton)
+                .addComponent(addUserToProjectButton)
                 .addContainerGap())
         );
 
@@ -297,7 +304,7 @@ public class OverviewDialog extends javax.swing.JDialog {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton AddUserToProjectButton;
+    private javax.swing.JButton addUserToProjectButton;
     private javax.swing.JButton deleteExperimentButton;
     private javax.swing.JButton deleteUserFromProjectButton;
     private javax.swing.JList experimentJList;

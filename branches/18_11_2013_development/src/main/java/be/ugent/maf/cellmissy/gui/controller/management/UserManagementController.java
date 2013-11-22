@@ -140,7 +140,6 @@ public class UserManagementController {
         // do nothing on close the dialog
         userManagementDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
-
         /**
          * add mouse listeners
          */

@@ -11,8 +11,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -83,6 +81,14 @@ public class User implements Serializable {
 
     public User(Long userid) {
         this.userid = userid;
+    }
+
+    public User(String firstName, String lastName, Role role, String password, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
+        this.password = password;
+        this.email = email;
     }
 
     public User(Long userid, String firstName, String lastName, String email, Role role, String password) {
