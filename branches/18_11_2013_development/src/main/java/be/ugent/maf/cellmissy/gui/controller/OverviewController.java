@@ -6,7 +6,6 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.Project;
-import be.ugent.maf.cellmissy.entity.ProjectHasUser;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.project.AddUserToProjectDialog;
 import be.ugent.maf.cellmissy.gui.project.OverviewDialog;
@@ -52,7 +51,7 @@ public class OverviewController {
     // binding list of users for a certain project
     private ObservableList<User> projectUsersBindingList;
     // binding list of all users
-    private ObservableList<User> userBindingList;
+    private ObservableList<User> usersToAddBindingList;
     private BindingGroup bindingGroup;
     // view
     private OverviewDialog overviewDialog;
@@ -82,6 +81,13 @@ public class OverviewController {
     }
 
     /**
+     * Getters
+     */
+    public ObservableList<Project> getProjectBindingList() {
+        return projectBindingList;
+    }
+
+    /**
      * Show main view through parent controller after click on main frame menu
      * item
      */
@@ -97,6 +103,9 @@ public class OverviewController {
         // disable delete experiment button
         overviewDialog.getDeleteExperimentButton().setEnabled(false);
         overviewDialog.getExperimentJList().setFocusable(false);
+        // disable also the buttons to add or delete user(s) to selected project
+        overviewDialog.getDeleteUserFromProjectButton().setEnabled(false);
+        overviewDialog.getAddUserToProjectButton().setEnabled(false);
     }
 
     /**
@@ -148,7 +157,6 @@ public class OverviewController {
                             bindingGroup.addBinding(jListBinding);
                             bindingGroup.bind();
                         } else {
-                            cellMissyController.showMessage("There are no experiments yet for this project!", "", JOptionPane.INFORMATION_MESSAGE);
                             if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                                 experimentBindingList.clear();
                             }
@@ -165,14 +173,8 @@ public class OverviewController {
                 if (!e.getValueIsAdjusting()) {
                     Project selectedProject = (Project) overviewDialog.getProjectJList().getSelectedValue();
                     if (selectedProject != null) {
-                        List<User> selectedProjectUsers = new ArrayList<>();
-                        List<ProjectHasUser> projectHasUsers = selectedProject.getProjectHasUserList();
-                        for (ProjectHasUser projectHasUser : projectHasUsers) {
-                            User user = projectHasUser.getUser();
-                            selectedProjectUsers.add(user);
-                        }
                         // init usersJList binding
-                        projectUsersBindingList = ObservableCollections.observableList(selectedProjectUsers);
+                        projectUsersBindingList = ObservableCollections.observableList(userService.findUsersByProjectid(selectedProject.getProjectid()));
                         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectUsersBindingList, overviewDialog.getUsersJList());
                         bindingGroup.addBinding(jListBinding);
                         bindingGroup.bind();
@@ -220,13 +222,17 @@ public class OverviewController {
                 if (selectedProject != null && !selectedUsers.isEmpty()) {
                     String message = "This will delete users:";
                     for (User user : selectedUsers) {
-                        message += "\n" + user.toString();
+                        message += "\n" + "\"" + user.toString() + "\"";
                     }
-                    String totMsg = message.concat("\nfrom project: " + selectedProject + "\nContinue?");
+                    String totMsg = message.concat("\nfrom project: " + selectedProject + "\n\nContinue?");
                     int option = JOptionPane.showConfirmDialog(overviewDialog, totMsg, "delete users from project", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                     switch (option) {
                         case JOptionPane.YES_OPTION:
-                            deleteUsersFromProject(selectedUsers, selectedProject);
+                            // delete users from project using the project service
+                            projectService.deleteUsersFromProject(selectedUsers, selectedProject);
+                            // delete the users from the current list
+                            projectUsersBindingList.removeAll(selectedUsers);
+                            cellMissyController.showMessage("User(s) deleted from current project!", "user(s) deleted", JOptionPane.INFORMATION_MESSAGE);
                     }
                 } else {
                     cellMissyController.showMessage("Please select project and user(s) to delete from it!", "delete user from project error", JOptionPane.WARNING_MESSAGE);
@@ -241,10 +247,27 @@ public class OverviewController {
                 // look for selected user
                 Project selectedProject = (Project) overviewDialog.getProjectJList().getSelectedValue();
                 if (selectedProject != null) {
-                    // show a List with current CellMissy users, do it in a separate dialog
-                    addUserToProjectDialog.pack();
-                    GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), addUserToProjectDialog);
-                    addUserToProjectDialog.setVisible(true);
+                    // init users binding list: these are users that can be add to a certain project (thus users which are not part of the project yet)
+                    List<User> allUsers = userService.findAll();
+                    List<User> usersToAddList = new ArrayList<>();
+                    for (User user : allUsers) {
+                        if (!projectUsersBindingList.contains(user)) {
+                            usersToAddList.add(user);
+                        }
+                    }
+                    // check that there are actually users that can be added!
+                    if (!usersToAddList.isEmpty()) { // then show the dialog and so on...
+                        usersToAddBindingList = ObservableCollections.observableList(usersToAddList);
+                        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, usersToAddBindingList, addUserToProjectDialog.getUsersJList());
+                        bindingGroup.addBinding(jListBinding);
+                        bindingGroup.bind();
+                        // show a List with current CellMissy users, do it in a separate dialog
+                        addUserToProjectDialog.pack();
+                        GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), addUserToProjectDialog);
+                        addUserToProjectDialog.setVisible(true);
+                    } else { // inform the user all the current CellMissy users are associated with the selected project
+                        cellMissyController.showMessage("All current users are busy with this project!", "no more users can be added", JOptionPane.WARNING_MESSAGE);
+                    }
                 } else {
                     cellMissyController.showMessage("Please select a project first!", "add user to project error", JOptionPane.WARNING_MESSAGE);
                 }
@@ -256,12 +279,6 @@ public class OverviewController {
      * Initialize the other dialog view
      */
     private void initAddUserToProjectDialog() {
-        // init users binding list
-        userBindingList = ObservableCollections.observableList(userService.findAll());
-        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, userBindingList, addUserToProjectDialog.getUsersJList());
-        bindingGroup.addBinding(jListBinding);
-        bindingGroup.bind();
-
         /**
          * Add action listeners
          */
@@ -272,32 +289,18 @@ public class OverviewController {
                 Project selectedProject = (Project) overviewDialog.getProjectJList().getSelectedValue();
                 List<User> selectedUsers = addUserToProjectDialog.getUsersJList().getSelectedValuesList();
                 if (!selectedUsers.isEmpty()) {
+                    // add users to project useing the project service
                     projectService.addUsersToProject(selectedUsers, selectedProject);
+                    // add the new users to the list
+                    projectUsersBindingList.addAll(selectedUsers);
+                    // show an info message and close the dialog
+                    cellMissyController.showMessage("User(s) added to current project!", "user(s) added", JOptionPane.INFORMATION_MESSAGE);
+                    addUserToProjectDialog.setVisible(false);
                 } else {
                     cellMissyController.showMessage("Please select user(s) to add to the project!", "add user to project error", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
-    }
-
-    /**
-     * Delete users from a certain project.
-     *
-     * @param users: the users to delete
-     * @param project: the selected project
-     */
-    private void deleteUsersFromProject(List<User> users, Project project) {
-        projectService.deleteUsersFromProject(users, project);
-    }
-
-    /**
-     * Add users to a certain project;
-     *
-     * @param users
-     * @param project
-     */
-    private void addUsersToProject(List<User> users, Project project) {
-        projectService.addUsersToProject(users, project);
     }
 
     /**

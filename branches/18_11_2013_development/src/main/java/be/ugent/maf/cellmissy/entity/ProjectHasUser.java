@@ -7,7 +7,6 @@ package be.ugent.maf.cellmissy.entity;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,7 +33,8 @@ import javax.xml.bind.annotation.XmlType;
 @NamedQueries({
     @NamedQuery(name = "ProjectHasUser.findAll", query = "SELECT p FROM ProjectHasUser p"),
     @NamedQuery(name = "ProjectHasUser.findByProjectHasUserid", query = "SELECT p FROM ProjectHasUser p WHERE p.projectHasUserid = :projectHasUserid"),
-    @NamedQuery(name = "ProjectHasUser.findByUserid", query = "SELECT p FROM ProjectHasUser p WHERE p.user.userid = :userid")})
+    @NamedQuery(name = "ProjectHasUser.findByUserid", query = "SELECT p FROM ProjectHasUser p WHERE p.user.userid = :userid"),
+    @NamedQuery(name = "ProjectHasUser.findByProjectid", query = "SELECT p FROM ProjectHasUser p WHERE p.project.projectid = :projectid")})
 public class ProjectHasUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,11 +45,11 @@ public class ProjectHasUser implements Serializable {
     @XmlTransient
     private Long projectHasUserid;
     @JoinColumn(name = "l_projectid", referencedColumnName = "projectid")
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @XmlTransient
     private Project project;
     @JoinColumn(name = "l_userid", referencedColumnName = "userid")
-    @ManyToOne(cascade = CascadeType.ALL, optional = true)
+    @ManyToOne
     @XmlTransient
     private User user;
 

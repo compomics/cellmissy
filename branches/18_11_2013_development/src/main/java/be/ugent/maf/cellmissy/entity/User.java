@@ -5,12 +5,15 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -72,7 +75,8 @@ public class User implements Serializable {
     private String email;
     @OneToMany(mappedBy = "user")
     private List<Experiment> experimentList;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SELECT)
     @XmlTransient
     private List<ProjectHasUser> projectHasUserList;
 
@@ -89,6 +93,7 @@ public class User implements Serializable {
         this.role = role;
         this.password = password;
         this.email = email;
+        this.projectHasUserList = new ArrayList<>();
     }
 
     public User(Long userid, String firstName, String lastName, String email, Role role, String password) {
@@ -98,6 +103,7 @@ public class User implements Serializable {
         this.email = email;
         this.role = role;
         this.password = password;
+        this.projectHasUserList = new ArrayList<>();
     }
 
     public Long getUserid() {

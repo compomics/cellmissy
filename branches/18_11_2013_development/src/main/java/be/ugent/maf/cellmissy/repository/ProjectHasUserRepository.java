@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.repository;
 
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.ProjectHasUser;
+import be.ugent.maf.cellmissy.entity.User;
 import java.util.List;
 
 /**
@@ -15,4 +16,6 @@ import java.util.List;
 public interface ProjectHasUserRepository extends GenericRepository<ProjectHasUser, Long> {
 
     public List<Project> findProjectsByUserid(Long userid);
+
+    public List<User> findUsersByProjectid(Long projectid);
 }

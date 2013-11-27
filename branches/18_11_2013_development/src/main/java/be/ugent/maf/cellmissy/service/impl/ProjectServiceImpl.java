@@ -111,15 +111,9 @@ public class ProjectServiceImpl implements ProjectService {
                 }
             }
         }
-        // set the other side of the relationship
-//        project.setProjectHasUserList(projHasUsersToDelete);
-//        for (User user : users) {
-//            user.setProjectHasUserList(projHasUsersToDelete);
-//        }
-
         for (ProjectHasUser projectHasUser : projHasUsersToDelete) {
-            projectHasUser = projectHasUserRepository.findById(projectHasUser.getProjectHasUserid());
-            projectHasUserRepository.delete(projectHasUser);
+            ProjectHasUser findById = projectHasUserRepository.findById(projectHasUser.getProjectHasUserid());
+            projectHasUserRepository.delete(findById);
         }
     }
 
@@ -129,6 +123,5 @@ public class ProjectServiceImpl implements ProjectService {
             ProjectHasUser projectHasUser = new ProjectHasUser(project, userToAdd);
             projectHasUserRepository.save(projectHasUser);
         }
-        update(project);
     }
 }

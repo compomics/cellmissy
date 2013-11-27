@@ -252,6 +252,10 @@ public class SetupExperimentController {
         return setupConditionsController.getPlateConditionBindingList();
     }
 
+    public void addNewProjectToList(Project project) {
+        cellMissyController.addNewProjectToList(project);
+    }
+
     /**
      * Import settings from another experiment. This action will show a JDialog,
      * with all the experiments for the current project. The user can select an

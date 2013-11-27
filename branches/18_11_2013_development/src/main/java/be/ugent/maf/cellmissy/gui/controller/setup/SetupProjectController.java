@@ -176,13 +176,11 @@ public class SetupProjectController {
         newProjectDialog.getAddButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                User sourceSelectedUser = (User) newProjectDialog.getSourceUsersList().getSelectedValue();
-                if (sourceSelectedUser != null) {
+                List<User> sourceSelectedUsers = newProjectDialog.getSourceUsersList().getSelectedValuesList();
+                if (!sourceSelectedUsers.isEmpty()) {
                     // move the user from the source list to the destination list
-                    destinationUsersBindingList.add(sourceSelectedUser);
-                    sourceUsersBindingList.remove(sourceSelectedUser);
-                    // select the just added element in the destination list
-                    newProjectDialog.getDestinationUsersList().setSelectedIndex(destinationUsersBindingList.indexOf(sourceSelectedUser));
+                    destinationUsersBindingList.addAll(sourceSelectedUsers);
+                    sourceUsersBindingList.removeAll(sourceSelectedUsers);
                 }
             }
         });
@@ -190,13 +188,11 @@ public class SetupProjectController {
         newProjectDialog.getRemoveButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                User destinationSelectedUser = (User) newProjectDialog.getDestinationUsersList().getSelectedValue();
-                if (destinationSelectedUser != null) {
+                List<User> destinationSelectedUsers = newProjectDialog.getDestinationUsersList().getSelectedValuesList();
+                if (!destinationSelectedUsers.isEmpty()) {
                     // move the user from the destination list to the source list
-                    sourceUsersBindingList.add(destinationSelectedUser);
-                    destinationUsersBindingList.remove(destinationSelectedUser);
-                    // select the just added element in the destination list
-                    newProjectDialog.getDestinationUsersList().setSelectedIndex(sourceUsersBindingList.indexOf(destinationSelectedUser));
+                    sourceUsersBindingList.addAll(destinationSelectedUsers);
+                    destinationUsersBindingList.removeAll(destinationSelectedUsers);
                 }
             }
         });
@@ -226,13 +222,15 @@ public class SetupProjectController {
             for (User destinationUser : destinationUsersBindingList) {
                 destinationUser.setProjectHasUserList(projectHasUsersList);
             }
-
+            projectService.save(newProject);
             // save the users
             projectService.saveProjectUsers(newProject);
-            projectService.save(newProject);
-            LOG.info(newProject + "was created");
-            // creation of new project was successfull
-            setupExperimentController.showMessage(newProject + "was created", "project created", JOptionPane.INFORMATION_MESSAGE);
+            setupExperimentController.getProjectBindingList().add(newProject);
+            setupExperimentController.addNewProjectToList(newProject);
+            // creation of new project was successfull !
+            String message = newProject + " was successfully created!";
+            LOG.info(message);
+            setupExperimentController.showMessage(message, "project created", JOptionPane.INFORMATION_MESSAGE);
             newProjectDialog.getProjectNumberTextField().setText("");
             newProjectDialog.getDescriptionTextArea().setText("");
             // close the dialog

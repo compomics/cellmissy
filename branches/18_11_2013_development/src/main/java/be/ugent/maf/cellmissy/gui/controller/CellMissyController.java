@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.gui.controller.management.InstrumentManagementController;
 import be.ugent.maf.cellmissy.gui.controller.management.UserManagementController;
 import be.ugent.maf.cellmissy.gui.controller.setup.SetupExperimentController;
@@ -110,6 +111,10 @@ public class CellMissyController {
     public void onStartup() {
         GuiUtils.centerDialogOnFrame(cellMissyFrame, startupDialog);
         startupDialog.setVisible(true);
+    }
+
+    public void addNewProjectToList(Project project) {
+        overviewController.getProjectBindingList().add(project);
     }
 
     /**
