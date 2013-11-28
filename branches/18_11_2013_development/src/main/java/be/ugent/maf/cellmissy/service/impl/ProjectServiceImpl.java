@@ -111,6 +111,7 @@ public class ProjectServiceImpl implements ProjectService {
                 }
             }
         }
+        project.getProjectHasUserList().removeAll(projHasUsersToDelete);
         for (ProjectHasUser projectHasUser : projHasUsersToDelete) {
             ProjectHasUser findById = projectHasUserRepository.findById(projectHasUser.getProjectHasUserid());
             projectHasUserRepository.delete(findById);
@@ -121,6 +122,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void addUsersToProject(List<User> users, Project project) {
         for (User userToAdd : users) {
             ProjectHasUser projectHasUser = new ProjectHasUser(project, userToAdd);
+            project.getProjectHasUserList().add(projectHasUser);
             projectHasUserRepository.save(projectHasUser);
         }
     }

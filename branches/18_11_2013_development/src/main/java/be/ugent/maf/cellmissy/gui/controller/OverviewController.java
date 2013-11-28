@@ -18,6 +18,8 @@ import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.Icon;
@@ -138,20 +140,22 @@ public class OverviewController {
          * add list selection listeners
          */
         //show experiments for the project selected
+        // show users for the selected project
         overviewDialog.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     //init experimentJList
-                    int selectedIndex = overviewDialog.getProjectJList().getSelectedIndex();
-                    if (selectedIndex != -1) {
-                        Project selectedProject = projectBindingList.get(selectedIndex);
+                    Project selectedProject = (Project) overviewDialog.getProjectJList().getSelectedValue();
+                    if (selectedProject != null) {
                         // set text for project description
                         overviewDialog.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
                         Long projectid = selectedProject.getProjectid();
                         List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
                         if (experimentNumbers != null) {
                             List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
+                            Collections.sort(experimentList, new Comp());
+
                             experimentBindingList = (ObservableCollections.observableList(experimentList));
                             JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, overviewDialog.getExperimentJList());
                             bindingGroup.addBinding(jListBinding);
@@ -161,18 +165,6 @@ public class OverviewController {
                                 experimentBindingList.clear();
                             }
                         }
-                    }
-                }
-            }
-        });
-
-        // show users for the selected project
-        overviewDialog.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    Project selectedProject = (Project) overviewDialog.getProjectJList().getSelectedValue();
-                    if (selectedProject != null) {
                         // init usersJList binding
                         projectUsersBindingList = ObservableCollections.observableList(userService.findUsersByProjectid(selectedProject.getProjectid()));
                         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectUsersBindingList, overviewDialog.getUsersJList());
@@ -220,7 +212,7 @@ public class OverviewController {
                 Project selectedProject = (Project) overviewDialog.getProjectJList().getSelectedValue();
                 List<User> selectedUsers = overviewDialog.getUsersJList().getSelectedValuesList();
                 if (selectedProject != null && !selectedUsers.isEmpty()) {
-                    String message = "This will delete users:";
+                    String message = "This will delete user(s):";
                     for (User user : selectedUsers) {
                         message += "\n" + "\"" + user.toString() + "\"";
                     }
@@ -337,6 +329,19 @@ public class OverviewController {
                 LOG.error(ex.getMessage(), ex);
                 cellMissyController.handleUnexpectedError(ex);
             }
+        }
+    }
+
+    /**
+     *
+     */
+    private class Comp implements Comparator<Experiment> {
+
+        @Override
+        public int compare(Experiment o1, Experiment o2) {
+            int experimentNumber1 = o1.getExperimentNumber();
+            int experimentNumber2 = o2.getExperimentNumber();
+            return Integer.compare(experimentNumber1, experimentNumber2);
         }
     }
 }

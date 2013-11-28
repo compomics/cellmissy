@@ -4,7 +4,9 @@
  */
 package be.ugent.maf.cellmissy.service;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.ProjectHasUser;
 import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.repository.ProjectRepository;
@@ -50,9 +52,9 @@ public class ProjectServiceTest {
         projectService.deleteUsersFromProject(usersToDelete, project);
         // the project id must still be not null
         Assert.assertNotNull(project.getProjectid());
-        List<Project> findProjectsByUserid = projectService.findProjectsByUserid(user1.getUserid());
-        // the user should  have no project anymore
-        Assert.assertEquals(0, findProjectsByUserid.size());
+        // now the project must have only one user
+        List<ProjectHasUser> projectHasUserList = project.getProjectHasUserList();
+        Assert.assertEquals(1, projectHasUserList.size());
     }
 
     @Test
@@ -66,5 +68,8 @@ public class ProjectServiceTest {
         usersToAdd.add(user3);
         usersToAdd.add(user4);
         projectService.addUsersToProject(usersToAdd, project);
+        // now the project has 4 users
+        List<ProjectHasUser> projectHasUserList = project.getProjectHasUserList();
+        Assert.assertEquals(4, projectHasUserList.size());
     }
 }

@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -62,6 +63,7 @@ public class Project implements Serializable {
     @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
     private String projectDescription;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    @OrderBy(value = "experimentNumber")
     @XmlTransient
     private List<Experiment> experimentList;
     @OneToMany(mappedBy = "project", fetch = FetchType.EAGER, orphanRemoval = true)
@@ -79,12 +81,6 @@ public class Project implements Serializable {
     public Project(Long projectid, int projectNumber) {
         this.projectid = projectid;
         this.projectNumber = projectNumber;
-    }
-
-    public Project(int projectNumber, String projectDescription, List<ProjectHasUser> projectHasUserList) {
-        this.projectNumber = projectNumber;
-        this.projectDescription = projectDescription;
-        this.projectHasUserList = projectHasUserList;
     }
 
     public Long getProjectid() {
