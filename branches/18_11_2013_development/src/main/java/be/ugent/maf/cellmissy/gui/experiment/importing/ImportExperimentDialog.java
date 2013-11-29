@@ -110,10 +110,6 @@ public class ImportExperimentDialog extends javax.swing.JDialog {
         return previousButton;
     }
 
-    public JLabel getProgressBarLabel() {
-        return progressBarLabel;
-    }
-
     public JComboBox getProjectComboBox() {
         return projectComboBox;
     }
@@ -124,10 +120,6 @@ public class ImportExperimentDialog extends javax.swing.JDialog {
 
     public JButton getSaveExperimentButton() {
         return saveExperimentButton;
-    }
-
-    public JProgressBar getSaveExperimentProgressBar() {
-        return saveExperimentProgressBar;
     }
 
     public JLabel getTimeFramesLabel() {
@@ -228,14 +220,11 @@ public class ImportExperimentDialog extends javax.swing.JDialog {
         nextButton = new javax.swing.JButton();
         saveExperimentButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        progressBarLabel = new javax.swing.JLabel();
-        saveExperimentProgressBar = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Import Experiment");
         setMinimumSize(new java.awt.Dimension(850, 650));
         setModal(true);
-        setPreferredSize(new java.awt.Dimension(850, 650));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         topPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -714,21 +703,12 @@ public class ImportExperimentDialog extends javax.swing.JDialog {
 
         cancelButton.setText("Cancel");
 
-        progressBarLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        progressBarLabel.setText("Please wait, experiment is being saved to DB!");
-
-        saveExperimentProgressBar.setIndeterminate(true);
-
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bottomPanelLayout.createSequentialGroup()
-                .addContainerGap(79, Short.MAX_VALUE)
-                .addComponent(progressBarLabel)
-                .addGap(18, 18, 18)
-                .addComponent(saveExperimentProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addContainerGap(508, Short.MAX_VALUE)
                 .addComponent(previousButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nextButton)
@@ -745,14 +725,12 @@ public class ImportExperimentDialog extends javax.swing.JDialog {
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(previousButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(nextButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(saveExperimentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(saveExperimentProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(progressBarLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         bottomPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {cancelButton, nextButton, previousButton, saveExperimentButton});
@@ -869,11 +847,9 @@ public class ImportExperimentDialog extends javax.swing.JDialog {
     private javax.swing.JLabel numberConditionsLabel;
     private javax.swing.JLabel plateFormatLabel;
     private javax.swing.JButton previousButton;
-    private javax.swing.JLabel progressBarLabel;
     private javax.swing.JComboBox projectComboBox;
     private javax.swing.JTextArea purposeTextArea;
     private javax.swing.JButton saveExperimentButton;
-    private javax.swing.JProgressBar saveExperimentProgressBar;
     private javax.swing.JPanel secondPanel;
     private javax.swing.JLabel timeFramesLabel;
     private javax.swing.JPanel topPanel;

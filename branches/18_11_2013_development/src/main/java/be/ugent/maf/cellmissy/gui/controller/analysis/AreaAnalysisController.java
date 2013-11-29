@@ -19,6 +19,7 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
+import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.LinearRegressionPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.StatisticsDialog;
 import be.ugent.maf.cellmissy.gui.view.table.model.PValuesTableModel;
@@ -890,8 +891,8 @@ public class AreaAnalysisController {
         protected File doInBackground() throws Exception {
             // disable button
             linearRegressionPanel.getCreateReportButton().setEnabled(false);
-            //set cursor to waiting one
-            areaMainController.setCursor(Cursor.WAIT_CURSOR);
+            // show waiting cursor
+            linearRegressionPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             boolean useCorrectedData = areaMainController.useCorrectedData();
             areaAnalysisReportController.setUseCorrectedData(useCorrectedData);
             //call the child controller to create report
@@ -917,10 +918,10 @@ public class AreaAnalysisController {
                 LOG.error(ex.getMessage(), ex);
                 areaMainController.showMessage("Cannot open the file!" + "\n" + ex.getMessage(), "error while opening file", JOptionPane.ERROR_MESSAGE);
             }
-            //set cursor back to default
-            areaMainController.setCursor(Cursor.DEFAULT_CURSOR);
             // enable button
             linearRegressionPanel.getCreateReportButton().setEnabled(true);
+            // show waiting cursor
+            linearRegressionPanel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
 }

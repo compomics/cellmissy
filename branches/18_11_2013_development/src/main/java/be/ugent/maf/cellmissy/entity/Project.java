@@ -44,7 +44,7 @@ import org.hibernate.annotations.FetchMode;
     @NamedQuery(name = "Project.findAll", query = "SELECT p FROM Project p"),
     @NamedQuery(name = "Project.findByProjectid", query = "SELECT p FROM Project p WHERE p.projectid = :projectid"),
     @NamedQuery(name = "Project.findByProjectNumber", query = "SELECT p FROM Project p WHERE p.projectNumber = :projectNumber")})
-public class Project implements Serializable {
+public class Project implements Serializable, Comparable<Project> {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -170,5 +170,10 @@ public class Project implements Serializable {
     public String toString() {
         DecimalFormat df = new DecimalFormat("000");
         return "P" + df.format(projectNumber);
+    }
+
+    @Override
+    public int compareTo(Project o) {
+        return Integer.compare(projectNumber, o.projectNumber);
     }
 }

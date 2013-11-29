@@ -43,7 +43,7 @@ import org.jasypt.hibernate.type.EncryptedStringType;
     @NamedQuery(name = "User.findByLastName", query = "SELECT u FROM User u WHERE u.lastName = :lastName"),
     @NamedQuery(name = "User.findByFullName", query = "SELECT u FROM User u WHERE u.firstName = :firstName AND u.lastName = :lastName"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email")})
-public class User implements Serializable {
+public class User implements Serializable, Comparable<User> {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -193,5 +193,10 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return firstName + " " + lastName;
+    }
+
+    @Override
+    public int compareTo(User o) {
+       return firstName.compareTo(o.firstName);
     }
 }

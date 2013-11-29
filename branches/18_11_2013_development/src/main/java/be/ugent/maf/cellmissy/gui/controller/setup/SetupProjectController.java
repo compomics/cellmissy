@@ -15,6 +15,7 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.PersistenceException;
 import javax.swing.Icon;
@@ -107,13 +108,14 @@ public class SetupProjectController {
         ImageIcon scaledQuestionIcon = GuiUtils.getScaledIcon(questionIcon);
         newProjectDialog.getQuestionButton().setIcon(scaledQuestionIcon);
         // users binding lists: source is filled in with all users from the database
-        sourceUsersBindingList = ObservableCollections.observableList(userService.findAll());
+        List<User> allUsers = userService.findAll();
+        Collections.sort(allUsers);
+        sourceUsersBindingList = ObservableCollections.observableList(allUsers);
         // destination list is empty at first place
         destinationUsersBindingList = ObservableCollections.observableList(new ArrayList<User>());
         //init source and destination Jlists bindings
         JListBinding sourceListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, sourceUsersBindingList, newProjectDialog.getSourceUsersList());
         bindingGroup.addBinding(sourceListBinding);
-        //init general treatment JList binding
         JListBinding destinationListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, destinationUsersBindingList, newProjectDialog.getDestinationUsersList());
         bindingGroup.addBinding(destinationListBinding);
 

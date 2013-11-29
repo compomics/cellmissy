@@ -535,7 +535,6 @@ public class CellMissyController {
         }
         getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromGenericInputParentPanel().getName());
         firstLoadingFromGenericInput = false;
-        loadExperimentFromGenericInputController.setExpListRenderer(getCurrentUser());
     }
 
     /**
@@ -547,7 +546,6 @@ public class CellMissyController {
         }
         getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromCellMiaParentPanel().getName());
         firstLoadingFromCellMia = false;
-        loadExperimentFromCellMiaController.setExpListRenderer(getCurrentUser());
     }
 
     /**
@@ -559,7 +557,6 @@ public class CellMissyController {
         }
         getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAnalysisExperimentParentPanel().getName());
         firstDataAnalysis = false;
-        areaMainController.setExpListRenderer(getCurrentUser());
     }
 
     /**

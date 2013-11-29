@@ -134,7 +134,7 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(infoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(infoScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                .addComponent(infoScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
                 .addContainerGap())
         );
         infoPanelLayout.setVerticalGroup(
@@ -147,6 +147,8 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
 
         experimentsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiments"));
 
+        experimentsScrollPane.setBorder(null);
+
         experimentsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         experimentsScrollPane.setViewportView(experimentsList);
 
@@ -156,7 +158,7 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
             experimentsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(experimentsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(experimentsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addComponent(experimentsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
                 .addContainerGap())
         );
         experimentsPanelLayout.setVerticalGroup(
@@ -167,24 +169,18 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        expOverviewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Experiment Overiew"));
+        expOverviewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment Details"));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("exp date");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setText("user");
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel3.setText("instrument");
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel5.setText("magnification");
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel6.setText("plate format");
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel7.setText("# conditions");
 
         expDateLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
@@ -201,7 +197,6 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
 
         expPurposeLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
 
-        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel9.setText("exp purpose");
 
         javax.swing.GroupLayout expOverviewPanelLayout = new javax.swing.GroupLayout(expOverviewPanel);
@@ -220,7 +215,7 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
                     .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(expOverviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(expPurposeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
+                    .addComponent(expPurposeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
                     .addComponent(expDateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(instrumentLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(magnificationLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)

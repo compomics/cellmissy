@@ -77,9 +77,7 @@ public class SetupReportController {
         try {
             boolean success;
             success = pdfFile.createNewFile();
-            if (success) {
-                setupExperimentController.showMessage("Pdf Report successfully created!", "Report created", JOptionPane.INFORMATION_MESSAGE);
-            } else {
+            if (!success) {
                 Object[] options = {"Yes", "No", "Cancel"};
                 int showOptionDialog = JOptionPane.showOptionDialog(null, "File already exists. Do you want to replace it?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
                 // if YES, user wants to delete existing file and replace it

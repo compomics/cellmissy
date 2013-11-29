@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.Icon;
@@ -117,7 +116,9 @@ public class OverviewController {
         overviewDialog.getProjectDescriptionTextArea().setLineWrap(true);
         overviewDialog.getProjectDescriptionTextArea().setWrapStyleWord(true);
         //init projectJList
-        projectBindingList = ObservableCollections.observableList(projectService.findAll());
+        List<Project> allProjects = projectService.findAll();
+        Collections.sort(allProjects);
+        projectBindingList = ObservableCollections.observableList(allProjects);
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, overviewDialog.getProjectJList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
@@ -154,8 +155,8 @@ public class OverviewController {
                         List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
                         if (experimentNumbers != null) {
                             List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
-                            Collections.sort(experimentList, new Comp());
-
+                            // order Experiments by their numbers
+                            Collections.sort(experimentList);
                             experimentBindingList = (ObservableCollections.observableList(experimentList));
                             JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, overviewDialog.getExperimentJList());
                             bindingGroup.addBinding(jListBinding);
@@ -166,7 +167,9 @@ public class OverviewController {
                             }
                         }
                         // init usersJList binding
-                        projectUsersBindingList = ObservableCollections.observableList(userService.findUsersByProjectid(selectedProject.getProjectid()));
+                        List<User> findUsersByProjectid = userService.findUsersByProjectid(selectedProject.getProjectid());
+                        Collections.sort(findUsersByProjectid);
+                        projectUsersBindingList = ObservableCollections.observableList(findUsersByProjectid);
                         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectUsersBindingList, overviewDialog.getUsersJList());
                         bindingGroup.addBinding(jListBinding);
                         bindingGroup.bind();
@@ -249,6 +252,7 @@ public class OverviewController {
                     }
                     // check that there are actually users that can be added!
                     if (!usersToAddList.isEmpty()) { // then show the dialog and so on...
+                        Collections.sort(usersToAddList);
                         usersToAddBindingList = ObservableCollections.observableList(usersToAddList);
                         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, usersToAddBindingList, addUserToProjectDialog.getUsersJList());
                         bindingGroup.addBinding(jListBinding);
@@ -329,19 +333,6 @@ public class OverviewController {
                 LOG.error(ex.getMessage(), ex);
                 cellMissyController.handleUnexpectedError(ex);
             }
-        }
-    }
-
-    /**
-     *
-     */
-    private class Comp implements Comparator<Experiment> {
-
-        @Override
-        public int compare(Experiment o1, Experiment o2) {
-            int experimentNumber1 = o1.getExperimentNumber();
-            int experimentNumber2 = o2.getExperimentNumber();
-            return Integer.compare(experimentNumber1, experimentNumber2);
         }
     }
 }

@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.PersistenceException;
 import javax.swing.Icon;
@@ -116,7 +117,9 @@ public class UserManagementController {
         ImageIcon scaledQuestionIcon = GuiUtils.getScaledIcon(questionIcon);
         userManagementDialog.getQuestionButton().setIcon(scaledQuestionIcon);
         // init userJList
-        userBindingList = ObservableCollections.observableList(userService.findAll());
+        List<User> allUsers = userService.findAll();
+        Collections.sort(allUsers);
+        userBindingList = ObservableCollections.observableList(allUsers);
         JListBinding userListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, userBindingList, userManagementDialog.getUsersList());
         bindingGroup.addBinding(userListBinding);
         // init user binding
@@ -153,6 +156,7 @@ public class UserManagementController {
                         Long userid = selectedUser.getUserid();
                         // get the relative projects by userid
                         List<Project> projects = projectService.findProjectsByUserid(userid);
+                        Collections.sort(projects);
                         // init projectJlist
                         projectBindingList = ObservableCollections.observableList(projects);
                         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, userManagementDialog.getProjectsList());
