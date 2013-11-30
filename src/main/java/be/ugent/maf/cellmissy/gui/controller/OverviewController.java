@@ -6,14 +6,19 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.User;
+import be.ugent.maf.cellmissy.gui.project.AddUserToProjectDialog;
 import be.ugent.maf.cellmissy.gui.project.OverviewDialog;
 import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsOverviewListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
+import be.ugent.maf.cellmissy.service.UserService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.Icon;
@@ -44,9 +49,14 @@ public class OverviewController {
     // model
     private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
+    // binding list of users for a certain project
+    private ObservableList<User> projectUsersBindingList;
+    // binding list of all users
+    private ObservableList<User> usersToAddBindingList;
     private BindingGroup bindingGroup;
     // view
     private OverviewDialog overviewDialog;
+    private AddUserToProjectDialog addUserToProjectDialog;
     // parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -56,6 +66,8 @@ public class OverviewController {
     private ProjectService projectService;
     @Autowired
     private ExperimentService experimentService;
+    @Autowired
+    private UserService userService;
 
     /**
      * Initialize controller
@@ -64,7 +76,16 @@ public class OverviewController {
         bindingGroup = new BindingGroup();
         // initialize main view component
         overviewDialog = new OverviewDialog(cellMissyController.getCellMissyFrame(), true);
-        initDialog();
+        addUserToProjectDialog = new AddUserToProjectDialog(cellMissyController.getCellMissyFrame(), true);
+        initOverviewDialog();
+        initAddUserToProjectDialog();
+    }
+
+    /**
+     * Getters
+     */
+    public ObservableList<Project> getProjectBindingList() {
+        return projectBindingList;
     }
 
     /**
@@ -83,16 +104,21 @@ public class OverviewController {
         // disable delete experiment button
         overviewDialog.getDeleteExperimentButton().setEnabled(false);
         overviewDialog.getExperimentJList().setFocusable(false);
+        // disable also the buttons to add or delete user(s) to selected project
+        overviewDialog.getDeleteUserFromProjectButton().setEnabled(false);
+        overviewDialog.getAddUserToProjectButton().setEnabled(false);
     }
 
     /**
      * Initialize dialog
      */
-    private void initDialog() {
+    private void initOverviewDialog() {
         overviewDialog.getProjectDescriptionTextArea().setLineWrap(true);
         overviewDialog.getProjectDescriptionTextArea().setWrapStyleWord(true);
         //init projectJList
-        projectBindingList = ObservableCollections.observableList(projectService.findAll());
+        List<Project> allProjects = projectService.findAll();
+        Collections.sort(allProjects);
+        projectBindingList = ObservableCollections.observableList(allProjects);
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, overviewDialog.getProjectJList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
@@ -102,35 +128,53 @@ public class OverviewController {
         ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new ExperimentsOverviewListRenderer(true);
         overviewDialog.getExperimentJList().setCellRenderer(experimentsOverviewListRenderer);
         // set icon for info label
-        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
+        Icon infoIcon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledInfoIcon = GuiUtils.getScaledIcon(infoIcon);
         // set icon for info label
-        overviewDialog.getInfoLabel().setIcon(scaledIcon);
+        overviewDialog.getInfoLabel().setIcon(scaledInfoIcon);
+        // set warning icon for the delete experiment Button
+        Icon warningIcon = UIManager.getIcon("OptionPane.warningIcon");
+        ImageIcon scaledWarningIcon = GuiUtils.getScaledIcon(warningIcon);
+        overviewDialog.getDeleteExperimentButton().setIcon(scaledWarningIcon);
+
+        /**
+         * add list selection listeners
+         */
         //show experiments for the project selected
+        // show users for the selected project
         overviewDialog.getProjectJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     //init experimentJList
-                    int selectedIndex = overviewDialog.getProjectJList().getSelectedIndex();
-                    if (selectedIndex != -1) {
-                        Project selectedProject = projectBindingList.get(selectedIndex);
+                    Project selectedProject = (Project) overviewDialog.getProjectJList().getSelectedValue();
+                    if (selectedProject != null) {
                         // set text for project description
                         overviewDialog.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
                         Long projectid = selectedProject.getProjectid();
                         List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
                         if (experimentNumbers != null) {
                             List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
+                            // order Experiments by their numbers
+                            Collections.sort(experimentList);
                             experimentBindingList = (ObservableCollections.observableList(experimentList));
                             JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, overviewDialog.getExperimentJList());
                             bindingGroup.addBinding(jListBinding);
                             bindingGroup.bind();
                         } else {
-                            cellMissyController.showMessage("There are no experiments yet for this project!", "", JOptionPane.INFORMATION_MESSAGE);
                             if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                                 experimentBindingList.clear();
                             }
                         }
+                        // init usersJList binding
+                        List<User> findUsersByProjectid = userService.findUsersByProjectid(selectedProject.getProjectid());
+                        Collections.sort(findUsersByProjectid);
+                        projectUsersBindingList = ObservableCollections.observableList(findUsersByProjectid);
+                        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectUsersBindingList, overviewDialog.getUsersJList());
+                        bindingGroup.addBinding(jListBinding);
+                        bindingGroup.bind();
+                        // update project label in the other dialog
+                        addUserToProjectDialog.getProjectLabel().setText(selectedProject.toString());
                     }
                 }
             }
@@ -158,7 +202,98 @@ public class OverviewController {
                     }
                 } else {
                     // else ask the user to select an experiment first
-                    cellMissyController.showMessage("Please select an experiment first.", "delete exp error", JOptionPane.WARNING_MESSAGE);
+                    cellMissyController.showMessage("Please select an experiment first!", "delete exp error", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+
+        // delete selected user from selected project
+        overviewDialog.getDeleteUserFromProjectButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // look for selected project and selected users
+                Project selectedProject = (Project) overviewDialog.getProjectJList().getSelectedValue();
+                List<User> selectedUsers = overviewDialog.getUsersJList().getSelectedValuesList();
+                if (selectedProject != null && !selectedUsers.isEmpty()) {
+                    String message = "This will delete user(s):";
+                    for (User user : selectedUsers) {
+                        message += "\n" + "\"" + user.toString() + "\"";
+                    }
+                    String totMsg = message.concat("\nfrom project: " + selectedProject + "\n\nContinue?");
+                    int option = JOptionPane.showConfirmDialog(overviewDialog, totMsg, "delete users from project", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    switch (option) {
+                        case JOptionPane.YES_OPTION:
+                            // delete users from project using the project service
+                            projectService.deleteUsersFromProject(selectedUsers, selectedProject);
+                            // delete the users from the current list
+                            projectUsersBindingList.removeAll(selectedUsers);
+                            cellMissyController.showMessage("User(s) deleted from current project!", "user(s) deleted", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } else {
+                    cellMissyController.showMessage("Please select project and user(s) to delete from it!", "delete user from project error", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+
+        // add a certain user to selected project
+        overviewDialog.getAddUserToProjectButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // look for selected user
+                Project selectedProject = (Project) overviewDialog.getProjectJList().getSelectedValue();
+                if (selectedProject != null) {
+                    // init users binding list: these are users that can be add to a certain project (thus users which are not part of the project yet)
+                    List<User> allUsers = userService.findAll();
+                    List<User> usersToAddList = new ArrayList<>();
+                    for (User user : allUsers) {
+                        if (!projectUsersBindingList.contains(user)) {
+                            usersToAddList.add(user);
+                        }
+                    }
+                    // check that there are actually users that can be added!
+                    if (!usersToAddList.isEmpty()) { // then show the dialog and so on...
+                        Collections.sort(usersToAddList);
+                        usersToAddBindingList = ObservableCollections.observableList(usersToAddList);
+                        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, usersToAddBindingList, addUserToProjectDialog.getUsersJList());
+                        bindingGroup.addBinding(jListBinding);
+                        bindingGroup.bind();
+                        // show a List with current CellMissy users, do it in a separate dialog
+                        addUserToProjectDialog.pack();
+                        GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), addUserToProjectDialog);
+                        addUserToProjectDialog.setVisible(true);
+                    } else { // inform the user all the current CellMissy users are associated with the selected project
+                        cellMissyController.showMessage("All current users are busy with this project!", "no more users can be added", JOptionPane.WARNING_MESSAGE);
+                    }
+                } else {
+                    cellMissyController.showMessage("Please select a project first!", "add user to project error", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+    }
+
+    /**
+     * Initialize the other dialog view
+     */
+    private void initAddUserToProjectDialog() {
+        /**
+         * Add action listeners
+         */
+        // add selected user(s) to selected project
+        addUserToProjectDialog.getAddUserToProjectButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Project selectedProject = (Project) overviewDialog.getProjectJList().getSelectedValue();
+                List<User> selectedUsers = addUserToProjectDialog.getUsersJList().getSelectedValuesList();
+                if (!selectedUsers.isEmpty()) {
+                    // add users to project useing the project service
+                    projectService.addUsersToProject(selectedUsers, selectedProject);
+                    // add the new users to the list
+                    projectUsersBindingList.addAll(selectedUsers);
+                    // show an info message and close the dialog
+                    cellMissyController.showMessage("User(s) added to current project!", "user(s) added", JOptionPane.INFORMATION_MESSAGE);
+                    addUserToProjectDialog.setVisible(false);
+                } else {
+                    cellMissyController.showMessage("Please select user(s) to add to the project!", "add user to project error", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });

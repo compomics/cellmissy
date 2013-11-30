@@ -5,11 +5,15 @@
 package be.ugent.maf.cellmissy.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -39,7 +43,7 @@ import org.jasypt.hibernate.type.EncryptedStringType;
     @NamedQuery(name = "User.findByLastName", query = "SELECT u FROM User u WHERE u.lastName = :lastName"),
     @NamedQuery(name = "User.findByFullName", query = "SELECT u FROM User u WHERE u.firstName = :firstName AND u.lastName = :lastName"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email")})
-public class User implements Serializable {
+public class User implements Serializable, Comparable<User> {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -71,12 +75,25 @@ public class User implements Serializable {
     private String email;
     @OneToMany(mappedBy = "user")
     private List<Experiment> experimentList;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SELECT)
+    @XmlTransient
+    private List<ProjectHasUser> projectHasUserList;
 
     public User() {
     }
 
     public User(Long userid) {
         this.userid = userid;
+    }
+
+    public User(String firstName, String lastName, Role role, String password, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
+        this.password = password;
+        this.email = email;
+        this.projectHasUserList = new ArrayList<>();
     }
 
     public User(Long userid, String firstName, String lastName, String email, Role role, String password) {
@@ -86,6 +103,7 @@ public class User implements Serializable {
         this.email = email;
         this.role = role;
         this.password = password;
+        this.projectHasUserList = new ArrayList<>();
     }
 
     public Long getUserid() {
@@ -144,6 +162,14 @@ public class User implements Serializable {
         this.experimentList = experimentList;
     }
 
+    public List<ProjectHasUser> getProjectHasUserList() {
+        return projectHasUserList;
+    }
+
+    public void setProjectHasUserList(List<ProjectHasUser> projectHasUserList) {
+        this.projectHasUserList = projectHasUserList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -167,5 +193,10 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return firstName + " " + lastName;
+    }
+
+    @Override
+    public int compareTo(User o) {
+       return firstName.compareTo(o.firstName);
     }
 }

@@ -22,7 +22,6 @@ import be.ugent.maf.cellmissy.parser.CellMiaFileParserTest;
 import be.ugent.maf.cellmissy.service.EcmService;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -91,7 +90,7 @@ public class ExperimentRepositoryTest {
         experiment.setPlateFormat(plateFormatRepository.findByFormat(6));
         // 2 plate conditions, 3 wells for each condition
         PlateCondition firstPlateCondition = new PlateCondition();
-        // first row of wells for condition 
+        // first row of wells for condition
         Well well1 = new Well(1, 1);
         well1.setPlateCondition(firstPlateCondition);
         Well well2 = new Well(2, 1);

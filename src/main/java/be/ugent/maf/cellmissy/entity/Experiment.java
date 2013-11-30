@@ -64,7 +64,7 @@ import org.hibernate.validator.constraints.Range;
     @NamedQuery(name = "Experiment.findExperimentNumbersByProjectId", query = "SELECT e.experimentNumber FROM Experiment e WHERE e.project.projectid = :projectid"),
     @NamedQuery(name = "Experiment.findExperimentsByProjectIdAndStatus", query = "SELECT e FROM Experiment e WHERE e.project.projectid = :projectid AND e.experimentStatus = :experimentStatus"),
     @NamedQuery(name = "Experiment.findExperimentsByProjectId", query = "SELECT e FROM Experiment e WHERE e.project.projectid = :projectid")})
-public class Experiment implements Serializable {
+public class Experiment implements Serializable, Comparable<Experiment> {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -323,5 +323,10 @@ public class Experiment implements Serializable {
     public String toString() {
         DecimalFormat df = new DecimalFormat("000");
         return "E" + df.format(experimentNumber);
+    }
+
+    @Override
+    public int compareTo(Experiment o) {
+        return Integer.compare(experimentNumber, o.experimentNumber);
     }
 }

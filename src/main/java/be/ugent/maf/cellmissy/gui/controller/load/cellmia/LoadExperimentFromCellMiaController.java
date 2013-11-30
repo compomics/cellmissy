@@ -129,11 +129,7 @@ public class LoadExperimentFromCellMiaController {
     public User getCurrentUser() {
         return cellMissyController.getCurrentUser();
     }
-
-    public void setExpListRenderer(User currentUser) {
-        cellMiaExperimentDataController.setExpListRenderer(currentUser);
-    }
-
+    
     /**
      * Check if current analysis has been saved before leaving the view
      *
@@ -229,7 +225,7 @@ public class LoadExperimentFromCellMiaController {
                             return ("obsep (Olympus CellR/APL) files only");
                         }
                     });
-                    // Removing "All Files" option from FileType 
+                    // Removing "All Files" option from FileType
                     fileChooser.setAcceptAllFileFilterUsed(false);
 
                     // in response to the button click, show open dialog
@@ -328,7 +324,7 @@ public class LoadExperimentFromCellMiaController {
      * chosen by the user
      */
     private void setExperimentMetadata(File obsepFile) {
-        // parse .obsep file 
+        // parse .obsep file
         obsepFileParser.parseObsepFile(obsepFile);
         // get experiment metadata
         List<Double> experimentMetadata = obsepFileParser.getExperimentMetadata();
@@ -380,7 +376,7 @@ public class LoadExperimentFromCellMiaController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            //disable the Finish and the Cancel buttons 
+            //disable the Finish and the Cancel buttons
             loadFromCellMiaPanel.getFinishButton().setEnabled(false);
             loadFromCellMiaPanel.getCancelButton().setEnabled(false);
             //show progress bar (indeterminate)

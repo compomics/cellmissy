@@ -42,7 +42,6 @@ public class DistanceMatrixDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Technical Precision");
-        setAlwaysOnTop(true);
         setMinimumSize(new java.awt.Dimension(600, 300));
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
         setPreferredSize(new java.awt.Dimension(600, 300));

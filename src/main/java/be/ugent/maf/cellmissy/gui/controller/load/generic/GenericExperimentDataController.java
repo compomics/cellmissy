@@ -8,16 +8,17 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.ProjectHasUser;
 import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.experiment.load.generic.LoadFromGenericInputMetadataPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsLoadListRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
 import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl.CycleTimeUnit;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Dimension;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -83,11 +84,6 @@ public class GenericExperimentDataController {
         return experimentBindingList;
     }
 
-    public void setExpListRenderer(User currentUser) {
-        ExperimentsListRenderer experimentsListRenderer = new ExperimentsListRenderer(currentUser);
-        loadFromGenericInputMetadataPanel.getExperimentsList().setCellRenderer(experimentsListRenderer);
-    }
-
     /**
      * Initialize Experiment metadata panel
      */
@@ -99,11 +95,12 @@ public class GenericExperimentDataController {
         loadFromGenericInputMetadataPanel.getInfoLabel().setIcon(scaledIcon);
         loadFromGenericInputMetadataPanel.getInfoLabel1().setIcon(scaledIcon);
         //init projectJList
-        projectBindingList = ObservableCollections.observableList(projectService.findAll());
+        List<Project> allProjects = projectService.findAll();
+        Collections.sort(allProjects);
+        projectBindingList = ObservableCollections.observableList(allProjects);
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, loadFromGenericInputMetadataPanel.getProjectsList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
-        //do the binding
 
         // fill in combobox with units
         for (CycleTimeUnit unit : CycleTimeUnit.values()) {
@@ -210,23 +207,7 @@ public class GenericExperimentDataController {
      * @param selectedExperiment
      */
     private void onSelectedExperiment(Experiment selectedExperiment) {
-        // get current user from parent controller
-        User currentUser = loadExperimentFromGenericInputController.getCurrentUser();
-        // get user of selected experiment
-        // these two entities might not be the same
-        User expUser = selectedExperiment.getUser();
-        // if the user has a standard role, check if its the same as the user for the exp, and if so, proceed to analysis
-        if (currentUser.getRole().equals(Role.STANDARD_USER)) {
-            if (currentUser.equals(expUser)) {
-                proceedToLoading(selectedExperiment);
-            } else {
-                String message = "It seems like you have no rights to load data for this experiment..." + "\n" + "Ask to user (" + expUser.getFirstName() + " " + expUser.getLastName() + ") !";
-                loadExperimentFromGenericInputController.showMessage(message, "accessing other experiment data", JOptionPane.WARNING_MESSAGE);
-            }
-        } else {
-            // if current user has ADMIN role, can do whatever he wants to...
-            proceedToLoading(selectedExperiment);
-        }
+        proceedToLoading(selectedExperiment);
     }
 
     /**
@@ -257,7 +238,6 @@ public class GenericExperimentDataController {
         if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
             experimentBindingList.clear();
         }
-
         // show project description
         String projectDescription = selectedProject.getProjectDescription();
         loadFromGenericInputMetadataPanel.getProjectDescriptionTextArea().setText(projectDescription);
@@ -265,15 +245,50 @@ public class GenericExperimentDataController {
         Long projectid = selectedProject.getProjectid();
         List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.IN_PROGRESS);
         if (experimentList != null) {
+            Collections.sort(experimentList);
             experimentBindingList = ObservableCollections.observableList(experimentList);
             JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, loadFromGenericInputMetadataPanel.getExperimentsList());
             bindingGroup.addBinding(jListBinding);
             bindingGroup.bind();
+            // check if the user has privileges on the selected project
+            // if not, show a message and disable the experiments list
+            if (!userHasPrivileges(selectedProject)) {
+                String message = "Sorry, you don't have enough privileges for the selected project!";
+                loadExperimentFromGenericInputController.showMessage(message, "no enough privileges", JOptionPane.WARNING_MESSAGE);
+                loadFromGenericInputMetadataPanel.getExperimentsList().setEnabled(false);
+            }
         } else {
             if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                 experimentBindingList.clear();
             }
             loadExperimentFromGenericInputController.showMessage("There are no experiments in progress for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    /**
+     * Does the current user have privileges on the current project?
+     *
+     * @param project
+     * @return true or false
+     */
+    private boolean userHasPrivileges(Project project) {
+        boolean hasPrivileges = false;
+        // get current user from main controller
+        User currentUser = loadExperimentFromGenericInputController.getCurrentUser();
+        // check for his/her role
+        // ADMIN user: return true
+        if (currentUser.getRole().equals(Role.ADMIN_USER)) {
+            hasPrivileges = true;
+        } else {
+            // we have a STANDARD user
+            // we need to check if he's involved in the selected project
+            for (ProjectHasUser projectHasUser : project.getProjectHasUserList()) {
+                if (projectHasUser.getUser().equals(currentUser)) {
+                    hasPrivileges = true;
+                    break;
+                }
+            }
+        }
+        return hasPrivileges;
     }
 }

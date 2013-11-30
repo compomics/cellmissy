@@ -18,6 +18,7 @@ import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.ProjectHasUser;
 import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.result.TimeInterval;
 import be.ugent.maf.cellmissy.entity.TimeStep;
@@ -27,6 +28,7 @@ import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisExperimentPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.AreaAnalysisInfoDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AreaAnalysisPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
@@ -35,7 +37,6 @@ import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.AnalysisGroupListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.AreaUnitOfMeasurementComboBoxRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.ConditionsAnalysisListRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.ExperimentsListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
@@ -53,6 +54,7 @@ import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -86,10 +88,10 @@ import org.springframework.stereotype.Controller;
  *
  * @author Paola Masuzzo
  */
-@Controller("areaController")
-public class AreaController {
+@Controller("areaMainController")
+public class AreaMainController {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaController.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaMainController.class);
     //model
     private Experiment experiment;
     private AreaAnalysisHolder areaAnalysisHolder;
@@ -110,6 +112,7 @@ public class AreaController {
     private MetaDataAnalysisPanel metaDataAnalysisPanel;
     private DataAnalysisPanel dataAnalysisPanel;
     private AnalysisPlatePanel analysisPlatePanel;
+    private AreaAnalysisInfoDialog areaAnalysisInfoDialog;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -136,11 +139,16 @@ public class AreaController {
         //init view
         analysisExperimentPanel = new AnalysisExperimentPanel();
         metaDataAnalysisPanel = new MetaDataAnalysisPanel();
+        areaAnalysisInfoDialog = new AreaAnalysisInfoDialog(cellMissyController.getCellMissyFrame(), true);
         // set icon for info label
-        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
-        metaDataAnalysisPanel.getInfoLabel().setIcon(scaledIcon);
-        metaDataAnalysisPanel.getInfoLabel1().setIcon(scaledIcon);
+        Icon informationIcon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledInfoIcon = GuiUtils.getScaledIcon(informationIcon);
+        metaDataAnalysisPanel.getInfoLabel().setIcon(scaledInfoIcon);
+        metaDataAnalysisPanel.getInfoLabel1().setIcon(scaledInfoIcon);
+        // set icon for question button
+        Icon questionIcon = UIManager.getIcon("OptionPane.questionIcon");
+        ImageIcon scaledQuestionIcon = GuiUtils.getScaledIcon(questionIcon);
+        metaDataAnalysisPanel.getQuestionButton().setIcon(scaledQuestionIcon);
         dataAnalysisPanel = new DataAnalysisPanel();
         analysisPlatePanel = new AnalysisPlatePanel();
         bindingGroup = new BindingGroup();
@@ -174,8 +182,8 @@ public class AreaController {
         return experiment;
     }
 
-    public String getAreaUnitOfMeasurement() {
-        return areaAnalysisHolder.getAreaUnitOfMeasurement().getUnitOfMeasurementString();
+    public AreaUnitOfMeasurement getAreaUnitOfMeasurement() {
+        return areaAnalysisHolder.getAreaUnitOfMeasurement();
     }
 
     public String getMeasuredAreaType() {
@@ -210,7 +218,7 @@ public class AreaController {
         return areaPreProcessingController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
     }
 
-    public JFreeChart createGlobalAreaChartInTimeInterval(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType){
+    public JFreeChart createGlobalAreaChartInTimeInterval(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType) {
         return areaPreProcessingController.createGlobalAreaChartInTimeInterval(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
     }
 
@@ -234,23 +242,12 @@ public class AreaController {
         return cellMissyController.getCellMissyFrame();
     }
 
-    public void onButtonsState(boolean isEnable) {
-        analysisExperimentPanel.getPreviousButton().setEnabled(isEnable);
-        analysisExperimentPanel.getNextButton().setEnabled(isEnable);
-        analysisExperimentPanel.getCancelButton().setEnabled(isEnable);
-    }
-
     public Algorithm getSelectedALgorithm() {
         return algorithmBindingList.get(metaDataAnalysisPanel.getAlgorithmComboBox().getSelectedIndex());
     }
 
     public ImagingType getSelectedImagingType() {
         return imagingTypeBindingList.get(metaDataAnalysisPanel.getImagingTypeComboBox().getSelectedIndex());
-    }
-
-    public void setExpListRenderer(User currentUser) {
-        ExperimentsListRenderer experimentsListRenderer = new ExperimentsListRenderer(currentUser);
-        metaDataAnalysisPanel.getExperimentsList().setCellRenderer(experimentsListRenderer);
     }
 
     public String getOutliersHandlerBeanName() {
@@ -275,6 +272,10 @@ public class AreaController {
 
     public void setDistanceMetricBeanName(String distanceMetricBeanName) {
         this.distanceMetricBeanName = distanceMetricBeanName;
+    }
+
+    public MetaDataAnalysisPanel getMetaDataAnalysisPanel() {
+        return metaDataAnalysisPanel;
     }
 
     /**
@@ -474,6 +475,13 @@ public class AreaController {
                 analysisExperimentPanel.getPreviousButton().setEnabled(false);
                 // enable next button
                 analysisExperimentPanel.getNextButton().setEnabled(true);
+                // enable or disable the converted table in the tabbed pane
+                AreaUnitOfMeasurement areaUnitOfMeasurement = (AreaUnitOfMeasurement) metaDataAnalysisPanel.getAreaUnitOfMeasurementComboBox().getSelectedItem();
+                if (areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.PIXELS) | areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.SPECIAL_MICRO_METERS)) {
+                    areaPreProcessingController.getAreaAnalysisPanel().getDataInspectingTabbedPane().setEnabledAt(1, true);
+                } else {
+                    areaPreProcessingController.getAreaAnalysisPanel().getDataInspectingTabbedPane().setEnabledAt(1, false);
+                }
                 // enable conditions list
                 dataAnalysisPanel.getConditionsList().setEnabled(true);
                 dataAnalysisPanel.getConditionsList().setSelectedIndex(plateConditionList.indexOf(currentCondition));
@@ -673,7 +681,9 @@ public class AreaController {
         metaDataAnalysisPanel.getProjectDescriptionTextArea().setWrapStyleWord(true);
 
         //init projects list
-        projectBindingList = ObservableCollections.observableList(projectService.findAll());
+        List<Project> allProjects = projectService.findAll();
+        Collections.sort(allProjects);
+        projectBindingList = ObservableCollections.observableList(allProjects);
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, metaDataAnalysisPanel.getProjectsList());
         bindingGroup.addBinding(jListBinding);
 
@@ -700,6 +710,9 @@ public class AreaController {
             public void actionPerformed(ActionEvent e) {
                 AreaUnitOfMeasurement areaUnitOfMeasurement = (AreaUnitOfMeasurement) metaDataAnalysisPanel.getAreaUnitOfMeasurementComboBox().getSelectedItem();
                 areaAnalysisHolder.setAreaUnitOfMeasurement(areaUnitOfMeasurement);
+                if (areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.PIXELS) | areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.SPECIAL_MICRO_METERS)) {
+                    areaAnalysisHolder.setAreaUnitOfMeasurement(AreaUnitOfMeasurement.MICRO_METERS);
+                }
             }
         });
 
@@ -727,7 +740,6 @@ public class AreaController {
                 }
             }
         });
-
 
         //when an experiment is selected, show algorithms and imaging types used for that experiment
         //show also conditions in the Jlist behind and plate view according to the conditions setup
@@ -847,6 +859,16 @@ public class AreaController {
 
         // select cell covered area as default
         metaDataAnalysisPanel.getCellCoveredAreaRadioButton().setSelected(true);
+        // add action Listener to the question/info button
+        metaDataAnalysisPanel.getQuestionButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // pack and show info dialog
+                GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), areaAnalysisInfoDialog);
+                areaAnalysisInfoDialog.setVisible(true);
+            }
+        });
+
         analysisExperimentPanel.getTopPanel().add(metaDataAnalysisPanel, gridBagConstraints);
     }
 
@@ -854,6 +876,7 @@ public class AreaController {
      * Initialize data analysis panel
      */
     private void initDataAnalysisPanel() {
+
         //when a certain condition is selected, fetch time steps for each well of the condition
         dataAnalysisPanel.getConditionsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -881,11 +904,10 @@ public class AreaController {
      * @param selectedProject
      */
     private void onSelectedProject(Project selectedProject) {
-
+        // clear up imaging and algorithm lists, if not empty
         if (!imagingTypeBindingList.isEmpty()) {
             imagingTypeBindingList.clear();
         }
-
         if (!algorithmBindingList.isEmpty()) {
             algorithmBindingList.clear();
         }
@@ -896,12 +918,21 @@ public class AreaController {
         Long projectid = selectedProject.getProjectid();
         List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.PERFORMED);
         if (experimentList != null) {
+            Collections.sort(experimentList);
             experimentBindingList = ObservableCollections.observableList(experimentList);
             JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, metaDataAnalysisPanel.getExperimentsList());
             bindingGroup.addBinding(jListBinding);
             bindingGroup.bind();
+            // check if the user has privileges on the selected project
+            // if not, show a message and disable the experiments list
+            if (!userHasPrivileges(selectedProject)) {
+                String message = "Sorry, you don't have enough privileges for the selected project!";
+                cellMissyController.showMessage(message, "no enough privileges", JOptionPane.WARNING_MESSAGE);
+                metaDataAnalysisPanel.getExperimentsList().setEnabled(false);
+            }
         } else {
-            cellMissyController.showMessage("There are no experiments performed yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
+            String message = "There are no experiments performed yet for this project!";
+            cellMissyController.showMessage(message, "no experiments found", JOptionPane.INFORMATION_MESSAGE);
             if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                 experimentBindingList.clear();
             }
@@ -915,26 +946,38 @@ public class AreaController {
      * @param selectedExperiment
      */
     private void onSelectedExperiment(Experiment selectedExperiment) {
-        // get current user from main controller
-        User currentUser = cellMissyController.getCurrentUser();
-        // get user of selected experiment
-        // these two entities might not be the same
-        User expUser = selectedExperiment.getUser();
-        // if the user has a standard role, check if its the same as the user for the exp, and if so, proceed to analysis
-        if (currentUser.getRole().equals(Role.STANDARD_USER)) {
-            if (currentUser.equals(expUser)) {
-                proceedToAnalysis(selectedExperiment);
-            } else {
-                String message = "It seems like you have no rights to analyze these data..." + "\n" + "Ask to user (" + expUser.getFirstName() + " " + expUser.getLastName() + ") !";
-                cellMissyController.showMessage(message, "accessing other experiment data", JOptionPane.WARNING_MESSAGE);
-            }
-        } else {
-            // if current user has ADMIN role, can do whatever he wants to...
-            proceedToAnalysis(selectedExperiment);
-        }
+        proceedToAnalysis(selectedExperiment);
     }
 
     /**
+     * Does the current user have privileges on the current project?
+     *
+     * @param project
+     * @return true or false
+     */
+    private boolean userHasPrivileges(Project project) {
+        boolean hasPrivileges = false;
+        // get current user from main controller
+        User currentUser = cellMissyController.getCurrentUser();
+        // check for his/her role
+        // ADMIN user: return true
+        if (currentUser.getRole().equals(Role.ADMIN_USER)) {
+            hasPrivileges = true;
+        } else {
+            // we have a STANDARD user
+            // we need to check if he's involved in the selected project
+            for (ProjectHasUser projectHasUser : project.getProjectHasUserList()) {
+                if (projectHasUser.getUser().equals(currentUser)) {
+                    hasPrivileges = true;
+                    break;
+                }
+            }
+        }
+        return hasPrivileges;
+    }
+
+    /**
+     * Everything is ready: proceed with the analysis!
      *
      * @param experimentToAnalyze
      */
@@ -1042,6 +1085,10 @@ public class AreaController {
         protected Void doInBackground() throws Exception {
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             dataAnalysisPanel.getConditionsList().setEnabled(false);
+            analysisExperimentPanel.getNextButton().setEnabled(false);
+            analysisExperimentPanel.getCancelButton().setEnabled(false);
+            analysisExperimentPanel.getPreviousButton().setEnabled(false);
+            // disable buttons as well
             List<Well> wellList = currentCondition.getWellList();
             //fetch time steps for each well of condition
             for (int i = 0; i < wellList.size(); i++) {
@@ -1066,9 +1113,17 @@ public class AreaController {
                 get();
                 dataAnalysisPanel.getConditionsList().setEnabled(true);
                 dataAnalysisPanel.getConditionsList().requestFocusInWindow();
+                analysisExperimentPanel.getNextButton().setEnabled(areaPreProcessingController.isProceedToAnalysis());
+                analysisExperimentPanel.getCancelButton().setEnabled(true);
+                analysisExperimentPanel.getPreviousButton().setEnabled(true);
                 if (!areaPreProcessingController.getTimeStepsBindingList().isEmpty()) {
                     //populate table with time steps for current condition (algorithm and imaging type assigned) === THIS IS ONLY TO look at motility track RESULTS
                     areaPreProcessingController.showTimeStepsInTable();
+                    // if the area unit of measurement is pixel or cellM µm², we show also the converted area values
+                    AreaUnitOfMeasurement areaUnitOfMeasurement = (AreaUnitOfMeasurement) metaDataAnalysisPanel.getAreaUnitOfMeasurementComboBox().getSelectedItem();
+                    if (areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.PIXELS) | areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.SPECIAL_MICRO_METERS)) {
+                        areaPreProcessingController.showConvertedAreaInTable();
+                    }
                     onCardSwitch();
                     //check which button is selected for analysis:
                     if (areaPreProcessingController.getAreaAnalysisPanel().getNormalizeAreaButton().isSelected()) {

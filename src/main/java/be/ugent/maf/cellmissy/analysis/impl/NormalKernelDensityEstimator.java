@@ -57,7 +57,7 @@ public class NormalKernelDensityEstimator implements KernelDensityEstimator {
         Arrays.sort(data);
         empiricalDist = new EmpiricalDist(data);
         //new Stream to randomly generate numbers
-        //combined multiple recursive generator (CMRG) 
+        //combined multiple recursive generator (CMRG)
         RandomStream stream = new MRG31k3p();
         NormalGen normalKernelDensityGen = new NormalGen(stream);
         kernelDensityGen = new KernelDensityGen(stream, empiricalDist, normalKernelDensityGen);
@@ -68,12 +68,12 @@ public class NormalKernelDensityEstimator implements KernelDensityEstimator {
         // Number Of Density Points to be used
         // This is a measurements of the estimation precision
         // usually, this is set to a default of 512, as in most KDE algorithms default values, i.e. R "density"function, OmicSoft, Matlab algorithms.
-        int numberOfDensityPoints = PropertiesConfigurationHolder.getInstance().getInt("numberOFDensityPoints");
+        int numberOfDensityPoints = PropertiesConfigurationHolder.getInstance().getInt("numberOfDensityPoints");
         List<double[]> densityFunction = new ArrayList<>();
         //init the KDE with a normal generator
         init(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(data)));
         //compute x values
-        //array for random samples 
+        //array for random samples
         double[] randomSamples = new double[numberOfDensityPoints];
         for (int i = 0; i < numberOfDensityPoints; i++) {
             double nextDouble = kernelDensityGen.nextDouble();

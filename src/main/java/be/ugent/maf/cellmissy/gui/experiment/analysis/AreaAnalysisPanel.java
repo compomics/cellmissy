@@ -17,6 +17,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
@@ -35,6 +36,14 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
 
     public JTable getTimeStepsTable() {
         return timeStepsTable;
+    }
+
+    public JTable getConvertedTimeStepsTable() {
+        return convertedTimeStepsTable;
+    }
+
+    public JTabbedPane getDataInspectingTabbedPane() {
+        return dataInspectingTabbedPane;
     }
 
     public JRadioButton getDeltaAreaButton() {
@@ -158,8 +167,11 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         linearRegressionModelLabel = new javax.swing.JLabel();
         bottomPanel = new javax.swing.JPanel();
         dataInspectingPanel = new javax.swing.JPanel();
+        dataInspectingTabbedPane = new javax.swing.JTabbedPane();
         timeStepsTableScrollPane = new javax.swing.JScrollPane();
         timeStepsTable = new javax.swing.JTable();
+        convertedTimeStepsTableScrollPane = new javax.swing.JScrollPane();
+        convertedTimeStepsTable = new javax.swing.JTable();
         preprocessingPanel = new javax.swing.JPanel();
         radioButtonsPanel = new javax.swing.JPanel();
         normalizeAreaButton = new javax.swing.JRadioButton();
@@ -261,7 +273,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         dataInspectingPanel.setOpaque(false);
 
         timeStepsTableScrollPane.setBackground(new java.awt.Color(255, 255, 255));
-        timeStepsTableScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Area Values from DB"));
+        timeStepsTableScrollPane.setBorder(null);
         timeStepsTableScrollPane.setMinimumSize(new java.awt.Dimension(20, 20));
         timeStepsTableScrollPane.setPreferredSize(new java.awt.Dimension(20, 20));
 
@@ -279,20 +291,39 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         timeStepsTable.setMinimumSize(new java.awt.Dimension(20, 20));
         timeStepsTableScrollPane.setViewportView(timeStepsTable);
 
+        dataInspectingTabbedPane.addTab("Area Values from DB (raw data)", timeStepsTableScrollPane);
+
+        convertedTimeStepsTableScrollPane.setBorder(null);
+
+        convertedTimeStepsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        convertedTimeStepsTableScrollPane.setViewportView(convertedTimeStepsTable);
+
+        dataInspectingTabbedPane.addTab("Converted Area Values", convertedTimeStepsTableScrollPane);
+
         javax.swing.GroupLayout dataInspectingPanelLayout = new javax.swing.GroupLayout(dataInspectingPanel);
         dataInspectingPanel.setLayout(dataInspectingPanelLayout);
         dataInspectingPanelLayout.setHorizontalGroup(
             dataInspectingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(dataInspectingPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 888, Short.MAX_VALUE)
+                .addComponent(dataInspectingTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 888, Short.MAX_VALUE)
                 .addContainerGap())
         );
         dataInspectingPanelLayout.setVerticalGroup(
             dataInspectingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dataInspectingPanelLayout.createSequentialGroup()
+            .addGroup(dataInspectingPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(timeStepsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
+                .addComponent(dataInspectingTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -584,8 +615,11 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JRadioButton cellCoveredAreaRadioButton;
     private javax.swing.JList conditionsList;
+    private javax.swing.JTable convertedTimeStepsTable;
+    private javax.swing.JScrollPane convertedTimeStepsTableScrollPane;
     private javax.swing.JRadioButton correctedAreaButton;
     private javax.swing.JPanel dataInspectingPanel;
+    private javax.swing.JTabbedPane dataInspectingTabbedPane;
     private javax.swing.JPanel dataTablePanel;
     private javax.swing.JRadioButton deltaAreaButton;
     private javax.swing.JTextField firstTimeFrameTextField;

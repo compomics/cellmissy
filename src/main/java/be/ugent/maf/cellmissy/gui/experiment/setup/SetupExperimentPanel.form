@@ -63,21 +63,15 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="infolabel" pref="145" max="32767" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="importTemplateButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="importSettingsButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="reportButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="exportTemplateButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="infolabel" pref="105" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="375" max="-2" attributes="0"/>
+                  <Component id="reportButton" linkSize="3" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="previousButton" linkSize="3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="nextButton" linkSize="3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="finishButton" min="-2" max="-2" attributes="0"/>
+                  <Component id="finishButton" linkSize="3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -92,9 +86,6 @@
                           <Component id="nextButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="finishButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="reportButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="importSettingsButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="importTemplateButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="exportTemplateButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="infolabel" alignment="1" min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
@@ -128,24 +119,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="PDF Report"/>
             <Property name="toolTipText" type="java.lang.String" value="Create a PDF file with set-up for current experiment"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="importSettingsButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Import Settings..."/>
-            <Property name="toolTipText" type="java.lang.String" value="Copy the set-up settings from another experiment from this project"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="importTemplateButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Import Template..."/>
-            <Property name="toolTipText" type="java.lang.String" value="Import an XMLfile and use it as template for the current experiment set-up"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="exportTemplateButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Export Template..."/>
-            <Property name="toolTipText" type="java.lang.String" value="Export the current experiment set-up to an XML file template"/>
           </Properties>
         </Component>
       </SubComponents>

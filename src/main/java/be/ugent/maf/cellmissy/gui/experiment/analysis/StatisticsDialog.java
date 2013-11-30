@@ -86,8 +86,7 @@ public class StatisticsDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Statistics");
-        setAlwaysOnTop(true);
-        setMinimumSize(new java.awt.Dimension(560, 660));
+        setMinimumSize(new java.awt.Dimension(750, 750));
         setPreferredSize(new java.awt.Dimension(560, 660));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
