@@ -88,7 +88,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         return singleCellAnalysisMenuItem;
     }
 
-
     public JPanel getLoadFromCellMiaParentPanel() {
         return loadFromCellMiaParentPanel;
     }
@@ -129,6 +128,14 @@ public class CellMissyFrame extends javax.swing.JFrame {
         return exportTemplateMenuItem;
     }
 
+    public JMenuItem getImportSettingsMenuItem() {
+        return importSettingsMenuItem;
+    }
+
+    public JMenuItem getImportTemplateMenuItem() {
+        return importTemplateMenuItem;
+    }
+
     /**
      * This method is called from within the constructor to initialise the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -157,18 +164,20 @@ public class CellMissyFrame extends javax.swing.JFrame {
         genericInputMenuItem = new javax.swing.JMenuItem();
         cellMiaMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
-        dataAnalysisMenu = new javax.swing.JMenu();
+        jMenu1 = new javax.swing.JMenu();
         areaAnalysisMenuItem = new javax.swing.JMenuItem();
         singleCellAnalysisMenuItem = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         overviewMenuItem = new javax.swing.JMenuItem();
-        jSeparator7 = new javax.swing.JPopupMenu.Separator();
-        importExperimentMenuItem = new javax.swing.JMenuItem();
-        exportExperimentMenuItem = new javax.swing.JMenuItem();
-        jSeparator6 = new javax.swing.JPopupMenu.Separator();
-        exportTemplateMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
+        exportMenu = new javax.swing.JMenu();
+        exportExperimentMenuItem = new javax.swing.JMenuItem();
+        exportTemplateMenuItem = new javax.swing.JMenuItem();
+        importMenu = new javax.swing.JMenu();
+        importExperimentMenuItem = new javax.swing.JMenuItem();
+        importSettingsMenuItem = new javax.swing.JMenuItem();
+        importTemplateMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
         assayMenuItem = new javax.swing.JMenuItem();
         jSeparator8 = new javax.swing.JPopupMenu.Separator();
@@ -324,34 +333,24 @@ public class CellMissyFrame extends javax.swing.JFrame {
         fileMenu.add(loadDataMenu);
         fileMenu.add(jSeparator4);
 
-        dataAnalysisMenu.setText("Data Analysis...");
+        jMenu1.setMnemonic('D');
+        jMenu1.setText("Data Analysis...");
 
-        areaAnalysisMenuItem.setText("...area");
-        dataAnalysisMenu.add(areaAnalysisMenuItem);
+        areaAnalysisMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        areaAnalysisMenuItem.setText("... area");
+        jMenu1.add(areaAnalysisMenuItem);
 
-        singleCellAnalysisMenuItem.setText("...single cell");
-        dataAnalysisMenu.add(singleCellAnalysisMenuItem);
+        singleCellAnalysisMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        singleCellAnalysisMenuItem.setText("... single cell");
+        jMenu1.add(singleCellAnalysisMenuItem);
 
-        fileMenu.add(dataAnalysisMenu);
+        fileMenu.add(jMenu1);
         fileMenu.add(jSeparator5);
 
         overviewMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         overviewMenuItem.setMnemonic('O');
         overviewMenuItem.setText("Overview");
         fileMenu.add(overviewMenuItem);
-        fileMenu.add(jSeparator7);
-
-        importExperimentMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
-        importExperimentMenuItem.setText("Import Experiment...");
-        fileMenu.add(importExperimentMenuItem);
-
-        exportExperimentMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
-        exportExperimentMenuItem.setText("Export Experiment...");
-        fileMenu.add(exportExperimentMenuItem);
-        fileMenu.add(jSeparator6);
-
-        exportTemplateMenuItem.setText("Export Template...");
-        fileMenu.add(exportTemplateMenuItem);
         fileMenu.add(jSeparator2);
 
         exitMenuItem.setMnemonic('X');
@@ -359,6 +358,31 @@ public class CellMissyFrame extends javax.swing.JFrame {
         fileMenu.add(exitMenuItem);
 
         cellMissyMenuBar.add(fileMenu);
+
+        exportMenu.setMnemonic('X');
+        exportMenu.setText("Export");
+
+        exportExperimentMenuItem.setText("Export Experiment...");
+        exportMenu.add(exportExperimentMenuItem);
+
+        exportTemplateMenuItem.setText("Export Setup Template...");
+        exportMenu.add(exportTemplateMenuItem);
+
+        cellMissyMenuBar.add(exportMenu);
+
+        importMenu.setMnemonic('I');
+        importMenu.setText("Import");
+
+        importExperimentMenuItem.setText("Import Experiment...");
+        importMenu.add(importExperimentMenuItem);
+
+        importSettingsMenuItem.setText("Import Setup Settings");
+        importMenu.add(importSettingsMenuItem);
+
+        importTemplateMenuItem.setText("Import Setup Template");
+        importMenu.add(importTemplateMenuItem);
+
+        cellMissyMenuBar.add(importMenu);
 
         editMenu.setMnemonic('E');
         editMenu.setText("Edit");
@@ -451,10 +475,10 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JMenuItem cellMiaMenuItem;
     private javax.swing.JMenuBar cellMissyMenuBar;
-    private javax.swing.JMenu dataAnalysisMenu;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenuItem exportExperimentMenuItem;
+    private javax.swing.JMenu exportMenu;
     private javax.swing.JMenuItem exportTemplateMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem genericInputMenuItem;
@@ -463,18 +487,20 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JPanel homePanel;
     private javax.swing.JPanel homeParentPanel;
     private javax.swing.JMenuItem importExperimentMenuItem;
+    private javax.swing.JMenu importMenu;
+    private javax.swing.JMenuItem importSettingsMenuItem;
+    private javax.swing.JMenuItem importTemplateMenuItem;
     private javax.swing.JMenuItem instrumentMenuItem;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
-    private javax.swing.JPopupMenu.Separator jSeparator6;
-    private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JPopupMenu.Separator jSeparator9;
     private javax.swing.JMenu loadDataMenu;

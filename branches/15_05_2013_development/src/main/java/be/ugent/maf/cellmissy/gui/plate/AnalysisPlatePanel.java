@@ -168,10 +168,10 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
                                 g2d.draw(verticalLine2D);
                                 Line2D horizontalLine2D = new Line2D.Double(horizontalLeftPoint, horizontalRightPoint);
                                 g2d.draw(horizontalLine2D);
-            }
-        }
-    }
-}
+                            }
+                        }
+                    }
+                }
             }
         }
     }

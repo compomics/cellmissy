@@ -83,7 +83,6 @@ public class Playground {
             }
             List<Algorithm> algorithms = experimentService.getAlgorithms(experiment);
             List<ImagingType> imagingTypes = experimentService.getImagingTypes(experiment);
-
             for (Algorithm algorithm : algorithms) {
                 for (ImagingType imagingType : imagingTypes) {
                     //**************************************************************************

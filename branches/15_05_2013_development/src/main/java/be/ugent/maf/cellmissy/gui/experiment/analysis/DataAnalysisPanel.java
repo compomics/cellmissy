@@ -67,7 +67,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
-        areaAnalysisParentPanel = new javax.swing.JPanel();
+        dataAnalysisSplitPane = new javax.swing.JSplitPane();
         leftPanel = new javax.swing.JPanel();
         experimentDataPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -82,28 +82,15 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         conditionsPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         conditionsList = new javax.swing.JList();
+        areaAnalysisParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(900, 700));
-        setLayout(new java.awt.GridBagLayout());
 
-        areaAnalysisParentPanel.setEnabled(false);
-        areaAnalysisParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        areaAnalysisParentPanel.setOpaque(false);
-        areaAnalysisParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        areaAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.7;
-        gridBagConstraints.weighty = 0.97;
-        add(areaAnalysisParentPanel, gridBagConstraints);
+        dataAnalysisSplitPane.setBackground(new java.awt.Color(255, 255, 255));
+        dataAnalysisSplitPane.setDividerLocation(450);
 
-        leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        leftPanel.setOpaque(false);
-        leftPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        leftPanel.setBackground(new java.awt.Color(255, 255, 255));
         leftPanel.setLayout(new java.awt.GridBagLayout());
 
         experimentDataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Data Analysis Details"));
@@ -163,11 +150,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(experimentNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
-
-        experimentDataPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel2, jLabel3, jLabel5});
-
-        experimentDataPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {datasetTextField, experimentNumberTextField, imagingTypeTextField, timeFramesNumberTextField});
-
         experimentDataPanelLayout.setVerticalGroup(
             experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(experimentDataPanelLayout.createSequentialGroup()
@@ -197,7 +179,6 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.25;
-        gridBagConstraints.insets = new java.awt.Insets(15, 15, 0, 0);
         leftPanel.add(experimentDataPanel, gridBagConstraints);
 
         analysisPlateParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -222,6 +203,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         jScrollPane3.setOpaque(false);
 
         conditionsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        conditionsList.setPreferredSize(new java.awt.Dimension(20, 20));
         conditionsList.setSelectedIndex(0);
         jScrollPane3.setViewportView(conditionsList);
 
@@ -229,11 +211,11 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         conditionsPanel.setLayout(conditionsPanelLayout);
         conditionsPanelLayout.setHorizontalGroup(
             conditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
         );
         conditionsPanelLayout.setVerticalGroup(
             conditionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -245,15 +227,28 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.2;
         leftPanel.add(conditionsPanel, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.weighty = 0.95;
-        add(leftPanel, gridBagConstraints);
+        dataAnalysisSplitPane.setLeftComponent(leftPanel);
+
+        areaAnalysisParentPanel.setBackground(new java.awt.Color(255, 255, 255));
+        areaAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
+        dataAnalysisSplitPane.setRightComponent(areaAnalysisParentPanel);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(dataAnalysisSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1047, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(dataAnalysisSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 705, Short.MAX_VALUE)
+                .addContainerGap())
+        );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel analysisPlateParentPanel;
@@ -262,6 +257,7 @@ public class DataAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JList conditionsList;
     private javax.swing.JPanel conditionsPanel;
+    private javax.swing.JSplitPane dataAnalysisSplitPane;
     private javax.swing.JTextField datasetTextField;
     private javax.swing.JPanel experimentDataPanel;
     private javax.swing.JTextField experimentNumberTextField;

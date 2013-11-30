@@ -18,6 +18,8 @@ import static be.ugent.maf.cellmissy.analysis.area.MeasuredAreaType.OPEN_AREA;
 import be.ugent.maf.cellmissy.analysis.area.impl.CellCoveredAreaPreProcessor;
 import be.ugent.maf.cellmissy.analysis.area.impl.OpenAreaPreProcessor;
 import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache;
+import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.result.area.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
@@ -335,8 +337,46 @@ public class AreaPreProcessingController {
         columnBinding.setColumnClass(Integer.class);
 
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${area}"));
-        String areaUnitOfMeasurement = getAreaUnitOfMeasurementString();
-        columnBinding.setColumnName("Area " + "(" + areaUnitOfMeasurement + ")");
+
+        AreaUnitOfMeasurement areaUnitOfMeasurement = (AreaUnitOfMeasurement) areaMainController.getMetaDataAreaPanel().getAreaUnitOfMeasurementComboBox().getSelectedItem();
+        String areaUnitOfMeasurementString = areaUnitOfMeasurement.getUnitOfMeasurementString();
+        columnBinding.setColumnName("Area " + "(" + areaUnitOfMeasurementString + ")");
+        columnBinding.setEditable(false);
+        columnBinding.setColumnClass(Double.class);
+        columnBinding.setRenderer(new FormatRenderer(areaMainController.getFormat(), SwingConstants.RIGHT));
+
+        bindingGroup.addBinding(timeStepsTableBinding);
+        bindingGroup.bind();
+    }
+
+    /**
+     * Show area values, but converted from pixels or cellM micrometers squared
+     * to micrometer squared.
+     */
+    public void showConvertedAreaInTable() {
+        double conversionFactor = computeConversionFactor();
+        //table binding
+        timeStepsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, timeStepsBindingList, areaAnalysisPanel.getConvertedTimeStepsTable());
+        //add column bindings
+        ColumnBinding columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.well.columnNumber}"));
+        columnBinding.setColumnName("Column");
+        columnBinding.setEditable(false);
+        columnBinding.setColumnClass(Integer.class);
+
+        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.well.rowNumber}"));
+        columnBinding.setColumnName("Row");
+        columnBinding.setEditable(false);
+        columnBinding.setColumnClass(Integer.class);
+
+        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${timeStepSequence}"));
+        columnBinding.setColumnName("Time point");
+        columnBinding.setEditable(false);
+        columnBinding.setColumnClass(Integer.class);
+
+        String expression = "${area" + "/" + conversionFactor + "}";
+        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create(expression));
+        String unitOfMeasurementString = AreaUnitOfMeasurement.MICRO_METERS.getUnitOfMeasurementString();
+        columnBinding.setColumnName("Area " + "(" + unitOfMeasurementString + ")");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Double.class);
         columnBinding.setRenderer(new FormatRenderer(areaMainController.getFormat(), SwingConstants.RIGHT));
@@ -1191,6 +1231,9 @@ public class AreaPreProcessingController {
     private Double[][] getAreaRawData(PlateCondition plateCondition) {
         // get processed time frames
         double[] processedTimeFrames = getProcessedTimeFrames(plateCondition);
+        // get the conversion factor, this could be just 1 of course
+        // in this case, no conversion is needed
+        double conversionFactor = computeConversionFactor();
         // get number of samples
         int numberOfSamplesPerCondition = AnalysisUtils.getNumberOfAreaAnalyzedSamples(plateCondition);
         boolean firstAreaIsZero = false;
@@ -1198,17 +1241,19 @@ public class AreaPreProcessingController {
         int counter = 0;
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
+                double areaRaw = timeStepsBindingList.get(counter).getArea();
+                double convertedArea = areaRaw / Math.pow(conversionFactor, 2);
                 // check for first row: sometimes area raw data is already equal to zero at first time
                 if (rowIndex != 0) {
-                    if (timeStepsBindingList.get(counter).getArea() != 0) {
-                        areaRawData[rowIndex][columnIndex] = timeStepsBindingList.get(counter).getArea();
-                    } else if (timeStepsBindingList.get(counter).getArea() == 0 && firstAreaIsZero) {
+                    if (areaRaw != 0) {
+                        areaRawData[rowIndex][columnIndex] = convertedArea;
+                    } else if (areaRaw == 0 && firstAreaIsZero) {
                         areaRawData[rowIndex][columnIndex] = 0.0;
                     } else {
                         areaRawData[rowIndex][columnIndex] = null;
                     }
                 } else {
-                    areaRawData[rowIndex][columnIndex] = timeStepsBindingList.get(counter).getArea();
+                    areaRawData[rowIndex][columnIndex] = convertedArea;
                     if (areaRawData[rowIndex][columnIndex] == 0) {
                         firstAreaIsZero = true;
                     }
@@ -1217,6 +1262,34 @@ public class AreaPreProcessingController {
             }
         }
         return areaRawData;
+    }
+
+    /**
+     * Compute the conversion factor according to area unit of measurement and
+     * experiment magnification.
+     *
+     * @return
+     */
+    private double computeConversionFactor() {
+        // by default, conversion factor is equal to 1
+        // this is the case of having imported micrometers squared results to the DB
+        double conversionFactor = 1;
+        Experiment currentExperiment = areaMainController.getExperiment();
+        // get the actual unit of measurement: if its pixels, override the conversion factor
+        AreaUnitOfMeasurement areaUnitOfMeasurement = (AreaUnitOfMeasurement) areaMainController.getMetaDataAreaPanel().getAreaUnitOfMeasurementComboBox().getSelectedItem();
+        if (areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.PIXELS)) {
+            // conversion factor needs to be set according to conversion factor of instrument and magnification used
+            // also, keep in mind this is done from pixel to micrometers square!
+            // actual conversion factor = instrument conversion factor x magnification / 10
+            Magnification magnification = currentExperiment.getMagnification();
+            double instrumentConversionFactor = currentExperiment.getInstrument().getConversionFactor();
+            double magnificationValue = magnification.getMagnificationValue();
+            conversionFactor = instrumentConversionFactor * magnificationValue / 10;
+            // the other case is our "cellM" special micrometers, another, fixed conversion is needed
+        } else if (areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.SPECIAL_MICRO_METERS)) {
+            conversionFactor = 4; // need to check this!!!
+        }
+        return conversionFactor;
     }
 
     /**
@@ -1395,12 +1468,18 @@ public class AreaPreProcessingController {
         // show both lines and points
         areaAnalysisPanel.getPlotLinesCheckBox().setSelected(true);
         areaAnalysisPanel.getPlotPointsCheckBox().setSelected(true);
+        TableHeaderRenderer tableHeaderRenderer = new TableHeaderRenderer(SwingConstants.RIGHT);
         // time steps table can not be edit, but it can be selected through columns, reordering is disabled
         areaAnalysisPanel.getTimeStepsTable().setColumnSelectionAllowed(true);
         areaAnalysisPanel.getTimeStepsTable().setRowSelectionAllowed(false);
-        areaAnalysisPanel.getTimeStepsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+        areaAnalysisPanel.getTimeStepsTable().getTableHeader().setDefaultRenderer(tableHeaderRenderer);
         areaAnalysisPanel.getTimeStepsTable().getTableHeader().setReorderingAllowed(false);
 
+        // same for the converted data table
+        areaAnalysisPanel.getConvertedTimeStepsTable().setColumnSelectionAllowed(true);
+        areaAnalysisPanel.getConvertedTimeStepsTable().setRowSelectionAllowed(false);
+        areaAnalysisPanel.getConvertedTimeStepsTable().getTableHeader().setDefaultRenderer(tableHeaderRenderer);
+        areaAnalysisPanel.getConvertedTimeStepsTable().getTableHeader().setReorderingAllowed(false);
         // set background to white
         areaAnalysisPanel.getTimeStepsTableScrollPane().getViewport().setBackground(Color.white);
         //init dataTable

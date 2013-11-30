@@ -52,8 +52,7 @@ public class AddDrugsTreatmentsDialog extends javax.swing.JDialog {
         treatmentTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Add new Drugs or Treatments");
-        setAlwaysOnTop(true);
+        setTitle("Add New Drugs or Treatments");
 
         addDrugButton.setText("Add Drug");
 

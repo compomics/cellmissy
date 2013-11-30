@@ -11,5 +11,4 @@ import be.ugent.maf.cellmissy.entity.Project;
  * @author Paola
  */
 public interface ProjectRepository extends GenericRepository<Project, Long> {
-    
 }

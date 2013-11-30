@@ -17,10 +17,14 @@ import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.ProjectHasUser;
+import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
+import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
+import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.setup.CopyExperimentSettingsDialog;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -52,12 +56,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import javax.persistence.PersistenceException;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -97,7 +101,8 @@ import org.xml.sax.SAXParseException;
 /**
  * SetupExperiment Panel Controller: set up a new experiment. Parent controller:
  * CellMissy Controller (main controller) Child controllers: Conditions
- * Controller, Setup Plate Controller
+ * Controller, Setup Plate Controller, Setup Report Controller, Treatment
+ * Controller, AssayECM Controller and ProjectController.
  *
  * @author Paola
  */
@@ -122,6 +127,7 @@ public class SetupExperimentController {
     private SetupPanel setupPanel;
     private CopyExperimentSettingsDialog copyExperimentSettingsDialog;
     private ImportTemplateDialog importTemplateDialog;
+    private WaitingDialog waitingDialog;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -132,6 +138,8 @@ public class SetupExperimentController {
     private SetupPlateController setupPlateController;
     @Autowired
     private SetupReportController setupReportController;
+    @Autowired
+    private SetupProjectController setupProjectController;
     //services
     @Autowired
     private ProjectService projectService;
@@ -154,16 +162,16 @@ public class SetupExperimentController {
         experimentInfoPanel = new ExperimentInfoPanel();
         setupExperimentPanel = new SetupExperimentPanel();
         setupPanel = new SetupPanel();
-
+        waitingDialog = new WaitingDialog(cellMissyController.getCellMissyFrame(), false);
         //init views
         initExperimentInfoPanel();
         initSetupExperimentPanel();
-        initNewProjectDialog();
         initCopySettingsDialog();
         initImportTemplateDialog();
         //init child controllers
         setupPlateController.init();
         setupConditionsController.init();
+        setupProjectController.init();
     }
 
     /**
@@ -248,19 +256,96 @@ public class SetupExperimentController {
         experimentInfoPanel.getNewProjectButton().setEnabled(false);
     }
 
-    /**
-     * Create a new Project
-     *
-     * @param projectNumber
-     * @param projectDescription
-     */
-    public void createNewProject(int projectNumber, String projectDescription) {
-        Project savedProject = projectService.setupProject(projectNumber, projectDescription, mainDirectory);
-        projectBindingList.add(savedProject);
-    }
-
     public ObservableList<PlateCondition> getPlateConditionBindingList() {
         return setupConditionsController.getPlateConditionBindingList();
+    }
+
+    public void addNewProjectToList(Project project) {
+        cellMissyController.addNewProjectToList(project);
+    }
+
+    /**
+     * Import settings from another experiment. This action will show a JDialog,
+     * with all the experiments for the current project. The user can select an
+     * experiment and copy the settings from it.
+     */
+    public void onImportSettings() {
+        // fill in the lists of experiments
+        Project selectedProject = (Project) experimentInfoPanel.getProjectsList().getSelectedValue();
+        List<Experiment> experimentsForCurrentProject = experimentService.findExperimentsByProjectId(selectedProject.getProjectid());
+        // check that there're actually experiments!
+        if (experimentsForCurrentProject != null) {
+            // sort the experiments
+            Collections.sort(experimentsForCurrentProject);
+            // bind the Jlist to the experimentsList
+            JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentsForCurrentProject, copyExperimentSettingsDialog.getExperimentsList());
+            bindingGroup.addBinding(jListBinding);
+            bindingGroup.bind();
+            // pack, center and show the dialog
+            copyExperimentSettingsDialog.pack();
+            GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), copyExperimentSettingsDialog);
+            copyExperimentSettingsDialog.setVisible(true);
+        } else {
+            // no experiments! inform the user
+            cellMissyController.showMessage("Sorry! There are no experiments here to copy settings from!", "cannot copy settings-no experiments in this project", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    /**
+     * Export the current experiment setup template to an external XML file.
+     */
+    public void onExportTemplateForCurrentExperiment() {
+        JFileChooser chooseDirectory = new JFileChooser();
+        chooseDirectory.setDialogTitle("Choose a directory to save the template");
+        chooseDirectory.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnVal = chooseDirectory.showSaveDialog(setupExperimentPanel);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File currentDirectory = chooseDirectory.getSelectedFile();
+            ExportTemplateToXMLSwingWorker exportTemplateToXMLSwingWorker = new ExportTemplateToXMLSwingWorker(currentDirectory);
+            exportTemplateToXMLSwingWorker.execute();
+        } else {
+            showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    /**
+     * Import setup template from external XML file to current experiment.
+     */
+    public void onImportTemplateToCurrentExperiment() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Choose an XML file for the template to import");
+        // to select only xml files
+        fileChooser.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+                int index = f.getName().lastIndexOf(".");
+                String extension = f.getName().substring(index + 1);
+                if (extension.equals("xml")) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            @Override
+            public String getDescription() {
+                return (".xml files");
+            }
+        });
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        int returnVal = fileChooser.showOpenDialog(setupExperimentPanel);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            // parse this selected XML file through the experiment service
+            // according to what we find here, we update the dialog to show (in the same method!)
+            parseXMLFile(selectedFile);
+        } else {
+            showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     /**
@@ -290,7 +375,6 @@ public class SetupExperimentController {
         setupSaved = false;
         // disable finish button
         setupExperimentPanel.getFinishButton().setEnabled(false);
-        setupExperimentPanel.getImportSettingsButton().setEnabled(false);
         // reset experiment info text fields
         experimentInfoPanel.getNumberTextField().setText("");
         experimentInfoPanel.getPurposeTextArea().setText("");
@@ -324,8 +408,8 @@ public class SetupExperimentController {
 
     /**
      * When the mouse is released and the rectangle has been drawn, this method
-     * is called: set well List of the current condition and set the
-     * condition of the selected wells
+     * is called: set well List of the current condition and set the condition
+     * of the selected wells
      *
      * @param plateCondition
      * @param rectangle
@@ -374,12 +458,12 @@ public class SetupExperimentController {
             List<Rectangle> rectangles = setupPlateController.getSetupPlatePanel().getRectangles().get(plateCondition);
             if (rectangles != null) {
                 for (Rectangle rectangle : rectangles) {
-                if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
-                    wellGui.getWell().setPlateCondition(null);
+                    if (rectangle.contains(ellipse.getX(), ellipse.getY(), ellipse.getWidth(), ellipse.getHeight())) {
+                        wellGui.getWell().setPlateCondition(null);
+                    }
                 }
             }
         }
-    }
     }
 
     /**
@@ -467,7 +551,9 @@ public class SetupExperimentController {
         experimentInfoPanel.getInfoLabel1().setIcon(scaledIcon);
         experimentInfoPanel.getInfoLabel().setIcon(scaledIcon);
         //init projectJList
-        projectBindingList = ObservableCollections.observableList(projectService.findAll());
+        List<Project> allProjects = projectService.findAll();
+        Collections.sort(allProjects);
+        projectBindingList = ObservableCollections.observableList(allProjects);
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectsList());
         bindingGroup.addBinding(jListBinding);
         //init instrument combo box
@@ -505,11 +591,6 @@ public class SetupExperimentController {
         nextButtonListener.registerDoc(experimentInfoPanel.getNumberTextField().getDocument());
         nextButtonListener.registerDoc(experimentInfoPanel.getPurposeTextArea().getDocument());
         nextButtonListener.registerDoc(((JTextField) experimentInfoPanel.getDateChooser().getDateEditor().getUiComponent()).getDocument());
-        // document listener for the copy settings button
-        ExperimentListener copySettingsButtonListener = new ExperimentListener(setupExperimentPanel.getImportSettingsButton());
-        copySettingsButtonListener.registerDoc(experimentInfoPanel.getNumberTextField().getDocument());
-        copySettingsButtonListener.registerDoc(experimentInfoPanel.getPurposeTextArea().getDocument());
-        copySettingsButtonListener.registerDoc(((JTextField) experimentInfoPanel.getDateChooser().getDateEditor().getUiComponent()).getDocument());
 
         /**
          * add mouse listeners
@@ -519,30 +600,40 @@ public class SetupExperimentController {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                //init experimentJList
+                    //init experimentJList
                     int selectedIndex = experimentInfoPanel.getProjectsList().getSelectedIndex();
                     if (selectedIndex != -1) {
                         Project selectedProject = projectBindingList.get(selectedIndex);
-                    // set text for project description
-                    experimentInfoPanel.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
-                    // request focus on experiment number
-                    experimentInfoPanel.getNumberTextField().requestFocusInWindow();
-                    Long projectid = selectedProject.getProjectid();
-                    List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
-                    if (experimentNumbers != null) {
-                        List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
-                        experimentBindingList = ObservableCollections.observableList(experimentList);
+                        // set text for project description
+                        experimentInfoPanel.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
+                        // request focus on experiment number
+                        experimentInfoPanel.getNumberTextField().requestFocusInWindow();
+                        Long projectid = selectedProject.getProjectid();
+                        List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
+                        if (experimentNumbers != null) {
+                            List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
+                            Collections.sort(experimentList);
+                            experimentBindingList = ObservableCollections.observableList(experimentList);
                             JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentBindingList, experimentInfoPanel.getExperimentsList());
-                        bindingGroup.addBinding(jListBinding);
-                        bindingGroup.bind();
-                    } else {
-                        cellMissyController.showMessage("There are no experiments yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
-                        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
-                            experimentBindingList.clear();
+                            bindingGroup.addBinding(jListBinding);
+                            bindingGroup.bind();
+                        } else {
+                            cellMissyController.showMessage("There are no experiments yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
+                            if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                                experimentBindingList.clear();
+                            }
+                        }
+                        if (!userHasPrivileges(selectedProject)) {
+                            experimentInfoPanel.getNumberTextField().setEnabled(false);
+                            experimentInfoPanel.getPurposeTextArea().setEnabled(false);
+                            String message = "Sorry, you don't have enough privileges for the selected project!";
+                            cellMissyController.showMessage(message, "no enough privileges", JOptionPane.WARNING_MESSAGE);
+                        } else {
+                            experimentInfoPanel.getNumberTextField().setEnabled(true);
+                            experimentInfoPanel.getPurposeTextArea().setEnabled(true);
                         }
                     }
                 }
-            }
             }
         });
 
@@ -550,61 +641,7 @@ public class SetupExperimentController {
         experimentInfoPanel.getNewProjectButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                newProjectDialog.getProjectNumberTextField().setText("");
-                newProjectDialog.getDescriptionTextArea().setText("");
-                // show a newProjectDialog
-                newProjectDialog.pack();
-                newProjectDialog.setVisible(true);
-    }
-        });
-    }
-
-    /**
-     * Initialize new project dialog
-     */
-    private void initNewProjectDialog() {
-        // customize dialog
-        newProjectDialog = new NewProjectDialog(getCellMissyFrame(), true);
-        //center the dialog on the main screen
-        newProjectDialog.setLocationRelativeTo(getCellMissyFrame());
-        // set icon for info label
-        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
-        newProjectDialog.getInfoLabel().setIcon(scaledIcon);
-
-        // create a new project
-        newProjectDialog.getCreateProjectButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //create new project: save it to DB and create folder on the server
-                if (!newProjectDialog.getProjectNumberTextField().getText().isEmpty()) {
-                    try {
-                        int projectNumber = Integer.parseInt(newProjectDialog.getProjectNumberTextField().getText());
-                        //project description is not mandatory
-                        String projectDescription = newProjectDialog.getDescriptionTextArea().getText();
-                        createNewProject(projectNumber, projectDescription);
-                        LOG.info("project " + projectNumber + " (" + projectDescription + ") " + "was created");
-                        // creation of new project was successfull
-                        showMessage("Project was created!", "Project created", JOptionPane.INFORMATION_MESSAGE);
-                        newProjectDialog.getProjectNumberTextField().setText("");
-                        newProjectDialog.getDescriptionTextArea().setText("");
-                        // close the dialog
-                        newProjectDialog.setVisible(false);
-                    } catch (PersistenceException exception) {
-                        showMessage("Project already present in the DB", "Error in persisting project", JOptionPane.WARNING_MESSAGE);
-                        LOG.error(exception.getMessage());
-                        newProjectDialog.getProjectNumberTextField().setText("");
-                        newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
-                    } catch (NumberFormatException exception) {
-                        showMessage("Please insert a valid number", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
-                        LOG.error(exception.getMessage());
-                        newProjectDialog.getProjectNumberTextField().setText("");
-                        newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
-                    }
-                } else {
-                    showMessage("Please insert a number for the project you want to create", "Error while creating new project", JOptionPane.WARNING_MESSAGE);
-                    newProjectDialog.getProjectNumberTextField().requestFocusInWindow();
-                }
+                setupProjectController.showNewProjectDialog();
             }
         });
     }
@@ -754,10 +791,10 @@ public class SetupExperimentController {
         setupExperimentPanel.getFinishButton().setVisible(false);
         setupExperimentPanel.getFinishButton().setEnabled(false);
         setupExperimentPanel.getReportButton().setVisible(false);
-        // hide also the button to copy experiment settings, and even the one to import/export the setup to a txt file
-        setupExperimentPanel.getImportSettingsButton().setVisible(false);
-        setupExperimentPanel.getImportTemplateButton().setVisible(false);
-        setupExperimentPanel.getExportTemplateButton().setVisible(false);
+        // disable the main frame menu items: import template and import settings
+        cellMissyController.getCellMissyFrame().getImportSettingsMenuItem().setEnabled(false);
+        cellMissyController.getCellMissyFrame().getImportTemplateMenuItem().setEnabled(false);
+
         cellMissyController.updateInfoLabel(setupExperimentPanel.getInfolabel(), "Please select a project from the list and fill in experiment/microscope metadata.");
 
         /**
@@ -795,33 +832,6 @@ public class SetupExperimentController {
             }
         });
 
-        /**
-         * Copy settings from another experiment. This action will show a
-         * JDialog, with all the experiments for the current project. The user
-         * can select an experiment and copy the settings from it.
-         */
-        setupExperimentPanel.getImportSettingsButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // fill in the lists of experiments
-                Project selectedProject = (Project) experimentInfoPanel.getProjectsList().getSelectedValue();
-                List<Experiment> experimentsForCurrentProject = experimentService.findExperimentsByProjectId(selectedProject.getProjectid());
-                // check that there're actually experiments!
-                if (experimentsForCurrentProject != null) {
-                    // bind the Jlist to the experimentsList
-                    JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, experimentsForCurrentProject, copyExperimentSettingsDialog.getExperimentsList());
-                    bindingGroup.addBinding(jListBinding);
-                    bindingGroup.bind();
-                    // pack, center and show the dialog
-                    copyExperimentSettingsDialog.pack();
-                    GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), copyExperimentSettingsDialog);
-                    copyExperimentSettingsDialog.setVisible(true);
-                } else {
-                    // no experiments! inform the user
-                    cellMissyController.showMessage("Sorry! There are no experiments here to copy settings from!", "cannot copy settings-no experiments in this project", JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        });
 
         // go back to previous view
         setupExperimentPanel.getPreviousButton().addActionListener(new ActionListener() {
@@ -893,67 +903,6 @@ public class SetupExperimentController {
                 } else {
                     showMessage("Validation problem." + "\n" + "Check your setup and try again to create the report.", "error in setup", JOptionPane.WARNING_MESSAGE);
                     setupExperimentPanel.getFinishButton().setEnabled(false);
-                }
-            }
-        });
-
-        // after having created a PDF report, we can export the current design to an external XML file
-        // this is something that the experiment service does, we only need the current experiment
-        setupExperimentPanel.getExportTemplateButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser chooseDirectory = new JFileChooser();
-                chooseDirectory.setDialogTitle("Choose a directory to save the template");
-                chooseDirectory.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                int returnVal = chooseDirectory.showSaveDialog(setupExperimentPanel);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File currentDirectory = chooseDirectory.getSelectedFile();
-                    ExportTemplateToXMLSwingWorker exportTemplateToXMLSwingWorker = new ExportTemplateToXMLSwingWorker(currentDirectory);
-                    exportTemplateToXMLSwingWorker.execute();
-                } else {
-                    showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        });
-
-        // when setting up an experiment, we can decide to import the settings from an XML file
-        // this is also done by the experiment service
-        setupExperimentPanel.getImportTemplateButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setDialogTitle("Choose an XML file for the template to import");
-                // to select only xml files
-                fileChooser.setFileFilter(new FileFilter() {
-                    @Override
-                    public boolean accept(File f) {
-                        if (f.isDirectory()) {
-                            return true;
-                        }
-                        int index = f.getName().lastIndexOf(".");
-                        String extension = f.getName().substring(index + 1);
-                        if (extension.equals("xml")) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    public String getDescription() {
-                        return (".xml files");
-                    }
-                });
-                fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                fileChooser.setAcceptAllFileFilterUsed(false);
-                int returnVal = fileChooser.showOpenDialog(setupExperimentPanel);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    // parse this selected XML file through the experiment service
-                    // according to what we find here, we update the dialog to show (in the same method!)
-                    parseXMLFile(selectedFile);
-                } else {
-                    showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -1076,6 +1025,33 @@ public class SetupExperimentController {
     }
 
     /**
+     * Does the current user have privileges on the current project?
+     *
+     * @param project
+     * @return true or false
+     */
+    private boolean userHasPrivileges(Project project) {
+        boolean hasPrivileges = false;
+        // get current user from main controller
+        User currentUser = cellMissyController.getCurrentUser();
+        // check for his/her role
+        // ADMIN user: return true
+        if (currentUser.getRole().equals(Role.ADMIN_USER)) {
+            hasPrivileges = true;
+        } else {
+            // we have a STANDARD user
+            // we need to check if he's involved in the selected project
+            for (ProjectHasUser projectHasUser : project.getProjectHasUserList()) {
+                if (projectHasUser.getUser().equals(currentUser)) {
+                    hasPrivileges = true;
+                    break;
+                }
+            }
+        }
+        return hasPrivileges;
+    }
+
+    /**
      * For a certain table, this method creates a model from the given
      * experiment with the conditions details and assign the model to the table.
      *
@@ -1191,7 +1167,7 @@ public class SetupExperimentController {
             try {
                 get();
                 setupSaved = true;
-                //show back default cursor 
+                //show back default cursor
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 showMessage("Experiment was successfully saved to DB.\nPlease choose what you want to do next.", "Experiment saved", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("Experiment " + experiment + "_" + experiment.getProject() + " saved; experiment is " + experiment.getExperimentStatus());
@@ -1217,8 +1193,6 @@ public class SetupExperimentController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            // disable the export template button
-            setupExperimentPanel.getExportTemplateButton().setEnabled(false);
             // show waiting cursor
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             exportExperimentToXMLFile(directory);
@@ -1231,7 +1205,6 @@ public class SetupExperimentController {
                 get();
                 //show back default cursor
                 cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                setupExperimentPanel.getExportTemplateButton().setEnabled(true);
                 showMessage("Experiment Template was exported to XML file!", "template exported to XML", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("Template for experiment " + experiment + "_" + experiment.getProject() + " exported to XML file");
             } catch (InterruptedException | ExecutionException ex) {
@@ -1243,7 +1216,7 @@ public class SetupExperimentController {
 
     /**
      * This Swing Worker copies the settings from a selected experiment to the
-     * new experiment that is being setting up.
+     * new experiment that is being setting up in this session.
      */
     private class CopyExpSettingsSwingWorker extends SwingWorker<Void, Void> {
 
@@ -1255,6 +1228,8 @@ public class SetupExperimentController {
 
         @Override
         protected Void doInBackground() throws Exception {
+            // no need for a waiting GUI, but at least a waiting cursor
+            copyExperimentSettingsDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             // we need to copy everything to new experiment
             // we should update here the GUI
             experimentService.copySetupSettingsFromOtherExperiment(experimentToCopy, experiment);
@@ -1266,6 +1241,7 @@ public class SetupExperimentController {
         protected void done() {
             try {
                 get();
+                copyExperimentSettingsDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 JOptionPane.showMessageDialog(copyExperimentSettingsDialog, "Settings have been copied to new experiment.\nYou will now see the layout.", "settings copied", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("Settings copied from experiment " + experimentToCopy + "_" + experimentToCopy.getProject() + " to" + experiment + "_" + experiment.getProject());
                 copyExperimentSettingsDialog.setVisible(false);
@@ -1286,6 +1262,9 @@ public class SetupExperimentController {
         protected Void doInBackground() throws Exception {
             // we need to copy everything to new experiment
             // we should update here the GUI
+            // we need here a waiting dialog: the XML is being parsed
+            String title = "XML file is being parsed. Please wait...";
+            showWaitingDialog(title);
             experimentService.copySetupSettingsFromXMLExperiment(experimentFromXMLFile, experiment);
             // if new objects need to be created, they need to be added now to the GUI components
             addNewObjectsToGui();
@@ -1297,6 +1276,7 @@ public class SetupExperimentController {
         protected void done() {
             try {
                 get();
+                waitingDialog.setVisible(false);
                 JOptionPane.showMessageDialog(importTemplateDialog, "Template settings have been copied to new experiment.\nYou will now see the layout.", "settings copied", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("Template settings copied to Experiment: " + experiment + "_" + experiment.getProject());
                 importTemplateDialog.setVisible(false);
@@ -1330,6 +1310,18 @@ public class SetupExperimentController {
         setupConditionsController.addNewEcmDensities(newEcmDensities);
         List<TreatmentType> newTreatmentTypes = setupConditionsController.findNewTreatmentTypes(experimentFromXMLFile);
         setupConditionsController.addNewTreatmentTypes(newTreatmentTypes);
+    }
+
+    /**
+     * Show the waiting dialog: set the title and center the dialog on the main
+     * frame. Set the dialog to visible.
+     *
+     * @param title
+     */
+    private void showWaitingDialog(String title) {
+        waitingDialog.setTitle(title);
+        GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), waitingDialog);
+        waitingDialog.setVisible(true);
     }
 
     /**
@@ -1508,15 +1500,10 @@ public class SetupExperimentController {
         // hide the next and show the finish
         setupExperimentPanel.getNextButton().setVisible(false);
         setupExperimentPanel.getFinishButton().setVisible(true);
-
         setupExperimentPanel.getFinishButton().setEnabled(setupExperimentPanel.getFinishButton().isEnabled());
-        setupExperimentPanel.getExportTemplateButton().setEnabled(setupExperimentPanel.getExportTemplateButton().isEnabled());
-        // now show the copy settings button, as well as the ones for the export/import of template
-        setupExperimentPanel.getImportSettingsButton().setVisible(true);
-        setupExperimentPanel.getExportTemplateButton().setVisible(true);
-        // the export is still disabled, you can use it after having created the PDF report
-        setupExperimentPanel.getExportTemplateButton().setEnabled(false);
-        setupExperimentPanel.getImportTemplateButton().setVisible(true);
+        // enable the main frame menu items: import template and import settings
+        cellMissyController.getCellMissyFrame().getImportSettingsMenuItem().setEnabled(true);
+        cellMissyController.getCellMissyFrame().getImportTemplateMenuItem().setEnabled(true);
         // the same for the PDF report button
         setupExperimentPanel.getReportButton().setVisible(true);
         setupExperimentPanel.getTopPanel().revalidate();
@@ -1538,9 +1525,9 @@ public class SetupExperimentController {
         setupExperimentPanel.getNextButton().setVisible(true);
         setupExperimentPanel.getFinishButton().setVisible(false);
         setupExperimentPanel.getReportButton().setVisible(false);
-        setupExperimentPanel.getImportSettingsButton().setVisible(false);
-        setupExperimentPanel.getImportTemplateButton().setVisible(false);
-        setupExperimentPanel.getExportTemplateButton().setVisible(false);
+        // disable the main frame menu items: import template and import settings
+        cellMissyController.getCellMissyFrame().getImportSettingsMenuItem().setEnabled(false);
+        cellMissyController.getCellMissyFrame().getImportTemplateMenuItem().setEnabled(false);
         setupExperimentPanel.getTopPanel().revalidate();
         setupExperimentPanel.getTopPanel().repaint();
     }
@@ -1635,7 +1622,8 @@ public class SetupExperimentController {
         protected File doInBackground() throws Exception {
             //disable buttons and show a waiting cursor
             setupExperimentPanel.getReportButton().setEnabled(false);
-            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            // show waiting cursor
+            setupExperimentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             File file = setupReportController.createSetupReport(directory);
             return file;
         }
@@ -1645,6 +1633,7 @@ public class SetupExperimentController {
             File file = null;
             try {
                 file = get();
+                waitingDialog.setVisible(false);
             } catch (InterruptedException | ExecutionException | CancellationException ex) {
                 LOG.error(ex.getMessage(), ex);
                 cellMissyController.handleUnexpectedError(ex);
@@ -1652,17 +1641,19 @@ public class SetupExperimentController {
             try {
                 //if export to PDF was successfull, open the PDF file from the desktop
                 if (Desktop.isDesktopSupported()) {
-                Desktop.getDesktop().open(file);
+                    Desktop.getDesktop().open(file);
                 }
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);
                 showMessage("Cannot open the file!" + "\n" + ex.getMessage(), "error while opening file", JOptionPane.ERROR_MESSAGE);
             }
-            cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            // enable the report, finish and export template buttons
+            setupExperimentPanel.getReportButton().setEnabled(true);
             // enable the report, finish and export template buttons
             setupExperimentPanel.getReportButton().setEnabled(true);
             setupExperimentPanel.getFinishButton().setEnabled(true);
-            setupExperimentPanel.getExportTemplateButton().setEnabled(true);
+            // show waiting cursor
+            setupExperimentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
 }

@@ -133,10 +133,6 @@ public class LoadExperimentFromGenericInputController {
         return cellMissyController.getCurrentUser();
     }
 
-    public void setExpListRenderer(User currentUser) {
-        genericExperimentDataController.setExpListRenderer(currentUser);
-    }
-
     /**
      * Check if current analysis has been saved before leaving the view
      *
