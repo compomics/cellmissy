@@ -5,10 +5,14 @@
 package be.ugent.maf.cellmissy.service.impl;
 
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.ProjectHasUser;
+import be.ugent.maf.cellmissy.entity.User;
+import be.ugent.maf.cellmissy.repository.ProjectHasUserRepository;
 import be.ugent.maf.cellmissy.repository.ProjectRepository;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("projectService")
 @Transactional
 public class ProjectServiceImpl implements ProjectService {
-    
+
     private static final Logger LOG = Logger.getLogger(ProjectService.class);
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
+    private ProjectHasUserRepository projectHasUserRepository;
     private String projectFolderName;
-    
+
     @Override
     public Project setupProject(int projectNumber, String description, File microscopeDirectory) {
 
@@ -35,7 +41,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project newProject = new Project();
         newProject.setProjectNumber(projectNumber);
         newProject.setProjectDescription(description);
-        
+
         newProject = projectRepository.update(newProject);
 
         //create project folder on the server
@@ -45,7 +51,7 @@ public class ProjectServiceImpl implements ProjectService {
         } else {
             projectFolderName = "CM_P" + df.format(projectNumber) + "_" + newProject.getProjectDescription();
         }
-        
+
         File subDirectory = new File(microscopeDirectory, projectFolderName);
         // mkdir() returns true if and only if the directory was created; false otherwise
         boolean mkdir = subDirectory.mkdir();
@@ -54,30 +60,70 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return newProject;
     }
-    
+
     @Override
     public Project findById(Long id) {
         return projectRepository.findById(id);
     }
-    
+
     @Override
     public List<Project> findAll() {
         return projectRepository.findAll();
     }
-    
+
     @Override
     public Project update(Project entity) {
         return projectRepository.update(entity);
     }
-    
+
     @Override
     public void delete(Project entity) {
         entity = projectRepository.findById(entity.getProjectid());
         projectRepository.delete(entity);
     }
-    
+
     @Override
     public void save(Project entity) {
         projectRepository.save(entity);
+    }
+
+    @Override
+    public void saveProjectUsers(Project entity) {
+        for (ProjectHasUser projectHasUser : entity.getProjectHasUserList()) {
+            projectHasUserRepository.save(projectHasUser);
+        }
+    }
+
+    @Override
+    public List<Project> findProjectsByUserid(Long userid) {
+        return projectHasUserRepository.findProjectsByUserid(userid);
+    }
+
+    @Override
+    public void deleteUsersFromProject(List<User> users, Project project) {
+        // get the project has users from the project
+        List<ProjectHasUser> projectHasUserList = project.getProjectHasUserList();
+        List<ProjectHasUser> projHasUsersToDelete = new ArrayList<>();
+        for (User userToDelete : users) {
+            for (ProjectHasUser projectHasUser : projectHasUserList) {
+                if (projectHasUser.getUser().equals(userToDelete)) {
+                    projHasUsersToDelete.add(projectHasUser);
+                }
+            }
+        }
+        project.getProjectHasUserList().removeAll(projHasUsersToDelete);
+        for (ProjectHasUser projectHasUser : projHasUsersToDelete) {
+            ProjectHasUser findById = projectHasUserRepository.findById(projectHasUser.getProjectHasUserid());
+            projectHasUserRepository.delete(findById);
+        }
+    }
+
+    @Override
+    public void addUsersToProject(List<User> users, Project project) {
+        for (User userToAdd : users) {
+            ProjectHasUser projectHasUser = new ProjectHasUser(project, userToAdd);
+            project.getProjectHasUserList().add(projectHasUser);
+            projectHasUserRepository.save(projectHasUser);
+        }
     }
 }

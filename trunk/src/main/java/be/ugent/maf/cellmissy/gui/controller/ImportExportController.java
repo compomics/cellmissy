@@ -21,6 +21,7 @@ import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.experiment.exporting.ExportExperimentDialog;
 import be.ugent.maf.cellmissy.gui.experiment.exporting.ExportTemplateDialog;
 import be.ugent.maf.cellmissy.gui.experiment.importing.ImportExperimentDialog;
@@ -38,7 +39,6 @@ import be.ugent.maf.cellmissy.service.TreatmentService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.CardLayout;
-import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,6 +48,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -101,6 +102,7 @@ public class ImportExportController {
     private ExportExperimentDialog exportExperimentDialog;
     private ImportExperimentDialog importExperimentDialog;
     private ExportTemplateDialog exportTemplateDialog;
+    private WaitingDialog waitingDialog;
     // parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -130,6 +132,8 @@ public class ImportExportController {
      */
     public void init() {
         bindingGroup = new BindingGroup();
+        // make a new waiting dialog here
+        waitingDialog = new WaitingDialog(cellMissyController.getCellMissyFrame(), false);
         // init views
         initExportExperimentDialog();
         initImportExperimentDialog();
@@ -173,15 +177,15 @@ public class ImportExportController {
         exportExperimentDialog = new ExportExperimentDialog(cellMissyController.getCellMissyFrame(), true);
         exportExperimentDialog.getProjectDescriptionTextArea().setLineWrap(true);
         exportExperimentDialog.getProjectDescriptionTextArea().setWrapStyleWord(true);
-        // hide progress bar and its label
-        exportExperimentDialog.getProgressBarLabel().setVisible(false);
-        exportExperimentDialog.getExportProgressBar().setVisible(false);
         // set icon for info label
         Icon icon = UIManager.getIcon("OptionPane.informationIcon");
         ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         exportExperimentDialog.getInfoLabel().setIcon(scaledIcon);
         // init projects list
-        projectBindingList = ObservableCollections.observableList(projectService.findAll());
+        List<Project> allProjects = projectService.findAll();
+        // sort the projects
+        Collections.sort(allProjects);
+        projectBindingList = ObservableCollections.observableList(allProjects);
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, exportExperimentDialog.getProjectsList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
@@ -223,7 +227,7 @@ public class ImportExportController {
                         exportExperimentDialog.getTimeFramesLabel().setText(" " + selectedExperiment.getTimeFrames().toString());
                         exportExperimentDialog.getInstrumentLabel().setText(" " + selectedExperiment.getInstrument().getName());
                         exportExperimentDialog.getPlateFormatLabel().setText(" " + selectedExperiment.getPlateFormat().toString());
-                        exportExperimentDialog.getNumberConditionsLabel().setText("" + selectedExperiment.getPlateConditionList().size());
+                        exportExperimentDialog.getNumberConditionsLabel().setText(" " + selectedExperiment.getPlateConditionList().size());
                         // set the model of the conditions table
                         updateConditionsTableModel(exportExperimentDialog.getConditionsDetailsTable(), selectedExperiment);
                     }
@@ -304,9 +308,6 @@ public class ImportExportController {
         importExperimentDialog.getInfoLabel().setIcon(scaledIcon);
         // set icon for info label
         importExperimentDialog.getInfoLabel1().setIcon(scaledIcon);
-        // hide progress bar and its label
-        importExperimentDialog.getProgressBarLabel().setVisible(false);
-        importExperimentDialog.getSaveExperimentProgressBar().setVisible(false);
         // customize table
         importExperimentDialog.getConditionsDetailsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         importExperimentDialog.getConditionsDetailsTable().getTableHeader().setReorderingAllowed(false);
@@ -656,6 +657,8 @@ public class ImportExportController {
         Long projectid = selectedProject.getProjectid();
         List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.PERFORMED);
         if (experimentList != null) {
+            // sort the experiments
+            Collections.sort(experimentList);
             experimentBindingList = ObservableCollections.observableList(experimentList);
             JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, exportExperimentDialog.getExperimentsList());
             bindingGroup.addBinding(jListBinding);
@@ -736,10 +739,11 @@ public class ImportExportController {
     }
 
     /**
-     * Swing worker to export the experiment
+     * Swing worker to export the experiment to an XML file
      */
     private class ExportExperimentSwingWorker extends SwingWorker<Void, Void> {
 
+        // the file to write the experiment to
         private File xmlFile;
 
         public ExportExperimentSwingWorker(File xmlFile) {
@@ -748,12 +752,12 @@ public class ImportExportController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            exportExperimentDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            // show progress bar and its label
-            exportExperimentDialog.getProgressBarLabel().setVisible(true);
-            exportExperimentDialog.getExportProgressBar().setVisible(true);
             //disable buttons and show a waiting cursor
             exportExperimentDialog.getExportButton().setEnabled(false);
+            exportExperimentDialog.getCancelButton().setEnabled(false);
+            // show waiting dialog
+            String title = "Experiment is being exported to file. Please wait...";
+            showWaitingDialog(title);
             // fetch the migration data
             for (PlateCondition plateCondition : experimentToExport.getPlateConditionList()) {
                 List<Well> wells = new ArrayList<>();
@@ -772,20 +776,20 @@ public class ImportExportController {
         protected void done() {
             try {
                 get();
-                // hide progress bar and its label
-                exportExperimentDialog.getProgressBarLabel().setVisible(false);
-                exportExperimentDialog.getExportProgressBar().setVisible(false);
+                // hide waiting dialog
+                waitingDialog.setVisible(false);
                 JOptionPane.showMessageDialog(exportExperimentDialog, "Experiment was successfully exported!", "experiment exported", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("experiment " + experimentToExport + "_" + experimentToExport.getProject() + " exported to file");
-                resetViewOnExportExperimentDialog();
+                // enable the buttons again
+                exportExperimentDialog.getCancelButton().setEnabled(true);
+                exportExperimentDialog.getExportButton().setEnabled(true);
                 exportExperimentDialog.setVisible(false);
+                resetViewOnExportExperimentDialog();
                 cellMissyController.onStartup();
             } catch (InterruptedException | ExecutionException | CancellationException ex) {
                 LOG.error(ex.getMessage(), ex);
             }
-            exportExperimentDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            // enable the button again
-            exportExperimentDialog.getExportButton().setEnabled(true);
+
         }
     }
 
@@ -802,10 +806,12 @@ public class ImportExportController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            exportTemplateDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             //disable buttons and show a waiting cursor
             exportTemplateDialog.getExportButton().setEnabled(false);
-            // export the experiment to file !
+            // show waiting dialog
+            String title = "Template is being exported to file. Please wait...";
+            showWaitingDialog(title);
+            // export the experiment to file
             exportExperimentTemplateToXMLFile(xmlFile);
             return null;
         }
@@ -814,6 +820,7 @@ public class ImportExportController {
         protected void done() {
             try {
                 get();
+                waitingDialog.setVisible(false);
                 JOptionPane.showMessageDialog(exportTemplateDialog, "Experiment template was successfully exported!", "experiment template exported", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("experiment template " + experimentTemplateToExport + "_" + experimentTemplateToExport.getProject() + " exported to file");
                 resetViewOnExportTemplateDialog();
@@ -822,17 +829,17 @@ public class ImportExportController {
             } catch (InterruptedException | ExecutionException | CancellationException ex) {
                 LOG.error(ex.getMessage(), ex);
             }
-            exportTemplateDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             // enable the button again
             exportTemplateDialog.getExportButton().setEnabled(true);
         }
     }
 
     /**
-     * Swing worker to import an experiment from an XML file
+     * Swing worker to import an experiment from an XML file.
      */
     private class ImportExperimentSwingWorker extends SwingWorker<Void, Void> {
 
+        // the XML file that has to be parsed to import the experiment
         private File xmlFile;
 
         public ImportExperimentSwingWorker(File xmlFile) {
@@ -841,7 +848,9 @@ public class ImportExportController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            importExperimentDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            // show waiting dialog
+            String title = "XML file is being parsed. Please wait...";
+            showWaitingDialog(title);
             // parse xmlfile
             parseXMLFile(xmlFile);
             return null;
@@ -851,6 +860,7 @@ public class ImportExportController {
         protected void done() {
             try {
                 get();
+                waitingDialog.setVisible(false);
                 // if parsing the XML file was successfull, the experiment is not null, and we can enable the next experiment button
                 if (importedExperiment != null) {
                     importExperimentDialog.getNextButton().setEnabled(true);
@@ -859,7 +869,6 @@ public class ImportExportController {
                 JOptionPane.showMessageDialog(importExperimentDialog, "Unexpected error: " + ex.getMessage(), "unexpected error", JOptionPane.ERROR_MESSAGE);
                 LOG.error(ex.getMessage(), ex);
             }
-            importExperimentDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
 
@@ -872,15 +881,13 @@ public class ImportExportController {
         protected Void doInBackground() throws Exception {
             // finish disable button
             importExperimentDialog.getSaveExperimentButton().setEnabled(false);
-            // show waiting cursor
-            importExperimentDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            // show also progress bar and its label
-            importExperimentDialog.getProgressBarLabel().setVisible(true);
-            importExperimentDialog.getSaveExperimentProgressBar().setVisible(true);
             // disable other buttons as well
             importExperimentDialog.getPreviousButton().setEnabled(false);
             importExperimentDialog.getNextButton().setEnabled(false);
             importExperimentDialog.getCancelButton().setEnabled(false);
+            // set the title of waiting dialog and show it
+            String title = "Experiment is being saved to DB. Please wait...";
+            showWaitingDialog(title);
             //save the new experiment to the DB
             // first we need to check if other objects need to be stored, then we actually save the experiment
             persistNewObjects();
@@ -927,10 +934,8 @@ public class ImportExportController {
         protected void done() {
             try {
                 get();
-                //show back default cursor and hide progress bar and its label
-                importExperimentDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                importExperimentDialog.getProgressBarLabel().setVisible(false);
-                importExperimentDialog.getSaveExperimentProgressBar().setVisible(false);
+                // hide waiting dialog
+                waitingDialog.setVisible(false);
                 JOptionPane.showMessageDialog(importExperimentDialog, "Imported experiment was successfully saved to DB.", "imported experiment saved", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("Experiment " + importedExperiment + "_" + importedExperiment.getProject() + " saved");
                 // hide dialog
@@ -1209,5 +1214,17 @@ public class ImportExportController {
             importExperimentDialog.getNewTreatmentLabel().setText(" no new parameters to add");
             importExperimentDialog.getNewTreatmentLabel().setFont(new Font("Tahoma", Font.ITALIC, 12));
         }
+    }
+
+    /**
+     * Show the waiting dialog: set the title and center the dialog on the main
+     * frame. Set the dialog to visible.
+     *
+     * @param title
+     */
+    private void showWaitingDialog(String title) {
+        waitingDialog.setTitle(title);
+        GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), waitingDialog);
+        waitingDialog.setVisible(true);
     }
 }

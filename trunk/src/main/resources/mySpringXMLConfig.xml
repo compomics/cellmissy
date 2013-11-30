@@ -2,12 +2,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:context="http://www.springframework.org/schema/context"       
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context.xsd       
+       http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
-    
+
     <!-- Property placeholder-->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
@@ -18,9 +18,9 @@
         </property>
         <property name="ignoreUnresolvablePlaceholders">
             <value>true</value>
-        </property>       
+        </property>
     </bean>
-    
+
     <!-- transaction beans -->
     <bean id="limsDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${db.driver}"/>
@@ -47,11 +47,11 @@
         </property>
         <property name="persistenceUnitName" value="limspersistenceunit"/>
     </bean>
-    
+
     <tx:annotation-driven/>
-    
+
     <context:annotation-config/>
-    
+
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
@@ -67,46 +67,46 @@
         <property name="registeredName" value="jasyptHibernateEncryptor"/>
         <property name="encryptor" ref="stringEncryptor"/>
     </bean>
-    
+
     <!-- repository beans -->
     <context:component-scan base-package="be.ugent.maf.cellmissy.repository">
         <context:include-filter type="annotation"
                                 expression="org.springframework.stereotype.Repository"/>
     </context:component-scan>
-    
+
     <!-- service beans -->
     <context:component-scan base-package="be.ugent.maf.cellmissy">
         <context:include-filter type="annotation"
                                 expression="org.springframework.stereotype.Service"/>
-    </context:component-scan> 
-    
+    </context:component-scan>
+
     <!-- controller beans -->
     <context:component-scan base-package="be.ugent.maf.cellmissy">
         <context:include-filter type="annotation"
                                 expression="org.springframework.stereotype.Controller"/>
-    </context:component-scan> 
-    
+    </context:component-scan>
+
     <!-- analysis implementations beans -->
     <!-- specify a bean name for each implementation, and the fully qualified classname, i.e.: including package -->
     <bean id="benjamini" class="be.ugent.maf.cellmissy.analysis.impl.BenjaminiCorrector">
     </bean>
-    
+
     <bean id="bonferroni" class="be.ugent.maf.cellmissy.analysis.impl.BonferroniCorrector">
     </bean>
-    
+
     <bean id="iQR_R_algorithm" class="be.ugent.maf.cellmissy.analysis.impl.IQRRAlgorithmOutliersHandler">
     </bean>
-    
+
     <bean id="iQR_Excel_algorithm" class="be.ugent.maf.cellmissy.analysis.impl.IQRExcelAlgorithmOutliersHandler">
     </bean>
-    
+
     <bean id="normal_Kernel" class="be.ugent.maf.cellmissy.analysis.impl.NormalKernelDensityEstimator">
     </bean>
-    
+
     <bean id="euclidean_Distance" class="be.ugent.maf.cellmissy.analysis.impl.EuclideanDistanceMetric">
     </bean>
-    
+
     <bean id="mann_Whitney_Statistics" class="be.ugent.maf.cellmissy.analysis.impl.MannWhitneyStatisticsCalculator">
     </bean>
-    
+
 </beans>

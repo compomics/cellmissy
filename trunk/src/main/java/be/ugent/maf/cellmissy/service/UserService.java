@@ -5,10 +5,11 @@
 package be.ugent.maf.cellmissy.service;
 
 import be.ugent.maf.cellmissy.entity.User;
+import java.util.List;
 
 /**
  *
- * @author niels
+ * @author Paola
  */
 public interface UserService extends GenericService<User, Long> {
 
@@ -19,7 +20,7 @@ public interface UserService extends GenericService<User, Long> {
      * @param lastName
      * @return found User, if any
      */
-    User findByFullName(String firstName, String lastName);
+    public User findByFullName(String firstName, String lastName);
 
     /**
      * find an User by firstName
@@ -27,7 +28,7 @@ public interface UserService extends GenericService<User, Long> {
      * @param firstName
      * @return found User, if any
      */
-    User findByFirstName(String firstName);
+    public User findByFirstName(String firstName);
 
     /**
      * find an User by lastName
@@ -35,7 +36,7 @@ public interface UserService extends GenericService<User, Long> {
      * @param lastName
      * @return found User, if any
      */
-    User findByLastName(String lastName);
+    public User findByLastName(String lastName);
 
     /**
      * Find the user by login credentials.
@@ -44,5 +45,13 @@ public interface UserService extends GenericService<User, Long> {
      * @param password the user password
      * @return the found user
      */
-    User findByLoginCredentials(String userName, String password);
+    public User findByLoginCredentials(String userName, String password);
+
+    /**
+     * Find List of users busy with a certain project, given the project id.
+     *
+     * @param projectid
+     * @return
+     */
+    public List<User> findUsersByProjectid(Long projectid);
 }

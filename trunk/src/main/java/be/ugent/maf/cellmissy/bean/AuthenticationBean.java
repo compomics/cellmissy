@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.User;
 import org.springframework.stereotype.Component;
 
 /**
+ * Authentication Bean: this keeps the current user in the application.
  *
  * @author Paola Masuzzo
  */
@@ -24,7 +25,8 @@ public class AuthenticationBean {
 
     /**
      * Get the current user
-     * @return 
+     *
+     * @return
      */
     public User getCurrentUser() {
         return currentUser;
@@ -32,7 +34,8 @@ public class AuthenticationBean {
 
     /**
      * Set the current user
-     * @param currentUser 
+     *
+     * @param currentUser
      */
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;

@@ -5,7 +5,7 @@
 
     <groupId>be.ugent.maf</groupId>
     <artifactId>CellMissy</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <packaging>jar</packaging>
 
     <name>CellMissy</name>
@@ -79,7 +79,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--            <plugin>
+<!--            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
                 <version>1.5</version>
@@ -98,6 +98,7 @@
                     <excludes>
                         <exclude>be/ugent/maf/cellmissy/entity/User.java</exclude>
                         <exclude>be/ugent/maf/cellmissy/entity/Role.java</exclude>
+                        <exclude>be/ugent/maf/cellmissy/entity/ProjectHasUser.java</exclude>
                     </excludes>
                     <outputDirectory>${project.build.directory}/schemas</outputDirectory>
                 </configuration>

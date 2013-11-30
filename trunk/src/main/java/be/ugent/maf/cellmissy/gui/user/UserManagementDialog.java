@@ -52,6 +52,14 @@ public class UserManagementDialog extends javax.swing.JDialog {
         return roleComboBox;
     }
 
+    public JList getProjectsList() {
+        return projectsList;
+    }
+
+    public JButton getQuestionButton() {
+        return questionButton;
+    }
+
     /**
      * Creates new form UserManagementDialog
      *
@@ -71,8 +79,11 @@ public class UserManagementDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         usersPanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        usersScrollPane = new javax.swing.JScrollPane();
         usersList = new javax.swing.JList();
+        projectsPanel = new javax.swing.JPanel();
+        projectsScrollPane = new javax.swing.JScrollPane();
+        projectsList = new javax.swing.JList();
         detailsPanel = new javax.swing.JPanel();
         firstNameLabel = new javax.swing.JLabel();
         firstNameTextField = new javax.swing.JTextField();
@@ -87,6 +98,7 @@ public class UserManagementDialog extends javax.swing.JDialog {
         addUserButton = new javax.swing.JButton();
         deleteUserButton = new javax.swing.JButton();
         saveUserButton = new javax.swing.JButton();
+        questionButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("User Management");
@@ -95,18 +107,14 @@ public class UserManagementDialog extends javax.swing.JDialog {
         usersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Users"));
         usersPanel.setMinimumSize(new java.awt.Dimension(20, 20));
 
-        jScrollPane1.setBackground(new java.awt.Color(255, 255, 255));
-        jScrollPane1.setBorder(null);
-        jScrollPane1.setAutoscrolls(true);
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(45, 100));
+        usersScrollPane.setBackground(new java.awt.Color(255, 255, 255));
+        usersScrollPane.setBorder(null);
+        usersScrollPane.setAutoscrolls(true);
+        usersScrollPane.setPreferredSize(new java.awt.Dimension(45, 100));
 
-        usersList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
+        usersList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         usersList.setVisibleRowCount(2);
-        jScrollPane1.setViewportView(usersList);
+        usersScrollPane.setViewportView(usersList);
 
         javax.swing.GroupLayout usersPanelLayout = new javax.swing.GroupLayout(usersPanel);
         usersPanel.setLayout(usersPanelLayout);
@@ -114,15 +122,46 @@ public class UserManagementDialog extends javax.swing.JDialog {
             usersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(usersPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(usersScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
                 .addContainerGap())
         );
         usersPanelLayout.setVerticalGroup(
             usersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(usersPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(usersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        projectsPanel.setBackground(new java.awt.Color(255, 255, 255));
+        projectsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected User Projects "));
+
+        projectsScrollPane.setBackground(new java.awt.Color(255, 255, 255));
+        projectsScrollPane.setBorder(null);
+        projectsScrollPane.setAutoscrolls(true);
+        projectsScrollPane.setPreferredSize(new java.awt.Dimension(45, 100));
+
+        projectsList.setEnabled(false);
+        projectsList.setFocusable(false);
+        projectsList.setRequestFocusEnabled(false);
+        projectsList.setVisibleRowCount(2);
+        projectsScrollPane.setViewportView(projectsList);
+
+        javax.swing.GroupLayout projectsPanelLayout = new javax.swing.GroupLayout(projectsPanel);
+        projectsPanel.setLayout(projectsPanelLayout);
+        projectsPanelLayout.setHorizontalGroup(
+            projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(projectsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        projectsPanelLayout.setVerticalGroup(
+            projectsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(projectsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(projectsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         detailsPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -147,6 +186,9 @@ public class UserManagementDialog extends javax.swing.JDialog {
 
         saveUserButton.setText("Save/Update User");
         saveUserButton.setToolTipText("save or update the selected user");
+
+        questionButton.setBorderPainted(false);
+        questionButton.setContentAreaFilled(false);
 
         javax.swing.GroupLayout detailsPanelLayout = new javax.swing.GroupLayout(detailsPanel);
         detailsPanel.setLayout(detailsPanelLayout);
@@ -177,7 +219,8 @@ public class UserManagementDialog extends javax.swing.JDialog {
                     .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(saveUserButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(addUserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(deleteUserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(deleteUserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(questionButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -189,6 +232,9 @@ public class UserManagementDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(detailsPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(questionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(addUserButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deleteUserButton)
@@ -224,16 +270,21 @@ public class UserManagementDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(usersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(detailsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(detailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(usersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(projectsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(usersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(usersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(projectsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(31, 31, 31)
                 .addComponent(detailsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -286,14 +337,18 @@ public class UserManagementDialog extends javax.swing.JDialog {
     private javax.swing.JLabel firstNameLabel;
     private javax.swing.JTextField firstNameTextField;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lastNameLabel;
     private javax.swing.JTextField lastNameTextField;
     private javax.swing.JPasswordField passwordField;
+    private javax.swing.JList projectsList;
+    private javax.swing.JPanel projectsPanel;
+    private javax.swing.JScrollPane projectsScrollPane;
+    private javax.swing.JButton questionButton;
     private javax.swing.JComboBox roleComboBox;
     private javax.swing.JButton saveUserButton;
     private javax.swing.JLabel selectRoleLabel;
     private javax.swing.JList usersList;
     private javax.swing.JPanel usersPanel;
+    private javax.swing.JScrollPane usersScrollPane;
     // End of variables declaration//GEN-END:variables
 }

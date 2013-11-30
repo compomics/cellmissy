@@ -1,7 +1,11 @@
 INSERT INTO `user` VALUES (1,'testuser1@test.com','user1','user1','7xyb63kC2ILEWopdoLiakOW4s8C9H5j/','ADMIN_USER');
+INSERT INTO `user` VALUES (2,'testuser2@test.com','user2','user2','7xyb63kC2ILEWopdoLiakOW4s8C9H5j/','STANDARD_USER');
 INSERT INTO `project` (`projectid`, `project_number`, `description`) VALUES ('1', '1', 'test');
 INSERT INTO `project` (`projectid`, `project_number`, `description`) VALUES ('2', '2', 'test2');
 INSERT INTO `project` (`projectid`, `project_number`) VALUES ('3', '3');
+
+INSERT INTO `project_has_user` (`project_has_userid`, `l_projectid`, `l_userid`) VALUES ('1', '1', '1');
+INSERT INTO `project_has_user` (`project_has_userid`, `l_projectid`, `l_userid`) VALUES ('2', '1', '2');
 
 INSERT INTO matrix_dimension VALUES (1,'2D'),(2,'3D'),(3, '2.5D');
 INSERT INTO `instrument` (`instrumentid`,`conversion_factor`,`name`) VALUES ('1', '1.55038','generic microscope');
