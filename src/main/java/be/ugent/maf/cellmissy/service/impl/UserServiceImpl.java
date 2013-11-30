@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.service.impl;
 
 import be.ugent.maf.cellmissy.entity.User;
+import be.ugent.maf.cellmissy.repository.ProjectHasUserRepository;
 import be.ugent.maf.cellmissy.repository.UserRepository;
 import be.ugent.maf.cellmissy.service.UserService;
 import java.util.List;
@@ -22,6 +23,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ProjectHasUserRepository projectHasUserRepository;
 
     @Override
     public User findByFullName(String firstName, String lastName) {
@@ -73,5 +76,10 @@ public class UserServiceImpl implements UserService {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<User> findUsersByProjectid(Long projectid) {
+        return projectHasUserRepository.findUsersByProjectid(projectid);
     }
 }

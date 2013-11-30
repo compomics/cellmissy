@@ -204,7 +204,7 @@ public class GenericImagedPlateController {
                             WellHasImagingType newWellHasImagingType = new WellHasImagingType(selectedWellGui.getWell(), currentImagingType, currentAlgorithm);
                             // get the list of WellHasImagingType for the selected well
                             List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
-                            // 
+                            //
                             reloadData(selectedWellGui);
                             // check if the wellHasImagingType was already processed
                             // this is comparing objects with column, row numbers, and algorithm,imaging types
@@ -229,7 +229,7 @@ public class GenericImagedPlateController {
                                 Object[] options = {"Overwrite", "Clear data", "Add location on same well", "Cancel"};
                                 int showOptionDialog = JOptionPane.showOptionDialog(null, "Data already loaded for this well / dataset / imaging type.\nWhat do you want to do now?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[3]);
                                 switch (showOptionDialog) {
-                                    case 0: // overwrite loaded data:      
+                                    case 0: // overwrite loaded data:
                                         // choose another file to parse (another dataset to load)
                                         File newFile = chooseData();
                                         if (newFile != null) {
@@ -392,12 +392,12 @@ public class GenericImagedPlateController {
                 return ("text files only");
             }
         });
-        // Removing "All Files" option from FileType 
+        // Removing "All Files" option from FileType
         fileChooser.setAcceptAllFileFilterUsed(false);
         int returnVal = fileChooser.showOpenDialog(loadExperimentFromGenericInputController.getCellMissyFrame());
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             // load selected data
-            // file to parse 
+            // file to parse
             bulkCellFile = fileChooser.getSelectedFile();
         } else {
             loadExperimentFromGenericInputController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
@@ -617,7 +617,7 @@ public class GenericImagedPlateController {
 
                 // check that a node is actually selected
                 if (selectedNode != null) {
-                    // iterate through the algorithms 
+                    // iterate through the algorithms
                     for (int i = 0; i < algorithmsBindingList.size(); i++) {
                         if (selectedNode.toString().equals(algorithmsBindingList.get(i).getAlgorithmName())) {
                             algoToRemove = algorithmsBindingList.get(i);

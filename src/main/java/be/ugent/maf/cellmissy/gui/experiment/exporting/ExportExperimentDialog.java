@@ -7,7 +7,6 @@ package be.ugent.maf.cellmissy.gui.experiment.exporting;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JProgressBar;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 
@@ -65,14 +64,6 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
         return exportButton;
     }
 
-    public JProgressBar getExportProgressBar() {
-        return exportProgressBar;
-    }
-
-    public JLabel getProgressBarLabel() {
-        return progressBarLabel;
-    }
-
     public JLabel getInfoLabel() {
         return infoLabel;
     }
@@ -96,16 +87,15 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
         java.awt.GridBagConstraints gridBagConstraints;
 
         overviewPanel = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        projectsList = new javax.swing.JList();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        experimentsList = new javax.swing.JList();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         projectDescriptionTextArea = new javax.swing.JTextArea();
         infoLabel = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        projectsList = new javax.swing.JList();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        experimentsList = new javax.swing.JList();
         expDetailsPanel = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         plateFormatLabel = new javax.swing.JLabel();
@@ -116,7 +106,6 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
         jLabel9 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
         purposeTextArea = new javax.swing.JTextArea();
-        jLabel12 = new javax.swing.JLabel();
         userLabel = new javax.swing.JLabel();
         instrumentLabel = new javax.swing.JLabel();
         timeFramesLabel = new javax.swing.JLabel();
@@ -126,35 +115,19 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
         bottomPanel = new javax.swing.JPanel();
         exportButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        exportProgressBar = new javax.swing.JProgressBar();
-        progressBarLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Export Experiment");
-        setAlwaysOnTop(true);
         setMinimumSize(new java.awt.Dimension(850, 650));
         setModal(true);
-        setPreferredSize(new java.awt.Dimension(850, 650));
+        setPreferredSize(new java.awt.Dimension(900, 750));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         overviewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Overview"));
         overviewPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         overviewPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel3.setText("Projects");
-
-        projectsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(projectsList);
-
-        experimentsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane2.setViewportView(experimentsList);
-
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel4.setText("Performed Experiments");
-
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("Project Description");
+        jScrollPane4.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Description"));
 
         projectDescriptionTextArea.setEditable(false);
         projectDescriptionTextArea.setColumns(20);
@@ -165,53 +138,80 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
 
         infoLabel.setText("Click on a project to see the relative performed experiments.");
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Projects"));
+
+        jScrollPane1.setBorder(null);
+
+        projectsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(projectsList);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Performed Experiments"));
+
+        jScrollPane2.setBorder(null);
+
+        experimentsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(experimentsList);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout overviewPanelLayout = new javax.swing.GroupLayout(overviewPanel);
         overviewPanel.setLayout(overviewPanelLayout);
         overviewPanelLayout.setHorizontalGroup(
             overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(overviewPanelLayout.createSequentialGroup()
-                .addGap(183, 183, 183)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(overviewPanelLayout.createSequentialGroup()
-                .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addContainerGap()
+                .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(infoLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, overviewPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(overviewPanelLayout.createSequentialGroup()
-                            .addGap(10, 10, 10)
-                            .addComponent(jLabel8))
-                        .addGroup(overviewPanelLayout.createSequentialGroup()
-                            .addContainerGap()
-                            .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, overviewPanelLayout.createSequentialGroup()
-                                    .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel3)
-                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(15, Short.MAX_VALUE))
+                        .addComponent(jScrollPane4)
+                        .addGap(4, 4, 4))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, overviewPanelLayout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(28, 28, 28))
         );
-
-        overviewPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jScrollPane1, jScrollPane2});
-
         overviewPanelLayout.setVerticalGroup(
             overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, overviewPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(infoLabel)
                 .addGap(19, 19, 19))
@@ -244,6 +244,7 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
 
         jLabel9.setText("number of time frames");
 
+        jScrollPane5.setBorder(javax.swing.BorderFactory.createTitledBorder("Purpose"));
         jScrollPane5.setOpaque(false);
 
         purposeTextArea.setEditable(false);
@@ -253,8 +254,6 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
         purposeTextArea.setFocusable(false);
         purposeTextArea.setPreferredSize(new java.awt.Dimension(170, 94));
         jScrollPane5.setViewportView(purposeTextArea);
-
-        jLabel12.setText("purpose");
 
         userLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
 
@@ -267,9 +266,9 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
         expDetailsPanelLayout.setHorizontalGroup(
             expDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(expDetailsPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(expDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(expDetailsPanelLayout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(expDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6)
                             .addComponent(jLabel9)
@@ -283,16 +282,11 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
                             .addComponent(plateFormatLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(numberConditionsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(userLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(expDetailsPanelLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jLabel12))
-                    .addGroup(expDetailsPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)))
-                .addGap(69, 69, 69))
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
-        expDetailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel10, jLabel11, jLabel12, jLabel6, jLabel7, jLabel9});
+        expDetailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel10, jLabel11, jLabel6, jLabel7, jLabel9});
 
         expDetailsPanelLayout.setVerticalGroup(
             expDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -318,10 +312,8 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
                 .addGroup(expDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(numberConditionsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -361,14 +353,14 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 722, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 844, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tablePanelLayout.setVerticalGroup(
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -389,21 +381,12 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
 
         cancelButton.setText("Cancel");
 
-        exportProgressBar.setIndeterminate(true);
-
-        progressBarLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        progressBarLabel.setText("Please wait, experiment is being exported to file !");
-
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bottomPanelLayout.createSequentialGroup()
-                .addContainerGap(75, Short.MAX_VALUE)
-                .addComponent(progressBarLabel)
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addComponent(exportProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addContainerGap(638, Short.MAX_VALUE)
                 .addComponent(exportButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(cancelButton)
@@ -415,21 +398,14 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bottomPanelLayout.createSequentialGroup()
-                .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(exportButton)
-                        .addComponent(cancelButton))
-                    .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(bottomPanelLayout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(progressBarLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(exportProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap()
+                .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(exportButton)
+                    .addComponent(cancelButton))
                 .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {cancelButton, exportButton, exportProgressBar, progressBarLabel});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {cancelButton, exportButton});
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -492,18 +468,15 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
     private javax.swing.JPanel expDetailsPanel;
     private javax.swing.JList experimentsList;
     private javax.swing.JButton exportButton;
-    private javax.swing.JProgressBar exportProgressBar;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel instrumentLabel;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -512,7 +485,6 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
     private javax.swing.JLabel numberConditionsLabel;
     private javax.swing.JPanel overviewPanel;
     private javax.swing.JLabel plateFormatLabel;
-    private javax.swing.JLabel progressBarLabel;
     private javax.swing.JTextArea projectDescriptionTextArea;
     private javax.swing.JList projectsList;
     private javax.swing.JTextArea purposeTextArea;

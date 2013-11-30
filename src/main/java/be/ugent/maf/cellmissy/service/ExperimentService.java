@@ -8,7 +8,6 @@ import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.ImagingType;
-import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.exception.CellMiaFoldersException;
 import java.io.File;
 import java.io.FileNotFoundException;

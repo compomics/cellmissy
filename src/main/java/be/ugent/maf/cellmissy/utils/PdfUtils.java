@@ -27,13 +27,50 @@ import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 
 /**
- * A utilities class for PDF files design - creation.
+ * A utilities class for PDF files design - creation. CellMissy uses iText, an
+ * open source library, for the creation of PDF files.
  *
  * @author Paola Masuzzo
  */
 public class PdfUtils {
 
+    // logger
     private static final Logger LOG = Logger.getLogger(PdfUtils.class);
+    // iText fonts for the PDF documents: body, bold and title fonts
+    private static Font bodyFont = new Font(Font.HELVETICA, 8);
+    private static Font boldFont = new Font(Font.HELVETICA, 8, Font.BOLD);
+    private static Font titleFont = new Font(Font.HELVETICA, 10, Font.BOLD);
+    // sizes for charts
+    private static int chartWidth = 500;
+    private static int chartHeight = 450;
+    private static int rectChartHeigth = 300;
+
+    /**
+     * Getters
+     */
+    public static Font getBodyFont() {
+        return bodyFont;
+    }
+
+    public static Font getBoldFont() {
+        return boldFont;
+    }
+
+    public static Font getTitleFont() {
+        return titleFont;
+    }
+
+    public static int getChartWidth() {
+        return chartWidth;
+    }
+
+    public static int getChartHeight() {
+        return chartHeight;
+    }
+
+    public static int getRectChartHeigth() {
+        return rectChartHeigth;
+    }
 
     /**
      * Get an image to add to the document from a JFreeChart
@@ -77,7 +114,7 @@ public class PdfUtils {
         Graphics2D graphics = template.createGraphics(imageWidth, imageHeight);
         panel.printAll(graphics);
         graphics.dispose();
-        // wrap the pdfTemplate inside an image ensures better quality (pixels) 
+        // wrap the pdfTemplate inside an image ensures better quality (pixels)
         try {
             image = Image.getInstance(template);
         } catch (BadElementException ex) {
@@ -145,7 +182,6 @@ public class PdfUtils {
     /**
      * Set up the look of a PdfPTable.
      *
-     *
      * @param dataTable
      */
     public static void setUpPdfPTable(PdfPTable dataTable) {
@@ -179,7 +215,6 @@ public class PdfUtils {
 
     /**
      * Add a cell with coloured border to a table
-     *
      *
      * @param table
      * @param color

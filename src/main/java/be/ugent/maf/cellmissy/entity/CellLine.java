@@ -147,7 +147,6 @@ public class CellLine implements Serializable {
         this.cellLineType = cellLineType;
     }
 
-    @XmlTransient
     public PlateCondition getPlateCondition() {
         return plateCondition;
     }

@@ -14,5 +14,4 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("projectRepository")
 public class ProjectJpaRepository extends GenericJpaRepository<Project, Long> implements ProjectRepository {
-    
 }

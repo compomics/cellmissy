@@ -4,10 +4,13 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.management;
 
+import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
+import be.ugent.maf.cellmissy.gui.user.UserInfoDialog;
 import be.ugent.maf.cellmissy.gui.user.UserManagementDialog;
+import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.service.UserService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -15,10 +18,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.PersistenceException;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -34,8 +43,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * User Management Controller: user management (create, search and delete users from
- * DB) Parent Controller: CellMissy Controller (main controller)
+ * User Management Controller: user management (create, search and delete users
+ * from DB) Parent Controller: CellMissy Controller (main controller)
  *
  * @author Paola
  */
@@ -45,15 +54,19 @@ public class UserManagementController {
     private static final Logger LOG = Logger.getLogger(UserManagementController.class);
     //model
     private ObservableList<User> userBindingList;
+    private ObservableList<Project> projectBindingList;
     private BindingGroup bindingGroup;
     //view
     private UserManagementDialog userManagementDialog;
+    private UserInfoDialog userInfoDialog;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
     //services
     @Autowired
     private UserService userService;
+    @Autowired
+    private ProjectService projectService;
 
     /**
      * initialize controller
@@ -62,6 +75,7 @@ public class UserManagementController {
         bindingGroup = new BindingGroup();
         //create a new user dialog and init view
         userManagementDialog = new UserManagementDialog(cellMissyController.getCellMissyFrame(), true);
+        userInfoDialog = new UserInfoDialog(cellMissyController.getCellMissyFrame(), true);
         // init main view
         initUserManagementDialog();
     }
@@ -98,11 +112,16 @@ public class UserManagementController {
      * initialize User Dialog
      */
     private void initUserManagementDialog() {
+        // set icon for question button
+        Icon questionIcon = UIManager.getIcon("OptionPane.questionIcon");
+        ImageIcon scaledQuestionIcon = GuiUtils.getScaledIcon(questionIcon);
+        userManagementDialog.getQuestionButton().setIcon(scaledQuestionIcon);
         // init userJList
-        userBindingList = ObservableCollections.observableList(userService.findAll());
+        List<User> allUsers = userService.findAll();
+        Collections.sort(allUsers);
+        userBindingList = ObservableCollections.observableList(allUsers);
         JListBinding userListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, userBindingList, userManagementDialog.getUsersList());
         bindingGroup.addBinding(userListBinding);
-
         // init user binding
         // autobind first name
         Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ_WRITE, userManagementDialog.getUsersList(), BeanProperty.create("selectedElement.firstName"), userManagementDialog.getFirstNameTextField(), BeanProperty.create("text"), "firstnamebinding");
@@ -123,6 +142,30 @@ public class UserManagementController {
         bindingGroup.bind();
         // do nothing on close the dialog
         userManagementDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+        /**
+         * add mouse listeners
+         */
+        //show experiments for the project selected
+        userManagementDialog.getUsersList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    User selectedUser = (User) userManagementDialog.getUsersList().getSelectedValue();
+                    if (selectedUser != null) {
+                        Long userid = selectedUser.getUserid();
+                        // get the relative projects by userid
+                        List<Project> projects = projectService.findProjectsByUserid(userid);
+                        Collections.sort(projects);
+                        // init projectJlist
+                        projectBindingList = ObservableCollections.observableList(projects);
+                        JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, userManagementDialog.getProjectsList());
+                        bindingGroup.addBinding(jListBinding);
+                        bindingGroup.bind();
+                    }
+                }
+            }
+        });
 
         /**
          * Add action listeners
@@ -219,6 +262,17 @@ public class UserManagementController {
                 } else {
                     userManagementDialog.setVisible(false);
                 }
+            }
+        });
+
+        // add action Listener to the question/info button
+        userManagementDialog.getQuestionButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                userInfoDialog.pack();
+                // pack and show info dialog
+                GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), userInfoDialog);
+                userInfoDialog.setVisible(true);
             }
         });
 

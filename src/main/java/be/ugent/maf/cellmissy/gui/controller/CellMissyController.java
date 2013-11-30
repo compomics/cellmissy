@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.gui.controller.management.InstrumentManagementController;
 import be.ugent.maf.cellmissy.gui.controller.management.UserManagementController;
 import be.ugent.maf.cellmissy.gui.controller.setup.SetupExperimentController;
@@ -44,8 +45,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Main Controller; Child Controllers: User Management, Setup Experiment, Load
- * Experiment, Data Analysis controllers.
+ * Main Controller Child Controllers: User Management, Setup Experiment, Load
+ * Experiment, Data Analysis - controllers
  *
  * @author Paola
  */
@@ -53,6 +54,7 @@ import org.springframework.stereotype.Controller;
 public class CellMissyController {
 
     private static final Logger LOG = Logger.getLogger(CellMissyController.class);
+    // model
     // model
     private boolean firstSetup;
     private boolean firstAreaAnalysis;
@@ -114,6 +116,10 @@ public class CellMissyController {
     public void onStartup() {
         GuiUtils.centerDialogOnFrame(cellMissyFrame, startupDialog);
         startupDialog.setVisible(true);
+    }
+
+    public void addNewProjectToList(Project project) {
+        overviewController.getProjectBindingList().add(project);
     }
 
     /**
@@ -308,8 +314,7 @@ public class CellMissyController {
     }
 
     /**
-     * Make the frame visible and enter the application after user has logged
-     * in.
+     * Make the frame visible and enter the application after user has logged in
      */
     public void enterTheApplication() {
         cellMissyFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -327,6 +332,10 @@ public class CellMissyController {
     private void initMainFrame() {
         // do nothing on closing the main frame; ask user for the OK to proceed
         cellMissyFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        // we disable these menu items, will be enabled only under ceratin conditions in the setup phase
+        cellMissyFrame.getImportSettingsMenuItem().setEnabled(false);
+        cellMissyFrame.getImportTemplateMenuItem().setEnabled(false);
+
         // ask the user if he wants to actually exit from the application
         cellMissyFrame.addWindowListener(new WindowAdapter() {
             @Override
@@ -409,14 +418,27 @@ public class CellMissyController {
             }
         });
 
+        // import setup settings
+        cellMissyFrame.getImportSettingsMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onImportSettings();
+            }
+        });
+
+        // import setup template
+        cellMissyFrame.getImportTemplateMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onImportTemplate();
+            }
+        });
 
         // add the hyperlink events
         aboutDialog.getAboutEditorPane().addHyperlinkListener(new LinkListener(aboutDialog.getAboutEditorPane()));
         helpDialog.getHelpEditorPane().addHyperlinkListener(new LinkListener(helpDialog.getHelpEditorPane()));
-
         aboutDialog.getAboutEditorPane().setCaretPosition(0);
         helpDialog.getHelpEditorPane().setCaretPosition(0);
-
         Image helpImage = new ImageIcon(getClass().getResource("/icons/helpIcon.png")).getImage();
         helpDialog.setIconImage(helpImage);
         Image aboutImage = new ImageIcon(getClass().getResource("/icons/informationIcon.png")).getImage();
@@ -475,7 +497,6 @@ public class CellMissyController {
             }
         });
 
-
         // overview
         startupDialog.getOverviewButton().addActionListener(new ActionListener() {
             @Override
@@ -503,9 +524,9 @@ public class CellMissyController {
             String menuItemText = ((JMenuItem) e.getSource()).getText();
             if (menuItemText.equalsIgnoreCase("create experiment") && switchCard(menuItemText)) {
                 onCreateExperiment();
-            } else if (menuItemText.equalsIgnoreCase("...area") && switchCard(menuItemText)) {
+            } else if (menuItemText.equalsIgnoreCase("... area") && switchCard(menuItemText)) {
                 onAreaAnalysis();
-            } else if (menuItemText.equalsIgnoreCase("...single cell") && switchCard(menuItemText)) {
+            } else if (menuItemText.equalsIgnoreCase("... single cell") && switchCard(menuItemText)) {
                 onSingleCellAnalysis();
             } else if (menuItemText.equalsIgnoreCase("... from CELLMIA") && switchCard(menuItemText)) {
                 onLoadingFromCellMia();
@@ -535,7 +556,6 @@ public class CellMissyController {
         }
         getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromGenericInputParentPanel().getName());
         firstLoadingFromGenericInput = false;
-        loadExperimentFromGenericInputController.setExpListRenderer(getCurrentUser());
     }
 
     /**
@@ -547,7 +567,6 @@ public class CellMissyController {
         }
         getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromCellMiaParentPanel().getName());
         firstLoadingFromCellMia = false;
-        loadExperimentFromCellMiaController.setExpListRenderer(getCurrentUser());
     }
 
     /**
@@ -559,7 +578,6 @@ public class CellMissyController {
         }
         getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getAreaAnalysisParentPanel().getName());
         firstAreaAnalysis = false;
-        areaMainController.setExpListRenderer(getCurrentUser());
     }
 
     /**
@@ -611,10 +629,35 @@ public class CellMissyController {
     }
 
     /**
-     * Action performed on export experiment template to file.
+     * Action performed on export experiment template to file. If we are setting
+     * up an experiment, the current template will be exported. If the user is
+     * performing other tasks in CellMissy, a specific dialog will be shown,
+     * through the import-export controller. In this last case, the user has to
+     * select an experiment and export the template from it.
      */
     private void onExportTemplate() {
-        importExportController.showExportTemplateDialog();
+        String currentCardName = GuiUtils.getCurrentCardName(cellMissyFrame.getBackgroundPanel());
+        if (currentCardName.equalsIgnoreCase("setupExperimentParentPanel")) {
+            setupExperimentController.onExportTemplateForCurrentExperiment();
+        } else {
+            // in any other case, use a dialog: select an experiment to export the template from
+            importExportController.showExportTemplateDialog();
+        }
+    }
+
+    /**
+     * Action performed on importing settings from another experiment.
+     */
+    private void onImportSettings() {
+        setupExperimentController.onImportSettings();
+    }
+
+    /**
+     * Action performed on importing a template from another experiment to the
+     * one that is currently being set up.
+     */
+    private void onImportTemplate() {
+        setupExperimentController.onImportTemplateToCurrentExperiment();
     }
 
     /**
@@ -680,8 +723,7 @@ public class CellMissyController {
     }
 
     /**
-     * This private class implements the HyperlinkListener for the project's web
-     * page (Google code).
+     * This private class implements the
      */
     private class LinkListener implements HyperlinkListener {
 

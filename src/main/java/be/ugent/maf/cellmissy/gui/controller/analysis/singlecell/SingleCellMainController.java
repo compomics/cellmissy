@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.ProjectHasUser;
 import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
@@ -26,7 +27,6 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.MetadataSingleC
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.ConditionsAnalysisListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.CoordinatesUnitOfMeasurementComboBoxRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.list.ExperimentsListRenderer;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
@@ -41,6 +41,7 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.Icon;
@@ -500,9 +501,7 @@ public class SingleCellMainController {
      * @param selectedProject
      */
     private void onSelectedProject(Project selectedProject) {
-        ExperimentsListRenderer experimentsListRenderer = new ExperimentsListRenderer(cellMissyController.getCurrentUser());
-        metadataSingleCellPanel.getExperimentsList().setCellRenderer(experimentsListRenderer);
-
+        // clear up imaging and algorithm lists, if not empty
         if (!imagingTypeBindingList.isEmpty()) {
             imagingTypeBindingList.clear();
         }
@@ -517,16 +516,51 @@ public class SingleCellMainController {
         Long projectid = selectedProject.getProjectid();
         List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.PERFORMED);
         if (experimentList != null) {
+            Collections.sort(experimentList);
             experimentBindingList = ObservableCollections.observableList(experimentList);
             JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, metadataSingleCellPanel.getExperimentsList());
             bindingGroup.addBinding(jListBinding);
-            bindingGroup.bind();
+            bindingGroup.bind();// check if the user has privileges on the selected project
+            // if not, show a message and disable the experiments list
+            if (!userHasPrivileges(selectedProject)) {
+                String message = "Sorry, you don't have enough privileges for the selected project!";
+                cellMissyController.showMessage(message, "no enough privileges", JOptionPane.WARNING_MESSAGE);
+                metadataSingleCellPanel.getExperimentsList().setEnabled(false);
+            }
         } else {
-            cellMissyController.showMessage("There are no experiments performed yet for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
+            String message = "There are no experiments performed yet for this project!";
+            cellMissyController.showMessage(message, "no experiments found", JOptionPane.INFORMATION_MESSAGE);
             if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                 experimentBindingList.clear();
             }
         }
+    }
+
+    /**
+     * Does the current user have privileges on the current project?
+     *
+     * @param project
+     * @return true or false
+     */
+    private boolean userHasPrivileges(Project project) {
+        boolean hasPrivileges = false;
+        // get current user from main controller
+        User currentUser = cellMissyController.getCurrentUser();
+        // check for his/her role
+        // ADMIN user: return true
+        if (currentUser.getRole().equals(Role.ADMIN_USER)) {
+            hasPrivileges = true;
+        } else {
+            // we have a STANDARD user
+            // we need to check if he's involved in the selected project
+            for (ProjectHasUser projectHasUser : project.getProjectHasUserList()) {
+                if (projectHasUser.getUser().equals(currentUser)) {
+                    hasPrivileges = true;
+                    break;
+                }
+            }
+        }
+        return hasPrivileges;
     }
 
     /**
@@ -536,23 +570,7 @@ public class SingleCellMainController {
      * @param selectedExperiment
      */
     private void onSelectedExperiment(Experiment selectedExperiment) {
-        // get current user from main controller
-        User currentUser = cellMissyController.getCurrentUser();
-        // get user of selected experiment
-        // these two entities might not be the same
-        User expUser = selectedExperiment.getUser();
-        // if the user has a standard role, check if its the same as the user for the exp, and if so, proceed to analysis
-        if (currentUser.getRole().equals(Role.STANDARD_USER)) {
-            if (currentUser.equals(expUser)) {
-                proceedToAnalysis(selectedExperiment);
-            } else {
-                String message = "It seems like you have no rights to analyze these data..." + "\n" + "Ask to user (" + expUser.getFirstName() + " " + expUser.getLastName() + ") !";
-                cellMissyController.showMessage(message, "accessing other experiment data", JOptionPane.WARNING_MESSAGE);
-            }
-        } else {
-            // if current user has ADMIN role, can do whatever he wants to...
-            proceedToAnalysis(selectedExperiment);
-        }
+        proceedToAnalysis(selectedExperiment);
     }
 
     /**
