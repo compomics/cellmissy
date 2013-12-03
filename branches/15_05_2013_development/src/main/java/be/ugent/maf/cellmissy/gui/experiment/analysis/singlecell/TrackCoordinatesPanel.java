@@ -218,7 +218,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.25;
         add(dataTablePanel, gridBagConstraints);
 
-        trackingPlotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Tracking Plot"));
+        trackingPlotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Customize Tracking Plot"));
         trackingPlotPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         trackingPlotPanel.setOpaque(false);
         trackingPlotPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -231,10 +231,12 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         conditionPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         conditionPanel.setOpaque(false);
 
-        jLabel1.setText("Number of tracks for current condition:");
+        jLabel1.setText("Number Of Tracks For Current Condition");
 
         tracksNumberConditionTextField.setEditable(false);
         tracksNumberConditionTextField.setBackground(new java.awt.Color(255, 255, 255));
+        tracksNumberConditionTextField.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        tracksNumberConditionTextField.setBorder(null);
         tracksNumberConditionTextField.setFocusable(false);
 
         javax.swing.GroupLayout conditionPanelLayout = new javax.swing.GroupLayout(conditionPanel);
@@ -246,7 +248,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tracksNumberConditionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
         conditionPanelLayout.setVerticalGroup(
             conditionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -255,7 +257,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addGroup(conditionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(tracksNumberConditionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
 
         trackingPlotTabbedPane.addTab("For Current Condition", conditionPanel);
@@ -272,6 +274,8 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
 
         tracksNumberWellTextField.setEditable(false);
         tracksNumberWellTextField.setBackground(new java.awt.Color(255, 255, 255));
+        tracksNumberWellTextField.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        tracksNumberWellTextField.setBorder(null);
         tracksNumberWellTextField.setFocusable(false);
 
         javax.swing.GroupLayout wellPanelLayout = new javax.swing.GroupLayout(wellPanel);
@@ -289,7 +293,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(tracksNumberWellTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(85, Short.MAX_VALUE))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
         wellPanelLayout.setVerticalGroup(
             wellPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -302,7 +306,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addGroup(wellPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(tracksNumberWellTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         trackingPlotTabbedPane.addTab("For A Well (Sample)", wellPanel);
@@ -319,32 +323,28 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
             trackingPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(trackingPlotTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, trackingPlotPanelLayout.createSequentialGroup()
-                .addContainerGap(124, Short.MAX_VALUE)
-                .addGroup(trackingPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(plotAllTracksButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(randomAndPlotButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, trackingPlotPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(randomTracksNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(263, Short.MAX_VALUE)
+                .addGroup(trackingPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(randomTracksNumberTextField, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, trackingPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(plotAllTracksButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(randomAndPlotButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-
-        trackingPlotPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotAllTracksButton, randomAndPlotButton, randomTracksNumberTextField});
-
         trackingPlotPanelLayout.setVerticalGroup(
             trackingPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(trackingPlotPanelLayout.createSequentialGroup()
                 .addComponent(trackingPlotTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(trackingPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(randomTracksNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(randomTracksNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(randomAndPlotButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(plotAllTracksButton)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         trackingPlotPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {plotAllTracksButton, randomAndPlotButton});
@@ -409,13 +409,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(clearSelectionButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(timeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel7)
-                        .addGap(24, 24, 24))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -427,7 +420,14 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                                     .addComponent(yTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(xTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(exploreTrackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(timeSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addGap(24, 24, 24)))))
                 .addContainerGap())
         );
 
@@ -448,7 +448,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(yTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 157, Short.MAX_VALUE)
                 .addComponent(clearSelectionButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(exploreTrackButton)
@@ -471,7 +471,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(currentTracksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(plotPointsCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
+                    .addComponent(plotPointsCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(plotLinesCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
