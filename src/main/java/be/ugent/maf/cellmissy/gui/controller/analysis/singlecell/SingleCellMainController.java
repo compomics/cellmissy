@@ -24,6 +24,7 @@ import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.MetadataSingleCellPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisInfoDialog;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.ConditionsAnalysisListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.CoordinatesUnitOfMeasurementComboBoxRenderer;
@@ -65,7 +66,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Main Controller for single cell analysis
+ * Main Controller for single cell analysis.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -88,6 +89,7 @@ public class SingleCellMainController {
     private MetadataSingleCellPanel metadataSingleCellPanel;
     private DataAnalysisPanel dataAnalysisPanel;
     private AnalysisPlatePanel analysisPlatePanel;
+    private SingleCellAnalysisInfoDialog singleCellAnalysisInfoDialog;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -112,11 +114,16 @@ public class SingleCellMainController {
         //init views
         analysisExperimentPanel = new AnalysisExperimentPanel();
         metadataSingleCellPanel = new MetadataSingleCellPanel();
-        // set icon for info label
-        Icon icon = UIManager.getIcon("OptionPane.informationIcon");
-        ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
-        metadataSingleCellPanel.getInfoLabel1().setIcon(scaledIcon);
-        metadataSingleCellPanel.getInfoLabel2().setIcon(scaledIcon);
+        singleCellAnalysisInfoDialog = new SingleCellAnalysisInfoDialog(cellMissyController.getCellMissyFrame(), true);
+        // set icon for info labels
+        Icon informationIcon = UIManager.getIcon("OptionPane.informationIcon");
+        ImageIcon scaledInfoIcon = GuiUtils.getScaledIcon(informationIcon);
+        metadataSingleCellPanel.getInfoLabel1().setIcon(scaledInfoIcon);
+        metadataSingleCellPanel.getInfoLabel2().setIcon(scaledInfoIcon);
+        // set icon for question button
+        Icon questionIcon = UIManager.getIcon("OptionPane.questionIcon");
+        ImageIcon scaledQuestionIcon = GuiUtils.getScaledIcon(questionIcon);
+        metadataSingleCellPanel.getQuestionButton().setIcon(scaledQuestionIcon);
         dataAnalysisPanel = new DataAnalysisPanel();
         analysisPlatePanel = new AnalysisPlatePanel();
         bindingGroup = new BindingGroup();
@@ -378,9 +385,10 @@ public class SingleCellMainController {
         metadataSingleCellPanel.getPurposeTextArea().setWrapStyleWord(true);
         metadataSingleCellPanel.getProjectDescriptionTextArea().setLineWrap(true);
         metadataSingleCellPanel.getProjectDescriptionTextArea().setWrapStyleWord(true);
-
-        //init projectJList
-        projectBindingList = ObservableCollections.observableList(projectService.findAll());
+        //init projectJList: find all the projects from DB and sort them
+        List<Project> allProjects = projectService.findAll();
+        Collections.sort(allProjects);
+        projectBindingList = ObservableCollections.observableList(allProjects);
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, metadataSingleCellPanel.getProjectsList());
         bindingGroup.addBinding(jListBinding);
 
@@ -415,9 +423,8 @@ public class SingleCellMainController {
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     // retrieve selected project
-                    int selectedIndex = metadataSingleCellPanel.getProjectsList().getSelectedIndex();
-                    if (selectedIndex != -1) {
-                        Project selectedProject = projectBindingList.get(selectedIndex);
+                    Project selectedProject = (Project) metadataSingleCellPanel.getProjectsList().getSelectedValue();
+                    if (selectedProject != null) {
                         if (experiment == null || !selectedProject.equals(experiment.getProject()) || experimentBindingList.isEmpty()) {
                             // project is being selected for the first time
                             onSelectedProject(selectedProject);
@@ -434,14 +441,22 @@ public class SingleCellMainController {
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     // retrieve selected experiment
-                    int selectedIndex = metadataSingleCellPanel.getExperimentsList().getSelectedIndex();
-                    if (selectedIndex != -1) {
-                        Experiment selectedExperiment = experimentBindingList.get(selectedIndex);
+                    Experiment selectedExperiment = (Experiment) metadataSingleCellPanel.getExperimentsList().getSelectedValue();
+                    if (selectedExperiment != null) {
                         if (experiment == null || !selectedExperiment.equals(experiment)) {
                             onSelectedExperiment(selectedExperiment);
                         }
                     }
                 }
+            }
+        });
+        // add action Listener to the question/info button
+        metadataSingleCellPanel.getQuestionButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // pack and show info dialog
+                GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), singleCellAnalysisInfoDialog);
+                singleCellAnalysisInfoDialog.setVisible(true);
             }
         });
 
@@ -473,9 +488,8 @@ public class SingleCellMainController {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    int selectedIndex = dataAnalysisPanel.getConditionsList().getSelectedIndex();
-                    if (selectedIndex != -1) {
-                        PlateCondition selectedCondition = plateConditionList.get(selectedIndex);
+                    PlateCondition selectedCondition = (PlateCondition) dataAnalysisPanel.getConditionsList().getSelectedValue();
+                    if (selectedCondition != null) {
                         // if we are clicking for the first time, current condition is still null
                         // check also that we are not clicking again the same condition
                         if (currentCondition == null || !currentCondition.equals(selectedCondition)) {
@@ -512,7 +526,7 @@ public class SingleCellMainController {
         // show project description
         String projectDescription = selectedProject.getProjectDescription();
         metadataSingleCellPanel.getProjectDescriptionTextArea().setText(projectDescription);
-        // show relative experiments
+        // show relative experiments, fetch them from DB and then sort them
         Long projectid = selectedProject.getProjectid();
         List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.PERFORMED);
         if (experimentList != null) {
@@ -704,13 +718,13 @@ public class SingleCellMainController {
                 controlGuiComponents(true);
                 dataAnalysisPanel.getConditionsList().requestFocusInWindow();
                 if (!singleCellPreProcessingController.getTracksBindingList().isEmpty()) {
-                    // update GUI according to current view on the Card Layout
-                    onCardSwitch();
-                    // on top of that, since we are moving from one condition to another one,
+                    // since we are moving from one condition to another one,
                     // we clear the list of tracks to plot, if it's not empty
                     if (!singleCellPreProcessingController.getTrackDataHolderBindingList().isEmpty()) {
                         singleCellPreProcessingController.getTrackDataHolderBindingList().clear();
                     }
+                    // update GUI according to current view on the Card Layout
+                    onCardSwitch();
                     // we get the category to plot from the selected tab in the GUI
                     int categoryToPlot = singleCellPreProcessingController.getTrackCoordinatesPanel().getTrackingPlotTabbedPane().getSelectedIndex();
                     // and we finally generate the random tracks to plot again

@@ -28,7 +28,7 @@ import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisExperimentPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.AreaAnalysisInfoDialog;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.area.AreaAnalysisInfoDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.AreaAnalysisPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;

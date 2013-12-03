@@ -74,7 +74,7 @@ public class TrackDataHolderTableModel extends AbstractTableModel {
         data[2][1] = track.getTrackLength();
         data[3][1] = trackDataHolder.getTimeIndexes().length;
         data[4][1] = trackDataHolder.getTrackDuration();
-        data[5][1] = trackDataHolder.getxMax();
+        data[5][1] = trackDataHolder.getxMin();
         data[6][1] = trackDataHolder.getxMax();
         data[7][1] = trackDataHolder.getyMin();
         data[8][1] = trackDataHolder.getyMax();
