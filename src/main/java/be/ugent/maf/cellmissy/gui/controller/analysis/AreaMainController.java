@@ -929,6 +929,8 @@ public class AreaMainController {
                 String message = "Sorry, you don't have enough privileges for the selected project!";
                 cellMissyController.showMessage(message, "no enough privileges", JOptionPane.WARNING_MESSAGE);
                 metaDataAnalysisPanel.getExperimentsList().setEnabled(false);
+            } else {
+                metaDataAnalysisPanel.getExperimentsList().setEnabled(true);
             }
         } else {
             String message = "There are no experiments performed yet for this project!";
