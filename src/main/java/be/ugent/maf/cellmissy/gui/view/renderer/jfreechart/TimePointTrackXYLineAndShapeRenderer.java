@@ -5,8 +5,10 @@
 package be.ugent.maf.cellmissy.gui.view.renderer.jfreechart;
 
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.BasicStroke;
 import java.awt.Paint;
 import java.awt.Shape;
+import java.awt.Stroke;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.util.ShapeUtilities;
 
@@ -20,6 +22,7 @@ public class TimePointTrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer
 
     private int selectedTrackIndex;
     private int timePoint;
+    private float lineWidth;
 
     /**
      * Constructor
@@ -28,9 +31,10 @@ public class TimePointTrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer
      * highlight in the plot)
      * @param timePoint: the time point to highlight in the track
      */
-    public TimePointTrackXYLineAndShapeRenderer(int selectedTrackIndex, int timePoint) {
+    public TimePointTrackXYLineAndShapeRenderer(int selectedTrackIndex, int timePoint, float lineWidth) {
         this.selectedTrackIndex = selectedTrackIndex;
         this.timePoint = timePoint;
+        this.lineWidth = lineWidth;
     }
 
     @Override
@@ -63,5 +67,10 @@ public class TimePointTrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer
         // create a cross diagonal shape to visualize the spot in the track
         Shape cellShape = ShapeUtilities.createDiagonalCross(3, 1);
         return cellShape;
+    }
+
+    @Override
+    public Stroke getSeriesStroke(int series) {
+        return new BasicStroke(lineWidth);
     }
 }

@@ -92,7 +92,6 @@ public class SingleCellPreProcessingController {
     /**
      * getters
      *
-     * @return
      */
     public SingleCellAnalysisPanel getSingleCellAnalysisPanel() {
         return singleCellAnalysisPanel;
@@ -178,19 +177,13 @@ public class SingleCellPreProcessingController {
         return trackCoordinatesController.getTrackDataHolderBindingList();
     }
 
+    /**
+     * Handle Unexpected errors through the main controller
+     *
+     * @param exception
+     */
     public void handleUnexpectedError(Exception exception) {
         singleCellMainController.handleUnexpectedError(exception);
-    }
-
-    /**
-     * Initialize map with plate conditions as keys and null objects as values
-     */
-    public void initMapWithConditions() {
-        for (PlateCondition plateCondition : singleCellMainController.getPlateConditionList()) {
-            // each condition is not loaded at the beginning
-            plateCondition.setLoaded(false);
-            preProcessingMap.put(plateCondition, null);
-        }
     }
 
     /**
@@ -205,6 +198,17 @@ public class SingleCellPreProcessingController {
     }
 
     /**
+     * Initialize map with plate conditions as keys and null objects as values
+     */
+    public void initMapWithConditions() {
+        for (PlateCondition plateCondition : singleCellMainController.getPlateConditionList()) {
+            // each condition is not loaded at the beginning
+            plateCondition.setLoaded(false);
+            preProcessingMap.put(plateCondition, null);
+        }
+    }
+
+    /**
      * Set cursor from main controller
      *
      * @param type
@@ -213,6 +217,12 @@ public class SingleCellPreProcessingController {
         singleCellMainController.setCursor(cursor);
     }
 
+    /**
+     * Given a certain category (selected index in a tabbed pane) generate the
+     * random track data holders.
+     *
+     * @param category: can be 0 or 1
+     */
     public void generateRandomTrackDataHolders(int category) {
         trackCoordinatesController.generateRandomTrackDataHolders(category);
     }

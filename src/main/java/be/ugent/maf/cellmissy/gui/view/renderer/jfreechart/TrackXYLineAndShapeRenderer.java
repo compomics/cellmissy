@@ -5,7 +5,9 @@
 package be.ugent.maf.cellmissy.gui.view.renderer.jfreechart;
 
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.BasicStroke;
 import java.awt.Paint;
+import java.awt.Stroke;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 /**
@@ -22,18 +24,21 @@ public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
     private boolean plotLines;
     private boolean plotPoints;
     private int trackSeriesIndex;
+    private float lineWidth;
 
     /**
      * Constructor
      *
      * @param plotLines: render lines on the plot?
      * @param plotPoints: render points on the plot?
-     * @param trackSeriesIndex: index for the current series (i.e. the track to highlight in the plot)
+     * @param trackSeriesIndex: index for the current series (i.e. the track to
+     * highlight in the plot)
      */
-    public TrackXYLineAndShapeRenderer(boolean plotLines, boolean plotPoints, int trackSeriesIndex) {
+    public TrackXYLineAndShapeRenderer(boolean plotLines, boolean plotPoints, int trackSeriesIndex, float lineWidth) {
         this.plotLines = plotLines;
         this.plotPoints = plotPoints;
         this.trackSeriesIndex = trackSeriesIndex;
+        this.lineWidth = lineWidth;
     }
 
     @Override
@@ -59,5 +64,10 @@ public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
     @Override
     public Boolean getSeriesShapesVisible(int series) {
         return plotPoints;
+    }
+
+    @Override
+    public Stroke getSeriesStroke(int series) {
+        return new BasicStroke(lineWidth);
     }
 }

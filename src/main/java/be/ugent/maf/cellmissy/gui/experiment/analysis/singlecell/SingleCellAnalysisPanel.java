@@ -136,7 +136,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.03;
+        gridBagConstraints.weighty = 0.02;
         add(topPanel, gridBagConstraints);
 
         bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -176,7 +176,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tracksScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
+                .addComponent(tracksScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -257,7 +257,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.97;
+        gridBagConstraints.weighty = 0.98;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
         add(bottomPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents

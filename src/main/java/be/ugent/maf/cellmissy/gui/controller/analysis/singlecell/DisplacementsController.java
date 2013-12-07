@@ -22,14 +22,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 /**
  * Controller for velocities logic
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-@Component("displacementsController")
+@Controller("displacementsController")
 public class DisplacementsController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisplacementsController.class);
