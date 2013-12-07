@@ -540,6 +540,8 @@ public class SingleCellMainController {
                 String message = "Sorry, you don't have enough privileges for the selected project!";
                 cellMissyController.showMessage(message, "no enough privileges", JOptionPane.WARNING_MESSAGE);
                 metadataSingleCellPanel.getExperimentsList().setEnabled(false);
+            } else {
+                metadataSingleCellPanel.getExperimentsList().setEnabled(true);
             }
         } else {
             String message = "There are no experiments performed yet for this project!";

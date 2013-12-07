@@ -12,7 +12,9 @@ import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
+import java.util.Arrays;
 import java.util.List;
+import org.apache.commons.lang.ArrayUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYLineAnnotation;
@@ -48,6 +50,8 @@ public class JFreeChartUtils {
     private static BasicStroke wideLine = new BasicStroke(2.5f);
     // font for the chart elements
     private static Font chartFont = new Font("Tahoma", Font.BOLD, 12);
+    // line widths
+    private static List<Float> lineWidths = Arrays.asList(1.0f, 1.5f, 2.0f, 2.5f, 3.0f);
 
     /**
      * Getters
@@ -60,6 +64,10 @@ public class JFreeChartUtils {
 
     public static BasicStroke getWideLine() {
         return wideLine;
+    }
+
+    public static List<Float> getLineWidths() {
+        return lineWidths;
     }
 
     // public methods
@@ -176,6 +184,24 @@ public class JFreeChartUtils {
             series.add(x, y);
         }
         return series;
+    }
+
+    /**
+     * Generate XYSeries from a 2D array
+     *
+     * @param coordinatesToPlot
+     * @return
+     */
+    public static XYSeries generateXYSeries(Double[][] coordinatesToPlot) {
+        // transpose the matrix
+        Double[][] transposed = AnalysisUtils.transpose2DArray(coordinatesToPlot);
+        // take first row: x coordinates
+        double[] xCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposed[0]));
+        // take second row: y coordinates
+        double[] yCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposed[1]));
+        // generate xy series for the plot
+        XYSeries xySeries = JFreeChartUtils.generateXYSeries(xCoordinates, yCoordinates);
+        return xySeries;
     }
 
     /**

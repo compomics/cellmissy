@@ -86,7 +86,7 @@ public class AnalysisExperimentPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.95;
+        gridBagConstraints.weighty = 0.97;
         add(topPanel, gridBagConstraints);
 
         bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -148,7 +148,7 @@ public class AnalysisExperimentPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.05;
+        gridBagConstraints.weighty = 0.03;
         add(bottomPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
