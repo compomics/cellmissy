@@ -449,13 +449,13 @@ public class JFreeChartUtils {
     private static Range computeMaxRange(XYPlot plot) {
         Range domain = plot.getDataRange(plot.getDomainAxis());
         Range range = plot.getDataRange(plot.getRangeAxis());
-        double domainLowerBound = domain.getLowerBound();
-        double domainUpperBound = domain.getUpperBound();
-        double rangeLowerBound = range.getLowerBound();
-        double rangeUpperBound = range.getUpperBound();
-        double lowerBound = Math.min(domainLowerBound, rangeLowerBound);
-        double upperdBound = Math.max(domainUpperBound, rangeUpperBound);
-        return new Range(lowerBound, upperdBound);
+        double lowerBound = Math.min(domain.getLowerBound(), range.getLowerBound());
+        double upperdBound = Math.max(domain.getUpperBound(), range.getUpperBound());
+        if (lowerBound < 0) {
+            return new Range(lowerBound - 20, upperdBound + 20);
+        } else {
+            return new Range(lowerBound + 20, upperdBound + 20);
+        }
     }
 
     /**

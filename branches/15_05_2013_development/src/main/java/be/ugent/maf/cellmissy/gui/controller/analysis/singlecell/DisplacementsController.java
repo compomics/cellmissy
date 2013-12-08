@@ -54,7 +54,7 @@ public class DisplacementsController {
     }
 
     /**
-     * getters
+     * Getters
      */
     public DisplacementsPanel getSpeedsPanel() {
         return displacementsPanel;

@@ -95,7 +95,7 @@ public class TrackCoordinatesController {
     }
 
     /**
-     * getters
+     * Getters
      */
     public TrackCoordinatesPanel getTrackCoordinatesPanel() {
         return trackCoordinatesPanel;
@@ -240,18 +240,8 @@ public class TrackCoordinatesController {
                 }
                 break;
         }
-        // we finally create the coordinates chart, no legend but yes tooltips
-        JFreeChart coordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x (µm)", "y (µm)", xYSeriesCollectionForPlot, PlotOrientation.VERTICAL, false, true, false);
-        JFreeChartUtils.setupTrackChart(coordinatesChart);
-        // get the current selected track from the JList, and use it to set a customized renderer
-        int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
-        Float lineWidth = (Float) trackCoordinatesPanel.getLineWidthComboBox().getSelectedItem();
-        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, selectedTrackIndex, lineWidth);
-        coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
-        coordinatesChartPanel.setChart(coordinatesChart);
-        exploreTrackController.getCoordinatesChartPanel().setChart(coordinatesChart);
-        trackCoordinatesPanel.getGraphicsParentPanel().revalidate();
-        trackCoordinatesPanel.getGraphicsParentPanel().repaint();
+        // we finally create the coordinates charts
+        setChartsWithXyCollection(chartTitle, xYSeriesCollectionForPlot);
     }
 
     /**
@@ -302,6 +292,7 @@ public class TrackCoordinatesController {
         trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().setSelected(true);
         trackCoordinatesPanel.getPlotLinesCheckBox().setSelected(true);
         trackCoordinatesPanel.getPlotPointsCheckBox().setSelected(false);
+        trackCoordinatesPanel.getShowEndPointsCheckBox().setSelected(true);
         //init chart panels
         coordinatesChartPanel = new ChartPanel(null);
         coordinatesChartPanel.setOpaque(false);
@@ -373,15 +364,16 @@ public class TrackCoordinatesController {
                 JFreeChart coordinatesChart = coordinatesChartPanel.getChart();
                 JFreeChartUtils.setupTrackChart(coordinatesChart);
                 int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
+                boolean showEndPoints = trackCoordinatesPanel.getShowEndPointsCheckBox().isSelected();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, plotPoints, selectedTrackIndex, lineWidth);
+                    TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, plotPoints, showEndPoints, getEndPoints(), selectedTrackIndex, lineWidth);
                     coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
                 } else {
                     // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
                     if (!plotPoints) {
                         trackCoordinatesPanel.getPlotPointsCheckBox().setSelected(true);
                     }
-                    TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(false, true, selectedTrackIndex, lineWidth);
+                    TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(false, true, false, null, selectedTrackIndex, lineWidth);
                     coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
                 }
             }
@@ -396,15 +388,19 @@ public class TrackCoordinatesController {
                 JFreeChart coordinatesChart = coordinatesChartPanel.getChart();
                 JFreeChartUtils.setupTrackChart(coordinatesChart);
                 int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
+                boolean showEndPoints = trackCoordinatesPanel.getShowEndPointsCheckBox().isSelected();
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, true, selectedTrackIndex, lineWidth);
+                    if (showEndPoints) {
+                        trackCoordinatesPanel.getShowEndPointsCheckBox().setSelected(false);
+                    }
+                    TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, true, false, null, selectedTrackIndex, lineWidth);
                     coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
                 } else {
                     // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
                     if (!plotLines) {
                         trackCoordinatesPanel.getPlotLinesCheckBox().setSelected(true);
                     }
-                    TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, selectedTrackIndex, lineWidth);
+                    TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, showEndPoints, getEndPoints(), selectedTrackIndex, lineWidth);
                     coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
                 }
             }
@@ -425,10 +421,11 @@ public class TrackCoordinatesController {
                     if (plotPoints) { // first of all, to show the endpoints we need to have only lines and not points
                         trackCoordinatesPanel.getPlotPointsCheckBox().setSelected(false);
                     }
-
+                    TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, plotPoints, true, getEndPoints(), selectedTrackIndex, lineWidth);
+                    coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
                 } else {
                     // need to hide the endpoints
-                    TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, selectedTrackIndex, lineWidth);
+                    TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, false, null, selectedTrackIndex, lineWidth);
                     coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
                 }
             }
@@ -510,7 +507,8 @@ public class TrackCoordinatesController {
                 boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
                 int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
                 Float lineWidth = (Float) trackCoordinatesPanel.getLineWidthComboBox().getSelectedItem();
-                TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, selectedTrackIndex, lineWidth);
+                boolean showEndPoints = trackCoordinatesPanel.getShowEndPointsCheckBox().isSelected();
+                TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, getEndPoints(), selectedTrackIndex, lineWidth);
                 coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
             }
         });
@@ -527,8 +525,10 @@ public class TrackCoordinatesController {
                 boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
                 int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
                 Float lineWidth = (Float) trackCoordinatesPanel.getLineWidthComboBox().getSelectedItem();
-                TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, selectedTrackIndex, lineWidth);
+                boolean showEndPoints = trackCoordinatesPanel.getShowEndPointsCheckBox().isSelected();
+                TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, getEndPoints(), selectedTrackIndex, lineWidth);
                 coordinatesChartPanel.getChart().getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
+                exploreTrackController.getCoordinatesChartPanel().getChart().getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
             }
         });
 
@@ -546,8 +546,25 @@ public class TrackCoordinatesController {
         boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
         boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
         Float lineWidth = (Float) trackCoordinatesPanel.getLineWidthComboBox().getSelectedItem();
-        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, selectedTrackIndex, lineWidth);
+        boolean showEndPoints = trackCoordinatesPanel.getShowEndPointsCheckBox().isSelected();
+        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, getEndPoints(), selectedTrackIndex, lineWidth);
         coordinatesChartPanel.getChart().getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
+    }
+
+    /**
+     * Iterate through the current track data holders and get the endpoints of
+     * the correspondent tracks.
+     *
+     * @return: a List of Integers, each Integer being the endpoint for a track.
+     */
+    private List<Integer> getEndPoints() {
+        List<Integer> endPoints = new ArrayList<>();
+        for (TrackDataHolder trackDataHolder : trackDataHolderBindingList) {
+            double[] timeIndexes = trackDataHolder.getTimeIndexes();
+            int numberOfTimePoints = timeIndexes.length - 1;
+            endPoints.add(numberOfTimePoints);
+        }
+        return endPoints;
     }
 
     /**
@@ -761,6 +778,32 @@ public class TrackCoordinatesController {
     }
 
     /**
+     * Given a title and a xyseriesCollection, set the charts of the 2 main
+     * chart panels.
+     *
+     * @param title
+     * @param xYSeriesCollection
+     */
+    private void setChartsWithXyCollection(String title, XYSeriesCollection xYSeriesCollection) {
+        boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
+        boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
+        Float lineWidth = (Float) trackCoordinatesPanel.getLineWidthComboBox().getSelectedItem();
+        boolean showEndPoints = trackCoordinatesPanel.getShowEndPointsCheckBox().isSelected();
+        int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
+        JFreeChart firstCoordinatesChart = ChartFactory.createXYLineChart(title, "x (µm)", "y (µm)", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        JFreeChartUtils.setupTrackChart(firstCoordinatesChart);
+        JFreeChart secondCoordinatesChart = ChartFactory.createXYLineChart(title, "x (µm)", "y (µm)", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        JFreeChartUtils.setupTrackChart(secondCoordinatesChart);
+        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, getEndPoints(), selectedTrackIndex, lineWidth);
+        firstCoordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
+        secondCoordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
+        coordinatesChartPanel.setChart(firstCoordinatesChart);
+        exploreTrackController.getCoordinatesChartPanel().setChart(secondCoordinatesChart);
+        trackCoordinatesPanel.getGraphicsParentPanel().revalidate();
+        trackCoordinatesPanel.getGraphicsParentPanel().repaint();
+    }
+
+    /**
      * Swing Worker to plot all track together!
      */
     private class PlotAllTracksConditionSwingWorker extends SwingWorker<Void, Void> {
@@ -782,9 +825,6 @@ public class TrackCoordinatesController {
             try {
                 get();
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-                boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
-                boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
-                Float lineWidth = (Float) trackCoordinatesPanel.getLineWidthComboBox().getSelectedItem();
                 // Plot Logic
                 int conditionIndex = singleCellPreProcessingController.getPlateConditionList().indexOf(currentCondition) + 1;
                 String chartTitle;
@@ -793,15 +833,7 @@ public class TrackCoordinatesController {
                 } else {
                     chartTitle = trackDataHolderBindingList.size() + " tracks, coordinates shifted to (0, 0) - condition " + conditionIndex;
                 }
-                JFreeChart coordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x (µm)", "y (µm)", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-                int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
-                JFreeChartUtils.setupTrackChart(coordinatesChart);
-                TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, selectedTrackIndex, lineWidth);
-                coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
-                coordinatesChartPanel.setChart(coordinatesChart);
-                exploreTrackController.getCoordinatesChartPanel().setChart(coordinatesChart);
-                trackCoordinatesPanel.getGraphicsParentPanel().revalidate();
-                trackCoordinatesPanel.getGraphicsParentPanel().repaint();
+                setChartsWithXyCollection(chartTitle, xYSeriesCollection);
                 singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
@@ -832,9 +864,6 @@ public class TrackCoordinatesController {
         protected void done() {
             try {
                 get();
-                boolean plotLines = trackCoordinatesPanel.getPlotLinesCheckBox().isSelected();
-                boolean plotPoints = trackCoordinatesPanel.getPlotPointsCheckBox().isSelected();
-                Float lineWidth = (Float) trackCoordinatesPanel.getLineWidthComboBox().getSelectedItem();
                 // Plot Logic
                 String chartTitle;
                 if (useRawCoordinates) {
@@ -842,15 +871,7 @@ public class TrackCoordinatesController {
                 } else {
                     chartTitle = trackDataHolderBindingList.size() + " tracks,  coordinates shifted to (0, 0) - well " + selectedWell.toString();
                 }
-                JFreeChart coordinatesChart = ChartFactory.createXYLineChart(chartTitle, "x (µm)", "y (µm)", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-                int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
-                JFreeChartUtils.setupTrackChart(coordinatesChart);
-                TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, selectedTrackIndex, lineWidth);
-                coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
-                coordinatesChartPanel.setChart(coordinatesChart);
-                exploreTrackController.getCoordinatesChartPanel().setChart(coordinatesChart);
-                trackCoordinatesPanel.getGraphicsParentPanel().revalidate();
-                trackCoordinatesPanel.getGraphicsParentPanel().repaint();
+                setChartsWithXyCollection(chartTitle, xYSeriesCollection);
                 singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);

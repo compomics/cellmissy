@@ -104,7 +104,7 @@ public class ExploreTrackController {
      */
     public void onSelectedTrack(int selectedTrackIndex) {
         Float lineWidth = (Float) trackCoordinatesController.getTrackCoordinatesPanel().getLineWidthComboBox().getSelectedItem();
-        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, selectedTrackIndex, lineWidth);
+        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, false, null, selectedTrackIndex, lineWidth);
         coordinatesChartPanel.getChart().getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
         TrackDataHolder selectedTrackDataHolder = trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex);
         // set up and enable the time /slider here
