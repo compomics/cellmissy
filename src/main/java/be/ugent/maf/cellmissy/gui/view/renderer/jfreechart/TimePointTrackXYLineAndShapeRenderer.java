@@ -14,15 +14,15 @@ import org.jfree.util.ShapeUtilities;
 
 /**
  * Renderer for a track x y plot, that will (on top on normal rendering) also
- * shows the time information.
+ * shows the time information, i.e. the cells is followed in time.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public class TimePointTrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
 
-    private int selectedTrackIndex;
-    private int timePoint;
-    private float lineWidth;
+    private int selectedTrackIndex; //track currently selected in list
+    private int timePoint; //current time point to highlight in the track
+    private float lineWidth; //thickness to use to render the line
 
     /**
      * Constructor
@@ -30,6 +30,7 @@ public class TimePointTrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer
      * @param selectedTrackIndex: the index of the current series (the track to
      * highlight in the plot)
      * @param timePoint: the time point to highlight in the track
+     * @param lineWidth: the thickness to render the line in plot
      */
     public TimePointTrackXYLineAndShapeRenderer(int selectedTrackIndex, int timePoint, float lineWidth) {
         this.selectedTrackIndex = selectedTrackIndex;
@@ -46,14 +47,14 @@ public class TimePointTrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer
             return GuiUtils.getAvailableColors()[colorIndex];
         } else {
             // not at the right series, take the non imaged color
-            // (basically, show the other tracks in grey)
+            // (basically, show the other tracks in gray)
             return GuiUtils.getNonImagedColor();
         }
     }
 
     @Override
     public boolean getItemShapeVisible(int series, int item) {
-        // when we are at the right series and time point, we how the point
+        // when we are at the right series and time point(item), we show the point
         if (series == selectedTrackIndex && item == timePoint) {
             return Boolean.TRUE;
         } else {
@@ -64,9 +65,8 @@ public class TimePointTrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer
 
     @Override
     public Shape getItemShape(int row, int column) {
-        // create a cross diagonal shape to visualize the spot in the track
-        Shape cellShape = ShapeUtilities.createDiagonalCross(3, 1);
-        return cellShape;
+        // return a cross diagonal shape to visualize the spot in the track
+        return ShapeUtilities.createDiagonalCross(3, 1);
     }
 
     @Override
