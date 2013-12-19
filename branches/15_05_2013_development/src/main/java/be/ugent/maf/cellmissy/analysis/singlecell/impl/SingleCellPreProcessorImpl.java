@@ -13,7 +13,6 @@ import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
-import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +36,10 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         List<TrackDataHolder> trackDataHolders = new ArrayList<>();
         List<Well> singleCellAnalyzedWells = plateCondition.getSingleCellAnalyzedWells();
         for (Well singleCellAnalyzedWell : singleCellAnalyzedWells) {
-            for (WellHasImagingType wellHasImagingType : singleCellAnalyzedWell.getWellHasImagingTypeList()) {
-                for (Track track : wellHasImagingType.getTrackList()) {
+            List<WellHasImagingType> wellHasImagingTypeList = singleCellAnalyzedWell.getWellHasImagingTypeList();
+            for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
+                List<Track> trackList = wellHasImagingType.getTrackList();
+                for (Track track : trackList) {
                     // generate a new track data holder for this track and add it to the list
                     TrackDataHolder trackDataHolder = new TrackDataHolder(track);
                     trackDataHolders.add(trackDataHolder);
@@ -76,7 +77,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     @Override
     public void generateTrackDurations(Double timeLapse, SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeTrackDuration(timeLapse, trackDataHolder);
+            trackOperator.computeDuration(timeLapse, trackDataHolder);
         }
     }
 
@@ -87,7 +88,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         generateTrackCoordinatesMatrix(singleCellPreProcessingResults, conversionFactor);
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            Double[][] trackCoordinatesMatrix = trackDataHolder.getTrackCoordinatesMatrix();
+            Double[][] trackCoordinatesMatrix = trackDataHolder.getCoordinatesMatrix();
             for (int row = 0; row < trackCoordinatesMatrix.length; row++) {
                 rawTrackCoordinatesMatrix[counter] = trackCoordinatesMatrix[row];
                 counter++;
@@ -110,7 +111,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         computeShiftedTrackCoordinates(singleCellPreProcessingResults);
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            Double[][] normalizedTrackCoordinates = trackDataHolder.getShiftedTrackCoordinates();
+            Double[][] normalizedTrackCoordinates = trackDataHolder.getShiftedCooordinatesMatrix();
             for (int row = 0; row < normalizedTrackCoordinates.length; row++) {
                 normalizedTrackCoordinatesMatrix[counter] = normalizedTrackCoordinates[row];
                 counter++;
@@ -142,7 +143,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         computeTrackMeanDisplacement(singleCellPreProcessingResults);
         for (int i = 0; i < trackDisplacementsVector.length; i++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double trackMeanDisplacement = trackDataHolder.getTrackMedianDisplacement();
+            double trackMeanDisplacement = trackDataHolder.getMedianDisplacement();
             trackDisplacementsVector[i] = trackMeanDisplacement;
         }
         singleCellPreProcessingResults.setTrackDisplacementsVector(trackDisplacementsVector);
@@ -182,7 +183,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         Double[] trackSpeedsVector = new Double[trackDisplacementsVector.length];
         for (int i = 0; i < trackDisplacementsVector.length; i++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double trackMeanSpeed = trackDataHolder.getTrackMeanSpeed();
+            double trackMeanSpeed = trackDataHolder.getMedianSpeed();
             trackSpeedsVector[i] = trackMeanSpeed;
         }
         singleCellPreProcessingResults.setTrackSpeedsVector(trackSpeedsVector);
@@ -202,6 +203,19 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
+    public void generateMaximalDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+        Double[] maximalDisplacementsVector = new Double[trackDataHolders.size()];
+        computeMaximalDisplacements(singleCellPreProcessingResults);
+        for (int i = 0; i < maximalDisplacementsVector.length; i++) {
+            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
+            double maximalDisplacement = trackDataHolder.getMaximalDisplacement();
+            maximalDisplacementsVector[i] = maximalDisplacement;
+        }
+        singleCellPreProcessingResults.setMaximalDisplacementsVector(maximalDisplacementsVector);
+    }
+
+    @Override
     public void generateTurningAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
         Double[] turningAnglesVector = new Double[dataStructure.length];
@@ -218,16 +232,16 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
-    public void generateTrackAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void generateMedianTurningAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] trackAnglesVector = new Double[trackDataHolders.size()];
-        computeTrackAngles(singleCellPreProcessingResults);
-        for (int i = 0; i < trackAnglesVector.length; i++) {
+        Double[] medianTurningAnglesVector = new Double[trackDataHolders.size()];
+        computeMedianTurningAngles(singleCellPreProcessingResults);
+        for (int i = 0; i < medianTurningAnglesVector.length; i++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double trackAngle = trackDataHolder.getTrackAngle();
-            trackAnglesVector[i] = trackAngle;
+            double trackAngle = trackDataHolder.getMedianTurningAngle();
+            medianTurningAnglesVector[i] = trackAngle;
         }
-        singleCellPreProcessingResults.setTrackAnglesVector(trackAnglesVector);
+        singleCellPreProcessingResults.setMedianTurningAnglesVector(medianTurningAnglesVector);
     }
 
     /**
@@ -237,7 +251,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      */
     private void generateTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults, double conversionFactor) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.generateTrackCoordinatesMatrix(trackDataHolder, conversionFactor);
+            trackOperator.generateCoordinatesMatrix(trackDataHolder, conversionFactor);
         }
     }
 
@@ -248,7 +262,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      */
     private void computeShiftedTrackCoordinates(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeShiftedTrackCoordinates(trackDataHolder);
+            trackOperator.computeShiftedCoordinatesMatrix(trackDataHolder);
         }
     }
 
@@ -278,7 +292,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      * Calculate the total number of track points.
      *
      * @param singleCellPreProcessingResults
-     * @return an integer with this number
+     * @return an integer
      */
     private int computeTotalTrackPointsNumber(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         int trackPointsNumber = 0;
@@ -295,7 +309,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      */
     private void computeTrackMeanDisplacement(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeTrackMedianDisplacement(trackDataHolder);
+            trackOperator.computeMedianDisplacement(trackDataHolder);
         }
     }
 
@@ -306,7 +320,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      */
     private void computeTrackMeanSpeed(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeTrackMeanSpeed(trackDataHolder);
+            trackOperator.computeMedianSpeed(trackDataHolder);
         }
     }
 
@@ -344,6 +358,17 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     /**
+     * Compute the maximal displacement for each track data holder.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    private void computeMaximalDisplacements(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.computeMaximalDisplacement(trackDataHolder);
+        }
+    }
+
+    /**
      * Compute the turning angles for each track data holder.
      *
      * @param singleCellPreProcessingResults
@@ -359,9 +384,9 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    private void computeTrackAngles(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    private void computeMedianTurningAngles(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeTrackAngle(trackDataHolder);
+            trackOperator.computeMedianTurningAngle(trackDataHolder);
         }
     }
 }

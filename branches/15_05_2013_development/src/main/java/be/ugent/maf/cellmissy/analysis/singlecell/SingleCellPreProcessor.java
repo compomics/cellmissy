@@ -112,6 +112,13 @@ public interface SingleCellPreProcessor {
     public void generateDirectionalitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
+     * Generate maximal displacements vector.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateMaximalDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
      * Generate turning angles vector.
      *
      * @param singleCellPreProcessingResults
@@ -123,5 +130,5 @@ public interface SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    public void generateTrackAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateMedianTurningAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 }

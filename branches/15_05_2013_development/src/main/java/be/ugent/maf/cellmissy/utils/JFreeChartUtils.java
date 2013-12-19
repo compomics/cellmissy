@@ -21,6 +21,7 @@ import org.jfree.chart.annotations.XYLineAnnotation;
 import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -68,6 +69,10 @@ public class JFreeChartUtils {
 
     public static List<Float> getLineWidths() {
         return lineWidths;
+    }
+
+    public static Font getChartFont() {
+        return chartFont;
     }
 
     // public methods
@@ -160,12 +165,34 @@ public class JFreeChartUtils {
         // get domanin and range axes
         ValueAxis domainAxis = xYPlot.getDomainAxis();
         ValueAxis rangeAxis = xYPlot.getRangeAxis();
-        // set label paint for axes to black
-        domainAxis.setLabelPaint(Color.black);
         rangeAxis.setLabelPaint(Color.black);
-        // set font for labels, both on domain and range axes
-        domainAxis.setLabelFont(chartFont);
         rangeAxis.setLabelFont(chartFont);
+        domainAxis.setLabelPaint(Color.black);
+        domainAxis.setLabelFont(chartFont);
+    }
+
+    /**
+     * Set up a combined domain chart. This chart uses a combined domain xy plot
+     * as plot.
+     *
+     * @param combinedChart
+     * @param trackIndex
+     */
+    public static void setupCombinedChart(JFreeChart combinedChart, int trackIndex) {
+        CombinedDomainXYPlot combinedDomainXYPlot = (CombinedDomainXYPlot) combinedChart.getXYPlot();
+        combinedDomainXYPlot.setBackgroundPaint(Color.white);
+        combinedDomainXYPlot.setRangeGridlinePaint(Color.black);
+        combinedDomainXYPlot.setOutlineStroke(wideLine);
+        // modify renderer
+        combinedDomainXYPlot.setRenderer(new XYLineAndShapeRenderer());
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) combinedDomainXYPlot.getRenderer();
+        renderer.setSeriesStroke(0, wideLine);
+        int length = GuiUtils.getAvailableColors().length;
+        int colorIndex = trackIndex % length;
+        renderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[colorIndex]);
+        // show only line and no points
+        renderer.setSeriesLinesVisible(0, true);
+        renderer.setSeriesShapesVisible(0, false);
     }
 
     /**

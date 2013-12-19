@@ -423,10 +423,12 @@ public class TrackCoordinatesController {
                     }
                     TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, plotPoints, true, getEndPoints(), selectedTrackIndex, lineWidth);
                     coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
+                    exploreTrackController.getCoordinatesChartPanel().getChart().getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
                 } else {
                     // need to hide the endpoints
                     TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, false, null, selectedTrackIndex, lineWidth);
                     coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
+                    exploreTrackController.getCoordinatesChartPanel().getChart().getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
                 }
             }
         });
@@ -583,9 +585,9 @@ public class TrackCoordinatesController {
         int counter = 0;
         for (TrackDataHolder trackDataHolder : trackDataHolderBindingList) {
             if (useRawCoordinates) {
-                coordinatesMatrix = trackDataHolder.getTrackCoordinatesMatrix();
+                coordinatesMatrix = trackDataHolder.getCoordinatesMatrix();
             } else {
-                coordinatesMatrix = trackDataHolder.getShiftedTrackCoordinates();
+                coordinatesMatrix = trackDataHolder.getShiftedCooordinatesMatrix();
             }
             XYSeries xySeries = JFreeChartUtils.generateXYSeries(coordinatesMatrix);
             Track track = trackDataHolder.getTrack();

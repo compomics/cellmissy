@@ -25,7 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Controller for velocities logic
+ * Controller for displacements logic. Parent controller is single cell
+ * preprocessing controller.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */

@@ -123,25 +123,6 @@ public class Project implements Serializable, Comparable<Project> {
         this.projectHasUserList = projectHasUserList;
     }
 
-//    @Override
-//    public int hashCode() {
-//        int hash = 0;
-//        hash += (projectid != null ? projectid.hashCode() : 0);
-//        return hash;
-//    }
-//
-//    @Override
-//    public boolean equals(Object object) {
-//        // TODO: Warning - this method won't work in the case the id fields are not set
-//        if (!(object instanceof Project)) {
-//            return false;
-//        }
-//        Project other = (Project) object;
-//        if ((this.projectid == null && other.projectid != null) || (this.projectid != null && !this.projectid.equals(other.projectid))) {
-//            return false;
-//        }
-//        return true;
-//    }
     @Override
     public int hashCode() {
         int hash = 3;

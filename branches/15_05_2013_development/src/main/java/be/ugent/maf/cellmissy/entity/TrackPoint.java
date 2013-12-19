@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -93,6 +94,9 @@ public class TrackPoint implements Serializable {
     @ManyToOne(optional = false)
     @XmlTransient
     private Track track;
+    @Transient
+    @XmlTransient
+    private Point point;
 
     public TrackPoint() {
     }
@@ -202,6 +206,14 @@ public class TrackPoint implements Serializable {
 
     public void setTrack(Track track) {
         this.track = track;
+    }
+
+    public Point getPoint() {
+        return point;
+    }
+
+    public void setPoint(Point point) {
+        this.point = point;
     }
 
     @Override

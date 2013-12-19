@@ -73,19 +73,19 @@ public class TrackDataHolderTableModel extends AbstractTableModel {
         data[1][1] = track.getTrackNumber();
         data[2][1] = track.getTrackLength();
         data[3][1] = trackDataHolder.getTimeIndexes().length;
-        data[4][1] = trackDataHolder.getTrackDuration();
+        data[4][1] = trackDataHolder.getDuration();
         data[5][1] = trackDataHolder.getxMin();
         data[6][1] = trackDataHolder.getxMax();
         data[7][1] = trackDataHolder.getyMin();
         data[8][1] = trackDataHolder.getyMax();
         data[9][1] = trackDataHolder.getxMax() - trackDataHolder.getxMin();
         data[10][1] = trackDataHolder.getyMax() - trackDataHolder.getyMin();
-        data[11][1] = trackDataHolder.getTrackMedianDisplacement();
-        data[12][1] = trackDataHolder.getTrackMeanSpeed();
+        data[11][1] = trackDataHolder.getMedianDisplacement();
+        data[12][1] = trackDataHolder.getMedianSpeed();
         data[13][1] = trackDataHolder.getCumulativeDistance();
         data[14][1] = trackDataHolder.getEuclideanDistance();
         data[15][1] = trackDataHolder.getDirectionality();
-        data[16][1] = trackDataHolder.getTrackAngle();
+        data[16][1] = trackDataHolder.getMedianTurningAngle();
     }
 
     /**
