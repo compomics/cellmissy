@@ -28,7 +28,7 @@ public interface TrackOperator {
      * @param timeLapse
      * @param trackDataHolder
      */
-    public void computeTrackDuration(Double timeLapse, TrackDataHolder trackDataHolder);
+    public void computeDuration(Double timeLapse, TrackDataHolder trackDataHolder);
 
     /**
      * Generate Track Point Matrix for a track. This is already scaling
@@ -39,7 +39,7 @@ public interface TrackOperator {
      * @param trackDataHolder
      * @param conversionFactor
      */
-    public void generateTrackCoordinatesMatrix(TrackDataHolder trackDataHolder, double conversionFactor);
+    public void generateCoordinatesMatrix(TrackDataHolder trackDataHolder, double conversionFactor);
 
     /**
      * Compute the min and max x + min and max y.
@@ -54,7 +54,7 @@ public interface TrackOperator {
      *
      * @param trackDataHolder
      */
-    public void computeShiftedTrackCoordinates(TrackDataHolder trackDataHolder);
+    public void computeShiftedCoordinatesMatrix(TrackDataHolder trackDataHolder);
 
     /**
      * Compute delta movements matrix.
@@ -75,7 +75,7 @@ public interface TrackOperator {
      *
      * @param trackDataHolder
      */
-    public void computeTrackMedianDisplacement(TrackDataHolder trackDataHolder);
+    public void computeMedianDisplacement(TrackDataHolder trackDataHolder);
 
     /**
      * Compute cumulative distance between start and end point of track. This is
@@ -99,7 +99,7 @@ public interface TrackOperator {
      *
      * @param trackDataHolder
      */
-    public void computeTrackMeanSpeed(TrackDataHolder trackDataHolder);
+    public void computeMedianSpeed(TrackDataHolder trackDataHolder);
 
     /**
      * Compute directionality of a certain track as the ratio between the
@@ -108,6 +108,13 @@ public interface TrackOperator {
      * @param trackDataHolder
      */
     public void computeDirectionality(TrackDataHolder trackDataHolder);
+
+    /**
+     * Compute maximal displacement of a certain track.
+     *
+     * @param trackDataHolder
+     */
+    public void computeMaximalDisplacement(TrackDataHolder trackDataHolder);
 
     /**
      * Compute turning angles.
@@ -121,5 +128,5 @@ public interface TrackOperator {
      *
      * @param trackDataHolder
      */
-    public void computeTrackAngle(TrackDataHolder trackDataHolder);
+    public void computeMedianTurningAngle(TrackDataHolder trackDataHolder);
 }

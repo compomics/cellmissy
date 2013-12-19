@@ -38,10 +38,15 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -63,8 +68,7 @@ public class ExploreTrackController {
     // view
     private ExploreTrackPanel exploreTrackPanel;
     private ChartPanel coordinatesChartPanel;
-    private ChartPanel xtCoordinateChartPanel;
-    private ChartPanel ytCoordinateChartPanel;
+    private ChartPanel xYTCoordinateChartPanel;
     private ChartPanel shiftedTrackChartPanel;
     // parent controller
     @Autowired
@@ -133,15 +137,12 @@ public class ExploreTrackController {
         coordinatesChartPanel = new ChartPanel(null);
         coordinatesChartPanel.setOpaque(false);
         exploreTrackPanel.getGraphicsParentPanel().add(coordinatesChartPanel, gridBagConstraints);
-        xtCoordinateChartPanel = new ChartPanel(null);
-        xtCoordinateChartPanel.setOpaque(false);
-        ytCoordinateChartPanel = new ChartPanel(null);
-        ytCoordinateChartPanel.setOpaque(false);
+        xYTCoordinateChartPanel = new ChartPanel(null);
+        xYTCoordinateChartPanel.setOpaque(false);
         shiftedTrackChartPanel = new ChartPanel(null);
         shiftedTrackChartPanel.setOpaque(false);
 
-        exploreTrackPanel.getxTCoordinatesParentPanel().add(xtCoordinateChartPanel, gridBagConstraints);
-        exploreTrackPanel.getyTCoordinatesParentPanel().add(ytCoordinateChartPanel, gridBagConstraints);
+        exploreTrackPanel.getxYTCoordinatesParentPanel().add(xYTCoordinateChartPanel, gridBagConstraints);
         exploreTrackPanel.getShiftedParentPanel().add(shiftedTrackChartPanel, gridBagConstraints);
 
         exploreTrackPanel.getTrackDataTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
@@ -288,7 +289,7 @@ public class ExploreTrackController {
      */
     private void plotSingleTrackData(TrackDataHolder trackDataHolder) {
         // plot x and y coordinates in time
-        plotCoordinatesInTime(trackDataHolder);
+        plotCoordinatesInTime2(trackDataHolder);
         // plot the shifted track coordinates
         plotShiftedCoordinates(trackDataHolder);
     }
@@ -303,7 +304,7 @@ public class ExploreTrackController {
         // get the selected track data holder, and thus the track to plot in time
         Track track = trackDataHolder.getTrack();
         // get the track coordinates matrix
-        Double[][] trackCoordinatesMatrix = trackDataHolder.getTrackCoordinatesMatrix();
+        Double[][] trackCoordinatesMatrix = trackDataHolder.getCoordinatesMatrix();
         // we need to transpose the matrix
         Double[][] transpose2DArray = AnalysisUtils.transpose2DArray(trackCoordinatesMatrix);
         // we get the x coordinates and the time information
@@ -320,16 +321,48 @@ public class ExploreTrackController {
         JFreeChart xtCoordinatesChart = ChartFactory.createXYLineChart(seriesKey + " - x over time", "time index", "x (µm)", xtSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         // set up the plot of the chart
         JFreeChartUtils.setupSingleTrackPlot(xtCoordinatesChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), true);
-        xtCoordinateChartPanel.setChart(xtCoordinatesChart);
+        xYTCoordinateChartPanel.setChart(xtCoordinatesChart);
+    }
+
+    private void plotCoordinatesInTime2(TrackDataHolder trackDataHolder) {
+        // get the selected track data holder, and thus the track to plot in time
+        Track track = trackDataHolder.getTrack();
+        // get the track coordinates matrix
+        Double[][] trackCoordinatesMatrix = trackDataHolder.getCoordinatesMatrix();
+        // we need to transpose the matrix
+        Double[][] transpose2DArray = AnalysisUtils.transpose2DArray(trackCoordinatesMatrix);
+        // we get the x coordinates and the time information
+        double[] xCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transpose2DArray[0]));
+        double[] timeIndexes = trackDataHolder.getTimeIndexes();
+        // we create the series and set its key
+        XYSeries xtSeries = JFreeChartUtils.generateXYSeries(timeIndexes, xCoordinates);
+        int trackNumber = track.getTrackNumber();
+        Well well = track.getWellHasImagingType().getWell();
+        String seriesKey = "track " + trackNumber + ", well " + well;
+        xtSeries.setKey(seriesKey);
+        // we then create the XYSeriesCollection and use it to make a new line chart
+        XYSeriesCollection xtSeriesCollection = new XYSeriesCollection(xtSeries);
+        XYItemRenderer renderer = new StandardXYItemRenderer();
+        NumberAxis xAxis = new NumberAxis("x (µm)");
+        XYPlot xTPlot = new XYPlot(xtSeriesCollection, null, xAxis, renderer);
+        // y axis
+        NumberAxis yAxis = new NumberAxis("y (µm)");
         // we repeat exactly the same with the y coordinates in time
         double[] yCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transpose2DArray[1]));
         XYSeries ytSeries = JFreeChartUtils.generateXYSeries(timeIndexes, yCoordinates);
         ytSeries.setKey(seriesKey);
         XYSeriesCollection ytSeriesCollection = new XYSeriesCollection(ytSeries);
-        JFreeChart ytCoordinatesChart = ChartFactory.createXYLineChart(seriesKey + " - y over time", "time index", "y (µm)", ytSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-        // set up the plot of the chart
-        JFreeChartUtils.setupSingleTrackPlot(ytCoordinatesChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), true);
-        ytCoordinateChartPanel.setChart(ytCoordinatesChart);
+        XYPlot yTPlot = new XYPlot(ytSeriesCollection, null, yAxis, renderer);
+        // domain axis
+        NumberAxis domainAxis = new NumberAxis("time index");
+        CombinedDomainXYPlot combinedDomainXYPlot = new CombinedDomainXYPlot(domainAxis);
+        combinedDomainXYPlot.setRenderer(new XYLineAndShapeRenderer());
+        combinedDomainXYPlot.add(xTPlot);
+        combinedDomainXYPlot.add(yTPlot);
+        combinedDomainXYPlot.setOrientation(PlotOrientation.VERTICAL);
+        JFreeChart combinedChart = new JFreeChart(seriesKey, JFreeChartUtils.getChartFont(), combinedDomainXYPlot, Boolean.FALSE);
+        JFreeChartUtils.setupCombinedChart(combinedChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
+        xYTCoordinateChartPanel.setChart(combinedChart);
     }
 
     /**
@@ -340,7 +373,7 @@ public class ExploreTrackController {
      */
     private void plotShiftedCoordinates(TrackDataHolder trackDataHolder) {
         // get the coordinates matrix
-        Double[][] shiftedTrackCoordinates = trackDataHolder.getShiftedTrackCoordinates();
+        Double[][] shiftedTrackCoordinates = trackDataHolder.getShiftedCooordinatesMatrix();
         XYSeries xYSeries = JFreeChartUtils.generateXYSeries(shiftedTrackCoordinates);
         Track track = trackDataHolder.getTrack();
         int trackNumber = track.getTrackNumber();

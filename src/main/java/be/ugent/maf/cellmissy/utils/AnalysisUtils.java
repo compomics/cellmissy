@@ -383,4 +383,20 @@ public class AnalysisUtils {
         }
         return list;
     }
+
+    /**
+     *
+     * @param well
+     * @return
+     */
+    public static List<Integer> getNumbersOfTracks(Well well) {
+        List<Integer> list = new ArrayList<>();
+        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+            List<Track> trackList = wellHasImagingType.getTrackList();
+            if (!trackList.isEmpty()) {
+                list.add(trackList.size());
+            }
+        }
+        return list;
+    }
 }

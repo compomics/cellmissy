@@ -66,9 +66,9 @@ public class Playground {
 //        Experiment experiment = experimentService.findById(21L);
             Project project = experiment.getProject();
             // make the folders
-            File file = new File("C:\\Users\\paola\\Desktop\\playground_outfiles");
-            File trackFolder = new File(file, project + "_" + experiment + "_" + "trackFiles");
-            trackFolder.mkdir();
+            File file = new File("C:\\Users\\paola\\Desktop\\P013");
+//            File trackFolder = new File(file, project + "_" + experiment + "_" + "trackFiles");
+//            trackFolder.mkdir();
             File globalFolder = new File(file, project + "_" + experiment + "_" + "globalFiles");
             globalFolder.mkdir();
 
@@ -86,20 +86,22 @@ public class Playground {
             for (Algorithm algorithm : algorithms) {
                 for (ImagingType imagingType : imagingTypes) {
                     //**************************************************************************
-                    File trackDataFolder = new File(trackFolder, project + "_" + experiment + "_" + "trackFiles_" + algorithm + "_" + imagingType);
-                    trackDataFolder.mkdir();
+//                    File trackDataFolder = new File(trackFolder, project + "_" + experiment + "_" + "trackFiles_" + algorithm + "_" + imagingType);
+//                    trackDataFolder.mkdir();
                     //**************************************************************************
                     File globalDataFolder = new File(globalFolder, project + "_" + experiment + "_" + "globalFiles" + algorithm + "_" + imagingType);
                     globalDataFolder.mkdir();
 
                     for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
                         List<List<Integer>> numbersOfTrackPoints = new ArrayList<>();
+                        List<List<Integer>> numberOfTracks = new ArrayList<>();
                         for (int i = 0; i < plateCondition.getWellList().size(); i++) {
                             Well currentWell = plateCondition.getWellList().get(i);
                             //fetch tracks collection for the wellhasimagingtype of interest
                             wellService.fetchTracks(currentWell, algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
                             wellService.fetchTrackPoints(currentWell, algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
                             numbersOfTrackPoints.add(AnalysisUtils.getNumbersOfTrackPoints(currentWell));
+                            numberOfTracks.add(AnalysisUtils.getNumbersOfTracks(currentWell));
                         }
                         // create a new object to hold pre-processing results
                         SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
@@ -118,7 +120,7 @@ public class Playground {
                         singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateTrackAnglesVector(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
 
                         // we create a file for each condition
                         String name1 = project + "_" + experiment + "_" + plateCondition + ".txt";
@@ -127,69 +129,79 @@ public class Playground {
                         Double[][] shiftedTrackCoordinatesMatrix = singleCellPreProcessingResults.getShiftedTrackCoordinatesMatrix();
                         Double[] instantaneousDisplacementsVector = singleCellPreProcessingResults.getInstantaneousDisplacementsVector();
                         Double[] turningAnglesVector = singleCellPreProcessingResults.getTurningAnglesVector();
-                        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(trackDataFolder, name1)))) {
-                            // HEADER
-                            bufferedWriter.append("well" + "\t" + "track" + "\t" + "time" + "\t" + "location" + "\t" + "x" + "\t" + "y" + "\t" + "shiftX" + "\t" + "shiftY" + "\t" + "instDispl" + "\t" + "turningAngle");
-                            bufferedWriter.newLine();
-                            int counter = 0;
-                            for (List<Integer> list : numbersOfTrackPoints) {
-                                for (Integer currentNumber : list) {
-                                    for (int row = counter; row < counter + currentNumber; row++) {
-                                        // this is just the data structure
-                                        Object[] currentRow = dataStructure[row];
-                                        for (int column = 0; column < currentRow.length; column++) {
-                                            bufferedWriter.append(currentRow[column].toString());
-                                            bufferedWriter.append("\t");
-                                        }
-                                        bufferedWriter.append("" + (list.indexOf(currentNumber) + 1));
-                                        bufferedWriter.append("\t");
-                                        // this is the rest of the calculation
-                                        bufferedWriter.append(rawTrackCoordinatesMatrix[row][0].toString());
-                                        bufferedWriter.append("\t");
-                                        bufferedWriter.append(rawTrackCoordinatesMatrix[row][1].toString());
-                                        bufferedWriter.append("\t");
-                                        bufferedWriter.append(shiftedTrackCoordinatesMatrix[row][0].toString());
-                                        bufferedWriter.append("\t");
-                                        bufferedWriter.append(shiftedTrackCoordinatesMatrix[row][1].toString());
-                                        bufferedWriter.append("\t");
-                                        if (instantaneousDisplacementsVector[row] != null) {
-                                            bufferedWriter.append(instantaneousDisplacementsVector[row].toString());
-                                        }
-                                        bufferedWriter.append("\t");
-                                        if (turningAnglesVector[row] != null) {
-                                            bufferedWriter.append(turningAnglesVector[row].toString());
-                                        }
-                                        bufferedWriter.newLine();
-                                    }
-                                    counter += currentNumber;
-                                }
-                            }
-                        } catch (IOException ex) {
-                            Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+//                        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(trackDataFolder, name1)))) {
+//                            // HEADER
+//                            bufferedWriter.append("well" + "\t" + "track" + "\t" + "time" + "\t" + "location" + "\t" + "x" + "\t" + "y" + "\t" + "shiftX" + "\t" + "shiftY" + "\t" + "instDispl" + "\t" + "turningAngle");
+//                            bufferedWriter.newLine();
+//                            int counter = 0;
+//                            for (List<Integer> list : numbersOfTrackPoints) {
+//                                for (Integer currentNumber : list) {
+//                                    for (int row = counter; row < counter + currentNumber; row++) {
+//                                        // this is just the data structure
+//                                        Object[] currentRow = dataStructure[row];
+//                                        for (int column = 0; column < currentRow.length; column++) {
+//                                            bufferedWriter.append(currentRow[column].toString());
+//                                            bufferedWriter.append("\t");
+//                                        }
+//                                        bufferedWriter.append("" + (list.indexOf(currentNumber) + 1));
+//                                        bufferedWriter.append("\t");
+//                                        // this is the rest of the calculation
+//                                        bufferedWriter.append(rawTrackCoordinatesMatrix[row][0].toString());
+//                                        bufferedWriter.append("\t");
+//                                        bufferedWriter.append(rawTrackCoordinatesMatrix[row][1].toString());
+//                                        bufferedWriter.append("\t");
+//                                        bufferedWriter.append(shiftedTrackCoordinatesMatrix[row][0].toString());
+//                                        bufferedWriter.append("\t");
+//                                        bufferedWriter.append(shiftedTrackCoordinatesMatrix[row][1].toString());
+//                                        bufferedWriter.append("\t");
+//                                        if (instantaneousDisplacementsVector[row] != null) {
+//                                            bufferedWriter.append(instantaneousDisplacementsVector[row].toString());
+//                                        }
+//                                        bufferedWriter.append("\t");
+//                                        if (turningAnglesVector[row] != null) {
+//                                            bufferedWriter.append(turningAnglesVector[row].toString());
+//                                        }
+//                                        bufferedWriter.newLine();
+//                                    }
+//                                    counter += currentNumber;
+//                                }
+//                            }
+//                        } catch (IOException ex) {
+//                            Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
+//                        }
                         String name2 = project + "_" + experiment + "_" + plateCondition + ".txt";
                         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
                         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(globalDataFolder, name2)))) {
                             // HEADER
-                            bufferedWriter.append("well" + "\t" + "track" + "\t" + "cumDist" + "\t" + "euclDist" + "\t" + "directionality" + "\t" + "medianDispl" + "\t" + "meanSpeed" + "\t" + "meanTurningAngle");
+                            bufferedWriter.append("well" + "\t" + "track" + "\t" + "location" + "\t" + "CD" + "\t" + "ED" + "\t" + "Directionality" + "\t" + "MD" + "\t" + "MS" + "\t" + "MTA");
                             bufferedWriter.newLine();
-                            for (TrackDataHolder trackDataHolder : trackDataHolders) {
-                                bufferedWriter.append(trackDataHolder.getTrack().getWellHasImagingType().getWell().toString());
-                                bufferedWriter.append("\t");
-                                bufferedWriter.append("" + trackDataHolder.getTrack().getTrackNumber());
-                                bufferedWriter.append("\t");
-                                bufferedWriter.append("" + trackDataHolder.getCumulativeDistance());
-                                bufferedWriter.append("\t");
-                                bufferedWriter.append("" + trackDataHolder.getEuclideanDistance());
-                                bufferedWriter.append("\t");
-                                bufferedWriter.append("" + trackDataHolder.getDirectionality());
-                                bufferedWriter.append("\t");
-                                bufferedWriter.append("" + trackDataHolder.getTrackMedianDisplacement());
-                                bufferedWriter.append("\t");
-                                bufferedWriter.append("" + trackDataHolder.getTrackMeanSpeed());
-                                bufferedWriter.append("\t");
-                                bufferedWriter.append("" + trackDataHolder.getTrackAngle());
-                                bufferedWriter.newLine();
+                            int counter = 0;
+                            for (List<Integer> list : numberOfTracks) {
+                                for (Integer currentNumber : list) {
+                                    for (int row = counter; row < counter + currentNumber; row++) {
+                                        TrackDataHolder trackDataHolder = trackDataHolders.get(row);
+                                        bufferedWriter.append(trackDataHolder.getTrack().getWellHasImagingType().getWell().toString());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getTrack().getTrackNumber());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + (list.indexOf(currentNumber) + 1));
+
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getCumulativeDistance());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getEuclideanDistance());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getDirectionality());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getMedianDisplacement());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getMedianSpeed());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getMedianTurningAngle());
+                                        bufferedWriter.newLine();
+                                    }
+                                    counter += currentNumber;
+                                }
                             }
                         } catch (IOException ex) {
                             Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);

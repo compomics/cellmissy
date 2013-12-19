@@ -72,7 +72,6 @@ public class CustomizeReportDialog extends javax.swing.JDialog {
         setTitle("Customize Analysis Report");
         setMinimumSize(new java.awt.Dimension(800, 750));
         setModal(true);
-        setPreferredSize(new java.awt.Dimension(800, 750));
 
         createReportButton.setText("Create & Save PDF Report");
         createReportButton.setToolTipText("Create a PDF report for this analysis and save it");

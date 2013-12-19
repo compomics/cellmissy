@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class DensityFunctionHolderCache extends LinkedHashMap<PlateCondition, Map<DensityFunctionHolderCache.DataCategory, List<List<double[]>>>> implements Cache<PlateCondition, Map<DensityFunctionHolderCache.DataCategory, List<List<double[]>>>> {
 
     /**
-     * enum for data category: is it raw data or already corrected data?
+     * ENUM for data category: is it raw data or already corrected data?
      */
     public enum DataCategory {
 
@@ -33,7 +33,7 @@ public class DensityFunctionHolderCache extends LinkedHashMap<PlateCondition, Ma
      * If the maximum size is reached, the first added element is removed and replaced
      * by the given plateCondition.
      * @param plateCondition
-     * @param densityFunction 
+     * @param densityFunction
      */
     @Override
     public void putInCache(PlateCondition plateCondition, Map<DensityFunctionHolderCache.DataCategory, List<List<double[]>>> densityFunction) {
@@ -53,7 +53,7 @@ public class DensityFunctionHolderCache extends LinkedHashMap<PlateCondition, Ma
     /**
      * Method from LinkedHashMap
      * @param eldest
-     * @return 
+     * @return
      */
     @Override
     protected boolean removeEldestEntry(Entry<PlateCondition, Map<DensityFunctionHolderCache.DataCategory, List<List<double[]>>>> eldest) {

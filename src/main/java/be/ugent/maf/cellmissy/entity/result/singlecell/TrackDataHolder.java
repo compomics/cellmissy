@@ -21,10 +21,10 @@ public class TrackDataHolder {
     // the time interval in which the track has been detected and followed in the tracking step
     private double[] timeIndexes;
     // track duration, in minutes
-    private double trackDuration;
+    private double duration;
     // matrix for track coordinates (x, y)
     // each row is a track point and contains couples of coordinates (x, y)
-    private Double[][] trackCoordinatesMatrix;
+    private Double[][] coordinatesMatrix;
     // minimum value for the x coordinate
     private double xMin;
     // maximum value for the x coordinate
@@ -34,37 +34,41 @@ public class TrackDataHolder {
     // maximum value for the y coordinate
     private double yMax;
     // matrix for shifted track coordinates
-    // same as the trackCoordinatesMatrix, but the origins of migration are superimposed at (0, 0)
-    private Double[][] shiftedTrackCoordinates;
+    // same as the coordinatesMatrix, but the origins of migration are superimposed at (0, 0)
+    private Double[][] shiftedCooordinatesMatrix;
     // matrix for delta movements in (x, y) direction
     // differences between location (x[n], y[n]) and location (x[n-1], y[n-1])
     private Double[][] deltaMovements;
-    // boolean for outliers: TRUE is data point is an outlier -----**** needs to be revisited
-    private boolean[] outliers;
     // array for  the instantaneous cell displacements
     // for a track, the minimal instantaneous speeds are derived from the displacement of the cell centroid between adjacent time points
     private Double[] instantaneousDisplacements;
     // track median displacement
     // this is the median displacement computed from all time intervals throughout a track
-    private double trackMedianDisplacement;
+    private double medianDisplacement;
     // track median speed
     // this is the track median displacement divided by the track duration (time interval in which the cell has been tracked)
-    private double trackMeanSpeed;
+    private double medianSpeed;
     // double for cumulative distance (between first and last time point of the track)
     // this is the total path length travelled by the cell in its displacement
     private double cumulativeDistance;
     // double for euclidean distance (between first and last time point of the track)
     // this is the real displacement of the cell in its motion (the net distance traveled), tipically smaller than the cumulative distance
     private double euclideanDistance;
-    // directionality: this is the ratio between the euclidean and the cumulative distance
+    // directionality: this is  the ratio between the euclidean and the cumulative distance
     // this parameter is also known in literature as confinement ratio or meandering index
     // since the path length is at least equal to the displacement, this coefficient can vary between 0 and 1
     private double directionality;
+    // maximal displacement: the length of the longest vector among all possible pair combinations of displacements
+    private double maximalDisplacement;
+    // displacement ratio: displacement/maximal displacement
+    private double displacementRatio;
+    // outreach ratio: maximal displacement/path lenght
+    private double outreachRatio;
     // array for turning angles
     // a turning angle is the observed turning angle of a cell between sequential time points (it is an instantaneous angle)
     private Double[] turningAngles;
     // track angle: the median turning angle computed from all time intervals throughout a track
-    private double trackAngle;
+    private double medianTurningAngle;
 
     /**
      * Constructor, takes a track as argument.
@@ -75,6 +79,10 @@ public class TrackDataHolder {
         this.track = track;
     }
 
+    /**
+     * Getters and setters
+     *
+     */
     public Track getTrack() {
         return track;
     }
@@ -91,20 +99,20 @@ public class TrackDataHolder {
         this.timeIndexes = timeIndexes;
     }
 
-    public double getTrackDuration() {
-        return trackDuration;
+    public double getDuration() {
+        return duration;
     }
 
-    public void setTrackDuration(double trackDuration) {
-        this.trackDuration = trackDuration;
+    public void setDuration(double duration) {
+        this.duration = duration;
     }
 
-    public Double[][] getTrackCoordinatesMatrix() {
-        return trackCoordinatesMatrix;
+    public Double[][] getCoordinatesMatrix() {
+        return coordinatesMatrix;
     }
 
-    public void setTrackCoordinatesMatrix(Double[][] trackCoordinatesMatrix) {
-        this.trackCoordinatesMatrix = trackCoordinatesMatrix;
+    public void setCoordinatesMatrix(Double[][] coordinatesMatrix) {
+        this.coordinatesMatrix = coordinatesMatrix;
     }
 
     public double getxMin() {
@@ -139,12 +147,12 @@ public class TrackDataHolder {
         this.yMax = yMax;
     }
 
-    public Double[][] getShiftedTrackCoordinates() {
-        return shiftedTrackCoordinates;
+    public Double[][] getShiftedCooordinatesMatrix() {
+        return shiftedCooordinatesMatrix;
     }
 
-    public void setShiftedTrackCoordinates(Double[][] shiftedTrackCoordinates) {
-        this.shiftedTrackCoordinates = shiftedTrackCoordinates;
+    public void setShiftedCooordinatesMatrix(Double[][] shiftedCooordinatesMatrix) {
+        this.shiftedCooordinatesMatrix = shiftedCooordinatesMatrix;
     }
 
     public Double[][] getDeltaMovements() {
@@ -155,14 +163,6 @@ public class TrackDataHolder {
         this.deltaMovements = deltaMovements;
     }
 
-    public boolean[] getOutliers() {
-        return outliers;
-    }
-
-    public void setOutliers(boolean[] outliers) {
-        this.outliers = outliers;
-    }
-
     public Double[] getInstantaneousDisplacements() {
         return instantaneousDisplacements;
     }
@@ -171,20 +171,20 @@ public class TrackDataHolder {
         this.instantaneousDisplacements = instantaneousDisplacements;
     }
 
-    public double getTrackMedianDisplacement() {
-        return trackMedianDisplacement;
+    public double getMedianDisplacement() {
+        return medianDisplacement;
     }
 
-    public void setTrackMedianDisplacement(double trackMedianDisplacement) {
-        this.trackMedianDisplacement = trackMedianDisplacement;
+    public void setMedianDisplacement(double medianDisplacement) {
+        this.medianDisplacement = medianDisplacement;
     }
 
-    public double getTrackMeanSpeed() {
-        return trackMeanSpeed;
+    public double getMedianSpeed() {
+        return medianSpeed;
     }
 
-    public void setTrackMeanSpeed(double trackMeanSpeed) {
-        this.trackMeanSpeed = trackMeanSpeed;
+    public void setMedianSpeed(double medianSpeed) {
+        this.medianSpeed = medianSpeed;
     }
 
     public double getCumulativeDistance() {
@@ -211,6 +211,30 @@ public class TrackDataHolder {
         this.directionality = directionality;
     }
 
+    public double getMaximalDisplacement() {
+        return maximalDisplacement;
+    }
+
+    public void setMaximalDisplacement(double maximalDisplacement) {
+        this.maximalDisplacement = maximalDisplacement;
+    }
+
+    public double getDisplacementRatio() {
+        return displacementRatio;
+    }
+
+    public void setDisplacementRatio(double displacementRatio) {
+        this.displacementRatio = displacementRatio;
+    }
+
+    public double getOutreachRatio() {
+        return outreachRatio;
+    }
+
+    public void setOutreachRatio(double outreachRatio) {
+        this.outreachRatio = outreachRatio;
+    }
+
     public Double[] getTurningAngles() {
         return turningAngles;
     }
@@ -219,12 +243,12 @@ public class TrackDataHolder {
         this.turningAngles = turningAngles;
     }
 
-    public double getTrackAngle() {
-        return trackAngle;
+    public double getMedianTurningAngle() {
+        return medianTurningAngle;
     }
 
-    public void setTrackAngle(double trackAngle) {
-        this.trackAngle = trackAngle;
+    public void setMedianTurningAngle(double medianTurningAngle) {
+        this.medianTurningAngle = medianTurningAngle;
     }
 
     @Override

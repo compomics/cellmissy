@@ -25,8 +25,6 @@ public class SingleCellPreProcessingResults {
     private Double[][] rawTrackCoordinatesMatrix;
     // track coordinates shifted to position (0, 0)
     private Double[][] shiftedTrackCoordinatesMatrix;
-    // boolean for the motile steps computation --- ******************* to be revisited
-    private boolean[] outliersVector;
     // array for instantaneous displacements
     private Double[] instantaneousDisplacementsVector;
     // array for track displacements
@@ -37,12 +35,18 @@ public class SingleCellPreProcessingResults {
     private Double[] cumulativeDistancesVector;
     // array for track Euclidean distancse
     private Double[] euclideanDistancesVector;
-    //array for directionalities
+    // array for directionalities
     private Double[] directionalitiesVector;
+    // array for maximal displacements
+    private Double[] maximalDisplacementsVector;
+    // array for displacement ratios
+    private Double[] displacementRatiosVector;
+    // array for outreach ratios
+    private Double[] outreachRatiosVector;
     // array for turning angles
     private Double[] turningAnglesVector;
     // array for track angles
-    private Double[] trackAnglesVector;
+    private Double[] medianTurningAnglesVector;
 
     public List<TrackDataHolder> getTrackDataHolders() {
         return trackDataHolders;
@@ -74,14 +78,6 @@ public class SingleCellPreProcessingResults {
 
     public void setShiftedTrackCoordinatesMatrix(Double[][] normalizedTrackCoordinatesMatrix) {
         this.shiftedTrackCoordinatesMatrix = normalizedTrackCoordinatesMatrix;
-    }
-
-    public boolean[] getOutliersVector() {
-        return outliersVector;
-    }
-
-    public void setOutliersVector(boolean[] outliersVector) {
-        this.outliersVector = outliersVector;
     }
 
     public Double[] getInstantaneousDisplacementsVector() {
@@ -132,6 +128,30 @@ public class SingleCellPreProcessingResults {
         this.directionalitiesVector = directionalitiesVector;
     }
 
+    public Double[] getMaximalDisplacementsVector() {
+        return maximalDisplacementsVector;
+    }
+
+    public void setMaximalDisplacementsVector(Double[] maximalDisplacementsVector) {
+        this.maximalDisplacementsVector = maximalDisplacementsVector;
+    }
+
+    public Double[] getDisplacementRatiosVector() {
+        return displacementRatiosVector;
+    }
+
+    public void setDisplacementRatiosVector(Double[] displacementRatiosVector) {
+        this.displacementRatiosVector = displacementRatiosVector;
+    }
+
+    public Double[] getOutreachRatiosVector() {
+        return outreachRatiosVector;
+    }
+
+    public void setOutreachRatiosVector(Double[] outreachRatiosVector) {
+        this.outreachRatiosVector = outreachRatiosVector;
+    }
+
     public Double[] getTurningAnglesVector() {
         return turningAnglesVector;
     }
@@ -140,11 +160,11 @@ public class SingleCellPreProcessingResults {
         this.turningAnglesVector = turningAnglesVector;
     }
 
-    public Double[] getTrackAnglesVector() {
-        return trackAnglesVector;
+    public Double[] getMedianTurningAnglesVector() {
+        return medianTurningAnglesVector;
     }
 
-    public void setTrackAnglesVector(Double[] trackAnglesVector) {
-        this.trackAnglesVector = trackAnglesVector;
+    public void setMedianTurningAnglesVector(Double[] medianTurningAnglesVector) {
+        this.medianTurningAnglesVector = medianTurningAnglesVector;
     }
 }
