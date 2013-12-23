@@ -6,9 +6,10 @@ package be.ugent.maf.cellmissy.analysis.singlecell.impl;
 
 import be.ugent.maf.cellmissy.analysis.singlecell.FarthestPointsPairCalculator;
 import be.ugent.maf.cellmissy.analysis.singlecell.TrackOperator;
-import be.ugent.maf.cellmissy.entity.Point;
+import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.FarthestPointsPair;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.Arrays;
@@ -182,12 +183,28 @@ public class TrackOperatorImpl implements TrackOperator {
     }
 
     @Override
-    public void computeMaximalDisplacement(TrackDataHolder trackDataHolder) {
-        List<Point> farthestPoints = farthestPointsPairCalculator.findFarthestPoints(trackDataHolder.getTrack());
-        Point firstPoint = farthestPoints.get(0);
-        Point secondPoint = farthestPoints.get(1);
-        double maximalDisplacement = firstPoint.euclideanDistanceTo(secondPoint);
-        trackDataHolder.setMaximalDisplacement(maximalDisplacement);
+    public void computeFarthestPointsPair(TrackDataHolder trackDataHolder) {
+        FarthestPointsPair farthestPointsPair = farthestPointsPairCalculator.findFarthestPoints(trackDataHolder);
+        trackDataHolder.setFarthestPointsPair(farthestPointsPair);
+    }
+
+    @Override
+    public void computeDisplacementRatio(TrackDataHolder trackDataHolder) {
+        double farthestDistance = trackDataHolder.getFarthestPointsPair().getGreatestDistance();
+        double displacementRatio = trackDataHolder.getEuclideanDistance() / farthestDistance;
+        trackDataHolder.setDisplacementRatio(displacementRatio);
+    }
+
+    /**
+     * Compute outreach ratio of a certain track.
+     *
+     * @param trackDataHolder
+     */
+    @Override
+    public void computeOutreachRatio(TrackDataHolder trackDataHolder) {
+        double farthestDistance = trackDataHolder.getFarthestPointsPair().getGreatestDistance();
+        double outreachRatio = farthestDistance / trackDataHolder.getCumulativeDistance();
+        trackDataHolder.setOutreachRatio(outreachRatio);
     }
 
     @Override

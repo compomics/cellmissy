@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.analysis.singlecell.impl;
 
 import be.ugent.maf.cellmissy.analysis.singlecell.ConvexHullCalculator;
-import be.ugent.maf.cellmissy.entity.Point;
+import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import java.util.ArrayList;

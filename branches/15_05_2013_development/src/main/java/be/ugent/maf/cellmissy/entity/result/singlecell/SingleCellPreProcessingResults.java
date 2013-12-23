@@ -37,8 +37,8 @@ public class SingleCellPreProcessingResults {
     private Double[] euclideanDistancesVector;
     // array for directionalities
     private Double[] directionalitiesVector;
-    // array for maximal displacements
-    private Double[] maximalDisplacementsVector;
+    // array for farthest points pairs
+    private FarthestPointsPair[] farthestPointsPairsVector;
     // array for displacement ratios
     private Double[] displacementRatiosVector;
     // array for outreach ratios
@@ -128,12 +128,12 @@ public class SingleCellPreProcessingResults {
         this.directionalitiesVector = directionalitiesVector;
     }
 
-    public Double[] getMaximalDisplacementsVector() {
-        return maximalDisplacementsVector;
+    public FarthestPointsPair[] getFarthestPointsPairsVector() {
+        return farthestPointsPairsVector;
     }
 
-    public void setMaximalDisplacementsVector(Double[] maximalDisplacementsVector) {
-        this.maximalDisplacementsVector = maximalDisplacementsVector;
+    public void setFarthestPointsPairsVector(FarthestPointsPair[] farthestPointsPairsVector) {
+        this.farthestPointsPairsVector = farthestPointsPairsVector;
     }
 
     public Double[] getDisplacementRatiosVector() {

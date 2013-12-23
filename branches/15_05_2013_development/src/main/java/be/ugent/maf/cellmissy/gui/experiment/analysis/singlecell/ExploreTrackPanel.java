@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -20,8 +21,8 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         return graphicsParentPanel;
     }
 
-    public JPanel getShiftedParentPanel() {
-        return shiftedParentPanel;
+    public JPanel getCoordinatesParentPanel() {
+        return coordinatesParentPanel;
     }
 
     public JSlider getTimeSlider() {
@@ -48,6 +49,18 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         return trackDataTable;
     }
 
+    public JButton getConvexHullButton() {
+        return convexHullButton;
+    }
+
+    public JTextField getFarthestPairFirstPointTextField() {
+        return farthestPairFirstPointTextField;
+    }
+
+    public JTextField getFarthestPairSecondPointTextField() {
+        return farthestPairSecondPointTextField;
+    }
+
     /**
      * Creates new form ExploreTrackPanel
      */
@@ -66,7 +79,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         graphicsParentPanel = new javax.swing.JPanel();
-        shiftedParentPanel = new javax.swing.JPanel();
+        coordinatesParentPanel = new javax.swing.JPanel();
         xYTCoordinatesParentPanel = new javax.swing.JPanel();
         rightPanel = new javax.swing.JPanel();
         tablePanel = new javax.swing.JPanel();
@@ -79,6 +92,12 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         xTextField = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        convexHullButton = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
+        farthestPairFirstPointTextField = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        farthestPairSecondPointTextField = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tracksList = new javax.swing.JList();
@@ -96,11 +115,11 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.5;
         add(graphicsParentPanel, gridBagConstraints);
 
-        shiftedParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("shifted (x, y)"));
-        shiftedParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        shiftedParentPanel.setOpaque(false);
-        shiftedParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        shiftedParentPanel.setLayout(new java.awt.GridBagLayout());
+        coordinatesParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("(x, y)"));
+        coordinatesParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        coordinatesParentPanel.setOpaque(false);
+        coordinatesParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        coordinatesParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
@@ -108,7 +127,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.weightx = 0.6;
         gridBagConstraints.weighty = 0.5;
-        add(shiftedParentPanel, gridBagConstraints);
+        add(coordinatesParentPanel, gridBagConstraints);
 
         xYTCoordinatesParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("x(t), y(t)"));
         xYTCoordinatesParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -148,7 +167,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tablePanelLayout.setVerticalGroup(
@@ -209,7 +228,56 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                 .addGroup(timeEvolutionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(yTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(123, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Farthest Pair Points"));
+
+        convexHullButton.setText("Show/Hide Convex Hull");
+
+        jLabel8.setText("point 1 =");
+
+        farthestPairFirstPointTextField.setEditable(false);
+        farthestPairFirstPointTextField.setFocusable(false);
+
+        jLabel9.setText("point 2 = ");
+
+        farthestPairSecondPointTextField.setEditable(false);
+        farthestPairSecondPointTextField.setFocusable(false);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel8))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(farthestPairSecondPointTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(convexHullButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(farthestPairFirstPointTextField, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {convexHullButton, farthestPairSecondPointTextField});
+
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(farthestPairFirstPointTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(farthestPairSecondPointTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addComponent(convexHullButton)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout rightPanelLayout = new javax.swing.GroupLayout(rightPanel);
@@ -218,7 +286,9 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rightPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(timeEvolutionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(timeEvolutionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -227,10 +297,13 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rightPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(timeEvolutionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addGroup(rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(rightPanelLayout.createSequentialGroup()
+                        .addComponent(timeEvolutionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 14, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -257,14 +330,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -279,15 +352,21 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         add(jPanel1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton convexHullButton;
+    private javax.swing.JPanel coordinatesParentPanel;
+    private javax.swing.JTextField farthestPairFirstPointTextField;
+    private javax.swing.JTextField farthestPairSecondPointTextField;
     private javax.swing.JPanel graphicsParentPanel;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel rightPanel;
-    private javax.swing.JPanel shiftedParentPanel;
     private javax.swing.JPanel tablePanel;
     private javax.swing.JPanel timeEvolutionPanel;
     private javax.swing.JSlider timeSlider;

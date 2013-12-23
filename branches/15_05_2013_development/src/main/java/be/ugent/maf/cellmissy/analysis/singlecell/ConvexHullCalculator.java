@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell;
 
-import be.ugent.maf.cellmissy.entity.Point;
+import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
 import be.ugent.maf.cellmissy.entity.Track;
 
 /**

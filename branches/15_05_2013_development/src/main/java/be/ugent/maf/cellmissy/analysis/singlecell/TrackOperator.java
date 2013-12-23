@@ -114,7 +114,21 @@ public interface TrackOperator {
      *
      * @param trackDataHolder
      */
-    public void computeMaximalDisplacement(TrackDataHolder trackDataHolder);
+    public void computeFarthestPointsPair(TrackDataHolder trackDataHolder);
+
+    /**
+     * Compute displacement ratio of a certain track.
+     *
+     * @param trackDataHolder
+     */
+    public void computeDisplacementRatio(TrackDataHolder trackDataHolder);
+
+    /**
+     * Compute outreach ratio of a certain track.
+     *
+     * @param trackDataHolder
+     */
+    public void computeOutreachRatio(TrackDataHolder trackDataHolder);
 
     /**
      * Compute turning angles.

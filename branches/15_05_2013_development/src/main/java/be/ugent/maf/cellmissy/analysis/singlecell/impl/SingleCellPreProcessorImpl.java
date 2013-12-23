@@ -13,6 +13,7 @@ import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.entity.result.singlecell.FarthestPointsPair;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -203,16 +204,42 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
-    public void generateMaximalDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void generateFarthestPointsPairsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] maximalDisplacementsVector = new Double[trackDataHolders.size()];
-        computeMaximalDisplacements(singleCellPreProcessingResults);
-        for (int i = 0; i < maximalDisplacementsVector.length; i++) {
+        FarthestPointsPair[] farthestPointsPairsVector = new FarthestPointsPair[trackDataHolders.size()];
+        computeFarthestPointsPairs(singleCellPreProcessingResults);
+        for (int i = 0; i < farthestPointsPairsVector.length; i++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double maximalDisplacement = trackDataHolder.getMaximalDisplacement();
-            maximalDisplacementsVector[i] = maximalDisplacement;
+            FarthestPointsPair farthestPointsPair = trackDataHolder.getFarthestPointsPair();
+            farthestPointsPairsVector[i] = farthestPointsPair;
         }
-        singleCellPreProcessingResults.setMaximalDisplacementsVector(maximalDisplacementsVector);
+        singleCellPreProcessingResults.setFarthestPointsPairsVector(farthestPointsPairsVector);
+    }
+
+    @Override
+    public void generateDisplacementRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+        Double[] displacementRatiosVector = new Double[trackDataHolders.size()];
+        computeDisplacementRatios(singleCellPreProcessingResults);
+        for (int i = 0; i < displacementRatiosVector.length; i++) {
+            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
+            double displacementRatio = trackDataHolder.getDisplacementRatio();
+            displacementRatiosVector[i] = displacementRatio;
+        }
+        singleCellPreProcessingResults.setDisplacementRatiosVector(displacementRatiosVector);
+    }
+
+    @Override
+    public void generateOutreachRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+        Double[] outreachRatiosVector = new Double[trackDataHolders.size()];
+        computeOutreachRatios(singleCellPreProcessingResults);
+        for (int i = 0; i < outreachRatiosVector.length; i++) {
+            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
+            double outreachRatio = trackDataHolder.getOutreachRatio();
+            outreachRatiosVector[i] = outreachRatio;
+        }
+        singleCellPreProcessingResults.setOutreachRatiosVector(outreachRatiosVector);
     }
 
     @Override
@@ -362,9 +389,31 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    private void computeMaximalDisplacements(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    private void computeFarthestPointsPairs(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeMaximalDisplacement(trackDataHolder);
+            trackOperator.computeFarthestPointsPair(trackDataHolder);
+        }
+    }
+
+    /**
+     * Compute the displacement ratios for each track data holder.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    private void computeDisplacementRatios(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.computeDisplacementRatio(trackDataHolder);
+        }
+    }
+
+    /**
+     * Compute the outreach ratios for each track data holder.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    private void computeOutreachRatios(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+            trackOperator.computeOutreachRatio(trackDataHolder);
         }
     }
 
