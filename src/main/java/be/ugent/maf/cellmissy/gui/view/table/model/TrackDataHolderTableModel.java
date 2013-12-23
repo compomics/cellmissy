@@ -86,6 +86,7 @@ public class TrackDataHolderTableModel extends AbstractTableModel {
         data[14][1] = trackDataHolder.getEuclideanDistance();
         data[15][1] = trackDataHolder.getDirectionality();
         data[16][1] = trackDataHolder.getMedianTurningAngle();
+        data[17][1] = trackDataHolder.getMaximalDisplacement();
     }
 
     /**
@@ -112,6 +113,7 @@ public class TrackDataHolderTableModel extends AbstractTableModel {
         featuresNames.add("ED (µm)");
         featuresNames.add("directionality");
         featuresNames.add("MTA (deg)");
+        featuresNames.add("max displ (µm)");
         return featuresNames;
     }
 }

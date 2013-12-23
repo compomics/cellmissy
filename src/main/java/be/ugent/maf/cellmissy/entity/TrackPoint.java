@@ -101,6 +101,10 @@ public class TrackPoint implements Serializable {
     public TrackPoint() {
     }
 
+    public TrackPoint(Point point) {
+        this.point = point;
+    }
+
     public TrackPoint(Long trackPointid) {
         this.trackPointid = trackPointid;
     }

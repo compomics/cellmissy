@@ -49,61 +49,57 @@ public class FarthestPointsPairCalculatorImpl implements FarthestPointsPairCalcu
         private Point secondPoint;
         private double farthestDistance;
 
+        /**
+         * Given a track, compute the two most distant track points. Use the
+         * rotating calispers method to determine all the antipodal pairs of
+         * points and vertices on the convex hull computed through the graham
+         * scan algorithm. (Note that only antipodal pairs of points should be
+         * checked, because the diameter is the highest distance between two
+         * parallel lines of the hull).
+         *
+         * @param track
+         */
         private void compute(Track track) {
             List<TrackPoint> trackPointList = track.getTrackPointList();
-            Iterable<Point> convexHull = grahamScanAlgorithm.computeConvexHull(track);
-            // single point
+            // only one point, return
             if (trackPointList.size() <= 1) {
                 return;
             }
+            // compute convex hull containing vertices
+            Iterable<Point> convexHull = grahamScanAlgorithm.computeConvexHull(track);
             // number of points on the hull
-            int hullPointsNumber = 0;
+            int M = 0;
             for (Point point : convexHull) {
-                hullPointsNumber++;
+                M++;
             }
             // the hull, in counterclockwise order
-            Point[] hull = new Point[hullPointsNumber + 1];
-            int n = 1;
+            Point[] hull = new Point[M];
+            int m = 0;
             for (Point point : convexHull) {
-                hull[n++] = point;
+                hull[m++] = point;
             }
             // all points are equal
-            if (hullPointsNumber == 1) {
+            if (M == 1) {
+                return;
+            }
+            // points are collinear
+            if (M == 2) {
+                firstPoint = hull[0];
+                secondPoint = hull[1];
+                farthestDistance = firstPoint.euclideanDistanceTo(secondPoint);
                 return;
             }
 
-            // points are collinear
-            if (hullPointsNumber == 2) {
-                firstPoint = hull[1];
-                secondPoint = hull[2];
-            }
-
-            // k = farthest vertex from edge from hull[1] to hull[m]
-            int k = 2;
-            double a = Point.computeSignedArea(hull[hullPointsNumber], hull[k + 1], hull[1]);
-            double b = Point.computeSignedArea(hull[hullPointsNumber], hull[k], hull[1]);
-            while (a > b) {
-                k++;
-            }
-
-            int j = k;
-            for (int i = 1; i <= k; i++) {
-                System.out.println(hull[i] + " and " + hull[j] + " are antipodal");
-                if (hull[i].euclideanDistanceTo(hull[j]) > farthestDistance) {
-                    firstPoint = hull[i];
-                    secondPoint = hull[j];
-                    farthestDistance = hull[i].euclideanDistanceTo(hull[j]);
-                }
-                double c = Point.computeSignedArea(hull[i], hull[j + 1], hull[i + 1]);
-                double d = Point.computeSignedArea(hull[i], hull[j], hull[i + 1]);
-                while ((j < hullPointsNumber) && c > d) {
-                    j++;
-                    System.out.println(hull[i] + " and " + hull[j] + " are antipodal");
-                    double distance = hull[i].euclideanDistanceTo(hull[j]);
-                    if (distance > farthestDistance) {
-                        firstPoint = hull[i];
-                        secondPoint = hull[j];
-                        farthestDistance = hull[i].euclideanDistanceTo(hull[j]);
+            for (Point point : convexHull) {
+                for (int i = 0; i < hull.length; i++) {
+                    Point other = hull[i];
+                    if (!point.equals(other)) {
+                        double euclideanDistance = point.euclideanDistanceTo(other);
+                        if (euclideanDistance > farthestDistance) {
+                            firstPoint = point;
+                            secondPoint = other;
+                            farthestDistance = euclideanDistance;
+                        }
                     }
                 }
             }

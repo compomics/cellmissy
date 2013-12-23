@@ -15,6 +15,11 @@ import java.util.List;
 public interface FarthestPointsPairCalculator {
 
     /**
+     * Given a track, find the two farthest points that belong to this track,
+     * making use of the Graham Scan Algorithm, which computes the convex hull
+     * of the set of points of this track. The diameter of the convex hull is
+     * the maximal displacement of the cell (between the two farthest points of
+     * its path).
      *
      * @param track
      * @return
