@@ -5,9 +5,11 @@
 package be.ugent.maf.cellmissy.analysis;
 
 import be.ugent.maf.cellmissy.analysis.singlecell.FarthestPointsPairCalculator;
-import be.ugent.maf.cellmissy.entity.Point;
+import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.FarthestPointsPair;
+import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.Assert;
@@ -37,6 +39,7 @@ public class FarthestPointsPairTest {
     private static Point t = new Point(8, 10);
     private static Point u = new Point(-2, 5);
     private static Point v = new Point(7, -4);
+    private static TrackDataHolder trackDataHolder = new TrackDataHolder(track);
 
     @BeforeClass
     public static void createTrack() {
@@ -79,14 +82,16 @@ public class FarthestPointsPairTest {
 //
 //        System.out.println("u-v: " + u.euclideanDistanceTo(v));
 
-        List<Point> farthestPoints = farthestPointsPairCalculator.findFarthestPoints(track);
-        int n = farthestPoints.size();
-        Assert.assertEquals(2, n);
-        Point firstPoint = farthestPoints.get(0);
-        Point secondPoint = farthestPoints.get(1);
-        double farthestDistance = firstPoint.euclideanDistanceTo(secondPoint);
-        System.out.println("distance from: " + firstPoint + " to: " + secondPoint + " is: d = " + farthestDistance);
+        FarthestPointsPair farthestPointsPair = farthestPointsPairCalculator.findFarthestPoints(trackDataHolder);
+        Point firstPoint = farthestPointsPair.getFirstPoint();
+        Point secondPoint = farthestPointsPair.getSecondPoint();
+        Assert.assertNotNull(firstPoint);
+        Assert.assertNotNull(secondPoint);
 
+        double computedFD = firstPoint.euclideanDistanceTo(secondPoint);
+        System.out.println("distance from: " + firstPoint + " to: " + secondPoint + " is: d = " + computedFD);
+        double fD = farthestPointsPair.getGreatestDistance();
+        Assert.assertEquals(computedFD, fD);
         Assert.assertEquals(v, firstPoint);
         Assert.assertEquals(t, secondPoint);
     }

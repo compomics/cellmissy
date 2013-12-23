@@ -253,9 +253,9 @@ public class SingleCellPreProcessingController {
             singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);
-
-            singleCellPreProcessor.generateMaximalDisplacementsVector(singleCellPreProcessingResults);
-
+            singleCellPreProcessor.generateFarthestPointsPairsVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateDisplacementRatiosVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateOutreachRatiosVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
             // fill in map

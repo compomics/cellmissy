@@ -6,6 +6,8 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.entity.result.singlecell.FarthestPointsPair;
+import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.ExploreTrackPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TimePointTrackXYLineAndShapeRenderer;
@@ -18,6 +20,8 @@ import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
 import javax.swing.JLabel;
@@ -69,7 +73,7 @@ public class ExploreTrackController {
     private ExploreTrackPanel exploreTrackPanel;
     private ChartPanel coordinatesChartPanel;
     private ChartPanel xYTCoordinateChartPanel;
-    private ChartPanel shiftedTrackChartPanel;
+    private ChartPanel singleTrackCoordinatesChartPanel;
     // parent controller
     @Autowired
     private TrackCoordinatesController trackCoordinatesController;
@@ -114,6 +118,10 @@ public class ExploreTrackController {
         // set up and enable the time /slider here
         setupTimeSlider(selectedTrackDataHolder);
         updateTrackData(selectedTrackDataHolder);
+        // show farthest points pair
+        FarthestPointsPair farthestPointsPair = selectedTrackDataHolder.getFarthestPointsPair();
+        exploreTrackPanel.getFarthestPairFirstPointTextField().setText(" " + farthestPointsPair.getFirstPoint());
+        exploreTrackPanel.getFarthestPairSecondPointTextField().setText(" " + farthestPointsPair.getSecondPoint().toString());
     }
 
     /**
@@ -139,11 +147,11 @@ public class ExploreTrackController {
         exploreTrackPanel.getGraphicsParentPanel().add(coordinatesChartPanel, gridBagConstraints);
         xYTCoordinateChartPanel = new ChartPanel(null);
         xYTCoordinateChartPanel.setOpaque(false);
-        shiftedTrackChartPanel = new ChartPanel(null);
-        shiftedTrackChartPanel.setOpaque(false);
+        singleTrackCoordinatesChartPanel = new ChartPanel(null);
+        singleTrackCoordinatesChartPanel.setOpaque(false);
 
         exploreTrackPanel.getxYTCoordinatesParentPanel().add(xYTCoordinateChartPanel, gridBagConstraints);
-        exploreTrackPanel.getShiftedParentPanel().add(shiftedTrackChartPanel, gridBagConstraints);
+        exploreTrackPanel.getCoordinatesParentPanel().add(singleTrackCoordinatesChartPanel, gridBagConstraints);
 
         exploreTrackPanel.getTrackDataTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         exploreTrackPanel.getTrackDataTable().getTableHeader().setReorderingAllowed(false);
@@ -204,6 +212,19 @@ public class ExploreTrackController {
             }
         });
 
+        // convex hull logic
+        exploreTrackPanel.getConvexHullButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
+                if (selectedTrackIndex != -1) {
+                    TrackDataHolder selectedTrackDataHolder = trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex);
+                    Iterable<Point> convexHull = selectedTrackDataHolder.getConvexHull();
+                    plotConvexHull(convexHull);
+                }
+            }
+        });
+
         // add view to parent panel
         trackCoordinatesController.getTrackCoordinatesPanel().getExploreTrackParentPanel().add(exploreTrackPanel, gridBagConstraints);
     }
@@ -222,6 +243,38 @@ public class ExploreTrackController {
         double yValue = dataset.getYValue(selectedTrackIndex, timePoint);
         exploreTrackPanel.getxTextField().setText(" " + xValue);
         exploreTrackPanel.getyTextField().setText(" " + yValue);
+    }
+
+    /**
+     *
+     * @param convexHull
+     */
+    private void plotConvexHull(Iterable<Point> convexHull) {
+        int M = 0;
+        for (Point point : convexHull) {
+            M++;
+        }
+        // the hull, in counterclockwise order
+        Point[] hull = new Point[M];
+        int m = 0;
+        for (Point point : convexHull) {
+            hull[m++] = point;
+        }
+        // generate xy coordinates for these points of the hull
+        double[] x = new double[m + 1];
+        double[] y = new double[m + 1];
+        for (int i = 0; i < m; i++) {
+            Point point = hull[i];
+            x[i] = point.getX();
+            y[i] = point.getY();
+        }
+        x[m] = hull[0].getX();
+        y[m] = hull[0].getY();
+
+        XYSeries xYseries = JFreeChartUtils.generateXYSeries(x, y);
+        XYSeriesCollection xYSeriesCollection = new XYSeriesCollection(xYseries);
+        JFreeChart shiftedCoordinatesChart = ChartFactory.createXYLineChart("", "x (µm)", "y (µm)", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        singleTrackCoordinatesChartPanel.setChart(shiftedCoordinatesChart);
     }
 
     /**
@@ -291,7 +344,7 @@ public class ExploreTrackController {
         // plot x and y coordinates in time
         plotCoordinatesInTime(trackDataHolder);
         // plot the shifted track coordinates
-        plotShiftedCoordinates(trackDataHolder);
+        plotCoordinatesInSpace(trackDataHolder);
     }
 
     /**
@@ -347,18 +400,18 @@ public class ExploreTrackController {
      *
      * @param trackDataHolder
      */
-    private void plotShiftedCoordinates(TrackDataHolder trackDataHolder) {
+    private void plotCoordinatesInSpace(TrackDataHolder trackDataHolder) {
         // get the coordinates matrix
-        Double[][] shiftedTrackCoordinates = trackDataHolder.getShiftedCooordinatesMatrix();
-        XYSeries xYSeries = JFreeChartUtils.generateXYSeries(shiftedTrackCoordinates);
+        Double[][] coordinatesMatrix = trackDataHolder.getCoordinatesMatrix();
+        XYSeries xYSeries = JFreeChartUtils.generateXYSeries(coordinatesMatrix);
         Track track = trackDataHolder.getTrack();
         int trackNumber = track.getTrackNumber();
         Well well = track.getWellHasImagingType().getWell();
         String seriesKey = "track " + trackNumber + ", well " + well;
         xYSeries.setKey(seriesKey);
         XYSeriesCollection ySeriesCollection = new XYSeriesCollection(xYSeries);
-        JFreeChart shiftedCoordinatesChart = ChartFactory.createXYLineChart(seriesKey + " - coordinates shifted to (0, 0)", "x (µm)", "y (µm)", ySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-        JFreeChartUtils.setupSingleTrackPlot(shiftedCoordinatesChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), false);
-        shiftedTrackChartPanel.setChart(shiftedCoordinatesChart);
+        JFreeChart shiftedCoordinatesChart = ChartFactory.createXYLineChart(seriesKey + " - raw coordinates", "x (µm)", "y (µm)", ySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        JFreeChartUtils.setupSingleTrackPlot(shiftedCoordinatesChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), true);
+        singleTrackCoordinatesChartPanel.setChart(shiftedCoordinatesChart);
     }
 }

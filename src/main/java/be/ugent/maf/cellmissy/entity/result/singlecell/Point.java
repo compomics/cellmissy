@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.entity;
+package be.ugent.maf.cellmissy.entity.result.singlecell;
 
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.Comparator;
 
 /**
@@ -129,7 +130,9 @@ public class Point implements Comparable<Point> {
 
     @Override
     public String toString() {
-        return "(" + x + ", " + y + ")";
+        Double roundedX = AnalysisUtils.roundThreeDecimals(x);
+        Double roundedY = AnalysisUtils.roundThreeDecimals(y);
+        return "(" + roundedX + ", " + roundedY + ")";
     }
 
     /**

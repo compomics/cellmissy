@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy;
 
-import be.ugent.maf.cellmissy.entity.Point;
+import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
 import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

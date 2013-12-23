@@ -116,7 +116,21 @@ public interface SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    public void generateMaximalDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateFarthestPointsPairsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     * Generate vector with displacement ratios.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateDisplacementRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     * Generate vector with outreach ratios.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateOutreachRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate turning angles vector.
