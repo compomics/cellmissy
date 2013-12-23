@@ -133,6 +133,35 @@ public class Point implements Comparable<Point> {
     }
 
     /**
+     * Equals method.
+     *
+     * @param
+     * @return
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+        if (other.getClass() != this.getClass()) {
+            return false;
+        }
+        Point that = (Point) other;
+        return this.x == that.x && this.y == that.y;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 43 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
+        hash = 43 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
+        return hash;
+    }
+
+    /**
      * Compare other points relative to polar angle (between 0 and 2pi) they
      * make with this point.
      */

@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration("classpath:mySpringXMLConfig.xml")
 public class PointTest {
 
-    // three points ont the plane
+    // 3 points ont the plane
     private static Point q;
     private static Point r;
     private static Point s;
@@ -42,7 +42,7 @@ public class PointTest {
     }
 
     @Test
-    public void testArea() {
+    public void testSignedArea() {
         double area = Point.computeSignedArea(q, r, s);
         Assert.assertEquals(5.685999999999999 * 2, area);
     }

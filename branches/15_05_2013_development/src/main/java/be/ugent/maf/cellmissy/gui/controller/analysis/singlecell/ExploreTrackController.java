@@ -289,7 +289,7 @@ public class ExploreTrackController {
      */
     private void plotSingleTrackData(TrackDataHolder trackDataHolder) {
         // plot x and y coordinates in time
-        plotCoordinatesInTime2(trackDataHolder);
+        plotCoordinatesInTime(trackDataHolder);
         // plot the shifted track coordinates
         plotShiftedCoordinates(trackDataHolder);
     }
@@ -301,30 +301,6 @@ public class ExploreTrackController {
      * @param track
      */
     private void plotCoordinatesInTime(TrackDataHolder trackDataHolder) {
-        // get the selected track data holder, and thus the track to plot in time
-        Track track = trackDataHolder.getTrack();
-        // get the track coordinates matrix
-        Double[][] trackCoordinatesMatrix = trackDataHolder.getCoordinatesMatrix();
-        // we need to transpose the matrix
-        Double[][] transpose2DArray = AnalysisUtils.transpose2DArray(trackCoordinatesMatrix);
-        // we get the x coordinates and the time information
-        double[] xCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transpose2DArray[0]));
-        double[] timeIndexes = trackDataHolder.getTimeIndexes();
-        // we create the series and set its key
-        XYSeries xtSeries = JFreeChartUtils.generateXYSeries(timeIndexes, xCoordinates);
-        int trackNumber = track.getTrackNumber();
-        Well well = track.getWellHasImagingType().getWell();
-        String seriesKey = "track " + trackNumber + ", well " + well;
-        xtSeries.setKey(seriesKey);
-        // we then create the XYSeriesCollection and use it to make a new line chart
-        XYSeriesCollection xtSeriesCollection = new XYSeriesCollection(xtSeries);
-        JFreeChart xtCoordinatesChart = ChartFactory.createXYLineChart(seriesKey + " - x over time", "time index", "x (µm)", xtSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-        // set up the plot of the chart
-        JFreeChartUtils.setupSingleTrackPlot(xtCoordinatesChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), true);
-        xYTCoordinateChartPanel.setChart(xtCoordinatesChart);
-    }
-
-    private void plotCoordinatesInTime2(TrackDataHolder trackDataHolder) {
         // get the selected track data holder, and thus the track to plot in time
         Track track = trackDataHolder.getTrack();
         // get the track coordinates matrix
