@@ -49,6 +49,8 @@ public class JFreeChartUtils {
     private static BasicStroke normalLine = new BasicStroke(1.5f);
     // ticker basic stroke: wide line
     private static BasicStroke wideLine = new BasicStroke(2.5f);
+    // dashed line
+    private static BasicStroke dashedLine = new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[]{6.0f, 6.0f}, 0.0f);
     // font for the chart elements
     private static Font chartFont = new Font("Tahoma", Font.BOLD, 12);
     // line widths
@@ -65,6 +67,10 @@ public class JFreeChartUtils {
 
     public static BasicStroke getWideLine() {
         return wideLine;
+    }
+
+    public static BasicStroke getDashedLine() {
+        return dashedLine;
     }
 
     public static List<Float> getLineWidths() {
@@ -169,6 +175,37 @@ public class JFreeChartUtils {
         rangeAxis.setLabelFont(chartFont);
         domainAxis.setLabelPaint(Color.black);
         domainAxis.setLabelFont(chartFont);
+    }
+
+    /**
+     *
+     * @param convexHullChart
+     * @param trackIndex
+     */
+    public static void setupConvexHullChart(JFreeChart convexHullChart, int trackIndex) {
+        // set title font
+        convexHullChart.getTitle().setFont(chartFont);
+        XYPlot xyPlot = convexHullChart.getXYPlot();
+        setupPlot(xyPlot);
+        xyPlot.setBackgroundPaint(new Color(177, 177, 60, 50));
+        xyPlot.setOutlinePaint(new Color(177, 177, 60, 100));
+        xyPlot.setOutlineStroke(wideLine);
+        xyPlot.setRangeGridlinePaint(Color.black);
+        xyPlot.setDomainGridlinePaint(Color.black);
+        // assign 2 renderers: one for the coordinates line and one for the convex hull plot
+        XYLineAndShapeRenderer coordinatesRenderer = new XYLineAndShapeRenderer();
+        coordinatesRenderer.setSeriesStroke(0, wideLine);
+        int length = GuiUtils.getAvailableColors().length;
+        int colorIndex = trackIndex % length;
+        coordinatesRenderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[colorIndex]);
+        // show both lines and points
+        coordinatesRenderer.setSeriesLinesVisible(0, true);
+        coordinatesRenderer.setSeriesShapesVisible(0, true);
+        xyPlot.setRenderer(0, coordinatesRenderer);
+        XYLineAndShapeRenderer convexHullRenderer = new XYLineAndShapeRenderer();
+        convexHullRenderer.setSeriesStroke(0, dashedLine);
+        convexHullRenderer.setSeriesPaint(0, Color.black);
+        xyPlot.setRenderer(1, convexHullRenderer);
     }
 
     /**
@@ -378,9 +415,9 @@ public class JFreeChartUtils {
     }
 
     /**
-     * Compute Max value of Y for density plot
+     * Compute Max value of Y from a dataset.
      *
-     * @param xYSeriesCollection
+     * @param xYSeriesCollection: the dataset
      * @return
      */
     public static double computeMaxY(XYSeriesCollection xYSeriesCollection) {
@@ -392,6 +429,23 @@ public class JFreeChartUtils {
             }
         }
         return maxY;
+    }
+
+    /**
+     * Compute min value of Y from a dataset.
+     *
+     * @param xYSeriesCollection: the dataset
+     * @return
+     */
+    public static double computeMinY(XYSeriesCollection xYSeriesCollection) {
+        double minY = 0;
+        List<XYSeries> seriesList = xYSeriesCollection.getSeries();
+        for (int i = 0; i < seriesList.size(); i++) {
+            if (seriesList.get(i).getMaxY() < minY) {
+                minY = seriesList.get(i).getMinY();
+            }
+        }
+        return minY;
     }
 
     /**
