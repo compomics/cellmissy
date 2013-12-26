@@ -20,8 +20,6 @@ import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
 import javax.swing.JLabel;
@@ -74,6 +72,7 @@ public class ExploreTrackController {
     private ChartPanel coordinatesChartPanel;
     private ChartPanel xYTCoordinateChartPanel;
     private ChartPanel singleTrackCoordinatesChartPanel;
+    private ChartPanel convexHullChartPanel;
     // parent controller
     @Autowired
     private TrackCoordinatesController trackCoordinatesController;
@@ -149,9 +148,12 @@ public class ExploreTrackController {
         xYTCoordinateChartPanel.setOpaque(false);
         singleTrackCoordinatesChartPanel = new ChartPanel(null);
         singleTrackCoordinatesChartPanel.setOpaque(false);
+        convexHullChartPanel = new ChartPanel(null);
+        convexHullChartPanel.setOpaque(false);
 
         exploreTrackPanel.getxYTCoordinatesParentPanel().add(xYTCoordinateChartPanel, gridBagConstraints);
         exploreTrackPanel.getCoordinatesParentPanel().add(singleTrackCoordinatesChartPanel, gridBagConstraints);
+        exploreTrackPanel.getConvexHullParentPanel().add(convexHullChartPanel, gridBagConstraints);
 
         exploreTrackPanel.getTrackDataTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         exploreTrackPanel.getTrackDataTable().getTableHeader().setReorderingAllowed(false);
@@ -212,19 +214,6 @@ public class ExploreTrackController {
             }
         });
 
-        // convex hull logic
-        exploreTrackPanel.getConvexHullButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
-                if (selectedTrackIndex != -1) {
-                    TrackDataHolder selectedTrackDataHolder = trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex);
-                    Iterable<Point> convexHull = selectedTrackDataHolder.getConvexHull();
-                    plotConvexHull(convexHull);
-                }
-            }
-        });
-
         // add view to parent panel
         trackCoordinatesController.getTrackCoordinatesPanel().getExploreTrackParentPanel().add(exploreTrackPanel, gridBagConstraints);
     }
@@ -243,38 +232,6 @@ public class ExploreTrackController {
         double yValue = dataset.getYValue(selectedTrackIndex, timePoint);
         exploreTrackPanel.getxTextField().setText(" " + xValue);
         exploreTrackPanel.getyTextField().setText(" " + yValue);
-    }
-
-    /**
-     *
-     * @param convexHull
-     */
-    private void plotConvexHull(Iterable<Point> convexHull) {
-        int M = 0;
-        for (Point point : convexHull) {
-            M++;
-        }
-        // the hull, in counterclockwise order
-        Point[] hull = new Point[M];
-        int m = 0;
-        for (Point point : convexHull) {
-            hull[m++] = point;
-        }
-        // generate xy coordinates for these points of the hull
-        double[] x = new double[m + 1];
-        double[] y = new double[m + 1];
-        for (int i = 0; i < m; i++) {
-            Point point = hull[i];
-            x[i] = point.getX();
-            y[i] = point.getY();
-        }
-        x[m] = hull[0].getX();
-        y[m] = hull[0].getY();
-
-        XYSeries xYseries = JFreeChartUtils.generateXYSeries(x, y);
-        XYSeriesCollection xYSeriesCollection = new XYSeriesCollection(xYseries);
-        JFreeChart shiftedCoordinatesChart = ChartFactory.createXYLineChart("", "x (µm)", "y (µm)", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-        singleTrackCoordinatesChartPanel.setChart(shiftedCoordinatesChart);
     }
 
     /**
@@ -345,6 +302,8 @@ public class ExploreTrackController {
         plotCoordinatesInTime(trackDataHolder);
         // plot the shifted track coordinates
         plotCoordinatesInSpace(trackDataHolder);
+        // plot convex hull
+        plotConvexHull(trackDataHolder);
     }
 
     /**
@@ -402,16 +361,68 @@ public class ExploreTrackController {
      */
     private void plotCoordinatesInSpace(TrackDataHolder trackDataHolder) {
         // get the coordinates matrix
-        Double[][] coordinatesMatrix = trackDataHolder.getCoordinatesMatrix();
-        XYSeries xYSeries = JFreeChartUtils.generateXYSeries(coordinatesMatrix);
+        Double[][] shiftedCoordinatesMatrix = trackDataHolder.getShiftedCooordinatesMatrix();
+        XYSeries xYSeries = JFreeChartUtils.generateXYSeries(shiftedCoordinatesMatrix);
         Track track = trackDataHolder.getTrack();
         int trackNumber = track.getTrackNumber();
         Well well = track.getWellHasImagingType().getWell();
         String seriesKey = "track " + trackNumber + ", well " + well;
         xYSeries.setKey(seriesKey);
         XYSeriesCollection ySeriesCollection = new XYSeriesCollection(xYSeries);
-        JFreeChart shiftedCoordinatesChart = ChartFactory.createXYLineChart(seriesKey + " - raw coordinates", "x (µm)", "y (µm)", ySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-        JFreeChartUtils.setupSingleTrackPlot(shiftedCoordinatesChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), true);
+        JFreeChart shiftedCoordinatesChart = ChartFactory.createXYLineChart(seriesKey + " - shifted coordinates", "x (µm)", "y (µm)", ySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        JFreeChartUtils.setupSingleTrackPlot(shiftedCoordinatesChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), false);
         singleTrackCoordinatesChartPanel.setChart(shiftedCoordinatesChart);
+    }
+
+    /**
+     * Given a track data holder, plot the track coordinates surrounded by the
+     * convex hull computed for the set of points that belong to the track.
+     *
+     * @param trackDataHolder
+     */
+    private void plotConvexHull(TrackDataHolder trackDataHolder) {
+        Iterable<Point> convexHull = trackDataHolder.getConvexHull();
+        int M = 0;
+        for (Point point : convexHull) {
+            M++;
+        }
+        // the hull, in counterclockwise order
+        Point[] hull = new Point[M];
+        int m = 0;
+        for (Point point : convexHull) {
+            hull[m++] = point;
+        }
+        // generate xy coordinates for the points of the hull
+        double[] x = new double[m + 1];
+        double[] y = new double[m + 1];
+        for (int i = 0; i < m; i++) {
+            Point point = hull[i];
+            x[i] = point.getX();
+            y[i] = point.getY();
+        }
+        // repeat fisrt coordinates at the end, to close the hull
+        x[m] = hull[0].getX();
+        y[m] = hull[0].getY();
+        // get info for the title of the plot
+        Track track = trackDataHolder.getTrack();
+        int trackNumber = track.getTrackNumber();
+        Well well = track.getWellHasImagingType().getWell();
+        String seriesKey = "track " + trackNumber + ", well " + well;
+        // dataset for the convex hull
+        XYSeries hullSeries = JFreeChartUtils.generateXYSeries(x, y);
+        XYSeriesCollection hullDataset = new XYSeriesCollection(hullSeries);
+        JFreeChart convexHullChart = ChartFactory.createXYLineChart(seriesKey + " - convex hull", "x (µm)", "y (µm)", hullDataset, PlotOrientation.VERTICAL, false, true, false);
+        // dataset for the coordinates
+        Double[][] coordinatesMatrix = trackDataHolder.getCoordinatesMatrix();
+        XYSeries coordinatesSeries = JFreeChartUtils.generateXYSeries(coordinatesMatrix);
+        XYSeriesCollection coordinatesDataset = new XYSeriesCollection(coordinatesSeries);
+        // use both datasets for the plot
+        XYPlot xyPlot = convexHullChart.getXYPlot();
+        xyPlot.setDataset(0, coordinatesDataset);
+        xyPlot.setDataset(1, hullDataset);
+        // set up the chart
+        int trackIndex = trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder);
+        JFreeChartUtils.setupConvexHullChart(convexHullChart, trackIndex);
+        convexHullChartPanel.setChart(convexHullChart);
     }
 }

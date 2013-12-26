@@ -519,6 +519,9 @@ public class TrackCoordinatesController {
         for (Float lineWidth : JFreeChartUtils.getLineWidths()) {
             trackCoordinatesPanel.getLineWidthComboBox().addItem(lineWidth);
         }
+        // select 1.5 as default
+        trackCoordinatesPanel.getLineWidthComboBox().setSelectedIndex(1);
+        
         // refresh plot with current line width selected
         trackCoordinatesPanel.getLineWidthComboBox().addActionListener(new ActionListener() {
             @Override
