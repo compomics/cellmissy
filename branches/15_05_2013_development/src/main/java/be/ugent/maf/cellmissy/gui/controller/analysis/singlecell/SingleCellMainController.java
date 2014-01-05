@@ -782,11 +782,9 @@ public class SingleCellMainController {
                 showInfoMessage("Track Coordinates are shown for each well");
                 singleCellPreProcessingController.updateTracksNumberInfo();
                 singleCellPreProcessingController.updateWellBindingList(currentCondition);
-                boolean plotLines = singleCellPreProcessingController.getTrackCoordinatesPanel().getPlotLinesCheckBox().isSelected();
-                boolean plotPoints = singleCellPreProcessingController.getTrackCoordinatesPanel().getPlotPointsCheckBox().isSelected();
                 //check which button is selected for analysis:
                 boolean useRawCoordinates = singleCellPreProcessingController.getTrackCoordinatesPanel().getUnshiftedCoordinatesRadioButton().isSelected();
-                singleCellPreProcessingController.plotRandomTrackCoordinates(currentCondition, useRawCoordinates, plotLines, plotPoints);
+                singleCellPreProcessingController.plotRandomTrackCoordinates(currentCondition, useRawCoordinates);
                 if (useRawCoordinates) {
                     singleCellPreProcessingController.showRawTrackCoordinatesInTable(currentCondition);
                 } else {

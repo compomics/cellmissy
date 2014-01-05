@@ -145,8 +145,8 @@ public class SingleCellPreProcessingController {
         trackCoordinatesController.showShiftedTrackCoordinatesInTable(plateCondition);
     }
 
-    public void plotRandomTrackCoordinates(PlateCondition plateCondition, boolean useRawData, boolean plotLines, boolean plotPoints) {
-        trackCoordinatesController.plotRandomTrackCoordinates(plateCondition, useRawData, plotLines, plotPoints);
+    public void plotRandomTrackCoordinates(PlateCondition plateCondition, boolean useRawData) {
+        trackCoordinatesController.plotRandomTrackCoordinates(plateCondition, useRawData);
     }
 
     public void resetRandomTracks() {
