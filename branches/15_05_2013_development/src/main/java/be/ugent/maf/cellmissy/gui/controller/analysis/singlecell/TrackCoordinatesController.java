@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingRe
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsMenuBar;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
@@ -18,6 +19,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TrackXYLineAndShapeRe
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackCoordinatesTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
@@ -29,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -72,6 +75,7 @@ public class TrackCoordinatesController {
     private ObservableList<TrackDataHolder> trackDataHolderBindingList;
     // view
     private TrackCoordinatesPanel trackCoordinatesPanel;
+    private PlotSettingsMenuBar plotSettingsMenuBar;
     private ChartPanel coordinatesChartPanel;
     // parent controller
     @Autowired
@@ -89,6 +93,7 @@ public class TrackCoordinatesController {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         // init views
+        initPlotSettingsMenuBar();
         initTrackCoordinatesPanel();
         // init child controller
         exploreTrackController.init();
@@ -254,6 +259,33 @@ public class TrackCoordinatesController {
     }
 
     /**
+     * Action Listener for MenuItems
+     */
+    private class ItemActionListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String menuItemText = ((JMenuItem) e.getSource()).getText();
+
+        }
+    }
+
+    /**
+     * Initialize plot settings menu bar
+     */
+    private void initPlotSettingsMenuBar() {
+        // create new object
+        plotSettingsMenuBar = new PlotSettingsMenuBar();
+        /**
+         * Add action listeners to the menu items
+         */
+        ItemActionListener itemActionListener = new ItemActionListener();
+        plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().addActionListener(itemActionListener);
+        plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().addActionListener(itemActionListener);
+        plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().addActionListener(itemActionListener);
+    }
+
+    /**
      * Initialize main panel
      */
     private void initTrackCoordinatesPanel() {
@@ -319,7 +351,7 @@ public class TrackCoordinatesController {
             public void chartMouseMoved(ChartMouseEvent e) {
             }
         });
-        trackCoordinatesPanel.getGraphicsParentPanel().add(coordinatesChartPanel, gridBagConstraints);
+        trackCoordinatesPanel.getCoordinatesParentPanel().add(coordinatesChartPanel, gridBagConstraints);
 
         /**
          * add action listeners
@@ -521,7 +553,7 @@ public class TrackCoordinatesController {
         }
         // select 1.5 as default
         trackCoordinatesPanel.getLineWidthComboBox().setSelectedIndex(1);
-        
+
         // refresh plot with current line width selected
         trackCoordinatesPanel.getLineWidthComboBox().addActionListener(new ActionListener() {
             @Override
@@ -536,6 +568,8 @@ public class TrackCoordinatesController {
                 exploreTrackController.getCoordinatesChartPanel().getChart().getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
             }
         });
+
+        trackCoordinatesPanel.getPlotSettingsPanel().add(plotSettingsMenuBar, BorderLayout.EAST);
 
         // add view to parent panel
         singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesParentPanel().add(trackCoordinatesPanel, gridBagConstraints);
@@ -804,8 +838,8 @@ public class TrackCoordinatesController {
         secondCoordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
         coordinatesChartPanel.setChart(firstCoordinatesChart);
         exploreTrackController.getCoordinatesChartPanel().setChart(secondCoordinatesChart);
-        trackCoordinatesPanel.getGraphicsParentPanel().revalidate();
-        trackCoordinatesPanel.getGraphicsParentPanel().repaint();
+        trackCoordinatesPanel.getCoordinatesParentPanel().revalidate();
+        trackCoordinatesPanel.getCoordinatesParentPanel().repaint();
     }
 
     /**
