@@ -62,7 +62,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         return convexHullGraphicsParentPanel;
     }
 
- 
+
     /**
      * Creates new form ExploreTrackPanel
      */
@@ -90,7 +90,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         tracksList = new javax.swing.JList();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         shiftedCoordinatesPanel = new javax.swing.JPanel();
-        leftPanel = new javax.swing.JPanel();
         coordinatesParentPanel = new javax.swing.JPanel();
         temporalEvolutionPanel = new javax.swing.JPanel();
         xYTCoordinatesParentPanel = new javax.swing.JPanel();
@@ -225,30 +224,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         shiftedCoordinatesPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         shiftedCoordinatesPanel.setLayout(new java.awt.GridBagLayout());
 
-        leftPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plot Settings"));
-        leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        leftPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
-        leftPanel.setLayout(leftPanelLayout);
-        leftPanelLayout.setHorizontalGroup(
-            leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 197, Short.MAX_VALUE)
-        );
-        leftPanelLayout.setVerticalGroup(
-            leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 297, Short.MAX_VALUE)
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.2;
-        gridBagConstraints.weighty = 1.0;
-        shiftedCoordinatesPanel.add(leftPanel, gridBagConstraints);
-
         coordinatesParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         coordinatesParentPanel.setName(""); // NOI18N
         coordinatesParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -258,7 +233,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.8;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         shiftedCoordinatesPanel.add(coordinatesParentPanel, gridBagConstraints);
 
@@ -437,7 +412,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JPanel leftPanel;
     private javax.swing.JPanel rightPanel;
     private javax.swing.JPanel shiftedCoordinatesPanel;
     private javax.swing.JPanel tablePanel;

@@ -110,8 +110,8 @@ public class ExploreTrackController {
      * @param selectedTrackIndex: the index of the selected track
      */
     public void onSelectedTrack(int selectedTrackIndex) {
-        Float lineWidth = (Float) trackCoordinatesController.getTrackCoordinatesPanel().getLineWidthComboBox().getSelectedItem();
-        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, false, null, selectedTrackIndex, lineWidth);
+//        Float lineWidth = (Float) trackCoordinatesController.getTrackCoordinatesPanel().getLineWidthComboBox().getSelectedItem();
+        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, false, null, selectedTrackIndex, 2.0f);
         coordinatesChartPanel.getChart().getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
         TrackDataHolder selectedTrackDataHolder = trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex);
         // set up and enable the time /slider here
@@ -270,8 +270,8 @@ public class ExploreTrackController {
     private void showTrackPointInTime(int selectedTrackIndex, int timePoint) {
         // get the xyplot from the chart and set it up
         XYPlot xyPlot = coordinatesChartPanel.getChart().getXYPlot();
-        Float lineWidth = (Float) trackCoordinatesController.getTrackCoordinatesPanel().getLineWidthComboBox().getSelectedItem();
-        TimePointTrackXYLineAndShapeRenderer timePointTrackXYLineAndShapeRenderer = new TimePointTrackXYLineAndShapeRenderer(selectedTrackIndex, timePoint, lineWidth);
+//        Float lineWidth = (Float) trackCoordinatesController.getTrackCoordinatesPanel().getLineWidthComboBox().getSelectedItem();
+        TimePointTrackXYLineAndShapeRenderer timePointTrackXYLineAndShapeRenderer = new TimePointTrackXYLineAndShapeRenderer(selectedTrackIndex, timePoint, 2.0f);
         xyPlot.setRenderer(timePointTrackXYLineAndShapeRenderer);
     }
 

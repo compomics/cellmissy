@@ -5,12 +5,24 @@
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.util.Enumeration;
 import java.util.List;
+import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSeparator;
+import org.jfree.util.ShapeUtilities;
 
 /**
  * This class extends JMenuBar from the Swing library. It is a JMenuBar to be
@@ -29,7 +41,7 @@ public class PlotSettingsMenuBar extends JMenuBar {
     private ButtonGroup linesButtonGroup;
 
     /**
-     * Public Constructor
+     * Public constructor
      */
     public PlotSettingsMenuBar() {
         constructMenuBar();
@@ -55,15 +67,49 @@ public class PlotSettingsMenuBar extends JMenuBar {
     }
 
     /**
+     * Public methods
+     */
+    //Get the selected line width from the button group
+    public Float getSelectedLineWidth() {
+        for (Enumeration<AbstractButton> buttons = linesButtonGroup.getElements(); buttons.hasMoreElements();) {
+            AbstractButton button = buttons.nextElement();
+            if (button.isSelected()) {
+                return Float.parseFloat(button.getText());
+            }
+        }
+        return null;
+    }
+
+    /**
      * Construct the MenuBar
      */
     private void constructMenuBar() {
         //main menu
         JMenu mainMenu = new JMenu("Plot Settings");
+        mainMenu.setBackground(Color.white);
+        mainMenu.setMinimumSize(new Dimension(5, 2));
+        mainMenu.setPreferredSize(new Dimension(87, 18));
+        mainMenu.setIcon(new Icon() {
+            @Override
+            public void paintIcon(Component c, Graphics g, int x, int y) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setColor(Color.lightGray);
+                g2d.fill(ShapeUtilities.createDiamond(10));
+            }
+
+            @Override
+            public int getIconWidth() {
+                return 10;
+            }
+
+            @Override
+            public int getIconHeight() {
+                return 10;
+            }
+        });
+        mainMenu.setIconTextGap(0);
         mainMenu.setToolTipText("Click to choose plot settings");
-
         //first submenu: line width
-
         JMenu lineWidthMenu = new JMenu("Line Width");
 
         //now, one menu item for each line width in the JFreeChart Utils class
@@ -79,14 +125,17 @@ public class PlotSettingsMenuBar extends JMenuBar {
             }
             linesButtonGroup.add(lineRadioButtonMenuItem);
         }
-
+        //add it to the main menu
         mainMenu.add(lineWidthMenu);
+        mainMenu.add(new JSeparator());
         plotLinesCheckBoxMenuItem = new JCheckBoxMenuItem("Plot Lines");
         plotPointsCheckBoxMenuItem = new JCheckBoxMenuItem("Plot Points");
         showEndPointsCheckBoxMenuItem = new JCheckBoxMenuItem("Show Endpoints");
+
         //add the menu items to the main menu
         mainMenu.add(plotLinesCheckBoxMenuItem);
         mainMenu.add(plotPointsCheckBoxMenuItem);
+        mainMenu.add(new JSeparator());
         mainMenu.add(showEndPointsCheckBoxMenuItem);
 
         //by deafult lines and endpoints are shown (points are not shown)
