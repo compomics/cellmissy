@@ -11,7 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
@@ -32,8 +31,8 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         return dataTablePanel;
     }
 
-    public JPanel getGraphicsParentPanel() {
-        return graphicsParentPanel;
+    public JPanel getCoordinatesParentPanel() {
+        return coordinatesParentPanel;
     }
 
     public JRadioButton getShiftedCoordinatesRadioButton() {
@@ -104,6 +103,10 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         return lineWidthComboBox;
     }
 
+    public JPanel getPlotSettingsPanel() {
+        return plotSettingsPanel;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -122,6 +125,9 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         tableInfoLabel = new javax.swing.JLabel();
         bottomPanel = new javax.swing.JPanel();
         dataTablePanel = new javax.swing.JPanel();
+        graphicsPanel = new javax.swing.JPanel();
+        plotSettingsPanel = new javax.swing.JPanel();
+        coordinatesParentPanel = new javax.swing.JPanel();
         trackingPlotPanel = new javax.swing.JPanel();
         trackingPlotTabbedPane = new javax.swing.JTabbedPane();
         conditionPanel = new javax.swing.JPanel();
@@ -146,7 +152,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         showEndPointsCheckBox = new javax.swing.JCheckBox();
         lineWidthComboBox = new javax.swing.JComboBox();
-        graphicsParentPanel = new javax.swing.JPanel();
         exploreTrackParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -223,6 +228,43 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.32;
         bottomPanel.add(dataTablePanel, gridBagConstraints);
 
+        graphicsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        graphicsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        graphicsPanel.setOpaque(false);
+        graphicsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        graphicsPanel.setLayout(new java.awt.GridBagLayout());
+
+        plotSettingsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        plotSettingsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        plotSettingsPanel.setLayout(new java.awt.BorderLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.03;
+        graphicsPanel.add(plotSettingsPanel, gridBagConstraints);
+
+        coordinatesParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        coordinatesParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        coordinatesParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weighty = 0.97;
+        graphicsPanel.add(coordinatesParentPanel, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.55;
+        gridBagConstraints.weighty = 0.68;
+        bottomPanel.add(graphicsPanel, gridBagConstraints);
+
         trackingPlotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Tracks..."));
         trackingPlotPanel.setFocusable(false);
         trackingPlotPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -253,7 +295,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tracksNumberConditionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(120, Short.MAX_VALUE))
+                .addContainerGap(126, Short.MAX_VALUE))
         );
         conditionPanelLayout.setVerticalGroup(
             conditionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -298,7 +340,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(tracksNumberWellTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addContainerGap(158, Short.MAX_VALUE))
         );
         wellPanelLayout.setVerticalGroup(
             wellPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -324,7 +366,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
 
         jLabel8.setText("tracks");
 
-        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder("Plotted Tracks")));
+        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Plotted Tracks"));
 
         plottedTracksJList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -392,7 +434,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
             .addGroup(trackingPlotPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(trackingPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(trackingPlotTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
+                    .addComponent(trackingPlotTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, trackingPlotPanelLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -407,7 +449,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                             .addComponent(clearSelectionButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(plotAllTracksButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(randomAndPlotButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         trackingPlotPanelLayout.setVerticalGroup(
@@ -423,7 +465,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(trackingPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(trackingPlotPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 145, Short.MAX_VALUE)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(randomAndPlotButton)
@@ -431,7 +473,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                         .addComponent(plotAllTracksButton)
                         .addGap(18, 18, 18)
                         .addComponent(clearSelectionButton))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -444,18 +486,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 0.45;
         gridBagConstraints.weighty = 0.93;
         bottomPanel.add(trackingPlotPanel, gridBagConstraints);
-
-        graphicsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        graphicsParentPanel.setOpaque(false);
-        graphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        graphicsParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.55;
-        gridBagConstraints.weighty = 0.68;
-        bottomPanel.add(graphicsParentPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -486,9 +516,10 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JButton clearSelectionButton;
     private javax.swing.JPanel conditionPanel;
+    private javax.swing.JPanel coordinatesParentPanel;
     private javax.swing.JPanel dataTablePanel;
     private javax.swing.JPanel exploreTrackParentPanel;
-    private javax.swing.JPanel graphicsParentPanel;
+    private javax.swing.JPanel graphicsPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -502,6 +533,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
     private javax.swing.JButton plotAllTracksButton;
     private javax.swing.JCheckBox plotLinesCheckBox;
     private javax.swing.JCheckBox plotPointsCheckBox;
+    private javax.swing.JPanel plotSettingsPanel;
     private javax.swing.JList plottedTracksJList;
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JButton randomAndPlotButton;

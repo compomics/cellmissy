@@ -56,7 +56,7 @@ public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
     @Override
     public boolean getItemShapeVisible(int series, int item) {
         // if we want to show the endpoints, we only show them (not the other points)
-        if (showEndPoints) {
+        if (showEndPoints && !endPoints.isEmpty()) {
             Integer endPoint = endPoints.get(series);
             // when we are at the right time point (endpoint), we show it
             if (item == endPoint) {
