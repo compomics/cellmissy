@@ -13,7 +13,8 @@ import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
-import be.ugent.maf.cellmissy.entity.result.singlecell.FarthestPointsPair;
+import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
+import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -206,12 +207,15 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     @Override
     public void generateFarthestPointsPairsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        FarthestPointsPair[] farthestPointsPairsVector = new FarthestPointsPair[trackDataHolders.size()];
+        Point[][] farthestPointsPairsVector = new Point[trackDataHolders.size()][2];
         computeFarthestPointsPairs(singleCellPreProcessingResults);
         for (int i = 0; i < farthestPointsPairsVector.length; i++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            FarthestPointsPair farthestPointsPair = trackDataHolder.getFarthestPointsPair();
-            farthestPointsPairsVector[i] = farthestPointsPair;
+            ConvexHull convexHull = trackDataHolder.getConvexHull();
+            List<Point> farthestPointsPair = convexHull.getFarthestPointsPair();
+            Point firstPoint = farthestPointsPair.get(0);
+            Point secondPoint = farthestPointsPair.get(1);
+            farthestPointsPairsVector[i] = new Point[]{firstPoint, secondPoint};
         }
         singleCellPreProcessingResults.setFarthestPointsPairsVector(farthestPointsPairsVector);
     }
@@ -391,7 +395,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      */
     private void computeFarthestPointsPairs(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.computeFarthestPointsPair(trackDataHolder);
+            trackOperator.computeConvexHull(trackDataHolder);
         }
     }
 

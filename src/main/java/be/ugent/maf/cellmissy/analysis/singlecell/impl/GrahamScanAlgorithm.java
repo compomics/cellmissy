@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.analysis.singlecell.ConvexHullCalculator;
 import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,9 +25,19 @@ import org.springframework.stereotype.Component;
 public class GrahamScanAlgorithm implements ConvexHullCalculator {
 
     @Override
-    public Iterable<Point> computeConvexHull(Track track) {
+    public void computeHull(Track track, ConvexHull convexHull) {
         GrahamScan grahamScan = new GrahamScan(track);
-        return grahamScan.computeHull();
+        Iterable<Point> hull = grahamScan.computeHull();
+        convexHull.setHull(hull);
+    }
+
+    @Override
+    public void computeFarthestPoints(Track track, ConvexHull convexHull) {
+        FarthestPointsPair farthestPointsPair = new FarthestPointsPair(track, convexHull);
+        List<Point> points = new ArrayList<>();
+        points.add(farthestPointsPair.firstPoint);
+        points.add(farthestPointsPair.secondPoint);
+        convexHull.setFarthestPointsPair(points);
     }
 
     /**
@@ -38,9 +49,9 @@ public class GrahamScanAlgorithm implements ConvexHullCalculator {
         private Stack<Point> hull = new Stack<>();
 
         /**
-         * Private Constructor.
+         * Private Constructor
          *
-         * @param track: the track to apply the graham algorithm on.
+         * @param track: the track to apply the graham algorithm on
          */
         private GrahamScan(Track track) {
             // create a list of points from the track points
@@ -122,7 +133,8 @@ public class GrahamScanAlgorithm implements ConvexHullCalculator {
             }
             Point[] points = new Point[n];
             int j = 0;
-            for (Point p : computeHull()) {
+            Iterable<Point> computeHull = computeHull();
+            for (Point p : computeHull) {
                 points[j++] = p;
             }
             for (int i = 0; i < j; i++) {
@@ -131,6 +143,79 @@ public class GrahamScanAlgorithm implements ConvexHullCalculator {
                 }
             }
             return true;
+        }
+    }
+
+    /**
+     *
+     */
+    private class FarthestPointsPair {
+
+        // first and second points of track, along with distance between them
+        private Point firstPoint;
+        private Point secondPoint;
+        private double maxSpan;
+
+        /**
+         * Constructor
+         *
+         * @param track: the track on which the farthest points pair is computed
+         * @param convexHull : the convex hull of the track
+         */
+        public FarthestPointsPair(Track track, ConvexHull convexHull) {
+            computePoints(track, convexHull);
+        }
+
+        /**
+         * Given a track, compute the two most distant track points. Compute the
+         * convex hull of the track and then look for the two farthest points
+         * among the vertices of the hull.
+         *
+         * @param track
+         */
+        private void computePoints(Track track, ConvexHull convexHull) {
+            List<TrackPoint> trackPointList = track.getTrackPointList();
+            // only one point, return
+            if (trackPointList.size() <= 1) {
+                return;
+            }
+            // number of points on the hull
+            int M = 0;
+            for (Point point : convexHull.getHull()) {
+                M++;
+            }
+            // the hull, in counterclockwise order
+            Point[] hull = new Point[M];
+            int m = 0;
+            for (Point point : convexHull.getHull()) {
+                hull[m++] = point;
+            }
+            // all points are equal
+            if (M == 1) {
+                return;
+            }
+            // points are collinear
+            if (M == 2) {
+                firstPoint = hull[0];
+                secondPoint = hull[1];
+                maxSpan = firstPoint.euclideanDistanceTo(secondPoint);
+                return;
+            }
+
+            // check for the greatest distance
+            for (Point point : hull) {
+                for (int i = 0; i < hull.length; i++) {
+                    Point other = hull[i];
+                    if (!point.equals(other)) {
+                        double euclideanDistance = point.euclideanDistanceTo(other);
+                        if (euclideanDistance > maxSpan) {
+                            firstPoint = point;
+                            secondPoint = other;
+                            maxSpan = euclideanDistance;
+                        }
+                    }
+                }
+            }
         }
     }
 }

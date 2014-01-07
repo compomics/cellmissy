@@ -114,7 +114,7 @@ public interface TrackOperator {
      *
      * @param trackDataHolder
      */
-    public void computeFarthestPointsPair(TrackDataHolder trackDataHolder);
+    public void computeConvexHull(TrackDataHolder trackDataHolder);
 
     /**
      * Compute displacement ratio of a certain track.

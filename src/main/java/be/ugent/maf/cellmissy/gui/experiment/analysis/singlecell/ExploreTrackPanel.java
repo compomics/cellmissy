@@ -4,8 +4,6 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -62,7 +60,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         return convexHullGraphicsParentPanel;
     }
 
-
     /**
      * Creates new form ExploreTrackPanel
      */
@@ -106,6 +103,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         farthestPairFirstPointTextField = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         farthestPairSecondPointTextField = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(400, 600));
         setLayout(new java.awt.GridBagLayout());
@@ -147,14 +145,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tablePanelLayout.setVerticalGroup(
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -164,14 +162,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rightPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
+                .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
                 .addContainerGap())
         );
         rightPanelLayout.setVerticalGroup(
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rightPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -198,14 +196,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             tracksListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tracksListPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tracksListPanelLayout.setVerticalGroup(
             tracksListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tracksListPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -260,14 +258,18 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         timeSliderPanel.setName(""); // NOI18N
         timeSliderPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel5.setText("x (µm) =");
 
         xTextField.setEditable(false);
+        xTextField.setBorder(null);
         xTextField.setFocusable(false);
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel6.setText("y (µm) =");
 
         yTextField.setEditable(false);
+        yTextField.setBorder(null);
         yTextField.setFocusable(false);
 
         javax.swing.GroupLayout timeSliderPanelLayout = new javax.swing.GroupLayout(timeSliderPanel);
@@ -275,17 +277,19 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         timeSliderPanelLayout.setHorizontalGroup(
             timeSliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(timeSliderPanelLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(timeSliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(timeSliderPanelLayout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(timeSliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6)
                             .addComponent(jLabel5))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(timeSliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(yTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(xTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(timeSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(xTextField)
+                            .addComponent(yTextField)))
+                    .addGroup(timeSliderPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(timeSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         timeSliderPanelLayout.setVerticalGroup(
@@ -336,16 +340,20 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         convexHullInfoPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("point A");
+        jLabel8.setText("point A = ");
 
         farthestPairFirstPointTextField.setEditable(false);
+        farthestPairFirstPointTextField.setBorder(null);
         farthestPairFirstPointTextField.setFocusable(false);
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel9.setText("point B ");
+        jLabel9.setText("point B  = ");
 
         farthestPairSecondPointTextField.setEditable(false);
+        farthestPairSecondPointTextField.setBorder(null);
         farthestPairSecondPointTextField.setFocusable(false);
+
+        jLabel1.setText("Farthest Points on Track:");
 
         javax.swing.GroupLayout convexHullInfoPanelLayout = new javax.swing.GroupLayout(convexHullInfoPanel);
         convexHullInfoPanel.setLayout(convexHullInfoPanelLayout);
@@ -354,18 +362,23 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             .addGroup(convexHullInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel8))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(farthestPairSecondPointTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(farthestPairFirstPointTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addGroup(convexHullInfoPanelLayout.createSequentialGroup()
+                        .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel8))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(farthestPairSecondPointTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(farthestPairFirstPointTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel1))
+                .addGap(17, 17, 17))
         );
         convexHullInfoPanelLayout.setVerticalGroup(
             convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(convexHullInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
                 .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(farthestPairFirstPointTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -373,7 +386,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                 .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
                     .addComponent(farthestPairSecondPointTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(240, Short.MAX_VALUE))
+                .addContainerGap(295, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -405,6 +418,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JTextField farthestPairFirstPointTextField;
     private javax.swing.JTextField farthestPairSecondPointTextField;
     private javax.swing.JPanel graphicsParentPanel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
