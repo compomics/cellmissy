@@ -17,7 +17,7 @@ import java.util.List;
 public class FarthestPointsPair {
 
     // the convex hull of the track, as an iterable of points
-    private Iterable<Point> convexHull;
+    private Iterable<Point> cHull;
     // first and second points of track, along with distance between them
     private Point firstPoint;
     private Point secondPoint;
@@ -29,8 +29,8 @@ public class FarthestPointsPair {
      * @param track: the track on which the farthest points pair is computed
      * @param convexHull : the convex hull of the track
      */
-    public FarthestPointsPair(Track track, Iterable<Point> convexHull) {
-        this.convexHull = convexHull;
+    public FarthestPointsPair(Track track, ConvexHull convexHull) {
+        this.cHull = convexHull.getHull();
         compute(track);
     }
 
@@ -64,13 +64,13 @@ public class FarthestPointsPair {
         }
         // number of points on the hull
         int M = 0;
-        for (Point point : convexHull) {
+        for (Point point : cHull) {
             M++;
         }
         // the hull, in counterclockwise order
         Point[] hull = new Point[M];
         int m = 0;
-        for (Point point : convexHull) {
+        for (Point point : hull) {
             hull[m++] = point;
         }
         // all points are equal
@@ -86,7 +86,7 @@ public class FarthestPointsPair {
         }
 
         // check for the greatest distance
-        for (Point point : convexHull) {
+        for (Point point : hull) {
             for (int i = 0; i < hull.length; i++) {
                 Point other = hull[i];
                 if (!point.equals(other)) {

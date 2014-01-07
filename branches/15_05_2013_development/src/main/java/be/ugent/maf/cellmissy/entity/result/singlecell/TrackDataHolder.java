@@ -59,10 +59,7 @@ public class TrackDataHolder {
     // since the path length is at least equal to the displacement, this coefficient can vary between 0 and 1
     private double directionality;
     // the convex hull of the track: the convex polygon containing all the points of the track
-    private Iterable<Point> convexHull;
-    // farthest point pair: the two points on the track most far away from each other
-    // maximal displacement: the length of the longest vector among all possible pair combinations of displacements
-    private FarthestPointsPair farthestPointsPair;
+    private ConvexHull convexHull;
     // displacement ratio: displacement/maximal displacement
     private double displacementRatio;
     // outreach ratio: maximal displacement/path lenght
@@ -214,20 +211,12 @@ public class TrackDataHolder {
         this.directionality = directionality;
     }
 
-    public Iterable<Point> getConvexHull() {
+    public ConvexHull getConvexHull() {
         return convexHull;
     }
 
-    public void setConvexHull(Iterable<Point> convexHull) {
+    public void setConvexHull(ConvexHull convexHull) {
         this.convexHull = convexHull;
-    }
-
-    public FarthestPointsPair getFarthestPointsPair() {
-        return farthestPointsPair;
-    }
-
-    public void setFarthestPointsPair(FarthestPointsPair farthestPointsPair) {
-        this.farthestPointsPair = farthestPointsPair;
     }
 
     public double getDisplacementRatio() {

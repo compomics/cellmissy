@@ -206,10 +206,10 @@ public class JFreeChartUtils {
         convexHullRenderer.setSeriesStroke(0, dashedLine);
         convexHullRenderer.setSeriesPaint(0, Color.black);
         xyPlot.setRenderer(1, convexHullRenderer);
-//        XYSeriesCollection dataset = (XYSeriesCollection) xyPlot.getDataset(0);
-//        double minY = computeMinY(dataset);
-//        System.out.println("@@@@@@@@ " + minY);
-//        xyPlot.getDomainAxis().setLowerMargin(minY);
+        XYSeriesCollection dataset = (XYSeriesCollection) xyPlot.getDataset(0);
+        double minY = dataset.getSeries(0).getMinY();
+        double maxY = dataset.getSeries(0).getMaxY();
+        xyPlot.getRangeAxis().setRange(minY, maxY);
     }
 
     /**

@@ -4,8 +4,8 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell;
 
-import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
 import be.ugent.maf.cellmissy.entity.Track;
+import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 
 /**
  * An interface for a Convex Hull Calculator. The Convex Hull for a set of
@@ -15,12 +15,7 @@ import be.ugent.maf.cellmissy.entity.Track;
  */
 public interface ConvexHullCalculator {
 
-    /**
-     * Given a track, and thus a list of points (cell based points) that make up
-     * this track, compute the convex hull for this set.
-     *
-     * @param track
-     * @return
-     */
-    public Iterable<Point> computeConvexHull(Track track);
+    public void computeHull(Track track, ConvexHull convexHull);
+
+    public void computeFarthestPoints(Track track, ConvexHull convexHull);
 }

@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.analysis.singlecell.impl.GrahamScanAlgorithm;
 import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.Assert;
@@ -58,18 +59,34 @@ public class GrahamScanTest {
 
     @Test
     public void testGrahamScan() {
-        Iterable<Point> convexHull = grahamScanAlgorithm.computeConvexHull(track);
+        ConvexHull convexHull = new ConvexHull();
+        grahamScanAlgorithm.computeHull(track, convexHull);
+        Iterable<Point> hull = convexHull.getHull();
         List<Point> convexHullVertices = new ArrayList<>();
         int verticesNumber = 0;
-        for (Point vertex : convexHull) {
+        for (Point vertex : hull) {
             verticesNumber++;
             convexHullVertices.add(vertex);
         }
         // convex hull has 4 points
         Assert.assertEquals(5, verticesNumber);
-        // first vertex is q (2, 3)
+        // first vertex is v
         Assert.assertEquals(v, convexHullVertices.get(0));
         // last vertex is u
         Assert.assertEquals(u, convexHullVertices.get(verticesNumber - 1));
+
+        grahamScanAlgorithm.computeFarthestPoints(track, convexHull);
+        List<Point> farthestPointsPair = convexHull.getFarthestPointsPair();
+        Point firstPoint = farthestPointsPair.get(0);
+        Point secondPoint = farthestPointsPair.get(1);
+        Assert.assertNotNull(firstPoint);
+        Assert.assertNotNull(secondPoint);
+
+        double computedFD = firstPoint.euclideanDistanceTo(secondPoint);
+        System.out.println("distance from: " + firstPoint + " to: " + secondPoint + " is: d = " + computedFD);
+        double fD = firstPoint.euclideanDistanceTo(secondPoint);
+        Assert.assertEquals(computedFD, fD);
+        Assert.assertEquals(v, firstPoint);
+        Assert.assertEquals(t, secondPoint);
     }
 }

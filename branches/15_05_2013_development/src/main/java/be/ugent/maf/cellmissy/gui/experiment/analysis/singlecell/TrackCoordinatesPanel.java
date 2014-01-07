@@ -203,7 +203,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.55;
-        gridBagConstraints.weighty = 0.32;
+        gridBagConstraints.weighty = 0.3;
         bottomPanel.add(dataTablePanel, gridBagConstraints);
 
         graphicsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -240,7 +240,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.55;
-        gridBagConstraints.weighty = 0.68;
+        gridBagConstraints.weighty = 0.7;
         bottomPanel.add(graphicsPanel, gridBagConstraints);
 
         trackingPlotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select Tracks..."));

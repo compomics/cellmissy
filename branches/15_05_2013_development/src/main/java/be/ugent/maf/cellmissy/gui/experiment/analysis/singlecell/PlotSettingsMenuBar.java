@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
+import be.ugent.maf.cellmissy.gui.view.icon.CircleIcon;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.Color;
 import java.awt.Component;
@@ -86,32 +87,15 @@ public class PlotSettingsMenuBar extends JMenuBar {
     private void constructMenuBar() {
         //main menu
         JMenu mainMenu = new JMenu("Plot Settings");
+        //customize main menu
         mainMenu.setBackground(Color.white);
         mainMenu.setMinimumSize(new Dimension(5, 2));
         mainMenu.setPreferredSize(new Dimension(87, 18));
-        mainMenu.setIcon(new Icon() {
-            @Override
-            public void paintIcon(Component c, Graphics g, int x, int y) {
-                Graphics2D g2d = (Graphics2D) g;
-                g2d.setColor(Color.lightGray);
-                g2d.fill(ShapeUtilities.createDiamond(10));
-            }
-
-            @Override
-            public int getIconWidth() {
-                return 10;
-            }
-
-            @Override
-            public int getIconHeight() {
-                return 10;
-            }
-        });
+        mainMenu.setIcon(new CircleIcon(Color.lightGray));
         mainMenu.setIconTextGap(0);
         mainMenu.setToolTipText("Click to choose plot settings");
         //first submenu: line width
         JMenu lineWidthMenu = new JMenu("Line Width");
-
         //now, one menu item for each line width in the JFreeChart Utils class
         List<Float> lineWidths = JFreeChartUtils.getLineWidths();
         linesButtonGroup = new ButtonGroup();

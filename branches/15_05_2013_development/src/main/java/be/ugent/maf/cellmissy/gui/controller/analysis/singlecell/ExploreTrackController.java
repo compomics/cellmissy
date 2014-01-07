@@ -6,7 +6,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
-import be.ugent.maf.cellmissy.entity.result.singlecell.FarthestPointsPair;
+import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.ExploreTrackPanel;
@@ -22,6 +22,7 @@ import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.GridBagConstraints;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
+import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
@@ -110,17 +111,17 @@ public class ExploreTrackController {
      * @param selectedTrackIndex: the index of the selected track
      */
     public void onSelectedTrack(int selectedTrackIndex) {
-//        Float lineWidth = (Float) trackCoordinatesController.getTrackCoordinatesPanel().getLineWidthComboBox().getSelectedItem();
-        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, false, null, selectedTrackIndex, 2.0f);
+        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, false, null, selectedTrackIndex, JFreeChartUtils.getLineWidths().get(2));
         coordinatesChartPanel.getChart().getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
         TrackDataHolder selectedTrackDataHolder = trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex);
         // set up and enable the time /slider here
         setupTimeSlider(selectedTrackDataHolder);
         updateTrackData(selectedTrackDataHolder);
         // show farthest points pair
-        FarthestPointsPair farthestPointsPair = selectedTrackDataHolder.getFarthestPointsPair();
-        exploreTrackPanel.getFarthestPairFirstPointTextField().setText(" " + farthestPointsPair.getFirstPoint());
-        exploreTrackPanel.getFarthestPairSecondPointTextField().setText(" " + farthestPointsPair.getSecondPoint().toString());
+        ConvexHull convexHull = selectedTrackDataHolder.getConvexHull();
+        List<Point> farthestPointsPair = convexHull.getFarthestPointsPair();
+        exploreTrackPanel.getFarthestPairFirstPointTextField().setText(" " + farthestPointsPair.get(0));
+        exploreTrackPanel.getFarthestPairSecondPointTextField().setText(" " + farthestPointsPair.get(1));
     }
 
     /**
@@ -270,13 +271,12 @@ public class ExploreTrackController {
     private void showTrackPointInTime(int selectedTrackIndex, int timePoint) {
         // get the xyplot from the chart and set it up
         XYPlot xyPlot = coordinatesChartPanel.getChart().getXYPlot();
-//        Float lineWidth = (Float) trackCoordinatesController.getTrackCoordinatesPanel().getLineWidthComboBox().getSelectedItem();
-        TimePointTrackXYLineAndShapeRenderer timePointTrackXYLineAndShapeRenderer = new TimePointTrackXYLineAndShapeRenderer(selectedTrackIndex, timePoint, 2.0f);
+        TimePointTrackXYLineAndShapeRenderer timePointTrackXYLineAndShapeRenderer = new TimePointTrackXYLineAndShapeRenderer(selectedTrackIndex, timePoint, JFreeChartUtils.getLineWidths().get(2));
         xyPlot.setRenderer(timePointTrackXYLineAndShapeRenderer);
     }
 
     /**
-     * Show the track data dialog for a certain track data holder selected.
+     * Update data in the table for the selected track.
      *
      * @param trackDataHolder
      */
@@ -297,11 +297,11 @@ public class ExploreTrackController {
      * @param trackDataHolder
      */
     private void plotSingleTrackData(TrackDataHolder trackDataHolder) {
-        // plot x and y coordinates in time
-        plotCoordinatesInTime(trackDataHolder);
         // plot the shifted track coordinates
         plotCoordinatesInSpace(trackDataHolder);
-        // plot convex hull
+        // plot x and y coordinates in time
+        plotCoordinatesInTime(trackDataHolder);
+        // plot the convex hull of the track
         plotConvexHull(trackDataHolder);
     }
 
@@ -380,15 +380,16 @@ public class ExploreTrackController {
      * @param trackDataHolder
      */
     private void plotConvexHull(TrackDataHolder trackDataHolder) {
-        Iterable<Point> convexHull = trackDataHolder.getConvexHull();
+        ConvexHull convexHull = trackDataHolder.getConvexHull();
+        Iterable<Point> cHull = convexHull.getHull();
         int M = 0;
-        for (Point point : convexHull) {
+        for (Point point : cHull) {
             M++;
         }
         // the hull, in counterclockwise order
         Point[] hull = new Point[M];
         int m = 0;
-        for (Point point : convexHull) {
+        for (Point point : cHull) {
             hull[m++] = point;
         }
         // generate xy coordinates for the points of the hull
@@ -399,7 +400,7 @@ public class ExploreTrackController {
             x[i] = point.getX();
             y[i] = point.getY();
         }
-        // repeat fisrt coordinates at the end, to close the hull
+        // repeat fisrt coordinates at the end, to close the polygon
         x[m] = hull[0].getX();
         y[m] = hull[0].getY();
         // get info for the title of the plot
