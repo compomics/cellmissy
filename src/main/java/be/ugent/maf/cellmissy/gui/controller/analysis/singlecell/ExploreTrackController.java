@@ -7,7 +7,8 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
-import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
+import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.ExploreTrackPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TimePointTrackXYLineAndShapeRenderer;
@@ -119,9 +120,9 @@ public class ExploreTrackController {
         updateTrackData(selectedTrackDataHolder);
         // show farthest points pair
         ConvexHull convexHull = selectedTrackDataHolder.getConvexHull();
-        List<Point> farthestPointsPair = convexHull.getFarthestPointsPair();
-        exploreTrackPanel.getFarthestPairFirstPointTextField().setText(" " + farthestPointsPair.get(0));
-        exploreTrackPanel.getFarthestPairSecondPointTextField().setText(" " + farthestPointsPair.get(1));
+        MostDistantPointsPair mostDistantPointsPair = convexHull.getMostDistantPointsPair();
+        exploreTrackPanel.getFarthestPairFirstPointTextField().setText(" " + mostDistantPointsPair.getFirstPoint());
+        exploreTrackPanel.getFarthestPairSecondPointTextField().setText(" " + mostDistantPointsPair.getSecondPoint());
     }
 
     /**
@@ -381,22 +382,22 @@ public class ExploreTrackController {
      */
     private void plotConvexHull(TrackDataHolder trackDataHolder) {
         ConvexHull convexHull = trackDataHolder.getConvexHull();
-        Iterable<Point> cHull = convexHull.getHull();
+        Iterable<GeometricPoint> cHull = convexHull.getHull();
         int M = 0;
-        for (Point point : cHull) {
+        for (GeometricPoint point : cHull) {
             M++;
         }
         // the hull, in counterclockwise order
-        Point[] hull = new Point[M];
+        GeometricPoint[] hull = new GeometricPoint[M];
         int m = 0;
-        for (Point point : cHull) {
+        for (GeometricPoint point : cHull) {
             hull[m++] = point;
         }
         // generate xy coordinates for the points of the hull
         double[] x = new double[m + 1];
         double[] y = new double[m + 1];
         for (int i = 0; i < m; i++) {
-            Point point = hull[i];
+            GeometricPoint point = hull[i];
             x[i] = point.getX();
             y[i] = point.getY();
         }

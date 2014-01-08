@@ -16,9 +16,9 @@ import java.util.List;
 public class ConvexHull {
 
     // the hull, as an iterable of points
-    private Iterable<Point> hull;
-    // the farthest points on the hull, as a list of two points
-    private List<Point> farthestPointsPair;
+    private Iterable<GeometricPoint> hull;
+    // the most distant points on the hull
+    private MostDistantPointsPair mostDistantPointsPair;
     // the area of the hull
     private double area;
     // the perimeter of the hull
@@ -27,20 +27,20 @@ public class ConvexHull {
     /**
      * Getters and setters
      */
-    public Iterable<Point> getHull() {
+    public Iterable<GeometricPoint> getHull() {
         return hull;
     }
 
-    public void setHull(Iterable<Point> hull) {
+    public void setHull(Iterable<GeometricPoint> hull) {
         this.hull = hull;
     }
 
-    public List<Point> getFarthestPointsPair() {
-        return farthestPointsPair;
+    public MostDistantPointsPair getMostDistantPointsPair() {
+        return mostDistantPointsPair;
     }
 
-    public void setFarthestPointsPair(List<Point> farthestPointsPair) {
-        this.farthestPointsPair = farthestPointsPair;
+    public void setMostDistantPointsPair(MostDistantPointsPair mostDistantPointsPair) {
+        this.mostDistantPointsPair = mostDistantPointsPair;
     }
 
     public double getArea() {

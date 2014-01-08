@@ -12,6 +12,7 @@ import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
@@ -19,7 +20,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYLineAnnotation;
 import org.jfree.chart.annotations.XYShapeAnnotation;
-import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.Plot;
@@ -55,6 +56,8 @@ public class JFreeChartUtils {
     private static Font chartFont = new Font("Tahoma", Font.BOLD, 12);
     // line widths
     private static List<Float> lineWidths = Arrays.asList(1.0f, 1.5f, 2.0f, 2.5f, 3.0f);
+    // decimal format for the plot axis
+    private static DecimalFormat format = new DecimalFormat("####.##");
 
     /**
      * Getters
@@ -169,12 +172,14 @@ public class JFreeChartUtils {
         // hide the border of the sorrounding box
         xYPlot.setOutlinePaint(Color.white);
         // get domanin and range axes
-        ValueAxis domainAxis = xYPlot.getDomainAxis();
-        ValueAxis rangeAxis = xYPlot.getRangeAxis();
+        NumberAxis domainAxis = (NumberAxis) xYPlot.getDomainAxis();
+        NumberAxis rangeAxis = (NumberAxis) xYPlot.getRangeAxis();
         rangeAxis.setLabelPaint(Color.black);
         rangeAxis.setLabelFont(chartFont);
         domainAxis.setLabelPaint(Color.black);
         domainAxis.setLabelFont(chartFont);
+        rangeAxis.setNumberFormatOverride(format);
+        domainAxis.setNumberFormatOverride(format);
     }
 
     /**

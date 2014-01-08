@@ -8,18 +8,18 @@ import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.Comparator;
 
 /**
- * Point object. This is a point with both Cartesian and Polar representation.
+ * GeometricPoint object. This is a point with both Cartesian and Polar representation.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class Point implements Comparable<Point> {
+public class GeometricPoint implements Comparable<GeometricPoint> {
 
     // x coordinate
     private double x;
     // y coordinate
     private double y;
     //
-    public final Comparator<Point> POLAR_COMPARATOR = new PolarComparator();
+    public final Comparator<GeometricPoint> POLAR_COMPARATOR = new PolarComparator();
 
     /**
      * Public constructor: takes x and y coordinates.
@@ -27,7 +27,7 @@ public class Point implements Comparable<Point> {
      * @param x
      * @param y
      */
-    public Point(double x, double y) {
+    public GeometricPoint(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -53,7 +53,7 @@ public class Point implements Comparable<Point> {
     }
 
     /**
-     * Returns the angle getTheta in polar coordinates.
+     * Get the angle theta in polar coordinates.
      *
      * @return the angle in radians (between -pi/2 and pi/2)
      */
@@ -67,7 +67,7 @@ public class Point implements Comparable<Point> {
      * @param other
      * @return
      */
-    public double euclideanDistanceTo(Point other) {
+    public double euclideanDistanceTo(GeometricPoint other) {
         double dx = this.x - other.x;
         double dy = this.y - other.y;
         return Math.hypot(dx, dy);
@@ -82,7 +82,7 @@ public class Point implements Comparable<Point> {
      * @return { -1, 0, +1 } if q-r-s is a { clockwise, collinear,
      * counterclockwise } turn.
      */
-    public static int counterClockWise(Point q, Point r, Point s) {
+    public static int counterClockWise(GeometricPoint q, GeometricPoint r, GeometricPoint s) {
         double area = computeSignedArea(q, r, s);
         if (area < 0) {
             return -1;
@@ -101,7 +101,7 @@ public class Point implements Comparable<Point> {
      * @param c third point
      * @return twice the signed area of the triangle a-b-c
      */
-    public static double computeSignedArea(Point q, Point r, Point s) {
+    public static double computeSignedArea(GeometricPoint q, GeometricPoint r, GeometricPoint s) {
         return (r.getX() - q.getX()) * (s.getY() - q.getY()) - (r.getY() - q.getY()) * (s.getX() - q.getX());
     }
 
@@ -110,11 +110,11 @@ public class Point implements Comparable<Point> {
      * x-coordinate.
      *
      * @param o the other point
-     * @return { a negative integer, zero, a positive integer } if this point is
-     * { less than, equal to, greater than } that point
+     * @return {-1, 0, +1} if this point is {less than, equal to, greater than}
+     * that point
      */
     @Override
-    public int compareTo(Point o) {
+    public int compareTo(GeometricPoint o) {
         if (this.y < o.y) {
             return -1;
         } else if (this.y > o.y) {
@@ -142,18 +142,18 @@ public class Point implements Comparable<Point> {
      * @return
      */
     @Override
-    public boolean equals(Object other) {
-        if (other == this) {
+    public boolean equals(Object obj) {
+        if (obj == this) {
             return true;
         }
-        if (other == null) {
+        if (obj == null) {
             return false;
         }
-        if (other.getClass() != this.getClass()) {
+        if (obj.getClass() != this.getClass()) {
             return false;
         }
-        Point that = (Point) other;
-        return this.x == that.x && this.y == that.y;
+        GeometricPoint other = (GeometricPoint) obj;
+        return this.x == other.x && this.y == other.y;
     }
 
     @Override
@@ -168,10 +168,10 @@ public class Point implements Comparable<Point> {
      * Compare other points relative to polar angle (between 0 and 2pi) they
      * make with this point.
      */
-    private class PolarComparator implements Comparator<Point> {
+    private class PolarComparator implements Comparator<GeometricPoint> {
 
         @Override
-        public int compare(Point q, Point r) {
+        public int compare(GeometricPoint q, GeometricPoint r) {
             double dx1 = q.getX() - x;
             double dy1 = q.getY() - y;
             double dx2 = r.getX() - x;
@@ -190,7 +190,7 @@ public class Point implements Comparable<Point> {
                 }
             } else {
                 // both above or below
-                return -counterClockWise(Point.this, q, r);
+                return -counterClockWise(GeometricPoint.this, q, r);
             }
         }
     }
