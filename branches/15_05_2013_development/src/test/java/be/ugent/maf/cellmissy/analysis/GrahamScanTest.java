@@ -5,10 +5,11 @@
 package be.ugent.maf.cellmissy.analysis;
 
 import be.ugent.maf.cellmissy.analysis.singlecell.impl.GrahamScanAlgorithm;
-import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
+import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
+import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.Assert;
@@ -32,12 +33,12 @@ public class GrahamScanTest {
     private GrahamScanAlgorithm grahamScanAlgorithm;
     // 6 points ont the plane
     private static Track track = new Track();
-    private static Point q = new Point(2, 3);
-    private static Point r = new Point(10, 6);
-    private static Point s = new Point(10, 9);
-    private static Point t = new Point(8, 10);
-    private static Point u = new Point(-2, 5);
-    private static Point v = new Point(7, -4);
+    private static GeometricPoint q = new GeometricPoint(2, 3);
+    private static GeometricPoint r = new GeometricPoint(10, 6);
+    private static GeometricPoint s = new GeometricPoint(10, 9);
+    private static GeometricPoint t = new GeometricPoint(8, 10);
+    private static GeometricPoint u = new GeometricPoint(-2, 5);
+    private static GeometricPoint v = new GeometricPoint(7, -4);
 
     @BeforeClass
     public static void createTrack() {
@@ -60,32 +61,28 @@ public class GrahamScanTest {
     @Test
     public void testGrahamScan() {
         ConvexHull convexHull = new ConvexHull();
+        // compute the hull
         grahamScanAlgorithm.computeHull(track, convexHull);
-        Iterable<Point> hull = convexHull.getHull();
-        List<Point> convexHullVertices = new ArrayList<>();
+        Iterable<GeometricPoint> hull = convexHull.getHull();
+        List<GeometricPoint> convexHullVertices = new ArrayList<>();
         int verticesNumber = 0;
-        for (Point vertex : hull) {
+        for (GeometricPoint vertex : hull) {
             verticesNumber++;
             convexHullVertices.add(vertex);
         }
-        // convex hull has 4 points
+        // convex hull has 5 points
         Assert.assertEquals(5, verticesNumber);
         // first vertex is v
         Assert.assertEquals(v, convexHullVertices.get(0));
         // last vertex is u
         Assert.assertEquals(u, convexHullVertices.get(verticesNumber - 1));
-
-        grahamScanAlgorithm.computeFarthestPoints(track, convexHull);
-        List<Point> farthestPointsPair = convexHull.getFarthestPointsPair();
-        Point firstPoint = farthestPointsPair.get(0);
-        Point secondPoint = farthestPointsPair.get(1);
+        // find the two most distant points on the hull
+        grahamScanAlgorithm.findMostDistantPoints(track, convexHull);
+        MostDistantPointsPair mostDistantPointsPair = convexHull.getMostDistantPointsPair();
+        GeometricPoint firstPoint = mostDistantPointsPair.getFirstPoint();
+        GeometricPoint secondPoint = mostDistantPointsPair.getSecondPoint();
         Assert.assertNotNull(firstPoint);
         Assert.assertNotNull(secondPoint);
-
-        double computedFD = firstPoint.euclideanDistanceTo(secondPoint);
-        System.out.println("distance from: " + firstPoint + " to: " + secondPoint + " is: d = " + computedFD);
-        double fD = firstPoint.euclideanDistanceTo(secondPoint);
-        Assert.assertEquals(computedFD, fD);
         Assert.assertEquals(v, firstPoint);
         Assert.assertEquals(t, secondPoint);
     }

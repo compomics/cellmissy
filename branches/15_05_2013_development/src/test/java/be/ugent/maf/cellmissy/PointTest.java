@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy;
 
-import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
+import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * A unit test for Point objects.
+ * A unit test for GeometricPoint objects.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -22,15 +22,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class PointTest {
 
     // 3 points ont the plane
-    private static Point q;
-    private static Point r;
-    private static Point s;
+    private static GeometricPoint q;
+    private static GeometricPoint r;
+    private static GeometricPoint s;
 
     @BeforeClass
     public static void createPoints() {
-        q = new Point(2.5, 3.5);
-        r = new Point(7.7, 6.8);
-        s = new Point(2.3, 5.56);
+        q = new GeometricPoint(2.5, 3.5);
+        r = new GeometricPoint(7.7, 6.8);
+        s = new GeometricPoint(2.3, 5.56);
     }
 
     @Test
@@ -43,13 +43,13 @@ public class PointTest {
 
     @Test
     public void testSignedArea() {
-        double area = Point.computeSignedArea(q, r, s);
+        double area = GeometricPoint.computeSignedArea(q, r, s);
         Assert.assertEquals(5.685999999999999 * 2, area);
     }
 
     @Test
     public void testCounterClockWise() {
-        int counterClockWise = Point.counterClockWise(q, r, s);
+        int counterClockWise = GeometricPoint.counterClockWise(q, r, s);
         Assert.assertEquals(1, counterClockWise);
     }
 }

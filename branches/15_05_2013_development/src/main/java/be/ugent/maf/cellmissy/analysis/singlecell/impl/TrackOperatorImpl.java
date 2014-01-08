@@ -5,10 +5,11 @@
 package be.ugent.maf.cellmissy.analysis.singlecell.impl;
 
 import be.ugent.maf.cellmissy.analysis.singlecell.TrackOperator;
-import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
+import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
+import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.Arrays;
@@ -59,8 +60,8 @@ public class TrackOperatorImpl implements TrackOperator {
             double x = trackPoint.getCellRow() / conversionFactor;
             double y = trackPoint.getCellCol() / conversionFactor;
             coordinatesMatrix[i] = new Double[]{x, y};
-            // create a new Point with these coordinates and set it to the TrackPoint
-            Point point = new Point(x, y);
+            // create a new GeometricPoint with these coordinates and set it to the TrackPoint
+            GeometricPoint point = new GeometricPoint(x, y);
             trackPoint.setPoint(point);
         }
         trackDataHolder.setCoordinatesMatrix(coordinatesMatrix);
@@ -186,15 +187,15 @@ public class TrackOperatorImpl implements TrackOperator {
         Track track = trackDataHolder.getTrack();
         ConvexHull convexHull = new ConvexHull();
         grahamScanAlgorithm.computeHull(track, convexHull);
-        grahamScanAlgorithm.computeFarthestPoints(track, convexHull);
+        grahamScanAlgorithm.findMostDistantPoints(track, convexHull);
         trackDataHolder.setConvexHull(convexHull);
     }
 
     @Override
     public void computeDisplacementRatio(TrackDataHolder trackDataHolder) {
         ConvexHull convexHull = trackDataHolder.getConvexHull();
-        List<Point> farthestPointsPair = convexHull.getFarthestPointsPair();
-        double maxSpan = farthestPointsPair.get(0).euclideanDistanceTo(farthestPointsPair.get(1));
+        MostDistantPointsPair mostDistantPointsPair = convexHull.getMostDistantPointsPair();
+        double maxSpan = mostDistantPointsPair.getMaxSpan();
         double displacementRatio = trackDataHolder.getEuclideanDistance() / maxSpan;
         trackDataHolder.setDisplacementRatio(displacementRatio);
     }
@@ -202,8 +203,8 @@ public class TrackOperatorImpl implements TrackOperator {
     @Override
     public void computeOutreachRatio(TrackDataHolder trackDataHolder) {
         ConvexHull convexHull = trackDataHolder.getConvexHull();
-        List<Point> farthestPointsPair = convexHull.getFarthestPointsPair();
-        double maxSpan = farthestPointsPair.get(0).euclideanDistanceTo(farthestPointsPair.get(1));
+        MostDistantPointsPair mostDistantPointsPair = convexHull.getMostDistantPointsPair();
+        double maxSpan = mostDistantPointsPair.getMaxSpan();
         double outreachRatio = maxSpan / trackDataHolder.getCumulativeDistance();
         trackDataHolder.setOutreachRatio(outreachRatio);
     }

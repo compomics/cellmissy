@@ -6,7 +6,7 @@ package be.ugent.maf.cellmissy.gui.view.table.model;
 
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
-import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
+import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,8 +89,8 @@ public class TrackDataHolderTableModel extends AbstractTableModel {
         data[15][1] = trackDataHolder.getDirectionality();
         data[16][1] = trackDataHolder.getMedianTurningAngle();
         ConvexHull convexHull = trackDataHolder.getConvexHull();
-        List<Point> farthestPointsPair = convexHull.getFarthestPointsPair();
-        data[17][1] = farthestPointsPair.get(0).euclideanDistanceTo(farthestPointsPair.get(1));
+        MostDistantPointsPair mostDistantPointsPair = convexHull.getMostDistantPointsPair();
+        data[17][1] = mostDistantPointsPair.getMaxSpan();
         data[18][1] = trackDataHolder.getDisplacementRatio();
         data[19][1] = trackDataHolder.getOutreachRatio();
     }

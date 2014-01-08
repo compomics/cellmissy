@@ -17,5 +17,5 @@ public interface ConvexHullCalculator {
 
     public void computeHull(Track track, ConvexHull convexHull);
 
-    public void computeFarthestPoints(Track track, ConvexHull convexHull);
+    public void findMostDistantPoints(Track track, ConvexHull convexHull);
 }

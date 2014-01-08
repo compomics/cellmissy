@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.entity;
 
-import be.ugent.maf.cellmissy.entity.result.singlecell.Point;
+import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -97,12 +97,12 @@ public class TrackPoint implements Serializable {
     private Track track;
     @Transient
     @XmlTransient
-    private Point point;
+    private GeometricPoint point;
 
     public TrackPoint() {
     }
 
-    public TrackPoint(Point point) {
+    public TrackPoint(GeometricPoint point) {
         this.point = point;
     }
 
@@ -213,11 +213,11 @@ public class TrackPoint implements Serializable {
         this.track = track;
     }
 
-    public Point getPoint() {
+    public GeometricPoint getPoint() {
         return point;
     }
 
-    public void setPoint(Point point) {
+    public void setPoint(GeometricPoint point) {
         this.point = point;
     }
 
