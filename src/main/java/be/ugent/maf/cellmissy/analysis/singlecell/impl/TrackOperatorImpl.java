@@ -188,6 +188,7 @@ public class TrackOperatorImpl implements TrackOperator {
         ConvexHull convexHull = new ConvexHull();
         grahamScanAlgorithm.computeHull(track, convexHull);
         grahamScanAlgorithm.findMostDistantPoints(track, convexHull);
+        grahamScanAlgorithm.computeArea(convexHull);
         trackDataHolder.setConvexHull(convexHull);
     }
 

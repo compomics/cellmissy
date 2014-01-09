@@ -112,11 +112,11 @@ public interface SingleCellPreProcessor {
     public void generateDirectionalitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
-     * Generate maximal displacements vector.
+     * Generate vector with convex hulls.
      *
      * @param singleCellPreProcessingResults
      */
-    public void generateFarthestPointsPairsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateConvexHullsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate vector with displacement ratios.
