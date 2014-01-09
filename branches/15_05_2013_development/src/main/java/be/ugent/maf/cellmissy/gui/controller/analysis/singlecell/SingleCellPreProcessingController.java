@@ -253,7 +253,7 @@ public class SingleCellPreProcessingController {
             singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateFarthestPointsPairsVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateConvexHullsVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateDisplacementRatiosVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateOutreachRatiosVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);

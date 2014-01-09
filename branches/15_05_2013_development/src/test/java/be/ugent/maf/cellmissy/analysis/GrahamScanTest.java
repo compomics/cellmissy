@@ -39,6 +39,8 @@ public class GrahamScanTest {
     private static GeometricPoint t = new GeometricPoint(8, 10);
     private static GeometricPoint u = new GeometricPoint(-2, 5);
     private static GeometricPoint v = new GeometricPoint(7, -4);
+    // the convex hull to do the calculations on
+    private ConvexHull convexHull = new ConvexHull();
 
     @BeforeClass
     public static void createTrack() {
@@ -59,8 +61,7 @@ public class GrahamScanTest {
     }
 
     @Test
-    public void testGrahamScan() {
-        ConvexHull convexHull = new ConvexHull();
+    public void testHull() {
         // compute the hull
         grahamScanAlgorithm.computeHull(track, convexHull);
         Iterable<GeometricPoint> hull = convexHull.getHull();
@@ -85,5 +86,9 @@ public class GrahamScanTest {
         Assert.assertNotNull(secondPoint);
         Assert.assertEquals(v, firstPoint);
         Assert.assertEquals(t, secondPoint);
+        // compute area
+        grahamScanAlgorithm.computeArea(convexHull);
+        double area = convexHull.getArea();
+        Assert.assertEquals(86.5, area);
     }
 }

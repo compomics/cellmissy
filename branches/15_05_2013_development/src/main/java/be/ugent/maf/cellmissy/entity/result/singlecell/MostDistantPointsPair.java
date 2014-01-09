@@ -9,6 +9,9 @@ import be.ugent.maf.cellmissy.entity.TrackPoint;
 import java.util.List;
 
 /**
+ * A pair of most distant geometric points on a track. It contains the couple of
+ * points, together with the distance between them. Searching for the 2 points
+ * is implemented using a convex hull
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -45,7 +48,7 @@ public class MostDistantPointsPair {
     }
 
     /**
-     *
+     * Do the actual computation
      * @param track
      * @param convexHull
      */
@@ -81,12 +84,12 @@ public class MostDistantPointsPair {
         // check for the greatest distance
         for (GeometricPoint geometricPoint : hull) {
             for (int i = 0; i < hull.length; i++) {
-                GeometricPoint otherPoint = hull[i];
-                if (!geometricPoint.equals(otherPoint)) {
-                    double euclideanDistance = geometricPoint.euclideanDistanceTo(otherPoint);
+                GeometricPoint otherGeometricPoint = hull[i];
+                if (!geometricPoint.equals(otherGeometricPoint)) {
+                    double euclideanDistance = geometricPoint.euclideanDistanceTo(otherGeometricPoint);
                     if (euclideanDistance > maxSpan) {
                         firstPoint = geometricPoint;
-                        secondPoint = otherPoint;
+                        secondPoint = otherGeometricPoint;
                         maxSpan = euclideanDistance;
                     }
                 }

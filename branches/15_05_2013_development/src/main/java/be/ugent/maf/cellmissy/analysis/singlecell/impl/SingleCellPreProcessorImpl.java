@@ -14,8 +14,6 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
-import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
-import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -206,19 +204,16 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
-    public void generateFarthestPointsPairsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void generateConvexHullsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        GeometricPoint[][] farthestPointsPairsVector = new GeometricPoint[trackDataHolders.size()][2];
-        computeFarthestPointsPairs(singleCellPreProcessingResults);
-        for (int i = 0; i < farthestPointsPairsVector.length; i++) {
+        ConvexHull[] convexHullsVector = new ConvexHull[trackDataHolders.size()];
+        computeConvexHulls(singleCellPreProcessingResults);
+        for (int i = 0; i < convexHullsVector.length; i++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(i);
             ConvexHull convexHull = trackDataHolder.getConvexHull();
-            MostDistantPointsPair mostDistantPointsPair = convexHull.getMostDistantPointsPair();
-            GeometricPoint firstPoint = mostDistantPointsPair.getFirstPoint();
-            GeometricPoint secondPoint = mostDistantPointsPair.getSecondPoint();
-            farthestPointsPairsVector[i] = new GeometricPoint[]{firstPoint, secondPoint};
+            convexHullsVector[i] = convexHull;
         }
-        singleCellPreProcessingResults.setFarthestPointsPairsVector(farthestPointsPairsVector);
+        singleCellPreProcessingResults.setConvexHullsVector(convexHullsVector);
     }
 
     @Override
@@ -394,7 +389,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    private void computeFarthestPointsPairs(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    private void computeConvexHulls(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
             trackOperator.computeConvexHull(trackDataHolder);
         }

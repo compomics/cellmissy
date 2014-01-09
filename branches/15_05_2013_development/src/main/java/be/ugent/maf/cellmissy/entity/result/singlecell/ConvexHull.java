@@ -4,8 +4,6 @@
  */
 package be.ugent.maf.cellmissy.entity.result.singlecell;
 
-import java.util.List;
-
 /**
  * Object Convex Hull: the convex hull or convex envelope of a set X of points
  * in the Euclidean plane or Euclidean space is the smallest convex set
