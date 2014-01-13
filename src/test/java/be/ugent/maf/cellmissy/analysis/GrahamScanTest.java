@@ -4,12 +4,14 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
+import be.ugent.maf.cellmissy.analysis.singlecell.ConvexHullOperator;
 import be.ugent.maf.cellmissy.analysis.singlecell.impl.GrahamScanAlgorithm;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.Assert;
@@ -31,6 +33,9 @@ public class GrahamScanTest {
 
     @Autowired
     private GrahamScanAlgorithm grahamScanAlgorithm;
+    @Autowired
+    private ConvexHullOperator convexHullOperator;
+
     // 6 points ont the plane
     private static Track track = new Track();
     private static GeometricPoint q = new GeometricPoint(2, 3);
@@ -86,8 +91,12 @@ public class GrahamScanTest {
         Assert.assertNotNull(secondPoint);
         Assert.assertEquals(v, firstPoint);
         Assert.assertEquals(t, secondPoint);
+        //compute perimeter
+        convexHullOperator.computePerimeter(convexHull);
+        double perimeter = convexHull.getPerimeter();
+        Assert.assertEquals(39.585, AnalysisUtils.roundThreeDecimals(perimeter));
         // compute area
-        grahamScanAlgorithm.computeArea(convexHull);
+        convexHullOperator.computeArea(convexHull);
         double area = convexHull.getArea();
         Assert.assertEquals(86.5, area);
     }

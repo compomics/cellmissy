@@ -49,6 +49,7 @@ public class MostDistantPointsPair {
 
     /**
      * Do the actual computation
+     *
      * @param track
      * @param convexHull
      */
@@ -95,5 +96,10 @@ public class MostDistantPointsPair {
                 }
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "{" + firstPoint + ", " + secondPoint + "}";
     }
 }

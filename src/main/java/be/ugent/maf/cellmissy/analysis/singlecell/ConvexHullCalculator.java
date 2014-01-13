@@ -33,13 +33,4 @@ public interface ConvexHullCalculator {
      * @param convexHull
      */
     public void findMostDistantPoints(Track track, ConvexHull convexHull);
-
-    /**
-     * Compute the Area of the hull (in micro-meters squared). Given the
-     * coordinates listed in a counterclockwise order around the hull, the area
-     * is simply computed using the determinant law.
-     *
-     * @param convexHull: the convex hull to compute the area for
-     */
-    public void computeArea(ConvexHull convexHull);
 }

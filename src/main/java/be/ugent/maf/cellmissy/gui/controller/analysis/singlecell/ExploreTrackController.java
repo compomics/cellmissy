@@ -8,14 +8,14 @@ import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
-import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.ExploreTrackPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TimePointTrackXYLineAndShapeRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TrackXYLineAndShapeRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.PlottedTracksListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.table.TrackDataHolderTableRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.SingleCellDataTableRenderer;
+import be.ugent.maf.cellmissy.gui.view.table.model.ConvexHullTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataHolderTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -23,7 +23,6 @@ import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.GridBagConstraints;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
-import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
@@ -118,11 +117,7 @@ public class ExploreTrackController {
         // set up and enable the time /slider here
         setupTimeSlider(selectedTrackDataHolder);
         updateTrackData(selectedTrackDataHolder);
-        // show farthest points pair
-        ConvexHull convexHull = selectedTrackDataHolder.getConvexHull();
-        MostDistantPointsPair mostDistantPointsPair = convexHull.getMostDistantPointsPair();
-        exploreTrackPanel.getFarthestPairFirstPointTextField().setText(" " + mostDistantPointsPair.getFirstPoint());
-        exploreTrackPanel.getFarthestPairSecondPointTextField().setText(" " + mostDistantPointsPair.getSecondPoint());
+        updateConvexHullData(selectedTrackDataHolder);
     }
 
     /**
@@ -159,6 +154,8 @@ public class ExploreTrackController {
 
         exploreTrackPanel.getTrackDataTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         exploreTrackPanel.getTrackDataTable().getTableHeader().setReorderingAllowed(false);
+        exploreTrackPanel.getConvexHullTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+        exploreTrackPanel.getConvexHullTable().getTableHeader().setReorderingAllowed(false);
 
         // add chart mouse listener to the chart panel: clicking on a track will make the track selected in the list and it will be highlighed in the plot
         coordinatesChartPanel.addChartMouseListener(new ChartMouseListener() {
@@ -286,9 +283,29 @@ public class ExploreTrackController {
         plotSingleTrackData(trackDataHolder);
         // update model for the track table
         exploreTrackPanel.getTrackDataTable().setModel(new TrackDataHolderTableModel(trackDataHolder));
-        TrackDataHolderTableRenderer trackDataHolderTableRenderer = new TrackDataHolderTableRenderer(new DecimalFormat("###.###"));
+        SingleCellDataTableRenderer singleCellDataTableRenderer = new SingleCellDataTableRenderer(new DecimalFormat("###.###"));
         for (int i = 0; i < exploreTrackPanel.getTrackDataTable().getColumnCount(); i++) {
-            exploreTrackPanel.getTrackDataTable().getColumnModel().getColumn(i).setCellRenderer(trackDataHolderTableRenderer);
+            exploreTrackPanel.getTrackDataTable().getColumnModel().getColumn(i).setCellRenderer(singleCellDataTableRenderer);
+        }
+        for (int i = 0; i < exploreTrackPanel.getTrackDataTable().getColumnCount(); i++) {
+            GuiUtils.packColumn(exploreTrackPanel.getTrackDataTable(), i, 1);
+        }
+    }
+
+    /**
+     *
+     * @param trackDataHolder
+     */
+    private void updateConvexHullData(TrackDataHolder trackDataHolder) {
+        // upate convex hull data in table
+        ConvexHull convexHull = trackDataHolder.getConvexHull();
+        exploreTrackPanel.getConvexHullTable().setModel(new ConvexHullTableModel(convexHull));
+        SingleCellDataTableRenderer singleCellDataTableRenderer = new SingleCellDataTableRenderer(new DecimalFormat("###.###"));
+        for (int i = 0; i < exploreTrackPanel.getConvexHullTable().getColumnCount(); i++) {
+            exploreTrackPanel.getConvexHullTable().getColumnModel().getColumn(i).setCellRenderer(singleCellDataTableRenderer);
+        }
+        for (int i = 0; i < exploreTrackPanel.getConvexHullTable().getColumnCount(); i++) {
+            GuiUtils.packColumn(exploreTrackPanel.getConvexHullTable(), i, 1);
         }
     }
 

@@ -17,10 +17,14 @@ public class ConvexHull {
     private Iterable<GeometricPoint> hull;
     // the most distant points on the hull
     private MostDistantPointsPair mostDistantPointsPair;
-    // the area of the hull
-    private double area;
     // the perimeter of the hull
     private double perimeter;
+    // the area of the hull
+    private double area;
+    // the acircularity
+    private double acircularity;
+    // the dispersion
+    private double directionality;
 
     /**
      * Getters and setters
@@ -41,6 +45,14 @@ public class ConvexHull {
         this.mostDistantPointsPair = mostDistantPointsPair;
     }
 
+    public double getPerimeter() {
+        return perimeter;
+    }
+
+    public void setPerimeter(double perimeter) {
+        this.perimeter = perimeter;
+    }
+
     public double getArea() {
         return area;
     }
@@ -49,11 +61,19 @@ public class ConvexHull {
         this.area = area;
     }
 
-    public double getPerimeter() {
-        return perimeter;
+    public double getAcircularity() {
+        return acircularity;
     }
 
-    public void setPerimeter(double perimeter) {
-        this.perimeter = perimeter;
+    public void setAcircularity(double acircularity) {
+        this.acircularity = acircularity;
+    }
+
+    public double getDirectionality() {
+        return directionality;
+    }
+
+    public void setDirectionality(double directionality) {
+        this.directionality = directionality;
     }
 }
