@@ -16,11 +16,11 @@ import javax.swing.table.DefaultTableCellRenderer;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class TrackDataHolderTableRenderer extends DefaultTableCellRenderer {
+public class SingleCellDataTableRenderer extends DefaultTableCellRenderer {
 
     private Format formatter;
 
-    public TrackDataHolderTableRenderer(Format formatter) {
+    public SingleCellDataTableRenderer(Format formatter) {
         this.formatter = formatter;
     }
 
@@ -29,8 +29,6 @@ public class TrackDataHolderTableRenderer extends DefaultTableCellRenderer {
         if (value != null && row != 0 && column != 0) {
             if (value instanceof Number) {
                 value = formatter.format(value);
-            } else {
-                value = formatter.format(Double.parseDouble(value.toString()));
             }
         }
         setValue(value);

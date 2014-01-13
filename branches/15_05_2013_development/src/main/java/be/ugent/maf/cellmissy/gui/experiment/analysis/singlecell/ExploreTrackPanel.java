@@ -48,16 +48,12 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         return trackDataTable;
     }
 
-    public JTextField getFarthestPairFirstPointTextField() {
-        return farthestPairFirstPointTextField;
-    }
-
-    public JTextField getFarthestPairSecondPointTextField() {
-        return farthestPairSecondPointTextField;
-    }
-
     public JPanel getConvexHullGraphicsParentPanel() {
         return convexHullGraphicsParentPanel;
+    }
+
+    public JTable getConvexHullTable() {
+        return convexHullTable;
     }
 
     /**
@@ -99,11 +95,8 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         convexHullPanel = new javax.swing.JPanel();
         convexHullGraphicsParentPanel = new javax.swing.JPanel();
         convexHullInfoPanel = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
-        farthestPairFirstPointTextField = new javax.swing.JTextField();
-        jLabel9 = new javax.swing.JLabel();
-        farthestPairSecondPointTextField = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        convexHullTable = new javax.swing.JTable();
 
         setPreferredSize(new java.awt.Dimension(400, 600));
         setLayout(new java.awt.GridBagLayout());
@@ -125,6 +118,8 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         tablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Track Data"));
         tablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
         tablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        jScrollPane2.setBorder(null);
 
         trackDataTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -339,54 +334,40 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         convexHullInfoPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         convexHullInfoPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("point A = ");
+        jScrollPane3.setBorder(null);
 
-        farthestPairFirstPointTextField.setEditable(false);
-        farthestPairFirstPointTextField.setBorder(null);
-        farthestPairFirstPointTextField.setFocusable(false);
-
-        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel9.setText("point B  = ");
-
-        farthestPairSecondPointTextField.setEditable(false);
-        farthestPairSecondPointTextField.setBorder(null);
-        farthestPairSecondPointTextField.setFocusable(false);
-
-        jLabel1.setText("Farthest Points on Track:");
+        convexHullTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane3.setViewportView(convexHullTable);
 
         javax.swing.GroupLayout convexHullInfoPanelLayout = new javax.swing.GroupLayout(convexHullInfoPanel);
         convexHullInfoPanel.setLayout(convexHullInfoPanelLayout);
         convexHullInfoPanelLayout.setHorizontalGroup(
             convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(convexHullInfoPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(convexHullInfoPanelLayout.createSequentialGroup()
-                        .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel8))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(farthestPairSecondPointTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(farthestPairFirstPointTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jLabel1))
-                .addGap(17, 17, 17))
+            .addGap(0, 352, Short.MAX_VALUE)
+            .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, convexHullInfoPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                    .addGap(7, 7, 7)))
         );
         convexHullInfoPanelLayout.setVerticalGroup(
             convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(convexHullInfoPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(farthestPairFirstPointTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(farthestPairSecondPointTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(295, Short.MAX_VALUE))
+            .addGap(0, 372, Short.MAX_VALUE)
+            .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, convexHullInfoPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -414,17 +395,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JPanel convexHullGraphicsParentPanel;
     private javax.swing.JPanel convexHullInfoPanel;
     private javax.swing.JPanel convexHullPanel;
+    private javax.swing.JTable convexHullTable;
     private javax.swing.JPanel coordinatesParentPanel;
-    private javax.swing.JTextField farthestPairFirstPointTextField;
-    private javax.swing.JTextField farthestPairSecondPointTextField;
     private javax.swing.JPanel graphicsParentPanel;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel rightPanel;
     private javax.swing.JPanel shiftedCoordinatesPanel;

@@ -45,32 +45,4 @@ public class GrahamScanAlgorithm implements ConvexHullCalculator {
         MostDistantPointsPair mostDistantPointsPair = new MostDistantPointsPair(track, convexHull);
         convexHull.setMostDistantPointsPair(mostDistantPointsPair);
     }
-
-    @Override
-    public void computeArea(ConvexHull convexHull) {
-        double area = 0;
-        Iterable<GeometricPoint> hull = convexHull.getHull();
-        // get the size of the hull: number of vertices of polygon
-        int n = 0;
-        for (GeometricPoint geometricPoint : hull) {
-            n++;
-        }
-        // we take n + 1
-        GeometricPoint[] geometricPoints = new GeometricPoint[n + 1];
-        int j = 0;
-        for (GeometricPoint geometricPoint : hull) {
-            geometricPoints[j++] = geometricPoint;
-        }
-        // close the polygon: last point of polygon has to be equal to first point
-        geometricPoints[n] = geometricPoints[0];
-        // sum the cross products around each vertex of the hull
-        for (int i = 0; i < n; i++) {
-            double xUp = geometricPoints[i].getX();
-            double yDown = geometricPoints[i + 1].getY();
-            double yUp = geometricPoints[i].getY();
-            double xDown = geometricPoints[i + 1].getX();
-            area += (xUp * yDown) - (yUp * xDown);
-        }
-        convexHull.setArea(area / 2);
-    }
 }

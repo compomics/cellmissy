@@ -119,6 +119,9 @@ public class Playground {
                         singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateConvexHullsVector(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateDisplacementRatiosVector(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateOutreachRatiosVector(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
 
@@ -173,7 +176,7 @@ public class Playground {
                         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
                         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(globalDataFolder, name2)))) {
                             // HEADER
-                            bufferedWriter.append("well" + "\t" + "track" + "\t" + "location" + "\t" + "CD" + "\t" + "ED" + "\t" + "Directionality" + "\t" + "MD" + "\t" + "MS" + "\t" + "MTA");
+                            bufferedWriter.append("w" + "\t" + "tr" + "\t" + "loc" + "\t" + "cd" + "\t" + "ed" + "\t" + "dir" + "\t" + "md" + "\t" + "ms" + "\t" + "mta" + "\t" + "max dis" + "\t" + "dr" + "\t" + "or" + "\t" + "perim" + "\t" + "area" + "\t" + "acirc" + "\t" + "dir2");
                             bufferedWriter.newLine();
                             int counter = 0;
                             for (List<Integer> list : numberOfTracks) {
@@ -185,7 +188,6 @@ public class Playground {
                                         bufferedWriter.append("" + trackDataHolder.getTrack().getTrackNumber());
                                         bufferedWriter.append("\t");
                                         bufferedWriter.append("" + (list.indexOf(currentNumber) + 1));
-
                                         bufferedWriter.append("\t");
                                         bufferedWriter.append("" + trackDataHolder.getCumulativeDistance());
                                         bufferedWriter.append("\t");
@@ -198,6 +200,20 @@ public class Playground {
                                         bufferedWriter.append("" + trackDataHolder.getMedianSpeed());
                                         bufferedWriter.append("\t");
                                         bufferedWriter.append("" + trackDataHolder.getMedianTurningAngle());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getConvexHull().getMostDistantPointsPair().getMaxSpan());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getDisplacementRatio());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getOutreachRatio());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getConvexHull().getPerimeter());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getConvexHull().getArea());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getConvexHull().getAcircularity());
+                                        bufferedWriter.append("\t");
+                                        bufferedWriter.append("" + trackDataHolder.getConvexHull().getDirectionality());
                                         bufferedWriter.newLine();
                                     }
                                     counter += currentNumber;

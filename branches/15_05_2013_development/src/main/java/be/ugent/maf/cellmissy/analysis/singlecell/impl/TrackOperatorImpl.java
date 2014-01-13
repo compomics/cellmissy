@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.impl;
 
+import be.ugent.maf.cellmissy.analysis.singlecell.ConvexHullOperator;
 import be.ugent.maf.cellmissy.analysis.singlecell.TrackOperator;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.Track;
@@ -29,6 +30,8 @@ public class TrackOperatorImpl implements TrackOperator {
 
     @Autowired
     private GrahamScanAlgorithm grahamScanAlgorithm;
+    @Autowired
+    private ConvexHullOperator convexHullOperator;
 
     @Override
     public void generateTimeIndexes(TrackDataHolder trackDataHolder) {
@@ -188,7 +191,10 @@ public class TrackOperatorImpl implements TrackOperator {
         ConvexHull convexHull = new ConvexHull();
         grahamScanAlgorithm.computeHull(track, convexHull);
         grahamScanAlgorithm.findMostDistantPoints(track, convexHull);
-        grahamScanAlgorithm.computeArea(convexHull);
+        convexHullOperator.computePerimeter(convexHull);
+        convexHullOperator.computeArea(convexHull);
+        convexHullOperator.computeAcircularity(convexHull);
+        convexHullOperator.computeDirectionality(convexHull);
         trackDataHolder.setConvexHull(convexHull);
     }
 

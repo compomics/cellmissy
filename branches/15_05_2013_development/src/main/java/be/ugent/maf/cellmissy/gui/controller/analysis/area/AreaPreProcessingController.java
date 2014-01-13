@@ -1233,7 +1233,7 @@ public class AreaPreProcessingController {
         double[] processedTimeFrames = getProcessedTimeFrames(plateCondition);
         // get the conversion factor, this could be just 1 of course
         // in this case, no conversion is needed
-        double conversionFactor = computeConversionFactor();
+//        double conversionFactor = computeConversionFactor();
         // get number of samples
         int numberOfSamplesPerCondition = AnalysisUtils.getNumberOfAreaAnalyzedSamples(plateCondition);
         boolean firstAreaIsZero = false;
@@ -1242,18 +1242,18 @@ public class AreaPreProcessingController {
         for (int columnIndex = 0; columnIndex < areaRawData[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < areaRawData.length; rowIndex++) {
                 double areaRaw = timeStepsBindingList.get(counter).getArea();
-                double convertedArea = areaRaw / Math.pow(conversionFactor, 2);
+//                double convertedArea = areaRaw / Math.pow(conversionFactor, 2);
                 // check for first row: sometimes area raw data is already equal to zero at first time
                 if (rowIndex != 0) {
                     if (areaRaw != 0) {
-                        areaRawData[rowIndex][columnIndex] = convertedArea;
+                        areaRawData[rowIndex][columnIndex] = areaRaw;
                     } else if (areaRaw == 0 && firstAreaIsZero) {
                         areaRawData[rowIndex][columnIndex] = 0.0;
                     } else {
                         areaRawData[rowIndex][columnIndex] = null;
                     }
                 } else {
-                    areaRawData[rowIndex][columnIndex] = convertedArea;
+                    areaRawData[rowIndex][columnIndex] = areaRaw;
                     if (areaRawData[rowIndex][columnIndex] == 0) {
                         firstAreaIsZero = true;
                     }
@@ -1287,7 +1287,7 @@ public class AreaPreProcessingController {
             conversionFactor = instrumentConversionFactor * magnificationValue / 10;
             // the other case is our "cellM" special micrometers, another, fixed conversion is needed
         } else if (areaUnitOfMeasurement.equals(AreaUnitOfMeasurement.SPECIAL_MICRO_METERS)) {
-            conversionFactor = 4; // need to check this!!!
+            conversionFactor = 0.25; // need to check this!!!
         }
         return conversionFactor;
     }
