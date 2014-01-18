@@ -23,7 +23,7 @@ public class ConvexHull {
     private double area;
     // the acircularity
     private double acircularity;
-    // the dispersion
+    // the directionality
     private double directionality;
 
     /**

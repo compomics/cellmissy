@@ -48,7 +48,7 @@ public class ConvexHullOperatorImpl implements ConvexHullOperator {
     public void computeAcircularity(ConvexHull convexHull) {
         double perimeter = convexHull.getPerimeter();
         double area = convexHull.getArea();
-        double acircularity = (4 * Math.PI * area) / Math.pow(perimeter, 2);
+        double acircularity = Math.pow(perimeter, 2) / (4 * Math.PI * area);
         convexHull.setAcircularity(acircularity);
     }
 
