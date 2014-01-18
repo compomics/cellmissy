@@ -17,6 +17,7 @@ import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.service.ExperimentService;
+import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -51,25 +52,26 @@ public class Playground {
         ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
         // get the services we need
         ExperimentService experimentService = (ExperimentService) context.getBean("experimentService");
+        ProjectService projectService = (ProjectService) context.getBean("projectService");
         WellService wellService = (WellService) context.getBean("wellService");
         SingleCellPreProcessor singleCellPreProcessor = (SingleCellPreProcessor) context.getBean("singleCellPreProcessor");
         // get all the experiments from DB
+        Project immuneCellsProject = projectService.findById(5L);
 //        List<Experiment> experiments = experimentService.findAll();
         // find the experiments by project id
-        List<Experiment> experiments = experimentService.findExperimentsByProjectId(5L); // immune cells, project id 5
+        List<Experiment> experiments = experimentService.findExperimentsByProjectId(immuneCellsProject.getProjectid()); // immune cells, project id 5
         for (Experiment experiment : experiments) {
             Magnification magnification = experiment.getMagnification();
             double instrumentConversionFactor = experiment.getInstrument().getConversionFactor();
             double magnificationValue = magnification.getMagnificationValue();
             double conversionFactor = instrumentConversionFactor * magnificationValue / 10;
-            System.out.println("$$$ C.F. is: " + conversionFactor);
+//            System.out.println("$$$ C.F. is: " + conversionFactor);
 //        Experiment experiment = experimentService.findById(21L);
-            Project project = experiment.getProject();
             // make the folders
             File file = new File("C:\\Users\\paola\\Desktop\\P013");
 //            File trackFolder = new File(file, project + "_" + experiment + "_" + "trackFiles");
 //            trackFolder.mkdir();
-            File globalFolder = new File(file, project + "_" + experiment + "_" + "globalFiles");
+            File globalFolder = new File(file, immuneCellsProject + "_" + experiment + "_" + "globalFiles");
             globalFolder.mkdir();
 
             // fetch the migration data
@@ -89,7 +91,7 @@ public class Playground {
 //                    File trackDataFolder = new File(trackFolder, project + "_" + experiment + "_" + "trackFiles_" + algorithm + "_" + imagingType);
 //                    trackDataFolder.mkdir();
                     //**************************************************************************
-                    File globalDataFolder = new File(globalFolder, project + "_" + experiment + "_" + "globalFiles" + algorithm + "_" + imagingType);
+                    File globalDataFolder = new File(globalFolder, immuneCellsProject + "_" + experiment + "_" + "globalFiles" + algorithm + "_" + imagingType);
                     globalDataFolder.mkdir();
 
                     for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
@@ -126,7 +128,7 @@ public class Playground {
                         singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
 
                         // we create a file for each condition
-                        String name1 = project + "_" + experiment + "_" + plateCondition + ".txt";
+                        String name1 = immuneCellsProject + "_" + experiment + "_" + plateCondition + ".txt";
                         Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
                         Double[][] rawTrackCoordinatesMatrix = singleCellPreProcessingResults.getRawTrackCoordinatesMatrix();
                         Double[][] shiftedTrackCoordinatesMatrix = singleCellPreProcessingResults.getShiftedTrackCoordinatesMatrix();
@@ -172,7 +174,7 @@ public class Playground {
 //                        } catch (IOException ex) {
 //                            Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
 //                        }
-                        String name2 = project + "_" + experiment + "_" + plateCondition + ".txt";
+                        String name2 = immuneCellsProject + "_" + experiment + "_" + plateCondition + ".txt";
                         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
                         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(globalDataFolder, name2)))) {
                             // HEADER
@@ -222,12 +224,12 @@ public class Playground {
                         } catch (IOException ex) {
                             Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        System.out.println(project + "_" + experiment + "_" + plateCondition + " processed");
+                        System.out.println(immuneCellsProject + "_" + experiment + "_" + plateCondition + " processed");
                     }
-                    System.out.println("****" + project + "_" + experiment + "_" + algorithm + ", " + imagingType + " processed");
+                    System.out.println("****" + immuneCellsProject + "_" + experiment + "_" + algorithm + ", " + imagingType + " processed");
                 }
             }
-            System.out.println("*-*-*-*-*" + project + "_" + experiment + " processed");
+            System.out.println("*-*-*-*-*" + immuneCellsProject + "_" + experiment + " processed");
         }
         //        WellService wellService = (WellService) context.getBean("wellService");
         //        Experiment experiment = experimentService.findById(1L);

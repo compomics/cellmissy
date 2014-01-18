@@ -30,7 +30,7 @@ public interface ConvexHullOperator {
     public void computeArea(ConvexHull convexHull);
 
     /**
-     * Compute the acircularity of the convex hull: 4*pi*area (perimeter)^2.
+     * Compute the acircularity of the convex hull = (perimeter)^2 / 4*pi*area .
      *
      * @param convexHull
      */
