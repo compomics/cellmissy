@@ -69,6 +69,8 @@ public class TrackDataHolder {
     private Double[] turningAngles;
     // track angle: the median turning angle computed from all time intervals throughout a track
     private double medianTurningAngle;
+    //to be deleted
+    private int label;
 
     /**
      * Constructor, takes a track as argument.
@@ -249,6 +251,14 @@ public class TrackDataHolder {
 
     public void setMedianTurningAngle(double medianTurningAngle) {
         this.medianTurningAngle = medianTurningAngle;
+    }
+
+    public int getLabel() {
+        return label;
+    }
+
+    public void setLabel(int label) {
+        this.label = label;
     }
 
     @Override

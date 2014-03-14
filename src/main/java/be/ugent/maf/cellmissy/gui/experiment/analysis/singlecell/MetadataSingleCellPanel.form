@@ -421,7 +421,7 @@
                           <Component id="questionButton" min="-2" pref="25" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="80" max="32767" attributes="0"/>
+                  <EmptySpace pref="76" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -496,7 +496,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel15">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Specify also the unit of measuement for the tracks coordinates."/>
+            <Property name="text" type="java.lang.String" value="Specify also the unit of measurement for the tracks coordinates."/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="questionButton">

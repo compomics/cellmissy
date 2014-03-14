@@ -67,6 +67,8 @@ public class GrahamScan {
         for (k2 = k1 + 1; k2 < n; k2++) {
             if (GeometricPoint.counterClockWise(geometricPoints[0], geometricPoints[k1], geometricPoints[k2]) != 0) {
                 break;
+            } else {
+                System.out.println("points: " + geometricPoints[0] + ", " + geometricPoints[k1] + ", " + geometricPoints[k2] + " are collinear on the plane.");
             }
         }
         hull.push(geometricPoints[k2 - 1]);    // points[k2-1] is the second extreme point

@@ -115,11 +115,10 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         rightPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         rightPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        tablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Track Data"));
         tablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
         tablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jScrollPane2.setBorder(null);
+        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Track Data"));
 
         trackDataTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -138,16 +137,15 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         tablePanel.setLayout(tablePanelLayout);
         tablePanelLayout.setHorizontalGroup(
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tablePanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tablePanelLayout.setVerticalGroup(
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tablePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -157,14 +155,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rightPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
+                .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
                 .addContainerGap())
         );
         rightPanelLayout.setVerticalGroup(
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rightPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
+                .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -191,14 +189,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             tracksListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tracksListPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tracksListPanelLayout.setVerticalGroup(
             tracksListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tracksListPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -284,7 +282,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                             .addComponent(yTextField)))
                     .addGroup(timeSliderPanelLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(timeSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)))
+                        .addComponent(timeSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         timeSliderPanelLayout.setVerticalGroup(
@@ -326,15 +324,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.7;
+        gridBagConstraints.weightx = 0.6;
         gridBagConstraints.weighty = 1.0;
         convexHullPanel.add(convexHullGraphicsParentPanel, gridBagConstraints);
 
-        convexHullInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Convex Hull Data"));
         convexHullInfoPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         convexHullInfoPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jScrollPane3.setBorder(null);
+        jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder("Convex Hull Data"));
 
         convexHullTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -353,21 +350,17 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         convexHullInfoPanel.setLayout(convexHullInfoPanelLayout);
         convexHullInfoPanelLayout.setHorizontalGroup(
             convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 352, Short.MAX_VALUE)
-            .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, convexHullInfoPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
-                    .addGap(7, 7, 7)))
+            .addGroup(convexHullInfoPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
+                .addContainerGap())
         );
         convexHullInfoPanelLayout.setVerticalGroup(
             convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 372, Short.MAX_VALUE)
-            .addGroup(convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, convexHullInfoPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
-                    .addContainerGap()))
+            .addGroup(convexHullInfoPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -375,7 +368,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.3;
+        gridBagConstraints.weightx = 0.4;
         gridBagConstraints.weighty = 1.0;
         convexHullPanel.add(convexHullInfoPanel, gridBagConstraints);
 
