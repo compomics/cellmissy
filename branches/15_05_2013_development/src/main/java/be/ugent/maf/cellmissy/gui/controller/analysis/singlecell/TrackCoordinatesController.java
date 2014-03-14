@@ -113,6 +113,26 @@ public class TrackCoordinatesController {
     }
 
     /**
+     * Set cursor from main controller
+     *
+     * @param type
+     */
+    public void setCursor(Cursor cursor) {
+        singleCellPreProcessingController.setCursor(cursor);
+    }
+
+    /**
+     * Show message through the main controller
+     *
+     * @param message
+     * @param title
+     * @param messageType
+     */
+    public void showMessage(String message, String title, Integer messageType) {
+        singleCellPreProcessingController.showMessage(message, title, messageType);
+    }
+
+    /**
      * Show the number of total tracks for the current selected condition.
      */
     public void updateTracksNumberInfo() {

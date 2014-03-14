@@ -20,6 +20,7 @@ import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataHolderTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
@@ -77,6 +78,7 @@ public class ExploreTrackController {
     // parent controller
     @Autowired
     private TrackCoordinatesController trackCoordinatesController;
+    // child controller
     // services
     private GridBagConstraints gridBagConstraints;
 
@@ -99,6 +101,26 @@ public class ExploreTrackController {
 
     public ExploreTrackPanel getExploreTrackPanel() {
         return exploreTrackPanel;
+    }
+
+    /**
+     * Set cursor from main controller
+     *
+     * @param type
+     */
+    public void setCursor(Cursor cursor) {
+        trackCoordinatesController.setCursor(cursor);
+    }
+
+    /**
+     * Show message through the main controller
+     *
+     * @param message
+     * @param title
+     * @param messageType
+     */
+    public void showMessage(String message, String title, Integer messageType) {
+        trackCoordinatesController.showMessage(message, title, messageType);
     }
 
     /**

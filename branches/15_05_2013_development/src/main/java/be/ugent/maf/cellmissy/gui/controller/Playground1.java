@@ -47,7 +47,7 @@ public class Playground1 {
         List<Experiment> experiments = experimentService.findExperimentsByProjectId(project.getProjectid());
         // folder and name for the output file
         File folder = new File("C:\\Users\\paola\\Desktop\\datasets");
-        String fileName = "dataset1.txt";
+        String fileName = "dataset_unlabeled.txt";
         List<List<TrackDataHolder>> biologicalConditions = new ArrayList<>();
         int totTracks = 0;
         for (Experiment experiment : experiments) {
@@ -94,13 +94,12 @@ public class Playground1 {
                     totTracks += trackDataHolders.size();
                 }
                 System.out.println("*-*-*-*-*" + project + "_" + experiment + " processed");
+                System.out.println("total tracks (cells): " + totTracks);
             }
-            System.out.println("number of biological conditions: " + biologicalConditions.size());
-            System.out.println("total tracks (cells): " + totTracks);
 
             try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(folder, fileName)))) {
                 // header of the file
-                bufferedWriter.append("id" + "\t" + "steps" + "\t" + "dur" + "\t" + "xmin" + "\t" + "xmax" + "\t" + "ymin" + "\t" + "ymax" + "\t"
+                bufferedWriter.append("id" + "\t" + "dur" + "\t" + "xmin" + "\t" + "xmax" + "\t" + "ymin" + "\t" + "ymax" + "\t"
                         + "xnd" + "\t" + "ynd" + "\t" + "cd" + "\t" + "ed" + "\t" + "dir" + "\t" + "md" + "\t" + "ms" + "\t" + "mta" + "\t" + "maxdis" + "\t"
                         + "dr" + "\t" + "or" + "\t" + "perim" + "\t" + "area" + "\t" + "acirc" + "\t" + "dir2" + "\t" + "label");
                 // new line
@@ -112,8 +111,6 @@ public class Playground1 {
                         TrackDataHolder trackDataHolder = conditionTracks.get(row);
                         Track track = trackDataHolder.getTrack();
                         bufferedWriter.append("" + track.getTrackid());
-                        bufferedWriter.append("\t");
-                        bufferedWriter.append("" + track.getTrackPointList().size());
                         bufferedWriter.append("\t");
                         bufferedWriter.append("" + trackDataHolder.getDuration());
                         bufferedWriter.append("\t");

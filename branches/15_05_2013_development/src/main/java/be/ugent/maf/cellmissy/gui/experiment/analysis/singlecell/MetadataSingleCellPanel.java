@@ -290,7 +290,7 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
 
         infoLabel2.setText("Select a dataset and an imaging type to analyze.");
 
-        jLabel15.setText("Specify also the unit of measuement for the tracks coordinates.");
+        jLabel15.setText("Specify also the unit of measurement for the tracks coordinates.");
 
         questionButton.setBorderPainted(false);
         questionButton.setContentAreaFilled(false);
@@ -320,7 +320,7 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
                         .addComponent(jLabel15)
                         .addGap(18, 18, 18)
                         .addComponent(questionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(80, Short.MAX_VALUE))
+                .addContainerGap(76, Short.MAX_VALUE))
         );
 
         userSelectionPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {algorithmComboBox, coordinatesUnitOfMeasurementComboBox, imagingTypeComboBox});

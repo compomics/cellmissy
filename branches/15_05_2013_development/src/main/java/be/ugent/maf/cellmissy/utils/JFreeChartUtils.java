@@ -192,7 +192,7 @@ public class JFreeChartUtils {
         convexHullChart.getTitle().setFont(chartFont);
         XYPlot xyPlot = convexHullChart.getXYPlot();
         setupPlot(xyPlot);
-        xyPlot.setBackgroundPaint(new Color(177, 177, 60, 50));
+        xyPlot.setBackgroundPaint(Color.white);
         xyPlot.setOutlinePaint(new Color(177, 177, 60, 100));
         xyPlot.setOutlineStroke(wideLine);
         xyPlot.setRangeGridlinePaint(Color.black);
@@ -358,7 +358,7 @@ public class JFreeChartUtils {
         chart.getTitle().setFont(chartFont);
         XYPlot xYPlot = chart.getXYPlot();
         setupPlot(xYPlot);
-        xYPlot.setBackgroundPaint(new Color(177, 177, 60, 50));
+        xYPlot.setBackgroundPaint(Color.white);
         xYPlot.setOutlinePaint(new Color(177, 177, 60, 100));
         xYPlot.setOutlineStroke(wideLine);
         xYPlot.setRangeGridlinePaint(Color.black);
