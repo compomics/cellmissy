@@ -41,6 +41,7 @@ public class GrahamScan {
      * @param geometricPointList
      */
     private void constructHull(List<GeometricPoint> geometricPointList) {
+        // how many points do we have?
         int n = geometricPointList.size();
         GeometricPoint[] geometricPoints = geometricPointList.toArray(new GeometricPoint[n]);
         // given that a vertex (extreme point) of the convex hull is a point with first a minimum (lowest) y coordinate, and second a maximum (rightmost) x coordinate,

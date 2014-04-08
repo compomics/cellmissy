@@ -46,8 +46,8 @@ public class Playground1 {
         Project project = projectService.findById(5L);
         List<Experiment> experiments = experimentService.findExperimentsByProjectId(project.getProjectid());
         // folder and name for the output file
-        File folder = new File("C:\\Users\\paola\\Desktop\\datasets");
-        String fileName = "dataset_unlabeled.txt";
+        File folder = new File("C:\\Users\\paola\\Desktop\\tracks_classification\\new");
+        String fileName = "data_unlabel.txt";
         List<List<TrackDataHolder>> biologicalConditions = new ArrayList<>();
         int totTracks = 0;
         for (Experiment experiment : experiments) {

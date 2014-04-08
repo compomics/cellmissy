@@ -86,7 +86,7 @@ public class PlotSettingsMenuBar extends JMenuBar {
         mainMenu.setPreferredSize(new Dimension(87, 18));
         mainMenu.setIcon(new CircleIcon(Color.lightGray));
         mainMenu.setIconTextGap(0);
-        mainMenu.setToolTipText("Click to choose plot settings");
+        mainMenu.setToolTipText("Click to customize plot");
         //first submenu: line width
         JMenu lineWidthMenu = new JMenu("Line Width");
         //now, one menu item for each line width in the JFreeChart Utils class

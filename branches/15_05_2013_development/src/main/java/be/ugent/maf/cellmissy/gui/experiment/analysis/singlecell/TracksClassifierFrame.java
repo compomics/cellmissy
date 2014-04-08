@@ -15,7 +15,6 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
-import be.ugent.maf.cellmissy.gui.view.renderer.list.PlottedTracksListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.SingleCellDataTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.ConvexHullTableModel;
@@ -114,10 +113,13 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
         buttonGroup.add(label0RadioButton);
         buttonGroup.add(label1RadioButton);
         buttonGroup.add(label2RadioButton);
+        buttonGroup.add(label3RadioButton);
         // select label 0 by default
         label0RadioButton.setSelected(true);
         logTextArea.setLineWrap(true);
         logTextArea.setWrapStyleWord(true);
+        expTextArea.setLineWrap(true);
+        expTextArea.setWrapStyleWord(true);
         //init projectJList: find all the projects from DB and sort them
         List<Project> allProjects = projectService.findAll();
         Collections.sort(allProjects);
@@ -219,6 +221,8 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
                             label = 1;
                         } else if (label2RadioButton.isSelected()) {
                             label = 2;
+                        } else if (label3RadioButton.isSelected()) {
+                            label = 3;
                         }
                         selectedTrack.setLabel(label);
                         trackDatasetList.add(selectedTrack);
@@ -244,6 +248,13 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
                 // create and execute new swing worker
                 WriteToFileSwingWorker writeToFileSwingWorker = new WriteToFileSwingWorker();
                 writeToFileSwingWorker.execute();
+            }
+        });
+        computeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FetchDataForExperimentSwingWorker fetchDataForExperimentSwingWorker = new FetchDataForExperimentSwingWorker();
+                fetchDataForExperimentSwingWorker.execute();
             }
         });
 
@@ -281,8 +292,7 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
      */
     private void onSelectedExperiment(Experiment selectedExperiment) {
         experiment = selectedExperiment;
-        FetchDataForExperimentSwingWorker fetchDataForExperimentSwingWorker = new FetchDataForExperimentSwingWorker();
-        fetchDataForExperimentSwingWorker.execute();
+        expTextArea.setText(experiment.getPurpose());
     }
 
     /**
@@ -476,11 +486,11 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
      * Write the dataset to file
      */
     private void writeDatasetToFile() {
-        File folder = new File("C:\\Users\\paola\\Desktop\\datasets");
-        String fileName = "dataset1.txt";
+        File folder = new File("C:\\Users\\paola\\Desktop\\tracks_classification");
+        String fileName = experiment + "_" + "data_label.txt";
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(folder, fileName)))) {
             // header of the file
-            bufferedWriter.append("id" + "\t" + "steps" + "\t" + "dur" + "\t" + "xmin" + "\t" + "xmax" + "\t" + "ymin" + "\t" + "ymax" + "\t"
+            bufferedWriter.append("id" + "\t" + "dur" + "\t" + "xmin" + "\t" + "xmax" + "\t" + "ymin" + "\t" + "ymax" + "\t"
                     + "xnd" + "\t" + "ynd" + "\t" + "cd" + "\t" + "ed" + "\t" + "dir" + "\t" + "md" + "\t" + "ms" + "\t" + "mta" + "\t" + "maxdis" + "\t"
                     + "dr" + "\t" + "or" + "\t" + "perim" + "\t" + "area" + "\t" + "acirc" + "\t" + "dir2" + "\t" + "label");
             // new line
@@ -489,8 +499,6 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
                 TrackDataHolder trackDataHolder = trackDatasetList.get(i);
                 Track track = trackDataHolder.getTrack();
                 bufferedWriter.append("" + track.getTrackid());
-                bufferedWriter.append("\t");
-                bufferedWriter.append("" + track.getTrackPointList().size());
                 bufferedWriter.append("\t");
                 bufferedWriter.append("" + trackDataHolder.getDuration());
                 bufferedWriter.append("\t");
@@ -560,6 +568,7 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
         label0RadioButton = new javax.swing.JRadioButton();
         label1RadioButton = new javax.swing.JRadioButton();
         label2RadioButton = new javax.swing.JRadioButton();
+        label3RadioButton = new javax.swing.JRadioButton();
         addTrackToDatasetButton = new javax.swing.JButton();
         removeTrackFromDatasetButton = new javax.swing.JButton();
         writeToFileButton = new javax.swing.JButton();
@@ -570,6 +579,9 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
         logTextArea = new javax.swing.JTextArea();
         jScrollPane7 = new javax.swing.JScrollPane();
         convexHullTable = new javax.swing.JTable();
+        expScrollPane = new javax.swing.JScrollPane();
+        expTextArea = new javax.swing.JTextArea();
+        computeButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Tracks Classifier");
@@ -607,9 +619,11 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
 
         label0RadioButton.setText("Label 0 (straight)");
 
-        label1RadioButton.setText("Label 1 (confined)");
+        label1RadioButton.setText("Label 1 (curve)");
 
-        label2RadioButton.setText("Label 2 (random)");
+        label2RadioButton.setText("Label 2 (confined)");
+
+        label3RadioButton.setText("Label 3 (random)");
 
         addTrackToDatasetButton.setText("Add Track To Dataset");
 
@@ -650,6 +664,17 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
         ));
         jScrollPane7.setViewportView(convexHullTable);
 
+        expScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+
+        expTextArea.setEditable(false);
+        expTextArea.setColumns(20);
+        expTextArea.setLineWrap(true);
+        expTextArea.setRows(5);
+        expTextArea.setWrapStyleWord(true);
+        expScrollPane.setViewportView(expTextArea);
+
+        computeButton.setText("Compute for Current Exp...");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -658,68 +683,79 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(label0RadioButton)
-                            .addComponent(label1RadioButton)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(label2RadioButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(addTrackToDatasetButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(writeToFileButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(removeTrackFromDatasetButton, javax.swing.GroupLayout.Alignment.LEADING)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(expScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                            .addComponent(computeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
-                            .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(convexHullGraphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE))
+                            .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                     .addComponent(jScrollPane6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(label0RadioButton)
+                            .addComponent(label3RadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(addTrackToDatasetButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(writeToFileButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(removeTrackFromDatasetButton)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(label1RadioButton)
+                                .addComponent(label2RadioButton)))
+                        .addGap(28, 28, 28)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 242, Short.MAX_VALUE))
+                    .addComponent(convexHullGraphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jScrollPane1, jScrollPane2, jScrollPane3});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {label0RadioButton, label1RadioButton, label2RadioButton, label3RadioButton});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(11, 11, 11)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane3)
-                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(label0RadioButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(label1RadioButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(label2RadioButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
-                                .addComponent(addTrackToDatasetButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(removeTrackFromDatasetButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(writeToFileButton))
-                            .addComponent(jScrollPane4)
-                            .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                    .addComponent(convexHullGraphPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 556, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(expScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1)
+                        .addComponent(computeButton))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(convexHullGraphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(label0RadioButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(label1RadioButton)
+                            .addGap(5, 5, 5)
+                            .addComponent(label2RadioButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(label3RadioButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(addTrackToDatasetButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(removeTrackFromDatasetButton)
+                            .addGap(18, 18, 18)
+                            .addComponent(writeToFileButton))))
                 .addContainerGap())
         );
-
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jScrollPane1, jScrollPane2});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -755,9 +791,12 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addTrackToDatasetButton;
+    private javax.swing.JButton computeButton;
     private javax.swing.JPanel convexHullGraphPanel;
     private javax.swing.JTable convexHullTable;
     private javax.swing.JList datasetList;
+    private javax.swing.JScrollPane expScrollPane;
+    private javax.swing.JTextArea expTextArea;
     private javax.swing.JList experimentsList;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -769,6 +808,7 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
     private javax.swing.JRadioButton label0RadioButton;
     private javax.swing.JRadioButton label1RadioButton;
     private javax.swing.JRadioButton label2RadioButton;
+    private javax.swing.JRadioButton label3RadioButton;
     private javax.swing.JTextArea logTextArea;
     private javax.swing.JList projectsList;
     private javax.swing.JButton removeTrackFromDatasetButton;

@@ -359,7 +359,7 @@ public class JFreeChartUtils {
         XYPlot xYPlot = chart.getXYPlot();
         setupPlot(xYPlot);
         xYPlot.setBackgroundPaint(Color.white);
-        xYPlot.setOutlinePaint(new Color(177, 177, 60, 100));
+        xYPlot.setOutlinePaint(Color.white);
         xYPlot.setOutlineStroke(wideLine);
         xYPlot.setRangeGridlinePaint(Color.black);
         xYPlot.setDomainGridlinePaint(Color.black);
