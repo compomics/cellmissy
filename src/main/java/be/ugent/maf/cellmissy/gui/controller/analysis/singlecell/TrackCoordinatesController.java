@@ -13,9 +13,9 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsMen
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.list.PlottedTracksListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TrackXYLineAndShapeRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.RectIconCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackCoordinatesTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
@@ -39,22 +39,19 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.table.JTableHeader;
 import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.BindingGroup;
+import org.jdesktop.beansbinding.ELProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JComboBoxBinding;
-import org.jdesktop.swingbinding.JListBinding;
+import org.jdesktop.swingbinding.JTableBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartMouseEvent;
-import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.entity.ChartEntity;
-import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -75,6 +72,7 @@ public class TrackCoordinatesController {
     private ObservableList<Well> wellBindingList;
     private JTable coordinatesTable;
     private ObservableList<TrackDataHolder> trackDataHolderBindingList;
+    private JTableBinding trackHoldersTableBinding;
     // view
     private TrackCoordinatesPanel trackCoordinatesPanel;
     private PlotSettingsMenuBar plotSettingsMenuBar;
@@ -119,6 +117,37 @@ public class TrackCoordinatesController {
      */
     public void setCursor(Cursor cursor) {
         singleCellPreProcessingController.setCursor(cursor);
+    }
+
+    /**
+     * Get the category to plot for the tracks: normally 0, the condition
+     * category; if the well radio button is selected, set the category to plot
+     * to 1.
+     *
+     * @return
+     */
+    public int getCategoryToplot() {
+        int categoryToPlot = 0;
+        if (trackCoordinatesPanel.getWellRadioButton().isSelected()) {
+            categoryToPlot = 1;
+        }
+        return categoryToPlot;
+    }
+
+    /**
+     * Iterate through the current track data holders and get the endpoints of
+     * the correspondent tracks.
+     *
+     * @return: a List of Integers, each Integer being the endpoint for a track.
+     */
+    public List<Integer> getEndPoints() {
+        List<Integer> endPoints = new ArrayList<>();
+        for (TrackDataHolder trackDataHolder : trackDataHolderBindingList) {
+            double[] timeIndexes = trackDataHolder.getTimeIndexes();
+            int numberOfTimePoints = timeIndexes.length - 1;
+            endPoints.add(numberOfTimePoints);
+        }
+        return endPoints;
     }
 
     /**
@@ -234,7 +263,7 @@ public class TrackCoordinatesController {
     public void plotRandomTrackCoordinates(PlateCondition plateCondition, boolean useRawCoordinates) {
         // we get the selected index from the tabbed pane
         // according to this, we generate the random tracks from the condition or from the well
-        int categoryToPlot = trackCoordinatesPanel.getTrackingPlotTabbedPane().getSelectedIndex();
+        int categoryToPlot = getCategoryToplot();
         // if we don't actually have tracks to plot, we generate them
         if (trackDataHolderBindingList.isEmpty()) {
             generateRandomTrackDataHolders(categoryToPlot);
@@ -279,6 +308,34 @@ public class TrackCoordinatesController {
     }
 
     /**
+     *
+     */
+    public void showPlottedTracksInTable() {
+        trackHoldersTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackDataHolderBindingList, trackCoordinatesPanel.getPlottedTracksTable());
+        // add column bindings
+        BeanProperty index = BeanProperty.create("index");
+        JTableBinding.ColumnBinding columnBinding = trackHoldersTableBinding.addColumnBinding(index);
+        columnBinding.setColumnName("");
+        columnBinding.setEditable(false);
+
+        columnBinding = trackHoldersTableBinding.addColumnBinding(ELProperty.create("${track}"));
+        columnBinding.setColumnName("track number");
+        columnBinding.setEditable(false);
+        columnBinding.setColumnClass(Track.class);
+
+        columnBinding = trackHoldersTableBinding.addColumnBinding(ELProperty.create("${track.wellHasImagingType.well}"));
+        columnBinding.setColumnName("well");
+        columnBinding.setEditable(false);
+        columnBinding.setColumnClass(Well.class);
+
+        bindingGroup.addBinding(trackHoldersTableBinding);
+        // do the binding
+        bindingGroup.bind();
+        //set renderer for first column
+        trackCoordinatesPanel.getPlottedTracksTable().getColumnModel().getColumn(0).setCellRenderer(new RectIconCellRenderer());
+    }
+
+    /**
      * Action Listener for MenuItems
      */
     private class ItemActionListener implements ItemListener {
@@ -291,7 +348,7 @@ public class TrackCoordinatesController {
             Float selectedLineWidth = plotSettingsMenuBar.getSelectedLineWidth();
             JFreeChart coordinatesChart = coordinatesChartPanel.getChart();
             JFreeChartUtils.setupTrackChart(coordinatesChart);
-            int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
+            int selectedTrackIndex = -1;
             TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = null;
             String menuItemText = ((JMenuItem) e.getSource()).getText();
             if (menuItemText.equalsIgnoreCase("plot lines")) {
@@ -363,19 +420,24 @@ public class TrackCoordinatesController {
     private void initTrackCoordinatesPanel() {
         // init new main panel
         trackCoordinatesPanel = new TrackCoordinatesPanel();
+        // create a new button group and add the two radio buttons to it
+        ButtonGroup categoriesToPlotButtonGroup = new ButtonGroup();
+        categoriesToPlotButtonGroup.add(trackCoordinatesPanel.getConditionRadioButton());
+        categoriesToPlotButtonGroup.add(trackCoordinatesPanel.getWellRadioButton());
+        trackCoordinatesPanel.getConditionRadioButton().setSelected(true);
         // init well binding list
         wellBindingList = ObservableCollections.observableList(new ArrayList<Well>());
         trackDataHolderBindingList = ObservableCollections.observableList(new ArrayList<TrackDataHolder>());
         // init jcombo box binding: wells
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, wellBindingList, trackCoordinatesPanel.getWellsComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
-        // init jlist binding: track data holders
-        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackDataHolderBindingList, trackCoordinatesPanel.getPlottedTracksJList());
-        bindingGroup.addBinding(jListBinding);
         // do the binding
         bindingGroup.bind();
-        // set cell renderer for the tracks list
-        trackCoordinatesPanel.getPlottedTracksJList().setCellRenderer(new PlottedTracksListRenderer(trackDataHolderBindingList));
+        // get the tables header
+        JTableHeader tracksTableHeader = trackCoordinatesPanel.getPlottedTracksTable().getTableHeader();
+        tracksTableHeader.setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        tracksTableHeader.setReorderingAllowed(false);
+
         //init dataTable
         coordinatesTable = new JTable();
         JScrollPane scrollPane = new JScrollPane(coordinatesTable);
@@ -397,29 +459,6 @@ public class TrackCoordinatesController {
         //init chart panels
         coordinatesChartPanel = new ChartPanel(null);
         coordinatesChartPanel.setOpaque(false);
-        // add chart mouse listener to the chart panel: clicking on a track will make the track selected in the list and it will be highlighed in the plot
-        coordinatesChartPanel.addChartMouseListener(new ChartMouseListener() {
-            @Override
-            public void chartMouseClicked(ChartMouseEvent e) {
-                // get the entity on from which the chart mouse event has been generated
-                ChartEntity chartEntity = e.getEntity();
-                // check that we don't click just on the background of the plot
-                if (chartEntity instanceof XYItemEntity) {
-                    XYItemEntity xYItemEntity = (XYItemEntity) e.getEntity();
-                    // get the series to highlight in the list and in the plot
-                    int seriesIndex = xYItemEntity.getSeriesIndex();
-                    trackCoordinatesPanel.getPlottedTracksJList().setSelectedIndex(seriesIndex);
-                    // scroll the list to the selected index
-                    trackCoordinatesPanel.getPlottedTracksJList().ensureIndexIsVisible(seriesIndex);
-                    exploreTrackController.getExploreTrackPanel().getTracksList().ensureIndexIsVisible(seriesIndex);
-                    onSelectedTrack(seriesIndex);
-                }
-            }
-
-            @Override
-            public void chartMouseMoved(ChartMouseEvent e) {
-            }
-        });
         trackCoordinatesPanel.getCoordinatesParentPanel().add(coordinatesChartPanel, gridBagConstraints);
 
         /**
@@ -458,10 +497,10 @@ public class TrackCoordinatesController {
             public void actionPerformed(ActionEvent e) {
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
                 boolean useRawData = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
-                int categoryToPlotIndex = trackCoordinatesPanel.getTrackingPlotTabbedPane().getSelectedIndex();
+                int categoryToPlot = getCategoryToplot();
                 if (currentCondition != null) {
                     resetTracksList();
-                    generateRandomTrackDataHolders(categoryToPlotIndex);
+                    generateRandomTrackDataHolders(categoryToPlot);
                     plotRandomTrackCoordinates(currentCondition, useRawData);
                 }
             }
@@ -484,7 +523,7 @@ public class TrackCoordinatesController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // we check for the selected tabbed pane and execute a swing worker to plot all tracks together
-                if (trackCoordinatesPanel.getTrackingPlotTabbedPane().getSelectedIndex() == 0) {
+                if (getCategoryToplot() == 0) {
                     PlotAllTracksConditionSwingWorker plotAllTracksConditionSwingWorker = new PlotAllTracksConditionSwingWorker();
                     plotAllTracksConditionSwingWorker.execute();
                 } else {
@@ -494,75 +533,10 @@ public class TrackCoordinatesController {
             }
         });
 
-        // select a track and highlight it in the current plot
-        trackCoordinatesPanel.getPlottedTracksJList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
-                    if (selectedTrackIndex != -1) {
-                        // set the selected index also in the other list
-                        exploreTrackController.getExploreTrackPanel().getTracksList().setSelectedIndex(selectedTrackIndex);
-                        onSelectedTrack(selectedTrackIndex);
-                        exploreTrackController.onSelectedTrack(selectedTrackIndex);
-                    }
-                }
-            }
-        });
-
-        // clear selection on the tracks list
-        trackCoordinatesPanel.getClearSelectionButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // clear the selection on the list
-                trackCoordinatesPanel.getPlottedTracksJList().clearSelection();
-                // refresh the plot
-                JFreeChart coordinatesChart = coordinatesChartPanel.getChart();
-                JFreeChartUtils.setupTrackChart(coordinatesChart);
-                boolean plotLines = plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().isSelected();
-                boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
-                boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
-                int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
-                Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
-                TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, getEndPoints(), selectedTrackIndex, lineWidth);
-                coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
-            }
-        });
         trackCoordinatesPanel.getPlotSettingsPanel().add(plotSettingsMenuBar, BorderLayout.EAST);
 
         // add view to parent panel
         singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesParentPanel().add(trackCoordinatesPanel, gridBagConstraints);
-    }
-
-    /**
-     * Action performed on selection of a single track: set the renderer for the
-     * x y plot and control some GUI elements.
-     *
-     * @param selectedTrackIndex: the index of the selected track
-     */
-    private void onSelectedTrack(int selectedTrackIndex) {
-        boolean plotLines = plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().isSelected();
-        boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
-        boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
-        Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
-        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, getEndPoints(), selectedTrackIndex, lineWidth);
-        coordinatesChartPanel.getChart().getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
-    }
-
-    /**
-     * Iterate through the current track data holders and get the endpoints of
-     * the correspondent tracks.
-     *
-     * @return: a List of Integers, each Integer being the endpoint for a track.
-     */
-    private List<Integer> getEndPoints() {
-        List<Integer> endPoints = new ArrayList<>();
-        for (TrackDataHolder trackDataHolder : trackDataHolderBindingList) {
-            double[] timeIndexes = trackDataHolder.getTimeIndexes();
-            int numberOfTimePoints = timeIndexes.length - 1;
-            endPoints.add(numberOfTimePoints);
-        }
-        return endPoints;
     }
 
     /**
@@ -786,13 +760,12 @@ public class TrackCoordinatesController {
         boolean plotLines = plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().isSelected();
         boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
         boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
-        int selectedTrackIndex = trackCoordinatesPanel.getPlottedTracksJList().getSelectedIndex();
         Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
         JFreeChart firstCoordinatesChart = ChartFactory.createXYLineChart(title, "x (µm)", "y (µm)", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         JFreeChartUtils.setupTrackChart(firstCoordinatesChart);
         JFreeChart secondCoordinatesChart = ChartFactory.createXYLineChart(title, "x (µm)", "y (µm)", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         JFreeChartUtils.setupTrackChart(secondCoordinatesChart);
-        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, getEndPoints(), selectedTrackIndex, lineWidth);
+        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, getEndPoints(), -1, lineWidth);
         firstCoordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
         secondCoordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
         coordinatesChartPanel.setChart(firstCoordinatesChart);

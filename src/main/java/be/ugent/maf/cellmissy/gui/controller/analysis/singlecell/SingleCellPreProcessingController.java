@@ -149,6 +149,10 @@ public class SingleCellPreProcessingController {
         trackCoordinatesController.plotRandomTrackCoordinates(plateCondition, useRawData);
     }
 
+    public void showPlottedTracksInTable() {
+        trackCoordinatesController.showPlottedTracksInTable();
+    }
+
     public void resetRandomTracks() {
         trackCoordinatesController.resetTracksList();
     }
@@ -175,6 +179,17 @@ public class SingleCellPreProcessingController {
 
     public ObservableList<TrackDataHolder> getTrackDataHolderBindingList() {
         return trackCoordinatesController.getTrackDataHolderBindingList();
+    }
+
+    /**
+     * Get the category to plot for the tracks: normally 0, the condition
+     * category; if the well radio button is selected, set the category to plot
+     * to 1.
+     *
+     * @return
+     */
+    public int getCategoryToplot() {
+        return trackCoordinatesController.getCategoryToplot();
     }
 
     /**

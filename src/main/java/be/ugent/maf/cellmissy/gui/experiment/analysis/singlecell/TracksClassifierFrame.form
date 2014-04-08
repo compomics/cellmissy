@@ -31,32 +31,41 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane1" linkSize="1" alignment="0" min="-2" pref="153" max="-2" attributes="0"/>
-                          <Component id="jScrollPane2" linkSize="1" alignment="0" min="-2" pref="153" max="-2" attributes="0"/>
-                          <Component id="label0RadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="label1RadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="label2RadioButton" alignment="0" max="32767" attributes="0"/>
-                              <Component id="addTrackToDatasetButton" alignment="0" max="32767" attributes="0"/>
-                              <Component id="writeToFileButton" alignment="0" max="32767" attributes="0"/>
-                              <Component id="removeTrackFromDatasetButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jScrollPane2" alignment="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="expScrollPane" alignment="0" pref="185" max="32767" attributes="0"/>
+                          <Component id="computeButton" alignment="1" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane4" alignment="0" min="-2" pref="206" max="-2" attributes="0"/>
-                          <Component id="jScrollPane3" linkSize="1" alignment="0" min="-2" pref="194" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="32767" attributes="0"/>
+                      <Component id="jScrollPane3" min="-2" pref="190" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="jScrollPane5" pref="281" max="32767" attributes="0"/>
                           <Component id="jScrollPane7" pref="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="convexHullGraphPanel" pref="608" max="32767" attributes="0"/>
                   </Group>
                   <Component id="jScrollPane6" max="32767" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="label0RadioButton" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="label3RadioButton" linkSize="1" alignment="0" max="32767" attributes="0"/>
+                          <Component id="addTrackToDatasetButton" alignment="0" max="32767" attributes="0"/>
+                          <Component id="writeToFileButton" alignment="0" max="32767" attributes="0"/>
+                          <Component id="removeTrackFromDatasetButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" alignment="0" groupAlignment="1" attributes="0">
+                              <Component id="label1RadioButton" linkSize="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="label2RadioButton" linkSize="1" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                      <Component id="jScrollPane4" min="-2" pref="182" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="242" max="32767" attributes="0"/>
+                  </Group>
+                  <Component id="convexHullGraphPanel" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -65,42 +74,48 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" attributes="0">
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" max="-2" attributes="0">
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="jScrollPane1" linkSize="2" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="jScrollPane2" linkSize="2" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="jScrollPane3" max="32767" attributes="0"/>
-                          <Component id="jScrollPane5" alignment="0" pref="0" max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="jScrollPane5" pref="0" max="32767" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="label0RadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="label1RadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="label2RadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="58" max="32767" attributes="0"/>
-                              <Component id="addTrackToDatasetButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="removeTrackFromDatasetButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="writeToFileButton" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="jScrollPane4" max="32767" attributes="0"/>
-                          <Component id="jScrollPane7" pref="0" max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="jScrollPane7" min="-2" pref="127" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="convexHullGraphPanel" min="-2" pref="556" max="-2" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jScrollPane1" pref="169" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jScrollPane2" min="-2" pref="167" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="expScrollPane" min="-2" pref="118" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                      <Component id="computeButton" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="jScrollPane3" alignment="0" max="32767" attributes="0"/>
+                  <Component id="convexHullGraphPanel" max="32767" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="jScrollPane6" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="jScrollPane6" pref="229" max="32767" attributes="0"/>
+                  <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="jScrollPane4" pref="210" max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="label0RadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="label1RadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                          <Component id="label2RadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="label3RadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="addTrackToDatasetButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="removeTrackFromDatasetButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="writeToFileButton" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+              </Group>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -217,12 +232,17 @@
     </Component>
     <Component class="javax.swing.JRadioButton" name="label1RadioButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Label 1 (confined)"/>
+        <Property name="text" type="java.lang.String" value="Label 1 (curve)"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JRadioButton" name="label2RadioButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Label 2 (random)"/>
+        <Property name="text" type="java.lang.String" value="Label 2 (confined)"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="label3RadioButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Label 3 (random)"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="addTrackToDatasetButton">
@@ -333,5 +353,35 @@
         </Component>
       </SubComponents>
     </Container>
+    <Container class="javax.swing.JScrollPane" name="expScrollPane">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder/>
+          </Border>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JTextArea" name="expTextArea">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+            <Property name="columns" type="int" value="20"/>
+            <Property name="lineWrap" type="boolean" value="true"/>
+            <Property name="rows" type="int" value="5"/>
+            <Property name="wrapStyleWord" type="boolean" value="true"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JButton" name="computeButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Compute for Current Exp..."/>
+      </Properties>
+    </Component>
   </SubComponents>
 </Form>

@@ -8,7 +8,8 @@ import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.Comparator;
 
 /**
- * GeometricPoint object. This is a point with both Cartesian and Polar representation.
+ * GeometricPoint object. This is a point with both Cartesian and Polar
+ * representation.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -18,7 +19,7 @@ public class GeometricPoint implements Comparable<GeometricPoint> {
     private double x;
     // y coordinate
     private double y;
-    //
+    // a polar comparator for the point:compare three points according to the angle they make
     public final Comparator<GeometricPoint> POLAR_COMPARATOR = new PolarComparator();
 
     /**
@@ -74,7 +75,8 @@ public class GeometricPoint implements Comparable<GeometricPoint> {
     }
 
     /**
-     * Given three points on the plane, is q-r-s a counterclockwise turn?
+     * Given three points on the plane, is q-r-s a counterclockwise turn? This
+     * is determined using the signed area the three points form.
      *
      * @param q
      * @param r
@@ -128,6 +130,11 @@ public class GeometricPoint implements Comparable<GeometricPoint> {
         }
     }
 
+    /**
+     * Round to three decimals in the toString method
+     *
+     * @return
+     */
     @Override
     public String toString() {
         Double roundedX = AnalysisUtils.roundThreeDecimals(x);
@@ -165,7 +172,7 @@ public class GeometricPoint implements Comparable<GeometricPoint> {
     }
 
     /**
-     * Compare other points relative to polar angle (between 0 and 2pi) they
+     * Compare other points relative to the polar angle (between 0 and 2pi) they
      * make with this point.
      */
     private class PolarComparator implements Comparator<GeometricPoint> {

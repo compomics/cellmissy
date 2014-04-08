@@ -728,7 +728,7 @@ public class SingleCellMainController {
                     // update GUI according to current view on the Card Layout
                     onCardSwitch();
                     // we get the category to plot from the selected tab in the GUI
-                    int categoryToPlot = singleCellPreProcessingController.getTrackCoordinatesPanel().getTrackingPlotTabbedPane().getSelectedIndex();
+                    int categoryToPlot = singleCellPreProcessingController.getCategoryToplot();
                     // and we finally generate the random tracks to plot again
                     // note that this is not done on the card switch method itself, because there we want to keep the same random tracks every time we switch from one view to another one.
                     singleCellPreProcessingController.generateRandomTrackDataHolders(categoryToPlot);
@@ -785,6 +785,7 @@ public class SingleCellMainController {
                 //check which button is selected for analysis:
                 boolean useRawCoordinates = singleCellPreProcessingController.getTrackCoordinatesPanel().getUnshiftedCoordinatesRadioButton().isSelected();
                 singleCellPreProcessingController.plotRandomTrackCoordinates(currentCondition, useRawCoordinates);
+                singleCellPreProcessingController.showPlottedTracksInTable();
                 if (useRawCoordinates) {
                     singleCellPreProcessingController.showRawTrackCoordinatesInTable(currentCondition);
                 } else {
