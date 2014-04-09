@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.ExploreTrackPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsRendererGiver;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsMenuBar;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TimePointTrackXYLineAndShapeRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TrackXYLineAndShapeRenderer;
@@ -31,11 +32,11 @@ import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.AbstractButton;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
@@ -81,6 +82,7 @@ public class ExploreTrackController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ExploreTrackController.class);
     // model
     private BindingGroup bindingGroup;
+    private PlayTrackSwingWorker playTrackSwingWorker;
     // view
     private ExploreTrackPanel exploreTrackPanel;
     private PlotSettingsMenuBar plotSettingsMenuBar;
@@ -138,7 +140,7 @@ public class ExploreTrackController {
     }
 
     /**
-     * Public methods
+     * Private methods
      */
     /**
      * Action performed on selection of a single track: set the renderer for the
@@ -146,18 +148,18 @@ public class ExploreTrackController {
      *
      * @param selectedTrackIndex: the index of the selected track
      */
-    public void onSelectedTrack(int selectedTrackIndex) {
+    private void onSelectedTrack(int selectedTrackIndex) {
+        TrackDataHolder selectedTrackDataHolder = trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex);
+        // set up and enable the time /slider here
+        setupTimeSlider(selectedTrackDataHolder);
+        updateTrackData(selectedTrackDataHolder);
+        updateConvexHullData(selectedTrackDataHolder);
         boolean plotLines = plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().isSelected();
         boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
         boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
         Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
         TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, trackCoordinatesController.getEndPoints(), selectedTrackIndex, lineWidth);
         coordinatesChartPanel.getChart().getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
-        TrackDataHolder selectedTrackDataHolder = trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex);
-        // set up and enable the time /slider here
-        setupTimeSlider(selectedTrackDataHolder);
-        updateTrackData(selectedTrackDataHolder);
-        updateConvexHullData(selectedTrackDataHolder);
     }
 
     /**
@@ -169,7 +171,6 @@ public class ExploreTrackController {
     private void initPlotSettingsMenuBar() {
         // create new object
         plotSettingsMenuBar = new PlotSettingsMenuBar();
-
         /**
          * Add item listeners to the menu items
          */
@@ -270,6 +271,19 @@ public class ExploreTrackController {
             }
         });
 
+        exploreTrackPanel.getStopButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // check for the status of the start button, if enables, worker is ongoing, we can stop it
+                if (!exploreTrackPanel.getPlayButton().isEnabled()) {
+                    // stop the worker
+                    playTrackSwingWorker.cancel(true);
+                    // enable the play button
+                    exploreTrackPanel.getPlayButton().setEnabled(true);
+                }
+            }
+        });
+
         // select a track and highlight it in the current plot
         exploreTrackPanel.getTracksList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -287,18 +301,7 @@ public class ExploreTrackController {
         exploreTrackPanel.getClearSelectionButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // clear the selection on the list
-                exploreTrackPanel.getTracksList().clearSelection();
-                // refresh the plot
-                JFreeChart coordinatesChart = coordinatesChartPanel.getChart();
-                JFreeChartUtils.setupTrackChart(coordinatesChart);
-                boolean plotLines = plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().isSelected();
-                boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
-                boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
-                int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
-                Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
-                TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, trackCoordinatesController.getEndPoints(), selectedTrackIndex, lineWidth);
-                coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
+                onClearSelection();
             }
         });
 
@@ -309,61 +312,37 @@ public class ExploreTrackController {
     }
 
     /**
+     * On clear selection on the list
+     */
+    private void onClearSelection() {
+        // clear the selection on the list
+        exploreTrackPanel.getTracksList().clearSelection();
+        // refresh the plot
+        JFreeChart coordinatesChart = coordinatesChartPanel.getChart();
+        JFreeChartUtils.setupTrackChart(coordinatesChart);
+        boolean plotLines = plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().isSelected();
+        boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
+        boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
+        int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
+        Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
+        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, trackCoordinatesController.getEndPoints(), selectedTrackIndex, lineWidth);
+        coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
+        // reset the time slider
+        exploreTrackPanel.getTimeSlider().setLabelTable(null);
+    }
+
+    /**
      * Action Listener for MenuItems
      */
     private class ItemActionListener implements ItemListener {
 
         @Override
         public void itemStateChanged(ItemEvent e) {
-            boolean plotLines = plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().isSelected();
-            boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
-            boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
-            Float selectedLineWidth = plotSettingsMenuBar.getSelectedLineWidth();
-            JFreeChart coordinatesChart = coordinatesChartPanel.getChart();
-            JFreeChartUtils.setupTrackChart(coordinatesChart);
-            int selectedTrackIndex = -1;
-            TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = null;
-            String menuItemText = ((JMenuItem) e.getSource()).getText();
-            if (menuItemText.equalsIgnoreCase("plot lines")) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, plotPoints, showEndPoints, trackCoordinatesController.getEndPoints(), selectedTrackIndex, selectedLineWidth);
-                } else {
-                    // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
-                    if (!plotPoints) {
-                        plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().setSelected(true);
-                    }
-                    trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(false, true, false, null, selectedTrackIndex, selectedLineWidth);
-                }
-            } else if (menuItemText.equalsIgnoreCase("plot points")) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    if (showEndPoints) {
-                        plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().setSelected(false);
-                    }
-                    trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, true, false, null, selectedTrackIndex, selectedLineWidth);
-                } else {
-                    // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
-                    if (!plotLines) {
-                        plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().setSelected(true);
-                    }
-                    trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, showEndPoints, trackCoordinatesController.getEndPoints(), selectedTrackIndex, selectedLineWidth);
-                }
-            } else if (menuItemText.equalsIgnoreCase("show endpoints")) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    // need to show the endpoints
-                    if (plotPoints) { // first of all, to show the endpoints we need to have only lines and not points
-                        plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().setSelected(false);
-                    }
-                    trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, plotPoints, true, trackCoordinatesController.getEndPoints(), selectedTrackIndex, selectedLineWidth);
-                } else {
-                    // need to hide the endpoints
-                    trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, false, null, selectedTrackIndex, selectedLineWidth);
-                }
-            } else {
-                // line widths (floats): get the text, cast to float
-                float lineWidth = Float.parseFloat(menuItemText);
-                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, trackCoordinatesController.getEndPoints(), selectedTrackIndex, lineWidth);
-            }
-            coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
+            int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
+            List<Integer> endPoints = trackCoordinatesController.getEndPoints();
+            PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(selectedTrackIndex, plotSettingsMenuBar, endPoints);
+            TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
+            coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
         }
     }
 
@@ -430,7 +409,8 @@ public class ExploreTrackController {
      * @param selectedTrackIndex
      */
     private void playTrack(int selectedTrackIndex) {
-        PlayTrackSwingWorker playTrackSwingWorker = new PlayTrackSwingWorker(selectedTrackIndex);
+        // create a bnew instance of the play swing worker and execute it
+        playTrackSwingWorker = new PlayTrackSwingWorker(selectedTrackIndex);
         playTrackSwingWorker.execute();
     }
 
@@ -636,7 +616,7 @@ public class ExploreTrackController {
                 // enable play button
                 exploreTrackPanel.getPlayButton().setEnabled(true);
             } catch (InterruptedException | ExecutionException | CancellationException ex) {
-                LOG.error(ex.getMessage(), ex);
+                LOG.error("play track cancelled");
             }
         }
     }

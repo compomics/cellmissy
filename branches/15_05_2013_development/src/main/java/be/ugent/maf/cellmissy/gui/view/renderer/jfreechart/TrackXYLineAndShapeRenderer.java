@@ -26,7 +26,7 @@ import org.jfree.util.ShapeUtilities;
  */
 public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
 
-    private boolean plotLines; //control the line
+    private boolean plotLines; //control the lines
     private boolean plotPoints; //control the points
     private boolean showEndPoints; //control the endpoints
     private List<Integer> endPoints; //integers for the endpoints

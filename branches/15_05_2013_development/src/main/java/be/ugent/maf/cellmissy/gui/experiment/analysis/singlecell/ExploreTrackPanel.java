@@ -33,6 +33,10 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         return playButton;
     }
 
+    public JButton getStopButton() {
+        return stopButton;
+    }
+
     public JList getTracksList() {
         return tracksList;
     }
@@ -90,7 +94,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         rightPanel = new javax.swing.JPanel();
         plotSettingsPanel = new javax.swing.JPanel();
         clearSelectionButton = new javax.swing.JButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
         tracksListPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tracksList = new javax.swing.JList();
@@ -111,7 +114,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         playButton = new javax.swing.JButton();
-        pauseButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
         convexHullPanel = new javax.swing.JPanel();
         convexHullGraphicsParentPanel = new javax.swing.JPanel();
@@ -136,12 +138,9 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         rightPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         rightPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        plotSettingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         plotSettingsPanel.setLayout(new java.awt.BorderLayout());
 
         clearSelectionButton.setText("Clear Selection On List");
-
-        jCheckBox1.setText("show only selected track");
 
         javax.swing.GroupLayout rightPanelLayout = new javax.swing.GroupLayout(rightPanel);
         rightPanel.setLayout(rightPanelLayout);
@@ -149,27 +148,19 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rightPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(plotSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(196, Short.MAX_VALUE))
-            .addGroup(rightPanelLayout.createSequentialGroup()
                 .addGroup(rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(clearSelectionButton)
-                    .addComponent(jCheckBox1))
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(plotSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(clearSelectionButton))
+                .addContainerGap())
         );
-
-        rightPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {clearSelectionButton, jCheckBox1});
-
         rightPanelLayout.setVerticalGroup(
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rightPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(plotSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 270, Short.MAX_VALUE)
-                .addComponent(jCheckBox1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(clearSelectionButton)
-                .addContainerGap())
+                .addContainerGap(308, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -177,7 +168,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.3;
+        gridBagConstraints.weightx = 0.2;
         gridBagConstraints.weighty = 0.5;
         add(rightPanel, gridBagConstraints);
 
@@ -195,14 +186,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             tracksListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tracksListPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tracksListPanelLayout.setVerticalGroup(
             tracksListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tracksListPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -211,7 +202,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.weightx = 0.3;
         gridBagConstraints.weighty = 0.5;
         add(tracksListPanel, gridBagConstraints);
 
@@ -258,14 +249,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tablePanelLayout.setVerticalGroup(
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -321,10 +312,10 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setText("Play Movie");
 
+        playButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/playIcon.png"))); // NOI18N
         playButton.setText("Play");
 
-        pauseButton.setText("Pause");
-
+        stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/stopIcon.png"))); // NOI18N
         stopButton.setText("Stop");
 
         javax.swing.GroupLayout timeSliderPanelLayout = new javax.swing.GroupLayout(timeSliderPanel);
@@ -344,22 +335,25 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                             .addComponent(yTextField)))
                     .addGroup(timeSliderPanelLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(timeSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE))
+                        .addComponent(timeSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE))
                     .addGroup(timeSliderPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(timeSliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addGroup(timeSliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(playButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(pauseButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(timeSliderPanelLayout.createSequentialGroup()
+                                .addGap(9, 9, 9)
+                                .addComponent(jLabel2))
+                            .addComponent(playButton))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(timeSliderPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {playButton, stopButton});
+
         timeSliderPanelLayout.setVerticalGroup(
             timeSliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(timeSliderPanelLayout.createSequentialGroup()
@@ -375,16 +369,16 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                 .addGroup(timeSliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(yTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(30, 30, 30)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(playButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pauseButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(stopButton)
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addContainerGap(124, Short.MAX_VALUE))
         );
+
+        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {playButton, stopButton});
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -437,7 +431,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(convexHullInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
                 .addContainerGap())
         );
         convexHullInfoPanelLayout.setVerticalGroup(
@@ -469,6 +463,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.5;
         add(jTabbedPane1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton clearSelectionButton;
     private javax.swing.JPanel convexHullGraphicsParentPanel;
@@ -477,7 +472,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JTable convexHullTable;
     private javax.swing.JPanel coordinatesParentPanel;
     private javax.swing.JPanel graphicsParentPanel;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
@@ -486,7 +480,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JButton pauseButton;
     private javax.swing.JButton playButton;
     private javax.swing.JPanel plotSettingsPanel;
     private javax.swing.JPanel rightPanel;

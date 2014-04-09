@@ -41,25 +41,33 @@ public class TimePointTrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer
     @Override
     public Paint getSeriesPaint(int series) {
         int length = GuiUtils.getAvailableColors().length;
-        int colorIndex = selectedTrackIndex % length;
-        // we are in the right series to highlight: use the correspondent color
-        if (series == selectedTrackIndex) {
-            return GuiUtils.getAvailableColors()[colorIndex];
+        int colorIndex = series % length;
+        if (selectedTrackIndex != -1) {
+            // we are in the right series to highlight: use the correspondent color
+            if (series == selectedTrackIndex) {
+                return GuiUtils.getAvailableColors()[colorIndex];
+            } else {
+                // not at the right series, take the non imaged color
+                // (basically, show the other tracks in gray)
+                return GuiUtils.getNonImagedColor();
+            }
         } else {
-            // not at the right series, take the non imaged color
-            // (basically, show the other tracks in gray)
-            return GuiUtils.getNonImagedColor();
+            return GuiUtils.getAvailableColors()[colorIndex];
         }
     }
 
     @Override
     public boolean getItemShapeVisible(int series, int item) {
-        // when we are at the right series and time point(item), we show the point
-        if (series == selectedTrackIndex && item == timePoint) {
-            return Boolean.TRUE;
+        if (selectedTrackIndex != -1) {
+            // when we are at the right series and time point(item), we show the point
+            if (series == selectedTrackIndex && item == timePoint) {
+                return Boolean.TRUE;
+            } else {
+                // otherwise, only the line
+                return Boolean.FALSE;
+            }
         } else {
-            // otherwise, only the line
-            return Boolean.FALSE;
+            return Boolean.TRUE;
         }
     }
 

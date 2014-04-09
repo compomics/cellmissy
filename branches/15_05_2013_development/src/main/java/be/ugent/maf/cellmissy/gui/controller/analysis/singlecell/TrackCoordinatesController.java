@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsMenuBar;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsRendererGiver;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
@@ -342,55 +343,11 @@ public class TrackCoordinatesController {
 
         @Override
         public void itemStateChanged(ItemEvent e) {
-            boolean plotLines = plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().isSelected();
-            boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
-            boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
-            Float selectedLineWidth = plotSettingsMenuBar.getSelectedLineWidth();
-            JFreeChart coordinatesChart = coordinatesChartPanel.getChart();
-            JFreeChartUtils.setupTrackChart(coordinatesChart);
             int selectedTrackIndex = -1;
-            TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = null;
-            String menuItemText = ((JMenuItem) e.getSource()).getText();
-            if (menuItemText.equalsIgnoreCase("plot lines")) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, plotPoints, showEndPoints, getEndPoints(), selectedTrackIndex, selectedLineWidth);
-                } else {
-                    // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
-                    if (!plotPoints) {
-                        plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().setSelected(true);
-                    }
-                    trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(false, true, false, null, selectedTrackIndex, selectedLineWidth);
-                }
-            } else if (menuItemText.equalsIgnoreCase("plot points")) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    if (showEndPoints) {
-                        plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().setSelected(false);
-                    }
-                    trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, true, false, null, selectedTrackIndex, selectedLineWidth);
-                } else {
-                    // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
-                    if (!plotLines) {
-                        plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().setSelected(true);
-                    }
-                    trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, showEndPoints, getEndPoints(), selectedTrackIndex, selectedLineWidth);
-                }
-            } else if (menuItemText.equalsIgnoreCase("show endpoints")) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    // need to show the endpoints
-                    if (plotPoints) { // first of all, to show the endpoints we need to have only lines and not points
-                        plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().setSelected(false);
-                    }
-                    trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, plotPoints, true, getEndPoints(), selectedTrackIndex, selectedLineWidth);
-                } else {
-                    // need to hide the endpoints
-                    trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, false, null, selectedTrackIndex, selectedLineWidth);
-                }
-            } else {
-                // line widths (floats): get the text, cast to float
-                float lineWidth = Float.parseFloat(menuItemText);
-                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, getEndPoints(), selectedTrackIndex, lineWidth);
-            }
-            coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
+            List<Integer> endPoints = getEndPoints();
+            PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(selectedTrackIndex, plotSettingsMenuBar, endPoints);
+            TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
+            coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
         }
     }
 
@@ -400,7 +357,6 @@ public class TrackCoordinatesController {
     private void initPlotSettingsMenuBar() {
         // create new object
         plotSettingsMenuBar = new PlotSettingsMenuBar();
-
         /**
          * Add item listeners to the menu items
          */
