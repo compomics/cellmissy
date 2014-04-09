@@ -269,7 +269,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         ));
         jScrollPane1.setViewportView(plottedTracksTable);
 
-        plotSettingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         plotSettingsPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout trackingPlotPanelLayout = new javax.swing.GroupLayout(trackingPlotPanel);
@@ -334,7 +333,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                         .addComponent(jLabel2)
                         .addComponent(jLabel8))
                     .addComponent(plotSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(34, 34, 34)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(conditionRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(wellRadioButton)
@@ -351,7 +350,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                     .addComponent(jLabel3)
                     .addComponent(tracksNumberWellTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(randomAndPlotButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
