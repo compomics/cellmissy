@@ -75,8 +75,8 @@ public class GeometricPoint implements Comparable<GeometricPoint> {
     }
 
     /**
-     * Given three points on the plane, is q-r-s a counterclockwise turn? This
-     * is determined using the signed area the three points form.
+     * Given 3 points on the plane, is q-r-s a counterclockwise turn? This is
+     * determined using the signed area the three points form.
      *
      * @param q
      * @param r
@@ -87,21 +87,24 @@ public class GeometricPoint implements Comparable<GeometricPoint> {
     public static int counterClockWise(GeometricPoint q, GeometricPoint r, GeometricPoint s) {
         double area = computeSignedArea(q, r, s);
         if (area < 0) {
-            return -1;
+            return -1; // the segment q-s is counterclockwise with respect to q-r (at r we make a left turn)
         } else if (area > 0) {
-            return +1;
+            return +1; // the segment q-s is clockwise with respect to q-r (at r we make a right turn)
         } else {
-            return 0;
+            return 0; // the 3 points are collinear
         }
     }
 
     /**
-     * Returns twice the signed area of the triangle q, r, s.
+     * Returns twice the signed area of the triangle whose vertices are q, r, s.
+     * This is also the area of the parallelogram whose vertices are q, r, s,
+     * q+r+s. This is also the determinant of the matrix containing the
+     * coordinates of the 3 points, i.e. the cross product q x r x s.
      *
-     * @param a first point
-     * @param b second point
-     * @param c third point
-     * @return twice the signed area of the triangle a-b-c
+     * @param q first point
+     * @param r second point
+     * @param s third point
+     * @return twice the signed area of the triangle q-r-s.
      */
     public static double computeSignedArea(GeometricPoint q, GeometricPoint r, GeometricPoint s) {
         return (r.getX() - q.getX()) * (s.getY() - q.getY()) - (r.getY() - q.getY()) * (s.getX() - q.getX());
@@ -172,7 +175,7 @@ public class GeometricPoint implements Comparable<GeometricPoint> {
     }
 
     /**
-     * Compare other points relative to the polar angle (between 0 and 2pi) they
+     * Compare other points (q, r) relative to the polar angle (between 0 and 2pi) they
      * make with this point.
      */
     private class PolarComparator implements Comparator<GeometricPoint> {
