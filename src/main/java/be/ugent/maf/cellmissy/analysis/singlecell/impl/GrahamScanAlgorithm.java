@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 /**
  * This class implements the convex hull calculator, using the Graham Scan
  * algorithm (and the Graham Scan class of CellMissy). The main idea here is as
- * simple as this: Sort points by angle from x0 2. Push x0 and x1. Set i=2 3.
+ * simple as this: Sort points by angle from x0. Push x0 and x1. Set i=2.
  * While i less or equal to n do: If xi makes left turn with respect to the top
  * 2 items on stack then f push xi and increment i++, else pop and discard.
  *
