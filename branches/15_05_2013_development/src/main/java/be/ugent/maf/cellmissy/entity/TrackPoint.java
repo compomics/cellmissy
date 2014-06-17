@@ -97,13 +97,13 @@ public class TrackPoint implements Serializable {
     private Track track;
     @Transient
     @XmlTransient
-    private GeometricPoint point;
+    private GeometricPoint geometricPoint;
 
     public TrackPoint() {
     }
 
     public TrackPoint(GeometricPoint point) {
-        this.point = point;
+        this.geometricPoint = point;
     }
 
     public TrackPoint(Long trackPointid) {
@@ -213,12 +213,12 @@ public class TrackPoint implements Serializable {
         this.track = track;
     }
 
-    public GeometricPoint getPoint() {
-        return point;
+    public GeometricPoint getGeometricPoint() {
+        return geometricPoint;
     }
 
-    public void setPoint(GeometricPoint point) {
-        this.point = point;
+    public void setGeometricPoint(GeometricPoint geometricPoint) {
+        this.geometricPoint = geometricPoint;
     }
 
     @Override

@@ -66,11 +66,12 @@ public class ConvexHullTableModel extends AbstractTableModel {
         // second column: the convex hull data
         data[0][1] = convexHull.getMostDistantPointsPair().getFirstPoint();
         data[1][1] = convexHull.getMostDistantPointsPair().getSecondPoint();
-        data[2][1] = convexHull.getMostDistantPointsPair().getMaxSpan();
-        data[3][1] = convexHull.getPerimeter();
-        data[4][1] = convexHull.getArea();
-        data[5][1] = convexHull.getAcircularity();
-        data[6][1] = convexHull.getDirectionality();
+        data[2][1] = convexHull.getHullSize();
+        data[3][1] = convexHull.getMostDistantPointsPair().getMaxSpan();
+        data[4][1] = convexHull.getPerimeter();
+        data[5][1] = convexHull.getArea();
+        data[6][1] = convexHull.getAcircularity();
+        data[7][1] = convexHull.getDirectionality();
     }
 
     /**
@@ -82,6 +83,7 @@ public class ConvexHullTableModel extends AbstractTableModel {
         List<String> featuresNames = new ArrayList<>();
         featuresNames.add("P1");
         featuresNames.add("P2");
+        featuresNames.add("Nr. vertices");
         featuresNames.add("Diam. (µm)");
         featuresNames.add("Perim. (µm)");
         featuresNames.add("Area (µm²)");

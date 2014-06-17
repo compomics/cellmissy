@@ -15,6 +15,8 @@ public class ConvexHull {
 
     // the hull, as an iterable of points
     private Iterable<GeometricPoint> hull;
+    // the size of the hull
+    private int hullSize;
     // the most distant points on the hull
     private MostDistantPointsPair mostDistantPointsPair;
     // the perimeter of the hull
@@ -35,6 +37,14 @@ public class ConvexHull {
 
     public void setHull(Iterable<GeometricPoint> hull) {
         this.hull = hull;
+    }
+
+    public int getHullSize() {
+        return hullSize;
+    }
+
+    public void setHullSize(int hullSize) {
+        this.hullSize = hullSize;
     }
 
     public MostDistantPointsPair getMostDistantPointsPair() {

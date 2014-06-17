@@ -66,10 +66,7 @@ public class ConvexHullOperatorImpl implements ConvexHullOperator {
     private GeometricPoint[] getClosedPolygonFromHull(ConvexHull convexHull) {
         Iterable<GeometricPoint> hull = convexHull.getHull();
         // get the size of the hull: number of vertices of polygon
-        int n = 0;
-        for (GeometricPoint geometricPoint : hull) {
-            n++;
-        }
+        int n = convexHull.getHullSize();
         // we take n + 1
         GeometricPoint[] geometricPoints = new GeometricPoint[n + 1];
         int j = 0;

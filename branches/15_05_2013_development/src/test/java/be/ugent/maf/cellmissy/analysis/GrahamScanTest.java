@@ -35,7 +35,6 @@ public class GrahamScanTest {
     private GrahamScanAlgorithm grahamScanAlgorithm;
     @Autowired
     private ConvexHullOperator convexHullOperator;
-
     // 6 points ont the plane
     private static Track track = new Track();
     private static GeometricPoint q = new GeometricPoint(2, 3);
@@ -67,21 +66,21 @@ public class GrahamScanTest {
 
     @Test
     public void testHull() {
-        // compute the hull
+        // compute the hull and its size, the number of vertices
         grahamScanAlgorithm.computeHull(track, convexHull);
+        grahamScanAlgorithm.computeHullSize(convexHull);
         Iterable<GeometricPoint> hull = convexHull.getHull();
+        int hullSize = convexHull.getHullSize();
         List<GeometricPoint> convexHullVertices = new ArrayList<>();
-        int verticesNumber = 0;
         for (GeometricPoint vertex : hull) {
-            verticesNumber++;
             convexHullVertices.add(vertex);
         }
         // convex hull has 5 points
-        Assert.assertEquals(5, verticesNumber);
+        Assert.assertEquals(5, hullSize);
         // first vertex is v
         Assert.assertEquals(v, convexHullVertices.get(0));
         // last vertex is u
-        Assert.assertEquals(u, convexHullVertices.get(verticesNumber - 1));
+        Assert.assertEquals(u, convexHullVertices.get(hullSize - 1));
         // find the two most distant points on the hull
         grahamScanAlgorithm.findMostDistantPoints(track, convexHull);
         MostDistantPointsPair mostDistantPointsPair = convexHull.getMostDistantPointsPair();

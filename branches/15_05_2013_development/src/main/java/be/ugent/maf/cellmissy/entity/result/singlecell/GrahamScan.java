@@ -27,7 +27,7 @@ public class GrahamScan {
     }
 
     /**
-     * Constructor
+     * Constructor, this will create the hull.
      *
      * @param track
      */
@@ -36,7 +36,7 @@ public class GrahamScan {
     }
 
     /**
-     * Construct the Hull
+     * Construct the Hull, given a list of geometric points.
      *
      * @param geometricPointList
      */
@@ -47,10 +47,10 @@ public class GrahamScan {
         // given that a vertex (extreme point) of the convex hull is a point with first a minimum (lowest) y coordinate, and second a maximum (rightmost) x coordinate,
         // we preprocess the points so that P0 (points[0]) has the lowest y-coordinate and we break ties by the x-coordinate
         Arrays.sort(geometricPoints); // sort by y coord
-        // sort by polar angle with respect to base point P0
+        // sort the reamining points by polar angle with respect to base point P0
         // breaking ties by distance to P0: if there is a tie and two points have the same angle, discard the one that is closest to P0
         Arrays.sort(geometricPoints, 1, n, geometricPoints[0].POLAR_COMPARATOR);
-        hull.push(geometricPoints[0]); // P0 is the first extreme point
+        hull.push(geometricPoints[0]); // P0 is the first extreme point, push it to the stack
         // we next loop through the points of the set one-by-one testing for convex hull vertices
         // find index k1 of first point not equal to P0, this is P1
         int k1;
@@ -60,7 +60,7 @@ public class GrahamScan {
             }
         }
         if (k1 == n) {
-            // all points are equal, return
+            // all points are equal, just return
             return;
         }
         // find index k2 of first point not collinear with P0 and P1, this is P2
@@ -72,7 +72,7 @@ public class GrahamScan {
                 System.out.println("points: " + geometricPoints[0] + ", " + geometricPoints[k1] + ", " + geometricPoints[k2] + " are collinear on the plane.");
             }
         }
-        hull.push(geometricPoints[k2 - 1]);    // points[k2-1] is the second extreme point
+        hull.push(geometricPoints[k2 - 1]);    // points[k2-1] is the second extreme point, push it to the stack
         // Graham scan algorithm
         for (int i = k2; i < n; i++) {
             // get the top point of the stack and remove it

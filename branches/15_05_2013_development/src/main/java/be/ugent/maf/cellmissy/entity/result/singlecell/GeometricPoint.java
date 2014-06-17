@@ -19,7 +19,7 @@ public class GeometricPoint implements Comparable<GeometricPoint> {
     private double x;
     // y coordinate
     private double y;
-    // a polar comparator for the point:compare three points according to the angle they make
+    // a polar comparator for the point: compare three points according to the angle they make
     public final Comparator<GeometricPoint> POLAR_COMPARATOR = new PolarComparator();
 
     /**
