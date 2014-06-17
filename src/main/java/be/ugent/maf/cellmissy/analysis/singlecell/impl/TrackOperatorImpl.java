@@ -64,8 +64,8 @@ public class TrackOperatorImpl implements TrackOperator {
             double y = trackPoint.getCellCol() / conversionFactor;
             coordinatesMatrix[i] = new Double[]{x, y};
             // create a new GeometricPoint with these coordinates and set it to the TrackPoint
-            GeometricPoint point = new GeometricPoint(x, y);
-            trackPoint.setPoint(point);
+            GeometricPoint geometricPoint = new GeometricPoint(x, y);
+            trackPoint.setGeometricPoint(geometricPoint);
         }
         trackDataHolder.setCoordinatesMatrix(coordinatesMatrix);
     }
@@ -190,6 +190,7 @@ public class TrackOperatorImpl implements TrackOperator {
         Track track = trackDataHolder.getTrack();
         ConvexHull convexHull = new ConvexHull();
         grahamScanAlgorithm.computeHull(track, convexHull);
+        grahamScanAlgorithm.computeHullSize(convexHull);
         grahamScanAlgorithm.findMostDistantPoints(track, convexHull);
         convexHullOperator.computePerimeter(convexHull);
         convexHullOperator.computeArea(convexHull);

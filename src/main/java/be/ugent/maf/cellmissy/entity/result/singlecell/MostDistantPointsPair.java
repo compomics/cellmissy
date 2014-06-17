@@ -60,10 +60,7 @@ public class MostDistantPointsPair {
             return;
         }
         // number of points on the hull
-        int M = 0;
-        for (GeometricPoint geometricPoint : convexHull.getHull()) {
-            M++;
-        }
+        int M = convexHull.getHullSize();
         // the hull, in counterclockwise order
         GeometricPoint[] hull = new GeometricPoint[M];
         int m = 0;

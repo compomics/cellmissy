@@ -46,62 +46,62 @@ public class Playground1 {
         Project project = projectService.findById(5L);
         List<Experiment> experiments = experimentService.findExperimentsByProjectId(project.getProjectid());
         // folder and name for the output file
-        File folder = new File("C:\\Users\\paola\\Desktop\\tracks_classification");
-        String fileName =  project + "_" +  "data_unlabel.txt";
+        File folder = new File("C:\\Users\\paola\\Desktop\\cells_classification");
+        String fileName = project + "_" + "data.txt";
         List<List<TrackDataHolder>> biologicalConditions = new ArrayList<>();
         int totTracks = 0;
         for (Experiment experiment : experiments) {
-            if (experiment.getExperimentid() != 59) {
-                double instrumentConversionFactor = experiment.getInstrument().getConversionFactor();
-                double magnificationValue = experiment.getMagnification().getMagnificationValue();
-                double conversionFactor = instrumentConversionFactor * magnificationValue / 10;
-                // fetch the migration data
-                for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
-                    List<Well> wells = new ArrayList<>();
-                    for (Well well : plateCondition.getWellList()) {
-                        Well fetchedWell = wellService.fetchMigrationData(well.getWellid());
-                        wells.add(fetchedWell);
-                    }
-                    plateCondition.setWellList(wells);
+//            if (experiment.getExperimentid() != 59) {
+            double instrumentConversionFactor = experiment.getInstrument().getConversionFactor();
+            double magnificationValue = experiment.getMagnification().getMagnificationValue();
+            double conversionFactor = instrumentConversionFactor * magnificationValue / 10;
+            // fetch the migration data
+            for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+                List<Well> wells = new ArrayList<>();
+                for (Well well : plateCondition.getWellList()) {
+                    Well fetchedWell = wellService.fetchMigrationData(well.getWellid());
+                    wells.add(fetchedWell);
                 }
-                // now do the computations
-                for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
-                    // create a new object to hold pre-processing results
-                    SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
-                    // do the computations
-                    singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition);
-                    singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateTimeIndexes(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateTrackDurations(experiment.getExperimentInterval(), singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, conversionFactor);
-                    singleCellPreProcessor.computeCoordinatesRanges(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateConvexHullsVector(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateDisplacementRatiosVector(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateOutreachRatiosVector(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
-                    singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
-                    List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-                    biologicalConditions.add(trackDataHolders);
-                    System.out.println("tracks for current conditions: " + trackDataHolders.size());
-                    System.out.println("*-*-*" + plateCondition + " processed");
-                    totTracks += trackDataHolders.size();
-                }
-                System.out.println("*-*-*-*-*" + project + "_" + experiment + " processed");
-                System.out.println("total tracks (cells): " + totTracks);
+                plateCondition.setWellList(wells);
             }
+            // now do the computations
+            for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+                // create a new object to hold pre-processing results
+                SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
+                // do the computations
+                singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition);
+                singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateTimeIndexes(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateTrackDurations(experiment.getExperimentInterval(), singleCellPreProcessingResults);
+                singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, conversionFactor);
+                singleCellPreProcessor.computeCoordinatesRanges(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateConvexHullsVector(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateDisplacementRatiosVector(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateOutreachRatiosVector(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
+                List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+                biologicalConditions.add(trackDataHolders);
+                System.out.println("tracks for current conditions: " + trackDataHolders.size());
+                System.out.println("*-*-*" + plateCondition + " processed");
+                totTracks += trackDataHolders.size();
+            }
+            System.out.println("*-*-*-*-*" + project + "_" + experiment + " processed");
+            System.out.println("total tracks (cells): " + totTracks);
+//            }
 
             try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(folder, fileName)))) {
                 // header of the file
                 bufferedWriter.append("id" + "\t" + "dur" + "\t" + "xmin" + "\t" + "xmax" + "\t" + "ymin" + "\t" + "ymax" + "\t"
                         + "xnd" + "\t" + "ynd" + "\t" + "cd" + "\t" + "ed" + "\t" + "dir" + "\t" + "md" + "\t" + "ms" + "\t" + "mta" + "\t" + "maxdis" + "\t"
-                        + "dr" + "\t" + "or" + "\t" + "perim" + "\t" + "area" + "\t" + "acirc" + "\t" + "dir2" + "\t" + "label");
+                        + "dr" + "\t" + "or" + "\t" + "perim" + "\t" + "area" + "\t" + "acirc" + "\t" + "dir2" + "\t" + "vertices");
                 // new line
                 bufferedWriter.newLine();
                 for (int i = 0; i < biologicalConditions.size(); i++) {
@@ -152,7 +152,8 @@ public class Playground1 {
                         bufferedWriter.append("\t");
                         bufferedWriter.append("" + trackDataHolder.getConvexHull().getDirectionality());
                         bufferedWriter.append("\t");
-                        bufferedWriter.append("-1");
+//                        bufferedWriter.append("-1");
+                        bufferedWriter.append("" + trackDataHolder.getConvexHull().getHullSize());
                         bufferedWriter.newLine();
                     }
                 }

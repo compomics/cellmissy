@@ -8,8 +8,8 @@ import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 
 /**
- * An interface for a Convex Hull Calculator. The interface computes the hull,
- * and some of its geometric properties.
+ * An interface for a Convex Hull Calculator. The interface simply computes the
+ * hull, and find the most distant points on it for a given track.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -23,6 +23,13 @@ public interface ConvexHullCalculator {
      * calculated
      */
     public void computeHull(Track track, ConvexHull convexHull);
+
+    /**
+     * Compute the size of the convex hull, i.e. the number of vertices.
+     *
+     * @param convexHull
+     */
+    public void computeHullSize(ConvexHull convexHull);
 
     /**
      * Find the pair of geometric points that are most distant from each other
