@@ -5,8 +5,10 @@
 package be.ugent.maf.cellmissy.gui.view.table.model;
 
 import be.ugent.maf.cellmissy.entity.Track;
+import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
+import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,25 +76,27 @@ public class TrackDataHolderTableModel extends AbstractTableModel {
         data[0][1] = track.getWellHasImagingType().getWell();
         data[1][1] = track.getTrackNumber();
         data[2][1] = track.getTrackLength();
-        data[3][1] = trackDataHolder.getTimeIndexes().length;
-        data[4][1] = trackDataHolder.getDuration();
-        data[5][1] = trackDataHolder.getxMin();
-        data[6][1] = trackDataHolder.getxMax();
-        data[7][1] = trackDataHolder.getyMin();
-        data[8][1] = trackDataHolder.getyMax();
-        data[9][1] = trackDataHolder.getxMax() - trackDataHolder.getxMin();
-        data[10][1] = trackDataHolder.getyMax() - trackDataHolder.getyMin();
-        data[11][1] = trackDataHolder.getMedianDisplacement();
-        data[12][1] = trackDataHolder.getMedianSpeed();
-        data[13][1] = trackDataHolder.getCumulativeDistance();
-        data[14][1] = trackDataHolder.getEuclideanDistance();
-        data[15][1] = trackDataHolder.getDirectionality();
-        data[16][1] = trackDataHolder.getMedianTurningAngle();
-        ConvexHull convexHull = trackDataHolder.getConvexHull();
+        StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
+        CellCentricDataHolder cellCentricDataHolder = trackDataHolder.getCellCentricDataHolder();
+        data[3][1] = stepCentricDataHolder.getTimeIndexes().length;
+        data[4][1] = cellCentricDataHolder.getTrackDuration();
+        data[5][1] = cellCentricDataHolder.getxMin();
+        data[6][1] = cellCentricDataHolder.getxMax();
+        data[7][1] = cellCentricDataHolder.getyMin();
+        data[8][1] = cellCentricDataHolder.getyMax();
+        data[9][1] = cellCentricDataHolder.getxNetDisplacement();
+        data[10][1] = cellCentricDataHolder.getyNetDisplacement();
+        data[11][1] = cellCentricDataHolder.getMedianDisplacement();
+        data[12][1] = cellCentricDataHolder.getMedianSpeed();
+        data[13][1] = cellCentricDataHolder.getCumulativeDistance();
+        data[14][1] = cellCentricDataHolder.getEuclideanDistance();
+        data[15][1] = cellCentricDataHolder.getEndPointDirectionalityRatio();
+        data[16][1] = cellCentricDataHolder.getMedianTurningAngle();
+        ConvexHull convexHull = cellCentricDataHolder.getConvexHull();
         MostDistantPointsPair mostDistantPointsPair = convexHull.getMostDistantPointsPair();
         data[17][1] = mostDistantPointsPair.getMaxSpan();
-        data[18][1] = trackDataHolder.getDisplacementRatio();
-        data[19][1] = trackDataHolder.getOutreachRatio();
+        data[18][1] = cellCentricDataHolder.getDisplacementRatio();
+        data[19][1] = cellCentricDataHolder.getOutreachRatio();
     }
 
     /**

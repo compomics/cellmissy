@@ -7,140 +7,25 @@ package be.ugent.maf.cellmissy.analysis.singlecell;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 
 /**
- * Interface: track operator. This performs basic operations on the track level,
- * using the track data holder.
+ * This interface operates on a track, performing operations on 2 levels:
+ * step-centric first, and cell-centric after.
+ *
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public interface TrackOperator {
 
     /**
-     * Generate Double vector with time indexes of track.
+     * Do the operations on the step-centric level.
      *
-     * @param trackDataHolder
+     * @param stepCentricDataHolder
      */
-    public void generateTimeIndexes(TrackDataHolder trackDataHolder);
+    public void operateOnSteps(TrackDataHolder trackDataHolder);
 
     /**
-     * Compute the duration of a track; this will depend on the time interval
-     * between successive frames in the time-lapse experiment.
+     * Do the operations on the cell-centric level.
      *
-     * @param timeLapse
-     * @param trackDataHolder
+     * @param cellCentricDataHolder
      */
-    public void computeDuration(Double timeLapse, TrackDataHolder trackDataHolder);
-
-    /**
-     * Generate Track Point Matrix for a track. This is already scaling
-     * according to the conversion factor, going from pixels to micrometers. If
-     * the conversion factor is equal to one, data was already in micrometers
-     * and no actual conversion is taken up.
-     *
-     * @param trackDataHolder
-     * @param conversionFactor
-     */
-    public void generateCoordinatesMatrix(TrackDataHolder trackDataHolder, double conversionFactor);
-
-    /**
-     * Compute the min and max x + min and max y.
-     *
-     * @param trackDataHolder
-     */
-    public void computeCoordinatesRange(TrackDataHolder trackDataHolder);
-
-    /**
-     * Compute shifted track coordinates starting from the track coordinates
-     * matrix; shifted means track coordinates are normalised to 0.
-     *
-     * @param trackDataHolder
-     */
-    public void computeShiftedCoordinatesMatrix(TrackDataHolder trackDataHolder);
-
-    /**
-     * Compute delta movements matrix.
-     *
-     * @param trackDataHolder
-     */
-    public void computeDeltaMovements(TrackDataHolder trackDataHolder);
-
-    /**
-     * Compute minimal instantaneous cell displacements.
-     *
-     * @param trackDataHolder
-     */
-    public void computeInstantaneousDisplacements(TrackDataHolder trackDataHolder);
-
-    /**
-     * Compute track median displacement
-     *
-     * @param trackDataHolder
-     */
-    public void computeMedianDisplacement(TrackDataHolder trackDataHolder);
-
-    /**
-     * Compute cumulative distance between start and end point of track. This is
-     * usually bigger the real displacement, and it's equal to the total path
-     * length.
-     *
-     * @param trackDataHolder
-     */
-    public void computeCumulativeDistance(TrackDataHolder trackDataHolder);
-
-    /**
-     * Compute Euclidean distance between start and end point. This is the real
-     * displacement of a cell along the track.
-     *
-     * @param trackDataHolder
-     */
-    public void computeEuclideanDistance(TrackDataHolder trackDataHolder);
-
-    /**
-     * Compute track median speed.F
-     *
-     * @param trackDataHolder
-     */
-    public void computeMedianSpeed(TrackDataHolder trackDataHolder);
-
-    /**
-     * Compute directionality of a certain track as the ratio between the
-     * Euclidean and the cumulative distance.
-     *
-     * @param trackDataHolder
-     */
-    public void computeDirectionality(TrackDataHolder trackDataHolder);
-
-    /**
-     * Compute maximal displacement of a certain track.
-     *
-     * @param trackDataHolder
-     */
-    public void computeConvexHull(TrackDataHolder trackDataHolder);
-
-    /**
-     * Compute displacement ratio of a certain track.
-     *
-     * @param trackDataHolder
-     */
-    public void computeDisplacementRatio(TrackDataHolder trackDataHolder);
-
-    /**
-     * Compute outreach ratio of a certain track.
-     *
-     * @param trackDataHolder
-     */
-    public void computeOutreachRatio(TrackDataHolder trackDataHolder);
-
-    /**
-     * Compute turning angles.
-     *
-     * @param trackDataHolder
-     */
-    public void computeTurningAngles(TrackDataHolder trackDataHolder);
-
-    /**
-     * Compute track angle: median across all angles for the track.
-     *
-     * @param trackDataHolder
-     */
-    public void computeMedianTurningAngle(TrackDataHolder trackDataHolder);
+    public void operateOnCells(TrackDataHolder trackDataHolder);
 }

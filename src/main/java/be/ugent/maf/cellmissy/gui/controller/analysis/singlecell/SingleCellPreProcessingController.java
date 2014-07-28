@@ -255,19 +255,20 @@ public class SingleCellPreProcessingController {
             // create a new object to hold pre-processing results
             SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
             // do computations
-            singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition);
+            double conversionFactor = computeConversionFactor();
+            Double timeLapse = singleCellMainController.getExperiment().getExperimentInterval();
+            singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition, conversionFactor, timeLapse);
             singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateTimeIndexes(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateTrackDurations(singleCellMainController.getExperiment().getExperimentInterval(), singleCellPreProcessingResults);
-            singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults, computeConversionFactor());
-            singleCellPreProcessor.computeCoordinatesRanges(singleCellPreProcessingResults);
+            singleCellPreProcessor.operateOnStepsAndCells(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults);
             singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
             singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateDirectionalityRatiosVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
-            singleCellPreProcessor.generateDirectionalitiesVector(singleCellPreProcessingResults);
+            singleCellPreProcessor.generateEndPointDirectionalityRatiosVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateConvexHullsVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateDisplacementRatiosVector(singleCellPreProcessingResults);
             singleCellPreProcessor.generateOutreachRatiosVector(singleCellPreProcessingResults);
