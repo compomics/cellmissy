@@ -21,8 +21,10 @@ public interface SingleCellPreProcessor {
      * @param plateCondition: we need here a plate condition because this can be
      * done only on the single cell analysed wells. We'll get these wells having
      * the condition.
+     * @param conversionFactor
+     * @param timeLapse
      */
-    public void generateTrackDataHolders(SingleCellPreProcessingResults singleCellPreProcessingResults, PlateCondition plateCondition);
+    public void generateTrackDataHolders(SingleCellPreProcessingResults singleCellPreProcessingResults, PlateCondition plateCondition, double conversionFactor, Double timeLapse);
 
     /**
      * Generate the data structure: this will put together the well of the
@@ -33,34 +35,19 @@ public interface SingleCellPreProcessor {
     public void generateDataStructure(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
-     * Generate time indexes.
+     * This will perform all the operations required on the step-centric and
+     * cell-centric level.
      *
      * @param singleCellPreProcessingResults
      */
-    public void generateTimeIndexes(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
-     * Generate track durations.
-     *
-     * @param timeLapse
-     * @param singleCellPreProcessingResults
-     */
-    public void generateTrackDurations(Double timeLapse, SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void operateOnStepsAndCells(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate the track coordinates matrix.
      *
      * @param singleCellPreProcessingResults
-     * @param conversionFactor
      */
-    public void generateRawTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults, double conversionFactor);
-
-    /**
-     * Compute the coordinates range.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void computeCoordinatesRanges(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateRawTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate the shifted track coordinates matrix.
@@ -75,6 +62,13 @@ public interface SingleCellPreProcessor {
      * @param singleCellPreProcessingResults
      */
     public void generateInstantaneousDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     * Generate the directionality ratios vector.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateDirectionalityRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate a vector with track displacements.
@@ -109,7 +103,7 @@ public interface SingleCellPreProcessor {
      *
      * @param singleCellPreProcessingResults
      */
-    public void generateDirectionalitiesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateEndPointDirectionalityRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
      * Generate vector with convex hulls.

@@ -370,7 +370,7 @@ public class ExploreTrackController {
      */
     private void setupTimeSlider(TrackDataHolder selectedTrackDataHolder) {
         JSlider timeSlider = exploreTrackPanel.getTimeSlider();
-        double[] timeIndexes = selectedTrackDataHolder.getTimeIndexes();
+        double[] timeIndexes = selectedTrackDataHolder.getStepCentricDataHolder().getTimeIndexes();
         timeSlider.setMinimum(0);
         int numberOfTimePoints = timeIndexes.length;
         int spacing = (int) numberOfTimePoints / 5;
@@ -439,7 +439,7 @@ public class ExploreTrackController {
      */
     private void updateConvexHullData(TrackDataHolder trackDataHolder) {
         // upate convex hull data in table
-        ConvexHull convexHull = trackDataHolder.getConvexHull();
+        ConvexHull convexHull = trackDataHolder.getCellCentricDataHolder().getConvexHull();
         exploreTrackPanel.getConvexHullTable().setModel(new ConvexHullTableModel(convexHull));
         SingleCellDataTableRenderer singleCellDataTableRenderer = new SingleCellDataTableRenderer(new DecimalFormat("###.###"));
         for (int i = 0; i < exploreTrackPanel.getConvexHullTable().getColumnCount(); i++) {
@@ -474,12 +474,12 @@ public class ExploreTrackController {
         // get the selected track data holder, and thus the track to plot in time
         Track track = trackDataHolder.getTrack();
         // get the track coordinates matrix
-        Double[][] trackCoordinatesMatrix = trackDataHolder.getCoordinatesMatrix();
+        Double[][] trackCoordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getCoordinatesMatrix();
         // we need to transpose the matrix
         Double[][] transpose2DArray = AnalysisUtils.transpose2DArray(trackCoordinatesMatrix);
         // we get the x coordinates and the time information
         double[] xCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transpose2DArray[0]));
-        double[] timeIndexes = trackDataHolder.getTimeIndexes();
+        double[] timeIndexes = trackDataHolder.getStepCentricDataHolder().getTimeIndexes();
         // we create the series and set its key
         XYSeries xtSeries = JFreeChartUtils.generateXYSeries(timeIndexes, xCoordinates);
         int trackNumber = track.getTrackNumber();
@@ -519,7 +519,7 @@ public class ExploreTrackController {
      */
     private void plotCoordinatesInSpace(TrackDataHolder trackDataHolder) {
         // get the coordinates matrix
-        Double[][] shiftedCoordinatesMatrix = trackDataHolder.getShiftedCooordinatesMatrix();
+        Double[][] shiftedCoordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getShiftedCooordinatesMatrix();
         XYSeries xYSeries = JFreeChartUtils.generateXYSeries(shiftedCoordinatesMatrix);
         Track track = trackDataHolder.getTrack();
         int trackNumber = track.getTrackNumber();
@@ -539,7 +539,7 @@ public class ExploreTrackController {
      * @param trackDataHolder
      */
     private void plotConvexHull(TrackDataHolder trackDataHolder) {
-        ConvexHull convexHull = trackDataHolder.getConvexHull();
+        ConvexHull convexHull = trackDataHolder.getCellCentricDataHolder().getConvexHull();
         Iterable<GeometricPoint> cHull = convexHull.getHull();
         int M = 0;
         for (GeometricPoint point : cHull) {
@@ -572,7 +572,7 @@ public class ExploreTrackController {
         XYSeriesCollection hullDataset = new XYSeriesCollection(hullSeries);
         JFreeChart convexHullChart = ChartFactory.createXYLineChart(seriesKey + " - convex hull", "x (µm)", "y (µm)", hullDataset, PlotOrientation.VERTICAL, false, true, false);
         // dataset for the coordinates
-        Double[][] coordinatesMatrix = trackDataHolder.getCoordinatesMatrix();
+        Double[][] coordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getCoordinatesMatrix();
         XYSeries coordinatesSeries = JFreeChartUtils.generateXYSeries(coordinatesMatrix);
         XYSeriesCollection coordinatesDataset = new XYSeriesCollection(coordinatesSeries);
         // use both datasets for the plot
@@ -601,7 +601,7 @@ public class ExploreTrackController {
             // disable play button
             exploreTrackPanel.getPlayButton().setEnabled(false);
             TrackDataHolder trackDataHolder = trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex);
-            double[] timeIndexes = trackDataHolder.getTimeIndexes();
+            double[] timeIndexes = trackDataHolder.getStepCentricDataHolder().getTimeIndexes();
             for (int i = 0; i < timeIndexes.length; i++) {
                 showTrackPointInTime(selectedTrackIndex, i);
                 Thread.sleep(50);

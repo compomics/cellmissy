@@ -144,7 +144,7 @@ public class TrackCoordinatesController {
     public List<Integer> getEndPoints() {
         List<Integer> endPoints = new ArrayList<>();
         for (TrackDataHolder trackDataHolder : trackDataHolderBindingList) {
-            double[] timeIndexes = trackDataHolder.getTimeIndexes();
+            double[] timeIndexes = trackDataHolder.getStepCentricDataHolder().getTimeIndexes();
             int numberOfTimePoints = timeIndexes.length - 1;
             endPoints.add(numberOfTimePoints);
         }
@@ -511,9 +511,9 @@ public class TrackCoordinatesController {
         int counter = 0;
         for (TrackDataHolder trackDataHolder : trackDataHolderBindingList) {
             if (useRawCoordinates) {
-                coordinatesMatrix = trackDataHolder.getCoordinatesMatrix();
+                coordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getCoordinatesMatrix();
             } else {
-                coordinatesMatrix = trackDataHolder.getShiftedCooordinatesMatrix();
+                coordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getShiftedCooordinatesMatrix();
             }
             XYSeries xySeries = JFreeChartUtils.generateXYSeries(coordinatesMatrix);
             Track track = trackDataHolder.getTrack();

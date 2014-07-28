@@ -110,6 +110,11 @@ public class TrackPoint implements Serializable {
         this.trackPointid = trackPointid;
     }
 
+    public TrackPoint(double cellRow, double cellCol) {
+        this.cellRow = cellRow;
+        this.cellCol = cellCol;
+    }
+
     public TrackPoint(Long trackPointid, int timeIndex, double cellRow, double cellCol) {
         this.trackPointid = trackPointid;
         this.timeIndex = timeIndex;

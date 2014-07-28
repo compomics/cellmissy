@@ -27,6 +27,8 @@ public class SingleCellPreProcessingResults {
     private Double[][] shiftedTrackCoordinatesMatrix;
     // array for instantaneous displacements
     private Double[] instantaneousDisplacementsVector;
+    // array for instantaneous directionality ratios
+    private Double[] directionalityRatiosVector;
     // array for track displacements
     private Double[] trackDisplacementsVector;
     // array for track speeds
@@ -36,7 +38,7 @@ public class SingleCellPreProcessingResults {
     // array for track Euclidean distancse
     private Double[] euclideanDistancesVector;
     // array for directionalities
-    private Double[] directionalitiesVector;
+    private Double[] endPointDirectionalityRatios;
     // array for convex hulls
     private ConvexHull[] convexHullsVector;
     // array for displacement ratios
@@ -88,6 +90,14 @@ public class SingleCellPreProcessingResults {
         this.instantaneousDisplacementsVector = instantaneousDisplacementsVector;
     }
 
+    public Double[] getDirectionalityRatiosVector() {
+        return directionalityRatiosVector;
+    }
+
+    public void setDirectionalityRatiosVector(Double[] directionalityRatiosVector) {
+        this.directionalityRatiosVector = directionalityRatiosVector;
+    }
+
     public Double[] getTrackDisplacementsVector() {
         return trackDisplacementsVector;
     }
@@ -120,12 +130,12 @@ public class SingleCellPreProcessingResults {
         this.euclideanDistancesVector = euclideanDistancesVector;
     }
 
-    public Double[] getDirectionalitiesVector() {
-        return directionalitiesVector;
+    public Double[] getEndPointDirectionalityRatios() {
+        return endPointDirectionalityRatios;
     }
 
-    public void setDirectionalitiesVector(Double[] directionalitiesVector) {
-        this.directionalitiesVector = directionalitiesVector;
+    public void setEndPointDirectionalityRatios(Double[] endPointDirectionalityRatios) {
+        this.endPointDirectionalityRatios = endPointDirectionalityRatios;
     }
 
     public ConvexHull[] getConvexHullsVector() {
