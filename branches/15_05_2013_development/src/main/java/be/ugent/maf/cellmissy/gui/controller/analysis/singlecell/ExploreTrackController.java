@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.ExploreTrackPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsRendererGiver;
@@ -88,6 +89,7 @@ public class ExploreTrackController {
     private PlotSettingsMenuBar plotSettingsMenuBar;
     private ChartPanel coordinatesChartPanel;
     private ChartPanel xYTCoordinateChartPanel;
+    private ChartPanel directionalityRatioChartPanel;
     private ChartPanel singleTrackCoordinatesChartPanel;
     private ChartPanel convexHullChartPanel;
     // parent controller
@@ -204,12 +206,15 @@ public class ExploreTrackController {
         exploreTrackPanel.getGraphicsParentPanel().add(coordinatesChartPanel, gridBagConstraints);
         xYTCoordinateChartPanel = new ChartPanel(null);
         xYTCoordinateChartPanel.setOpaque(false);
+        directionalityRatioChartPanel = new ChartPanel(null);
+        directionalityRatioChartPanel.setOpaque(false);
         singleTrackCoordinatesChartPanel = new ChartPanel(null);
         singleTrackCoordinatesChartPanel.setOpaque(false);
         convexHullChartPanel = new ChartPanel(null);
         convexHullChartPanel.setOpaque(false);
 
         exploreTrackPanel.getxYTCoordinatesParentPanel().add(xYTCoordinateChartPanel, gridBagConstraints);
+        exploreTrackPanel.getDirectionalityRatioGraphicsParentPanel().add(directionalityRatioChartPanel, gridBagConstraints);
         exploreTrackPanel.getCoordinatesParentPanel().add(singleTrackCoordinatesChartPanel, gridBagConstraints);
         exploreTrackPanel.getConvexHullGraphicsParentPanel().add(convexHullChartPanel, gridBagConstraints);
 
@@ -327,8 +332,8 @@ public class ExploreTrackController {
         Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
         TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, trackCoordinatesController.getEndPoints(), selectedTrackIndex, lineWidth);
         coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
-        // reset the time slider
-        exploreTrackPanel.getTimeSlider().setLabelTable(null);
+        // @todo: reset the time slider, null pointer exception !
+//        exploreTrackPanel.getTimeSlider().setLabelTable(null);
     }
 
     /**
@@ -405,6 +410,7 @@ public class ExploreTrackController {
     }
 
     /**
+     * Play a track in time (using a swing worker).
      *
      * @param selectedTrackIndex
      */
@@ -434,6 +440,7 @@ public class ExploreTrackController {
     }
 
     /**
+     * Update measurements of convex hull for a given selected track.
      *
      * @param trackDataHolder
      */
@@ -462,11 +469,12 @@ public class ExploreTrackController {
         plotCoordinatesInTime(trackDataHolder);
         // plot the convex hull of the track
         plotConvexHull(trackDataHolder);
+        // plot the directionality ratio in time
+        plotDirectionalityRatioInTime(trackDataHolder);
     }
 
     /**
-     * Plot x and y coordinates in time for the given track. The track is
-     * actually get from the track data holder object.
+     * Plot x and y coordinates in time for the given track.
      *
      * @param track
      */
@@ -509,6 +517,30 @@ public class ExploreTrackController {
         JFreeChart combinedChart = new JFreeChart(seriesKey, JFreeChartUtils.getChartFont(), combinedDomainXYPlot, Boolean.FALSE);
         JFreeChartUtils.setupCombinedChart(combinedChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
         xYTCoordinateChartPanel.setChart(combinedChart);
+    }
+
+    /**
+     * Plot Directionality Ratio in time for a given track.
+     *
+     * @param trackDataHolder
+     */
+    private void plotDirectionalityRatioInTime(TrackDataHolder trackDataHolder) {
+        StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
+        Track track = trackDataHolder.getTrack();
+        Double[] directionalityRatios = stepCentricDataHolder.getDirectionalityRatios(); // y axis: the directionality values
+        double[] timeIndexes = stepCentricDataHolder.getTimeIndexes(); // x axis: time points
+        double[] directionalityValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(directionalityRatios));
+        // we create the series and set its key
+        XYSeries ytSeries = JFreeChartUtils.generateXYSeries(timeIndexes, directionalityValues);
+        int trackNumber = track.getTrackNumber();
+        Well well = track.getWellHasImagingType().getWell();
+        String seriesKey = "track " + trackNumber + ", well " + well;
+        ytSeries.setKey(seriesKey);
+        // we then create the XYSeriesCollection and use it to make a new line chart
+        XYSeriesCollection ytSeriesCollection = new XYSeriesCollection(ytSeries);
+        JFreeChart directionalityRatioChart = ChartFactory.createXYLineChart(seriesKey + " - directionality ratio in time", "time index", "directionality ratio", ytSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        JFreeChartUtils.setupSingleTrackPlot(directionalityRatioChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), true);
+        directionalityRatioChartPanel.setChart(directionalityRatioChart);
     }
 
     /**

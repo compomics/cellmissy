@@ -118,9 +118,12 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
                 // Returns the angle theta from the conversion of rectangular coordinates (x, y)
                 // to polar coordinates (r, theta).
                 // This method computes the phase theta by computing an arc tangent of y/x in the range of -pi to pi.
-                Double angleRadians = Math.atan2(deltaY, deltaX);
+                Double angleRadians = Math.atan(deltaY/deltaX);
                 // go from radians to degrees
                 Double angleDegrees = angleRadians * 180 / Math.PI;
+                if (angleDegrees < 0) {
+                    angleDegrees = angleDegrees + 360;
+                }
                 turningAngles[row] = angleDegrees;
             }
         }
@@ -130,25 +133,28 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     @Override
     public void computeDirectionalityRatios(StepCentricDataHolder stepCentricDataHolder) {
         Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
-        Double[] directionalityRatios = new Double[coordinatesMatrix.length];
         Double[] instantaneousDisplacements = stepCentricDataHolder.getInstantaneousDisplacements();
-        // first coordinates
+        Double[] directionalityRatios = new Double[coordinatesMatrix.length];
+        // first coordinates (x, y)
         double firstX = coordinatesMatrix[0][0];
         double firstY = coordinatesMatrix[0][1];
         for (int row = 1; row < coordinatesMatrix.length; row++) {
             // get current coordinates
             double currentX = coordinatesMatrix[row][0];
             double currentY = coordinatesMatrix[row][1];
-            Double deltaX = currentX - firstX;
-            Double deltaY = currentY - firstY;
-            double tempCumulativeDistance = 0;
-            double tempEuclideanDistance = Math.hypot(deltaX, deltaY);
+            // the delta movements between the current position and the start point
+            double deltaX = currentX - firstX;
+            double deltaY = currentY - firstY;
+            // the distance between the start point of the track and the current position
+            double euclDistToStartPoint = Math.hypot(deltaX, deltaY);
+            double tempCumDist = 0;
             for (int i = 0; i < row; i++) {
                 if (instantaneousDisplacements[i] != null) {
-                    tempCumulativeDistance += instantaneousDisplacements[i];
+                    tempCumDist += instantaneousDisplacements[i];
                 }
             }
-            directionalityRatios[row - 1] = tempEuclideanDistance / tempCumulativeDistance;
+            double currentDirectionalityRatio = euclDistToStartPoint / tempCumDist;
+            directionalityRatios[row - 1] = currentDirectionalityRatio;
         }
         stepCentricDataHolder.setDirectionalityRatios(directionalityRatios);
     }

@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * A pair of most distant geometric points on a track. It contains the couple of
  * points, together with the distance between them. Searching for the 2 points
- * is implemented using a convex hull
+ * is implemented using a convex hull.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */

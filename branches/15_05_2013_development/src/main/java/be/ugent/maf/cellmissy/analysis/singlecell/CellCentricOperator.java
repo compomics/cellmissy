@@ -19,15 +19,14 @@ public interface CellCentricOperator {
     /**
      * Compute the duration of a track.
      *
-     * @param timeLapse
      * @param stepCentricDataHolder
      * @param cellCentricDataHolder
      */
     public void computeTrackDuration(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
     /**
-     * Compute the min and max x + min and max y. And then the net displacements
-     * in the x and y directions.
+     * Compute the min and max x and y coordinates, along with the net
+     * displacements in the two directions.
      *
      * @param stepCentricDataHolder
      * @param cellCentricDataHolder
@@ -78,7 +77,7 @@ public interface CellCentricOperator {
     public void computeEndPointDirectionalityRatio(CellCentricDataHolder cellCentricDataHolder);
 
     /**
-     * Compute maximal displacement of a certain track.
+     * Compute convex hull and relative measurements for a certain track.
      *
      * @param stepCentricDataHolder
      * @param cellCentricDataHolder
@@ -86,14 +85,19 @@ public interface CellCentricOperator {
     public void computeConvexHull(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
     /**
-     * Compute displacement ratio of a certain track.
+     * Compute displacement ratio of a certain track: the net displacement
+     * (Euclidean distance) travelled by the cell, divided by the maximum span
+     * (the length of the segment connecting the two most distant points on the
+     * cell track).
      *
      * @param cellCentricDataHolder
      */
     public void computeDisplacementRatio(CellCentricDataHolder cellCentricDataHolder);
 
     /**
-     * Compute outreach ratio of a certain track.
+     * Compute outreach ratio of a certain track: the max span (the length of
+     * the segment connecting the two most distant points on the cell track)
+     * divided by the cumulative distance travelled by the cell.
      *
      * @param cellCentricDataHolder
      */

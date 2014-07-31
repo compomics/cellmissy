@@ -4,9 +4,11 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
+import be.ugent.maf.cellmissy.analysis.singlecell.CellCentricOperator;
 import be.ugent.maf.cellmissy.analysis.singlecell.StepCentricOperator;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
@@ -20,19 +22,22 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * A unit test for some preprocessing methods on single cells analysis, at the
- * step-centric level.
+ * A unit test for some pre-processing methods on single cell analysis, at the
+ * cell-centric level.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:mySpringXMLConfig.xml")
-public class StepCentricOperatorTest {
+public class CellCentricOperatorTest {
 
     @Autowired
+    private CellCentricOperator cellCentricOperator;
+    @Autowired
     private StepCentricOperator stepCentricOperator;
-    // the data holder
+    // the data holders
     private static StepCentricDataHolder stepCentricDataHolder = new StepCentricDataHolder();
+    private static CellCentricDataHolder cellCentricDataHolder = new CellCentricDataHolder();
 
     @BeforeClass
     public static void createTrack() {
@@ -60,26 +65,17 @@ public class StepCentricOperatorTest {
         stepCentricOperator.generateCoordinatesMatrix(stepCentricDataHolder);
         stepCentricOperator.computeDeltaMovements(stepCentricDataHolder);
         stepCentricOperator.computeInstantaneousDisplacements(stepCentricDataHolder);
-        stepCentricOperator.computeDirectionalityRatios(stepCentricDataHolder);
-        Double[] directionalityRatios = stepCentricDataHolder.getDirectionalityRatios();
-        double firstDR = directionalityRatios[0];
-        double secondDR = directionalityRatios[1];
-        double thirdDR = directionalityRatios[2];
-        Assert.assertEquals(1.0, firstDR);
-        Assert.assertEquals(0.866, AnalysisUtils.roundThreeDecimals(secondDR));
-        Assert.assertEquals(0.669, AnalysisUtils.roundThreeDecimals(thirdDR));
-        // test instantaneous turning angles
-        stepCentricOperator.computeTurningAngles(stepCentricDataHolder);
-        Double[] turningAngles = stepCentricDataHolder.getTurningAngles();
-        double firstTA = turningAngles[0];
-        double secondTA = turningAngles[1];
-        double thirdTA = turningAngles[2];
-        double fourthTA = turningAngles[3];
-        double lastTurningAngle = turningAngles[4];
-        Assert.assertEquals(20.556, AnalysisUtils.roundThreeDecimals(firstTA));
-        Assert.assertEquals(90.0, secondTA);
-        Assert.assertEquals(333.435, AnalysisUtils.roundThreeDecimals(thirdTA));
-        Assert.assertEquals(26.565, AnalysisUtils.roundThreeDecimals(fourthTA));
-        Assert.assertEquals(315.0, AnalysisUtils.roundThreeDecimals(lastTurningAngle));
+        // test the euclidean distance
+        cellCentricOperator.computeEuclideanDistance(stepCentricDataHolder, cellCentricDataHolder);
+        double euclideanDistance = cellCentricDataHolder.getEuclideanDistance();
+        Assert.assertEquals(8.602, AnalysisUtils.roundThreeDecimals(euclideanDistance));
+        // test the cumulative distance
+        cellCentricOperator.computeCumulativeDistance(stepCentricDataHolder, cellCentricDataHolder);
+        double cumulativeDistance = cellCentricDataHolder.getCumulativeDistance();
+        Assert.assertEquals(37.688, AnalysisUtils.roundThreeDecimals(cumulativeDistance));
+        // test end point directionality ratio
+        cellCentricOperator.computeEndPointDirectionalityRatio(cellCentricDataHolder);
+        double endPointDirectionalityRatio = cellCentricDataHolder.getEndPointDirectionalityRatio();
+        Assert.assertEquals(0.228, AnalysisUtils.roundThreeDecimals(endPointDirectionalityRatio));
     }
 }

@@ -83,10 +83,14 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
 
     @Override
     public void computeEuclideanDistance(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
-        Double[][] deltaMovements = stepCentricDataHolder.getDeltaMovements();
-        // last delta movements
-        Double deltaX = deltaMovements[deltaMovements.length - 2][0];
-        Double deltaY = deltaMovements[deltaMovements.length - 2][1];
+        Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
+        Double[][] transposedCoordinatesMatrix = AnalysisUtils.transpose2DArray(coordinatesMatrix);
+        double firstX = transposedCoordinatesMatrix[0][0];
+        double firstY = transposedCoordinatesMatrix[1][0];
+        double lastX = transposedCoordinatesMatrix[0][transposedCoordinatesMatrix[0].length - 1];
+        double lastY = transposedCoordinatesMatrix[1][transposedCoordinatesMatrix[0].length - 1];
+        double deltaX = lastX - firstX;
+        double deltaY = lastY - firstY;
         // Math.hypot: sqrt(x2 +y2) without intermediate overflow or underflow
         double euclideanDistance = Math.hypot(deltaX, deltaY);
         cellCentricDataHolder.setEuclideanDistance(euclideanDistance);
@@ -102,8 +106,8 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
 
     @Override
     public void computeEndPointDirectionalityRatio(CellCentricDataHolder cellCentricDataHolder) {
-        double directionality = cellCentricDataHolder.getEuclideanDistance() / cellCentricDataHolder.getCumulativeDistance();
-        cellCentricDataHolder.setEndPointDirectionalityRatio(directionality);
+        double endPointDirectionalityRatio = cellCentricDataHolder.getEuclideanDistance() / cellCentricDataHolder.getCumulativeDistance();
+        cellCentricDataHolder.setEndPointDirectionalityRatio(endPointDirectionalityRatio);
     }
 
     @Override
