@@ -19,7 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:mySpringXMLConfig.xml")
-public class PointTest {
+public class GeometricPointTest {
 
     // 3 points ont the plane
     private static GeometricPoint q;

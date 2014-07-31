@@ -248,6 +248,6 @@ public class TrackPoint implements Serializable {
 
     @Override
     public String toString() {
-        return "be.ugent.maf.cellmissy.entity.TrackPoint[ trackPointid=" + trackPointid + " ]";
+        return cellRow + ", " + cellRow;
     }
 }
