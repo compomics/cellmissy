@@ -53,6 +53,10 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         return directionalityRatioGraphicsParentPanel;
     }
 
+    public JPanel getDirectionAutocorrelationPanel() {
+        return directionAutocorrelationPanel;
+    }
+
     public JTextField getyTextField() {
         return yTextField;
     }
@@ -125,6 +129,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         jScrollPane3 = new javax.swing.JScrollPane();
         convexHullTable = new javax.swing.JTable();
         directionalityRatioPanel = new javax.swing.JPanel();
+        directionAutocorrelationPanel = new javax.swing.JPanel();
         directionalityRatioGraphicsParentPanel = new javax.swing.JPanel();
 
         setPreferredSize(new java.awt.Dimension(400, 600));
@@ -463,17 +468,29 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         directionalityRatioPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         directionalityRatioPanel.setLayout(new java.awt.GridBagLayout());
 
-        directionalityRatioGraphicsParentPanel.setLayout(new java.awt.GridBagLayout());
+        directionAutocorrelationPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        directionAutocorrelationPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        directionAutocorrelationPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 1.0;
+        directionalityRatioPanel.add(directionAutocorrelationPanel, gridBagConstraints);
+
+        directionalityRatioGraphicsParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 1.0;
         directionalityRatioPanel.add(directionalityRatioGraphicsParentPanel, gridBagConstraints);
 
-        jTabbedPane1.addTab("directionality ratio", directionalityRatioPanel);
+        jTabbedPane1.addTab("directionality", directionalityRatioPanel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -485,7 +502,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.5;
         add(jTabbedPane1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton clearSelectionButton;
     private javax.swing.JPanel convexHullGraphicsParentPanel;
@@ -493,6 +509,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JPanel convexHullPanel;
     private javax.swing.JTable convexHullTable;
     private javax.swing.JPanel coordinatesParentPanel;
+    private javax.swing.JPanel directionAutocorrelationPanel;
     private javax.swing.JPanel directionalityRatioGraphicsParentPanel;
     private javax.swing.JPanel directionalityRatioPanel;
     private javax.swing.JPanel graphicsParentPanel;
