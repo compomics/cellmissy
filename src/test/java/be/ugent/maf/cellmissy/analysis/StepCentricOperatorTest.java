@@ -81,5 +81,21 @@ public class StepCentricOperatorTest {
         Assert.assertEquals(333.435, AnalysisUtils.roundThreeDecimals(thirdTA));
         Assert.assertEquals(26.565, AnalysisUtils.roundThreeDecimals(fourthTA));
         Assert.assertEquals(315.0, AnalysisUtils.roundThreeDecimals(lastTurningAngle));
+        // test direction autocorrelations
+        double[] timeIndexes = new double[]{2, 3, 5, 6, 7, 10}; // time indexes of the track
+        stepCentricDataHolder.setTimeIndexes(timeIndexes);
+        stepCentricOperator.computeDirectionAutocorrelations(stepCentricDataHolder);
+        List<Double[]> directionAutocorrelations = stepCentricDataHolder.getDirectionAutocorrelations();
+        int size = directionAutocorrelations.size();
+        Assert.assertEquals(4, size);
+        // first time interval: 4 direction autocorrelations
+        Double[] timeZero = directionAutocorrelations.get(0);
+        Assert.assertEquals(4, timeZero.length);
+        Assert.assertEquals(0.351, AnalysisUtils.roundThreeDecimals(timeZero[0]));
+        Assert.assertEquals(-0.447, AnalysisUtils.roundThreeDecimals(timeZero[1]));
+        // last time interval: only one direction autocorrelation
+        Double[] lastTime = directionAutocorrelations.get(size - 1);
+        Assert.assertEquals(1, lastTime.length);
+        Assert.assertEquals(0.414, AnalysisUtils.roundThreeDecimals(lastTime[0]));
     }
 }

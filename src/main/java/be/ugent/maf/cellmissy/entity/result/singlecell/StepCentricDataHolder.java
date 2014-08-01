@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.entity.result.singlecell;
 
 import be.ugent.maf.cellmissy.entity.Track;
+import java.util.List;
 
 /**
  * This class keeps the instantaneous measurements about a certain track.
@@ -13,6 +14,7 @@ import be.ugent.maf.cellmissy.entity.Track;
  */
 public class StepCentricDataHolder {
     // the track on which the computations are to be done
+
     private Track track;
     // the conversion factor (from pixel to another unit of measuremnt)
     private double conversionFactor;
@@ -41,8 +43,9 @@ public class StepCentricDataHolder {
     private Double[] directionalityRatios;
     // array for the MSD values
     private Double[] meanSquareDisplacements;
-    // array for the direction autocorrelation values
-    private Double[] directionAutocorrelations;
+    // list of arrays for the direction autocorrelations
+    // a direction autocorrelation is defined as the cosine of the difference between turning angles at successive time points
+    private List<Double[]> directionAutocorrelations;
 
     /**
      * Constructor
@@ -157,11 +160,11 @@ public class StepCentricDataHolder {
         this.meanSquareDisplacements = meanSquareDisplacements;
     }
 
-    public Double[] getDirectionAutocorrelations() {
+    public List<Double[]> getDirectionAutocorrelations() {
         return directionAutocorrelations;
     }
 
-    public void setDirectionAutocorrelations(Double[] directionAutocorrelations) {
+    public void setDirectionAutocorrelations(List<Double[]> directionAutocorrelations) {
         this.directionAutocorrelations = directionAutocorrelations;
     }
 }

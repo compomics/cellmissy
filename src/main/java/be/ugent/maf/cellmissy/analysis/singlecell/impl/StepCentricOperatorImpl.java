@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -118,9 +119,9 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
                 // Returns the angle theta from the conversion of rectangular coordinates (x, y)
                 // to polar coordinates (r, theta).
                 // This method computes the phase theta by computing an arc tangent of y/x in the range of -pi to pi.
-                Double angleRadians = Math.atan(deltaY/deltaX);
+                Double angleRadians = Math.atan(deltaY / deltaX);
                 // go from radians to degrees
-                Double angleDegrees = angleRadians * 180 / Math.PI;
+                Double angleDegrees = Math.toDegrees(angleRadians);
                 if (angleDegrees < 0) {
                     angleDegrees = angleDegrees + 360;
                 }
@@ -165,5 +166,21 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
 
     @Override
     public void computeDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder) {
+        double[] timeIndexes = stepCentricDataHolder.getTimeIndexes();
+        Double[] turningAngles = stepCentricDataHolder.getTurningAngles();
+        List<Double[]> directionAutocorrelationsList = new ArrayList<>();
+        for (int counter = 0; counter < timeIndexes.length - 2; counter++) {
+            // current vector for direction autocorrelations
+            Double[] currentDAs = new Double[turningAngles.length - 2 - counter];
+            for (int row = 0; row < currentDAs.length; row++) {
+                double currentTA = turningAngles[row]; // current turning angle
+                double successiveTA = turningAngles[row + counter + 1]; // successive turning angle
+                double theta = currentTA - successiveTA; // the theta difference
+                double currentDA = Math.cos(Math.toRadians(theta)); // current direction autocorrelation
+                currentDAs[row] = currentDA; // put it in the vector
+            }
+            directionAutocorrelationsList.add(currentDAs); // add the vector to the total list
+        }
+        stepCentricDataHolder.setDirectionAutocorrelations(directionAutocorrelationsList);
     }
 }

@@ -516,6 +516,8 @@ public class JFreeChartUtils {
             setupTrackChart(chart);
         }
         xyPlot.setOutlineStroke(wideLine);
+        xyPlot.setRangeGridlinePaint(Color.black);
+        xyPlot.setDomainGridlinePaint(Color.black);
         // set title font
         chart.getTitle().setFont(chartFont);
         // modify renderer

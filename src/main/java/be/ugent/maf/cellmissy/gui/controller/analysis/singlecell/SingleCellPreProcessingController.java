@@ -61,6 +61,7 @@ public class SingleCellPreProcessingController {
     private JTableBinding tracksTableBinding;
     private JTableBinding trackPointsTableBinding;
     private Map<PlateCondition, SingleCellPreProcessingResults> preProcessingMap;
+    private final static String newLine = "\n";
     // view
     private SingleCellAnalysisPanel singleCellAnalysisPanel;
     // parent controller
@@ -249,6 +250,8 @@ public class SingleCellPreProcessingController {
      * @param plateCondition
      */
     public void updateMapWithCondition(PlateCondition plateCondition) {
+        String info = "* Fetching data for plate condition: " + plateCondition + "*";
+        appendInfo(info);
         // fetch the track points from DB
         singleCellMainController.fetchTrackPoints(plateCondition);
         if (preProcessingMap.get(plateCondition) == null) {
@@ -257,22 +260,38 @@ public class SingleCellPreProcessingController {
             // do computations
             double conversionFactor = computeConversionFactor();
             Double timeLapse = singleCellMainController.getExperiment().getExperimentInterval();
+            appendInfo("generating data holders...");
             singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition, conversionFactor, timeLapse);
             singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
+            appendInfo("computing step-centric and cell-centric data...");
             singleCellPreProcessor.operateOnStepsAndCells(singleCellPreProcessingResults);
+            appendInfo("generating raw coordinates matrix...");
             singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults);
+            appendInfo("computing shifted-to-zero coordinates matrix...");
             singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
+            appendInfo("generating instantaneous displacements...");
             singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
+            appendInfo("generating directionality ratios...");
             singleCellPreProcessor.generateDirectionalityRatiosVector(singleCellPreProcessingResults);
+            appendInfo("generating track displacements ...");
             singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
+            appendInfo("generating cumulative distances...");
             singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
+            appendInfo("generating euclidean distances...");
             singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
+            appendInfo("generating track speeds...");
             singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
+            appendInfo("generating track end-point directionality ratios...");
             singleCellPreProcessor.generateEndPointDirectionalityRatiosVector(singleCellPreProcessingResults);
+            appendInfo("generating convex hulls...");
             singleCellPreProcessor.generateConvexHullsVector(singleCellPreProcessingResults);
+            appendInfo("generating track displacements...");
             singleCellPreProcessor.generateDisplacementRatiosVector(singleCellPreProcessingResults);
+            appendInfo("generating outreach ratios...");
             singleCellPreProcessor.generateOutreachRatiosVector(singleCellPreProcessingResults);
+            appendInfo("generating turning angles...");
             singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
+            appendInfo("generating median turning angles...");
             singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
             // fill in map
             preProcessingMap.put(plateCondition, singleCellPreProcessingResults);
@@ -309,6 +328,16 @@ public class SingleCellPreProcessingController {
 
         bindingGroup.addBinding(tracksTableBinding);
         bindingGroup.bind();
+    }
+
+    /**
+     * Append the info in the log text area. F
+     *
+     * @param info
+     */
+    public void appendInfo(String info) {
+        singleCellAnalysisPanel.getLogTextArea().append(info + newLine);
+        singleCellAnalysisPanel.getLogTextArea().setCaretPosition(singleCellAnalysisPanel.getLogTextArea().getDocument().getLength());
     }
 
     /**

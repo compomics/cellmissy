@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -55,6 +56,10 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         return velocitiesLabel;
     }
 
+    public JTextArea getLogTextArea() {
+        return logTextArea;
+    }
+
     /**
      * Creates new form SingleCellAnalysisPanel
      */
@@ -84,6 +89,8 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         trackPointsScrollPane = new javax.swing.JScrollPane();
         trackPointsTable = new javax.swing.JTable();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        logTextArea = new javax.swing.JTextArea();
         trackCoordinatesParentPanel = new javax.swing.JPanel();
         velocitiesParentPanel = new javax.swing.JPanel();
 
@@ -176,7 +183,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tracksScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
+                .addComponent(tracksScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -212,6 +219,17 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
+        jScrollPane6.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
+
+        logTextArea.setEditable(false);
+        logTextArea.setColumns(20);
+        logTextArea.setFont(new java.awt.Font("Monospaced", 0, 14)); // NOI18N
+        logTextArea.setForeground(new java.awt.Color(0, 51, 204));
+        logTextArea.setLineWrap(true);
+        logTextArea.setRows(5);
+        logTextArea.setWrapStyleWord(true);
+        jScrollPane6.setViewportView(logTextArea);
+
         javax.swing.GroupLayout inspectingDataPanelLayout = new javax.swing.GroupLayout(inspectingDataPanel);
         inspectingDataPanel.setLayout(inspectingDataPanelLayout);
         inspectingDataPanelLayout.setHorizontalGroup(
@@ -220,16 +238,19 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(inspectingDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 1017, Short.MAX_VALUE))
                 .addContainerGap())
         );
         inspectingDataPanelLayout.setVerticalGroup(
             inspectingDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(inspectingDataPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -267,6 +288,8 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel inspectingDataPanel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JTextArea logTextArea;
     private javax.swing.JPanel topPanel;
     private javax.swing.JLabel trackCoordinatesLabel;
     private javax.swing.JPanel trackCoordinatesParentPanel;
