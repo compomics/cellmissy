@@ -53,8 +53,8 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         return directionalityRatioGraphicsParentPanel;
     }
 
-    public JPanel getDirectionAutocorrelationPanel() {
-        return directionAutocorrelationPanel;
+    public JPanel getDirectionAutocorrelationsGraphicsParentPanel() {
+        return directionAutocorrelationsGraphicsParentPanel;
     }
 
     public JTextField getyTextField() {
@@ -128,8 +128,8 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         convexHullInfoPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         convexHullTable = new javax.swing.JTable();
-        directionalityRatioPanel = new javax.swing.JPanel();
-        directionAutocorrelationPanel = new javax.swing.JPanel();
+        directionalityPanel = new javax.swing.JPanel();
+        directionAutocorrelationsGraphicsParentPanel = new javax.swing.JPanel();
         directionalityRatioGraphicsParentPanel = new javax.swing.JPanel();
 
         setPreferredSize(new java.awt.Dimension(400, 600));
@@ -464,13 +464,13 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("convex hull", convexHullPanel);
 
-        directionalityRatioPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        directionalityRatioPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        directionalityRatioPanel.setLayout(new java.awt.GridBagLayout());
+        directionalityPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        directionalityPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        directionalityPanel.setLayout(new java.awt.GridBagLayout());
 
-        directionAutocorrelationPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        directionAutocorrelationPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        directionAutocorrelationPanel.setLayout(new java.awt.GridBagLayout());
+        directionAutocorrelationsGraphicsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        directionAutocorrelationsGraphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        directionAutocorrelationsGraphicsParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -478,8 +478,10 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 1.0;
-        directionalityRatioPanel.add(directionAutocorrelationPanel, gridBagConstraints);
+        directionalityPanel.add(directionAutocorrelationsGraphicsParentPanel, gridBagConstraints);
 
+        directionalityRatioGraphicsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        directionalityRatioGraphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         directionalityRatioGraphicsParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -488,9 +490,9 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 1.0;
-        directionalityRatioPanel.add(directionalityRatioGraphicsParentPanel, gridBagConstraints);
+        directionalityPanel.add(directionalityRatioGraphicsParentPanel, gridBagConstraints);
 
-        jTabbedPane1.addTab("directionality", directionalityRatioPanel);
+        jTabbedPane1.addTab("directionality", directionalityPanel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -509,9 +511,9 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JPanel convexHullPanel;
     private javax.swing.JTable convexHullTable;
     private javax.swing.JPanel coordinatesParentPanel;
-    private javax.swing.JPanel directionAutocorrelationPanel;
+    private javax.swing.JPanel directionAutocorrelationsGraphicsParentPanel;
+    private javax.swing.JPanel directionalityPanel;
     private javax.swing.JPanel directionalityRatioGraphicsParentPanel;
-    private javax.swing.JPanel directionalityRatioPanel;
     private javax.swing.JPanel graphicsParentPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

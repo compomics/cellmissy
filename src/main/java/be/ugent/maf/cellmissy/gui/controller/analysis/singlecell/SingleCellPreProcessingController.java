@@ -263,6 +263,8 @@ public class SingleCellPreProcessingController {
             appendInfo("generating data holders...");
             singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition, conversionFactor, timeLapse);
             singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
+            int numberOfTracks = singleCellPreProcessingResults.getTrackDataHolders().size();
+            appendInfo("--> total number of cell tracks: " + numberOfTracks);
             appendInfo("computing step-centric and cell-centric data...");
             singleCellPreProcessor.operateOnStepsAndCells(singleCellPreProcessingResults);
             appendInfo("generating raw coordinates matrix...");

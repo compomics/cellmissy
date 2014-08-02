@@ -38,6 +38,7 @@ public class TrackOperatorImpl implements TrackOperator {
         stepCentricOperator.computeDirectionalityRatios(stepCentricDataHolder);
         stepCentricOperator.computeMeanSquareDisplacements(stepCentricDataHolder);
         stepCentricOperator.computeDirectionAutocorrelations(stepCentricDataHolder);
+        stepCentricOperator.computeMeanDirectionAutocorrelations(stepCentricDataHolder);
     }
 
     @Override

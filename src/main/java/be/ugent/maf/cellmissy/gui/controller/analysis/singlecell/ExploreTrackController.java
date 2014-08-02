@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -90,6 +91,7 @@ public class ExploreTrackController {
     private ChartPanel coordinatesChartPanel;
     private ChartPanel xYTCoordinateChartPanel;
     private ChartPanel directionalityRatioChartPanel;
+    private ChartPanel directionAutocorrelationsChartPanel;
     private ChartPanel singleTrackCoordinatesChartPanel;
     private ChartPanel convexHullChartPanel;
     // parent controller
@@ -208,6 +210,8 @@ public class ExploreTrackController {
         xYTCoordinateChartPanel.setOpaque(false);
         directionalityRatioChartPanel = new ChartPanel(null);
         directionalityRatioChartPanel.setOpaque(false);
+        directionAutocorrelationsChartPanel = new ChartPanel(null);
+        directionAutocorrelationsChartPanel.setOpaque(false);
         singleTrackCoordinatesChartPanel = new ChartPanel(null);
         singleTrackCoordinatesChartPanel.setOpaque(false);
         convexHullChartPanel = new ChartPanel(null);
@@ -215,6 +219,7 @@ public class ExploreTrackController {
 
         exploreTrackPanel.getxYTCoordinatesParentPanel().add(xYTCoordinateChartPanel, gridBagConstraints);
         exploreTrackPanel.getDirectionalityRatioGraphicsParentPanel().add(directionalityRatioChartPanel, gridBagConstraints);
+        exploreTrackPanel.getDirectionAutocorrelationsGraphicsParentPanel().add(directionAutocorrelationsChartPanel, gridBagConstraints);
         exploreTrackPanel.getCoordinatesParentPanel().add(singleTrackCoordinatesChartPanel, gridBagConstraints);
         exploreTrackPanel.getConvexHullGraphicsParentPanel().add(convexHullChartPanel, gridBagConstraints);
 
@@ -471,6 +476,8 @@ public class ExploreTrackController {
         plotConvexHull(trackDataHolder);
         // plot the directionality ratio in time
         plotDirectionalityRatioInTime(trackDataHolder);
+        // plot the direction autocorrelation coefficients in time
+        plotDirectionAutocorrelationInTime(trackDataHolder);
     }
 
     /**
@@ -538,9 +545,48 @@ public class ExploreTrackController {
         ytSeries.setKey(seriesKey);
         // we then create the XYSeriesCollection and use it to make a new line chart
         XYSeriesCollection ytSeriesCollection = new XYSeriesCollection(ytSeries);
-        JFreeChart directionalityRatioChart = ChartFactory.createXYLineChart(seriesKey + " - directionality ratio in time", "time index", "directionality ratio", ytSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        JFreeChart directionalityRatioChart = ChartFactory.createXYLineChart(seriesKey + " - Directionality Ratio", "time index", "directionality ratio", ytSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         JFreeChartUtils.setupSingleTrackPlot(directionalityRatioChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), true);
         directionalityRatioChartPanel.setChart(directionalityRatioChart);
+    }
+
+    /**
+     * Plot the Direction autocorrelation coefficients in time for a given
+     * track.F
+     *
+     * @param trackDataHolder
+     */
+    private void plotDirectionAutocorrelationInTime(TrackDataHolder trackDataHolder) {
+        StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
+        Track track = trackDataHolder.getTrack();
+        int trackNumber = track.getTrackNumber();
+        Well well = track.getWellHasImagingType().getWell();
+        // each element of the list is an array of double containing the coefficients computed at overlapping time intervals
+        List<Double[]> directionAutocorrelationsList = stepCentricDataHolder.getDirectionAutocorrelations();
+        Double[] meanDirectionAutocorrelations = stepCentricDataHolder.getMeanDirectionAutocorrelations();
+        double[] timeIndexes = stepCentricDataHolder.getTimeIndexes(); // x axis: time points
+        double[] timePoints = new double[timeIndexes.length];
+        for (int i = 0; i < timePoints.length; i++) {
+            timePoints[i] = i + 1;
+        }
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        // first series with the mean coefficients
+        XYSeries xySeries = JFreeChartUtils.generateXYSeries(timePoints, ArrayUtils.toPrimitive(meanDirectionAutocorrelations));
+        String seriesKey = "track " + trackNumber + ", well " + well + "_mean coefficient";
+        xySeries.setKey(seriesKey);
+        xySeriesCollection.addSeries(xySeries);
+        // now all the rest
+        for (int i = 0; i < directionAutocorrelationsList.size(); i++) {
+            Double[] coefficients = directionAutocorrelationsList.get(i);
+            double[] toPrimitive = ArrayUtils.toPrimitive(coefficients);
+            xySeries = JFreeChartUtils.generateXYSeries(timePoints[i], toPrimitive);
+            seriesKey = "track " + trackNumber + ", well " + well + "_" + i;
+            xySeries.setKey(seriesKey);
+            xySeriesCollection.addSeries(xySeries);
+        }
+        JFreeChart directionAutocorrelationsChart = ChartFactory.createScatterPlot("Direction Autocorrelation", "time index", "direction autocorrelation", xySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        JFreeChartUtils.setupDirectionAutocorrelationPlot(directionAutocorrelationsChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
+        directionAutocorrelationsChartPanel.setChart(directionAutocorrelationsChart);
     }
 
     /**
