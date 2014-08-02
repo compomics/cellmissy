@@ -10,6 +10,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
+import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.text.DecimalFormat;
@@ -35,9 +36,11 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataItem;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
+import org.jfree.util.ShapeUtilities;
 
 /**
  * This class contains some helpful JFreeChart utilities.
@@ -253,6 +256,24 @@ public class JFreeChartUtils {
         XYSeries series = new XYSeries("", false);
         for (int i = 0; i < yValues.length; i++) {
             double x = xValues[i];
+            double y = yValues[i];
+            series.add(x, y);
+        }
+        return series;
+    }
+
+
+    /**
+     *
+     * @param xValue
+     * @param yValues
+     * @return
+     */
+    public static XYSeries generateXYSeries(double xValue, double[] yValues) {
+        // autosort False
+        XYSeries series = new XYSeries("", false);
+        for (int i = 0; i < yValues.length; i++) {
+            double x = xValue;
             double y = yValues[i];
             series.add(x, y);
         }
@@ -526,9 +547,44 @@ public class JFreeChartUtils {
         int length = GuiUtils.getAvailableColors().length;
         int colorIndex = trackIndex % length;
         renderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[colorIndex]);
-        // show only line and no points
+        // show line AND points
         renderer.setSeriesLinesVisible(0, true);
-        renderer.setSeriesShapesVisible(0, false);
+        renderer.setSeriesShapesVisible(0, true);
+    }
+
+    /**
+     * Set up direction autocorrelation plot.
+     *
+     * @param chart: the chart to get the plot from
+     * @param trackIndex: right color for the line
+     */
+    public static void setupDirectionAutocorrelationPlot(JFreeChart chart, int trackIndex) {
+        // set up the plot
+        XYPlot xyPlot = chart.getXYPlot();
+        setupPlot(xyPlot);
+        xyPlot.setOutlineStroke(wideLine);
+        xyPlot.setRangeGridlinePaint(Color.black);
+        xyPlot.setDomainGridlinePaint(Color.black);
+        // set title font
+        chart.getTitle().setFont(chartFont);
+        // modify renderer
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xyPlot.getRenderer();
+        int length = GuiUtils.getAvailableColors().length;
+        int colorIndex = trackIndex % length;
+        Shape cross = ShapeUtilities.createDiagonalCross(2, 1);
+        for (int indexSeries = 0; indexSeries < xyPlot.getSeriesCount(); indexSeries++) {
+            renderer.setSeriesStroke(indexSeries, wideLine);
+            renderer.setSeriesShapesFilled(indexSeries, true);
+            renderer.setSeriesShape(indexSeries, cross);
+            if (indexSeries != 0) {
+                renderer.setSeriesPaint(indexSeries, Color.BLACK);
+                renderer.setSeriesLinesVisible(indexSeries, false);
+                // the mean values in the right color and with the line visible
+            } else {
+                renderer.setSeriesPaint(indexSeries, GuiUtils.getAvailableColors()[colorIndex]);
+                renderer.setSeriesLinesVisible(indexSeries, true);
+            }
+        }
     }
 
     /**

@@ -9,8 +9,10 @@ import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -182,5 +184,17 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
             directionAutocorrelationsList.add(currentDAs); // add the vector to the total list
         }
         stepCentricDataHolder.setDirectionAutocorrelations(directionAutocorrelationsList);
+    }
+
+    @Override
+    public void computeMeanDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder) {
+        List<Double[]> directionAutocorrelations = stepCentricDataHolder.getDirectionAutocorrelations();
+        Double[] meanDirectionAutocorrelations = new Double[directionAutocorrelations.size()];
+        for (int i = 0; i < directionAutocorrelations.size(); i++) {
+            Double[] coefficients = directionAutocorrelations.get(i);
+            Double meanDirectionAutocorrelation = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(coefficients));
+            meanDirectionAutocorrelations[i] = meanDirectionAutocorrelation;
+        }
+        stepCentricDataHolder.setMeanDirectionAutocorrelations(meanDirectionAutocorrelations);
     }
 }

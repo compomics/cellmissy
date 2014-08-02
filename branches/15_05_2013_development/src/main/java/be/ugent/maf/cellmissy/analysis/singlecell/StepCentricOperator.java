@@ -80,4 +80,11 @@ public interface StepCentricOperator {
      * @param stepCentricDataHolder
      */
     public void computeDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder);
+
+    /**
+     * Compute mean direction autocorrelations values.
+     *
+     * @param stepCentricDataHolder
+     */
+    public void computeMeanDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder);
 }

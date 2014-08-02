@@ -46,6 +46,9 @@ public class StepCentricDataHolder {
     // list of arrays for the direction autocorrelations
     // a direction autocorrelation is defined as the cosine of the difference between turning angles at successive time points
     private List<Double[]> directionAutocorrelations;
+    // an array for the mean values of the direction autocorrelations
+    // per each time point (overlapping time interval), a mean DA is computed
+    private Double[] meanDirectionAutocorrelations;
 
     /**
      * Constructor
@@ -166,5 +169,13 @@ public class StepCentricDataHolder {
 
     public void setDirectionAutocorrelations(List<Double[]> directionAutocorrelations) {
         this.directionAutocorrelations = directionAutocorrelations;
+    }
+
+    public Double[] getMeanDirectionAutocorrelations() {
+        return meanDirectionAutocorrelations;
+    }
+
+    public void setMeanDirectionAutocorrelations(Double[] meanDirectionAutocorrelations) {
+        this.meanDirectionAutocorrelations = meanDirectionAutocorrelations;
     }
 }
