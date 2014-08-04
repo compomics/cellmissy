@@ -250,7 +250,7 @@ public class SingleCellPreProcessingController {
      * @param plateCondition
      */
     public void updateMapWithCondition(PlateCondition plateCondition) {
-        String info = "* Fetching data for plate condition: " + plateCondition + "*";
+        String info = "* Fetching data for plate condition: " + plateCondition + " *";
         appendInfo(info);
         // fetch the track points from DB
         singleCellMainController.fetchTrackPoints(plateCondition);

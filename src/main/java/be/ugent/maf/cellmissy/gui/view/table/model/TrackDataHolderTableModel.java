@@ -91,12 +91,13 @@ public class TrackDataHolderTableModel extends AbstractTableModel {
         data[13][1] = cellCentricDataHolder.getCumulativeDistance();
         data[14][1] = cellCentricDataHolder.getEuclideanDistance();
         data[15][1] = cellCentricDataHolder.getEndPointDirectionalityRatio();
-        data[16][1] = cellCentricDataHolder.getMedianTurningAngle();
+        data[16][1] = cellCentricDataHolder.getMedianDirectionalityRatio();
+        data[17][1] = cellCentricDataHolder.getMedianTurningAngle();
         ConvexHull convexHull = cellCentricDataHolder.getConvexHull();
         MostDistantPointsPair mostDistantPointsPair = convexHull.getMostDistantPointsPair();
-        data[17][1] = mostDistantPointsPair.getMaxSpan();
-        data[18][1] = cellCentricDataHolder.getDisplacementRatio();
-        data[19][1] = cellCentricDataHolder.getOutreachRatio();
+        data[18][1] = mostDistantPointsPair.getMaxSpan();
+        data[19][1] = cellCentricDataHolder.getDisplacementRatio();
+        data[20][1] = cellCentricDataHolder.getOutreachRatio();
     }
 
     /**
@@ -109,7 +110,7 @@ public class TrackDataHolderTableModel extends AbstractTableModel {
         featuresNames.add("well");
         featuresNames.add("track number");
         featuresNames.add("length");
-        featuresNames.add("points number");
+        featuresNames.add("number of steps");
         featuresNames.add("duration (min)");
         featuresNames.add("x min (µm)");
         featuresNames.add("x max (µm)");
@@ -117,15 +118,16 @@ public class TrackDataHolderTableModel extends AbstractTableModel {
         featuresNames.add("y max (µm)");
         featuresNames.add("x ND (µm)");
         featuresNames.add("y ND (µm)");
-        featuresNames.add("MD (µm)");
-        featuresNames.add("MS (µm/min)");
-        featuresNames.add("CD (µm)");
-        featuresNames.add("ED (µm)");
-        featuresNames.add("directionality");
-        featuresNames.add("MTA (deg)");
-        featuresNames.add("max displ (µm)");
-        featuresNames.add("DR");
-        featuresNames.add("OR");
+        featuresNames.add("median displ. (µm)");
+        featuresNames.add("median speed (µm/min)");
+        featuresNames.add("cumulative dist. (µm)");
+        featuresNames.add("euclidean dist. (µm)");
+        featuresNames.add("end-point direct. ratio");
+        featuresNames.add("median direct. ratio");
+        featuresNames.add("median turning angle (deg)");
+        featuresNames.add("max displ. (µm)");
+        featuresNames.add("displ. ratio");
+        featuresNames.add("outreach ratio");
         return featuresNames;
     }
 }

@@ -240,7 +240,7 @@ public class SingleCellMainController {
         for (Well imagedWell : imagedWells) {
             Algorithm selectedAlgorithm = getSelectedAlgorithm();
             ImagingType selectedImagingType = getSelectedImagingType();
-            String info = "** fetching data for sample: " + imagedWell + "**";
+            String info = "** fetching data for sample: " + imagedWell + " **";
             singleCellPreProcessingController.appendInfo(info);
             wellService.fetchTrackPoints(imagedWell, selectedAlgorithm.getAlgorithmid(), selectedImagingType.getImagingTypeid());
         }
