@@ -41,6 +41,9 @@ public class CellCentricDataHolder {
     // this parameter is also known in literature as confinement ratio or meandering index
     // since the path length is at least equal to the displacement, this coefficient can vary between 0 and 1
     private double endPointDirectionalityRatio;
+    // median directionality ratio
+    // when computed in time (not end-point measurement!), the median directionality ratio is derived
+    private double medianDirectionalityRatio;
     // the convex hull of the track: the convex polygon containing all the points of the track
     private ConvexHull convexHull;
     // displacement ratio: displacement/maximal displacement
@@ -156,6 +159,14 @@ public class CellCentricDataHolder {
 
     public void setEndPointDirectionalityRatio(double endPointDirectionalityRatio) {
         this.endPointDirectionalityRatio = endPointDirectionalityRatio;
+    }
+
+    public double getMedianDirectionalityRatio() {
+        return medianDirectionalityRatio;
+    }
+
+    public void setMedianDirectionalityRatio(double medianDirectionalityRatio) {
+        this.medianDirectionalityRatio = medianDirectionalityRatio;
     }
 
     public ConvexHull getConvexHull() {

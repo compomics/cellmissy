@@ -171,13 +171,15 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
         double[] timeIndexes = stepCentricDataHolder.getTimeIndexes();
         Double[] turningAngles = stepCentricDataHolder.getTurningAngles();
         List<Double[]> directionAutocorrelationsList = new ArrayList<>();
+        Double[] firstCoefficient = new Double[]{1.0}; // first coefficient is 1
+        directionAutocorrelationsList.add(firstCoefficient);
         for (int counter = 0; counter < timeIndexes.length - 2; counter++) {
-            // current vector for direction autocorrelations
+            // create a new current vector for direction autocorrelations
             Double[] currentDAs = new Double[turningAngles.length - 2 - counter];
             for (int row = 0; row < currentDAs.length; row++) {
                 double currentTA = turningAngles[row]; // current turning angle
                 double successiveTA = turningAngles[row + counter + 1]; // successive turning angle
-                double theta = currentTA - successiveTA; // the theta difference
+                double theta = currentTA - successiveTA; // the theta difference between them
                 double currentDA = Math.cos(Math.toRadians(theta)); // current direction autocorrelation
                 currentDAs[row] = currentDA; // put it in the vector
             }
@@ -189,12 +191,12 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     @Override
     public void computeMeanDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder) {
         List<Double[]> directionAutocorrelations = stepCentricDataHolder.getDirectionAutocorrelations();
-        Double[] meanDirectionAutocorrelations = new Double[directionAutocorrelations.size()];
+        Double[] medianDirectionAutocorrelations = new Double[directionAutocorrelations.size()];
         for (int i = 0; i < directionAutocorrelations.size(); i++) {
             Double[] coefficients = directionAutocorrelations.get(i);
-            Double meanDirectionAutocorrelation = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(coefficients));
-            meanDirectionAutocorrelations[i] = meanDirectionAutocorrelation;
+            Double medianDirectionAutocorrelation = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(coefficients));
+            medianDirectionAutocorrelations[i] = medianDirectionAutocorrelation;
         }
-        stepCentricDataHolder.setMeanDirectionAutocorrelations(meanDirectionAutocorrelations);
+        stepCentricDataHolder.setMedianDirectionAutocorrelations(medianDirectionAutocorrelations);
     }
 }

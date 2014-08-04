@@ -262,7 +262,6 @@ public class JFreeChartUtils {
         return series;
     }
 
-
     /**
      *
      * @param xValue
@@ -277,6 +276,19 @@ public class JFreeChartUtils {
             double y = yValues[i];
             series.add(x, y);
         }
+        return series;
+    }
+
+    /**
+     *
+     * @param xValue
+     * @param yValue
+     * @return
+     */
+    public static XYSeries generateXYSeries(double xValue, double yValue) {
+        // autosort False
+        XYSeries series = new XYSeries("", false);
+        series.add(xValue, yValue);
         return series;
     }
 
@@ -585,6 +597,7 @@ public class JFreeChartUtils {
                 renderer.setSeriesLinesVisible(indexSeries, true);
             }
         }
+        xyPlot.getDomainAxis().setLowerBound(-0.3);
     }
 
     /**

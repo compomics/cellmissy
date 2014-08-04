@@ -52,6 +52,7 @@ public class TrackOperatorImpl implements TrackOperator {
         cellCentricOperator.computeEuclideanDistance(stepCentricDataHolder, cellCentricDataHolder);
         cellCentricOperator.computeMedianSpeed(stepCentricDataHolder, cellCentricDataHolder);
         cellCentricOperator.computeEndPointDirectionalityRatio(cellCentricDataHolder);
+        cellCentricOperator.computeMedianDirectionalityRatio(stepCentricDataHolder, cellCentricDataHolder);
         cellCentricOperator.computeConvexHull(stepCentricDataHolder, cellCentricDataHolder);
         cellCentricOperator.computeDisplacementRatio(cellCentricDataHolder);
         cellCentricOperator.computeOutreachRatio(cellCentricDataHolder);

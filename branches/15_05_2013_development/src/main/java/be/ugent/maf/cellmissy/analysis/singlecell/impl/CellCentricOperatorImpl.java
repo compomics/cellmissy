@@ -111,6 +111,14 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     }
 
     @Override
+    public void computeMedianDirectionalityRatio(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
+        Double[] directionalityRatios = stepCentricDataHolder.getDirectionalityRatios();
+        Double[] excludeNullValues = AnalysisUtils.excludeNullValues(directionalityRatios);
+        double medianDirectionalityRatio = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
+        cellCentricDataHolder.setMedianDirectionalityRatio(medianDirectionalityRatio);
+    }
+
+    @Override
     public void computeConvexHull(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
         Track track = stepCentricDataHolder.getTrack();
         ConvexHull convexHull = new ConvexHull();

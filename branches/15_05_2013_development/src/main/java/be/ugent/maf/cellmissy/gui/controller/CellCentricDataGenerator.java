@@ -28,11 +28,11 @@ import java.util.logging.Logger;
 import org.springframework.context.ApplicationContext;
 
 /**
- * Copy of Playground class
+ * This is a playground to generate files for downstream analysis.
  *
  * @author Paola Masuzzo
  */
-public class Playground1 {
+public class CellCentricDataGenerator {
 
     public static void main(String[] args) {
 
@@ -47,14 +47,14 @@ public class Playground1 {
         Project project = projectService.findById(4L);
         List<Experiment> experiments = experimentService.findExperimentsByProjectId(project.getProjectid());
         // root folder
-        File folder = new File("Z:\\paola\\computations_CellMissy");
+        File folder = new File("Z:\\paola\\cellCentricComputations_CellMissy");
         // subfolder for project
         File subfolder = new File(folder, project + "_" + project.getProjectDescription());
         subfolder.mkdir();
 //        List<List<TrackDataHolder>> biologicalConditions = new ArrayList<>();
         int totTracks = 0;
         for (Experiment experiment : experiments) {
-            if (experiment.getExperimentNumber() > 14) {
+//            if (experiment.getExperimentNumber() == 17) {
 
                 List<List<TrackDataHolder>> biologicalConditions = new ArrayList<>();
                 String expPurpose = experiment.getPurpose();
@@ -62,9 +62,6 @@ public class Playground1 {
                 expPurpose = expPurpose.replaceAll("\\s+", "");
                 expPurpose = expPurpose.replaceAll(",", "_");
                 expPurpose = expPurpose.replace("-->", "_");
-
-//                String expPurpose = "Single_cells_2D";
-
 
                 System.out.println("exp: " + expPurpose);
                 String fileName = project + "_" + project.getProjectDescription() + "_" + experiment + "_" + expPurpose + ".csv";
@@ -88,7 +85,7 @@ public class Playground1 {
                 for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
                     // create a new object to hold pre-processing results
                     SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
-                    System.out.println("****************computations started for condition: " + plateCondition);
+                    System.out.println("****************cell-centric computations started for condition: " + plateCondition);
                     // do the computations
                     singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition, conversionFactor, experiment.getExperimentInterval());
                     singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
@@ -108,7 +105,7 @@ public class Playground1 {
                     singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
                     singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
                     List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-                    System.out.println("****************computations ended for condition: " + plateCondition);
+                    System.out.println("****************cell-centric computations ended for condition: " + plateCondition);
                     biologicalConditions.add(trackDataHolders);
                     System.out.println("$$$ tracks for current conditions: " + trackDataHolders.size());
                     System.out.println("*-*-*" + plateCondition + " processed");
@@ -118,10 +115,10 @@ public class Playground1 {
                 System.out.println("$$$$$$ total tracks so far: " + totTracks);
 //            }
 
-                try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(subfolder, fileName)))) {
+                try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(folder, fileName)))) {
                     System.out.println("csv file succ. created!");
                     // header of the file
-                    bufferedWriter.append("id" + " " + "label" + " " + "dur" + " " + "xmin" + " " + "xmax" + " " + "ymin" + " " + "ymax" + " "
+                    bufferedWriter.append("id" + " " + "label" + " " + "steps" + " " + "xmin" + " " + "xmax" + " " + "ymin" + " " + "ymax" + " "
                             + "xnd" + " " + "ynd" + " " + "cd" + " " + "ed" + " " + "endpointdir" + " " + "md" + " " + "ms" + " " + "mta" + " " + "maxdis" + " "
                             + "dr" + " " + "or" + " " + "perim" + " " + "area" + " " + "acirc" + " " + "dir2" + " " + "vertices");
                     // new line
@@ -137,7 +134,7 @@ public class Playground1 {
                             bufferedWriter.append(" ");
                             bufferedWriter.append("-1");
                             bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getTrackDuration());
+                            bufferedWriter.append("" + trackDataHolder.getTrack().getTrackPointList().size());
                             bufferedWriter.append(" ");
                             bufferedWriter.append("" + cellCentricDataHolder.getxMin());
                             bufferedWriter.append(" ");
@@ -182,10 +179,10 @@ public class Playground1 {
                         }
                     }
                 } catch (IOException ex) {
-                    Logger.getLogger(Playground1.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(CellCentricDataGenerator.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-            }
+//            }
         }
     }
 }

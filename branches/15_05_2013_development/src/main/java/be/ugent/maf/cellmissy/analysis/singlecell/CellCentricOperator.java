@@ -77,6 +77,15 @@ public interface CellCentricOperator {
     public void computeEndPointDirectionalityRatio(CellCentricDataHolder cellCentricDataHolder);
 
     /**
+     * Compute the median directionality ratio: the directionality ratio is
+     * computed in time and then the median value is derived.
+     *
+     * @param stepCentricDataHolder
+     * @param cellCentricDataHolder
+     */
+    public void computeMedianDirectionalityRatio(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+
+    /**
      * Compute convex hull and relative measurements for a certain track.
      *
      * @param stepCentricDataHolder

@@ -48,7 +48,7 @@ public class StepCentricDataHolder {
     private List<Double[]> directionAutocorrelations;
     // an array for the mean values of the direction autocorrelations
     // per each time point (overlapping time interval), a mean DA is computed
-    private Double[] meanDirectionAutocorrelations;
+    private Double[] medianDirectionAutocorrelations;
 
     /**
      * Constructor
@@ -171,11 +171,11 @@ public class StepCentricDataHolder {
         this.directionAutocorrelations = directionAutocorrelations;
     }
 
-    public Double[] getMeanDirectionAutocorrelations() {
-        return meanDirectionAutocorrelations;
+    public Double[] getMedianDirectionAutocorrelations() {
+        return medianDirectionAutocorrelations;
     }
 
-    public void setMeanDirectionAutocorrelations(Double[] meanDirectionAutocorrelations) {
-        this.meanDirectionAutocorrelations = meanDirectionAutocorrelations;
+    public void setMedianDirectionAutocorrelations(Double[] medianDirectionAutocorrelations) {
+        this.medianDirectionAutocorrelations = medianDirectionAutocorrelations;
     }
 }
