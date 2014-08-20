@@ -73,7 +73,7 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     @Override
     public void computeDeltaMovements(StepCentricDataHolder stepCentricDataHolder) {
         Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
-        Double[][] deltaMovements = new Double[coordinatesMatrix.length][coordinatesMatrix[0].length];
+        Double[][] deltaMovements = new Double[coordinatesMatrix.length - 1][coordinatesMatrix[0].length];
         // we need to start from the second row
         for (int row = 1; row < coordinatesMatrix.length; row++) {
             // get current coordinates
@@ -98,13 +98,11 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
         for (int row = 0; row < instantaneousDisplacements.length; row++) {
             Double deltaX = deltaMovements[row][0];
             Double deltaY = deltaMovements[row][1];
-            if (deltaX != null && deltaY != null) {
-                // this is simply the Euclidean distance between two consecutive time points
-                // deltaZ = sqrt(deltaX² + deltaY²)
-                // dividing this quantity for the time frame will give the speed information
-                Double instantaneousDisplacement = Math.hypot(deltaX, deltaY);
-                instantaneousDisplacements[row] = instantaneousDisplacement;
-            }
+            // this is simply the Euclidean distance between two consecutive time points
+            // deltaZ = sqrt(deltaX² + deltaY²)
+            // dividing this quantity for the time frame will give the speed information
+            Double instantaneousDisplacement = Math.hypot(deltaX, deltaY);
+            instantaneousDisplacements[row] = instantaneousDisplacement;
         }
         stepCentricDataHolder.setInstantaneousDisplacements(instantaneousDisplacements);
     }
@@ -116,19 +114,17 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
         for (int row = 0; row < turningAngles.length; row++) {
             Double deltaX = deltaMovements[row][0];
             Double deltaY = deltaMovements[row][1];
-            if (deltaX != null && deltaY != null) {
-                // angle = degrees(atan(deltaY/deltaX))
-                // Returns the angle theta from the conversion of rectangular coordinates (x, y)
-                // to polar coordinates (r, theta).
-                // This method computes the phase theta by computing an arc tangent of y/x in the range of -pi to pi.
-                Double angleRadians = Math.atan(deltaY / deltaX);
-                // go from radians to degrees
-                Double angleDegrees = Math.toDegrees(angleRadians);
-                if (angleDegrees < 0) {
-                    angleDegrees = angleDegrees + 360;
-                }
-                turningAngles[row] = angleDegrees;
+            // angle = degrees(atan(deltaY/deltaX))
+            // Returns the angle theta from the conversion of rectangular coordinates (x, y)
+            // to polar coordinates (r, theta).
+            // This method computes the phase theta by computing an arc tangent of y/x in the range of -pi to pi.
+            Double angleRadians = Math.atan(deltaY / deltaX);
+            // go from radians to degrees
+            Double angleDegrees = Math.toDegrees(angleRadians);
+            if (angleDegrees < 0) {
+                angleDegrees = angleDegrees + 360;
             }
+            turningAngles[row] = angleDegrees;
         }
         stepCentricDataHolder.setTurningAngles(turningAngles);
     }
@@ -137,7 +133,7 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     public void computeDirectionalityRatios(StepCentricDataHolder stepCentricDataHolder) {
         Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
         Double[] instantaneousDisplacements = stepCentricDataHolder.getInstantaneousDisplacements();
-        Double[] directionalityRatios = new Double[coordinatesMatrix.length];
+        Double[] directionalityRatios = new Double[instantaneousDisplacements.length];
         // first coordinates (x, y)
         double firstX = coordinatesMatrix[0][0];
         double firstY = coordinatesMatrix[0][1];
@@ -152,9 +148,7 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
             double euclDistToStartPoint = Math.hypot(deltaX, deltaY);
             double tempCumDist = 0;
             for (int i = 0; i < row; i++) {
-                if (instantaneousDisplacements[i] != null) {
-                    tempCumDist += instantaneousDisplacements[i];
-                }
+                tempCumDist += instantaneousDisplacements[i];
             }
             double currentDirectionalityRatio = euclDistToStartPoint / tempCumDist;
             directionalityRatios[row - 1] = currentDirectionalityRatio;
@@ -168,14 +162,13 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
 
     @Override
     public void computeDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder) {
-        double[] timeIndexes = stepCentricDataHolder.getTimeIndexes();
         Double[] turningAngles = stepCentricDataHolder.getTurningAngles();
         List<Double[]> directionAutocorrelationsList = new ArrayList<>();
         Double[] firstCoefficient = new Double[]{1.0}; // first coefficient is 1
         directionAutocorrelationsList.add(firstCoefficient);
-        for (int counter = 0; counter < timeIndexes.length - 2; counter++) {
+        for (int counter = 0; counter < turningAngles.length - 1; counter++) {
             // create a new current vector for direction autocorrelations
-            Double[] currentDAs = new Double[turningAngles.length - 2 - counter];
+            Double[] currentDAs = new Double[turningAngles.length - 1 - counter];
             for (int row = 0; row < currentDAs.length; row++) {
                 double currentTA = turningAngles[row]; // current turning angle
                 double successiveTA = turningAngles[row + counter + 1]; // successive turning angle
