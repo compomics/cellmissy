@@ -87,12 +87,16 @@ public class StepCentricOperatorTest {
         stepCentricOperator.computeDirectionAutocorrelations(stepCentricDataHolder);
         List<Double[]> directionAutocorrelations = stepCentricDataHolder.getDirectionAutocorrelations();
         int size = directionAutocorrelations.size();
-        Assert.assertEquals(4, size);
-        // first time interval: 4 direction autocorrelations
+        Assert.assertEquals(5, size);
+        // time zero: direction autocorrelation only 1
         Double[] timeZero = directionAutocorrelations.get(0);
-        Assert.assertEquals(4, timeZero.length);
-        Assert.assertEquals(0.351, AnalysisUtils.roundThreeDecimals(timeZero[0]));
-        Assert.assertEquals(-0.447, AnalysisUtils.roundThreeDecimals(timeZero[1]));
+        Assert.assertEquals(1, timeZero.length);
+        Assert.assertEquals(1.0, timeZero[0]);
+        // first time interval: 4 direction autocorrelations
+        Double[] timeOne = directionAutocorrelations.get(1);
+        Assert.assertEquals(timeIndexes.length - 2, timeOne.length);
+        Assert.assertEquals(0.351, AnalysisUtils.roundThreeDecimals(timeOne[0]));
+        Assert.assertEquals(-0.447, AnalysisUtils.roundThreeDecimals(timeOne[1]));
         // last time interval: only one direction autocorrelation
         Double[] lastTime = directionAutocorrelations.get(size - 1);
         Assert.assertEquals(1, lastTime.length);

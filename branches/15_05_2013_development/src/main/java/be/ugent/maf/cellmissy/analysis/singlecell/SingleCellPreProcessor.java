@@ -71,6 +71,13 @@ public interface SingleCellPreProcessor {
     public void generateDirectionalityRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
+     * Generate the median directionality ratios vector.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateMedianDirectionalityRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
      * Generate a vector with track displacements.
      *
      * @param singleCellPreProcessingResults

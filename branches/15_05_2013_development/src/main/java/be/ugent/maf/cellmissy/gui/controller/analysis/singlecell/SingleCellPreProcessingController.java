@@ -275,7 +275,9 @@ public class SingleCellPreProcessingController {
             singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
             appendInfo("generating directionality ratios...");
             singleCellPreProcessor.generateDirectionalityRatiosVector(singleCellPreProcessingResults);
-            appendInfo("generating track displacements ...");
+            appendInfo("generating track displacements...");
+            singleCellPreProcessor.generateMedianDirectionalityRatiosVector(singleCellPreProcessingResults);
+            appendInfo("generating median directionality ratios...");
             singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
             appendInfo("generating cumulative distances...");
             singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);

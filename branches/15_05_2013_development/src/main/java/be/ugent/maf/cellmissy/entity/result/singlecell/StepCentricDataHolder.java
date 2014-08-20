@@ -40,6 +40,7 @@ public class StepCentricDataHolder {
     private Double[] turningAngles;
     // array for directionality ratios
     // this is the consistency of motion: the ratio between the net displacement and the cumulative distance at each travelled time point
+    // the math concept is the same as for the end point directionality vector, but this is computed in time
     private Double[] directionalityRatios;
     // array for the MSD values
     private Double[] meanSquareDisplacements;

@@ -142,6 +142,18 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     }
 
     @Override
+    public void generateMedianDirectionalityRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+        Double[] medianDirectionalityRatiosVector = new Double[trackDataHolders.size()];
+        for (int i = 0; i < medianDirectionalityRatiosVector.length; i++) {
+            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
+            double trackAngle = trackDataHolder.getCellCentricDataHolder().getMedianDirectionalityRatio();
+            medianDirectionalityRatiosVector[i] = trackAngle;
+        }
+        singleCellPreProcessingResults.setMedianDirectionalityRatiosVector(medianDirectionalityRatiosVector);
+    }
+
+    @Override
     public void generateTrackDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
         Double[] trackDisplacementsVector = new Double[trackDataHolders.size()];

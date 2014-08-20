@@ -29,6 +29,8 @@ public class SingleCellPreProcessingResults {
     private Double[] instantaneousDisplacementsVector;
     // array for instantaneous directionality ratios
     private Double[] directionalityRatiosVector;
+    // array for the median directionality ratios (median in time)
+    private Double[] medianDirectionalityRatiosVector;
     // array for track displacements
     private Double[] trackDisplacementsVector;
     // array for track speeds
@@ -96,6 +98,14 @@ public class SingleCellPreProcessingResults {
 
     public void setDirectionalityRatiosVector(Double[] directionalityRatiosVector) {
         this.directionalityRatiosVector = directionalityRatiosVector;
+    }
+
+    public Double[] getMedianDirectionalityRatiosVector() {
+        return medianDirectionalityRatiosVector;
+    }
+
+    public void setMedianDirectionalityRatiosVector(Double[] medianDirectionalityRatiosVector) {
+        this.medianDirectionalityRatiosVector = medianDirectionalityRatiosVector;
     }
 
     public Double[] getTrackDisplacementsVector() {

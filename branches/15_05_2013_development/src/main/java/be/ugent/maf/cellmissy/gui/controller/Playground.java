@@ -107,6 +107,7 @@ public class Playground {
                         singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateDirectionalityRatiosVector(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateMedianDirectionalityRatiosVector(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
                         singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
