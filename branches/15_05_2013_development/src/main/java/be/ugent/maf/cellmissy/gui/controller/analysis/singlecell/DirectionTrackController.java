@@ -39,6 +39,7 @@ public class DirectionTrackController {
     private ChartPanel directionalityRatioChartPanel;
     private ChartPanel directionAutocorrelationsChartPanel;
     private ChartPanel directionAutocorrelationTimeOneChartPanel;
+    private ChartPanel polarChartPanel;
     // parent controller
     @Autowired
     private ExploreTrackController exploreTrackController;
@@ -117,6 +118,7 @@ public class DirectionTrackController {
     }
 
     /**
+     * This plots the direction autocorrelation values but only at time 1.
      *
      * @param trackDataHolder
      */
@@ -143,6 +145,25 @@ public class DirectionTrackController {
     }
 
     /**
+     *
+     * @param trackDataHolder
+     */
+    public void plotPolarChart(TrackDataHolder trackDataHolder) {
+        StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
+        Double[] turningAngles = stepCentricDataHolder.getTurningAngles();
+        Double[] instantaneousDisplacements = stepCentricDataHolder.getInstantaneousDisplacements();
+        Track track = trackDataHolder.getTrack();
+        int trackNumber = track.getTrackNumber();
+        Well well = track.getWellHasImagingType().getWell();
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        XYSeries xySeries = JFreeChartUtils.generateXYSeries(ArrayUtils.toPrimitive(turningAngles), ArrayUtils.toPrimitive(instantaneousDisplacements));
+        xySeries.setKey("track " + trackNumber + ", well " + well + "_time 1");
+        xySeriesCollection.addSeries(xySeries);
+        JFreeChart polarChart = ChartFactory.createPolarChart("track " + trackNumber + ", well " + well + " - Polar Plot", xySeriesCollection, false, true, false);
+        polarChartPanel.setChart(polarChart);
+    }
+
+    /**
      * Initialize main view
      */
     private void initMainView() {
@@ -152,9 +173,12 @@ public class DirectionTrackController {
         directionAutocorrelationsChartPanel.setOpaque(false);
         directionAutocorrelationTimeOneChartPanel = new ChartPanel(null);
         directionAutocorrelationTimeOneChartPanel.setOpaque(false);
+        polarChartPanel = new ChartPanel(null);
+        polarChartPanel.setOpaque(false);
         ExploreTrackPanel exploreTrackPanel = exploreTrackController.getExploreTrackPanel();
         exploreTrackPanel.getDirectionalityRatioGraphicsParentPanel().add(directionalityRatioChartPanel, gridBagConstraints);
         exploreTrackPanel.getDirectionAutocorrelationsGraphicsParentPanel().add(directionAutocorrelationsChartPanel, gridBagConstraints);
         exploreTrackPanel.getDirectionAutocorrelationTimeOneGraphicsParentPanel().add(directionAutocorrelationTimeOneChartPanel, gridBagConstraints);
+        exploreTrackPanel.getPolarPlotGraphicsParentPanel().add(polarChartPanel, gridBagConstraints);
     }
 }

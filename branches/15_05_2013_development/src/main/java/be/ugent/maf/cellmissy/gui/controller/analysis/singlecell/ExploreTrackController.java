@@ -481,6 +481,8 @@ public class ExploreTrackController {
         directionTrackController.plotDirectionAutocorrelationsInTime(trackDataHolder);
         // plot direction autocorrelation at time one
         directionTrackController.plotDirectionAutocorrelationTimeOne(trackDataHolder);
+        // plot polar chart
+        directionTrackController.plotPolarChart(trackDataHolder);
     }
 
     /**
