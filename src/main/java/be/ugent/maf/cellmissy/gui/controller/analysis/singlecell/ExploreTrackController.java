@@ -8,7 +8,6 @@ import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
-import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.ExploreTrackPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsRendererGiver;
@@ -24,6 +23,7 @@ import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -172,9 +172,6 @@ public class ExploreTrackController {
     }
 
     /**
-     * Private classes and methods
-     */
-    /**
      * Initialize plot settings menu bar
      */
     private void initPlotSettingsMenuBar() {
@@ -272,6 +269,7 @@ public class ExploreTrackController {
         });
 
         // action listeners
+        // play a track in time
         exploreTrackPanel.getPlayButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -282,6 +280,7 @@ public class ExploreTrackController {
             }
         });
 
+        // stop a track in time
         exploreTrackPanel.getStopButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -553,6 +552,39 @@ public class ExploreTrackController {
     }
 
     /**
+     * Setup a convex hull chart for a selected track.
+     *
+     * @param trackDataHolder
+     */
+    private void setupConvexHullChart(JFreeChart convexHullChart, TrackDataHolder trackDataHolder) {
+        XYPlot xyPlot = convexHullChart.getXYPlot();
+        JFreeChartUtils.setupXYPlot(xyPlot);
+        xyPlot.setDomainGridlinePaint(Color.black);
+        // set title font
+        convexHullChart.getTitle().setFont(JFreeChartUtils.getChartFont());
+        // set up the chart
+        int trackIndex = trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder);
+        // assign 2 renderers: one for the coordinates line and one for the convex hull plot
+        XYLineAndShapeRenderer coordinatesRenderer = new XYLineAndShapeRenderer();
+        coordinatesRenderer.setSeriesStroke(0, JFreeChartUtils.getWideLine());
+        int length = GuiUtils.getAvailableColors().length;
+        int colorIndex = trackIndex % length;
+        coordinatesRenderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[colorIndex]);
+        // show both lines and points
+        coordinatesRenderer.setSeriesLinesVisible(0, true);
+        coordinatesRenderer.setSeriesShapesVisible(0, true);
+        xyPlot.setRenderer(0, coordinatesRenderer);
+        XYLineAndShapeRenderer convexHullRenderer = new XYLineAndShapeRenderer();
+        convexHullRenderer.setSeriesStroke(0, JFreeChartUtils.getDashedLine());
+        convexHullRenderer.setSeriesPaint(0, Color.black);
+        xyPlot.setRenderer(1, convexHullRenderer);
+        XYSeriesCollection dataset = (XYSeriesCollection) xyPlot.getDataset(0);
+        double minY = dataset.getSeries(0).getMinY();
+        double maxY = dataset.getSeries(0).getMaxY();
+        xyPlot.getRangeAxis().setRange(minY, maxY);
+    }
+
+    /**
      * Given a track data holder, plot the track coordinates surrounded by the
      * convex hull computed for the set of points that belong to the track.
      *
@@ -599,14 +631,12 @@ public class ExploreTrackController {
         XYPlot xyPlot = convexHullChart.getXYPlot();
         xyPlot.setDataset(0, coordinatesDataset);
         xyPlot.setDataset(1, hullDataset);
-        // set up the chart
-        int trackIndex = trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder);
-        JFreeChartUtils.setupConvexHullChart(convexHullChart, trackIndex);
+        setupConvexHullChart(convexHullChart, trackDataHolder);
         convexHullChartPanel.setChart(convexHullChart);
     }
 
     /**
-     *
+     * Swing worker to play a track.
      */
     private class PlayTrackSwingWorker extends SwingWorker<Void, Void> {
 

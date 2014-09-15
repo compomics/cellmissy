@@ -12,15 +12,25 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.ExploreTrackPan
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+import static be.ugent.maf.cellmissy.utils.JFreeChartUtils.setupXYPlot;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
+import java.awt.Shape;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.PolarPlot;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.DefaultPolarItemRenderer;
+import org.jfree.chart.renderer.PolarItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.util.ShapeUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -54,6 +64,67 @@ public class DirectionTrackController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         // init main view
         initMainView();
+    }
+
+    /**
+     * Set up direction autocorrelation plot.
+     *
+     * @param chart: the chart to get the plot from
+     * @param trackDataHolder: to get the right color for the line
+     */
+    private void setupDirectionAutocorrelationPlot(JFreeChart chart, TrackDataHolder trackDataHolder) {
+        // set up the plot
+        XYPlot xyPlot = chart.getXYPlot();
+        setupXYPlot(xyPlot);
+        xyPlot.setOutlineStroke(JFreeChartUtils.getWideLine());
+        xyPlot.setRangeGridlinePaint(Color.black);
+        xyPlot.setDomainGridlinePaint(Color.black);
+        // set title font
+        chart.getTitle().setFont(JFreeChartUtils.getChartFont());
+        // modify renderer
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xyPlot.getRenderer();
+        int length = GuiUtils.getAvailableColors().length;
+        int trackIndex = exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder);
+        int colorIndex = trackIndex % length;
+        Shape cross = ShapeUtilities.createDiagonalCross(2, 1);
+        for (int indexSeries = 0; indexSeries < xyPlot.getSeriesCount(); indexSeries++) {
+            renderer.setSeriesStroke(indexSeries, JFreeChartUtils.getWideLine());
+            renderer.setSeriesShapesFilled(indexSeries, true);
+            renderer.setSeriesShape(indexSeries, cross);
+            if (indexSeries != 0) {
+                renderer.setSeriesPaint(indexSeries, Color.BLACK);
+                renderer.setSeriesLinesVisible(indexSeries, false);
+                // the mean values in the right color and with the line visible
+            } else {
+                renderer.setSeriesPaint(indexSeries, GuiUtils.getAvailableColors()[colorIndex]);
+                renderer.setSeriesLinesVisible(indexSeries, true);
+            }
+        }
+        xyPlot.getDomainAxis().setLowerBound(-0.3);
+    }
+
+    /**
+     *
+     * @param chart: the chart to get the plot from
+     * @param trackDataHolder: to get the right color for the line
+     */
+    private void setupPolarPlot(JFreeChart chart, TrackDataHolder trackDataHolder) {
+        // set up the plot
+        PolarPlot polarPlot = (PolarPlot) chart.getPlot();
+        chart.getTitle().setFont(JFreeChartUtils.getChartFont());
+        polarPlot.setBackgroundPaint(Color.white);
+        polarPlot.setAngleGridlinePaint(Color.black);
+        // hide the border of the sorrounding box
+        polarPlot.setOutlinePaint(Color.white);
+        polarPlot.setAngleLabelFont(JFreeChartUtils.getChartFont());
+        polarPlot.setAngleLabelPaint(Color.black);
+        // modify renderer
+        DefaultPolarItemRenderer renderer = (DefaultPolarItemRenderer) polarPlot.getRenderer();
+        renderer.setSeriesStroke(0, JFreeChartUtils.getWideLine());
+        int length = GuiUtils.getAvailableColors().length;
+        int trackIndex = exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder);
+        int colorIndex = trackIndex % length;
+        renderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[colorIndex]);
     }
 
     /**
@@ -113,7 +184,7 @@ public class DirectionTrackController {
             xySeriesCollection.addSeries(xySeries);
         }
         JFreeChart directionAutocorrelationsChart = ChartFactory.createScatterPlot("track " + trackNumber + ", well " + well + " - Direction Autocorrelation", "time", "direction autocorrelation", xySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-        JFreeChartUtils.setupDirectionAutocorrelationPlot(directionAutocorrelationsChart, exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
+        setupDirectionAutocorrelationPlot(directionAutocorrelationsChart, trackDataHolder);
         directionAutocorrelationsChartPanel.setChart(directionAutocorrelationsChart);
     }
 
@@ -140,7 +211,7 @@ public class DirectionTrackController {
         xySeries.setKey("track " + trackNumber + ", well " + well + "_time 1");
         xySeriesCollection.addSeries(xySeries);
         JFreeChart directionAutocorrelationTimeOneChart = ChartFactory.createScatterPlot("track " + trackNumber + ", well " + well + " - Direction Autocorrelation-Time 1", "time index", "direction autocorrelation-Time 1", xySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-        JFreeChartUtils.setupDirectionAutocorrelationPlot(directionAutocorrelationTimeOneChart, exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
+        setupDirectionAutocorrelationPlot(directionAutocorrelationTimeOneChart, trackDataHolder);
         directionAutocorrelationTimeOneChartPanel.setChart(directionAutocorrelationTimeOneChart);
     }
 
@@ -160,11 +231,12 @@ public class DirectionTrackController {
         xySeries.setKey("track " + trackNumber + ", well " + well + "_time 1");
         xySeriesCollection.addSeries(xySeries);
         JFreeChart polarChart = ChartFactory.createPolarChart("track " + trackNumber + ", well " + well + " - Polar Plot", xySeriesCollection, false, true, false);
+        setupPolarPlot(polarChart, trackDataHolder);
         polarChartPanel.setChart(polarChart);
     }
 
     /**
-     * Initialize main view
+     * Initialize main view.
      */
     private void initMainView() {
         directionalityRatioChartPanel = new ChartPanel(null);
