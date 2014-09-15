@@ -20,6 +20,7 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplacementsPa
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
@@ -61,7 +62,6 @@ public class SingleCellPreProcessingController {
     private JTableBinding tracksTableBinding;
     private JTableBinding trackPointsTableBinding;
     private Map<PlateCondition, SingleCellPreProcessingResults> preProcessingMap;
-    private final static String newLine = "\n";
     // view
     private SingleCellAnalysisPanel singleCellAnalysisPanel;
     // parent controller
@@ -340,6 +340,7 @@ public class SingleCellPreProcessingController {
      * @param info
      */
     public void appendInfo(String info) {
+        String newLine = JFreeChartUtils.getNewLine();
         singleCellAnalysisPanel.getLogTextArea().append(info + newLine);
         singleCellAnalysisPanel.getLogTextArea().setCaretPosition(singleCellAnalysisPanel.getLogTextArea().getDocument().getLength());
     }

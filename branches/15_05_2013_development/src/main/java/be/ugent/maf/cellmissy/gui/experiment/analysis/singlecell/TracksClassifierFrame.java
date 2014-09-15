@@ -342,9 +342,6 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
         XYPlot xyPlot = convexHullChart.getXYPlot();
         xyPlot.setDataset(0, coordinatesDataset);
         xyPlot.setDataset(1, hullDataset);
-        // set up the chart
-        int trackIndex = trackDataHolderBindingList.indexOf(trackDataHolder);
-        JFreeChartUtils.setupConvexHullChart(convexHullChart, trackIndex);
         convexHullChartPanel.setChart(convexHullChart);
     }
 

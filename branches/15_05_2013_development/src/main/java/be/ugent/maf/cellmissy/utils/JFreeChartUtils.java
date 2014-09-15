@@ -52,6 +52,8 @@ public class JFreeChartUtils {
     private static BasicStroke normalLine = new BasicStroke(1.5f);
     // ticker basic stroke: wide line
     private static BasicStroke wideLine = new BasicStroke(2.5f);
+    // new line, enter
+    private final static String newLine = "\n";
     // dashed line
     private static BasicStroke dashedLine = new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[]{6.0f, 6.0f}, 0.0f);
     // font for the chart elements
@@ -64,7 +66,6 @@ public class JFreeChartUtils {
     /**
      * Getters
      *
-     * @return
      */
     public static BasicStroke getNormalLine() {
         return normalLine;
@@ -72,6 +73,10 @@ public class JFreeChartUtils {
 
     public static BasicStroke getWideLine() {
         return wideLine;
+    }
+
+    public static String getNewLine() {
+        return newLine;
     }
 
     public static BasicStroke getDashedLine() {
@@ -87,6 +92,30 @@ public class JFreeChartUtils {
     }
 
     // public methods
+    /**
+     * Setup a x-y plot
+     *
+     * @param xYPlot
+     */
+    public static void setupXYPlot(XYPlot xYPlot) {
+        // set background to white and grid color to black
+        xYPlot.setBackgroundPaint(Color.white);
+        xYPlot.setRangeGridlinePaint(Color.black);
+        // hide the border of the sorrounding box
+        xYPlot.setOutlinePaint(Color.white);
+        // get domanin and range axes
+        NumberAxis domainAxis = (NumberAxis) xYPlot.getDomainAxis();
+        NumberAxis rangeAxis = (NumberAxis) xYPlot.getRangeAxis();
+        // set their label font and color
+        rangeAxis.setLabelPaint(Color.black);
+        rangeAxis.setLabelFont(chartFont);
+        domainAxis.setLabelPaint(Color.black);
+        domainAxis.setLabelFont(chartFont);
+        // override number format for the axes
+        rangeAxis.setNumberFormatOverride(format);
+        domainAxis.setNumberFormatOverride(format);
+    }
+
     /**
      * This method is generating a chart for the density function given a
      * certain index for the condition, a xYSeriesCollection made up of the
@@ -107,7 +136,7 @@ public class JFreeChartUtils {
         //disable autorange for the axes
         xYPlot.getDomainAxis().setAutoRange(false);
         xYPlot.getRangeAxis().setAutoRange(false);
-        setupPlot(xYPlot);
+        setupXYPlot(xYPlot);
         //set ranges for x and y axes
         xYPlot.getDomainAxis().setRange(xYSeriesCollection.getDomainLowerBound(true) - 0.05, xYSeriesCollection.getDomainUpperBound(true) + 0.05);
         xYPlot.getRangeAxis().setUpperBound(computeMaxY(xYSeriesCollection) + 0.05);
@@ -160,63 +189,6 @@ public class JFreeChartUtils {
                 }
             }
         }
-    }
-
-    /**
-     * Setup a xy plot
-     *
-     * @param xYPlot
-     */
-    public static void setupPlot(XYPlot xYPlot) {
-        // set background to white and grid color to black
-        xYPlot.setBackgroundPaint(Color.white);
-        xYPlot.setRangeGridlinePaint(Color.black);
-        // hide the border of the sorrounding box
-        xYPlot.setOutlinePaint(Color.white);
-        // get domanin and range axes
-        NumberAxis domainAxis = (NumberAxis) xYPlot.getDomainAxis();
-        NumberAxis rangeAxis = (NumberAxis) xYPlot.getRangeAxis();
-        rangeAxis.setLabelPaint(Color.black);
-        rangeAxis.setLabelFont(chartFont);
-        domainAxis.setLabelPaint(Color.black);
-        domainAxis.setLabelFont(chartFont);
-        rangeAxis.setNumberFormatOverride(format);
-        domainAxis.setNumberFormatOverride(format);
-    }
-
-    /**
-     *
-     * @param convexHullChart
-     * @param trackIndex
-     */
-    public static void setupConvexHullChart(JFreeChart convexHullChart, int trackIndex) {
-        // set title font
-        convexHullChart.getTitle().setFont(chartFont);
-        XYPlot xyPlot = convexHullChart.getXYPlot();
-        setupPlot(xyPlot);
-        xyPlot.setBackgroundPaint(Color.white);
-        xyPlot.setOutlinePaint(new Color(177, 177, 60, 100));
-        xyPlot.setOutlineStroke(wideLine);
-        xyPlot.setRangeGridlinePaint(Color.black);
-        xyPlot.setDomainGridlinePaint(Color.black);
-        // assign 2 renderers: one for the coordinates line and one for the convex hull plot
-        XYLineAndShapeRenderer coordinatesRenderer = new XYLineAndShapeRenderer();
-        coordinatesRenderer.setSeriesStroke(0, wideLine);
-        int length = GuiUtils.getAvailableColors().length;
-        int colorIndex = trackIndex % length;
-        coordinatesRenderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[colorIndex]);
-        // show both lines and points
-        coordinatesRenderer.setSeriesLinesVisible(0, true);
-        coordinatesRenderer.setSeriesShapesVisible(0, true);
-        xyPlot.setRenderer(0, coordinatesRenderer);
-        XYLineAndShapeRenderer convexHullRenderer = new XYLineAndShapeRenderer();
-        convexHullRenderer.setSeriesStroke(0, dashedLine);
-        convexHullRenderer.setSeriesPaint(0, Color.black);
-        xyPlot.setRenderer(1, convexHullRenderer);
-        XYSeriesCollection dataset = (XYSeriesCollection) xyPlot.getDataset(0);
-        double minY = dataset.getSeries(0).getMinY();
-        double maxY = dataset.getSeries(0).getMaxY();
-        xyPlot.getRangeAxis().setRange(minY, maxY);
     }
 
     /**
@@ -323,7 +295,7 @@ public class JFreeChartUtils {
         // put legend on the right edge
         chart.getLegend().setPosition(RectangleEdge.RIGHT);
         XYPlot xYPlot = chart.getXYPlot();
-        setupPlot(xYPlot);
+        setupXYPlot(xYPlot);
         // get the xyseriescollection from the plot
         XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
         // modify renderer
@@ -356,7 +328,7 @@ public class JFreeChartUtils {
         chart.getTitle().setFont(chartFont);
         // get xyplot from the chart
         XYPlot xYPlot = chart.getXYPlot();
-        setupPlot(xYPlot);
+        setupXYPlot(xYPlot);
         // get the xyseriescollection from the plot
         XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
         // modify renderer
@@ -389,9 +361,9 @@ public class JFreeChartUtils {
         // set title font
         chart.getTitle().setFont(chartFont);
         XYPlot xYPlot = chart.getXYPlot();
-        setupPlot(xYPlot);
+        setupXYPlot(xYPlot);
         xYPlot.setBackgroundPaint(Color.white);
-        xYPlot.setOutlinePaint(Color.white);
+        xYPlot.setOutlinePaint(Color.black);
         xYPlot.setOutlineStroke(wideLine);
         xYPlot.setRangeGridlinePaint(Color.black);
         xYPlot.setDomainGridlinePaint(Color.black);
@@ -490,49 +462,6 @@ public class JFreeChartUtils {
     }
 
     /**
-     * Add circle annotations on the track plot: an empty circle will annotate
-     * the starting point of the track, while a filled one will annotate the end
-     * point.
-     *
-     * @param plot: the plot to add the annotations on
-     * @param seriesIndex: needed to get the right Color
-     */
-    public static void addCirclePointersOnTrackPlot(XYPlot plot, int seriesIndex) {
-        Stroke stroke = new BasicStroke(1.5f);
-        int length = GuiUtils.getAvailableColors().length;
-        int colorIndex = seriesIndex % length;
-        Color color = GuiUtils.getAvailableColors()[colorIndex];
-        XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) plot.getDataset();
-        XYSeries currentSeries = xYSeriesCollection.getSeries(seriesIndex);
-        int itemCount = currentSeries.getItemCount();
-        // get the first data item: first (x, y)
-        XYDataItem firstDataItem = currentSeries.getDataItem(0);
-        double firstX = firstDataItem.getXValue();
-        double firstY = firstDataItem.getYValue();
-        // get the last data item: last (x, y)
-        XYDataItem lastDataItem = currentSeries.getDataItem(itemCount - 1);
-        double lastX = lastDataItem.getXValue();
-        double lastY = lastDataItem.getYValue();
-        // size for the circle pointer
-        double circleSize = 4;
-        // first top left x and y
-        int firstTopLeftX = (int) Math.round(firstX - circleSize / 2);
-        int firstTopLeftY = (int) Math.round(firstY - circleSize / 2);
-        // empty circle to annotate the starting point
-        Ellipse2D emptyCircle = new Ellipse2D.Double(firstTopLeftX, firstTopLeftY, circleSize, circleSize);
-        XYShapeAnnotation emptyCircleAnnotation = new XYShapeAnnotation(emptyCircle, stroke, color);
-        // last top left x and y
-        int lastTopLeftX = (int) Math.round(lastX - circleSize / 2);
-        int lastTopLeftY = (int) Math.round(lastY - circleSize / 2);
-        // filled circle to annotate the end point
-        Ellipse2D filledCircle = new Ellipse2D.Double(lastTopLeftX, lastTopLeftY, circleSize, circleSize);
-        XYShapeAnnotation filledCircleAnnotation = new XYShapeAnnotation(filledCircle, stroke, color, color);
-        // add the two annotations on the plot
-        plot.getRenderer().addAnnotation(emptyCircleAnnotation);
-        plot.getRenderer().addAnnotation(filledCircleAnnotation);
-    }
-
-    /**
      * Set up the single track plot.
      *
      * @param chart: the chart to get the plot from
@@ -543,7 +472,7 @@ public class JFreeChartUtils {
     public static void setupSingleTrackPlot(JFreeChart chart, int trackIndex, boolean inTime) {
         // set up the plot
         XYPlot xyPlot = chart.getXYPlot();
-        setupPlot(xyPlot);
+        setupXYPlot(xyPlot);
         if (!inTime) {
             setupTrackChart(chart);
         }
@@ -561,42 +490,6 @@ public class JFreeChartUtils {
         // show line AND points
         renderer.setSeriesLinesVisible(0, true);
         renderer.setSeriesShapesVisible(0, true);
-    }
-
-    /**
-     * Set up direction autocorrelation plot.
-     *
-     * @param chart: the chart to get the plot from
-     * @param trackIndex: right color for the line
-     */
-    public static void setupDirectionAutocorrelationPlot(JFreeChart chart, int trackIndex) {
-        // set up the plot
-        XYPlot xyPlot = chart.getXYPlot();
-        setupPlot(xyPlot);
-        xyPlot.setOutlineStroke(wideLine);
-        xyPlot.setRangeGridlinePaint(Color.black);
-        xyPlot.setDomainGridlinePaint(Color.black);
-        // set title font
-        chart.getTitle().setFont(chartFont);
-        // modify renderer
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xyPlot.getRenderer();
-        int length = GuiUtils.getAvailableColors().length;
-        int colorIndex = trackIndex % length;
-        Shape cross = ShapeUtilities.createDiagonalCross(2, 1);
-        for (int indexSeries = 0; indexSeries < xyPlot.getSeriesCount(); indexSeries++) {
-            renderer.setSeriesStroke(indexSeries, wideLine);
-            renderer.setSeriesShapesFilled(indexSeries, true);
-            renderer.setSeriesShape(indexSeries, cross);
-            if (indexSeries != 0) {
-                renderer.setSeriesPaint(indexSeries, Color.BLACK);
-                renderer.setSeriesLinesVisible(indexSeries, false);
-                // the mean values in the right color and with the line visible
-            } else {
-                renderer.setSeriesPaint(indexSeries, GuiUtils.getAvailableColors()[colorIndex]);
-                renderer.setSeriesLinesVisible(indexSeries, true);
-            }
-        }
-        xyPlot.getDomainAxis().setLowerBound(-0.3);
     }
 
     /**
