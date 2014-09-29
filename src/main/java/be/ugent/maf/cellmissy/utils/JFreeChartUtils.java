@@ -10,9 +10,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
-import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.geom.Ellipse2D;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -20,8 +18,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYLineAnnotation;
-import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.Plot;
@@ -35,11 +33,9 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.Range;
-import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
-import org.jfree.util.ShapeUtilities;
 
 /**
  * This class contains some helpful JFreeChart utilities.
@@ -125,7 +121,7 @@ public class JFreeChartUtils {
      * @param conditionIndex
      * @param xYSeriesCollection
      * @param chartTitle
-     * @return
+     * @return the chart
      */
     public static JFreeChart generateDensityFunctionChart(PlateCondition plateCondition, int conditionIndex, XYSeriesCollection xYSeriesCollection, String chartTitle) {
         String specificChartTitle = chartTitle + " Condition " + conditionIndex + " (replicates)";
@@ -216,11 +212,11 @@ public class JFreeChartUtils {
     }
 
     /**
-     * Generate Series for (x,y).
+     * Generate a series for a (x, y) plot, given two arrays of double values.
      *
      * @param xValues
      * @param yValues
-     * @return
+     * @return the series
      */
     public static XYSeries generateXYSeries(double[] xValues, double[] yValues) {
         // autosort False
@@ -234,10 +230,12 @@ public class JFreeChartUtils {
     }
 
     /**
+     * Generate a series for a (x, y) plot, given a single x double value, and
+     * an array of y double values.
      *
      * @param xValue
      * @param yValues
-     * @return
+     * @return the series
      */
     public static XYSeries generateXYSeries(double xValue, double[] yValues) {
         // autosort False
@@ -251,10 +249,11 @@ public class JFreeChartUtils {
     }
 
     /**
+     * Generate a series for a (x, y) plot, given single x and y double values.
      *
      * @param xValue
      * @param yValue
-     * @return
+     * @return the series
      */
     public static XYSeries generateXYSeries(double xValue, double yValue) {
         // autosort False
@@ -264,10 +263,11 @@ public class JFreeChartUtils {
     }
 
     /**
-     * Generate XYSeries from a 2D array
+     * Generate a series for a (x, y) plot, a 2D array containing both x and y
+     * double values.
      *
      * @param coordinatesToPlot
-     * @return
+     * @return the series
      */
     public static XYSeries generateXYSeries(Double[][] coordinatesToPlot) {
         // transpose the matrix
@@ -478,7 +478,7 @@ public class JFreeChartUtils {
         }
         xyPlot.setOutlineStroke(wideLine);
         xyPlot.setRangeGridlinePaint(Color.black);
-        xyPlot.setDomainGridlinePaint(Color.black);
+        xyPlot.setDomainGridlinePaint(Color.white);
         // set title font
         chart.getTitle().setFont(chartFont);
         // modify renderer
@@ -500,8 +500,8 @@ public class JFreeChartUtils {
      * @return the Range
      */
     private static Range computeMaxRange(XYPlot plot) {
-        Range domain = plot.getDataRange(plot.getDomainAxis());
-        Range range = plot.getDataRange(plot.getRangeAxis());
+        Range domain = plot.getDomainAxis().getRange();
+        Range range = plot.getRangeAxis().getRange();
         double lowerBound = Math.min(domain.getLowerBound(), range.getLowerBound());
         double upperdBound = Math.max(domain.getUpperBound(), range.getUpperBound());
         if (lowerBound < 0) {

@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingRe
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsMenuBar;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsRendererGiver;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
@@ -29,6 +30,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -53,6 +55,8 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +77,8 @@ public class TrackCoordinatesController {
     private JTable coordinatesTable;
     private ObservableList<TrackDataHolder> trackDataHolderBindingList;
     private JTableBinding trackHoldersTableBinding;
+    private Double[][] experimentRawCoordinatesRanges;
+    private Double[][] experimentShiftedCoordinatesRanges;
     // view
     private TrackCoordinatesPanel trackCoordinatesPanel;
     private PlotSettingsMenuBar plotSettingsMenuBar;
@@ -380,6 +386,12 @@ public class TrackCoordinatesController {
         categoriesToPlotButtonGroup.add(trackCoordinatesPanel.getConditionRadioButton());
         categoriesToPlotButtonGroup.add(trackCoordinatesPanel.getWellRadioButton());
         trackCoordinatesPanel.getConditionRadioButton().setSelected(true);
+        // another ButtonGroup is needed for the scaling of the axes
+        ButtonGroup scaleAxesButtonGroup = new ButtonGroup();
+        scaleAxesButtonGroup.add(trackCoordinatesPanel.getDoNotScaleRadioButton());
+        scaleAxesButtonGroup.add(trackCoordinatesPanel.getScaleToConditionRadioButton());
+        scaleAxesButtonGroup.add(trackCoordinatesPanel.getScaleToExperimentRadioButton());
+        trackCoordinatesPanel.getDoNotScaleRadioButton().setSelected(true);
         // init well binding list
         wellBindingList = ObservableCollections.observableList(new ArrayList<Well>());
         trackDataHolderBindingList = ObservableCollections.observableList(new ArrayList<TrackDataHolder>());
@@ -443,6 +455,32 @@ public class TrackCoordinatesController {
                     showShiftedTrackCoordinatesInTable(currentCondition);
                     plotRandomTrackCoordinates(currentCondition, false);
                 }
+            }
+        });
+
+        // scale the plot to condition x and y min, max coordinates
+        trackCoordinatesPanel.getScaleToConditionRadioButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+                scaleAxesToCondition(coordinatesChartPanel.getChart(), currentCondition);
+                JFreeChartUtils.setupTrackChart(coordinatesChartPanel.getChart());
+            }
+        });
+
+        // scale the plot to experiment x and y min, max coordinates
+        trackCoordinatesPanel.getScaleToExperimentRadioButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                scaleAxesToExperiment(coordinatesChartPanel.getChart());
+            }
+        });
+
+        // do not scale the axes
+        trackCoordinatesPanel.getDoNotScaleRadioButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                plotRandomTrackCoordinates(singleCellPreProcessingController.getCurrentCondition(), trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected());
             }
         });
 
@@ -717,6 +755,12 @@ public class TrackCoordinatesController {
         boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
         Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
         JFreeChart firstCoordinatesChart = ChartFactory.createXYLineChart(title, "x (µm)", "y (µm)", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        // check if we need to scale axes to condition or to experiment
+        if (trackCoordinatesPanel.getScaleToConditionRadioButton().isSelected()) {
+            scaleAxesToCondition(firstCoordinatesChart, singleCellPreProcessingController.getCurrentCondition());
+        } else if (trackCoordinatesPanel.getScaleToExperimentRadioButton().isSelected()) {
+            scaleAxesToExperiment(firstCoordinatesChart);
+        }
         JFreeChartUtils.setupTrackChart(firstCoordinatesChart);
         JFreeChart secondCoordinatesChart = ChartFactory.createXYLineChart(title, "x (µm)", "y (µm)", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         JFreeChartUtils.setupTrackChart(secondCoordinatesChart);
@@ -727,6 +771,152 @@ public class TrackCoordinatesController {
         exploreTrackController.getCoordinatesChartPanel().setChart(secondCoordinatesChart);
         trackCoordinatesPanel.getCoordinatesParentPanel().revalidate();
         trackCoordinatesPanel.getCoordinatesParentPanel().repaint();
+    }
+
+    /**
+     * Scale axes to the condition coordinates ranges.
+     *
+     * @param chart
+     * @param plateCondition
+     */
+    private void scaleAxesToCondition(JFreeChart chart, PlateCondition plateCondition) {
+        SingleCellPreProcessingResults preProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
+        boolean useRawData = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
+        Double[][] coordinatesRanges;
+        if (useRawData) {
+            coordinatesRanges = preProcessingResults.getRawCoordinatesRanges();
+        } else {
+            coordinatesRanges = preProcessingResults.getShiftedCoordinatesRanges();
+        }
+        XYPlot xYPlot = chart.getXYPlot();
+        Double[] xCoords = coordinatesRanges[0];
+        Double[] yCoords = coordinatesRanges[1];
+        xYPlot.getDomainAxis().setRange(new Range(yCoords[0], yCoords[1]));
+        xYPlot.getRangeAxis().setRange(new Range(xCoords[0], xCoords[1]));
+    }
+
+    /**
+     * Scale the axes to the experiment coordinates ranges.
+     *
+     * @param chart
+     */
+    private void scaleAxesToExperiment(JFreeChart chart) {
+        if (experimentRawCoordinatesRanges == null | experimentShiftedCoordinatesRanges == null) {
+            // we need to compute them
+            computeExperimentCoordinatesRanges();
+        } else {
+            boolean useRawData = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
+            Double[][] coordinatesRanges;
+            if (useRawData) {
+                coordinatesRanges = experimentRawCoordinatesRanges;
+            } else {
+                coordinatesRanges = experimentShiftedCoordinatesRanges;
+            }
+            XYPlot xYPlot = chart.getXYPlot();
+            Double[] xCoords = coordinatesRanges[0];
+            Double[] yCoords = coordinatesRanges[1];
+            xYPlot.getDomainAxis().setRange(new Range(yCoords[0], yCoords[1]));
+            xYPlot.getRangeAxis().setRange(new Range(xCoords[0], xCoords[1]));
+            JFreeChartUtils.setupTrackChart(coordinatesChartPanel.getChart());
+        }
+    }
+
+    /**
+     * Compute both raw and shifted experiment coordinates ranges.
+     */
+    private void computeExperimentCoordinatesRanges() {
+        FetchAllConditionsSwingWorker fetchAllConditionsSwingWorker = new FetchAllConditionsSwingWorker();
+        fetchAllConditionsSwingWorker.execute();
+    }
+
+    /**
+     *
+     */
+    private class FetchAllConditionsSwingWorker extends SwingWorker<Void, Void> {
+
+        WaitingDialog waitingDialog = new WaitingDialog(singleCellPreProcessingController.getMainFrame(), false);
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            waitingDialog.setTitle("Please wait, computing in background...");
+            GuiUtils.centerDialogOnFrame(singleCellPreProcessingController.getMainFrame(), waitingDialog);
+            waitingDialog.setVisible(true);
+            // get all the conditions and do the computations
+            List<PlateCondition> plateConditionList = singleCellPreProcessingController.getPlateConditionList();
+            for (PlateCondition plateCondition : plateConditionList) {
+                singleCellPreProcessingController.fetchTracks(plateCondition);
+                singleCellPreProcessingController.updateMapWithCondition(plateCondition);
+            }
+            experimentRawCoordinatesRanges = new Double[2][2];
+            experimentShiftedCoordinatesRanges = new Double[2][2];
+            List<Double> xRawMinList = new ArrayList<>();
+            List<Double> xRawMaxList = new ArrayList<>();
+            List<Double> yRawMinList = new ArrayList<>();
+            List<Double> yRawMaxList = new ArrayList<>();
+
+            List<Double> xShifMinList = new ArrayList<>();
+            List<Double> xShifMaxList = new ArrayList<>();
+            List<Double> yShifMinList = new ArrayList<>();
+            List<Double> yShifMaxList = new ArrayList<>();
+
+            for (PlateCondition plateCondition : plateConditionList) {
+                // now get back the coordinates and compute the ranges
+                SingleCellPreProcessingResults preProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
+                Double[][] rawCoordinatesRanges = preProcessingResults.getRawCoordinatesRanges();
+                Double[][] shiftedCoordinatesRanges = preProcessingResults.getShiftedCoordinatesRanges();
+
+                xRawMinList.add(rawCoordinatesRanges[0][0]);
+                xRawMaxList.add(rawCoordinatesRanges[0][1]);
+                yRawMinList.add(rawCoordinatesRanges[1][0]);
+                yRawMaxList.add(rawCoordinatesRanges[1][1]);
+
+                xShifMinList.add(shiftedCoordinatesRanges[0][0]);
+                xShifMaxList.add(shiftedCoordinatesRanges[0][1]);
+                yShifMinList.add(shiftedCoordinatesRanges[1][0]);
+                yShifMaxList.add(shiftedCoordinatesRanges[1][1]);
+            }
+            Double xRawMin = Collections.min(xRawMinList);
+            Double xRawMax = Collections.max(xRawMaxList);
+            Double yRawMin = Collections.min(yRawMinList);
+            Double yRawMax = Collections.max(yRawMaxList);
+            experimentRawCoordinatesRanges[0] = new Double[]{xRawMin, xRawMax};
+            experimentRawCoordinatesRanges[1] = new Double[]{yRawMin, yRawMax};
+
+            Double xShifMin = Collections.min(xShifMinList);
+            Double xShifMax = Collections.max(xShifMaxList);
+            Double yShifMin = Collections.min(yShifMinList);
+            Double yShifMax = Collections.max(yShifMaxList);
+            experimentShiftedCoordinatesRanges[0] = new Double[]{xShifMin, xShifMax};
+            experimentShiftedCoordinatesRanges[1] = new Double[]{yShifMin, yShifMax};
+
+            boolean useRawData = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
+            Double[][] coordinatesRanges;
+            if (useRawData) {
+                coordinatesRanges = experimentRawCoordinatesRanges;
+            } else {
+                coordinatesRanges = experimentShiftedCoordinatesRanges;
+            }
+            XYPlot xYPlot = coordinatesChartPanel.getChart().getXYPlot();
+            Double[] xCoords = coordinatesRanges[0];
+            Double[] yCoords = coordinatesRanges[1];
+            xYPlot.getDomainAxis().setRange(new Range(yCoords[0], yCoords[1]));
+            xYPlot.getRangeAxis().setRange(new Range(xCoords[0], xCoords[1]));
+
+            JFreeChartUtils.setupTrackChart(coordinatesChartPanel.getChart());
+
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                waitingDialog.setVisible(false);
+            } catch (InterruptedException | ExecutionException ex) {
+                LOG.error(ex.getMessage(), ex);
+                singleCellPreProcessingController.handleUnexpectedError(ex);
+            }
+        }
     }
 
     /**

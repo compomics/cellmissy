@@ -16,7 +16,10 @@ import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -99,16 +102,54 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
     @Override
     public void generateShiftedTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults) {
         Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-        Double[][] normalizedTrackCoordinatesMatrix = new Double[dataStructure.length][2];
+        Double[][] shiftedTrackCoordinatesMatrix = new Double[dataStructure.length][2];
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            Double[][] normalizedTrackCoordinates = trackDataHolder.getStepCentricDataHolder().getShiftedCooordinatesMatrix();
-            for (int row = 0; row < normalizedTrackCoordinates.length; row++) {
-                normalizedTrackCoordinatesMatrix[counter] = normalizedTrackCoordinates[row];
+            Double[][] shiftedTrackCoordinates = trackDataHolder.getStepCentricDataHolder().getShiftedCooordinatesMatrix();
+            for (int row = 0; row < shiftedTrackCoordinates.length; row++) {
+                shiftedTrackCoordinatesMatrix[counter] = shiftedTrackCoordinates[row];
                 counter++;
             }
         }
-        singleCellPreProcessingResults.setShiftedTrackCoordinatesMatrix(normalizedTrackCoordinatesMatrix);
+        singleCellPreProcessingResults.setShiftedTrackCoordinatesMatrix(shiftedTrackCoordinatesMatrix);
+    }
+
+    @Override
+    public void generateRawCoordinatesRanges(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        // get the raw tracks coordinates
+        Double[][] rawTrackCoordinatesMatrix = singleCellPreProcessingResults.getRawTrackCoordinatesMatrix();
+        // get the x and the y values, first needs to be transposed
+        Double[][] transposedMatrix = AnalysisUtils.transpose2DArray(rawTrackCoordinatesMatrix);
+        Double[] xCoord = transposedMatrix[0];
+        Double[] yCoord = transposedMatrix[1];
+        // compute the min and the max coordinates
+        Double xMin = Collections.min(Arrays.asList(xCoord));
+        Double xMax = Collections.max(Arrays.asList(xCoord));
+        Double ymin = Collections.min(Arrays.asList(yCoord));
+        Double yMax = Collections.max(Arrays.asList(yCoord));
+        Double[][] rawCoordinatesRanges = new Double[2][2];
+        rawCoordinatesRanges[0] = new Double[]{xMin, xMax};
+        rawCoordinatesRanges[1] = new Double[]{ymin, yMax};
+        singleCellPreProcessingResults.setRawCoordinatesRanges(rawCoordinatesRanges);
+    }
+
+    @Override
+    public void generateShiftedCoordinatesRanges(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        // get the raw tracks coordinates
+        Double[][] shiftedTrackCoordinatesMatrix = singleCellPreProcessingResults.getShiftedTrackCoordinatesMatrix();
+        // get the x and the y values, first needs to be transposed
+        Double[][] transposedMatrix = AnalysisUtils.transpose2DArray(shiftedTrackCoordinatesMatrix);
+        Double[] xCoord = transposedMatrix[0];
+        Double[] yCoord = transposedMatrix[1];
+        // compute the min and the max coordinates
+        Double xMin = Collections.min(Arrays.asList(xCoord));
+        Double xMax = Collections.max(Arrays.asList(xCoord));
+        Double ymin = Collections.min(Arrays.asList(yCoord));
+        Double yMax = Collections.max(Arrays.asList(yCoord));
+        Double[][] shiftedCoordinatesRanges = new Double[2][2];
+        shiftedCoordinatesRanges[0] = new Double[]{xMin, xMax};
+        shiftedCoordinatesRanges[1] = new Double[]{ymin, yMax};
+        singleCellPreProcessingResults.setShiftedCoordinatesRanges(shiftedCoordinatesRanges);
     }
 
     @Override

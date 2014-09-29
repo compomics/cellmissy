@@ -89,6 +89,7 @@ public class ExploreTrackController {
     private PlotSettingsMenuBar plotSettingsMenuBar;
     private ChartPanel coordinatesChartPanel;
     private ChartPanel xYTCoordinateChartPanel;
+    private ChartPanel displacementTChartPanel;
     private ChartPanel singleTrackCoordinatesChartPanel;
     private ChartPanel convexHullChartPanel;
     // parent controller
@@ -210,6 +211,8 @@ public class ExploreTrackController {
         exploreTrackPanel.getGraphicsParentPanel().add(coordinatesChartPanel, gridBagConstraints);
         xYTCoordinateChartPanel = new ChartPanel(null);
         xYTCoordinateChartPanel.setOpaque(false);
+        displacementTChartPanel = new ChartPanel(null);
+        displacementTChartPanel.setOpaque(false);
 
         singleTrackCoordinatesChartPanel = new ChartPanel(null);
         singleTrackCoordinatesChartPanel.setOpaque(false);
@@ -217,6 +220,8 @@ public class ExploreTrackController {
         convexHullChartPanel.setOpaque(false);
 
         exploreTrackPanel.getxYTCoordinatesParentPanel().add(xYTCoordinateChartPanel, gridBagConstraints);
+        exploreTrackPanel.getDisplacementTParentPanel().add(displacementTChartPanel, gridBagConstraints);
+
 
         exploreTrackPanel.getCoordinatesParentPanel().add(singleTrackCoordinatesChartPanel, gridBagConstraints);
         exploreTrackPanel.getConvexHullGraphicsParentPanel().add(convexHullChartPanel, gridBagConstraints);
@@ -470,8 +475,9 @@ public class ExploreTrackController {
     private void plotSingleTrackData(TrackDataHolder trackDataHolder) {
         // plot the shifted track coordinates
         plotCoordinatesInSpace(trackDataHolder);
-        // plot x and y coordinates in time
+        // plot x and y coordinates in time + displacements in time
         plotCoordinatesInTime(trackDataHolder);
+        plotDisplacementsInTime(trackDataHolder);
         // plot the convex hull of the track
         plotConvexHull(trackDataHolder);
         // plot the directionality ratio in time
@@ -528,6 +534,28 @@ public class ExploreTrackController {
         JFreeChart combinedChart = new JFreeChart(seriesKey, JFreeChartUtils.getChartFont(), combinedDomainXYPlot, Boolean.FALSE);
         JFreeChartUtils.setupCombinedChart(combinedChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
         xYTCoordinateChartPanel.setChart(combinedChart);
+    }
+
+    /**
+     * Plot displacements in time.
+     *
+     * @param trackDataHolder
+     */
+    private void plotDisplacementsInTime(TrackDataHolder trackDataHolder) {
+        // get the displacements and the time to plot
+        Double[] instantaneousDisplacements = trackDataHolder.getStepCentricDataHolder().getInstantaneousDisplacements();
+        double[] timeIndexes = trackDataHolder.getStepCentricDataHolder().getTimeIndexes();
+        Track track = trackDataHolder.getTrack();
+        // we create the series and set its key
+        XYSeries xYSeries = JFreeChartUtils.generateXYSeries(timeIndexes, ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(instantaneousDisplacements)));
+        int trackNumber = track.getTrackNumber();
+        Well well = track.getWellHasImagingType().getWell();
+        String seriesKey = "track " + trackNumber + ", well " + well;
+        xYSeries.setKey(seriesKey);
+        XYSeriesCollection ySeriesCollection = new XYSeriesCollection(xYSeries);
+        JFreeChart displInTimeChart = ChartFactory.createXYLineChart(seriesKey + " - displacements in time", "time index", "displ (µm)", ySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        JFreeChartUtils.setupSingleTrackPlot(displInTimeChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), true);
+        displacementTChartPanel.setChart(displInTimeChart);
     }
 
     /**

@@ -49,6 +49,10 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         return xYTCoordinatesParentPanel;
     }
 
+    public JPanel getDisplacementTParentPanel() {
+        return displacementTParentPanel;
+    }
+
     public JPanel getDirectionalityRatioGraphicsParentPanel() {
         return directionalityRatioGraphicsParentPanel;
     }
@@ -120,7 +124,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         jScrollPane2 = new javax.swing.JScrollPane();
         trackDataTable = new javax.swing.JTable();
         temporalEvolutionPanel = new javax.swing.JPanel();
-        xYTCoordinatesParentPanel = new javax.swing.JPanel();
         timeSliderPanel = new javax.swing.JPanel();
         timeSlider = new javax.swing.JSlider();
         jLabel5 = new javax.swing.JLabel();
@@ -131,6 +134,9 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         playButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
+        temporalPlotsTabbedPane = new javax.swing.JTabbedPane();
+        xYTCoordinatesParentPanel = new javax.swing.JPanel();
+        displacementTParentPanel = new javax.swing.JPanel();
         convexHullPanel = new javax.swing.JPanel();
         convexHullGraphicsParentPanel = new javax.swing.JPanel();
         convexHullInfoPanel = new javax.swing.JPanel();
@@ -298,18 +304,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         temporalEvolutionPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         temporalEvolutionPanel.setLayout(new java.awt.GridBagLayout());
 
-        xYTCoordinatesParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        xYTCoordinatesParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        xYTCoordinatesParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.7;
-        gridBagConstraints.weighty = 1.0;
-        temporalEvolutionPanel.add(xYTCoordinatesParentPanel, gridBagConstraints);
-
         timeSliderPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Time Frames"));
         timeSliderPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         timeSliderPanel.setName(""); // NOI18N
@@ -411,6 +405,23 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 0.3;
         gridBagConstraints.weighty = 1.0;
         temporalEvolutionPanel.add(timeSliderPanel, gridBagConstraints);
+
+        temporalPlotsTabbedPane.setMinimumSize(new java.awt.Dimension(20, 20));
+        temporalPlotsTabbedPane.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        xYTCoordinatesParentPanel.setLayout(new java.awt.GridBagLayout());
+        temporalPlotsTabbedPane.addTab("(x, y)", xYTCoordinatesParentPanel);
+
+        displacementTParentPanel.setLayout(new java.awt.GridBagLayout());
+        temporalPlotsTabbedPane.addTab("displacements", displacementTParentPanel);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.7;
+        gridBagConstraints.weighty = 1.0;
+        temporalEvolutionPanel.add(temporalPlotsTabbedPane, gridBagConstraints);
 
         jTabbedPane1.addTab("temporal evolution", temporalEvolutionPanel);
 
@@ -580,6 +591,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JPanel directionAutocorrelationsGraphicsParentPanel;
     private javax.swing.JPanel directionalityPanel;
     private javax.swing.JPanel directionalityRatioGraphicsParentPanel;
+    private javax.swing.JPanel displacementTParentPanel;
     private javax.swing.JPanel graphicsParentPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -599,6 +611,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JButton stopButton;
     private javax.swing.JPanel tablePanel;
     private javax.swing.JPanel temporalEvolutionPanel;
+    private javax.swing.JTabbedPane temporalPlotsTabbedPane;
     private javax.swing.JSlider timeSlider;
     private javax.swing.JPanel timeSliderPanel;
     private javax.swing.JTable trackDataTable;
