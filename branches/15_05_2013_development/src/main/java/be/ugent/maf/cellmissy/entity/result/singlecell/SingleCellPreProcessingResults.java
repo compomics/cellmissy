@@ -25,6 +25,10 @@ public class SingleCellPreProcessingResults {
     private Double[][] rawTrackCoordinatesMatrix;
     // track coordinates shifted to position (0, 0)
     private Double[][] shiftedTrackCoordinatesMatrix;
+    // 2x2 matrix with raw coordinates ranges (xmin-xmax-y-min-ymax)
+    private Double[][] rawCoordinatesRanges;
+    // 2x2 matrix with shifted coordinates ranges (xmin-xmax-y-min-ymax)
+    private Double[][] shiftedCoordinatesRanges;
     // array for instantaneous displacements
     private Double[] instantaneousDisplacementsVector;
     // array for instantaneous directionality ratios
@@ -82,6 +86,22 @@ public class SingleCellPreProcessingResults {
 
     public void setShiftedTrackCoordinatesMatrix(Double[][] normalizedTrackCoordinatesMatrix) {
         this.shiftedTrackCoordinatesMatrix = normalizedTrackCoordinatesMatrix;
+    }
+
+    public Double[][] getRawCoordinatesRanges() {
+        return rawCoordinatesRanges;
+    }
+
+    public void setRawCoordinatesRanges(Double[][] rawCoordinatesRanges) {
+        this.rawCoordinatesRanges = rawCoordinatesRanges;
+    }
+
+    public Double[][] getShiftedCoordinatesRanges() {
+        return shiftedCoordinatesRanges;
+    }
+
+    public void setShiftedCoordinatesRanges(Double[][] shiftedCoordinatesRanges) {
+        this.shiftedCoordinatesRanges = shiftedCoordinatesRanges;
     }
 
     public Double[] getInstantaneousDisplacementsVector() {

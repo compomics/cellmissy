@@ -182,6 +182,10 @@ public class SingleCellPreProcessingController {
         return trackCoordinatesController.getTrackDataHolderBindingList();
     }
 
+    public void fetchTracks(PlateCondition plateCondition) {
+        singleCellMainController.fetchTracks(plateCondition);
+    }
+
     /**
      * Get the category to plot for the tracks: normally 0, the condition
      * category; if the well radio button is selected, set the category to plot
@@ -250,8 +254,7 @@ public class SingleCellPreProcessingController {
      * @param plateCondition
      */
     public void updateMapWithCondition(PlateCondition plateCondition) {
-        String info = "* Fetching data for plate condition: " + plateCondition + " *";
-        appendInfo(info);
+        appendInfo("* Fetching data for plate condition: " + plateCondition + " *");
         // fetch the track points from DB
         singleCellMainController.fetchTrackPoints(plateCondition);
         if (preProcessingMap.get(plateCondition) == null) {
@@ -271,6 +274,10 @@ public class SingleCellPreProcessingController {
             singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults);
             appendInfo("computing shifted-to-zero coordinates matrix...");
             singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
+            appendInfo("computing raw coordinates ranges...");
+            singleCellPreProcessor.generateRawCoordinatesRanges(singleCellPreProcessingResults);
+            appendInfo("computing shifted coordinates ranges...");
+            singleCellPreProcessor.generateShiftedCoordinatesRanges(singleCellPreProcessingResults);
             appendInfo("generating instantaneous displacements...");
             singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
             appendInfo("generating directionality ratios...");
@@ -299,6 +306,8 @@ public class SingleCellPreProcessingController {
             singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
             // fill in map
             preProcessingMap.put(plateCondition, singleCellPreProcessingResults);
+            appendInfo("**************************");
+            appendInfo("Plate condition processed!");
         }
     }
 

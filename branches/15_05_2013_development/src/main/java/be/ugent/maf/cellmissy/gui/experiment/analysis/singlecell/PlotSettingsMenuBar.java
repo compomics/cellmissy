@@ -5,9 +5,13 @@
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.gui.view.icon.CircleIcon;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.AbstractButton;
@@ -74,6 +78,14 @@ public class PlotSettingsMenuBar extends JMenuBar {
         return null;
     }
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(Color.white);
+        g2d.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
+    }
+
     /**
      * Construct the MenuBar
      */
@@ -81,10 +93,10 @@ public class PlotSettingsMenuBar extends JMenuBar {
         //main menu
         JMenu mainMenu = new JMenu("Plot Settings");
         //customize main menu
-        mainMenu.setBackground(Color.white);
+        mainMenu.setFont(new Font("Tahoma", Font.BOLD, 11));
         mainMenu.setMinimumSize(new Dimension(5, 2));
         mainMenu.setPreferredSize(new Dimension(87, 18));
-        mainMenu.setIcon(new CircleIcon(Color.lightGray));
+        mainMenu.setIcon(new CircleIcon(Color.ORANGE));
         mainMenu.setIconTextGap(0);
         mainMenu.setToolTipText("Click to customize plot");
         //first submenu: line width

@@ -247,6 +247,20 @@ public class SingleCellMainController {
     }
 
     /**
+     *
+     * @param plateCondition
+     */
+    public void fetchTracks(PlateCondition plateCondition) {
+        //fetch tracks for each well of condition
+        for (int i = 0; i < plateCondition.getWellList().size(); i++) {
+            //fetch tracks collection for the wellhasimagingtype of interest
+            Algorithm algorithm = getSelectedAlgorithm();
+            ImagingType imagingType = getSelectedImagingType();
+            wellService.fetchTracks(plateCondition.getWellList().get(i), algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
+        }
+    }
+
+    /**
      * Update track points list with objects from a selected track in upper
      * table.
      *
@@ -699,13 +713,7 @@ public class SingleCellMainController {
             // show a waiting cursor and disable GUI components
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             controlGuiComponents(false);
-            //fetch tracks for each well of condition
-            for (int i = 0; i < currentCondition.getWellList().size(); i++) {
-                //fetch tracks collection for the wellhasimagingtype of interest
-                Algorithm algorithm = getSelectedAlgorithm();
-                ImagingType imagingType = getSelectedImagingType();
-                wellService.fetchTracks(currentCondition.getWellList().get(i), algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
-            }
+            fetchTracks(currentCondition);
             // when all wells re fetched, update tracks list
             updateTracksList(currentCondition);  // if tracks were actually fetched from DB, update map
             if (!singleCellPreProcessingController.getTracksBindingList().isEmpty()) {

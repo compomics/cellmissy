@@ -57,6 +57,20 @@ public interface SingleCellPreProcessor {
     public void generateShiftedTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
     /**
+     * Generate raw coordinates ranges.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateRawCoordinatesRanges(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     * Generate shifted coordinates ranges.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateShiftedCoordinatesRanges(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
      * Generate the instantaneous displacement Vector.
      *
      * @param singleCellPreProcessingResults

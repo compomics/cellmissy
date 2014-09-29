@@ -10,6 +10,8 @@ import java.util.List;
 import javax.swing.JMenuItem;
 
 /**
+ * This class keeps the right TrackXYLineAndShapeRenderer, according to user
+ * selection through a plotSettingsMenuBar.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -25,10 +27,10 @@ public class PlotSettingsRendererGiver {
     /**
      * Constructor
      *
-     * @param selectedTrackIndex
-     * @param plotSettingsMenuBar
-     * @param endPoints
-     * @param plot
+     * @param selectedTrackIndex: which track has to be highlighted?
+     * @param plotSettingsMenuBar: the GUI through the user selects display
+     * options.
+     * @param endPoints: the list of end points to show in the plot.
      */
     public PlotSettingsRendererGiver(int selectedTrackIndex, PlotSettingsMenuBar plotSettingsMenuBar, List<Integer> endPoints) {
         this.selectedTrackIndex = selectedTrackIndex;
@@ -39,7 +41,8 @@ public class PlotSettingsRendererGiver {
     /**
      * Get the right renderer for the plot
      *
-     * @return the renderer
+     * @param e: the event item from a menu item
+     * @return the appropriate renderer for the plot
      */
     public TrackXYLineAndShapeRenderer getRenderer(ItemEvent e) {
 
