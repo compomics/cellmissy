@@ -47,7 +47,6 @@ public class DirectionTrackController {
     private ChartPanel directionalityRatioChartPanel;
     private ChartPanel directionAutocorrelationsChartPanel;
     private ChartPanel directionAutocorrelationTimeOneChartPanel;
-    private ChartPanel polarChartPanel;
     // parent controller
     @Autowired
     private ExploreTrackController exploreTrackController;
@@ -99,30 +98,6 @@ public class DirectionTrackController {
             }
         }
         xyPlot.getDomainAxis().setLowerBound(-0.3);
-    }
-
-    /**
-     *
-     * @param chart: the chart to get the plot from
-     * @param trackDataHolder: to get the right color for the line
-     */
-    private void setupPolarPlot(JFreeChart chart, TrackDataHolder trackDataHolder) {
-        // set up the plot
-        PolarPlot polarPlot = (PolarPlot) chart.getPlot();
-        chart.getTitle().setFont(JFreeChartUtils.getChartFont());
-        polarPlot.setBackgroundPaint(Color.white);
-        polarPlot.setAngleGridlinePaint(Color.black);
-        // hide the border of the sorrounding box
-        polarPlot.setOutlinePaint(Color.white);
-        polarPlot.setAngleLabelFont(JFreeChartUtils.getChartFont());
-        polarPlot.setAngleLabelPaint(Color.black);
-        // modify renderer
-        DefaultPolarItemRenderer renderer = (DefaultPolarItemRenderer) polarPlot.getRenderer();
-        renderer.setSeriesStroke(0, JFreeChartUtils.getWideLine());
-        int length = GuiUtils.getAvailableColors().length;
-        int trackIndex = exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder);
-        int colorIndex = trackIndex % length;
-        renderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[colorIndex]);
     }
 
     /**
@@ -181,7 +156,7 @@ public class DirectionTrackController {
             xySeries.setKey("track " + trackNumber + ", well " + well + "_" + i);
             xySeriesCollection.addSeries(xySeries);
         }
-        JFreeChart directionAutocorrelationsChart = ChartFactory.createScatterPlot("track " + trackNumber + ", well " + well + " - Direction Autocorrelation", "time", "direction autocorrelation", xySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        JFreeChart directionAutocorrelationsChart = ChartFactory.createScatterPlot("track " + trackNumber + ", well " + well + " - Direction Autocorrelation", "step size", "direction autocorrelation", xySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         setupDirectionAutocorrelationPlot(directionAutocorrelationsChart, trackDataHolder);
         directionAutocorrelationsChartPanel.setChart(directionAutocorrelationsChart);
     }
@@ -214,26 +189,6 @@ public class DirectionTrackController {
     }
 
     /**
-     *
-     * @param trackDataHolder
-     */
-    public void plotPolarChart(TrackDataHolder trackDataHolder) {
-        StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
-        Double[] turningAngles = stepCentricDataHolder.getTurningAngles();
-        Double[] instantaneousDisplacements = stepCentricDataHolder.getInstantaneousDisplacements();
-        Track track = trackDataHolder.getTrack();
-        int trackNumber = track.getTrackNumber();
-        Well well = track.getWellHasImagingType().getWell();
-        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
-        XYSeries xySeries = JFreeChartUtils.generateXYSeries(ArrayUtils.toPrimitive(turningAngles), ArrayUtils.toPrimitive(instantaneousDisplacements));
-        xySeries.setKey("track " + trackNumber + ", well " + well + "_time 1");
-        xySeriesCollection.addSeries(xySeries);
-        JFreeChart polarChart = ChartFactory.createPolarChart("track " + trackNumber + ", well " + well + " - Polar Plot", xySeriesCollection, false, true, false);
-        setupPolarPlot(polarChart, trackDataHolder);
-        polarChartPanel.setChart(polarChart);
-    }
-
-    /**
      * Initialize main view.
      */
     private void initMainView() {
@@ -243,12 +198,10 @@ public class DirectionTrackController {
         directionAutocorrelationsChartPanel.setOpaque(false);
         directionAutocorrelationTimeOneChartPanel = new ChartPanel(null);
         directionAutocorrelationTimeOneChartPanel.setOpaque(false);
-        polarChartPanel = new ChartPanel(null);
-        polarChartPanel.setOpaque(false);
+
         ExploreTrackPanel exploreTrackPanel = exploreTrackController.getExploreTrackPanel();
         exploreTrackPanel.getDirectionalityRatioGraphicsParentPanel().add(directionalityRatioChartPanel, gridBagConstraints);
         exploreTrackPanel.getDirectionAutocorrelationsGraphicsParentPanel().add(directionAutocorrelationsChartPanel, gridBagConstraints);
         exploreTrackPanel.getDirectionAutocorrelationTimeOneGraphicsParentPanel().add(directionAutocorrelationTimeOneChartPanel, gridBagConstraints);
-        exploreTrackPanel.getPolarPlotGraphicsParentPanel().add(polarChartPanel, gridBagConstraints);
     }
 }
