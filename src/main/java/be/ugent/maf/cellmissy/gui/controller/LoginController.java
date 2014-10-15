@@ -80,7 +80,7 @@ public class LoginController {
     }
 
     /**
-     * 
+     *
      */
     public void showLoginDialog() {
         //show login dialog
@@ -95,6 +95,7 @@ public class LoginController {
 
         // request focus on user name text field
         loginDialog.getUserNameTextField().requestFocusInWindow();
+        loginDialog.getRootPane().setDefaultButton(loginDialog.getLoginButton());
 
         // login button: validate user credentials and attempt the login
         loginDialog.getLoginButton().addActionListener(new ActionListener() {
@@ -131,7 +132,7 @@ public class LoginController {
      * On login: attempt to enter the application
      */
     private void onLogin() {
-        //check if a user with given user name and password is found in the db    
+        //check if a user with given user name and password is found in the db
         LOG.info("Login attempt with user name: " + loginDialog.getUserNameTextField().getText());
         User currentUser = userService.findByLoginCredentials(loginDialog.getUserNameTextField().getText(), String.valueOf(loginDialog.getPasswordTextField().getPassword()));
         if (currentUser != null) {
@@ -147,7 +148,7 @@ public class LoginController {
                 // if the user has a Role.STANDARD, disable admin section
                 cellMissyController.disableAdminSection();
             }
-            //set current user in authentication bean    
+            //set current user in authentication bean
             authenticationBean.setCurrentUser(currentUser);
             // enter CellMissy: show main frame
             cellMissyController.enterTheApplication();

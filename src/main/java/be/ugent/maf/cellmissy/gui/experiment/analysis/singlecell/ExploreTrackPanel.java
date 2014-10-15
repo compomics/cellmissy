@@ -89,10 +89,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         return clearSelectionButton;
     }
 
-    public JPanel getPolarPlotGraphicsParentPanel() {
-        return polarPlotGraphicsParentPanel;
-    }
-
     /**
      * Creates new form ExploreTrackPanel
      */
@@ -146,9 +142,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         directionAutocorrelationsGraphicsParentPanel = new javax.swing.JPanel();
         directionAutocorrelationTimeOneGraphicsParentPanel = new javax.swing.JPanel();
         directionalityRatioGraphicsParentPanel = new javax.swing.JPanel();
-        polarPlotPanel = new javax.swing.JPanel();
-        polarPlotGraphicsParentPanel = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
 
         setPreferredSize(new java.awt.Dimension(400, 600));
         setLayout(new java.awt.GridBagLayout());
@@ -215,7 +208,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             tracksListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tracksListPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tracksListPanelLayout.setVerticalGroup(
@@ -529,47 +522,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("directionality", directionalityPanel);
 
-        polarPlotPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        polarPlotPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        polarPlotPanel.setLayout(new java.awt.GridBagLayout());
-
-        polarPlotGraphicsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        polarPlotGraphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        polarPlotGraphicsParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 1.0;
-        polarPlotPanel.add(polarPlotGraphicsParentPanel, gridBagConstraints);
-
-        jPanel2.setMinimumSize(new java.awt.Dimension(20, 20));
-        jPanel2.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 478, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 382, Short.MAX_VALUE)
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 1.0;
-        polarPlotPanel.add(jPanel2, gridBagConstraints);
-
-        jTabbedPane1.addTab("polar plot", polarPlotPanel);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -597,15 +549,12 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton playButton;
     private javax.swing.JPanel plotSettingsPanel;
-    private javax.swing.JPanel polarPlotGraphicsParentPanel;
-    private javax.swing.JPanel polarPlotPanel;
     private javax.swing.JPanel rightPanel;
     private javax.swing.JPanel shiftedCoordinatesPanel;
     private javax.swing.JButton stopButton;

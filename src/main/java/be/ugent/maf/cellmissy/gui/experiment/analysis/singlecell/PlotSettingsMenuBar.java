@@ -91,10 +91,10 @@ public class PlotSettingsMenuBar extends JMenuBar {
      */
     private void constructMenuBar() {
         //main menu
-        JMenu mainMenu = new JMenu("Plot Settings");
+        JMenu mainMenu = new JMenu("Settings");
         //customize main menu
         mainMenu.setFont(new Font("Tahoma", Font.BOLD, 11));
-        mainMenu.setMinimumSize(new Dimension(5, 2));
+        mainMenu.setMinimumSize(new Dimension(10, 5));
         mainMenu.setPreferredSize(new Dimension(87, 18));
         mainMenu.setIcon(new CircleIcon(Color.ORANGE));
         mainMenu.setIconTextGap(0);
