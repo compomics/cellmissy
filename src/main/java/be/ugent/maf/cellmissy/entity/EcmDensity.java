@@ -111,6 +111,6 @@ public class EcmDensity implements Serializable {
 
     @Override
     public String toString() {
-        return ecmDensity + " mg/ml";
+        return ecmDensity + "";
     }
 }

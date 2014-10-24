@@ -212,6 +212,7 @@ public class WellHasImagingType implements Serializable {
 
     @Override
     public String toString() {
-        return sequenceNumber + ", " + imagingType.getName() + ", " + algorithm.getAlgorithmName();
+//        return sequenceNumber + "_" + imagingType.getName() + "_" + algorithm.getAlgorithmName();
+        return imagingType.getName() + "_" + algorithm.getAlgorithmName();
     }
 }
