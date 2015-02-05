@@ -17,13 +17,15 @@ public interface AreaStatisticsAnalyzer {
      * Generate SUMMARY STATISTICS for a certain analysis group.
      *
      * @param areaAnalysisGroup
+     * @param statisticalTestName
      */
     public void generateSummaryStatistics(AreaAnalysisGroup areaAnalysisGroup, String statisticalTestName);
 
     /**
      * Compute a p values matrix for a certain analysis group.
      *
-     * @param areaAnalysisGroup 
+     * @param areaAnalysisGroup
+     * @param statisticalTestName
      */
     public void executePairwiseComparisons(AreaAnalysisGroup areaAnalysisGroup, String statisticalTestName);
 
@@ -33,6 +35,7 @@ public interface AreaStatisticsAnalyzer {
      * matrix.
      *
      * @param areaAnalysisGroup
+     * @param statisticalTestName
      * @param alpha
      * @param isAdjusted
      */

@@ -21,8 +21,7 @@ public class MannWhitneyStatisticsCalculator implements StatisticsCalculator {
     public double executeStatisticalTest(double[] x, double[] y) {
 
         MannWhitneyUTest mannWhitneyUTest = new MannWhitneyUTest();
-        double pValue = mannWhitneyUTest.mannWhitneyUTest(x, y);
-        return pValue;
+        return mannWhitneyUTest.mannWhitneyUTest(x, y);
     }
 
     @Override
@@ -31,8 +30,7 @@ public class MannWhitneyStatisticsCalculator implements StatisticsCalculator {
         for (int i = 0; i < x.length; i++) {
             summaryStatistics.addValue(x[i]);
         }
-        StatisticalSummary summary = summaryStatistics.getSummary();
-        return summary;
+        return summaryStatistics.getSummary();
     }
 
     @Override

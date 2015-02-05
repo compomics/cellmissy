@@ -18,11 +18,11 @@ import javax.swing.JMenuItem;
 public class PlotSettingsRendererGiver {
 
     // an index for the track to highlight
-    private int selectedTrackIndex;
+    private final int selectedTrackIndex;
     // a menu bar with the settings for th eplot
-    private PlotSettingsMenuBar plotSettingsMenuBar;
+    private final PlotSettingsMenuBar plotSettingsMenuBar;
     // the end points for the tracks to show
-    private List<Integer> endPoints;
+    private final List<Integer> endPoints;
 
     /**
      * Constructor

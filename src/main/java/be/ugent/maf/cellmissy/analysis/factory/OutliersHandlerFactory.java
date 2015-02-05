@@ -21,7 +21,7 @@ public class OutliersHandlerFactory {
      * This is mapping the bean names with the respective implementations for
      * the OutliersHandler.
      */
-    private Map<String, OutliersHandler> outliersHandlers;
+    private final Map<String, OutliersHandler> outliersHandlers;
     private static final OutliersHandlerFactory outliersHandlerFactory = new OutliersHandlerFactory();
 
     /**

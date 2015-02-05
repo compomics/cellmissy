@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import java.awt.*;
 
 /**
  *
@@ -140,8 +141,8 @@ public class ImportExperimentDialog extends javax.swing.JDialog {
     /**
      * Creates new form ImportExperimentDialog
      */
-    public ImportExperimentDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public ImportExperimentDialog(Frame parent) {
+        super(parent, true);
         initComponents();
     }
 
@@ -776,7 +777,7 @@ public class ImportExperimentDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ImportExperimentDialog dialog = new ImportExperimentDialog(new javax.swing.JFrame(), true);
+                ImportExperimentDialog dialog = new ImportExperimentDialog(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

@@ -19,7 +19,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class AnalysisGroupListRenderer extends DefaultListCellRenderer {
 
-    private List<PlateCondition> plateConditionList;
+    private final List<PlateCondition> plateConditionList;
 
     public AnalysisGroupListRenderer(List<PlateCondition> plateConditionList) {
         this.plateConditionList = plateConditionList;

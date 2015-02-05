@@ -36,8 +36,8 @@ public class CellCentricOperatorTest {
     @Autowired
     private StepCentricOperator stepCentricOperator;
     // the data holders
-    private static StepCentricDataHolder stepCentricDataHolder = new StepCentricDataHolder();
-    private static CellCentricDataHolder cellCentricDataHolder = new CellCentricDataHolder();
+    private static final StepCentricDataHolder stepCentricDataHolder = new StepCentricDataHolder();
+    private static final CellCentricDataHolder cellCentricDataHolder = new CellCentricDataHolder();
 
     @BeforeClass
     public static void createTrack() {

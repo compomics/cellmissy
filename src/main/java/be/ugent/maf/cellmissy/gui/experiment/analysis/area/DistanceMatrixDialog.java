@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.gui.experiment.analysis.area;
 
 import javax.swing.JTable;
+import java.awt.*;
 
 /**
  *
@@ -15,11 +16,11 @@ public class DistanceMatrixDialog extends javax.swing.JDialog {
     /**
      * Creates new form ReplicatesSelectionDialog
      *
-     * @param parent
      * @param modal
+     * @param parent
      */
-    public DistanceMatrixDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public DistanceMatrixDialog(Frame parent) {
+        super(parent, true);
         initComponents();
     }
 
@@ -101,7 +102,7 @@ public class DistanceMatrixDialog extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                DistanceMatrixDialog dialog = new DistanceMatrixDialog(new javax.swing.JFrame(), true);
+                DistanceMatrixDialog dialog = new DistanceMatrixDialog(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

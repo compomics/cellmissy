@@ -19,7 +19,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class AreaDataTableModel extends AbstractTableModel {
 
-    private PlateCondition plateCondition;
+    private final PlateCondition plateCondition;
     private String columnNames[];
     private Double[][] data;
 

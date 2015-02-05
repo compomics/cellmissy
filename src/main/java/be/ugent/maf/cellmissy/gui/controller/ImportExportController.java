@@ -174,7 +174,7 @@ public class ImportExportController {
      */
     private void initExportExperimentDialog() {
         // make a new dialog
-        exportExperimentDialog = new ExportExperimentDialog(cellMissyController.getCellMissyFrame(), true);
+        exportExperimentDialog = new ExportExperimentDialog(cellMissyController.getCellMissyFrame());
         exportExperimentDialog.getProjectDescriptionTextArea().setLineWrap(true);
         exportExperimentDialog.getProjectDescriptionTextArea().setWrapStyleWord(true);
         // set icon for info label
@@ -294,7 +294,7 @@ public class ImportExportController {
      */
     private void initImportExperimentDialog() {
         // create a new dialog
-        importExperimentDialog = new ImportExperimentDialog(cellMissyController.getCellMissyFrame(), true);
+        importExperimentDialog = new ImportExperimentDialog(cellMissyController.getCellMissyFrame());
         importExperimentDialog.getPurposeTextArea().setLineWrap(true);
         importExperimentDialog.getPurposeTextArea().setWrapStyleWord(true);
         // we first disable the previous, next and the save buttons
@@ -446,7 +446,7 @@ public class ImportExportController {
      */
     private void initExportTemplateDialog() {
         // make a new dialog
-        exportTemplateDialog = new ExportTemplateDialog(cellMissyController.getCellMissyFrame(), true);
+        exportTemplateDialog = new ExportTemplateDialog(cellMissyController.getCellMissyFrame());
         exportTemplateDialog.getProjectDescriptionTextArea().setLineWrap(true);
         exportTemplateDialog.getProjectDescriptionTextArea().setWrapStyleWord(true);
         // set icon for info label
@@ -639,7 +639,7 @@ public class ImportExportController {
         nonEditableTableModel.setDataVector(data, columnNames);
         table.setModel(nonEditableTableModel);
         for (int i = 0; i < nonEditableTableModel.getColumnCount(); i++) {
-            GuiUtils.packColumn(table, i, 1);
+            GuiUtils.packColumn(table, i);
         }
     }
 
@@ -744,7 +744,7 @@ public class ImportExportController {
     private class ExportExperimentSwingWorker extends SwingWorker<Void, Void> {
 
         // the file to write the experiment to
-        private File xmlFile;
+        private final File xmlFile;
 
         public ExportExperimentSwingWorker(File xmlFile) {
             this.xmlFile = xmlFile;
@@ -798,7 +798,7 @@ public class ImportExportController {
      */
     private class ExportTemplateSwingWorker extends SwingWorker<Void, Void> {
 
-        private File xmlFile;
+        private final File xmlFile;
 
         public ExportTemplateSwingWorker(File xmlFile) {
             this.xmlFile = xmlFile;
@@ -840,7 +840,7 @@ public class ImportExportController {
     private class ImportExperimentSwingWorker extends SwingWorker<Void, Void> {
 
         // the XML file that has to be parsed to import the experiment
-        private File xmlFile;
+        private final File xmlFile;
 
         public ImportExperimentSwingWorker(File xmlFile) {
             this.xmlFile = xmlFile;

@@ -125,8 +125,7 @@ public class StepCentricDataGenerator {
                         + "dirAutocorr" + " " + "medDirAutocorr" + " " + "dirRatio");
                 // new line
                 bufferedWriter.newLine();
-                for (int i = 0; i < biologicalConditions.size(); i++) {
-                    List<TrackDataHolder> conditionTracks = biologicalConditions.get(i);
+                for (List<TrackDataHolder> conditionTracks : biologicalConditions) {
                     int tracksNumber = conditionTracks.size();
                     for (int row = 0; row < tracksNumber; row++) {
                         TrackDataHolder trackDataHolder = conditionTracks.get(row);

@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.gui;
 
 import javax.swing.JEditorPane;
+import java.awt.*;
 
 /**
  *
@@ -19,8 +20,8 @@ public class HelpDialog extends javax.swing.JDialog {
     /**
      * Creates new form HelpDialog
      */
-    public HelpDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public HelpDialog(Frame parent) {
+        super(parent, true);
         initComponents();
     }
 
@@ -97,7 +98,7 @@ public class HelpDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                HelpDialog dialog = new HelpDialog(new javax.swing.JFrame(), true);
+                HelpDialog dialog = new HelpDialog(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

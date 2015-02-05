@@ -5,7 +5,6 @@
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.gui.view.icon.CircleIcon;
-import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.Color;
 import java.awt.Dimension;

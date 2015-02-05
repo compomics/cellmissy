@@ -243,7 +243,7 @@ public class PlateManagementController {
      */
     private class DeletePlateFormatSwingWorker extends SwingWorker<Void, Void> {
 
-        private PlateFormat plateFormat;
+        private final PlateFormat plateFormat;
         private String message;
         private String title;
         private int optionMessage;

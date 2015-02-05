@@ -20,7 +20,7 @@ import javax.swing.JList;
  */
 public class PlottedTracksListRenderer extends DefaultListCellRenderer {
 
-    private List<TrackDataHolder> trackDataHolders;
+    private final List<TrackDataHolder> trackDataHolders;
 
     /**
      * Constructor: takes a list of track data holders

@@ -17,7 +17,7 @@ import javax.swing.JList;
  */
 public class ExperimentsOverviewListRenderer extends DefaultListCellRenderer {
 
-    private boolean selectable;
+    private final boolean selectable;
 
     public ExperimentsOverviewListRenderer(boolean selectable) {
         this.selectable = selectable;

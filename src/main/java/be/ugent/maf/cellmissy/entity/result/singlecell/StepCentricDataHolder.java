@@ -75,6 +75,7 @@ public class StepCentricDataHolder {
     /**
      * Getters and setters.
      *
+     * @return
      */
     public Track getTrack() {
         return track;

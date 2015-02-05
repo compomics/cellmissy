@@ -19,7 +19,7 @@ public class CheckBoxesGlobalViewsTableModel extends AbstractTableModel {
     private Object[][] data;
     private String columnNames[];
     private Boolean[][] checkBoxes;
-    private Map<String, Boolean[]> globalViewsMap;
+    private final Map<String, Boolean[]> globalViewsMap;
 
     /**
      * Constructor.

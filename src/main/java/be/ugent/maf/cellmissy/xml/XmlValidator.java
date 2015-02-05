@@ -20,7 +20,7 @@ import javax.xml.bind.ValidationEventHandler;
  */
 public class XmlValidator implements ValidationEventHandler {
 
-    private List<ValidationEvent> validationEvents = new ArrayList<>();
+    private final List<ValidationEvent> validationEvents = new ArrayList<>();
 
     public List<ValidationEvent> getValidationEvents() {
         return validationEvents;

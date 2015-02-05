@@ -13,8 +13,6 @@ import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.view.table.model.AreaDataTableModel;
 import be.ugent.maf.cellmissy.analysis.area.MeasuredAreaType;
-import static be.ugent.maf.cellmissy.analysis.area.MeasuredAreaType.CELL_COVERED_AREA;
-import static be.ugent.maf.cellmissy.analysis.area.MeasuredAreaType.OPEN_AREA;
 import be.ugent.maf.cellmissy.analysis.area.impl.CellCoveredAreaPreProcessor;
 import be.ugent.maf.cellmissy.analysis.area.impl.OpenAreaPreProcessor;
 import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache;
@@ -597,14 +595,13 @@ public class AreaPreProcessingController {
 
             XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
             // array for x axis
-            double[] xValues = processedTimeFrames;
             int counter = 0;
             for (Well well : processedWells) {
                 int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(well);
                 if (numberOfSamplesPerWell == 1) {
                     for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                         double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
-                        XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                        XYSeries xySeries = JFreeChartUtils.generateXYSeries(processedTimeFrames, yValues);
                         xySeries.setKey("" + (well));
                         xYSeriesCollection.addSeries(xySeries);
                     }
@@ -612,7 +609,7 @@ public class AreaPreProcessingController {
                     int label = 0;
                     for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                         double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
-                        XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                        XYSeries xySeries = JFreeChartUtils.generateXYSeries(processedTimeFrames, yValues);
                         xySeries.setKey("" + (well) + ", " + (label + 1));
                         xYSeriesCollection.addSeries(xySeries);
                         label++;
@@ -822,14 +819,13 @@ public class AreaPreProcessingController {
         List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
         XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
         // array for x axis
-        double[] xValues = processedTimeFrames;
         int counter = 0;
         for (Well well : processedWells) {
             int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(well);
             if (numberOfSamplesPerWell == 1) {
                 for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                     double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
-                    XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                    XYSeries xySeries = JFreeChartUtils.generateXYSeries(processedTimeFrames, yValues);
                     xySeries.setKey("" + (well));
                     xYSeriesCollection.addSeries(xySeries);
                 }
@@ -837,7 +833,7 @@ public class AreaPreProcessingController {
                 int label = 0;
                 for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                     double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
-                    XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                    XYSeries xySeries = JFreeChartUtils.generateXYSeries(processedTimeFrames, yValues);
                     xySeries.setKey("" + (well) + ", " + (label + 1));
                     xYSeriesCollection.addSeries(xySeries);
                     label++;
@@ -1516,7 +1512,7 @@ public class AreaPreProcessingController {
         globalAreaChartPanel = new ChartPanel(null);
         globalAreaChartPanel.setOpaque(false);
         // init other views
-        distanceMatrixDialog = new DistanceMatrixDialog(areaMainController.getCellMissyFrame(), true);
+        distanceMatrixDialog = new DistanceMatrixDialog(areaMainController.getCellMissyFrame());
         timeFramesSelectionDialog = new TimeFramesSelectionDialog(areaMainController.getCellMissyFrame(), true);
         // do nothing on close the dialog
         timeFramesSelectionDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -1876,7 +1872,7 @@ public class AreaPreProcessingController {
      */
     private class PlotDensityFunctionSwingWorker extends SwingWorker<Void, Void> {
 
-        private PlateCondition plateCondition;
+        private final PlateCondition plateCondition;
         // xySeriesCollections needed for raw data and for corrected data
         private XYSeriesCollection rawDataXYSeriesCollection;
         private XYSeriesCollection correctedDataXYSeriesCollection;
@@ -1980,9 +1976,9 @@ public class AreaPreProcessingController {
      */
     private final class CheckBoxOutliersCellEditor extends AbstractCellEditor implements TableCellEditor, ItemListener {
 
-        private JCheckBox checkBox;
+        private final JCheckBox checkBox;
         private final PlateCondition plateCondition;
-        private DistanceMatrixTableModel distanceMatrixTableModel;
+        private final DistanceMatrixTableModel distanceMatrixTableModel;
 
         // Contructor
         private CheckBoxOutliersCellEditor(DistanceMatrixTableModel distanceMatrixTableModel, PlateCondition plateCondition) {
@@ -2038,7 +2034,7 @@ public class AreaPreProcessingController {
      */
     private class FetchAllConditionsSwingWorker extends SwingWorker<Void, Void> {
 
-        List<PlateCondition> plateConditionList = areaMainController.getPlateConditionList();
+        final List<PlateCondition> plateConditionList = areaMainController.getPlateConditionList();
 
         @Override
         protected Void doInBackground() throws Exception {

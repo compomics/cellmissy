@@ -4,6 +4,8 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis.area;
 
+import java.awt.*;
+
 /**
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
@@ -13,8 +15,8 @@ public class AreaAnalysisInfoDialog extends javax.swing.JDialog {
     /**
      * Creates new form AreaAnalysisInfoDialog
      */
-    public AreaAnalysisInfoDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public AreaAnalysisInfoDialog(Frame parent) {
+        super(parent, true);
         initComponents();
     }
 
@@ -88,7 +90,7 @@ public class AreaAnalysisInfoDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AreaAnalysisInfoDialog dialog = new AreaAnalysisInfoDialog(new javax.swing.JFrame(), true);
+                AreaAnalysisInfoDialog dialog = new AreaAnalysisInfoDialog(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

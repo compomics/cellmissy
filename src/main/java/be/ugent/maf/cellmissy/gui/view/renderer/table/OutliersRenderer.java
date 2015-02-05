@@ -18,8 +18,8 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class OutliersRenderer extends DefaultTableCellRenderer {
 
-    private boolean[][] outliers;
-    private Format formatter;
+    private final boolean[][] outliers;
+    private final Format formatter;
 
     /**
      * Constructor, takes a 2D array of boolean (TRUE means point is an outlier)

@@ -68,7 +68,7 @@ public class ConditionsPanel extends javax.swing.JPanel {
         jScrollPane1.setVerifyInputWhenFocusTarget(false);
 
         conditionsJList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1" };
+            final String[] strings = { "Item 1" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });

@@ -204,7 +204,7 @@ public class TreatmentsController {
      *
      */
     private void initTreatmentSetupPanel() {
-        addDrugsTreatmentsDialog = new AddDrugsTreatmentsDialog(setupConditionsController.getCellMissyFrame(), true);
+        addDrugsTreatmentsDialog = new AddDrugsTreatmentsDialog(setupConditionsController.getCellMissyFrame());
 
         //set volume unit of measure (of assay medium)
         treatmentsPanel.getVolumeUnitLabel().setText("\u00B5" + "l");

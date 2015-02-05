@@ -63,10 +63,9 @@ public interface CellCentricOperator {
     /**
      * Compute track median speed.
      *
-     * @param stepCentricDataHolder
      * @param cellCentricDataHolder
      */
-    public void computeMedianSpeed(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+    public void computeMedianSpeed(CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute directionality of a certain track as the ratio between the
@@ -119,4 +118,13 @@ public interface CellCentricOperator {
      * @param cellCentricDataHolder
      */
     public void computeMedianTurningAngle(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+
+    /**
+     * Compute median direction autocorrelations at time interval of size (step)
+     * 1.
+     *
+     * @param stepCentricDataHolder
+     * @param cellCentricDataHolder
+     */
+    public void computeMedianDirectionAutocorrelation(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 }

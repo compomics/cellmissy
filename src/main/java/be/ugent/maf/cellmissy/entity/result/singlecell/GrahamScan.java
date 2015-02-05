@@ -17,7 +17,7 @@ import java.util.Stack;
 public class GrahamScan {
 
     // the hull, in a form of a Stack
-    private Stack<GeometricPoint> hull = new Stack<>();
+    private final Stack<GeometricPoint> hull = new Stack<>();
 
     /**
      * Get the constructed hull

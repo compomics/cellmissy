@@ -145,8 +145,8 @@ public class CellMissyController {
         cellMissyFrame.setTitle("CellMissy - Cell Migration Invasion Storage System");
         // create a new startup dialog
         startupDialog = new StartupDialog(cellMissyFrame, true);
-        aboutDialog = new AboutDialog(cellMissyFrame, true);
-        helpDialog = new HelpDialog(cellMissyFrame, true);
+        aboutDialog = new AboutDialog(cellMissyFrame);
+        helpDialog = new HelpDialog(cellMissyFrame);
         // at starter, show main panel with logo
         getCardLayout().first(cellMissyFrame.getBackgroundPanel());
         // init booleans to true
@@ -727,7 +727,7 @@ public class CellMissyController {
      */
     private class LinkListener implements HyperlinkListener {
 
-        private JEditorPane editorPane;
+        private final JEditorPane editorPane;
 
         public LinkListener(JEditorPane editorPane) {
             this.editorPane = editorPane;

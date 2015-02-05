@@ -20,8 +20,8 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class PValuesTableRenderer extends DefaultTableCellRenderer {
 
-    private Format formatter;
-    private boolean[][] significances;
+    private final Format formatter;
+    private final boolean[][] significances;
 
     /**
      * Constructor, takes a formatter, + a boolean containing the significances:

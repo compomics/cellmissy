@@ -62,8 +62,7 @@ public class XMLParserImpl implements XMLParser {
         xmlValidator = new XmlValidator();
         unmarshaller.setEventHandler(xmlValidator);
         // finally unmarshal the XML file to the Object
-        T t = (T) unmarshaller.unmarshal(xmlFile);
-        return t;
+        return (T) unmarshaller.unmarshal(xmlFile);
     }
 
     @Override

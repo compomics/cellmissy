@@ -19,8 +19,8 @@ public class StatisticalSummaryTableModel extends AbstractTableModel {
 
     private Object[][] data;
     private String columnNames[];
-    private AreaAnalysisGroup analysisGroup;
-    private List<PlateCondition> plateConditionList;
+    private final AreaAnalysisGroup analysisGroup;
+    private final List<PlateCondition> plateConditionList;
 
     /** 
      * Constructor

@@ -21,7 +21,7 @@ import javax.swing.JList;
 public class ConditionsAnalysisListRenderer extends DefaultListCellRenderer {
 
     // Plate Conditions List
-    private List<PlateCondition> plateConditionList;
+    private final List<PlateCondition> plateConditionList;
 
     /**
      * Constructor, takes the list of plate conditions

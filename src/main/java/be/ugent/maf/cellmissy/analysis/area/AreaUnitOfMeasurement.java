@@ -12,7 +12,7 @@ package be.ugent.maf.cellmissy.analysis.area;
 public enum AreaUnitOfMeasurement {
 
     MICRO_METERS(1), PIXELS(2), PERCENTAGE(3), SPECIAL_MICRO_METERS(4);
-    private int unit;
+    private final int unit;
 
     private AreaUnitOfMeasurement(int unit) {
         this.unit = unit;

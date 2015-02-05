@@ -187,7 +187,7 @@ public class GenericImagedPlateController {
             // if the mouse has been pressed and released on a wellGui, show a dialog to choose file to parse
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (mouseListenerEnabled == true) {
+                if (mouseListenerEnabled) {
                     WellGui selectedWellGui = null;
                     for (WellGui wellGui : imagedPlatePanel.getWellGuiList()) {
                         List<Ellipse2D> ellipsi = wellGui.getEllipsi();
@@ -364,9 +364,6 @@ public class GenericImagedPlateController {
      * Opening a dialog to select file to parse and load data parsing the
      * selected file
      *
-     * @param rawDataChooser
-     * @param newWellHasImagingType
-     * @param selectedWellGui
      */
     private File chooseData() {
         File bulkCellFile = null;
@@ -380,11 +377,7 @@ public class GenericImagedPlateController {
                 }
                 int index = f.getName().lastIndexOf(".");
                 String extension = f.getName().substring(index + 1);
-                if (extension.equals("txt")) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return extension.equals("txt");
             }
 
             @Override
@@ -578,14 +571,12 @@ public class GenericImagedPlateController {
                     return;
                 }
                 // look for imaging type selected
-                for (int i = 0; i < imagingTypesBindingList.size(); i++) {
-                    if (imagingTypesBindingList.get(i).getName().equals(selectedNode.toString())) {
+                for (ImagingType anImagingTypesBindingList : imagingTypesBindingList) {
+                    if (anImagingTypesBindingList.getName().equals(selectedNode.toString())) {
                         // imaging type that was selected
-                        ImagingType selectedImagingType = imagingTypesBindingList.get(i);
-                        currentImagingType = selectedImagingType;
+                        currentImagingType = anImagingTypesBindingList;
                         // look for associated dataset
-                        Algorithm associatedDataset = findDataset(selectedNode);
-                        currentAlgorithm = associatedDataset;
+                        currentAlgorithm = findDataset(selectedNode);
                         // if mouse listener was still not enabled, enable it, together with main panel buttons
                         if (!mouseListenerEnabled) {
                             mouseListenerEnabled = true;

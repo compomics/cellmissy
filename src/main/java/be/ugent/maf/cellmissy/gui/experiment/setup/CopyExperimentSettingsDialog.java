@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
+import java.awt.*;
 
 /**
  *
@@ -67,8 +68,8 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
     /**
      * Creates new form CopyExperimentSettingsDialog
      */
-    public CopyExperimentSettingsDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public CopyExperimentSettingsDialog(Frame parent) {
+        super(parent, true);
         initComponents();
     }
 
@@ -412,7 +413,7 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                CopyExperimentSettingsDialog dialog = new CopyExperimentSettingsDialog(new javax.swing.JFrame(), true);
+                CopyExperimentSettingsDialog dialog = new CopyExperimentSettingsDialog(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

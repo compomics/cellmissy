@@ -298,8 +298,8 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
             Double[] turningAngles = trackDataHolder.getStepCentricDataHolder().getTurningAngles();
-            for (int i = 0; i < turningAngles.length; i++) {
-                turningAnglesVector[counter] = turningAngles[i];
+            for (Double turningAngle : turningAngles) {
+                turningAnglesVector[counter] = turningAngle;
                 counter++;
             }
         }
@@ -312,10 +312,22 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         Double[] medianTurningAnglesVector = new Double[trackDataHolders.size()];
         for (int i = 0; i < medianTurningAnglesVector.length; i++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double trackAngle = trackDataHolder.getCellCentricDataHolder().getMedianTurningAngle();
-            medianTurningAnglesVector[i] = trackAngle;
+            double medianTurningAngle = trackDataHolder.getCellCentricDataHolder().getMedianTurningAngle();
+            medianTurningAnglesVector[i] = medianTurningAngle;
         }
         singleCellPreProcessingResults.setMedianTurningAnglesVector(medianTurningAnglesVector);
+    }
+
+    @Override
+    public void generateMedianDirectionAutocorrelationsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+        Double[] medianDirectionAutocorrelationsVector = new Double[trackDataHolders.size()];
+        for (int i = 0; i < medianDirectionAutocorrelationsVector.length; i++) {
+            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
+            double medianDirectionAutocorrelation = trackDataHolder.getCellCentricDataHolder().getMedianDirectionAutocorrelation();
+            medianDirectionAutocorrelationsVector[i] = medianDirectionAutocorrelation;
+        }
+        singleCellPreProcessingResults.setMedianDirectionAutocorrelationsVector(medianDirectionAutocorrelationsVector);
     }
 
     /**
@@ -331,4 +343,5 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         }
         return trackPointsNumber;
     }
+
 }

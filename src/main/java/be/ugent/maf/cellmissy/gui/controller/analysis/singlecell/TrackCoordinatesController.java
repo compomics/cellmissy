@@ -834,7 +834,7 @@ public class TrackCoordinatesController {
      */
     private class FetchAllConditionsSwingWorker extends SwingWorker<Void, Void> {
 
-        WaitingDialog waitingDialog = new WaitingDialog(singleCellPreProcessingController.getMainFrame(), false);
+        final WaitingDialog waitingDialog = new WaitingDialog(singleCellPreProcessingController.getMainFrame(), false);
 
         @Override
         protected Void doInBackground() throws Exception {
@@ -924,7 +924,7 @@ public class TrackCoordinatesController {
      */
     private class PlotAllTracksConditionSwingWorker extends SwingWorker<Void, Void> {
 
-        private boolean useRawCoordinates = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
+        private final boolean useRawCoordinates = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
         private XYSeriesCollection xYSeriesCollection;
 
         @Override
@@ -963,8 +963,8 @@ public class TrackCoordinatesController {
      */
     private class PlotAllTracksWellSwingWorker extends SwingWorker<Void, Void> {
 
-        boolean useRawCoordinates = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
-        private Well selectedWell = (Well) trackCoordinatesPanel.getWellsComboBox().getSelectedItem();
+        final boolean useRawCoordinates = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
+        private final Well selectedWell = (Well) trackCoordinatesPanel.getWellsComboBox().getSelectedItem();
         private XYSeriesCollection xYSeriesCollection;
 
         @Override

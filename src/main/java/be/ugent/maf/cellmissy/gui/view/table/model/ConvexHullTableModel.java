@@ -17,7 +17,7 @@ public class ConvexHullTableModel extends AbstractTableModel {
 
     private String columnNames[];
     private Object[][] data;
-    private ConvexHull convexHull;
+    private final ConvexHull convexHull;
 
     /**
      * Constructor: takes a convex hull need to populate the table model.

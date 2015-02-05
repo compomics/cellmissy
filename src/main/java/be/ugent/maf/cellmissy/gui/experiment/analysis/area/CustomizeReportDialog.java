@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.experiment.analysis.area;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.JTextPane;
+import java.awt.*;
 
 /**
  *
@@ -41,8 +42,8 @@ public class CustomizeReportDialog extends javax.swing.JDialog {
     /**
      * Creates new form CustomizeReportDialog
      */
-    public CustomizeReportDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public CustomizeReportDialog(Frame parent) {
+        super(parent, true);
         initComponents();
     }
 
@@ -242,7 +243,7 @@ public class CustomizeReportDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                CustomizeReportDialog dialog = new CustomizeReportDialog(new javax.swing.JFrame(), true);
+                CustomizeReportDialog dialog = new CustomizeReportDialog(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

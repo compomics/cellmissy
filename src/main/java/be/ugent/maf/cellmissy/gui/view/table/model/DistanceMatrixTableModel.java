@@ -20,8 +20,8 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
     private Object[][] data;
     private boolean[] checkboxOutliers;
     private String columnNames[];
-    private boolean[][] outliers;
-    private PlateCondition plateCondition;
+    private final boolean[][] outliers;
+    private final PlateCondition plateCondition;
 
     /**
      * Constructor (data to show in the table and boolean matrix for outliers detection)

@@ -27,7 +27,7 @@ public class PropertiesConfigurationHolder extends PropertiesConfiguration {
 
     /**
      * get instance of the Properties Configuration Holder
-     * @return 
+     * @return
      */
     public static PropertiesConfigurationHolder getInstance() {
         return ourInstance;

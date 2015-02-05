@@ -9,6 +9,7 @@ import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import java.awt.*;
 
 /**
  *
@@ -47,8 +48,8 @@ public class AssayManagementDialog extends javax.swing.JDialog {
     /**
      * Creates new form AssayManagementDialog
      */
-    public AssayManagementDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public AssayManagementDialog(Frame parent) {
+        super(parent, true);
         initComponents();
     }
 
@@ -88,7 +89,7 @@ public class AssayManagementDialog extends javax.swing.JDialog {
         jScrollPane1.setPreferredSize(new java.awt.Dimension(45, 100));
 
         assaysList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2" };
+            final String[] strings = { "Item 1", "Item 2" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
@@ -255,7 +256,7 @@ public class AssayManagementDialog extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                AssayManagementDialog dialog = new AssayManagementDialog(new javax.swing.JFrame(), true);
+                AssayManagementDialog dialog = new AssayManagementDialog(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

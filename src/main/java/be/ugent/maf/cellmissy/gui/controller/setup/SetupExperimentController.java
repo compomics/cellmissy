@@ -651,7 +651,7 @@ public class SetupExperimentController {
      */
     private void initCopySettingsDialog() {
         // make a new dialog
-        copyExperimentSettingsDialog = new CopyExperimentSettingsDialog(cellMissyController.getCellMissyFrame(), true);
+        copyExperimentSettingsDialog = new CopyExperimentSettingsDialog(cellMissyController.getCellMissyFrame());
         // justify info text
         SimpleAttributeSet simpleAttributeSet = new SimpleAttributeSet();
         StyleConstants.setAlignment(simpleAttributeSet, StyleConstants.ALIGN_JUSTIFIED);
@@ -735,7 +735,7 @@ public class SetupExperimentController {
      */
     private void initImportTemplateDialog() {
         // make a new dialog
-        importTemplateDialog = new ImportTemplateDialog(cellMissyController.getCellMissyFrame(), true);
+        importTemplateDialog = new ImportTemplateDialog(cellMissyController.getCellMissyFrame());
         // customize table
         importTemplateDialog.getConditionsDetailsTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         importTemplateDialog.getConditionsDetailsTable().getTableHeader().setReorderingAllowed(false);
@@ -1085,7 +1085,7 @@ public class SetupExperimentController {
         nonEditableTableModel.setDataVector(data, columnNames);
         table.setModel(nonEditableTableModel);
         for (int i = 0; i < nonEditableTableModel.getColumnCount(); i++) {
-            GuiUtils.packColumn(table, i, 1);
+            GuiUtils.packColumn(table, i);
         }
     }
 
@@ -1184,7 +1184,7 @@ public class SetupExperimentController {
      */
     private class ExportTemplateToXMLSwingWorker extends SwingWorker<Void, Void> {
 
-        private File directory;
+        private final File directory;
 
         // constructor
         public ExportTemplateToXMLSwingWorker(File directory) {
@@ -1220,7 +1220,7 @@ public class SetupExperimentController {
      */
     private class CopyExpSettingsSwingWorker extends SwingWorker<Void, Void> {
 
-        private Experiment experimentToCopy;
+        private final Experiment experimentToCopy;
 
         public CopyExpSettingsSwingWorker(Experiment experimentToCopy) {
             this.experimentToCopy = experimentToCopy;
@@ -1537,8 +1537,8 @@ public class SetupExperimentController {
      */
     private static class ExperimentListener implements DocumentListener {
 
-        private List<Document> documentList = new ArrayList<>();
-        private JButton button;
+        private final List<Document> documentList = new ArrayList<>();
+        private final JButton button;
 
         public ExperimentListener(JButton button) {
             this.button = button;
@@ -1612,7 +1612,7 @@ public class SetupExperimentController {
     private class SetupReportWorker extends SwingWorker<File, Void> {
         // directory to save the setup
 
-        private File directory;
+        private final File directory;
 
         public SetupReportWorker(File directory) {
             this.directory = directory;
@@ -1624,8 +1624,7 @@ public class SetupExperimentController {
             setupExperimentPanel.getReportButton().setEnabled(false);
             // show waiting cursor
             setupExperimentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            File file = setupReportController.createSetupReport(directory);
-            return file;
+            return setupReportController.createSetupReport(directory);
         }
 
         @Override

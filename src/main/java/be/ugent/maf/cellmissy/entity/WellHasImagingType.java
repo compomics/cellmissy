@@ -104,6 +104,10 @@ public class WellHasImagingType implements Serializable {
         this.algorithm = algorithm;
     }
 
+    public WellHasImagingType(Well well) {
+        this.well = well;
+    }
+
     public WellHasImagingType(Long wellHasImagingTypeid) {
         this.wellHasImagingTypeid = wellHasImagingTypeid;
     }

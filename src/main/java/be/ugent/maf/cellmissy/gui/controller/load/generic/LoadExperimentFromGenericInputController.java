@@ -395,8 +395,8 @@ public class LoadExperimentFromGenericInputController {
      */
     private static class ExperimentListener implements DocumentListener {
 
-        private List<Document> documentList = new ArrayList<>();
-        private JButton button;
+        private final List<Document> documentList = new ArrayList<>();
+        private final JButton button;
 
         public ExperimentListener(JButton button) {
             this.button = button;

@@ -32,7 +32,7 @@ public class StepCentricOperatorTest {
     @Autowired
     private StepCentricOperator stepCentricOperator;
     // the data holder
-    private static StepCentricDataHolder stepCentricDataHolder = new StepCentricDataHolder();
+    private static final StepCentricDataHolder stepCentricDataHolder = new StepCentricDataHolder();
 
     @BeforeClass
     public static void createTrack() {

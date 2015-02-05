@@ -44,7 +44,9 @@ public class CollectiveDataGenerator {
         Project project = projectService.findById(1L);
         List<Experiment> experiments = experimentService.findExperimentsByProjectId(project.getProjectid());
         // root folder
-        File folder = new File("Z:\\paola\\CellMissy_data\\mini_screening_drugs_4");
+//        File folder = new File("Z:\\paola\\CellMissy_data\\mini_screening_drugs_4");
+
+        File folder = new File("C:\\Users\\paola\\Desktop\\UGent\\Weizmann Institute\\mini_screening_drugs");
         for (Experiment experiment : experiments) {
 
             // test with one experiment

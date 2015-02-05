@@ -26,12 +26,12 @@ import org.jfree.util.ShapeUtilities;
  */
 public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
 
-    private boolean plotLines; //control the lines
-    private boolean plotPoints; //control the points
-    private boolean showEndPoints; //control the endpoints
-    private List<Integer> endPoints; //integers for the endpoints
-    private int selectedTrackIndex; //index for the currently selected track
-    private float lineWidth; // thickness for the line
+    private final boolean plotLines; //control the lines
+    private final boolean plotPoints; //control the points
+    private final boolean showEndPoints; //control the endpoints
+    private final List<Integer> endPoints; //integers for the endpoints
+    private final int selectedTrackIndex; //index for the currently selected track
+    private final float lineWidth; // thickness for the line
 
     /**
      * Constructor

@@ -62,14 +62,12 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
     public List<T> findByExample(final T exampleInstance) {
         Session session = (Session) getEntityManager().getDelegate();
         Criteria crit = session.createCriteria(getEntityClass());
-        final List<T> result = crit.list();
-        return result;
+        return crit.list();
     }
 
     @Override
     public T findById(final ID id) {
-        final T result = getEntityManager().find(persistentClass, id);
-        return result;
+        return getEntityManager().find(persistentClass, id);
     }
 
     @SuppressWarnings("unchecked")
@@ -81,23 +79,21 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
             query.setParameter(i + 1, params[i]);
         }
 
-        final List<T> result = (List<T>) query.getResultList();
-        return result;
+        return (List<T>) query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<T> findByNamedQueryAndNamedParams(final String name,
-            final Map<String, ? extends Object> params) {
+            final Map<String, ?> params) {
         javax.persistence.Query query = getEntityManager().createNamedQuery(
                 name);
 
-        for (final Map.Entry<String, ? extends Object> param : params.entrySet()) {
+        for (final Map.Entry<String, ?> param : params.entrySet()) {
             query.setParameter(param.getKey(), param.getValue());
         }
 
-        final List<T> result = (List<T>) query.getResultList();
-        return result;
+        return (List<T>) query.getResultList();
     }
 
     @Override
@@ -156,8 +152,7 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
             crit.setMaxResults(maxResults);
         }
 
-        final List<T> result = crit.list();
-        return result;
+        return crit.list();
     }
 
     protected long countByCriteria(Criterion... criterion) {
@@ -179,8 +174,7 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
 
     @Override
     public T update(T entity) {
-        final T mergedEntity = getEntityManager().merge(entity);
-        return mergedEntity;
+        return getEntityManager().merge(entity);
     }
 
     @Override

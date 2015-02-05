@@ -17,10 +17,10 @@ import javax.swing.Icon;
 public class LineIcon implements Icon {
 
     // the stroke-width property
-    private Integer lineHeight;
-    private Integer lineWidth;
+    private final Integer lineHeight;
+    private final Integer lineWidth;
     // the stroke-colour property
-    private Color color;
+    private final Color color;
 
     /**
      * Constructor: takes an integer for the line height, one per its width and

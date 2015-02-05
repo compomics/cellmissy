@@ -144,19 +144,19 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
     /**
      * set file filters for CellMIA
      */
-    private static FilenameFilter sampleFilter = new FilenameFilter() {
+    private static final FilenameFilter sampleFilter = new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
             return name.startsWith("sample");
         }
     };
-    private static FilenameFilter resultsFilter = new FilenameFilter() {
+    private static final FilenameFilter resultsFilter = new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
             return name.startsWith("results");
         }
     };
-    private static FilenameFilter textfilesFilter = new FilenameFilter() {
+    private static final FilenameFilter textfilesFilter = new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
             return name.endsWith(".txt");

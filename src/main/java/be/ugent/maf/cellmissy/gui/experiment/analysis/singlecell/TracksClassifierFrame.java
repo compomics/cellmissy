@@ -73,20 +73,20 @@ import org.springframework.context.ApplicationContext;
 public class TracksClassifierFrame extends javax.swing.JFrame {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TracksClassifierFrame.class);
-    private BindingGroup bindingGroup;
+    private final BindingGroup bindingGroup;
     private ObservableList<TrackDataHolder> trackDatasetList;
-    private GridBagConstraints gridBagConstraints;
+    private final GridBagConstraints gridBagConstraints;
     private ObservableList<TrackDataHolder> trackDataHolderBindingList;
     private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
     private Experiment experiment;
     private final static String newLine = "\n";
     private ChartPanel convexHullChartPanel;
-    ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
-    ProjectService projectService = context.getBean("projectService", ProjectService.class);
-    ExperimentService experimentService = context.getBean("experimentService", ExperimentService.class);
-    WellService wellService = context.getBean("wellService", WellService.class);
-    SingleCellPreProcessor singleCellPreProcessor = (SingleCellPreProcessor) context.getBean("singleCellPreProcessor");
+    final ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
+    final ProjectService projectService = context.getBean("projectService", ProjectService.class);
+    final ExperimentService experimentService = context.getBean("experimentService", ExperimentService.class);
+    final WellService wellService = context.getBean("wellService", WellService.class);
+    final SingleCellPreProcessor singleCellPreProcessor = (SingleCellPreProcessor) context.getBean("singleCellPreProcessor");
 
     /**
      * Creates new form TracksClassifierFrame
@@ -190,7 +190,7 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
                             trackTable.getColumnModel().getColumn(i).setCellRenderer(singleCellDataTableRenderer);
                         }
                         for (int i = 0; i < trackTable.getColumnCount(); i++) {
-                            GuiUtils.packColumn(trackTable, i, 1);
+                            GuiUtils.packColumn(trackTable, i);
                         }
                         // upate convex hull data in table
                         CellCentricDataHolder cellCentricDataHolder = selectedTrackDataHolder.getCellCentricDataHolder();
@@ -200,7 +200,7 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
                             convexHullTable.getColumnModel().getColumn(i).setCellRenderer(singleCellDataTableRenderer);
                         }
                         for (int i = 0; i < convexHullTable.getColumnCount(); i++) {
-                            GuiUtils.packColumn(convexHullTable, i, 1);
+                            GuiUtils.packColumn(convexHullTable, i);
                         }
                         plotConvexHull(selectedTrackDataHolder);
                     }

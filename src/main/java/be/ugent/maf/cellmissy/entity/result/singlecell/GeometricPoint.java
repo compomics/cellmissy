@@ -16,9 +16,9 @@ import java.util.Comparator;
 public class GeometricPoint implements Comparable<GeometricPoint> {
 
     // x coordinate
-    private double x;
+    private final double x;
     // y coordinate
-    private double y;
+    private final double y;
     // a polar comparator for the point: compare three points according to the angle they make
     public final Comparator<GeometricPoint> POLAR_COMPARATOR = new PolarComparator();
 

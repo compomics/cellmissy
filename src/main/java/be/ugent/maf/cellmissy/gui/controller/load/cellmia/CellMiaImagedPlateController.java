@@ -180,7 +180,7 @@ public class CellMiaImagedPlateController {
             @Override
             public void mouseClicked(MouseEvent e) {
                 // check if mouse listener has been enabled first
-                if (isEnable == true) {
+                if (isEnable) {
                     WellGui firstWellGui = null;
                     for (WellGui wellGui : imagedPlatePanel.getWellGuiList()) {
                         List<Ellipse2D> ellipsi = wellGui.getEllipsi();

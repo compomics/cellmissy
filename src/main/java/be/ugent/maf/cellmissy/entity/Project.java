@@ -125,8 +125,7 @@ public class Project implements Serializable, Comparable<Project> {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        return hash;
+        return 3;
     }
 
     @Override
