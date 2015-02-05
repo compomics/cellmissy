@@ -271,7 +271,7 @@ public class AreaAnalysisController {
             if (columnIndex == columnNames.length - 1 | columnIndex == columnNames.length - 2) {
                 slopesTable.getColumnModel().getColumn(columnIndex).setCellRenderer(new FormatRenderer(areaMainController.getFormat(), SwingConstants.LEFT));
             }
-            GuiUtils.packColumn(slopesTable, columnIndex, 1);
+            GuiUtils.packColumn(slopesTable, columnIndex);
         }
         // select by default all conditions: to show all bars in the velocity chart
         slopesTable.setRowSelectionInterval(0, linearRegressionPanel.getSlopesTable().getRowCount() - 1);
@@ -877,8 +877,8 @@ public class AreaAnalysisController {
      */
     private class AnalysisReportSwingWorker extends SwingWorker<File, Void> {
 
-        private File directory;
-        private String reportName;
+        private final File directory;
+        private final String reportName;
 
         public AnalysisReportSwingWorker(File directory, String reportName) {
             this.directory = directory;
@@ -894,8 +894,7 @@ public class AreaAnalysisController {
             boolean useCorrectedData = areaMainController.useCorrectedData();
             areaAnalysisReportController.setUseCorrectedData(useCorrectedData);
             //call the child controller to create report
-            File file = areaAnalysisReportController.createAnalysisReport(directory, reportName);
-            return file;
+            return areaAnalysisReportController.createAnalysisReport(directory, reportName);
         }
 
         @Override

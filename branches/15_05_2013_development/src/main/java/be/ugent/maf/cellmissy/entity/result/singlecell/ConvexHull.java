@@ -30,6 +30,7 @@ public class ConvexHull {
 
     /**
      * Getters and setters
+     * @return
      */
     public Iterable<GeometricPoint> getHull() {
         return hull;

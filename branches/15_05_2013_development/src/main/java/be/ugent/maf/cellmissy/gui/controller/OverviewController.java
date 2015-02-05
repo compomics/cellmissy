@@ -76,7 +76,7 @@ public class OverviewController {
         bindingGroup = new BindingGroup();
         // initialize main view component
         overviewDialog = new OverviewDialog(cellMissyController.getCellMissyFrame(), true);
-        addUserToProjectDialog = new AddUserToProjectDialog(cellMissyController.getCellMissyFrame(), true);
+        addUserToProjectDialog = new AddUserToProjectDialog(cellMissyController.getCellMissyFrame());
         initOverviewDialog();
         initAddUserToProjectDialog();
     }

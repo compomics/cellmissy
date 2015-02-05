@@ -25,9 +25,9 @@ import javax.swing.JPanel;
 public abstract class AbstractPlatePanel extends JPanel {
 
     protected List<WellGui> wellGuiList;
-    protected PlateFormat plateFormat;
+    private PlateFormat plateFormat;
     protected static final int pixelsGrid = 8;
-    protected static final int pixelsBorders = 25;
+    private static final int pixelsBorders = 25;
 
     /**
      * Constructor; setOpaque to false.

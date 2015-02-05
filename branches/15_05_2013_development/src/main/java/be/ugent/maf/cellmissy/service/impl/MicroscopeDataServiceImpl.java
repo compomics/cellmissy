@@ -41,7 +41,6 @@ public class MicroscopeDataServiceImpl implements MicroscopeDataService {
         // Map imaging type to position list names
         Map<ImagingType, String> imagingTypeToPosListMap = obsepFileParser.mapImagingTypetoPositionList();
         // Map imaging type to samples
-        Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = positionListParser.parsePositionList(imagingTypeToPosListMap, experiment.getSetupFolder());
-        return imagingTypeMap;
+        return positionListParser.parsePositionList(imagingTypeToPosListMap, experiment.getSetupFolder());
     }
 }

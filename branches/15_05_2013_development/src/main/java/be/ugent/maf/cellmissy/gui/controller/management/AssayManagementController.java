@@ -70,7 +70,7 @@ public class AssayManagementController {
     public void init() {
         bindingGroup = new BindingGroup();
         // creata a new dialog
-        assayManagementDialog = new AssayManagementDialog(cellMissyController.getCellMissyFrame(), true);
+        assayManagementDialog = new AssayManagementDialog(cellMissyController.getCellMissyFrame());
         // init main view
         initAssayManagementDialog();
     }
@@ -243,7 +243,7 @@ public class AssayManagementController {
      */
     private class DeleteAssaySwingWorker extends SwingWorker<Void, Void> {
 
-        private Assay assay;
+        private final Assay assay;
         private String message;
         private String title;
         private int optionMessage;

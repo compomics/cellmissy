@@ -18,7 +18,7 @@ import javax.swing.JList;
  */
 public class ExperimentsListRenderer extends DefaultListCellRenderer {
 
-    private User currentUser;
+    private final User currentUser;
 
     public ExperimentsListRenderer(User currentUser) {
         setOpaque(true);

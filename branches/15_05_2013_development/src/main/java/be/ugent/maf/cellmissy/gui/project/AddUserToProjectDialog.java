@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.project;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import java.awt.*;
 
 /**
  *
@@ -29,8 +30,8 @@ public class AddUserToProjectDialog extends javax.swing.JDialog {
     /**
      * Creates new form AddUserToProjectDialog
      */
-    public AddUserToProjectDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public AddUserToProjectDialog(Frame parent) {
+        super(parent, true);
         initComponents();
     }
 
@@ -156,7 +157,7 @@ public class AddUserToProjectDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AddUserToProjectDialog dialog = new AddUserToProjectDialog(new javax.swing.JFrame(), true);
+                AddUserToProjectDialog dialog = new AddUserToProjectDialog(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

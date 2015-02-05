@@ -34,8 +34,7 @@ public class AnalysisUtils {
                 list.add(value);
             }
         }
-        Double[] newArray = list.toArray(new Double[list.size()]);
-        return newArray;
+        return list.toArray(new Double[list.size()]);
     }
 
     /**
@@ -197,7 +196,7 @@ public class AnalysisUtils {
      * @param data
      * @return MAD
      */
-    public static double computeMAD(double[] data) {
+    private static double computeMAD(double[] data) {
         double[] deviations = new double[data.length];
         double median = computeMedian(data);
         for (int i = 0; i < data.length; i++) {
@@ -354,7 +353,7 @@ public class AnalysisUtils {
      * @param well
      * @return
      */
-    public static int getNumberOfSingleCellAnalyzedSamplesPerWell(Well well) {
+    private static int getNumberOfSingleCellAnalyzedSamplesPerWell(Well well) {
         int numberOfSamplesPerWell = 0;
         for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
             if (!wellHasImagingType.getTrackList().isEmpty()) {

@@ -21,7 +21,7 @@ public class StatisticsTestFactory {
      * This is mapping the bean names with the respective implementations for
      * the statistical tests.
      */
-    private Map<String, StatisticsCalculator> statisticsCalculators;
+    private final Map<String, StatisticsCalculator> statisticsCalculators;
     private static final StatisticsTestFactory statisticsTestFactory = new StatisticsTestFactory();
 
     /**

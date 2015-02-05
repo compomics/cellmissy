@@ -18,7 +18,7 @@ public class RectIcon implements Icon {
 
     private final Integer rectHeight = 10;
     private final Integer rectWidth = 25;
-    private Color color;
+    private final Color color;
 
     /**
      * Constructor with a color

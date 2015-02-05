@@ -77,13 +77,13 @@ public class AreaAnalysisReportController {
     private boolean useCorrectedData;
     private Map<PlateCondition, Boolean> conditionsToPlotMap;
     private Map<String, Boolean[]> globalViewsMap;
-    private static Font bodyFont = new Font(Font.HELVETICA, 8);
-    private static Font boldFont = new Font(Font.HELVETICA, 8, Font.BOLD);
-    private static Font titleFont = new Font(Font.HELVETICA, 10, Font.BOLD);
-    private static int chartWidth = 500;
-    private static int chartHeight = 450;
-    private static int rectChartWidth = 500;
-    private static int rectChartHeigth = 300;
+    private static final Font bodyFont = new Font(Font.HELVETICA, 8);
+    private static final Font boldFont = new Font(Font.HELVETICA, 8, Font.BOLD);
+    private static final Font titleFont = new Font(Font.HELVETICA, 10, Font.BOLD);
+    private static final int chartWidth = 500;
+    private static final int chartHeight = 450;
+    private static final int rectChartWidth = 500;
+    private static final int rectChartHeigth = 300;
     //view
     private CustomizeReportDialog customizeReportDialog;
     //parent controller
@@ -167,7 +167,7 @@ public class AreaAnalysisReportController {
         customizeReportDialog.getConditionsCheckBoxesTable().getColumnModel().getColumn(1).setCellEditor(new CheckBoxConditionsCellEditor(checkBoxesConditionsTableModel));
         // pack columns of table
         for (int i = 0; i < customizeReportDialog.getConditionsCheckBoxesTable().getColumnCount(); i++) {
-            GuiUtils.packColumn(customizeReportDialog.getConditionsCheckBoxesTable(), i, 1);
+            GuiUtils.packColumn(customizeReportDialog.getConditionsCheckBoxesTable(), i);
         }
         // global views table
         CheckBoxesGlobalViewsTableModel checkBoxesGlobalViewsTableModel = new CheckBoxesGlobalViewsTableModel(globalViewsMap);
@@ -181,7 +181,7 @@ public class AreaAnalysisReportController {
         }
         // pack columns of table
         for (int i = 0; i < customizeReportDialog.getGlobalViewsTable().getColumnCount(); i++) {
-            GuiUtils.packColumn(customizeReportDialog.getGlobalViewsTable(), i, 1);
+            GuiUtils.packColumn(customizeReportDialog.getGlobalViewsTable(), i);
         }
         // pack the dialog, center it on screen and show it
         customizeReportDialog.pack();
@@ -219,7 +219,7 @@ public class AreaAnalysisReportController {
      */
     private void initCustomizeReportDialog() {
         // create a new dialog
-        customizeReportDialog = new CustomizeReportDialog(areaAnalysisController.getCellMissyFrame(), true);
+        customizeReportDialog = new CustomizeReportDialog(areaAnalysisController.getCellMissyFrame());
         // customize tables
         customizeReportDialog.getConditionsCheckBoxesTable().getTableHeader().setReorderingAllowed(false);
         customizeReportDialog.getConditionsCheckBoxesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
@@ -914,8 +914,8 @@ public class AreaAnalysisReportController {
      */
     private final class CheckBoxConditionsCellEditor extends AbstractCellEditor implements TableCellEditor, ItemListener {
 
-        private JCheckBox checkBox;
-        private CheckBoxesConditionsTableModel conditionsCheckBoxesTableModel;
+        private final JCheckBox checkBox;
+        private final CheckBoxesConditionsTableModel conditionsCheckBoxesTableModel;
 
         private CheckBoxConditionsCellEditor(CheckBoxesConditionsTableModel conditionsCheckBoxesTableModel) {
             checkBox = new JCheckBox();
@@ -959,8 +959,8 @@ public class AreaAnalysisReportController {
      */
     private final class CheckBoxGlobalViewsCellEditor extends AbstractCellEditor implements TableCellEditor, ItemListener {
 
-        private JCheckBox checkBox;
-        private CheckBoxesGlobalViewsTableModel checkBoxesGlobalViewsTableModel;
+        private final JCheckBox checkBox;
+        private final CheckBoxesGlobalViewsTableModel checkBoxesGlobalViewsTableModel;
 
         private CheckBoxGlobalViewsCellEditor(CheckBoxesGlobalViewsTableModel conditionsCheckBoxesTableModel) {
             checkBox = new JCheckBox();

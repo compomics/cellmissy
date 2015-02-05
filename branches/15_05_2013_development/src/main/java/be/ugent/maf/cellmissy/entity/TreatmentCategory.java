@@ -15,7 +15,7 @@ public enum TreatmentCategory {
 
     DRUG(1), GENERAL_TREATMENT(2);
 
-    private int databaseValue;
+    private final int databaseValue;
 
     private TreatmentCategory(int databaseValue){
         this.databaseValue = databaseValue;

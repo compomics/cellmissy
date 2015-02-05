@@ -209,8 +209,7 @@ public class PlateCondition implements Serializable {
 
     public Integer getConditionIndex() {
         String substring = this.getName().substring(10);
-        Integer conditionIndex = Integer.parseInt(substring);
-        return conditionIndex;
+        return Integer.parseInt(substring);
     }
 
     /**

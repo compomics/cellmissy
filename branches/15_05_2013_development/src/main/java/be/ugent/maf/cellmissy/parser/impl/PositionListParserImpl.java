@@ -52,7 +52,7 @@ public class PositionListParserImpl implements PositionListParser {
                     positionListFile = setupFiles[j];
                     try (BufferedReader bufferedReader = new BufferedReader(new FileReader(positionListFile))) {
                         String strRead;
-                        // check if file actually contains line to read, otherwise throw ann exception
+                        // check if file actually contains line to read, otherwise throw an exception
                         if (bufferedReader.read() == -1) {
                             throw new FileParserException("Seems like your position list file is empty!\nPlease check your file.");
                         }

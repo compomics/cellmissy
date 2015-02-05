@@ -136,7 +136,7 @@ public class AreaMainController {
         //init view
         analysisExperimentPanel = new AnalysisExperimentPanel();
         metaDataAreaPanel = new MetadataAreaPanel();
-        areaAnalysisInfoDialog = new AreaAnalysisInfoDialog(cellMissyController.getCellMissyFrame(), true);
+        areaAnalysisInfoDialog = new AreaAnalysisInfoDialog(cellMissyController.getCellMissyFrame());
         // set icon for info label
         Icon informationIcon = UIManager.getIcon("OptionPane.informationIcon");
         ImageIcon scaledInfoIcon = GuiUtils.getScaledIcon(informationIcon);

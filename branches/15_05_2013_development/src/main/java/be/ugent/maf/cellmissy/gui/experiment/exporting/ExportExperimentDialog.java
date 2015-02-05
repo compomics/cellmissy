@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import java.awt.*;
 
 /**
  *
@@ -71,8 +72,8 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
     /**
      * Creates new form ExportExperimentDialog
      */
-    public ExportExperimentDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public ExportExperimentDialog(Frame parent) {
+        super(parent, true);
         initComponents();
     }
 
@@ -450,7 +451,7 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ExportExperimentDialog dialog = new ExportExperimentDialog(new javax.swing.JFrame(), true);
+                ExportExperimentDialog dialog = new ExportExperimentDialog(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

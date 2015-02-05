@@ -19,7 +19,7 @@ public class TrackDataHolder {
 
     // track
     // the track from which the data are being computed-kept in memory
-    private Track track;
+    private final Track track;
     // the step-centric measurements
     private StepCentricDataHolder stepCentricDataHolder;
     // the cell-centric measurements
@@ -29,6 +29,8 @@ public class TrackDataHolder {
      * Constructor, takes a track as argument.
      *
      * @param track
+     * @param stepCentricDataHolder
+     * @param cellCentricDataHolder
      */
     public TrackDataHolder(Track track, StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
         this.track = track;
@@ -39,6 +41,7 @@ public class TrackDataHolder {
     /**
      * Getters and setters
      *
+     * @return
      */
     public Track getTrack() {
         return track;
@@ -64,6 +67,6 @@ public class TrackDataHolder {
     public String toString() {
         int trackNumber = track.getTrackNumber();
         Well well = track.getWellHasImagingType().getWell();
-        return "track " + trackNumber + ", well " + well;
+        return "track " + track.getTrackid() + ", well " + well;
     }
 }

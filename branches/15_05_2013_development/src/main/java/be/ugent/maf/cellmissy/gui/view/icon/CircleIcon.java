@@ -18,7 +18,7 @@ public class CircleIcon implements Icon {
 
     private final Integer circleHeight = 10;
     private final Integer circleWidth = 10;
-    private Color color;
+    private final Color color;
 
     /**
      * Constructor with a color

@@ -21,7 +21,7 @@ public class KernelDensityEstimatorFactory {
      * This is mapping the bean names with the respective implementations for
      * the kernel density estimation.
      */
-    private Map<String, KernelDensityEstimator> kernelDensityEstimators;
+    private final Map<String, KernelDensityEstimator> kernelDensityEstimators;
     private static final KernelDensityEstimatorFactory kernelDensityEstimatorFactory = new KernelDensityEstimatorFactory();
 
     /**

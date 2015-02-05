@@ -15,7 +15,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class AlignedTableRenderer extends DefaultTableCellRenderer {
 
-    private int alignment;
+    private final int alignment;
 
     /**
      * Constructor

@@ -11,6 +11,7 @@ package be.ugent.maf.cellmissy.entity.result.singlecell;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public class CellCentricDataHolder {
+
     // track duration, in minutes
     private double trackDuration;
     // minimum value for the x coordinate
@@ -54,6 +55,10 @@ public class CellCentricDataHolder {
     private double medianTurningAngle;
     //@todo: to be deleted afterwards, for testing only
     private int label;
+    // the root mean squared deviation from average displacement
+    private double RMSDeviation;
+    // the median direction autocorrelation, computed for time interval of size 1
+    private double medianDirectionAutocorrelation;
 
     /**
      * Constructor
@@ -64,6 +69,7 @@ public class CellCentricDataHolder {
     /**
      * Getters and setters.
      *
+     * @return
      */
     public double getTrackDuration() {
         return trackDuration;
@@ -207,5 +213,21 @@ public class CellCentricDataHolder {
 
     public void setLabel(int label) {
         this.label = label;
+    }
+
+    public double getRMSDeviation() {
+        return RMSDeviation;
+    }
+
+    public void setRMSDeviation(double RMSDeviation) {
+        this.RMSDeviation = RMSDeviation;
+    }
+
+    public double getMedianDirectionAutocorrelation() {
+        return medianDirectionAutocorrelation;
+    }
+
+    public void setMedianDirectionAutocorrelation(double medianDirectionAutocorrelation) {
+        this.medianDirectionAutocorrelation = medianDirectionAutocorrelation;
     }
 }

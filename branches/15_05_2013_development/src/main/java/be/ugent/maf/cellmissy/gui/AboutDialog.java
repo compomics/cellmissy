@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.gui;
 
 import javax.swing.JEditorPane;
+import java.awt.*;
 
 /**
  *
@@ -19,8 +20,8 @@ public class AboutDialog extends javax.swing.JDialog {
     /**
      * Creates new form AboutDialog
      */
-    public AboutDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public AboutDialog(Frame parent) {
+        super(parent, true);
         initComponents();
     }
 
@@ -96,7 +97,7 @@ public class AboutDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AboutDialog dialog = new AboutDialog(new javax.swing.JFrame(), true);
+                AboutDialog dialog = new AboutDialog(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

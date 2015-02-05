@@ -21,7 +21,7 @@ public class DistanceMetricFactory {
      * This is mapping the bean names with the respective implementations for
      * the distance metric.
      */
-    private Map<String, DistanceMetricOperator> distanceMetrics;
+    private final Map<String, DistanceMetricOperator> distanceMetrics;
     private static final DistanceMetricFactory distanceMetricFactory = new DistanceMetricFactory();
 
     /**

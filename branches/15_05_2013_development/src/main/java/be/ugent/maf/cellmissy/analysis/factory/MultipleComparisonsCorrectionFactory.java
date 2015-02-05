@@ -21,7 +21,7 @@ public class MultipleComparisonsCorrectionFactory {
      * This is mapping the bean names with the respective implementations for
      * the MultipleComparisonsCorrector.
      */
-    private Map<String, MultipleComparisonsCorrector> correctors;
+    private final Map<String, MultipleComparisonsCorrector> correctors;
     private static final MultipleComparisonsCorrectionFactory multipleComparisonsCorrectionFactory = new MultipleComparisonsCorrectionFactory();
 
     /**

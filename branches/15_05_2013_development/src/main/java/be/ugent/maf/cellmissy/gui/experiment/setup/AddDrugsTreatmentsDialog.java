@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.gui.experiment.setup;
 
 import javax.swing.JButton;
 import javax.swing.JTextField;
+import java.awt.*;
 
 /**
  *
@@ -31,11 +32,11 @@ public class AddDrugsTreatmentsDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form AddDrugsTreatmentsDialog
-     * @param parent
      * @param modal
+     * @param parent
      */
-    public AddDrugsTreatmentsDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public AddDrugsTreatmentsDialog(Frame parent) {
+        super(parent, true);
         initComponents();
     }
 
@@ -118,7 +119,7 @@ public class AddDrugsTreatmentsDialog extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                AddDrugsTreatmentsDialog dialog = new AddDrugsTreatmentsDialog(new javax.swing.JFrame(), true);
+                AddDrugsTreatmentsDialog dialog = new AddDrugsTreatmentsDialog(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

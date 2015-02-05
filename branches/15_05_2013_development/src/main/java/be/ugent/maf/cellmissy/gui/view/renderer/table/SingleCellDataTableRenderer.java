@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class SingleCellDataTableRenderer extends DefaultTableCellRenderer {
 
-    private Format formatter;
+    private final Format formatter;
 
     public SingleCellDataTableRenderer(Format formatter) {
         this.formatter = formatter;

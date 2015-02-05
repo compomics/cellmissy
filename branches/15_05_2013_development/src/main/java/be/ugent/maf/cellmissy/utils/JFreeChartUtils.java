@@ -44,19 +44,19 @@ import org.jfree.ui.RectangleEdge;
 public class JFreeChartUtils {
 
     // default basic stroke: normal line
-    private static BasicStroke normalLine = new BasicStroke(1.5f);
+    private static final BasicStroke normalLine = new BasicStroke(1.5f);
     // ticker basic stroke: wide line
-    private static BasicStroke wideLine = new BasicStroke(2.5f);
+    private static final BasicStroke wideLine = new BasicStroke(2.5f);
     // new line, enter
     private final static String newLine = "\n";
     // dashed line
-    private static BasicStroke dashedLine = new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[]{6.0f, 6.0f}, 0.0f);
+    private static final BasicStroke dashedLine = new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[]{6.0f, 6.0f}, 0.0f);
     // font for the chart elements
-    private static Font chartFont = new Font("Tahoma", Font.BOLD, 12);
+    private static final Font chartFont = new Font("Tahoma", Font.BOLD, 12);
     // line widths
-    private static List<Float> lineWidths = Arrays.asList(1.0f, 1.5f, 2.0f, 2.5f, 3.0f);
+    private static final List<Float> lineWidths = Arrays.asList(1.0f, 1.5f, 2.0f, 2.5f, 3.0f);
     // decimal format for the plot axis
-    private static DecimalFormat format = new DecimalFormat("####.##");
+    private static final DecimalFormat format = new DecimalFormat("####.##");
 
     /**
      * Getters
@@ -95,7 +95,7 @@ public class JFreeChartUtils {
     public static void setupXYPlot(XYPlot xYPlot) {
         // set background to white and grid color to black
         xYPlot.setBackgroundPaint(Color.white);
-        xYPlot.setRangeGridlinePaint(Color.black);
+//        xYPlot.setRangeGridlinePaint(Color.black);
         // hide the border of the sorrounding box
         xYPlot.setOutlinePaint(Color.white);
         // get domanin and range axes
@@ -240,9 +240,8 @@ public class JFreeChartUtils {
         // autosort False
         XYSeries series = new XYSeries("", false);
         for (int i = 0; i < yValues.length; i++) {
-            double x = xValue;
             double y = yValues[i];
-            series.add(x, y);
+            series.add(xValue, y);
         }
         return series;
     }
@@ -276,8 +275,7 @@ public class JFreeChartUtils {
         // take second row: y coordinates
         double[] yCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposed[1]));
         // generate xy series for the plot
-        XYSeries xySeries = JFreeChartUtils.generateXYSeries(xCoordinates, yCoordinates);
-        return xySeries;
+        return JFreeChartUtils.generateXYSeries(xCoordinates, yCoordinates);
     }
 
     /**
@@ -286,7 +284,6 @@ public class JFreeChartUtils {
      * @param chart: chart to setup
      * @param wellList: keep track of wells added, removed: list needed
      * @param plotLines: show lines on plot?
-     * @param plotLines: show points on plot?
      */
     public static void setupReplicatesAreaChart(JFreeChart chart, List<Well> wellList, boolean plotLines, boolean plotPoints) {
         // set title font
@@ -320,7 +317,6 @@ public class JFreeChartUtils {
      *
      * @param chart: chart to setup
      * @param plotLines: show lines on plot?
-     * @param plotLines: show points on plot?
      */
     public static void setupGlobalAreaChart(JFreeChart chart, boolean plotLines, boolean plotPoints) {
         // set title font
@@ -364,8 +360,8 @@ public class JFreeChartUtils {
         xYPlot.setBackgroundPaint(Color.white);
         xYPlot.setOutlinePaint(Color.black);
         xYPlot.setOutlineStroke(wideLine);
-        xYPlot.setRangeGridlinePaint(Color.black);
-        xYPlot.setDomainGridlinePaint(Color.black);
+//        xYPlot.setRangeGridlinePaint(Color.black);
+//        xYPlot.setDomainGridlinePaint(Color.black);
         Range maxRange = computeMaxRange(xYPlot);
         xYPlot.getDomainAxis().setRange(maxRange);
         xYPlot.getRangeAxis().setRange(maxRange);
@@ -476,7 +472,7 @@ public class JFreeChartUtils {
             setupTrackChart(chart);
         }
         xyPlot.setOutlineStroke(wideLine);
-        xyPlot.setRangeGridlinePaint(Color.black);
+//        xyPlot.setRangeGridlinePaint(Color.black);
         xyPlot.setDomainGridlinePaint(Color.white);
         // set title font
         chart.getTitle().setFont(chartFont);

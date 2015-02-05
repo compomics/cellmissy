@@ -89,7 +89,7 @@ public class PlateManagementDialog extends javax.swing.JDialog {
         jScrollPane1.setPreferredSize(new java.awt.Dimension(45, 100));
 
         plateFormatsList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2" };
+            final String[] strings = { "Item 1", "Item 2" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });

@@ -21,7 +21,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
  */
 public class DataTreeCellRenderer extends DefaultTreeCellRenderer {
 
-    private List<ImagingType> imagingTypeList;
+    private final List<ImagingType> imagingTypeList;
 
     /**
      * Constructor, takes a list of imaging types

@@ -12,7 +12,7 @@ public enum SignificanceLevel {
     
     LOWER(0.01), STANDARD(0.05), HIGHER(0.1);
     
-    private Double value;
+    private final Double value;
 
     private SignificanceLevel(Double value) {
         this.value = value;

@@ -18,14 +18,14 @@ public interface TrackOperator {
     /**
      * Do the operations on the step-centric level.
      *
-     * @param stepCentricDataHolder
+     * @param trackDataHolder
      */
     public void operateOnSteps(TrackDataHolder trackDataHolder);
 
     /**
      * Do the operations on the cell-centric level.
      *
-     * @param cellCentricDataHolder
+     * @param trackDataHolder
      */
     public void operateOnCells(TrackDataHolder trackDataHolder);
 }

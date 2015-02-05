@@ -17,8 +17,8 @@ public class PValuesTableModel extends AbstractTableModel {
 
     private Object[][] data;
     private String columnNames[];
-    private AreaAnalysisGroup analysisGroup;
-    private List<PlateCondition> plateConditionList;
+    private final AreaAnalysisGroup analysisGroup;
+    private final List<PlateCondition> plateConditionList;
 
     /**
      * Constructor
@@ -78,9 +78,7 @@ public class PValuesTableModel extends AbstractTableModel {
         // fill in data
         for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
             data[rowIndex][0] = "Cond " + (plateConditionList.indexOf(plateConditions.get(rowIndex)) + 1);
-            for (int columnIndex = 1; columnIndex < columnNames.length; columnIndex++) {
-                data[rowIndex][columnIndex] = pValuesMatrix[rowIndex][columnIndex - 1];
-            }
+            System.arraycopy(pValuesMatrix[rowIndex], 0, data[rowIndex], 1, columnNames.length - 1);
         }
     }
 }

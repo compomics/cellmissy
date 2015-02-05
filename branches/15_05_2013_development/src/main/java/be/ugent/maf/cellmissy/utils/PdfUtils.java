@@ -37,13 +37,13 @@ public class PdfUtils {
     // logger
     private static final Logger LOG = Logger.getLogger(PdfUtils.class);
     // iText fonts for the PDF documents: body, bold and title fonts
-    private static Font bodyFont = new Font(Font.HELVETICA, 8);
-    private static Font boldFont = new Font(Font.HELVETICA, 8, Font.BOLD);
-    private static Font titleFont = new Font(Font.HELVETICA, 10, Font.BOLD);
+    private static final Font bodyFont = new Font(Font.HELVETICA, 8);
+    private static final Font boldFont = new Font(Font.HELVETICA, 8, Font.BOLD);
+    private static final Font titleFont = new Font(Font.HELVETICA, 10, Font.BOLD);
     // sizes for charts
-    private static int chartWidth = 500;
-    private static int chartHeight = 450;
-    private static int rectChartHeigth = 300;
+    private static final int chartWidth = 500;
+    private static final int chartHeight = 450;
+    private static final int rectChartHeigth = 300;
 
     /**
      * Getters

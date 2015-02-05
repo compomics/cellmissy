@@ -20,8 +20,8 @@ import javax.swing.JList;
  */
 public class RectIconListRenderer extends DefaultListCellRenderer {
 
-    private List<PlateCondition> plateConditionList;
-    private List<Integer> numberOfReplicates;
+    private final List<PlateCondition> plateConditionList;
+    private final List<Integer> numberOfReplicates;
 
     /**
      * Constructor, needs a list of plate conditions, together with number of

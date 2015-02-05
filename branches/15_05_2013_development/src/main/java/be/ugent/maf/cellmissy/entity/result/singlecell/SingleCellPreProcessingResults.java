@@ -55,6 +55,8 @@ public class SingleCellPreProcessingResults {
     private Double[] turningAnglesVector;
     // array for track angles
     private Double[] medianTurningAnglesVector;
+    // array with the median direction autocorrelations
+    private Double[] medianDirectionAutocorrelationsVector;
 
     public List<TrackDataHolder> getTrackDataHolders() {
         return trackDataHolders;
@@ -206,5 +208,13 @@ public class SingleCellPreProcessingResults {
 
     public void setMedianTurningAnglesVector(Double[] medianTurningAnglesVector) {
         this.medianTurningAnglesVector = medianTurningAnglesVector;
+    }
+
+    public Double[] getMedianDirectionAutocorrelationsVector() {
+        return medianDirectionAutocorrelationsVector;
+    }
+
+    public void setMedianDirectionAutocorrelationsVector(Double[] medianDirectionAutocorrelationsVector) {
+        this.medianDirectionAutocorrelationsVector = medianDirectionAutocorrelationsVector;
     }
 }

@@ -43,11 +43,11 @@ public class GuiUtils {
     // Colors used for Imaging Type Rendering
     private static final Color[] imagingTypeColors = {new Color(138, 43, 226), new Color(135, 206, 250), new Color(255, 0, 255)};
     // Font for highlighted labels
-    private static Font boldFont = new Font("Tahoma", Font.BOLD, 14);
+    private static final Font boldFont = new Font("Tahoma", Font.BOLD, 14);
     // Font for normal labels
-    private static Font plainFont = new Font("Tahoma", Font.PLAIN, 12);
+    private static final Font plainFont = new Font("Tahoma", Font.PLAIN, 12);
     // Color for highlighted labels
-    private static Color highlightColor = new Color(72, 61, 169);
+    private static final Color highlightColor = new Color(72, 61, 169);
 
     /**
      * Getters
@@ -189,8 +189,7 @@ public class GuiUtils {
         // dispose of the graphics
         graphics2D.dispose();
         // create the actual image icon
-        ImageIcon imageIcon = new ImageIcon(bufferedImage);
-        return imageIcon;
+        return new ImageIcon(bufferedImage);
     }
 
     /**
@@ -211,12 +210,10 @@ public class GuiUtils {
      * widest cell in the column (the computation is done per row, then). Margin
      * pixels are added to the left and right (resulting in an additional width
      * of 2*margin pixels).
-     *
-     * @param table
+     *  @param table
      * @param colIndex
-     * @param margin
      */
-    public static void packColumn(JTable table, int colIndex, int margin) {
+    public static void packColumn(JTable table, int colIndex) {
         // get column model and then column
         DefaultTableColumnModel columnModel = (DefaultTableColumnModel) table.getColumnModel();
         TableColumn column = columnModel.getColumn(colIndex);
@@ -240,7 +237,7 @@ public class GuiUtils {
             width = Math.max(width, component.getPreferredSize().width);
         }
         // add margin
-        width += 2 * margin;
+        width += 2 * 1;
         // set the width
         column.setPreferredWidth(width);
     }

@@ -67,7 +67,7 @@ public interface GenericRepository<T, ID extends Serializable> {
      */
     List<T> findByNamedQueryAndNamedParams(
             final String queryName,
-            final Map<String, ? extends Object> params);
+            final Map<String, ?> params);
 
     /**
      * Count all entities.

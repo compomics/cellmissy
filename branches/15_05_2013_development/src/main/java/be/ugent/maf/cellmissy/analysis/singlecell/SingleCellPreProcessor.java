@@ -160,4 +160,11 @@ public interface SingleCellPreProcessor {
      * @param singleCellPreProcessingResults
      */
     public void generateMedianTurningAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
+
+    /**
+     * Generate vector with the median direction autocorrelations.
+     *
+     * @param singleCellPreProcessingResults
+     */
+    public void generateMedianDirectionAutocorrelationsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 }

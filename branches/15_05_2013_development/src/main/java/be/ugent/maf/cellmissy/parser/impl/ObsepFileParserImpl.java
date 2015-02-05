@@ -37,7 +37,7 @@ public class ObsepFileParserImpl implements ObsepFileParser {
     public enum CycleTimeUnit {
 
         HOURS(1), MINUTES(2), SECONDS(3), MILLISECONDS(4);
-        private int unitValue;
+        private final int unitValue;
 
         private CycleTimeUnit(int unitValue) {
             this.unitValue = unitValue;

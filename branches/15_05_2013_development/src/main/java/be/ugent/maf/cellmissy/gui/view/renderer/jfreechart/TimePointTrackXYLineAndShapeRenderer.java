@@ -20,9 +20,9 @@ import org.jfree.util.ShapeUtilities;
  */
 public class TimePointTrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
 
-    private int selectedTrackIndex; //track currently selected in list
-    private int timePoint; //current time point to highlight in the track
-    private float lineWidth; //thickness to use to render the line
+    private final int selectedTrackIndex; //track currently selected in list
+    private final int timePoint; //current time point to highlight in the track
+    private final float lineWidth; //thickness to use to render the line
 
     /**
      * Constructor

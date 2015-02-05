@@ -65,7 +65,7 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     public void computeMedianDisplacement(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
         Double[] instantaneousDisplacements = stepCentricDataHolder.getInstantaneousDisplacements();
         Double[] excludeNullValues = AnalysisUtils.excludeNullValues(instantaneousDisplacements);
-        double medianDisplacement = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
+        double medianDisplacement = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(excludeNullValues));
         cellCentricDataHolder.setMedianDisplacement(medianDisplacement);
     }
 
@@ -97,7 +97,7 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     }
 
     @Override
-    public void computeMedianSpeed(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
+    public void computeMedianSpeed(CellCentricDataHolder cellCentricDataHolder) {
         double medianDisplacement = cellCentricDataHolder.getMedianDisplacement();
         double duration = cellCentricDataHolder.getTrackDuration();
         double medianSpeed = medianDisplacement / duration;
@@ -155,7 +155,16 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
         Double[] turningAngles = stepCentricDataHolder.getTurningAngles();
         Double[] excludeNullValues = AnalysisUtils.excludeNullValues(turningAngles);
         // simply compute the median of the turning angles
-        double medianTurningAngle = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
+        double medianTurningAngle = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(excludeNullValues));
         cellCentricDataHolder.setMedianTurningAngle(medianTurningAngle);
+    }
+
+    @Override
+    public void computeMedianDirectionAutocorrelation(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
+        List<Double[]> directionAutocorrelationsList = stepCentricDataHolder.getDirectionAutocorrelations();
+        Double[] directionAutocorrelations = directionAutocorrelationsList.get(1);
+        // simply compute the median of the direction autocorrelations
+        double medianDirectionAutocorrelation = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(directionAutocorrelations));
+        cellCentricDataHolder.setMedianDirectionAutocorrelation(medianDirectionAutocorrelation);
     }
 }

@@ -17,8 +17,8 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class VelocityOutliersRenderer extends DefaultTableCellRenderer {
 
-    private boolean[] outliers;
-    private Format formatter;
+    private final boolean[] outliers;
+    private final Format formatter;
 
     /**
      * Constructor

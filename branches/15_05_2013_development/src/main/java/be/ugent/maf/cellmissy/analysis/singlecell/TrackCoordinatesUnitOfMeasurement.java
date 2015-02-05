@@ -12,7 +12,7 @@ package be.ugent.maf.cellmissy.analysis.singlecell;
 public enum TrackCoordinatesUnitOfMeasurement {
 
     MICRO_METERS(1), PIXELS(2);
-    private int unit;
+    private final int unit;
 
     private TrackCoordinatesUnitOfMeasurement(int unit) {
         this.unit = unit;

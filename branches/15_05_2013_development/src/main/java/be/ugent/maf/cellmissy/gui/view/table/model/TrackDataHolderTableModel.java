@@ -24,7 +24,7 @@ public class TrackDataHolderTableModel extends AbstractTableModel {
 
     private String columnNames[];
     private Object[][] data;
-    private TrackDataHolder trackDataHolder;
+    private final TrackDataHolder trackDataHolder;
 
     /**
      * Constructor: takes a track data holder object needed to populate the

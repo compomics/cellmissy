@@ -445,7 +445,7 @@ public class ExploreTrackController {
             exploreTrackPanel.getTrackDataTable().getColumnModel().getColumn(i).setCellRenderer(singleCellDataTableRenderer);
         }
         for (int i = 0; i < exploreTrackPanel.getTrackDataTable().getColumnCount(); i++) {
-            GuiUtils.packColumn(exploreTrackPanel.getTrackDataTable(), i, 1);
+            GuiUtils.packColumn(exploreTrackPanel.getTrackDataTable(), i);
         }
     }
 
@@ -463,7 +463,7 @@ public class ExploreTrackController {
             exploreTrackPanel.getConvexHullTable().getColumnModel().getColumn(i).setCellRenderer(singleCellDataTableRenderer);
         }
         for (int i = 0; i < exploreTrackPanel.getConvexHullTable().getColumnCount(); i++) {
-            GuiUtils.packColumn(exploreTrackPanel.getConvexHullTable(), i, 1);
+            GuiUtils.packColumn(exploreTrackPanel.getConvexHullTable(), i);
         }
     }
 
@@ -585,7 +585,7 @@ public class ExploreTrackController {
     private void setupConvexHullChart(JFreeChart convexHullChart, TrackDataHolder trackDataHolder) {
         XYPlot xyPlot = convexHullChart.getXYPlot();
         JFreeChartUtils.setupXYPlot(xyPlot);
-        xyPlot.setDomainGridlinePaint(Color.black);
+//        xyPlot.setDomainGridlinePaint(Color.black);
         // set title font
         convexHullChart.getTitle().setFont(JFreeChartUtils.getChartFont());
         // set up the chart
@@ -666,7 +666,7 @@ public class ExploreTrackController {
      */
     private class PlayTrackSwingWorker extends SwingWorker<Void, Void> {
 
-        private int selectedTrackIndex;
+        private final int selectedTrackIndex;
 
         public PlayTrackSwingWorker(int selectedTrackIndex) {
             this.selectedTrackIndex = selectedTrackIndex;

@@ -248,6 +248,6 @@ public class TrackPoint implements Serializable {
 
     @Override
     public String toString() {
-        return cellRow + ", " + cellRow;
+        return "x: " + cellRow + ", y: " + cellCol;
     }
 }

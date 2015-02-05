@@ -36,15 +36,15 @@ public class GrahamScanTest {
     @Autowired
     private ConvexHullOperator convexHullOperator;
     // 6 points ont the plane
-    private static Track track = new Track();
-    private static GeometricPoint q = new GeometricPoint(2, 3);
-    private static GeometricPoint r = new GeometricPoint(10, 6);
-    private static GeometricPoint s = new GeometricPoint(10, 9);
-    private static GeometricPoint t = new GeometricPoint(8, 10);
-    private static GeometricPoint u = new GeometricPoint(-2, 5);
-    private static GeometricPoint v = new GeometricPoint(7, -4);
+    private static final Track track = new Track();
+    private static final GeometricPoint q = new GeometricPoint(2, 3);
+    private static final GeometricPoint r = new GeometricPoint(10, 6);
+    private static final GeometricPoint s = new GeometricPoint(10, 9);
+    private static final GeometricPoint t = new GeometricPoint(8, 10);
+    private static final GeometricPoint u = new GeometricPoint(-2, 5);
+    private static final GeometricPoint v = new GeometricPoint(7, -4);
     // the convex hull to do the calculations on
-    private ConvexHull convexHull = new ConvexHull();
+    private final ConvexHull convexHull = new ConvexHull();
 
     @BeforeClass
     public static void createTrack() {

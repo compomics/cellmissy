@@ -20,7 +20,7 @@ public class CheckBoxesConditionsTableModel extends AbstractTableModel {
     private Object[][] data;
     private String columnNames[];
     private boolean[] checkBoxes;
-    private Map<PlateCondition, Boolean> map;
+    private final Map<PlateCondition, Boolean> map;
 
     /**
      * Constructor.

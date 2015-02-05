@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.experiment.setup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import java.awt.*;
 
 /**
  *
@@ -69,8 +70,8 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
     /**
      * Creates new form ImportTemplateDialog
      */
-    public ImportTemplateDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public ImportTemplateDialog(Frame parent) {
+        super(parent, true);
         initComponents();
     }
 
@@ -429,7 +430,7 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ImportTemplateDialog dialog = new ImportTemplateDialog(new javax.swing.JFrame(), true);
+                ImportTemplateDialog dialog = new ImportTemplateDialog(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

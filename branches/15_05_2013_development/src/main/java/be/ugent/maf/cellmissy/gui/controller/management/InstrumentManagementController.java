@@ -250,7 +250,7 @@ public class InstrumentManagementController {
      */
     private class DeleteInstrumentSwingWorker extends SwingWorker<Void, Void> {
 
-        private Instrument instrument;
+        private final Instrument instrument;
         private String message;
         private String title;
         private int optionMessage;

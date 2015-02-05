@@ -19,7 +19,7 @@ import javax.swing.table.AbstractTableModel;
 public class TrackDataTableModel extends AbstractTableModel {
 
     private Object[][] data;
-    private String columnNames[];
+    private final String[] columnNames;
 
     /**
      * Constructor

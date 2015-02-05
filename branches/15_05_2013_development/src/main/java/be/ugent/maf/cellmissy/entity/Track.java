@@ -73,6 +73,11 @@ public class Track implements Serializable {
         this.trackid = trackid;
     }
 
+    public Track(Long trackid, int trackNumber) {
+        this.trackid = trackid;
+        this.trackNumber = trackNumber;
+    }
+
     public Track(Long trackid, int trackNumber, int trackLength) {
         this.trackid = trackid;
         this.trackNumber = trackNumber;
@@ -133,10 +138,7 @@ public class Track implements Serializable {
             return false;
         }
         Track other = (Track) object;
-        if ((this.trackid == null && other.trackid != null) || (this.trackid != null && !this.trackid.equals(other.trackid))) {
-            return false;
-        }
-        return true;
+        return !((this.trackid == null && other.trackid != null) || (this.trackid != null && !this.trackid.equals(other.trackid)));
     }
 
     @Override

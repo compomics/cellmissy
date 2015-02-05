@@ -19,7 +19,7 @@ import javax.swing.JList;
  * @author Paola Masuzzo
  */
 public class ConditionsLoadListRenderer extends DefaultListCellRenderer {
-    private List<PlateCondition> plateConditionList;
+    private final List<PlateCondition> plateConditionList;
 
     /**
      * Constructor, takes the list of plate conditions
