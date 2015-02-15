@@ -24,6 +24,7 @@ import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
@@ -34,16 +35,16 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- *
  * @author Paola Masuzzo
  */
 @Component("setupReportController")
-public class SetupReportController {
+class SetupReportController {
 
     private static final Logger LOG = Logger.getLogger(SetupReportController.class);
     // model
@@ -57,7 +58,6 @@ public class SetupReportController {
     //services
 
     /**
-     *
      * @param directory
      * @return
      */
@@ -70,7 +70,6 @@ public class SetupReportController {
     }
 
     /**
-     *
      * @param pdfFile
      */
     private void tryToCreateFile(File pdfFile) {
@@ -198,8 +197,6 @@ public class SetupReportController {
 
     /**
      * Create Image from a aJFreeChart and add it to document
-     *
-     * @param chart
      */
     private void addImageFromJPanel(JPanel panel, int imageWidth, int imageHeight) {
         Image imageFromJPanel = PdfUtils.getImageFromJPanel(writer, panel, imageWidth, imageHeight);
@@ -228,16 +225,16 @@ public class SetupReportController {
         // add main title for section
         PdfUtils.addTitle(document, "BIOLOGICAL CONDITIONS", PdfUtils.getTitleFont());
         List<PlateCondition> plateConditions = new ArrayList(experiment.getPlateConditionList());
-        for (int i = 0; i < plateConditions.size(); i++) {
-            Paragraph paragraph = new Paragraph("" + plateConditions.get(i).getName(), titleFont);
+        for (PlateCondition plateCondition : plateConditions) {
+            Paragraph paragraph = new Paragraph("" + plateCondition.getName(), titleFont);
             //set font color to condition index
             int lenght = GuiUtils.getAvailableColors().length;
-            int conditionIndex = plateConditions.get(i).getConditionIndex() - 1;
+            int conditionIndex = plateCondition.getConditionIndex() - 1;
             int indexOfColor = conditionIndex % lenght;
             titleFont.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
             try {
                 document.add(paragraph);
-                addConditionInfo(plateConditions.get(i));
+                addConditionInfo(plateCondition);
                 PdfUtils.addEmptyLines(document, 1);
             } catch (DocumentException ex) {
                 LOG.error(ex.getMessage(), ex);
@@ -381,8 +378,7 @@ public class SetupReportController {
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, titleFont);
         lines.clear();
         List<Treatment> treatments = plateCondition.getTreatmentList();
-        for (int i = 0; i < treatments.size(); i++) {
-            Treatment treatment = treatments.get(i);
+        for (Treatment treatment : treatments) {
             line = "Treatment type: " + treatment.getTreatmentType();
             lines.add(line);
             line = "Treatment concentration: " + treatment.getConcentration() + " " + treatment.getConcentrationUnit();
@@ -417,9 +413,8 @@ public class SetupReportController {
         PdfUtils.addCustomizedCell(dataTable, "Assay(Medium, %Serum)", PdfUtils.getTitleFont());
         List<PlateCondition> plateConditions = experiment.getPlateConditionList();
         int lenght = GuiUtils.getAvailableColors().length;
-        for (int i = 0; i < plateConditions.size(); i++) {
-            PlateCondition plateCondition = plateConditions.get(i);
-            int conditionIndex = plateConditions.get(i).getConditionIndex() - 1;
+        for (PlateCondition plateCondition : plateConditions) {
+            int conditionIndex = plateCondition.getConditionIndex() - 1;
             int indexOfColor = conditionIndex % lenght;
             Color color = GuiUtils.getAvailableColors()[indexOfColor];
             PdfUtils.addColoredCell(dataTable, color);

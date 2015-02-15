@@ -24,6 +24,7 @@ import be.ugent.maf.cellmissy.gui.experiment.setup.ConditionsPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.SetupConditionsPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.ConditionsSetupListRenderer;
 import be.ugent.maf.cellmissy.service.CellLineService;
+
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +34,7 @@ import javax.persistence.PersistenceException;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -55,7 +57,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola
  */
 @Controller("setupConditionsController")
-public class SetupConditionsController {
+class SetupConditionsController {
 
     private static final Logger LOG = Logger.getLogger(SetupConditionsController.class);
     //model

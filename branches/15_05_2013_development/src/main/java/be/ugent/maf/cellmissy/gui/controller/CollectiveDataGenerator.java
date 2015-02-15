@@ -16,6 +16,7 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -24,13 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.springframework.context.ApplicationContext;
 
 /**
- *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class CollectiveDataGenerator {
+class CollectiveDataGenerator {
 
     public static void main(String[] args) {
 
@@ -97,7 +98,7 @@ public class CollectiveDataGenerator {
                                 List<TimeStep> timeStepList = whit.getTimeStepList();
                                 int numberOfTimeSteps = timeStepList.size();
 
-                                for (int i = 0; i < numberOfTimeSteps; i++) {
+                                for (TimeStep aTimeStepList : timeStepList) {
                                     bufferedWriter.append("" + plateCondition.getPlateConditionid());
                                     bufferedWriter.append(" ");
 //                                    bufferedWriter.append("" + whit);
@@ -158,9 +159,9 @@ public class CollectiveDataGenerator {
                                     bufferedWriter.append(" ");
                                     bufferedWriter.append("" + plateCondition.getAssay().getMatrixDimension());
                                     bufferedWriter.append(" ");
-                                    bufferedWriter.append("" + timeStepList.get(i).getArea());
+                                    bufferedWriter.append("" + aTimeStepList.getArea());
                                     bufferedWriter.append(" ");
-                                    bufferedWriter.append("" + timeStepList.get(i).getTimeStepSequence());
+                                    bufferedWriter.append("" + aTimeStepList.getTimeStepSequence());
 
                                     bufferedWriter.newLine();
                                 }

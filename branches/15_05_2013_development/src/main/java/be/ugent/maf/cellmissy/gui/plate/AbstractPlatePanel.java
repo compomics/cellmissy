@@ -24,15 +24,15 @@ import javax.swing.JPanel;
  */
 public abstract class AbstractPlatePanel extends JPanel {
 
-    protected List<WellGui> wellGuiList;
+    List<WellGui> wellGuiList;
     private PlateFormat plateFormat;
-    protected static final int pixelsGrid = 8;
+    static final int pixelsGrid = 8;
     private static final int pixelsBorders = 25;
 
     /**
      * Constructor; setOpaque to false.
      */
-    public AbstractPlatePanel() {
+    AbstractPlatePanel() {
         setOpaque(false);
     }
 
@@ -85,15 +85,15 @@ public abstract class AbstractPlatePanel extends JPanel {
      * @param wellSize -- size of wells according to format
      * @param g -- graphics
      */
-    public void drawWells(int wellSize, Graphics g) {
+    void drawWells(int wellSize, Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
 
         for (int i = 0; i < plateFormat.getNumberOfRows(); i++) {
             for (int j = 0; j < plateFormat.getNumberOfCols(); j++) {
 
-                int topLeftX = (int) Math.round(wellSize * j + (j + 1) * pixelsGrid + pixelsBorders);
-                int topLeftY = (int) Math.round(wellSize * i + (i + 1) * pixelsGrid + pixelsBorders);
+                int topLeftX = Math.round(wellSize * j + (j + 1) * pixelsGrid + pixelsBorders);
+                int topLeftY = Math.round(wellSize * i + (i + 1) * pixelsGrid + pixelsBorders);
 
                 List<Ellipse2D> ellipsi = new ArrayList<>();
 
@@ -125,7 +125,7 @@ public abstract class AbstractPlatePanel extends JPanel {
      * @param columnNumber
      * @param rowNumber
      */
-    protected void drawPlateLabel(Ellipse2D ellipse2D, Graphics2D g2d, int columnNumber, int rowNumber) {
+    void drawPlateLabel(Ellipse2D ellipse2D, Graphics2D g2d, int columnNumber, int rowNumber) {
         Font font = new Font("Arial", Font.BOLD, 12);
         g2d.setFont(font);
         String columnLabel = "" + columnNumber;
@@ -149,7 +149,7 @@ public abstract class AbstractPlatePanel extends JPanel {
      *
      * @param parentDimension
      */
-    public void doResize(Dimension parentDimension) {
+    void doResize(Dimension parentDimension) {
         int minimumParentDimension = Math.min(parentDimension.height, parentDimension.width);
 
         if (plateFormat != null) {

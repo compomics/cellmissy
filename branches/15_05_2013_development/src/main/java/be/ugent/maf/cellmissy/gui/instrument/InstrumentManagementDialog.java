@@ -159,7 +159,7 @@ public class InstrumentManagementDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addInstrumentButton, deleteInstrumentButton, saveInstrumentButton});
+        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, addInstrumentButton, deleteInstrumentButton, saveInstrumentButton);
 
         detailsPanelLayout.setVerticalGroup(
             detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

@@ -15,11 +15,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 /**
- * Renderer for the Data Tree used in the Data Loader.
+ * Renderer for the Data Tree used in the Data Loader (generic input).
  *
  * @author Paola Masuzzo
  */
-public class DataTreeCellRenderer extends DefaultTreeCellRenderer {
+public class LoadDataTreeCellRenderer extends DefaultTreeCellRenderer {
 
     private final List<ImagingType> imagingTypeList;
 
@@ -28,7 +28,7 @@ public class DataTreeCellRenderer extends DefaultTreeCellRenderer {
      *
      * @param imagingTypeList
      */
-    public DataTreeCellRenderer(List<ImagingType> imagingTypeList) {
+    public LoadDataTreeCellRenderer(List<ImagingType> imagingTypeList) {
         this.imagingTypeList = imagingTypeList;
         setOpaque(true);
         setIconTextGap(10);

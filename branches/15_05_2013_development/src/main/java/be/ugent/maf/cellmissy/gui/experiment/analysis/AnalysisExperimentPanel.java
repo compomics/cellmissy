@@ -121,7 +121,7 @@ public class AnalysisExperimentPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, nextButton, previousButton, startButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, cancelButton, nextButton, previousButton, startButton);
 
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -140,7 +140,7 @@ public class AnalysisExperimentPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {fetchAllConditionsProgressBar, previousButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, fetchAllConditionsProgressBar, previousButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

@@ -76,11 +76,7 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
     // isCellEditable and setValuesAt need BOTH to be overriden in order to keep track of changes that occour in the table model
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (rowIndex == data.length - 1 && columnIndex != 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return rowIndex == data.length - 1 && columnIndex != 0;
     }
 
     @Override
@@ -103,10 +99,10 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
         columnNames = new String[numberOfSamplesPerCondition + 1];
      
         int counter = 1;
-        for (int j = 0; j < processedWells.size(); j++) {
-            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(processedWells.get(j));
+        for (Well processedWell1 : processedWells) {
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(processedWell1);
             for (int i = counter; i < numberOfSamplesPerWell + counter; i++) {
-                columnNames[i] = "" + processedWells.get(j);
+                columnNames[i] = "" + processedWell1;
             }
             counter += numberOfSamplesPerWell;
         }
@@ -114,12 +110,12 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
         checkboxOutliers = new boolean[dataToShow.length];
         data = new Object[dataToShow.length + 1][columnNames.length];
         counter = 0;
-        for (int j = 0; j < processedWells.size(); j++) {
-            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(processedWells.get(j));
+        for (Well processedWell : processedWells) {
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(processedWell);
 
             for (int columnIndex = 1; columnIndex < data.length; columnIndex++) {
                 for (int rowIndex = counter; rowIndex < numberOfSamplesPerWell + counter; rowIndex++) {
-                    data[rowIndex][0] = "" + processedWells.get(j);
+                    data[rowIndex][0] = "" + processedWell;
                     data[rowIndex][columnIndex] = dataToShow[rowIndex][columnIndex - 1];
                 }
                 // if the outliers ratio is bigger than RATIO, chechBox is selected (true)
@@ -140,8 +136,8 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
     private double getOutlierRatio(int columnIndex) {
         boolean[] outliersPerColumn = outliers[columnIndex];
         int count = 0;
-        for (int i = 0; i < outliersPerColumn.length; i++) {
-            if (outliersPerColumn[i]) {
+        for (boolean anOutliersPerColumn : outliersPerColumn) {
+            if (anOutliersPerColumn) {
                 count++;
             }
         }

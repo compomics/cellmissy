@@ -17,6 +17,7 @@ import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.WellService;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -34,6 +35,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,7 +47,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola Masuzzo
  */
 @Controller("imagedPlateController")
-public class CellMiaImagedPlateController {
+class CellMiaImagedPlateController {
 
     private static final Logger LOG = org.apache.log4j.Logger.getLogger(CellMiaImagedPlateController.class);
     //model
@@ -104,7 +106,7 @@ public class CellMiaImagedPlateController {
      * @return
      * @throws CellMiaDataLoadingException
      */
-    public int getNumberOfSamples() throws CellMiaDataLoadingException {
+    int getNumberOfSamples() throws CellMiaDataLoadingException {
         return wellService.getNumberOfSamples();
     }
 

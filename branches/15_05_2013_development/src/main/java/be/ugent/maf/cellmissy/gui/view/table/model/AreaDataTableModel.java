@@ -68,10 +68,10 @@ public class AreaDataTableModel extends AbstractTableModel {
         //first column name: Time Frames
         columnNames[0] = "time frame";
         int counter = 1;
-        for (int j = 0; j < areaAnalyzedWells.size(); j++) {
-            int numberOfAreaAnalyzedSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(areaAnalyzedWells.get(j));
+        for (Well areaAnalyzedWell : areaAnalyzedWells) {
+            int numberOfAreaAnalyzedSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(areaAnalyzedWell);
             for (int i = counter; i < numberOfAreaAnalyzedSamplesPerWell + counter; i++) {
-                columnNames[i] = "" + areaAnalyzedWells.get(j);
+                columnNames[i] = "" + areaAnalyzedWell;
             }
             counter += numberOfAreaAnalyzedSamplesPerWell;
         }

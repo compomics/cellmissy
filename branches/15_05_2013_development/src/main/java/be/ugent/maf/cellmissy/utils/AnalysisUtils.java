@@ -137,8 +137,8 @@ public class AnalysisUtils {
     public static double computeMean(double[] data) {
         // sum of all the elements
         double sum = 0;
-        for (int i = 0; i < data.length; i++) {
-            sum += data[i];
+        for (double aData : data) {
+            sum += aData;
         }
         return sum / data.length;
     }
@@ -173,8 +173,8 @@ public class AnalysisUtils {
     public static double computeStandardDeviation(double[] data) {
         double sum = 0;
         double mean = computeMean(data);
-        for (int i = 0; i < data.length; i++) {
-            double diff = data[i] - mean;
+        for (double aData : data) {
+            double diff = aData - mean;
             sum += diff * diff;
         }
         return Math.sqrt(sum / data.length);
@@ -229,8 +229,8 @@ public class AnalysisUtils {
      */
     public static double computeQuantile(double[] data, double p) {
         DescriptiveStatistics dataStatistics = new DescriptiveStatistics();
-        for (int i = 0; i < data.length; i++) {
-            dataStatistics.addValue(data[i]);
+        for (double aData : data) {
+            dataStatistics.addValue(aData);
         }
         // get an estimate for the pth percentile of the data
         return dataStatistics.getPercentile(p);

@@ -240,10 +240,7 @@ public class TrackPoint implements Serializable {
             return false;
         }
         TrackPoint other = (TrackPoint) object;
-        if ((this.trackPointid == null && other.trackPointid != null) || (this.trackPointid != null && !this.trackPointid.equals(other.trackPointid))) {
-            return false;
-        }
-        return true;
+        return !((this.trackPointid == null && other.trackPointid != null) || (this.trackPointid != null && !this.trackPointid.equals(other.trackPointid)));
     }
 
     @Override

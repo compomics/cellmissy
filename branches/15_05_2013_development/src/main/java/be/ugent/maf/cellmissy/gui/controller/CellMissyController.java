@@ -21,6 +21,7 @@ import be.ugent.maf.cellmissy.gui.controller.management.AssayManagementControlle
 import be.ugent.maf.cellmissy.gui.controller.management.PlateManagementController;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+
 import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.Image;
@@ -28,7 +29,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Iterator;
 import java.util.logging.Level;
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
@@ -39,6 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.event.HyperlinkListener;
+
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.ELProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,7 @@ public class CellMissyController {
     private boolean firstLoadingFromGenericInput;
     //view
     //main frame
-    CellMissyFrame cellMissyFrame;
+    private CellMissyFrame cellMissyFrame;
     // startup dialog with functionalities of the software
     private StartupDialog startupDialog;
     private HelpDialog helpDialog;
@@ -94,6 +95,8 @@ public class CellMissyController {
     private SingleCellMainController singleCellMainController;
     @Autowired
     private ImportExportController importExportController;
+    @Autowired
+    private TracksWriterController tracksWriterController;
 
     /**
      * Get main frame
@@ -168,6 +171,7 @@ public class CellMissyController {
         plateManagementController.init();
         assayManagementController.init();
         importExportController.init();
+        tracksWriterController.init();
         // initialize main frame
         initMainFrame();
         // initialize start up dialog
@@ -231,8 +235,7 @@ public class CellMissyController {
         if (userManagementController.validateUser(userToValidate).isEmpty()) {
             isValid = true;
         } else {
-            for (Iterator<String> it = userManagementController.validateUser(userToValidate).iterator(); it.hasNext();) {
-                String string = it.next();
+            for (String string : userManagementController.validateUser(userToValidate)) {
                 message += string + "\n";
             }
             showMessage(message, "Error in user validation", JOptionPane.WARNING_MESSAGE);
@@ -505,6 +508,15 @@ public class CellMissyController {
             }
         });
 
+        // write cell tracks data to file
+        startupDialog.getWriteCellTracksToFileButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onWriteTracksToFile();
+            }
+        });
+
         // about CellMissy
         startupDialog.getAboutButton().addActionListener(new ActionListener() {
             @Override
@@ -629,6 +641,14 @@ public class CellMissyController {
     }
 
     /**
+     * Action performed on write tracks data to file.
+     */
+    private void onWriteTracksToFile() {
+        startupDialog.setVisible(false);
+        tracksWriterController.showTracksWriterDialog();
+    }
+
+    /**
      * Action performed on export experiment template to file. If we are setting
      * up an experiment, the current template will be exported. If the user is
      * performing other tasks in CellMissy, a specific dialog will be shown,
@@ -706,11 +726,7 @@ public class CellMissyController {
                 }
                 break;
         }
-        if (showOptionDialog == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return showOptionDialog == 0;
     }
 
     /**

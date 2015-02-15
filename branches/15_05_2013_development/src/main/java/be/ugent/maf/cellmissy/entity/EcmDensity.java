@@ -103,10 +103,7 @@ public class EcmDensity implements Serializable {
         if (!Objects.equals(this.ecmDensityid, other.ecmDensityid)) {
             return false;
         }
-        if (!Objects.equals(this.ecmDensity, other.ecmDensity)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.ecmDensity, other.ecmDensity);
     }
 
     @Override

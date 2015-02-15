@@ -25,7 +25,7 @@ public class DensityFunctionHolderCache extends LinkedHashMap<PlateCondition, Ma
      */
     public enum DataCategory {
 
-        RAW_DATA, CORRECTED_DATA;
+        RAW_DATA, CORRECTED_DATA
     }
 
     /**

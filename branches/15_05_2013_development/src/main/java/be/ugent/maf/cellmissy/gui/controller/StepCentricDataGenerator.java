@@ -1,7 +1,7 @@
- /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/*
+* To change this template, choose Tools | Templates
+* and open the template in the editor.
+*/
 package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.analysis.singlecell.SingleCellPreProcessor;
@@ -17,6 +17,7 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -32,7 +34,7 @@ import org.springframework.context.ApplicationContext;
  *
  * @author Paola Masuzzo
  */
-public class StepCentricDataGenerator {
+class StepCentricDataGenerator {
 
     public static void main(String[] args) {
 
@@ -127,8 +129,7 @@ public class StepCentricDataGenerator {
                 bufferedWriter.newLine();
                 for (List<TrackDataHolder> conditionTracks : biologicalConditions) {
                     int tracksNumber = conditionTracks.size();
-                    for (int row = 0; row < tracksNumber; row++) {
-                        TrackDataHolder trackDataHolder = conditionTracks.get(row);
+                    for (TrackDataHolder trackDataHolder : conditionTracks) {
                         Track track = trackDataHolder.getTrack();
                         StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
                         double[] timeIndexes = stepCentricDataHolder.getTimeIndexes(); //

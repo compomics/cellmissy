@@ -362,7 +362,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {playButton, stopButton});
+        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, playButton, stopButton);
 
         timeSliderPanelLayout.setVerticalGroup(
             timeSliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -388,7 +388,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                 .addContainerGap(124, Short.MAX_VALUE))
         );
 
-        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {playButton, stopButton});
+        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, playButton, stopButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

@@ -32,7 +32,6 @@ public class AddDrugsTreatmentsDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form AddDrugsTreatmentsDialog
-     * @param modal
      * @param parent
      */
     public AddDrugsTreatmentsDialog(Frame parent) {
@@ -75,7 +74,7 @@ public class AddDrugsTreatmentsDialog extends javax.swing.JDialog {
                 .addContainerGap(55, Short.MAX_VALUE))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addDrugButton, addTreatmentButton});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, addDrugButton, addTreatmentButton);
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

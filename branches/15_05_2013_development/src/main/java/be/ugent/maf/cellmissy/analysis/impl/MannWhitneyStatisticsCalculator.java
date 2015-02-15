@@ -27,8 +27,8 @@ public class MannWhitneyStatisticsCalculator implements StatisticsCalculator {
     @Override
     public StatisticalSummary getSummaryStatistics(double[] x) {
         SummaryStatistics summaryStatistics = new SummaryStatistics();
-        for (int i = 0; i < x.length; i++) {
-            summaryStatistics.addValue(x[i]);
+        for (double aX : x) {
+            summaryStatistics.addValue(aX);
         }
         return summaryStatistics.getSummary();
     }

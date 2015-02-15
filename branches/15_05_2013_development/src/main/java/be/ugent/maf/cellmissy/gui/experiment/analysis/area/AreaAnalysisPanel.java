@@ -528,11 +528,11 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, plotAllConditionsButton, plotSelectedConditionsButton});
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jLabel1, plotAllConditionsButton, plotSelectedConditionsButton);
 
-        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotErrorBarsCheckBox, plotLinesCheckBox, plotPointsCheckBox, useCorrectedDataCheckBox});
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, plotErrorBarsCheckBox, plotLinesCheckBox, plotPointsCheckBox, useCorrectedDataCheckBox);
 
-        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {firstTimeFrameTextField, lastTimeFrameTextField});
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, firstTimeFrameTextField, lastTimeFrameTextField);
 
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

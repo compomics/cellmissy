@@ -184,10 +184,7 @@ public class User implements Serializable, Comparable<User> {
             return false;
         }
         User other = (User) object;
-        if ((this.userid == null && other.userid != null) || (this.userid != null && !this.userid.equals(other.userid))) {
-            return false;
-        }
-        return true;
+        return !((this.userid == null && other.userid != null) || (this.userid != null && !this.userid.equals(other.userid)));
     }
 
     @Override

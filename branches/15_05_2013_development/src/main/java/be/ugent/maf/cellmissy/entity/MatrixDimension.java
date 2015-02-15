@@ -105,10 +105,7 @@ public class MatrixDimension implements Serializable {
             return false;
         }
         MatrixDimension other = (MatrixDimension) object;
-        if ((this.matrixDimensionid == null && other.matrixDimensionid != null) || (this.matrixDimensionid != null && !this.matrixDimensionid.equals(other.matrixDimensionid))) {
-            return false;
-        }
-        return true;
+        return !((this.matrixDimensionid == null && other.matrixDimensionid != null) || (this.matrixDimensionid != null && !this.matrixDimensionid.equals(other.matrixDimensionid)));
     }
 
     @Override

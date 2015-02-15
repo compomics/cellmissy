@@ -17,11 +17,13 @@ import be.ugent.maf.cellmissy.gui.experiment.setup.AssayEcm2DPanel;
 import be.ugent.maf.cellmissy.gui.experiment.setup.AssayEcm3DPanel;
 import be.ugent.maf.cellmissy.service.AssayService;
 import be.ugent.maf.cellmissy.service.EcmService;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -39,7 +41,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola
  */
 @Controller("assayEcmController")
-public class AssayEcmController {
+class AssayEcmController {
 
     // model
     //binding list for matrix dimensions
@@ -155,7 +157,7 @@ public class AssayEcmController {
      * models for the 3 different dimensions.
      *
      * @param assays: the list from which the assays are taken and added to the
-     * GUI-models.
+     *                GUI-models.
      */
     public void addNewAssays(List<Assay> assays) {
         for (Assay assay : assays) {
@@ -455,8 +457,9 @@ public class AssayEcmController {
 
     /**
      * Reset fields for Assay and ECM parameters
+     * <p/>
+     * *******************************
      *
-     ********************************
      * @param plateCondition
      */
     public void resetAssayEcmInputFields(PlateCondition plateCondition) {

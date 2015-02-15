@@ -7,12 +7,14 @@ package be.ugent.maf.cellmissy.gui.controller;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyConfigDialog;
 import be.ugent.maf.cellmissy.gui.PropertyGuiWrapper;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.JOptionPane;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -27,15 +29,12 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 
 /**
- *
  * @author Paola Masuzzo
  */
 @Controller("cellMissyParamsController")
-public class CellMissyParamsController {
+class CellMissyParamsController {
 
     private static final Logger LOG = Logger.getLogger(CellMissyParamsController.class);
-    // model
-    private BindingGroup bindingGroup;
     private ObservableList<PropertyGuiWrapper> propertyGuiWrapperBindingList;
     // view
     private CellMissyConfigDialog cellMissyConfigDialog;
@@ -61,7 +60,7 @@ public class CellMissyParamsController {
         cellMissyConfigDialog = new CellMissyConfigDialog(loginController.getCellMissyFrame(), true);
         cellMissyConfigDialog.setLocationRelativeTo(null);
         //init bindings
-        bindingGroup = new BindingGroup();
+        BindingGroup bindingGroup = new BindingGroup();
         //table binding 
         propertyGuiWrapperBindingList = ObservableCollections.observableList(new ArrayList<PropertyGuiWrapper>());
         initPropertyGuiWrappersBindingList();

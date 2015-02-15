@@ -52,10 +52,6 @@ public class SetupPlatePanel extends AbstractPlatePanel {
         return rectangles;
     }
 
-    public void setRectangles(Map<PlateCondition, List<Rectangle>> rectangles) {
-        this.rectangles = rectangles;
-    }
-
     public Point getEndPoint() {
         return endPoint;
     }

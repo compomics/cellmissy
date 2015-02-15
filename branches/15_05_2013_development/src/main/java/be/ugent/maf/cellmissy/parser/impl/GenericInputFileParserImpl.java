@@ -55,9 +55,6 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
                     throw new FileParserException("Please make sure your import file has 2 columns!");
                 }
             }
-        } catch (FileNotFoundException e) {
-            LOG.error(e.getMessage(), e);
-            throw new FileParserException(e.getMessage());
         } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
             throw new FileParserException(ex.getMessage());

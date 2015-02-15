@@ -91,8 +91,8 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
             StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
             Double[][] trackCoordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
-            for (int row = 0; row < trackCoordinatesMatrix.length; row++) {
-                rawTrackCoordinatesMatrix[counter] = trackCoordinatesMatrix[row];
+            for (Double[] aTrackCoordinatesMatrix : trackCoordinatesMatrix) {
+                rawTrackCoordinatesMatrix[counter] = aTrackCoordinatesMatrix;
                 counter++;
             }
         }
@@ -106,8 +106,8 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
             Double[][] shiftedTrackCoordinates = trackDataHolder.getStepCentricDataHolder().getShiftedCooordinatesMatrix();
-            for (int row = 0; row < shiftedTrackCoordinates.length; row++) {
-                shiftedTrackCoordinatesMatrix[counter] = shiftedTrackCoordinates[row];
+            for (Double[] shiftedTrackCoordinate : shiftedTrackCoordinates) {
+                shiftedTrackCoordinatesMatrix[counter] = shiftedTrackCoordinate;
                 counter++;
             }
         }
@@ -159,8 +159,8 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
             Double[] instantaneousDisplacements = trackDataHolder.getStepCentricDataHolder().getInstantaneousDisplacements();
-            for (int i = 0; i < instantaneousDisplacements.length; i++) {
-                instantaneousDisplacementsVector[counter] = instantaneousDisplacements[i];
+            for (Double instantaneousDisplacement : instantaneousDisplacements) {
+                instantaneousDisplacementsVector[counter] = instantaneousDisplacement;
                 counter++;
             }
         }
@@ -174,8 +174,8 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
             Double[] directionalityRatios = trackDataHolder.getStepCentricDataHolder().getDirectionalityRatios();
-            for (int i = 0; i < directionalityRatios.length; i++) {
-                directionalityRatiosVector[counter] = directionalityRatios[i];
+            for (Double directionalityRatio : directionalityRatios) {
+                directionalityRatiosVector[counter] = directionalityRatio;
                 counter++;
             }
         }

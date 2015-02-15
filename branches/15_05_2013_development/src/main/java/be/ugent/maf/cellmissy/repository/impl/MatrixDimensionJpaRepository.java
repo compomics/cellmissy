@@ -13,5 +13,5 @@ import org.springframework.stereotype.Repository;
  * @author Paola
  */
 @Repository("matrixDimensionRepository")
-public class MatrixDimensionJpaRepository extends GenericJpaRepository<MatrixDimension, Long> implements MatrixDimensionRepository {
+class MatrixDimensionJpaRepository extends GenericJpaRepository<MatrixDimension, Long> implements MatrixDimensionRepository {
 }

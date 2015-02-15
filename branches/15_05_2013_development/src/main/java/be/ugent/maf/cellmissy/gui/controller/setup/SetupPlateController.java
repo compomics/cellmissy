@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.plate.SetupPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.PlateService;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
@@ -24,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.event.MouseInputAdapter;
+
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -40,7 +42,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola
  */
 @Controller("setupPlateController")
-public class SetupPlateController {
+class SetupPlateController {
 
     //model
     private ObservableList<PlateFormat> plateFormatBindingList;
@@ -102,7 +104,7 @@ public class SetupPlateController {
      *
      * @param conditionToRemove from the list
      */
-    public void removeRectangleEntry(PlateCondition conditionToRemove) {
+    void removeRectangleEntry(PlateCondition conditionToRemove) {
         setupPlatePanel.getRectangles().remove(conditionToRemove);
     }
 

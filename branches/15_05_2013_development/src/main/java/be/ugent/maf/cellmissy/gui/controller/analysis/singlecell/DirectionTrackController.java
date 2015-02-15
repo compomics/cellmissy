@@ -12,11 +12,14 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.ExploreTrackPan
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+
 import static be.ugent.maf.cellmissy.utils.JFreeChartUtils.setupXYPlot;
+
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Shape;
 import java.util.List;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -37,7 +40,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Controller("directionTrackController")
-public class DirectionTrackController {
+class DirectionTrackController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ExploreTrackController.class);
     // model
@@ -64,7 +67,7 @@ public class DirectionTrackController {
     /**
      * Set up direction autocorrelation plot.
      *
-     * @param chart: the chart to get the plot from
+     * @param chart:           the chart to get the plot from
      * @param trackDataHolder: to get the right color for the line
      */
     private void setupDirectionAutocorrelationPlot(JFreeChart chart, TrackDataHolder trackDataHolder) {

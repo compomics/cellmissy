@@ -42,6 +42,7 @@ import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.InstrumentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
+
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Font;
@@ -85,6 +86,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
+
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -174,15 +176,6 @@ public class SetupExperimentController {
         setupProjectController.init();
     }
 
-    /**
-     * setters and getters
-     *
-     * @return
-     */
-    public SetupExperimentPanel getSetupExperimentPanel() {
-        return setupExperimentPanel;
-    }
-
     public SetupPanel getSetupPanel() {
         return setupPanel;
     }
@@ -195,14 +188,6 @@ public class SetupExperimentController {
         return projectBindingList;
     }
 
-    public ObservableList<Experiment> getExperimentBindingList() {
-        return experimentBindingList;
-    }
-
-    public void setExperimentBindingList(ObservableList<Experiment> experimentBindingList) {
-        this.experimentBindingList = experimentBindingList;
-    }
-
     public CellMissyFrame getCellMissyFrame() {
         return cellMissyController.getCellMissyFrame();
     }
@@ -212,7 +197,6 @@ public class SetupExperimentController {
     }
 
     /**
-     *
      * If the user adds a new condition, add a new entry to the map: new
      * condition-empty list of rectangles
      *
@@ -323,11 +307,7 @@ public class SetupExperimentController {
                 }
                 int index = f.getName().lastIndexOf(".");
                 String extension = f.getName().substring(index + 1);
-                if (extension.equals("xml")) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return extension.equals("xml");
             }
 
             @Override
@@ -537,6 +517,7 @@ public class SetupExperimentController {
     /*
      * private methods and classes
      */
+
     /**
      * Initialize the experiment info panel
      */
@@ -1055,7 +1036,6 @@ public class SetupExperimentController {
      * For a certain table, this method creates a model from the given
      * experiment with the conditions details and assign the model to the table.
      *
-     *
      * @param table
      * @param exp
      */
@@ -1329,10 +1309,10 @@ public class SetupExperimentController {
      * the experiment object that we got from this file. We also pack and show
      * the dialog here.
      *
-     * @param xmlFile: we need this to just show the name
+     * @param xmlFile:               we need this to just show the name
      * @param experimentFromXMLFile: we need this to show the conditions and see
-     * if some other parameters need to be persisted before the experiment can
-     * be saved
+     *                               if some other parameters need to be persisted before the experiment can
+     *                               be saved
      */
     private void showTemplateDialog(File xmlFile, Experiment experimentFromXMLFile) {
         // update info and table in the dialog

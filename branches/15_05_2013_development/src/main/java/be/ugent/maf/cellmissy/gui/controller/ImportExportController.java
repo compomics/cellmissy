@@ -38,6 +38,7 @@ import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.TreatmentService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+
 import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -67,6 +68,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
+
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -86,7 +88,7 @@ import org.xml.sax.SAXParseException;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Controller("importExportController")
-public class ImportExportController {
+class ImportExportController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ImportExportController.class);
     // model
@@ -341,11 +343,7 @@ public class ImportExportController {
                         }
                         int index = f.getName().lastIndexOf(".");
                         String extension = f.getName().substring(index + 1);
-                        if (extension.equals("xml")) {
-                            return true;
-                        } else {
-                            return false;
-                        }
+                        return extension.equals("xml");
                     }
 
                     @Override
@@ -608,7 +606,6 @@ public class ImportExportController {
     /**
      * For a certain table, this method creates a model from the given
      * experiment with the conditions details and assign the model to the table.
-     *
      *
      * @param table
      * @param exp

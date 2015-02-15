@@ -10,11 +10,13 @@ import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.LoginDialog;
 import be.ugent.maf.cellmissy.service.UserService;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JOptionPane;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,7 +27,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola Masuzzo
  */
 @Controller("loginController")
-public class LoginController {
+class LoginController {
 
     private static final Logger LOG = Logger.getLogger(LoginController.class);
     // model

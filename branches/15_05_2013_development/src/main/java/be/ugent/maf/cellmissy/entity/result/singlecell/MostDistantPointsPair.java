@@ -81,8 +81,7 @@ public class MostDistantPointsPair {
 
         // check for the greatest distance
         for (GeometricPoint geometricPoint : hull) {
-            for (int i = 0; i < hull.length; i++) {
-                GeometricPoint otherGeometricPoint = hull[i];
+            for (GeometricPoint otherGeometricPoint : hull) {
                 if (!geometricPoint.equals(otherGeometricPoint)) {
                     double euclideanDistance = geometricPoint.euclideanDistanceTo(otherGeometricPoint);
                     if (euclideanDistance > maxSpan) {

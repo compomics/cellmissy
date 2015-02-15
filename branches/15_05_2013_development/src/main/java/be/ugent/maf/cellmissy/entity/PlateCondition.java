@@ -188,10 +188,7 @@ public class PlateCondition implements Serializable {
         if (!Objects.equals(this.plateConditionid, other.plateConditionid)) {
             return false;
         }
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.name, other.name);
     }
 
     @Override

@@ -287,7 +287,7 @@ public class ExportExperimentDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        expDetailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel10, jLabel11, jLabel6, jLabel7, jLabel9});
+        expDetailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jLabel10, jLabel11, jLabel6, jLabel7, jLabel9);
 
         expDetailsPanelLayout.setVerticalGroup(
             expDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

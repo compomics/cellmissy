@@ -47,7 +47,7 @@ public class PlottedTracksListRenderer extends DefaultListCellRenderer {
     @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        int trackIndex = trackDataHolders.indexOf((TrackDataHolder) value);
+        int trackIndex = trackDataHolders.indexOf(value);
         int lenght = GuiUtils.getAvailableColors().length;
         int indexOfColor = trackIndex % lenght;
         Color color = GuiUtils.getAvailableColors()[indexOfColor];

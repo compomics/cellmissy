@@ -21,6 +21,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
@@ -35,6 +36,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
+
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.ELProperty;
@@ -52,7 +54,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Controller("singleCellPreProcessingController")
-public class SingleCellPreProcessingController {
+class SingleCellPreProcessingController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SingleCellPreProcessingController.class);
     // model
@@ -92,7 +94,6 @@ public class SingleCellPreProcessingController {
 
     /**
      * getters
-     *
      */
     public SingleCellAnalysisPanel getSingleCellAnalysisPanel() {
         return singleCellAnalysisPanel;
@@ -154,10 +155,6 @@ public class SingleCellPreProcessingController {
         trackCoordinatesController.showPlottedTracksInTable();
     }
 
-    public void resetRandomTracks() {
-        trackCoordinatesController.resetTracksList();
-    }
-
     public void showInstantaneousSpeedsInTable(PlateCondition plateCondition) {
         displacementsController.showInstantaneousDisplInTable(plateCondition);
     }
@@ -172,10 +169,6 @@ public class SingleCellPreProcessingController {
 
     public CellMissyFrame getMainFrame() {
         return singleCellMainController.getCellMissyFrame();
-    }
-
-    public Experiment getExperiment() {
-        return singleCellMainController.getExperiment();
     }
 
     public ObservableList<TrackDataHolder> getTrackDataHolderBindingList() {
@@ -230,8 +223,6 @@ public class SingleCellPreProcessingController {
 
     /**
      * Set cursor from main controller
-     *
-     * @param type
      */
     public void setCursor(Cursor cursor) {
         singleCellMainController.setCursor(cursor);
@@ -344,7 +335,7 @@ public class SingleCellPreProcessingController {
     }
 
     /**
-     * Append the info in the log text area. F
+     * Append the info in the log text area.
      *
      * @param info
      */

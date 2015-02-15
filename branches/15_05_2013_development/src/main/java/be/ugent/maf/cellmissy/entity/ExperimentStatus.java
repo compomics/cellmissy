@@ -13,5 +13,5 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 public enum ExperimentStatus {
 
-    IN_PROGRESS, PERFORMED;
+    IN_PROGRESS, PERFORMED
 }

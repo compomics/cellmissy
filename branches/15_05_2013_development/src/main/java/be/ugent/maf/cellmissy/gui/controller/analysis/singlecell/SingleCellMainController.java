@@ -33,6 +33,7 @@ import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+
 import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -52,6 +53,7 @@ import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Binding;
@@ -147,11 +149,11 @@ public class SingleCellMainController {
         return dataAnalysisPanel;
     }
 
-    public Algorithm getSelectedAlgorithm() {
+    Algorithm getSelectedAlgorithm() {
         return algorithmBindingList.get(metadataSingleCellPanel.getAlgorithmComboBox().getSelectedIndex());
     }
 
-    public ImagingType getSelectedImagingType() {
+    ImagingType getSelectedImagingType() {
         return imagingTypeBindingList.get(metadataSingleCellPanel.getImagingTypeComboBox().getSelectedIndex());
     }
 
@@ -192,8 +194,6 @@ public class SingleCellMainController {
 
     /**
      * Set cursor from main controller
-     *
-     * @param type
      */
     public void setCursor(Cursor cursor) {
         cellMissyController.setCursor(cursor);
@@ -214,7 +214,7 @@ public class SingleCellMainController {
      *
      * @param plateCondition
      */
-    public void showNotImagedWells(PlateCondition plateCondition) {
+    void showNotImagedWells(PlateCondition plateCondition) {
         plateCondition.setLoaded(true);
         analysisPlatePanel.repaint();
     }
@@ -225,7 +225,7 @@ public class SingleCellMainController {
      *
      * @param plateCondition
      */
-    public void showWellsForCurrentCondition(PlateCondition plateCondition) {
+    void showWellsForCurrentCondition(PlateCondition plateCondition) {
         analysisPlatePanel.setCurrentCondition(plateCondition);
         analysisPlatePanel.repaint();
     }
@@ -247,7 +247,6 @@ public class SingleCellMainController {
     }
 
     /**
-     *
      * @param plateCondition
      */
     public void fetchTracks(PlateCondition plateCondition) {

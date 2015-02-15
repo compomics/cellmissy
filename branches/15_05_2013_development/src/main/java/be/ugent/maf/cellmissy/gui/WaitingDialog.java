@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui;
 
+import java.awt.Dialog;
 import javax.swing.JProgressBar;
 
 /**
@@ -18,10 +19,16 @@ public class WaitingDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form WaitingDialog
+     * @param parent
+     * @param modal
      */
     public WaitingDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+    }
+
+    public WaitingDialog(Dialog owner, String title, boolean modal) {
+        super(owner, title, modal);
     }
 
     /**
@@ -36,7 +43,6 @@ public class WaitingDialog extends javax.swing.JDialog {
         progressBar = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setAlwaysOnTop(true);
 
         progressBar.setIndeterminate(true);
 

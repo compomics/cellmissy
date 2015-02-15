@@ -157,7 +157,7 @@ public class AssayManagementDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addAssayButton, deleteAssayButton, saveAssayButton});
+        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, addAssayButton, deleteAssayButton, saveAssayButton);
 
         detailsPanelLayout.setVerticalGroup(
             detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

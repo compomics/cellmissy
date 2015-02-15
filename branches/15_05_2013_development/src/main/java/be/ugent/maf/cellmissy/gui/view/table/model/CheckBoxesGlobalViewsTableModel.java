@@ -24,7 +24,7 @@ public class CheckBoxesGlobalViewsTableModel extends AbstractTableModel {
     /**
      * Constructor.
      *
-     * @param globalViews
+     * @param globalViewsMap
      */
     public CheckBoxesGlobalViewsTableModel(Map<String, Boolean[]> globalViewsMap) {
         this.globalViewsMap = globalViewsMap;
@@ -65,11 +65,7 @@ public class CheckBoxesGlobalViewsTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex != 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return columnIndex != 0;
     }
 
     @Override

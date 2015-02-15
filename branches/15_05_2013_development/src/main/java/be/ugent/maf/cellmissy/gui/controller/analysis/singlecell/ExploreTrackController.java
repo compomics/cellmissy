@@ -22,6 +22,7 @@ import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataHolderTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -45,6 +46,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -78,7 +80,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Controller("exploreTrackController")
-public class ExploreTrackController {
+class ExploreTrackController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ExploreTrackController.class);
     // model
@@ -129,25 +131,28 @@ public class ExploreTrackController {
         return trackCoordinatesController.getTrackDataHolderBindingList();
     }
 
-    /**
-     * Set cursor from main controller
-     *
-     * @param type
-     */
-    public void setCursor(Cursor cursor) {
-        trackCoordinatesController.setCursor(cursor);
-    }
+// --Commented out by Inspection START (06/02/2015 13:35):
+//    /**
+//     * Set cursor from main controller
+//     *
+//     */
+//    public void setCursor(Cursor cursor) {
+//        trackCoordinatesController.setCursor(cursor);
+//    }
+// --Commented out by Inspection STOP (06/02/2015 13:35)
 
-    /**
-     * Show message through the main controller
-     *
-     * @param message
-     * @param title
-     * @param messageType
-     */
-    public void showMessage(String message, String title, Integer messageType) {
-        trackCoordinatesController.showMessage(message, title, messageType);
-    }
+// --Commented out by Inspection START (06/02/2015 13:35):
+//    /**
+//     * Show message through the main controller
+//     *
+//     * @param message
+//     * @param title
+//     * @param messageType
+//     */
+//    public void showMessage(String message, String title, Integer messageType) {
+//        trackCoordinatesController.showMessage(message, title, messageType);
+//    }
+// --Commented out by Inspection STOP (06/02/2015 13:35)
 
     /**
      * Private methods
@@ -185,7 +190,7 @@ public class ExploreTrackController {
         plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().addItemListener(itemActionListener);
         plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().addItemListener(itemActionListener);
         plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().addItemListener(itemActionListener);
-        for (Enumeration<AbstractButton> buttons = plotSettingsMenuBar.getLinesButtonGroup().getElements(); buttons.hasMoreElements();) {
+        for (Enumeration<AbstractButton> buttons = plotSettingsMenuBar.getLinesButtonGroup().getElements(); buttons.hasMoreElements(); ) {
             AbstractButton button = buttons.nextElement();
             button.addItemListener(itemActionListener);
         }
@@ -264,7 +269,7 @@ public class ExploreTrackController {
                 int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
                 if (selectedTrackIndex != -1) {
                     // get the current time value from the slider
-                    int timePoint = (int) source.getValue();
+                    int timePoint = source.getValue();
                     // show the track point in time: basically set the renderer for the chart
                     showTrackPointInTime(selectedTrackIndex, timePoint);
                     // update x and y coordinates field
@@ -388,7 +393,7 @@ public class ExploreTrackController {
         double[] timeIndexes = selectedTrackDataHolder.getStepCentricDataHolder().getTimeIndexes();
         timeSlider.setMinimum(0);
         int numberOfTimePoints = timeIndexes.length;
-        int spacing = (int) numberOfTimePoints / 5;
+        int spacing = numberOfTimePoints / 5;
         timeSlider.setMaximum(numberOfTimePoints - 1); // this triggers the stateChanged
         timeSlider.setMajorTickSpacing(spacing);
         timeSlider.setPaintTicks(true);
@@ -408,8 +413,8 @@ public class ExploreTrackController {
      * Show the evolution of a track in time: while sliding on the time slide, a
      * cell is followed in time and a spot is highlighted.
      *
-     * @param trackSeriesIndex: the series (track) index
-     * @param currentTimePoint: the actual time point to highlight
+     * @param selectedTrackIndex: the series (track) index
+     * @param timePoint:          the actual time point to highlight
      */
     private void showTrackPointInTime(int selectedTrackIndex, int timePoint) {
         // get the xyplot from the chart and set it up
@@ -491,7 +496,7 @@ public class ExploreTrackController {
     /**
      * Plot x and y coordinates in time for the given track.
      *
-     * @param track
+     * @param trackDataHolder
      */
     private void plotCoordinatesInTime(TrackDataHolder trackDataHolder) {
         // get the selected track data holder, and thus the track to plot in time

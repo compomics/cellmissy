@@ -122,7 +122,7 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
      * @param criterion
      * @return
      */
-    protected List<T> findByCriteria(final Criterion... criterion) {
+    List<T> findByCriteria(final Criterion... criterion) {
         return findByCriteria(-1, -1, criterion);
     }
 
@@ -135,8 +135,8 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
      * @return  
      */
     @SuppressWarnings("unchecked")
-    protected List<T> findByCriteria(final int firstResult,
-            final int maxResults, final Criterion... criterion) {
+    List<T> findByCriteria(final int firstResult,
+                           final int maxResults, final Criterion... criterion) {
         Session session = (Session) getEntityManager().getDelegate();
         Criteria crit = session.createCriteria(getEntityClass());
 
@@ -155,7 +155,7 @@ public class GenericJpaRepository<T, ID extends Serializable> implements Generic
         return crit.list();
     }
 
-    protected long countByCriteria(Criterion... criterion) {
+    long countByCriteria(Criterion... criterion) {
         Session session = (Session) getEntityManager().getDelegate();
         Criteria crit = session.createCriteria(getEntityClass());
         crit.setProjection(Projections.rowCount());

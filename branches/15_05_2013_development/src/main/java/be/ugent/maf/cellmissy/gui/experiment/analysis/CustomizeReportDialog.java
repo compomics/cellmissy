@@ -13,7 +13,7 @@ import java.awt.*;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class CustomizeReportDialog extends javax.swing.JDialog {
+class CustomizeReportDialog extends javax.swing.JDialog {
 
     public JButton getCreateReportButton() {
         return createReportButton;
@@ -42,7 +42,7 @@ public class CustomizeReportDialog extends javax.swing.JDialog {
     /**
      * Creates new form CustomizeReportDialog
      */
-    public CustomizeReportDialog(Frame parent) {
+    private CustomizeReportDialog(Frame parent) {
         super(parent, true);
         initComponents();
     }
@@ -140,7 +140,7 @@ public class CustomizeReportDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addGlobalViewButton, removeGlobalViewButton});
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, addGlobalViewButton, removeGlobalViewButton);
 
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

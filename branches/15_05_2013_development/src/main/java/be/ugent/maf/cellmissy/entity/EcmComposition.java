@@ -116,10 +116,7 @@ public class EcmComposition implements Serializable {
             return false;
         }
         EcmComposition other = (EcmComposition) object;
-        if ((this.compositionTypeid == null && other.compositionTypeid != null) || (this.compositionTypeid != null && !this.compositionTypeid.equals(other.compositionTypeid))) {
-            return false;
-        }
-        return true;
+        return !((this.compositionTypeid == null && other.compositionTypeid != null) || (this.compositionTypeid != null && !this.compositionTypeid.equals(other.compositionTypeid)));
     }
 
     @Override

@@ -278,9 +278,9 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
                 .addContainerGap(215, Short.MAX_VALUE))
         );
 
-        statisticsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {createReportButton, statisticsButton});
+        statisticsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, createReportButton, statisticsButton);
 
-        statisticsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {firstTimeFrameTextField, lastTimeFrameTextField});
+        statisticsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, firstTimeFrameTextField, lastTimeFrameTextField);
 
         statisticsPanelLayout.setVerticalGroup(
             statisticsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -326,7 +326,7 @@ public class LinearRegressionPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        statisticsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {createReportButton, statisticsButton});
+        statisticsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, createReportButton, statisticsButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

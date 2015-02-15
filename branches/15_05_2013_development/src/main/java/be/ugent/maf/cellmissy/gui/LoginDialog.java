@@ -91,7 +91,7 @@ public class LoginDialog extends javax.swing.JDialog {
                 .addGap(60, 60, 60))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {editButton, loginButton});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, editButton, loginButton);
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

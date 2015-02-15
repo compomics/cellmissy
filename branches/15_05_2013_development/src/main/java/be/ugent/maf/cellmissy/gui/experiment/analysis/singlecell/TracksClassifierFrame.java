@@ -70,7 +70,7 @@ import org.springframework.context.ApplicationContext;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class TracksClassifierFrame extends javax.swing.JFrame {
+class TracksClassifierFrame extends javax.swing.JFrame {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TracksClassifierFrame.class);
     private final BindingGroup bindingGroup;
@@ -82,16 +82,16 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
     private Experiment experiment;
     private final static String newLine = "\n";
     private ChartPanel convexHullChartPanel;
-    final ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
-    final ProjectService projectService = context.getBean("projectService", ProjectService.class);
-    final ExperimentService experimentService = context.getBean("experimentService", ExperimentService.class);
-    final WellService wellService = context.getBean("wellService", WellService.class);
-    final SingleCellPreProcessor singleCellPreProcessor = (SingleCellPreProcessor) context.getBean("singleCellPreProcessor");
+    private final ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
+    private final ProjectService projectService = context.getBean("projectService", ProjectService.class);
+    private final ExperimentService experimentService = context.getBean("experimentService", ExperimentService.class);
+    private final WellService wellService = context.getBean("wellService", WellService.class);
+    private final SingleCellPreProcessor singleCellPreProcessor = (SingleCellPreProcessor) context.getBean("singleCellPreProcessor");
 
     /**
      * Creates new form TracksClassifierFrame
      */
-    public TracksClassifierFrame() {
+    private TracksClassifierFrame() {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         initComponents();
@@ -499,8 +499,7 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
                     + "dr" + " " + "or" + " " + "perim" + " " + "area" + " " + "acirc" + " " + "dir2" + " " + "vertices");
             // new line
             bufferedWriter.newLine();
-            for (int i = 0; i < trackDatasetList.size(); i++) {
-                TrackDataHolder trackDataHolder = trackDatasetList.get(i);
+            for (TrackDataHolder trackDataHolder : trackDatasetList) {
                 Track track = trackDataHolder.getTrack();
                 CellCentricDataHolder cellCentricDataHolder = trackDataHolder.getCellCentricDataHolder();
                 bufferedWriter.append("" + track.getTrackid());
@@ -721,7 +720,7 @@ public class TracksClassifierFrame extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {label0RadioButton, label1RadioButton, label2RadioButton, label3RadioButton});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, label0RadioButton, label1RadioButton, label2RadioButton, label3RadioButton);
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

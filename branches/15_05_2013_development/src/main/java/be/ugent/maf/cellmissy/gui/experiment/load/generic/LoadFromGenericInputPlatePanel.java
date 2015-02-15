@@ -287,9 +287,9 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addDatasetButton, addImagingButton, datasetNameTextField, imagingNameTextField});
+        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, addDatasetButton, addImagingButton, datasetNameTextField, imagingNameTextField);
 
-        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel4, jLabel5});
+        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jLabel4, jLabel5);
 
         userInputPanelLayout.setVerticalGroup(
             userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

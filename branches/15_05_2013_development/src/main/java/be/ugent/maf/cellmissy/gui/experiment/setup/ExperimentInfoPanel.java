@@ -187,7 +187,7 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
                 .addGap(65, 65, 65))
         );
 
-        overviewPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {infoLabel1, jLabel6});
+        overviewPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, infoLabel1, jLabel6);
 
         overviewPanelLayout.setVerticalGroup(
             overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -257,7 +257,7 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        experimentDataPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {dateLabel, numberLabel});
+        experimentDataPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, dateLabel, numberLabel);
 
         experimentDataPanelLayout.setVerticalGroup(
             experimentDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -369,9 +369,9 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
                 .addGap(25, 25, 25))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {imageAnalysisDataPanel, microscopeDataPanel});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, imageAnalysisDataPanel, microscopeDataPanel);
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {experimentDataPanel, overviewPanel});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, experimentDataPanel, overviewPanel);
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

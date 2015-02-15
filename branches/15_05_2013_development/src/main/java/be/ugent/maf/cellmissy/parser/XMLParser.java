@@ -24,7 +24,6 @@ public interface XMLParser {
      * object that contains the root of the content tree, and the output target,
      * simply a File in the XML extension.
      *
-     * @param object
      * @param file
      * @throws JAXBException
      * @throws FileNotFoundException

@@ -20,6 +20,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.list.ExperimentsListRenderer;
 import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl.CycleTimeUnit;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Collections;
@@ -31,6 +32,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -48,7 +50,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola Masuzzo
  */
 @Controller("experimentMetadataController")
-public class CellMiaExperimentDataController {
+class CellMiaExperimentDataController {
 
     private static final Logger LOG = Logger.getLogger(LoadExperimentFromCellMiaController.class);
     //model
@@ -167,7 +169,7 @@ public class CellMiaExperimentDataController {
                             // if experiment is still null, project is being selected for the first time
                             onSelectedProject(selectedProject);
                             // if experiment is not null and a different project is selected, reset redo on selected project
-                        } else if (loadExperimentFromCellMiaController.getExperiment() != null && !loadExperimentFromCellMiaController.getExperiment().getProject().equals(selectedProject)) {
+                        } else if (!loadExperimentFromCellMiaController.getExperiment().getProject().equals(selectedProject)) {
                             resetOnANewProject();
                             onSelectedProject(selectedProject);
                         }

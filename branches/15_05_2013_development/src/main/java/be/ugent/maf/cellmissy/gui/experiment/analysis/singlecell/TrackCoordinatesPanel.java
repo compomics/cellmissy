@@ -309,7 +309,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        otherOptionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {doNotScaleRadioButton, scaleToConditionRadioButton, scaleToExperimentRadioButton});
+        otherOptionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, doNotScaleRadioButton, scaleToConditionRadioButton, scaleToExperimentRadioButton);
 
         otherOptionsPanelLayout.setVerticalGroup(
             otherOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -404,7 +404,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addComponent(plotAllTracksButton))
         );
 
-        trackingPlotPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {randomTracksNumberTextField, tracksNumberConditionTextField, tracksNumberWellTextField});
+        trackingPlotPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, randomTracksNumberTextField, tracksNumberConditionTextField, tracksNumberWellTextField);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;

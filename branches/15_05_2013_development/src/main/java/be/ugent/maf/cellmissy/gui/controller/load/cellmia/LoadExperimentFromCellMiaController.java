@@ -18,6 +18,7 @@ import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.parser.ObsepFileParser;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
@@ -33,12 +34,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
  * Parent Controller: CellMissy Controller (main controller) Child Controllers:
  * Imaged Plate Controller, Experiment Metadata Controller
  *
@@ -129,10 +130,6 @@ public class LoadExperimentFromCellMiaController {
     public User getCurrentUser() {
         return cellMissyController.getCurrentUser();
     }
-    
-    public void setExpListRenderer(User currentUser) {
-        cellMiaExperimentDataController.setExpListRenderer(currentUser);
-    }
 
     /**
      * Check if current analysis has been saved before leaving the view
@@ -169,6 +166,7 @@ public class LoadExperimentFromCellMiaController {
     /*
      * private methods and classes
      */
+
     /**
      * Initializes the loading data panel
      */
@@ -217,11 +215,7 @@ public class LoadExperimentFromCellMiaController {
                             }
                             int index = f.getName().lastIndexOf(".");
                             String extension = f.getName().substring(index + 1);
-                            if (extension.equals("obsep")) {
-                                return true;
-                            } else {
-                                return false;
-                            }
+                            return extension.equals("obsep");
                         }
 
                         @Override
@@ -325,7 +319,7 @@ public class LoadExperimentFromCellMiaController {
      * Set experiment metadata parsing the obsep file from microscope
      *
      * @param obsepFile: this is loaded from the experiment or it is rather
-     * chosen by the user
+     *                   chosen by the user
      */
     private void setExperimentMetadata(File obsepFile) {
         // parse .obsep file
