@@ -31,6 +31,7 @@ import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -60,6 +61,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -83,12 +85,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Area analysis controller, this controller is actually doing the analysis
+ * Area analysis controller, this controller is actually doing the analysis on
+ * the area level.
  *
  * @author Paola Masuzzo
  */
 @Controller("areaAnalysisController")
-public class AreaAnalysisController {
+class AreaAnalysisController {
 
     private static final Logger LOG = Logger.getLogger(AreaAnalysisController.class);
     // model
@@ -358,7 +361,6 @@ public class AreaAnalysisController {
     }
 
     /**
-     *
      * @param conditionsToShow
      * @return
      */
@@ -532,7 +534,7 @@ public class AreaAnalysisController {
                     // show statistics in tables
                     showSummary(selectedGroup);
                     // set the correction combobox to the one already chosen
-                    statisticsDialog.getCorrectionMethodsComboBox().setSelectedItem((Object) selectedGroup.getCorrectionMethodName());
+                    statisticsDialog.getCorrectionMethodsComboBox().setSelectedItem(selectedGroup.getCorrectionMethodName());
                     if (selectedGroup.getCorrectionMethodName().equals("none")) {
                         // by default show p-values without adjustment
                         showPValues(selectedGroup, false);
@@ -581,12 +583,7 @@ public class AreaAnalysisController {
                     String statisticalTest = statisticsDialog.getStatisticalTestComboBox().getSelectedItem().toString();
                     Double selectedSignLevel = (Double) statisticsDialog.getSignificanceLevelComboBox().getSelectedItem();
                     AreaAnalysisGroup selectedGroup = groupsBindingList.get(linearRegressionPanel.getGroupsList().getSelectedIndex());
-                    boolean isAdjusted;
-                    if (selectedGroup.getCorrectionMethodName().equals("none")) {
-                        isAdjusted = false;
-                    } else {
-                        isAdjusted = true;
-                    }
+                    boolean isAdjusted = !selectedGroup.getCorrectionMethodName().equals("none");
                     areaStatisticsAnalyzer.detectSignificance(selectedGroup, statisticalTest, selectedSignLevel, isAdjusted);
                     boolean[][] significances = selectedGroup.getSignificances();
                     JTable pValuesTable = statisticsDialog.getpValuesTable();
@@ -810,8 +807,8 @@ public class AreaAnalysisController {
         List<PlateCondition> plateConditionsList = new ArrayList<>();
         List<AreaAnalysisResults> areaAnalysisResultsList = new ArrayList<>();
         int[] selectedRows = linearRegressionPanel.getSlopesTable().getSelectedRows();
-        for (int i = 0; i < selectedRows.length; i++) {
-            PlateCondition selectedCondition = areaMainController.getPlateConditionList().get(selectedRows[i]);
+        for (int selectedRow : selectedRows) {
+            PlateCondition selectedCondition = areaMainController.getPlateConditionList().get(selectedRow);
             plateConditionsList.add(selectedCondition);
             AreaAnalysisResults areaAnalysisResults = analysisMap.get(selectedCondition);
             areaAnalysisResultsList.add(areaAnalysisResults);
@@ -907,7 +904,7 @@ public class AreaAnalysisController {
                 areaMainController.handleUnexpectedError(ex);
             }
             try {
-                //if export to PDF was successfull, open the PDF file from the desktop
+                //if export to PDF was successful, open the PDF file from the desktop
                 if (Desktop.isDesktopSupported()) {
                     Desktop.getDesktop().open(file);
                 }

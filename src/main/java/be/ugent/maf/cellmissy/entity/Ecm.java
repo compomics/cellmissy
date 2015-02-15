@@ -266,10 +266,7 @@ public class Ecm implements Serializable {
             return false;
         }
         Ecm other = (Ecm) object;
-        if ((this.ecmid == null && other.ecmid != null) || (this.ecmid != null && !this.ecmid.equals(other.ecmid))) {
-            return false;
-        }
-        return true;
+        return !((this.ecmid == null && other.ecmid != null) || (this.ecmid != null && !this.ecmid.equals(other.ecmid)));
     }
 
     @Override

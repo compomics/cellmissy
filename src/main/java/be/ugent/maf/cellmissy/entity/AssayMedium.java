@@ -138,10 +138,7 @@ public class AssayMedium implements Serializable {
             return false;
         }
         AssayMedium other = (AssayMedium) object;
-        if ((this.assayMediumid == null && other.assayMediumid != null) || (this.assayMediumid != null && !this.assayMediumid.equals(other.assayMediumid))) {
-            return false;
-        }
-        return true;
+        return !((this.assayMediumid == null && other.assayMediumid != null) || (this.assayMediumid != null && !this.assayMediumid.equals(other.assayMediumid)));
     }
 
     @Override

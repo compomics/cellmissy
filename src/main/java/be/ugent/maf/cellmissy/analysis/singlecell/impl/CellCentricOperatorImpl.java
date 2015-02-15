@@ -73,9 +73,9 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     public void computeCumulativeDistance(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
         double cumulativeDistance = 0;
         Double[] instantaneousDisplacements = stepCentricDataHolder.getInstantaneousDisplacements();
-        for (int i = 0; i < instantaneousDisplacements.length; i++) {
-            if (instantaneousDisplacements[i] != null) {
-                cumulativeDistance += instantaneousDisplacements[i];
+        for (Double instantaneousDisplacement : instantaneousDisplacements) {
+            if (instantaneousDisplacement != null) {
+                cumulativeDistance += instantaneousDisplacement;
             }
         }
         cellCentricDataHolder.setCumulativeDistance(cumulativeDistance);
@@ -162,7 +162,12 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     @Override
     public void computeMedianDirectionAutocorrelation(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
         List<Double[]> directionAutocorrelationsList = stepCentricDataHolder.getDirectionAutocorrelations();
-        Double[] directionAutocorrelations = directionAutocorrelationsList.get(1);
+        Double[] directionAutocorrelations ;
+        if(directionAutocorrelationsList.size()>1){
+            directionAutocorrelations = directionAutocorrelationsList.get(1);
+        } else {
+            directionAutocorrelations = directionAutocorrelationsList.get(0);
+        }
         // simply compute the median of the direction autocorrelations
         double medianDirectionAutocorrelation = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(directionAutocorrelations));
         cellCentricDataHolder.setMedianDirectionAutocorrelation(medianDirectionAutocorrelation);

@@ -143,8 +143,8 @@ public class ObsepFileParserImpl implements ObsepFileParser {
         List<String> posListNames = new ArrayList<>();
         // get "Stage loop" nodes
         List<Node> stageLoopNodes = getChildNodeListByAttributeValue(loopNode, "Stage loop");
-        for (int i = 0; i < stageLoopNodes.size(); i++) {
-            NamedNodeMap posListAttr = stageLoopNodes.get(i).getFirstChild().getFirstChild().getAttributes();
+        for (Node stageLoopNode : stageLoopNodes) {
+            NamedNodeMap posListAttr = stageLoopNode.getFirstChild().getFirstChild().getAttributes();
             for (int j = 0; j < posListAttr.getLength(); j++) {
                 String posListName = posListAttr.item(j).getNodeValue();
                 posListNames.add(posListName);
@@ -165,15 +165,15 @@ public class ObsepFileParserImpl implements ObsepFileParser {
         List<Node> stageLoopNodes = getChildNodeListByAttributeValue(loopNode, "Stage loop");
         // get "Image" nodes
         List<Node> imageNodes = new ArrayList<>();
-        for (int i = 0; i < stageLoopNodes.size(); i++) {
-            Node imageNode = getChildNodeByAttributeValue(stageLoopNodes.get(i), "Image");
+        for (Node stageLoopNode : stageLoopNodes) {
+            Node imageNode = getChildNodeByAttributeValue(stageLoopNode, "Image");
             imageNodes.add(imageNode);
         }
 
         // create new imaging type entitie(s) and set class members
-        for (int i = 0; i < imageNodes.size(); i++) {
+        for (Node imageNode : imageNodes) {
             ImagingType imagingType = new ImagingType();
-            NodeList imageChildNodes = imageNodes.get(i).getChildNodes();
+            NodeList imageChildNodes = imageNode.getChildNodes();
 
             // set exposure time value
             NamedNodeMap exposureTimeAttr = imageChildNodes.item(0).getFirstChild().getAttributes();

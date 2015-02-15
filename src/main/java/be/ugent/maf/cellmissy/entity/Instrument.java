@@ -114,10 +114,7 @@ public class Instrument implements Serializable {
             return false;
         }
         Instrument other = (Instrument) object;
-        if ((this.instrumentid == null && other.instrumentid != null) || (this.instrumentid != null && !this.instrumentid.equals(other.instrumentid))) {
-            return false;
-        }
-        return true;
+        return !((this.instrumentid == null && other.instrumentid != null) || (this.instrumentid != null && !this.instrumentid.equals(other.instrumentid)));
     }
 
     @Override

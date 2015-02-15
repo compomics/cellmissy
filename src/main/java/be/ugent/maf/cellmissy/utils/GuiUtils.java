@@ -90,7 +90,7 @@ public class GuiUtils {
      * @param childComponent
      * @return boolean
      */
-    public static boolean containsComponent(Container parentContainer, Component childComponent) {
+    private static boolean containsComponent(Container parentContainer, Component childComponent) {
         boolean containsComponent = false;
         for (Component component : parentContainer.getComponents()) {
             if (childComponent.equals(component)) {
@@ -167,7 +167,6 @@ public class GuiUtils {
      * the specified integer scale. This is done through a buffered image.
      *
      * @param icon
-     * @param scale
      * @return
      */
     public static ImageIcon getScaledIcon(Icon icon) {
@@ -237,7 +236,7 @@ public class GuiUtils {
             width = Math.max(width, component.getPreferredSize().width);
         }
         // add margin
-        width += 2 * 1;
+        width += 2;
         // set the width
         column.setPreferredWidth(width);
     }

@@ -30,6 +30,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -55,6 +56,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
 import org.apache.log4j.Logger;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jfree.chart.JFreeChart;
@@ -67,7 +69,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola Masuzzo
  */
 @Controller("areaAnalysisReportController")
-public class AreaAnalysisReportController {
+class AreaAnalysisReportController {
 
     private static final Logger LOG = Logger.getLogger(AreaAnalysisReportController.class);
     //model
@@ -257,8 +259,8 @@ public class AreaAnalysisReportController {
             public void actionPerformed(ActionEvent e) {
                 // get the selected rows in the table
                 int[] selectedRows = customizeReportDialog.getGlobalViewsTable().getSelectedRows();
-                for (int i = 0; i < selectedRows.length; i++) {
-                    int indexToRemove = selectedRows[i] + 1;
+                for (int selectedRow : selectedRows) {
+                    int indexToRemove = selectedRow + 1;
                     globalViewsMap.remove("Global View " + indexToRemove);
                 }
                 // refresh table model
@@ -291,7 +293,6 @@ public class AreaAnalysisReportController {
     }
 
     /**
-     *
      * @param pdfFile
      */
     private void tryToCreateFile(File pdfFile) {
@@ -326,7 +327,6 @@ public class AreaAnalysisReportController {
     }
 
     /**
-     *
      * @param outputStream
      */
     private void createPdfFile(FileOutputStream outputStream) {
@@ -405,8 +405,6 @@ public class AreaAnalysisReportController {
 
     /**
      * Create Image from a aJFreeChart and add it to document
-     *
-     * @param chart
      */
     private void addImageFromJPanel(JPanel panel, int imageWidth, int imageHeight) {
         Image imageFromJPanel = PdfUtils.getImageFromJPanel(writer, panel, imageWidth, imageHeight);
@@ -613,8 +611,8 @@ public class AreaAnalysisReportController {
         PdfPTable linearRegressionTable = new PdfPTable(columnNames.length);
         PdfUtils.setUpPdfPTable(linearRegressionTable);
         // add 1st row: column names
-        for (int i = 0; i < columnNames.length; i++) {
-            PdfUtils.addCustomizedCell(linearRegressionTable, columnNames[i], boldFont);
+        for (String columnName : columnNames) {
+            PdfUtils.addCustomizedCell(linearRegressionTable, columnName, boldFont);
         }
         copyDataFromJTable(linearRegressionTable, table);
         return linearRegressionTable;
@@ -661,11 +659,11 @@ public class AreaAnalysisReportController {
         if (!groupsList.isEmpty()) {
             // add main title for section
             PdfUtils.addTitle(document, "ANALYSIS GROUPS", titleFont);
-            for (int i = 0; i < groupsList.size(); i++) {
-                Paragraph paragraph = new Paragraph("Analysis group: " + groupsList.get(i).getGroupName());
+            for (AreaAnalysisGroup aGroupsList : groupsList) {
+                Paragraph paragraph = new Paragraph("Analysis group: " + aGroupsList.getGroupName());
                 try {
                     document.add(paragraph);
-                    addAnalysisInfo(groupsList.get(i));
+                    addAnalysisInfo(aGroupsList);
                     // go to new page
                     document.newPage();
                 } catch (DocumentException ex) {
@@ -769,8 +767,8 @@ public class AreaAnalysisReportController {
         List<PlateCondition> plateConditionList = new ArrayList<>(preProcessingMap.keySet());
         // add 1st row
         PdfUtils.addCustomizedCell(pValuesTable, " ", boldFont);
-        for (int i = 0; i < plateConditions.size(); i++) {
-            PdfUtils.addCustomizedCell(pValuesTable, "Cond " + (plateConditionList.indexOf(plateConditions.get(i)) + 1), bodyFont);
+        for (PlateCondition plateCondition : plateConditions) {
+            PdfUtils.addCustomizedCell(pValuesTable, "Cond " + (plateConditionList.indexOf(plateCondition) + 1), bodyFont);
         }
         // table with p values for analysis group
         JTable table = new JTable(new PValuesTableModel(analysisGroup, plateConditionList, isAdjusted));
@@ -792,7 +790,7 @@ public class AreaAnalysisReportController {
                     // if value is a Double, get primitive value of it
                     if (valueAt.getClass().equals(Double.class)) {
                         String valueString = valueAt.toString();
-                        double doubleValue = Double.valueOf(valueString).doubleValue();
+                        double doubleValue = Double.valueOf(valueString);
                         Double roundedValue = AnalysisUtils.roundThreeDecimals(doubleValue);
                         PdfUtils.addCustomizedCell(dataTable, "" + roundedValue, bodyFont);
                     } else {
@@ -852,8 +850,8 @@ public class AreaAnalysisReportController {
         // number of replicates info
         int numberOfReplicates = 0;
         boolean[] excludeReplicates = areaPreProcessingResults.getExcludeReplicates();
-        for (int i = 0; i < excludeReplicates.length; i++) {
-            if (!excludeReplicates[i]) {
+        for (boolean excludeReplicate : excludeReplicates) {
+            if (!excludeReplicate) {
                 numberOfReplicates++;
             }
         }
@@ -861,8 +859,6 @@ public class AreaAnalysisReportController {
     }
 
     /**
-     *
-     * @param areaPreProcessingResults
      * @return
      */
     private List<Well> getExcludedWells(PlateCondition plateCondition) {
@@ -926,7 +922,7 @@ public class AreaAnalysisReportController {
 
         @Override
         public Object getCellEditorValue() {
-            return Boolean.valueOf(checkBox.isSelected());
+            return checkBox.isSelected();
         }
 
         @Override
@@ -971,7 +967,7 @@ public class AreaAnalysisReportController {
 
         @Override
         public Object getCellEditorValue() {
-            return Boolean.valueOf(checkBox.isSelected());
+            return checkBox.isSelected();
         }
 
         @Override

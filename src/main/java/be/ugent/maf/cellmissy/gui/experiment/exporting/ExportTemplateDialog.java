@@ -285,7 +285,7 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
                 .addGap(71, 71, 71))
         );
 
-        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel10, jLabel11, jLabel6, jLabel7});
+        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jLabel10, jLabel11, jLabel6, jLabel7);
 
         detailsPanelLayout.setVerticalGroup(
             detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -312,9 +312,9 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        detailsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {instrumentLabel, numberConditionsLabel, plateFormatLabel, userLabel});
+        detailsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, instrumentLabel, numberConditionsLabel, plateFormatLabel, userLabel);
 
-        detailsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabel10, jLabel11, jLabel6, jLabel7});
+        detailsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, jLabel10, jLabel11, jLabel6, jLabel7);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -391,7 +391,7 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, exportButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, cancelButton, exportButton);
 
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -403,7 +403,7 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {cancelButton, exportButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, cancelButton, exportButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

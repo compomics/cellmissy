@@ -259,9 +259,9 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        expOverviewPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {expDateLabel, expPurposeLabel, instrumentLabel, magnificationLabel, numberConditionsLabel, plateFormatLabel, userLabel});
+        expOverviewPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, expDateLabel, expPurposeLabel, instrumentLabel, magnificationLabel, numberConditionsLabel, plateFormatLabel, userLabel);
 
-        expOverviewPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabel1, jLabel2, jLabel3, jLabel5, jLabel6, jLabel7, jLabel9});
+        expOverviewPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, jLabel1, jLabel2, jLabel3, jLabel5, jLabel6, jLabel7, jLabel9);
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);
@@ -359,7 +359,7 @@ public class CopyExperimentSettingsDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, copySettingsButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, cancelButton, copySettingsButton);
 
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

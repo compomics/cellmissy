@@ -387,7 +387,7 @@ public class ImportExperimentDialog extends javax.swing.JDialog {
                 .addGap(50, 50, 50))
         );
 
-        experimentDetailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel10, jLabel11, jLabel14, jLabel6, jLabel7, jLabel9});
+        experimentDetailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jLabel10, jLabel11, jLabel14, jLabel6, jLabel7, jLabel9);
 
         experimentDetailsPanelLayout.setVerticalGroup(
             experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -440,11 +440,11 @@ public class ImportExperimentDialog extends javax.swing.JDialog {
                 .addGap(52, 52, 52))
         );
 
-        experimentDetailsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabel11, jLabel12, jLabel13});
+        experimentDetailsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, jLabel11, jLabel12, jLabel13);
 
-        experimentDetailsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {durationLabel, instrumentLabel, intervalLabel, numberConditionsLabel, plateFormatLabel, timeFramesLabel});
+        experimentDetailsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, durationLabel, instrumentLabel, intervalLabel, numberConditionsLabel, plateFormatLabel, timeFramesLabel);
 
-        experimentDetailsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabel10, jLabel14, jLabel7, jLabel9});
+        experimentDetailsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, jLabel10, jLabel14, jLabel7, jLabel9);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -719,7 +719,7 @@ public class ImportExperimentDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, nextButton, previousButton, saveExperimentButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, cancelButton, nextButton, previousButton, saveExperimentButton);
 
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -733,7 +733,7 @@ public class ImportExperimentDialog extends javax.swing.JDialog {
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {cancelButton, nextButton, previousButton, saveExperimentButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, cancelButton, nextButton, previousButton, saveExperimentButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

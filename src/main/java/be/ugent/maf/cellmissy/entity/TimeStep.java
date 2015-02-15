@@ -188,10 +188,7 @@ public class TimeStep implements Serializable {
             return false;
         }
         TimeStep other = (TimeStep) object;
-        if ((this.timeStepid == null && other.timeStepid != null) || (this.timeStepid != null && !this.timeStepid.equals(other.timeStepid))) {
-            return false;
-        }
-        return true;
+        return !((this.timeStepid == null && other.timeStepid != null) || (this.timeStepid != null && !this.timeStepid.equals(other.timeStepid)));
     }
 
     @Override

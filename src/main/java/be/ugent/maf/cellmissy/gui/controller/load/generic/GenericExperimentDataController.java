@@ -17,6 +17,7 @@ import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl.CycleTimeUnit;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+
 import java.awt.Dimension;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -37,11 +39,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
  * @author Paola Masuzzo
  */
 @Controller("genericExperimentDataController")
-public class GenericExperimentDataController {
+class GenericExperimentDataController {
 
     //model
     private ObservableList<Project> projectBindingList;
@@ -125,7 +126,7 @@ public class GenericExperimentDataController {
                             // if experiment is still null, project is being selected for the first time
                             onSelectedProject(selectedProject);
                             // if experiment is not null and a different project is selected, reset redo on selected project
-                        } else if (loadExperimentFromGenericInputController.getExperiment() != null && !loadExperimentFromGenericInputController.getExperiment().getProject().equals(selectedProject)) {
+                        } else if (!loadExperimentFromGenericInputController.getExperiment().getProject().equals(selectedProject)) {
                             resetOnANewProject();
                             onSelectedProject(selectedProject);
                         }
@@ -211,7 +212,6 @@ public class GenericExperimentDataController {
     }
 
     /**
-     *
      * @param selectedExperiment
      */
     private void proceedToLoading(Experiment selectedExperiment) {

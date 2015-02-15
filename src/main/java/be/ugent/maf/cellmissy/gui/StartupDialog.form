@@ -27,25 +27,21 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="areaAnalysisButton" alignment="0" max="32767" attributes="0"/>
-                          <Component id="createExpButton" linkSize="3" alignment="1" pref="157" max="32767" attributes="0"/>
-                          <Component id="genericInputButton" alignment="0" max="32767" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="overviewButton" linkSize="3" pref="160" max="32767" attributes="0"/>
-                          <Component id="cellMiaButton" max="32767" attributes="0"/>
-                          <Component id="singleCellAnalysisButton" alignment="0" max="32767" attributes="0"/>
-                      </Group>
+                  <Component id="writeCellTracksToFileButton" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Component id="areaAnalysisButton" linkSize="3" alignment="0" max="32767" attributes="0"/>
+                      <Component id="createExpButton" linkSize="3" alignment="1" pref="157" max="32767" attributes="0"/>
+                      <Component id="genericInputButton" linkSize="3" alignment="0" max="32767" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="100" max="-2" attributes="0"/>
-                      <Component id="aboutButton" min="-2" pref="160" max="-2" attributes="0"/>
-                  </Group>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="cellMiaButton" linkSize="3" alignment="1" min="-2" pref="165" max="-2" attributes="0"/>
+                  <Component id="overviewButton" linkSize="3" alignment="1" pref="160" max="32767" attributes="0"/>
+                  <Component id="singleCellAnalysisButton" linkSize="3" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="aboutButton" linkSize="3" alignment="1" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -55,23 +51,26 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="createExpButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="overviewButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="createExpButton" linkSize="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="overviewButton" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="genericInputButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="cellMiaButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="areaAnalysisButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="singleCellAnalysisButton" alignment="3" min="-2" pref="41" max="-2" attributes="0"/>
+                  <Component id="areaAnalysisButton" linkSize="2" alignment="3" max="32767" attributes="0"/>
+                  <Component id="singleCellAnalysisButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="aboutButton" linkSize="2" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="writeCellTracksToFileButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="aboutButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -88,7 +87,7 @@
     <Component class="javax.swing.JButton" name="areaAnalysisButton">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/icons/dataAnalysisIcon.png"/>
+          <Image iconType="3" name="/icons/ccm.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Area Analysis"/>
       </Properties>
@@ -128,9 +127,17 @@
     <Component class="javax.swing.JButton" name="singleCellAnalysisButton">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/icons/dataAnalysisIcon.png"/>
+          <Image iconType="3" name="/icons/scm.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Single Cell Analysis"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="writeCellTracksToFileButton">
+      <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/icons/wtf.png"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Write cell tracks to file..."/>
       </Properties>
     </Component>
   </SubComponents>

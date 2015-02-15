@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class EmptyDoubleXMLAdapter extends XmlAdapter<String, Double> {
+class EmptyDoubleXMLAdapter extends XmlAdapter<String, Double> {
 
     @Override
     public Double unmarshal(String v) throws Exception {

@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyConfigDialog;
 import be.ugent.maf.cellmissy.gui.PropertyGuiWrapper;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -19,6 +20,7 @@ import java.util.Iterator;
 import javax.persistence.PersistenceException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.hibernate.exception.GenericJDBCException;
@@ -148,7 +150,7 @@ public class ApplicationValidator {
      * @param title
      * @param messageType
      */
-    public void showMessage(String message, String title, Integer messageType) {
+    void showMessage(String message, String title, Integer messageType) {
         JOptionPane.showMessageDialog(mainFrame.getContentPane(), message, title, messageType);
     }
 

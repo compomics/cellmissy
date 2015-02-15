@@ -26,6 +26,9 @@ public class GeometricPointTest {
     private static GeometricPoint r;
     private static GeometricPoint s;
 
+    /**
+     * Before class, create geometric points.
+     */
     @BeforeClass
     public static void createPoints() {
         q = new GeometricPoint(2.5, 3.5);
@@ -33,6 +36,9 @@ public class GeometricPointTest {
         s = new GeometricPoint(2.3, 5.56);
     }
 
+    /**
+     * Test euclidean distance computation between points.
+     */
     @Test
     public void testEuclideanDistance() {
         double euclideanDistanceTo = q.euclideanDistanceTo(r);
@@ -41,12 +47,18 @@ public class GeometricPointTest {
         Assert.assertEquals(0.0, zeroDistance);
     }
 
+    /**
+     * Compute the signed area between three points.
+     */
     @Test
     public void testSignedArea() {
         double area = GeometricPoint.computeSignedArea(q, r, s);
         Assert.assertEquals(5.685999999999999 * 2, area);
     }
 
+    /**
+     * Test if three points are counter-clock-wise on a plane.
+     */
     @Test
     public void testCounterClockWise() {
         int counterClockWise = GeometricPoint.counterClockWise(q, r, s);

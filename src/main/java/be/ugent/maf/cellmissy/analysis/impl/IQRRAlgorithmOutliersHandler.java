@@ -16,7 +16,7 @@ import org.apache.commons.lang.ArrayUtils;
  */
 public class IQRRAlgorithmOutliersHandler implements OutliersHandler {
 
-    final double k = 1.5;
+    private final double k = 1.5;
 
     @Override
     public boolean[][] detectOutliers(Double[][] data) {

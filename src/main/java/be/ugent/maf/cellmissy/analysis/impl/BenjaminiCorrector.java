@@ -86,10 +86,10 @@ public class BenjaminiCorrector implements MultipleComparisonsCorrector {
      */
     private double[] putPValuesInAVector(Double[][] symmetricMatrix) {
         List<Double> list = new ArrayList<>();
-        for (int rowIndex = 0; rowIndex < symmetricMatrix.length; rowIndex++) {
+        for (Double[] aSymmetricMatrix : symmetricMatrix) {
             for (int columnIndex = 0; columnIndex < symmetricMatrix[0].length; columnIndex++) {
-                if (symmetricMatrix[rowIndex][columnIndex] != null) {
-                    list.add(symmetricMatrix[rowIndex][columnIndex]);
+                if (aSymmetricMatrix[columnIndex] != null) {
+                    list.add(aSymmetricMatrix[columnIndex]);
                 }
             }
         }

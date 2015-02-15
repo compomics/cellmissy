@@ -16,7 +16,6 @@ public class DistanceMatrixDialog extends javax.swing.JDialog {
     /**
      * Creates new form ReplicatesSelectionDialog
      *
-     * @param modal
      * @param parent
      */
     public DistanceMatrixDialog(Frame parent) {

@@ -67,11 +67,7 @@ public class CheckBoxesConditionsTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return columnIndex == 1;
     }
 
     @Override

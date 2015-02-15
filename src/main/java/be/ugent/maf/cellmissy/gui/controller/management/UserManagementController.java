@@ -14,6 +14,7 @@ import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.utils.ValidationUtils;
 import be.ugent.maf.cellmissy.service.UserService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -28,6 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;

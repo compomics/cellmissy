@@ -72,7 +72,7 @@ public class TransformedAreaPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotLinesCheckBox, plotPointsCheckBox});
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, plotLinesCheckBox, plotPointsCheckBox);
 
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

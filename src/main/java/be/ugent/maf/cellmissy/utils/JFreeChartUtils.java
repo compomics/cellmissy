@@ -58,14 +58,6 @@ public class JFreeChartUtils {
     // decimal format for the plot axis
     private static final DecimalFormat format = new DecimalFormat("####.##");
 
-    /**
-     * Getters
-     *
-     */
-    public static BasicStroke getNormalLine() {
-        return normalLine;
-    }
-
     public static BasicStroke getWideLine() {
         return wideLine;
     }
@@ -239,8 +231,7 @@ public class JFreeChartUtils {
     public static XYSeries generateXYSeries(double xValue, double[] yValues) {
         // autosort False
         XYSeries series = new XYSeries("", false);
-        for (int i = 0; i < yValues.length; i++) {
-            double y = yValues[i];
+        for (double y : yValues) {
             series.add(xValue, y);
         }
         return series;
@@ -431,9 +422,9 @@ public class JFreeChartUtils {
     public static double computeMaxY(XYSeriesCollection xYSeriesCollection) {
         double maxY = 0;
         List<XYSeries> seriesList = xYSeriesCollection.getSeries();
-        for (int i = 0; i < seriesList.size(); i++) {
-            if (seriesList.get(i).getMaxY() > maxY) {
-                maxY = seriesList.get(i).getMaxY();
+        for (XYSeries aSeriesList : seriesList) {
+            if (aSeriesList.getMaxY() > maxY) {
+                maxY = aSeriesList.getMaxY();
             }
         }
         return maxY;
@@ -448,9 +439,9 @@ public class JFreeChartUtils {
     public static double computeMinY(XYSeriesCollection xYSeriesCollection) {
         double minY = 0;
         List<XYSeries> seriesList = xYSeriesCollection.getSeries();
-        for (int i = 0; i < seriesList.size(); i++) {
-            if (seriesList.get(i).getMaxY() < minY) {
-                minY = seriesList.get(i).getMinY();
+        for (XYSeries aSeriesList : seriesList) {
+            if (aSeriesList.getMaxY() < minY) {
+                minY = aSeriesList.getMinY();
             }
         }
         return minY;

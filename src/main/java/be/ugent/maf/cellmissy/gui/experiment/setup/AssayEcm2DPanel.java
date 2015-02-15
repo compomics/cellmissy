@@ -208,9 +208,9 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
                     .addComponent(volumeUnitLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
-        ecmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {coatingTemperatureTextField, coatingTimeTextField, concentrationTextField, volumeTextField});
+        ecmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, coatingTemperatureTextField, coatingTimeTextField, concentrationTextField, volumeTextField);
 
-        ecmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addCompositionButton, compositionComboBox});
+        ecmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, addCompositionButton, compositionComboBox);
 
         ecmPanelLayout.setVerticalGroup(
             ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -247,7 +247,7 @@ public class AssayEcm2DPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        ecmPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {volumeTextField, volumeUnitLabel});
+        ecmPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, volumeTextField, volumeUnitLabel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

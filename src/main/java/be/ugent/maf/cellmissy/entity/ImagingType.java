@@ -135,10 +135,7 @@ public class ImagingType implements Serializable {
         if (!Objects.equals(this.lightIntensity, other.lightIntensity)) {
             return false;
         }
-        if (!Objects.equals(this.exposureTime, other.exposureTime)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.exposureTime, other.exposureTime);
     }
 
     @Override

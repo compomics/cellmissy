@@ -224,7 +224,7 @@ public class UserManagementDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {emailTextField, firstNameTextField, lastNameTextField, passwordField, roleComboBox});
+        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, emailTextField, firstNameTextField, lastNameTextField, passwordField, roleComboBox);
 
         detailsPanelLayout.setVerticalGroup(
             detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

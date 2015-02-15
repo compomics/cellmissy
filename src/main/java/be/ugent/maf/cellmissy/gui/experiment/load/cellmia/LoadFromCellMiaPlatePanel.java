@@ -112,7 +112,7 @@ public class LoadFromCellMiaPlatePanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        experimentMetadataPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {expNumberLabel, jScrollPane1, projNumberLabel});
+        experimentMetadataPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, expNumberLabel, jScrollPane1, projNumberLabel);
 
         experimentMetadataPanelLayout.setVerticalGroup(
             experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

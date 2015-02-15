@@ -1,7 +1,7 @@
- /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/*
+* To change this template, choose Tools | Templates
+* and open the template in the editor.
+*/
 package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.analysis.singlecell.SingleCellPreProcessor;
@@ -20,6 +20,7 @@ import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -35,7 +37,7 @@ import org.springframework.context.ApplicationContext;
  *
  * @author Paola Masuzzo
  */
-public class Playground {
+class Playground {
 
     public static void main(String[] args) {
 

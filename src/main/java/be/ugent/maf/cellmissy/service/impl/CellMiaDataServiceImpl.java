@@ -92,9 +92,9 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                                     // iterate trough the folders and look for the text files, parse the files with cellMiaFileParser
                                     // results folders
                                     File[] resultsFiles = sampleFiles[i].listFiles(resultsFilter);
-                                    for (int j = 0; j < resultsFiles.length; j++) {
+                                    for (File resultsFile : resultsFiles) {
                                         // text files
-                                        File[] textFiles = resultsFiles[j].listFiles(textfilesFilter);
+                                        File[] textFiles = resultsFile.listFiles(textfilesFilter);
                                         Arrays.sort(textFiles);
                                         for (File textFile : textFiles) {
                                             // parse bulk cell file
@@ -175,8 +175,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
      */
     private Map<ImagingType, List<WellHasImagingType>> copyMap() {
         Map<ImagingType, List<WellHasImagingType>> map = new HashMap<>();
-        for (Iterator<ImagingType> it = imagingTypeMap.keySet().iterator(); it.hasNext();) {
-            ImagingType imagingType = it.next();
+        for (ImagingType imagingType : imagingTypeMap.keySet()) {
             List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
             for (WellHasImagingType wellHasImagingType : imagingTypeMap.get(imagingType)) {
                 WellHasImagingType newWellHasImagingType = new WellHasImagingType(wellHasImagingType.getSequenceNumber(), wellHasImagingType.getXCoordinate(), wellHasImagingType.getYCoordinate(), wellHasImagingType.getImagingType());
@@ -211,8 +210,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
     @Override
     public int getExpectedNumberOfSamples() {
         int total = 0;
-        for (Iterator<ImagingType> it = imagingTypeMap.keySet().iterator(); it.hasNext();) {
-            ImagingType imagingType = it.next();
+        for (ImagingType imagingType : imagingTypeMap.keySet()) {
             List<WellHasImagingType> list = imagingTypeMap.get(imagingType);
             total += list.size();
         }

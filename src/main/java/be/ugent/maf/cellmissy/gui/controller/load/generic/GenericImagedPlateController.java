@@ -14,13 +14,14 @@ import be.ugent.maf.cellmissy.exception.FileParserException;
 import be.ugent.maf.cellmissy.gui.experiment.load.generic.LoadFromGenericInputPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
-import be.ugent.maf.cellmissy.gui.view.renderer.tree.DataTreeCellRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.tree.LoadDataTreeCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.parser.GenericInputFileParser;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -46,6 +47,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -58,11 +60,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- *
  * @author Paola Masuzzo
  */
 @Component("genericImagedPlatePanel")
-public class GenericImagedPlateController {
+class GenericImagedPlateController {
 
     private static final Logger LOG = Logger.getLogger(GenericImagedPlateController.class);
     //model
@@ -363,7 +364,6 @@ public class GenericImagedPlateController {
     /**
      * Opening a dialog to select file to parse and load data parsing the
      * selected file
-     *
      */
     private File chooseData() {
         File bulkCellFile = null;
@@ -452,7 +452,6 @@ public class GenericImagedPlateController {
     }
 
     /**
-     *
      * @param selectedWellGui
      */
     private void highlightImagedWell(WellGui selectedWellGui) {
@@ -554,7 +553,7 @@ public class GenericImagedPlateController {
         // set imaging type list for plate
         imagedPlatePanel.setImagingTypeList(imagingTypesBindingList);
         // set cell renderer for the JTree
-        loadFromGenericInputPlatePanel.getDataTree().setCellRenderer(new DataTreeCellRenderer(imagingTypesBindingList));
+        loadFromGenericInputPlatePanel.getDataTree().setCellRenderer(new LoadDataTreeCellRenderer(imagingTypesBindingList));
 
         // allow only one node to be selected
         loadFromGenericInputPlatePanel.getDataTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);

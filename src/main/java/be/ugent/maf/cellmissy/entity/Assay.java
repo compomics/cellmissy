@@ -116,10 +116,7 @@ public class Assay implements Serializable {
             return false;
         }
         Assay other = (Assay) object;
-        if ((this.assayid == null && other.assayid != null) || (this.assayid != null && !this.assayid.equals(other.assayid))) {
-            return false;
-        }
-        return true;
+        return !((this.assayid == null && other.assayid != null) || (this.assayid != null && !this.assayid.equals(other.assayid)));
     }
 
     @Override

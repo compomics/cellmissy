@@ -13,6 +13,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.DisplacementsTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -21,6 +22,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -31,7 +33,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Controller("displacementsController")
-public class DisplacementsController {
+class DisplacementsController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisplacementsController.class);
     // model
@@ -101,7 +103,6 @@ public class DisplacementsController {
     }
 
     /**
-     *
      * @param plateCondition
      */
     public void showTrackSpeedsInTable(PlateCondition plateCondition) {
@@ -187,9 +188,9 @@ public class DisplacementsController {
      * Show the track data in a table.
      *
      * @param plateCondition: the condition from which the data needs to be
-     * shown.
-     * @param columnNames: the names for the columns of the table model.
-     * @param dataToShow: the data to be shown.
+     *                        shown.
+     * @param columnNames:    the names for the columns of the table model.
+     * @param dataToShow:     the data to be shown.
      */
     private void showTrackDataInTable(PlateCondition plateCondition, String columnNames[], Double[] dataToShow) {
         SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);

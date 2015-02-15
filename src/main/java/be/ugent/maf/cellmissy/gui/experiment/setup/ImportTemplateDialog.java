@@ -163,7 +163,7 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
                 .addGap(535, 535, 535))
         );
 
-        topPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel6, jLabel7});
+        topPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jLabel1, jLabel6, jLabel7);
 
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -183,9 +183,9 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        topPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {numberConditionsLabel, plateFormatLabel, xmlFileLabel});
+        topPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, numberConditionsLabel, plateFormatLabel, xmlFileLabel);
 
-        topPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabel1, jLabel6, jLabel7});
+        topPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, jLabel1, jLabel6, jLabel7);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -307,7 +307,7 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
                 .addGap(407, 407, 407))
         );
 
-        newParametersPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel10, jLabel11, jLabel12, jLabel13, jLabel14, jLabel8, jLabel9});
+        newParametersPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jLabel10, jLabel11, jLabel12, jLabel13, jLabel14, jLabel8, jLabel9);
 
         newParametersPanelLayout.setVerticalGroup(
             newParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -345,7 +345,7 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
                 .addGap(18, 18, 18))
         );
 
-        newParametersPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {newAssayLabel, newBottomMatrixLabel, newCellLineLabel, newEcmCompositionLabel, newEcmDensityLabel, newPlateFormatLabel, newTreatmentLabel});
+        newParametersPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, newAssayLabel, newBottomMatrixLabel, newCellLineLabel, newEcmCompositionLabel, newEcmDensityLabel, newPlateFormatLabel, newTreatmentLabel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -376,7 +376,7 @@ public class ImportTemplateDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, copySettingsButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, cancelButton, copySettingsButton);
 
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

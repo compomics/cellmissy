@@ -129,7 +129,7 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, finishButton, forwardButton, parseObsepFileButton, startButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, cancelButton, finishButton, forwardButton, parseObsepFileButton, startButton);
 
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -150,7 +150,7 @@ public class LoadFromCellMiaPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {parseObsepFileButton, saveDataProgressBar});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, parseObsepFileButton, saveDataProgressBar);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

@@ -29,7 +29,6 @@ public class GrahamScan {
     /**
      * Constructor, this will create the hull.
      *
-     * @param track
      */
     public GrahamScan(List<GeometricPoint> geometricPointList) {
         constructHull(geometricPointList);

@@ -14,6 +14,7 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.UserService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +29,7 @@ import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -39,11 +41,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
  * @author Paola Masuzzo
  */
 @Controller("overviewController")
-public class OverviewController {
+class OverviewController {
 
     private static final Logger LOG = Logger.getLogger(OverviewController.class);
     // model
@@ -125,7 +126,7 @@ public class OverviewController {
         // customize dialog
         overviewDialog.setLocationRelativeTo(cellMissyController.getCellMissyFrame());
         // set cell renderer for experiments list
-        ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new  ExperimentsOverviewListRenderer(true);
+        ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new ExperimentsOverviewListRenderer(true);
         overviewDialog.getExperimentJList().setCellRenderer(experimentsOverviewListRenderer);
         // set icon for info label
         Icon infoIcon = UIManager.getIcon("OptionPane.informationIcon");
@@ -146,26 +147,26 @@ public class OverviewController {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                //init experimentJList
+                    //init experimentJList
                     Project selectedProject = (Project) overviewDialog.getProjectJList().getSelectedValue();
                     if (selectedProject != null) {
-                    // set text for project description
-                    overviewDialog.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
-                    Long projectid = selectedProject.getProjectid();
-                    List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
-                    if (experimentNumbers != null) {
-                        List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
+                        // set text for project description
+                        overviewDialog.getProjectDescriptionTextArea().setText(selectedProject.getProjectDescription());
+                        Long projectid = selectedProject.getProjectid();
+                        List<Integer> experimentNumbers = experimentService.findExperimentNumbersByProjectId(projectid);
+                        if (experimentNumbers != null) {
+                            List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
                             // order Experiments by their numbers
                             Collections.sort(experimentList);
-                        experimentBindingList = (ObservableCollections.observableList(experimentList));
-                        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, overviewDialog.getExperimentJList());
-                        bindingGroup.addBinding(jListBinding);
-                        bindingGroup.bind();
-                    } else {
-                        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
-                            experimentBindingList.clear();
+                            experimentBindingList = (ObservableCollections.observableList(experimentList));
+                            JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, overviewDialog.getExperimentJList());
+                            bindingGroup.addBinding(jListBinding);
+                            bindingGroup.bind();
+                        } else {
+                            if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                                experimentBindingList.clear();
+                            }
                         }
-                    }
                         // init usersJList binding
                         List<User> findUsersByProjectid = userService.findUsersByProjectid(selectedProject.getProjectid());
                         Collections.sort(findUsersByProjectid);
@@ -175,8 +176,8 @@ public class OverviewController {
                         bindingGroup.bind();
                         // update project label in the other dialog
                         addUserToProjectDialog.getProjectLabel().setText(selectedProject.toString());
+                    }
                 }
-            }
             }
         });
 
@@ -218,7 +219,7 @@ public class OverviewController {
                     String message = "This will delete user(s):";
                     for (User user : selectedUsers) {
                         message += "\n" + "\"" + user.toString() + "\"";
-    }
+                    }
                     String totMsg = message.concat("\nfrom project: " + selectedProject + "\n\nContinue?");
                     int option = JOptionPane.showConfirmDialog(overviewDialog, totMsg, "delete users from project", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                     switch (option) {

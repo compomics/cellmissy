@@ -42,7 +42,6 @@ public class MultipleComparisonsCorrectionFactory {
     /**
      * Get the corrector according to the correction bean name.
      *
-     * @param String: the name of the bean for the corrector
      * @return
      */
     public MultipleComparisonsCorrector getCorrector(String beanName) {

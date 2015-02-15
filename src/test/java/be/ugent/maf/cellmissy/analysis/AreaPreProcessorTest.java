@@ -32,7 +32,7 @@ public class AreaPreProcessorTest {
     public static void setUpData() {
         data = new Double[100];
         for (int i = 0; i < data.length; i++) {
-            data[i] = Double.valueOf(i + 1);
+            data[i] = (double) (i + 1);
         }
     }
 

@@ -168,7 +168,7 @@ public class TimeFramesSelectionDialog extends javax.swing.JDialog {
                 .addContainerGap(343, Short.MAX_VALUE))
         );
 
-        userInteractionPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel2, jLabel3});
+        userInteractionPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jLabel1, jLabel2, jLabel3);
 
         userInteractionPanelLayout.setVerticalGroup(
             userInteractionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

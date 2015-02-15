@@ -83,6 +83,10 @@ public class Project implements Serializable, Comparable<Project> {
         this.projectNumber = projectNumber;
     }
 
+    public Project(String projectDescription) {
+        this.projectDescription = projectDescription;
+    }
+
     public Long getProjectid() {
         return projectid;
     }
@@ -140,10 +144,7 @@ public class Project implements Serializable, Comparable<Project> {
         if (!Objects.equals(this.projectid, other.projectid)) {
             return false;
         }
-        if (this.projectNumber != other.projectNumber) {
-            return false;
-        }
-        return true;
+        return this.projectNumber == other.projectNumber;
     }
 
     @Override

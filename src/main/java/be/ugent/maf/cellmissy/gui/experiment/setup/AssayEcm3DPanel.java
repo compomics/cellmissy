@@ -236,7 +236,7 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
-        ecmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {bottomMatrixTypeComboBox, bottomMatrixVolumeTextField});
+        ecmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, bottomMatrixTypeComboBox, bottomMatrixVolumeTextField);
 
         ecmPanelLayout.setVerticalGroup(
             ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -284,7 +284,7 @@ public class AssayEcm3DPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        ecmPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {topMatrixVolumeTextField, topVolumeUnitLabel});
+        ecmPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, topMatrixVolumeTextField, topVolumeUnitLabel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

@@ -5,8 +5,10 @@
 package be.ugent.maf.cellmissy.gui.controller;
 
 import com.compomics.software.CompomicsWrapper;
+
 import java.io.File;
 import java.net.URISyntaxException;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -14,7 +16,7 @@ import org.apache.log4j.Logger;
  *
  * @author Paola Masuzzo
  */
-public class CellMissyStarter {
+class CellMissyStarter {
 
     private static final Logger LOG = Logger.getLogger(CellMissyStarter.class);
 

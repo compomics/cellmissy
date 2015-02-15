@@ -89,9 +89,9 @@ public class RawAreaPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotLinesCheckBox, plotPointsCheckBox});
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, plotLinesCheckBox, plotPointsCheckBox);
 
-        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, processedTimeFramesTextField});
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jLabel1, processedTimeFramesTextField);
 
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

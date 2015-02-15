@@ -187,9 +187,9 @@ public class TreatmentsPanel extends javax.swing.JPanel {
                 .addGap(26, 26, 26))
         );
 
-        treatmentDualListPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addButton, removeButton});
+        treatmentDualListPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, addButton, removeButton);
 
-        treatmentDualListPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jScrollPane2, jScrollPane4});
+        treatmentDualListPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jScrollPane2, jScrollPane4);
 
         treatmentDualListPanelLayout.setVerticalGroup(
             treatmentDualListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,7 +208,7 @@ public class TreatmentsPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        treatmentDualListPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jScrollPane2, jScrollPane4});
+        treatmentDualListPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, jScrollPane2, jScrollPane4);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -311,7 +311,7 @@ public class TreatmentsPanel extends javax.swing.JPanel {
                         .addGap(13, 13, 13))))
         );
 
-        treatmentSetupPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {assayMediumComboBox, concentrationTextField, drugSolventComboBox, mediumVolumeTextField, serumComboBox, serumConcentrationTextField, solventConcentrationTextField, timingTextField});
+        treatmentSetupPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, assayMediumComboBox, concentrationTextField, drugSolventComboBox, mediumVolumeTextField, serumComboBox, serumConcentrationTextField, solventConcentrationTextField, timingTextField);
 
         treatmentSetupPanelLayout.setVerticalGroup(
             treatmentSetupPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -367,9 +367,9 @@ public class TreatmentsPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        treatmentSetupPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {concentrationTextField, timingTextField});
+        treatmentSetupPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, concentrationTextField, timingTextField);
 
-        treatmentSetupPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {serumConcentrationTextField, solventConcentrationTextField});
+        treatmentSetupPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, serumConcentrationTextField, solventConcentrationTextField);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

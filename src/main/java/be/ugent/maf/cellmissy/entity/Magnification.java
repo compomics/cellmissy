@@ -98,10 +98,7 @@ public class Magnification implements Serializable {
             return false;
         }
         Magnification other = (Magnification) object;
-        if ((this.magnificationid == null && other.magnificationid != null) || (this.magnificationid != null && !this.magnificationid.equals(other.magnificationid))) {
-            return false;
-        }
-        return true;
+        return !((this.magnificationid == null && other.magnificationid != null) || (this.magnificationid != null && !this.magnificationid.equals(other.magnificationid)));
     }
 
     @Override

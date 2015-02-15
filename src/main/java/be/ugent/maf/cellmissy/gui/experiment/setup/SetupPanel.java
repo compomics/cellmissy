@@ -28,10 +28,6 @@ public class SetupPanel extends javax.swing.JPanel {
         initComponents();
     }
 
-    public JPanel getSetupPlateParentPanel() {
-        return setupPlateParentPanel;
-    }
-
     public JPanel getSetupConditionsParentPanel() {
         return setupConditionsParentPanel;
     }
@@ -236,7 +232,7 @@ public class SetupPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        buttonsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {clearAllButton, clearLastButton, randomButton});
+        buttonsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, clearAllButton, clearLastButton, randomButton);
 
         buttonsPanelLayout.setVerticalGroup(
             buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -294,7 +290,7 @@ public class SetupPanel extends javax.swing.JPanel {
                     .addComponent(plateFormatComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
-        topPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {plateFormatComboBox, selectFormatLabel});
+        topPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, plateFormatComboBox, selectFormatLabel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

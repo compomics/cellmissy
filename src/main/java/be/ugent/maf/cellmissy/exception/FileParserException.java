@@ -11,10 +11,6 @@ package be.ugent.maf.cellmissy.exception;
  */
 public class FileParserException extends Exception {
 
-    public FileParserException() {
-        super();
-    }
-
     public FileParserException(String message) {
         super(message);
     }

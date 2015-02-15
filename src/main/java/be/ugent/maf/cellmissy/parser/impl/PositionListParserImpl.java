@@ -47,9 +47,9 @@ public class PositionListParserImpl implements PositionListParser {
             File[] setupFiles = setupFolder.listFiles();
             File positionListFile = null;
             // iterate through files inside the folder and look for position lists file(s)
-            for (int j = 0; j < setupFiles.length; j++) {
-                if (setupFiles[j].getName().equals(positionListName + ".txt")) {
-                    positionListFile = setupFiles[j];
+            for (File setupFile : setupFiles) {
+                if (setupFile.getName().equals(positionListName + ".txt")) {
+                    positionListFile = setupFile;
                     try (BufferedReader bufferedReader = new BufferedReader(new FileReader(positionListFile))) {
                         String strRead;
                         // check if file actually contains line to read, otherwise throw an exception

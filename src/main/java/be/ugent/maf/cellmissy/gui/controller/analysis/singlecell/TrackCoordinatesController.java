@@ -21,6 +21,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.RectIconCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackCoordinatesTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -42,6 +43,7 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.table.JTableHeader;
+
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -68,7 +70,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Controller("trackCoordinatesController")
-public class TrackCoordinatesController {
+class TrackCoordinatesController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TrackCoordinatesController.class);
     // model
@@ -119,7 +121,7 @@ public class TrackCoordinatesController {
     /**
      * Set cursor from main controller
      *
-     * @param type
+     * @param cursor
      */
     public void setCursor(Cursor cursor) {
         singleCellPreProcessingController.setCursor(cursor);
@@ -261,10 +263,9 @@ public class TrackCoordinatesController {
      * data need to be used and if points and/or lines need to be shown on the
      * plot.
      *
-     *
-     * @param plateCondition: the plate condition to plot the tracks from
+     * @param plateCondition:    the plate condition to plot the tracks from
      * @param useRawCoordinates: if true, plot raw data, else take the shifted
-     * to zero coordinates.
+     *                           to zero coordinates.
      */
     public void plotRandomTrackCoordinates(PlateCondition plateCondition, boolean useRawCoordinates) {
         // we get the selected index from the tabbed pane
@@ -369,7 +370,7 @@ public class TrackCoordinatesController {
         plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().addItemListener(itemActionListener);
         plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().addItemListener(itemActionListener);
         plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().addItemListener(itemActionListener);
-        for (Enumeration<AbstractButton> buttons = plotSettingsMenuBar.getLinesButtonGroup().getElements(); buttons.hasMoreElements();) {
+        for (Enumeration<AbstractButton> buttons = plotSettingsMenuBar.getLinesButtonGroup().getElements(); buttons.hasMoreElements(); ) {
             AbstractButton button = buttons.nextElement();
             button.addItemListener(itemActionListener);
         }

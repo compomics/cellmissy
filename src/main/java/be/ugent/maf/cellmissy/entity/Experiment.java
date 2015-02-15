@@ -313,10 +313,7 @@ public class Experiment implements Serializable, Comparable<Experiment> {
             return false;
         }
         Experiment other = (Experiment) object;
-        if ((this.experimentid == null && other.experimentid != null) || (this.experimentid != null && !this.experimentid.equals(other.experimentid))) {
-            return false;
-        }
-        return true;
+        return !((this.experimentid == null && other.experimentid != null) || (this.experimentid != null && !this.experimentid.equals(other.experimentid)));
     }
 
     @Override

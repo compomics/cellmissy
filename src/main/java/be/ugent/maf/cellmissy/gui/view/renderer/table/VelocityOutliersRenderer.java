@@ -15,7 +15,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class VelocityOutliersRenderer extends DefaultTableCellRenderer {
+class VelocityOutliersRenderer extends DefaultTableCellRenderer {
 
     private final boolean[] outliers;
     private final Format formatter;
@@ -23,7 +23,6 @@ public class VelocityOutliersRenderer extends DefaultTableCellRenderer {
     /**
      * Constructor
      *
-     * @param motileStepsVector
      */
     public VelocityOutliersRenderer(boolean[] outliers, Format formatter) {
         this.outliers = outliers;

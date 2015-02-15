@@ -19,6 +19,7 @@ import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -34,12 +35,12 @@ import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
  * @author Paola Masuzzo
  */
 @Controller("loadExperimentFromGenericInputController")
@@ -65,6 +66,7 @@ public class LoadExperimentFromGenericInputController {
     private GridBagConstraints gridBagConstraints;
 
     //services
+
     /**
      * Initialize controller
      */
@@ -96,11 +98,11 @@ public class LoadExperimentFromGenericInputController {
         cellMissyController.showMessage(message, title, messageType);
     }
 
-    public void handleUnexpectedError(Exception ex) {
+    void handleUnexpectedError(Exception ex) {
         cellMissyController.handleUnexpectedError(ex);
     }
 
-    public void updateInfoLabel(JLabel label, String message) {
+    void updateInfoLabel(JLabel label, String message) {
         cellMissyController.updateInfoLabel(label, message);
     }
 
@@ -114,10 +116,6 @@ public class LoadExperimentFromGenericInputController {
 
     public ImagedPlatePanel getImagedPlatePanel() {
         return genericImagedPlateController.getImagedPlatePanel();
-    }
-
-    public void initPlatePanel(PlateFormat plateFormat, Dimension dimension) {
-        genericImagedPlateController.getImagedPlatePanel().initPanel(plateFormat, dimension);
     }
 
     public CellMissyFrame getCellMissyFrame() {

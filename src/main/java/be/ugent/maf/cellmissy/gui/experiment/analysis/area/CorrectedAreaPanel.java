@@ -168,11 +168,11 @@ public class CorrectedAreaPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {chooseTimeFramesButton, selectReplicatesButton});
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, chooseTimeFramesButton, selectReplicatesButton);
 
-        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plotLinesCheckBox, plotPointsCheckBox, showTimeIntervalCheckBox});
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, plotLinesCheckBox, plotPointsCheckBox, showTimeIntervalCheckBox);
 
-        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel2});
+        leftPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jLabel1, jLabel2);
 
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

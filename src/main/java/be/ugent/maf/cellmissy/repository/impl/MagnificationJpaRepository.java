@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
  * @author Paola Masuzzo
  */
 @Repository("magnificationRepository")
-public class MagnificationJpaRepository extends GenericJpaRepository<Magnification, Long> implements MagnificationRepository{
+class MagnificationJpaRepository extends GenericJpaRepository<Magnification, Long> implements MagnificationRepository{
     
 }

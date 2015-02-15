@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * @XmlJavaTypeAdapter(EmptyStringXMLAdapter.class)
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class EmptyStringXMLAdapter extends XmlAdapter<String, String> {
+class EmptyStringXMLAdapter extends XmlAdapter<String, String> {
 
     @Override
     public String unmarshal(String v) throws Exception {

@@ -196,7 +196,7 @@ public class ExperimentServiceImpl implements ExperimentService {
 
         // check for experiment folder
         if (experimentFolder != null) {
-            //set experiment folde
+            //set experiment folder
             experiment.setExperimentFolder(experimentFolder);
             for (File file : experimentFolder.listFiles()) {
                 if (file.getName().endsWith("raw")) {
@@ -205,12 +205,8 @@ public class ExperimentServiceImpl implements ExperimentService {
                 } else if (file.getName().endsWith("MIA")) {
                     //Mia folder
                     miaFolder = file;
-                    if (miaFolder != null) {
-                        //set experiment mia folder
-                        experiment.setMiaFolder(miaFolder);
-                    } else {
-                        throw new CellMiaFoldersException("No MIA folder found.\nPlease check folder structure!");
-                    }
+                    //set experiment mia folder
+                    experiment.setMiaFolder(miaFolder);
                 }
             }
         } else {
@@ -269,9 +265,9 @@ public class ExperimentServiceImpl implements ExperimentService {
             if (docFiles != null) {
                 List<File> obsepFolders = new ArrayList<>();
                 File[] docFilesListed = docFiles.listFiles();
-                for (int i = 0; i < docFilesListed.length; i++) {
-                    if (docFilesListed[i].getName().startsWith("D")) {
-                        obsepFolders.add(docFilesListed[i]);
+                for (File aDocFilesListed : docFilesListed) {
+                    if (aDocFilesListed.getName().startsWith("D")) {
+                        obsepFolders.add(aDocFilesListed);
                     }
                 }
                 //obsep file
@@ -669,8 +665,7 @@ public class ExperimentServiceImpl implements ExperimentService {
         // plate conditions
         List<PlateCondition> plateConditionList = xmlExperiment.getPlateConditionList();
         List<PlateCondition> conditions = new ArrayList<>();
-        for (int i = 0; i < plateConditionList.size(); i++) {
-            PlateCondition plateCondition = plateConditionList.get(i);
+        for (PlateCondition plateCondition : plateConditionList) {
             // create a new condition
             PlateCondition newPlateCondition = new PlateCondition();
             // assay: we check in the DB for the assay as well: if it's there, we use it !

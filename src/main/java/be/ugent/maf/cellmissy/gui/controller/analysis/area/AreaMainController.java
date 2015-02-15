@@ -41,6 +41,7 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
+
 import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -65,6 +66,7 @@ import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
@@ -261,7 +263,7 @@ public class AreaMainController {
         return outliersHandlerBeanName;
     }
 
-    public void setOutliersHandlerBeanName(String outliersHandlerBeanName) {
+    void setOutliersHandlerBeanName(String outliersHandlerBeanName) {
         this.outliersHandlerBeanName = outliersHandlerBeanName;
     }
 
@@ -269,7 +271,7 @@ public class AreaMainController {
         return kernelDensityEstimatorBeanName;
     }
 
-    public void setKernelDensityEstimatorBeanName(String kernelDensityEstimatorBeanName) {
+    void setKernelDensityEstimatorBeanName(String kernelDensityEstimatorBeanName) {
         this.kernelDensityEstimatorBeanName = kernelDensityEstimatorBeanName;
     }
 
@@ -277,7 +279,7 @@ public class AreaMainController {
         return distanceMetricBeanName;
     }
 
-    public void setDistanceMetricBeanName(String distanceMetricBeanName) {
+    void setDistanceMetricBeanName(String distanceMetricBeanName) {
         this.distanceMetricBeanName = distanceMetricBeanName;
     }
 
@@ -287,11 +289,7 @@ public class AreaMainController {
      * @return
      */
     public boolean analysisWasStarted() {
-        if (experiment != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return experiment != null;
     }
 
     /**
@@ -375,7 +373,7 @@ public class AreaMainController {
      *
      * @param plateCondition
      */
-    public void showWellsForCurrentCondition(PlateCondition plateCondition) {
+    void showWellsForCurrentCondition(PlateCondition plateCondition) {
         analysisPlatePanel.setCurrentCondition(plateCondition);
         analysisPlatePanel.repaint();
     }
@@ -964,7 +962,6 @@ public class AreaMainController {
     }
 
     /**
-     *
      * @param experimentToAnalyze
      */
     private void proceedToAnalysis(Experiment experimentToAnalyze) {
@@ -1077,11 +1074,11 @@ public class AreaMainController {
             // disable buttons as well
             List<Well> wellList = currentCondition.getWellList();
             //fetch time steps for each well of condition
-            for (int i = 0; i < wellList.size(); i++) {
+            for (Well aWellList : wellList) {
                 //fetch time step collection for the wellhasimagingtype of interest
                 Algorithm algorithm = algorithmBindingList.get(metaDataAreaPanel.getAlgorithmComboBox().getSelectedIndex());
                 ImagingType imagingType = imagingTypeBindingList.get(metaDataAreaPanel.getImagingTypeComboBox().getSelectedIndex());
-                wellService.fetchTimeSteps(wellList.get(i), algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
+                wellService.fetchTimeSteps(aWellList, algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
             }
             // when all wells were fetched, update TimeStepList
             updateTimeStepsList(currentCondition);

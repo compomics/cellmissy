@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.gui.project.ProjectInfoDialog;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.UserService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -41,7 +43,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Controller("setupProjectController")
-public class SetupProjectController {
+class SetupProjectController {
 
     private static final Logger LOG = Logger.getLogger(SetupProjectController.class);
     // model
@@ -69,14 +71,6 @@ public class SetupProjectController {
         projectInfoDialog = new ProjectInfoDialog(setupExperimentController.getCellMissyFrame(), true);
         // init views
         initNewProjectDialog();
-    }
-
-    /**
-     * Getters
-     */
-    public NewProjectDialog getNewProjectDialog() {
-        return newProjectDialog;
-
     }
 
     /**

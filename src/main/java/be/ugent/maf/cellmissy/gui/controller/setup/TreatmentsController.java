@@ -13,6 +13,7 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.gui.experiment.setup.TreatmentsPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.TreatmentsRenderer;
 import be.ugent.maf.cellmissy.service.TreatmentService;
+
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +25,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
@@ -46,7 +48,7 @@ import org.springframework.stereotype.Controller;
  * @author Paola
  */
 @Controller("treatmentsController")
-public class TreatmentsController {
+class TreatmentsController {
 
     private static final Logger LOG = Logger.getLogger(TreatmentsController.class);
     //model
@@ -201,7 +203,6 @@ public class TreatmentsController {
 
     /**
      * private methods and classes
-     *
      */
     private void initTreatmentSetupPanel() {
         addDrugsTreatmentsDialog = new AddDrugsTreatmentsDialog(setupConditionsController.getCellMissyFrame());
@@ -274,11 +275,11 @@ public class TreatmentsController {
                 if (treatmentsPanel.getSourceList1().getSelectedValue() != null) {
                     //move a treatment from a source list to the destination list
                     addTreatmentFromASourceList(treatmentsPanel.getSourceList1());
-                    drugBindingList.remove((TreatmentType) treatmentsPanel.getSourceList1().getSelectedValue());
+                    drugBindingList.remove(treatmentsPanel.getSourceList1().getSelectedValue());
                 } else if (treatmentsPanel.getSourceList2().getSelectedValue() != null) {
                     //move a treatment from a source list to the destination list
                     addTreatmentFromASourceList(treatmentsPanel.getSourceList2());
-                    generalTreatmentBindingList.remove((TreatmentType) treatmentsPanel.getSourceList2().getSelectedValue());
+                    generalTreatmentBindingList.remove(treatmentsPanel.getSourceList2().getSelectedValue());
                 } else {
                     setupConditionsController.showMessage("Select a drug or a treatment to add to current list!", "add drug/treatment error", JOptionPane.WARNING_MESSAGE);
                 }
@@ -298,7 +299,7 @@ public class TreatmentsController {
                         case 2:
                             generalTreatmentBindingList.add(((Treatment) treatmentsPanel.getDestinationList().getSelectedValue()).getTreatmentType());
                     }
-                    treatmentBindingList.remove((Treatment) treatmentsPanel.getDestinationList().getSelectedValue());
+                    treatmentBindingList.remove(treatmentsPanel.getDestinationList().getSelectedValue());
                 } else {
                     setupConditionsController.showMessage("Select a drug or a treatment to remove from current list!", "remove drug/treatment error", JOptionPane.WARNING_MESSAGE);
                 }

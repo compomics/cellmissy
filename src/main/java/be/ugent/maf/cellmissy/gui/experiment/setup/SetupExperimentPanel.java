@@ -118,7 +118,7 @@ public class SetupExperimentPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {finishButton, nextButton, previousButton, reportButton});
+        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, finishButton, nextButton, previousButton, reportButton);
 
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

@@ -216,7 +216,7 @@ public class AssayEcm25DPanel extends javax.swing.JPanel {
                 .addGap(20, 20, 20))
         );
 
-        ecmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addCompositionButton, bottomMatrixTypeComboBox, bottomMatrixVolumeTextField, densityComboBox});
+        ecmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, addCompositionButton, bottomMatrixTypeComboBox, bottomMatrixVolumeTextField, densityComboBox);
 
         ecmPanelLayout.setVerticalGroup(
             ecmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

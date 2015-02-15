@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
  * @author Paola Masuzzo
  */
 @Repository("instrumentRepository")
-public class InstrumentJpaRepository extends GenericJpaRepository<Instrument, Long> implements InstrumentRepository{
+class InstrumentJpaRepository extends GenericJpaRepository<Instrument, Long> implements InstrumentRepository{
     
 }

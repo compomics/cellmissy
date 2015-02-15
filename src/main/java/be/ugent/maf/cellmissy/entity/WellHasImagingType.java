@@ -199,10 +199,7 @@ public class WellHasImagingType implements Serializable {
         if (!Objects.equals(this.imagingType, other.imagingType)) {
             return false;
         }
-        if (!Objects.equals(this.algorithm, other.algorithm)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.algorithm, other.algorithm);
     }
 
     @Override

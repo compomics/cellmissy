@@ -77,7 +77,7 @@ public class ExperimentRepositoryTest {
         // create a new experiment istance and set its class members
         Experiment experiment = new Experiment();
         experiment.setProject(project);
-        experiment.setExperimentNumber(001);
+        experiment.setExperimentNumber(1);
         experiment.setPurpose("This is to test insertion to DB");
         // Imaging types: 2, BF and PC
         ImagingType firstImagingType = new ImagingType();

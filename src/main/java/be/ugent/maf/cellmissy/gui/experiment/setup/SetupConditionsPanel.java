@@ -47,10 +47,6 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
         return assayEcmParentPanel;
     }
 
-    public JPanel getAssayEcmPanel() {
-        return assayEcmPanel;
-    }
-
     public JComboBox getGrowthMediumComboBox() {
         return growthMediumComboBox;
     }
@@ -173,9 +169,9 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {seedingDensityLabel, seedingTimeLabel});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, seedingDensityLabel, seedingTimeLabel);
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cellLineComboBox, growthMediumComboBox, seedingDensityTextField, seedingTimeTextField, serumComboBox, serumConcentrationTextField});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, cellLineComboBox, growthMediumComboBox, seedingDensityTextField, seedingTimeTextField, serumComboBox, serumConcentrationTextField);
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -237,7 +233,7 @@ public class SetupConditionsPanel extends javax.swing.JPanel {
                 .addContainerGap(59, Short.MAX_VALUE))
         );
 
-        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addCellLineButton, cellLineNameTextField});
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, addCellLineButton, cellLineNameTextField);
 
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

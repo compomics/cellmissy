@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class AnalysisGroupListRenderer extends DefaultListCellRenderer {
+class AnalysisGroupListRenderer extends DefaultListCellRenderer {
 
     private final List<PlateCondition> plateConditionList;
 

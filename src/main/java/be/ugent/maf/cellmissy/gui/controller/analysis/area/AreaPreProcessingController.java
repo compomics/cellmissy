@@ -34,6 +34,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.RectIconListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -63,6 +64,7 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableCellEditor;
 import javax.swing.text.StyledDocument;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -80,10 +82,12 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jfree.data.Range;
@@ -94,7 +98,7 @@ import org.jfree.data.Range;
  * @author Paola Masuzzo
  */
 @Controller("areaPreProcessingController")
-public class AreaPreProcessingController {
+class AreaPreProcessingController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaPreProcessingController.class);
     //model
@@ -461,7 +465,7 @@ public class AreaPreProcessingController {
      *
      * @param plateCondition
      */
-    public void showTimeIntervalInfo(PlateCondition plateCondition) {
+    void showTimeIntervalInfo(PlateCondition plateCondition) {
         AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
         int lastTimeFrame = areaPreProcessingResults.getTimeInterval().getLastTimeFrame();
         correctedAreaPanel.getLastTimeFrameTextField().setText("" + timeFramesBindingList.get(lastTimeFrame));
@@ -506,7 +510,6 @@ public class AreaPreProcessingController {
     }
 
     /**
-     *
      * @param plateCondition
      * @param plotLines
      * @param plotPoints
@@ -567,7 +570,7 @@ public class AreaPreProcessingController {
      * Plot corrected data replicates
      *
      * @param showTimeInterval - use time interval chosen for current condition
-     * or use the entire experiment time frames range?
+     *                         or use the entire experiment time frames range?
      */
     public void plotCorrectedArea(PlateCondition plateCondition, boolean plotLines, boolean plotPoints, boolean showTimeInterval) {
         if (showTimeInterval) {
@@ -907,7 +910,6 @@ public class AreaPreProcessingController {
     }
 
     /**
-     *
      * @param plateConditionList
      * @param useCorrectedData
      * @param plotErrorBars
@@ -991,7 +993,6 @@ public class AreaPreProcessingController {
     }
 
     /**
-     *
      * @param plateConditionList
      * @param useCorrectedData
      * @param plotErrorBars
@@ -1141,7 +1142,7 @@ public class AreaPreProcessingController {
      *
      * @return boolean
      */
-    public boolean useCorrectedData() {
+    boolean useCorrectedData() {
         return areaAnalysisPanel.getUseCorrectedDataCheckBox().isSelected();
     }
 
@@ -1243,7 +1244,7 @@ public class AreaPreProcessingController {
                 if (rowIndex != 0) {
                     if (areaRaw != 0) {
                         areaRawData[rowIndex][columnIndex] = areaRaw;
-                    } else if (areaRaw == 0 && firstAreaIsZero) {
+                    } else if (firstAreaIsZero) {
                         areaRawData[rowIndex][columnIndex] = 0.0;
                     } else {
                         areaRawData[rowIndex][columnIndex] = null;
@@ -1306,7 +1307,6 @@ public class AreaPreProcessingController {
     }
 
     /**
-     *
      * @param plateCondition
      * @return
      */
@@ -1544,7 +1544,7 @@ public class AreaPreProcessingController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //check that a condition is selected
-                if (areaMainController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != - 1) {
+                if (areaMainController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != -1) {
                     //show normalized values in the table
                     showNormalizedAreaInTable(areaMainController.getCurrentCondition());
                     showProcessedTimeFrames(areaMainController.getCurrentCondition());
@@ -1571,7 +1571,7 @@ public class AreaPreProcessingController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //check that a condition is selected
-                if (areaMainController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != - 1) {
+                if (areaMainController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != -1) {
                     showTransformedDataInTable(areaMainController.getCurrentCondition());
                     //set charts panel to null
                     densityChartPanel.setChart(null);
@@ -1598,7 +1598,7 @@ public class AreaPreProcessingController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //check that a condition is selected
-                if (areaMainController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != - 1) {
+                if (areaMainController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != -1) {
                     //show delta area values in the table
                     showDeltaAreaInTable(areaMainController.getCurrentCondition());
                     // remove other panels
@@ -1645,7 +1645,7 @@ public class AreaPreProcessingController {
         areaAnalysisPanel.getCorrectedAreaButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (areaMainController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != - 1) {
+                if (areaMainController.getDataAnalysisPanel().getConditionsList().getSelectedIndex() != -1) {
                     // show values in table
                     showCorrectedAreaInTable(areaMainController.getCurrentCondition());
                     boolean plotLines = correctedAreaPanel.getPlotLinesCheckBox().isSelected();
@@ -1664,7 +1664,7 @@ public class AreaPreProcessingController {
                     plotCorrectedArea(areaMainController.getCurrentCondition(), plotLines, plotPoints, showTimeInterval);
                     // enable global view and analysis
                     proceedToAnalysis = true;
-                    areaMainController.getAnalysisExperimentPanel().getNextButton().setEnabled(proceedToAnalysis);
+                    areaMainController.getAnalysisExperimentPanel().getNextButton().setEnabled(true);
                 }
             }
         });
@@ -1991,7 +1991,7 @@ public class AreaPreProcessingController {
 
         @Override
         public Object getCellEditorValue() {
-            return Boolean.valueOf(checkBox.isSelected());
+            return checkBox.isSelected();
         }
 
         @Override
