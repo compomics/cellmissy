@@ -61,8 +61,6 @@ class SingleCellPreProcessingController {
     private BindingGroup bindingGroup;
     private ObservableList<Track> tracksBindingList;
     private ObservableList<TrackPoint> trackPointsBindingList;
-    private JTableBinding tracksTableBinding;
-    private JTableBinding trackPointsTableBinding;
     private Map<PlateCondition, SingleCellPreProcessingResults> preProcessingMap;
     // view
     private SingleCellAnalysisPanel singleCellAnalysisPanel;
@@ -308,7 +306,7 @@ class SingleCellPreProcessingController {
      */
     public void showTracksInTable() {
         // table binding
-        tracksTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, tracksBindingList, singleCellAnalysisPanel.getTracksTable());
+        JTableBinding tracksTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, tracksBindingList, singleCellAnalysisPanel.getTracksTable());
         // add column bindings
         ColumnBinding columnBinding = tracksTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.well.columnNumber}"));
         columnBinding.setColumnName("Column");
@@ -402,7 +400,7 @@ class SingleCellPreProcessingController {
         String unitOfMeasurementString = coordinatesUnitOfMeasurement.getUnitOfMeasurementString();
 
         // table binding
-        trackPointsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, trackPointsBindingList, singleCellAnalysisPanel.getTrackPointsTable());
+        JTableBinding trackPointsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, trackPointsBindingList, singleCellAnalysisPanel.getTrackPointsTable());
 
         ColumnBinding columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${track.trackNumber}"));
         columnBinding.setColumnName("Track");

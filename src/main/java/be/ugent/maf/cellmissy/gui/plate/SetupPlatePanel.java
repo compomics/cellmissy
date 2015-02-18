@@ -29,7 +29,7 @@ public class SetupPlatePanel extends AbstractPlatePanel {
     // end point of mouse dragging
     private Point endPoint;
     // map between a Condition and a list of rectangles
-    private Map<PlateCondition, List<Rectangle>> rectangles;
+    private final Map<PlateCondition, List<Rectangle>> rectangles;
     // current plate condition
     private PlateCondition currentCondition;
 

@@ -32,7 +32,6 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectRepository projectRepository;
     @Autowired
     private ProjectHasUserRepository projectHasUserRepository;
-    private String projectFolderName;
 
     @Override
     public Project setupProject(int projectNumber, String description, File microscopeDirectory) {
@@ -46,6 +45,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         //create project folder on the server
         DecimalFormat df = new DecimalFormat("000");
+        String projectFolderName;
         if (newProject.getProjectDescription().length() == 0) {
             projectFolderName = "CM_P" + df.format(projectNumber);
         } else {

@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.Icon;
@@ -97,8 +98,6 @@ class ImportExportController {
     private Experiment experimentTemplateToExport;
     private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
-    private ObservableList<Instrument> instrumentBindingList;
-    private ObservableList<Magnification> magnificationBindingList;
     private BindingGroup bindingGroup;
     // view
     private ExportExperimentDialog exportExperimentDialog;
@@ -315,11 +314,11 @@ class ImportExportController {
         importExperimentDialog.getConditionsDetailsTable().getTableHeader().setReorderingAllowed(false);
         // instruments
         //init instrument combo box
-        instrumentBindingList = ObservableCollections.observableList(instrumentService.findAll());
+        ObservableList<Instrument> instrumentBindingList = ObservableCollections.observableList(instrumentService.findAll());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, instrumentBindingList, importExperimentDialog.getInstrumentComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         // magnifications
-        magnificationBindingList = ObservableCollections.observableList(instrumentService.findAllMagnifications());
+        ObservableList<Magnification> magnificationBindingList = ObservableCollections.observableList(instrumentService.findAllMagnifications());
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, magnificationBindingList, importExperimentDialog.getMagnificationComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         // projects
@@ -595,7 +594,7 @@ class ImportExportController {
         boolean hasExperiment = false;
         if (experimentService.findExperimentNumbersByProjectId(projectId) != null) {
             for (Integer number : experimentService.findExperimentNumbersByProjectId(projectId)) {
-                if (number == experimentNumber) {
+                if (Objects.equals(number, experimentNumber)) {
                     hasExperiment = true;
                 }
             }

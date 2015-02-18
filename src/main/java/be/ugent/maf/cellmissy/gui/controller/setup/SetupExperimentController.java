@@ -56,11 +56,7 @@ import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
@@ -1568,7 +1564,7 @@ public class SetupExperimentController {
         boolean hasExperiment = false;
         if (experimentService.findExperimentNumbersByProjectId(projectId) != null) {
             for (Integer number : experimentService.findExperimentNumbersByProjectId(projectId)) {
-                if (number == experimentNumber) {
+                if (Objects.equals(number, experimentNumber)) {
                     hasExperiment = true;
                 }
             }

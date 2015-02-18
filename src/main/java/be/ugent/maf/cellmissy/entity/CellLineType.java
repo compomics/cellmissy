@@ -102,10 +102,7 @@ public class CellLineType implements Serializable {
             return false;
         }
         final CellLineType other = (CellLineType) obj;
-        if (!Objects.equals(this.cellLineTypeid, other.cellLineTypeid)) {
-            return false;
-        }
-        return Objects.equals(this.name, other.name);
+        return Objects.equals(this.cellLineTypeid, other.cellLineTypeid) && Objects.equals(this.name, other.name);
     }
 
     @Override

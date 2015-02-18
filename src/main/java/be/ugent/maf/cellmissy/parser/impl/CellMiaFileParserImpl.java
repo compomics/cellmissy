@@ -53,8 +53,6 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
                 //add timestep to the list
                 timeStepList.add(timeStep);
             }
-        } catch (FileNotFoundException e) {
-            LOG.error(e.getMessage(), e);
         } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }
@@ -104,8 +102,6 @@ public class CellMiaFileParserImpl implements CellMiaFileParser {
             // when all the file is read, add the last track to the list
             trackList.add(currentTrack);
 
-        } catch (FileNotFoundException e) {
-            LOG.error(e.getMessage(), e);
         } catch (IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }

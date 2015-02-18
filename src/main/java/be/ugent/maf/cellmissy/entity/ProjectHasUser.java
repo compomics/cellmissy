@@ -106,10 +106,7 @@ public class ProjectHasUser implements Serializable {
         if (!Objects.equals(this.projectHasUserid, other.projectHasUserid)) {
             return false;
         }
-        if (!Objects.equals(this.project, other.project)) {
-            return false;
-        }
-        return Objects.equals(this.user, other.user);
+        return Objects.equals(this.project, other.project) && Objects.equals(this.user, other.user);
     }
 
     @Override

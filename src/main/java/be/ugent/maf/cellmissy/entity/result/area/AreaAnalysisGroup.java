@@ -127,10 +127,7 @@ public class AreaAnalysisGroup {
         if (!Objects.equals(this.plateConditions, other.plateConditions)) {
             return false;
         }
-        if (!Objects.equals(this.areaAnalysisResults, other.areaAnalysisResults)) {
-            return false;
-        }
-        return Objects.equals(this.correctionMethodName, other.correctionMethodName);
+        return Objects.equals(this.areaAnalysisResults, other.areaAnalysisResults) && Objects.equals(this.correctionMethodName, other.correctionMethodName);
     }
 
     @Override

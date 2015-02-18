@@ -151,10 +151,7 @@ public class PlateFormat implements Serializable {
             return false;
         }
         final PlateFormat other = (PlateFormat) obj;
-        if (!Objects.equals(this.numberOfCols, other.numberOfCols)) {
-            return false;
-        }
-        return Objects.equals(this.numberOfRows, other.numberOfRows);
+        return Objects.equals(this.numberOfCols, other.numberOfCols) && Objects.equals(this.numberOfRows, other.numberOfRows);
     }
 
     @Override

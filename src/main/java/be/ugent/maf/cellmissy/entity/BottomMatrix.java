@@ -100,10 +100,7 @@ public class BottomMatrix implements Serializable {
             return false;
         }
         final BottomMatrix other = (BottomMatrix) obj;
-        if (!Objects.equals(this.bottomMatrixid, other.bottomMatrixid)) {
-            return false;
-        }
-        return Objects.equals(this.type, other.type);
+        return Objects.equals(this.bottomMatrixid, other.bottomMatrixid) && Objects.equals(this.type, other.type);
     }
 
     @Override

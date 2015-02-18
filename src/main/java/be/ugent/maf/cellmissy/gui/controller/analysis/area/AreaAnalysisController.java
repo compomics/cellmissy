@@ -98,7 +98,6 @@ class AreaAnalysisController {
     private BindingGroup bindingGroup;
     private Map<PlateCondition, AreaAnalysisResults> analysisMap;
     private ObservableList<AreaAnalysisGroup> groupsBindingList;
-    private ObservableList<Double> significanceLevelsBindingList;
     // view
     private LinearRegressionPanel linearRegressionPanel;
     private ChartPanel velocityChartPanel;
@@ -436,7 +435,7 @@ class AreaAnalysisController {
         for (SignificanceLevel significanceLevel : SignificanceLevel.values()) {
             significanceLevels.add(significanceLevel.getValue());
         }
-        significanceLevelsBindingList = ObservableCollections.observableList(significanceLevels);
+        ObservableList<Double> significanceLevelsBindingList = ObservableCollections.observableList(significanceLevels);
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, significanceLevelsBindingList, statisticsDialog.getSignificanceLevelComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         bindingGroup.bind();

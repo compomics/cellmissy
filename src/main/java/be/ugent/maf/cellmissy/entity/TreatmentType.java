@@ -115,10 +115,7 @@ public class TreatmentType implements Serializable {
             return false;
         }
         final TreatmentType other = (TreatmentType) obj;
-        if (!Objects.equals(this.treatmentTypeid, other.treatmentTypeid)) {
-            return false;
-        }
-        return Objects.equals(this.name, other.name);
+        return Objects.equals(this.treatmentTypeid, other.treatmentTypeid) && Objects.equals(this.name, other.name);
     }
 
     @Override

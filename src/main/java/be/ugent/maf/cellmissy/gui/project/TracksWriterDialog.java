@@ -24,12 +24,8 @@ public class TracksWriterDialog extends javax.swing.JDialog {
         return chooseDirectoryButton;
     }
 
-    public JButton getWriteDataToFileButton() {
-        return writeDataToFileButton;
-    }
-
-    public JButton getComputeButton() {
-        return computeButton;
+    public JButton getComputeAndWriteButton() {
+        return computeAndWriteButton;
     }
 
     public JTextArea getLogTextArea() {
@@ -68,17 +64,14 @@ public class TracksWriterDialog extends javax.swing.JDialog {
         userInputPanel = new javax.swing.JPanel();
         dataScrollPane = new javax.swing.JScrollPane();
         dataTree = new javax.swing.JTree();
-        computeButton = new javax.swing.JButton();
-        buttonsPanel = new javax.swing.JPanel();
+        computeAndWriteButton = new javax.swing.JButton();
         selectAllButton = new javax.swing.JButton();
         deselectAllButton = new javax.swing.JButton();
+        directoryTextField = new javax.swing.JTextField();
+        chooseDirectoryButton = new javax.swing.JButton();
         computationsPanel = new javax.swing.JPanel();
         logScrollPane = new javax.swing.JScrollPane();
         logTextArea = new javax.swing.JTextArea();
-        writeToFilePanel = new javax.swing.JPanel();
-        directoryTextField = new javax.swing.JTextField();
-        chooseDirectoryButton = new javax.swing.JButton();
-        writeDataToFileButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Write cell tracks data to file");
@@ -92,7 +85,16 @@ public class TracksWriterDialog extends javax.swing.JDialog {
         dataScrollPane.setBorder(null);
         dataScrollPane.setViewportView(dataTree);
 
-        computeButton.setText("Compute!");
+        computeAndWriteButton.setText("Compute & Write to File");
+
+        selectAllButton.setText("Select All");
+
+        deselectAllButton.setText("Deselect All");
+
+        directoryTextField.setEditable(false);
+        directoryTextField.setEnabled(false);
+
+        chooseDirectoryButton.setText("Choose Directory");
 
         javax.swing.GroupLayout userInputPanelLayout = new javax.swing.GroupLayout(userInputPanel);
         userInputPanel.setLayout(userInputPanelLayout);
@@ -103,18 +105,33 @@ public class TracksWriterDialog extends javax.swing.JDialog {
                 .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dataScrollPane)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, userInputPanelLayout.createSequentialGroup()
-                        .addGap(0, 329, Short.MAX_VALUE)
-                        .addComponent(computeButton)))
+                        .addComponent(directoryTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
+                        .addGap(10, 10, 10)
+                        .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(chooseDirectoryButton)
+                            .addComponent(selectAllButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(deselectAllButton)
+                            .addComponent(computeAndWriteButton))))
                 .addContainerGap())
         );
+
+        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {chooseDirectoryButton, computeAndWriteButton, deselectAllButton, selectAllButton});
+
         userInputPanelLayout.setVerticalGroup(
             userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(userInputPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(dataScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(computeButton)
-                .addContainerGap())
+                .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(directoryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chooseDirectoryButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(selectAllButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(deselectAllButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(computeAndWriteButton))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -122,49 +139,8 @@ public class TracksWriterDialog extends javax.swing.JDialog {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.9;
+        gridBagConstraints.weighty = 1.0;
         getContentPane().add(userInputPanel, gridBagConstraints);
-
-        buttonsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
-        buttonsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        buttonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        selectAllButton.setText("Select All");
-
-        deselectAllButton.setText("Deselect All");
-
-        javax.swing.GroupLayout buttonsPanelLayout = new javax.swing.GroupLayout(buttonsPanel);
-        buttonsPanel.setLayout(buttonsPanelLayout);
-        buttonsPanelLayout.setHorizontalGroup(
-            buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(buttonsPanelLayout.createSequentialGroup()
-                .addContainerGap(339, Short.MAX_VALUE)
-                .addGroup(buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(selectAllButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deselectAllButton, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
-        );
-
-        buttonsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {deselectAllButton, selectAllButton});
-
-        buttonsPanelLayout.setVerticalGroup(
-            buttonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, buttonsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(selectAllButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(deselectAllButton)
-                .addGap(9, 9, 9))
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.1;
-        getContentPane().add(buttonsPanel, gridBagConstraints);
 
         computationsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Computations"));
         computationsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -186,14 +162,14 @@ public class TracksWriterDialog extends javax.swing.JDialog {
             computationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(computationsPanelLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addComponent(logScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
+                .addComponent(logScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
                 .addGap(16, 16, 16))
         );
         computationsPanelLayout.setVerticalGroup(
             computationsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(computationsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(logScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
+                .addComponent(logScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
                 .addGap(12, 12, 12))
         );
 
@@ -204,50 +180,6 @@ public class TracksWriterDialog extends javax.swing.JDialog {
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(computationsPanel, gridBagConstraints);
-
-        writeToFilePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
-        writeToFilePanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        writeToFilePanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        directoryTextField.setEditable(false);
-
-        chooseDirectoryButton.setText("Choose Directory");
-
-        writeDataToFileButton.setText("Write Data To File");
-
-        javax.swing.GroupLayout writeToFilePanelLayout = new javax.swing.GroupLayout(writeToFilePanel);
-        writeToFilePanel.setLayout(writeToFilePanelLayout);
-        writeToFilePanelLayout.setHorizontalGroup(
-            writeToFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, writeToFilePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(directoryTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(writeToFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(writeDataToFileButton)
-                    .addComponent(chooseDirectoryButton))
-                .addContainerGap())
-        );
-        writeToFilePanelLayout.setVerticalGroup(
-            writeToFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(writeToFilePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(writeToFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(directoryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chooseDirectoryButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(writeDataToFileButton)
-                .addContainerGap(51, Short.MAX_VALUE))
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.2;
-        getContentPane().add(writeToFilePanel, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -268,13 +200,7 @@ public class TracksWriterDialog extends javax.swing.JDialog {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TracksWriterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TracksWriterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TracksWriterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(TracksWriterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
@@ -295,10 +221,9 @@ public class TracksWriterDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel buttonsPanel;
     private javax.swing.JButton chooseDirectoryButton;
     private javax.swing.JPanel computationsPanel;
-    private javax.swing.JButton computeButton;
+    private javax.swing.JButton computeAndWriteButton;
     private javax.swing.JScrollPane dataScrollPane;
     private javax.swing.JTree dataTree;
     private javax.swing.JButton deselectAllButton;
@@ -307,7 +232,5 @@ public class TracksWriterDialog extends javax.swing.JDialog {
     private javax.swing.JTextArea logTextArea;
     private javax.swing.JButton selectAllButton;
     private javax.swing.JPanel userInputPanel;
-    private javax.swing.JButton writeDataToFileButton;
-    private javax.swing.JPanel writeToFilePanel;
     // End of variables declaration//GEN-END:variables
 }
