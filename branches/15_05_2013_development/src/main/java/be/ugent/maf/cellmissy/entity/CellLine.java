@@ -164,10 +164,7 @@ public class CellLine implements Serializable {
             return false;
         }
         final CellLine other = (CellLine) obj;
-        if (!Objects.equals(this.seedingTime, other.seedingTime)) {
-            return false;
-        }
-        return Objects.equals(this.seedingDensity, other.seedingDensity);
+        return Objects.equals(this.seedingTime, other.seedingTime) && Objects.equals(this.seedingDensity, other.seedingDensity);
     }
 
     @Override

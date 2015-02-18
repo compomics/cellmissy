@@ -46,8 +46,6 @@ import org.springframework.transaction.TransactionException;
 public class ApplicationValidator {
 
     private static final Logger LOG = Logger.getLogger(ApplicationValidator.class);
-    // model
-    private BindingGroup bindingGroup;
     private ObservableList<PropertyGuiWrapper> propertyGuiWrapperBindingList;
     // view
     private CellMissyConfigDialog cellMissyConfigDialog;
@@ -70,7 +68,7 @@ public class ApplicationValidator {
         });
 
         //init bindings
-        bindingGroup = new BindingGroup();
+        BindingGroup bindingGroup = new BindingGroup();
         //table binding
         propertyGuiWrapperBindingList = ObservableCollections.observableList(new ArrayList<PropertyGuiWrapper>());
         initPropertyGuiWrappersBindingList();

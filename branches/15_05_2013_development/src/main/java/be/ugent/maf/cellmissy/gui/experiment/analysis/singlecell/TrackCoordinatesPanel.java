@@ -100,7 +100,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
     public JRadioButton getScaleToExperimentRadioButton() {
         return scaleToExperimentRadioButton;
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -309,7 +309,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        otherOptionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, doNotScaleRadioButton, scaleToConditionRadioButton, scaleToExperimentRadioButton);
+        otherOptionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {doNotScaleRadioButton, scaleToConditionRadioButton, scaleToExperimentRadioButton});
 
         otherOptionsPanelLayout.setVerticalGroup(
             otherOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -404,7 +404,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addComponent(plotAllTracksButton))
         );
 
-        trackingPlotPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, randomTracksNumberTextField, tracksNumberConditionTextField, tracksNumberWellTextField);
+        trackingPlotPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {randomTracksNumberTextField, tracksNumberConditionTextField, tracksNumberWellTextField});
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -434,11 +434,11 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(trackCoordinatesTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
+            .addComponent(trackCoordinatesTabbedPane)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(trackCoordinatesTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE)
+            .addComponent(trackCoordinatesTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables

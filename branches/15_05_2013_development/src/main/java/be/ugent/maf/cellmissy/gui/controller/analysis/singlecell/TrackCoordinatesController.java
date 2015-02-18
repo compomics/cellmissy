@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingRe
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsMenuBar;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsRendererGiver;
@@ -78,7 +79,6 @@ class TrackCoordinatesController {
     private ObservableList<Well> wellBindingList;
     private JTable coordinatesTable;
     private ObservableList<TrackDataHolder> trackDataHolderBindingList;
-    private JTableBinding trackHoldersTableBinding;
     private Double[][] experimentRawCoordinatesRanges;
     private Double[][] experimentShiftedCoordinatesRanges;
     // view
@@ -103,9 +103,10 @@ class TrackCoordinatesController {
         // init views
         initPlotSettingsMenuBar();
         initTrackCoordinatesPanel();
-        // init child controller
+        // init child controllers
         exploreTrackController.init();
     }
+
 
     /**
      * Getters
@@ -125,6 +126,51 @@ class TrackCoordinatesController {
      */
     public void setCursor(Cursor cursor) {
         singleCellPreProcessingController.setCursor(cursor);
+    }
+
+    public void setExperimentShiftedCoordinatesRanges(Double[][] experimentShiftedCoordinatesRanges) {
+        this.experimentShiftedCoordinatesRanges = experimentShiftedCoordinatesRanges;
+    }
+
+    public Double[][] getExperimentShiftedCoordinatesRanges() {
+        return experimentShiftedCoordinatesRanges;
+    }
+
+    /**
+     *
+     * @param plateCondition
+     * @return
+     */
+    public SingleCellPreProcessingResults getPreProcessingResults(PlateCondition plateCondition) {
+        return singleCellPreProcessingController.getPreProcessingResults(plateCondition);
+    }
+
+    public void handleUnexpectedError(Exception ex) {
+        singleCellPreProcessingController.handleUnexpectedError(ex);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public CellMissyFrame getMainFrame() {
+        return singleCellPreProcessingController.getMainFrame();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public List<PlateCondition> getPlateConditionList() {
+        return singleCellPreProcessingController.getPlateConditionList();
+    }
+
+    public void fetchTracks(PlateCondition plateCondition) {
+        singleCellPreProcessingController.fetchTracks(plateCondition);
+    }
+
+    public void updateMapWithCondition(PlateCondition plateCondition) {
+        singleCellPreProcessingController.updateMapWithCondition(plateCondition);
     }
 
     /**
@@ -173,7 +219,7 @@ class TrackCoordinatesController {
      * Show the number of total tracks for the current selected condition.
      */
     public void updateTracksNumberInfo() {
-        int trackNumber = getTrackNumberForCondition();
+        int trackNumber = getTrackNumberForCondition(singleCellPreProcessingController.getCurrentCondition());
         trackCoordinatesPanel.getTracksNumberConditionTextField().setText("" + trackNumber);
     }
 
@@ -250,7 +296,7 @@ class TrackCoordinatesController {
         // check if tracks need to be generated from within the same well or not
         switch (category) {
             case 0:
-                generateRandomTrackHoldersForCondition();
+                generateRandomTrackHoldersForCondition(singleCellPreProcessingController.getCurrentCondition());
                 break;
             case 1:
                 generateRandomTrackDataHoldersForWell();
@@ -263,9 +309,9 @@ class TrackCoordinatesController {
      * data need to be used and if points and/or lines need to be shown on the
      * plot.
      *
-     * @param plateCondition:    the plate condition to plot the tracks from
+     * @param plateCondition: the plate condition to plot the tracks from
      * @param useRawCoordinates: if true, plot raw data, else take the shifted
-     *                           to zero coordinates.
+     * to zero coordinates.
      */
     public void plotRandomTrackCoordinates(PlateCondition plateCondition, boolean useRawCoordinates) {
         // we get the selected index from the tabbed pane
@@ -308,7 +354,7 @@ class TrackCoordinatesController {
     /**
      * Empty the list with the track data holders.
      */
-    public void resetTracksList() {
+    void resetTracksList() {
         if (!trackDataHolderBindingList.isEmpty()) {
             trackDataHolderBindingList.clear();
         }
@@ -318,7 +364,7 @@ class TrackCoordinatesController {
      *
      */
     public void showPlottedTracksInTable() {
-        trackHoldersTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackDataHolderBindingList, trackCoordinatesPanel.getPlottedTracksTable());
+        JTableBinding trackHoldersTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackDataHolderBindingList, trackCoordinatesPanel.getPlottedTracksTable());
         // add column bindings
         BeanProperty index = BeanProperty.create("index");
         JTableBinding.ColumnBinding columnBinding = trackHoldersTableBinding.addColumnBinding(index);
@@ -370,7 +416,7 @@ class TrackCoordinatesController {
         plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().addItemListener(itemActionListener);
         plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().addItemListener(itemActionListener);
         plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().addItemListener(itemActionListener);
-        for (Enumeration<AbstractButton> buttons = plotSettingsMenuBar.getLinesButtonGroup().getElements(); buttons.hasMoreElements(); ) {
+        for (Enumeration<AbstractButton> buttons = plotSettingsMenuBar.getLinesButtonGroup().getElements(); buttons.hasMoreElements();) {
             AbstractButton button = buttons.nextElement();
             button.addItemListener(itemActionListener);
         }
@@ -505,7 +551,8 @@ class TrackCoordinatesController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Well selectedWell = (Well) trackCoordinatesPanel.getWellsComboBox().getSelectedItem();
-                List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForWell(selectedWell);
+                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+                List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForWell(currentCondition, selectedWell);
                 int numberTracksForCurrentWell = trackHoldersForCurrentWell.size();
                 // update info with number of tracks for current selected well
                 trackCoordinatesPanel.getTracksNumberWellTextField().setText(" " + numberTracksForCurrentWell);
@@ -541,7 +588,7 @@ class TrackCoordinatesController {
      * @param useRawCoordinates
      * @return a XYSeriesCollection
      */
-    private XYSeriesCollection generateXYSeriesCollectionForPlot(boolean useRawCoordinates) {
+    public XYSeriesCollection generateXYSeriesCollectionForPlot(boolean useRawCoordinates) {
         XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
         // the matrix to use is either the raw coordinates matrix or the shifted matrix
         Double[][] coordinatesMatrix;
@@ -580,7 +627,7 @@ class TrackCoordinatesController {
     private void generateRandomTrackDataHoldersForWell() {
         // get only the track holders for the selected well
         Well selectedWell = (Well) trackCoordinatesPanel.getWellsComboBox().getSelectedItem();
-        List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForWell(selectedWell);
+        List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForWell(singleCellPreProcessingController.getCurrentCondition(), selectedWell);
         int numberTracksForCurrentWell = trackHoldersForCurrentWell.size();
         // update info with number of tracks for current selected well
         trackCoordinatesPanel.getTracksNumberWellTextField().setText("" + numberTracksForCurrentWell);
@@ -626,9 +673,9 @@ class TrackCoordinatesController {
      * Generate the random track holders across random wells of a particular
      * condition.
      */
-    private void generateRandomTrackHoldersForCondition() {
+    private void generateRandomTrackHoldersForCondition(PlateCondition plateCondition) {
         // get track holders for current condition
-        List<TrackDataHolder> trackHoldersForCurrentCondition = getTrackHoldersForCurrentCondition();
+        List<TrackDataHolder> trackHoldersForCurrentCondition = getTrackHoldersForCondition(plateCondition);
         int tracksNumberForCondition = trackHoldersForCurrentCondition.size();
         // if the user does not write anything, number of tracks to be plotted is set to default
         String text = trackCoordinatesPanel.getRandomTracksNumberTextField().getText();
@@ -689,9 +736,9 @@ class TrackCoordinatesController {
      * @param well
      * @return
      */
-    private List<TrackDataHolder> getTrackHoldersForWell(Well well) {
+    private List<TrackDataHolder> getTrackHoldersForWell(PlateCondition plateCondition, Well well) {
         // first, get the track holders for the current condition
-        List<TrackDataHolder> trackHoldersForCurrentCondition = getTrackHoldersForCurrentCondition();
+        List<TrackDataHolder> trackHoldersForCurrentCondition = getTrackHoldersForCondition(plateCondition);
         List<TrackDataHolder> trackHoldersForWell = new ArrayList<>();
         // then, get the selected well, and filter only the results from this well
         for (TrackDataHolder trackDataHolder : trackHoldersForCurrentCondition) {
@@ -708,10 +755,9 @@ class TrackCoordinatesController {
      *
      * @return the track data holders
      */
-    private List<TrackDataHolder> getTrackHoldersForCurrentCondition() {
-        PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+    private List<TrackDataHolder> getTrackHoldersForCondition(PlateCondition plateCondition) {
         // through the map, we get the pre processing results for the current condition
-        SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(currentCondition);
+        SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
         return singleCellPreProcessingResults.getTrackDataHolders();
     }
 
@@ -719,8 +765,8 @@ class TrackCoordinatesController {
      * For the current condition, generate the list with all the track data
      * holders.
      */
-    private void generateAllTrackHoldersForCurrentCondition() {
-        List<TrackDataHolder> trackHoldersForCurrentCondition = getTrackHoldersForCurrentCondition();
+    public void generateAllTrackHoldersForCondition(PlateCondition plateCondition) {
+        List<TrackDataHolder> trackHoldersForCurrentCondition = getTrackHoldersForCondition(plateCondition);
         trackDataHolderBindingList.addAll(trackHoldersForCurrentCondition);
     }
 
@@ -729,8 +775,8 @@ class TrackCoordinatesController {
      *
      * @param well
      */
-    private void generateAllTrackHoldersForCurrentWell(Well well) {
-        List<TrackDataHolder> trackHoldersForWell = getTrackHoldersForWell(well);
+    private void generateAllTrackHoldersForCurrentWell(PlateCondition plateCondition, Well well) {
+        List<TrackDataHolder> trackHoldersForWell = getTrackHoldersForWell(plateCondition, well);
         trackDataHolderBindingList.addAll(trackHoldersForWell);
     }
 
@@ -739,8 +785,8 @@ class TrackCoordinatesController {
      *
      * @return the number.
      */
-    private int getTrackNumberForCondition() {
-        return getTrackHoldersForCurrentCondition().size();
+    private int getTrackNumberForCondition(PlateCondition plateCondition) {
+        return getTrackHoldersForCondition(plateCondition).size();
     }
 
     /**
@@ -932,7 +978,7 @@ class TrackCoordinatesController {
         protected Void doInBackground() throws Exception {
             singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             resetTracksList();
-            generateAllTrackHoldersForCurrentCondition();
+            generateAllTrackHoldersForCondition(singleCellPreProcessingController.getCurrentCondition());
             xYSeriesCollection = generateXYSeriesCollectionForPlot(useRawCoordinates);
             return null;
         }
@@ -972,7 +1018,7 @@ class TrackCoordinatesController {
         protected Void doInBackground() throws Exception {
             singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             resetTracksList();
-            generateAllTrackHoldersForCurrentWell(selectedWell);
+            generateAllTrackHoldersForCurrentWell(singleCellPreProcessingController.getCurrentCondition(), selectedWell);
             xYSeriesCollection = generateXYSeriesCollectionForPlot(useRawCoordinates);
             return null;
         }

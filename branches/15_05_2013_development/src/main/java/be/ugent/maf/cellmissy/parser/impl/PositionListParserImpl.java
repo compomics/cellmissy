@@ -37,9 +37,7 @@ public class PositionListParserImpl implements PositionListParser {
         // this Map maps ImagingType (keys) to List of WellHasImagingType (values)
         Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = new HashMap<>();
         // in the microscope folder, look for the text files to parse
-        Iterator<Map.Entry<ImagingType, String>> iterator = imagingTypeToPosListMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<ImagingType, String> next = iterator.next();
+        for (Map.Entry<ImagingType, String> next : imagingTypeToPosListMap.entrySet()) {
             ImagingType imagingType = next.getKey();
             String positionListName = next.getValue();
 
@@ -84,9 +82,6 @@ public class PositionListParserImpl implements PositionListParser {
                         // set the List of WellHasImagingTypes with the current List
                         imagingType.setWellHasImagingTypeList(wellHasImagingTypeList);
 
-                    } catch (FileNotFoundException e) {
-                        LOG.error(e.getMessage(), e);
-                        throw new FileParserException(e.getMessage());
                     } catch (IOException ex) {
                         LOG.error(ex.getMessage(), ex);
                         throw new FileParserException(ex.getMessage());

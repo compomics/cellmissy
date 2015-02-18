@@ -16,8 +16,6 @@ import org.apache.commons.lang.ArrayUtils;
  */
 public class IQRExcelAlgorithmOutliersHandler implements OutliersHandler {
 
-    private final double k = 1.5;
-
     @Override
     public boolean[][] detectOutliers(Double[][] data) {
         Double[][] transposedData = AnalysisUtils.transpose2DArray(data);
@@ -37,6 +35,7 @@ public class IQRExcelAlgorithmOutliersHandler implements OutliersHandler {
                 //an outlier is here defined as a data point smaller than 1.5 times (first quartile - IQR)
                 // greater than 1.5 * (third quartile + IQR)
                 if (row[columnIndex] != null) {
+                    double k = 1.5;
                     if (row[columnIndex] < (firstQuartile - k * IQR) | row[columnIndex] > (thirdQuartile + k * IQR)) {
                         booleanMatrix[columnIndex][rowIndex] = true;
                     }

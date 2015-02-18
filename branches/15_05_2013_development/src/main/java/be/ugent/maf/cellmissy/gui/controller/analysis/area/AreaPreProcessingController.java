@@ -527,14 +527,13 @@ class AreaPreProcessingController {
             List<Well> processedWells = plateCondition.getAreaAnalyzedWells();
             XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
             // array for x axis
-            double[] xValues = processedTimeFrames;
             int counter = 0;
             for (Well well : processedWells) {
                 int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(well);
                 if (numberOfSamplesPerWell == 1) {
                     for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                         double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
-                        XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                        XYSeries xySeries = JFreeChartUtils.generateXYSeries(processedTimeFrames, yValues);
                         xySeries.setKey("" + (well));
                         xYSeriesCollection.addSeries(xySeries);
                     }
@@ -542,7 +541,7 @@ class AreaPreProcessingController {
                     int label = 0;
                     for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
                         double[] yValues = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposedArea[i]));
-                        XYSeries xySeries = JFreeChartUtils.generateXYSeries(xValues, yValues);
+                        XYSeries xySeries = JFreeChartUtils.generateXYSeries(processedTimeFrames, yValues);
                         xySeries.setKey("" + (well) + ", " + (label + 1));
                         xYSeriesCollection.addSeries(xySeries);
                         label++;

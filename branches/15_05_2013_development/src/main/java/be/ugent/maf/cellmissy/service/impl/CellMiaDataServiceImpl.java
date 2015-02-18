@@ -41,7 +41,6 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
     private MicroscopeDataService microscopeDataService;
     @Autowired
     private CellMiaFileParser cellMiaFileParser;
-    private Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> algoMap;
     private Map<ImagingType, List<WellHasImagingType>> imagingTypeMap;
     private static final Logger LOG = Logger.getLogger(CellMiaDataService.class);
 
@@ -54,7 +53,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
     public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> processCellMiaData() throws FileParserException, PositionListMismatchException, CellMiaDataLoadingException {
         long currentTimeMillis = System.currentTimeMillis();
         imagingTypeMap = microscopeDataService.processMicroscopeData();
-        algoMap = new HashMap<>();
+        Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> algoMap = new HashMap<>();
         File[] algoFiles = experiment.getMiaFolder().listFiles();
         // iterate through the algorithms folders
         for (File file : algoFiles) {
@@ -76,9 +75,7 @@ public class CellMiaDataServiceImpl implements CellMiaDataService {
                     int imageTypeStartFolder = 0;
                     // make use of an iterator on a EntrySet is more efficient then iterating through the keys of the map
                     Set<Map.Entry<ImagingType, List<WellHasImagingType>>> entrySet = map.entrySet();
-                    Iterator<Map.Entry<ImagingType, List<WellHasImagingType>>> iterator = entrySet.iterator();
-                    while (iterator.hasNext()) {
-                        Map.Entry<ImagingType, List<WellHasImagingType>> next = iterator.next();
+                    for (Map.Entry<ImagingType, List<WellHasImagingType>> next : entrySet) {
                         ImagingType imagingType = next.getKey();
                         List<WellHasImagingType> wellHasImagingTypeList = next.getValue();
                         // check that there are files to be parsed -- algo is created only if there's a list of files to be processed

@@ -18,7 +18,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class MapDataTreeCellRenderer extends DefaultTreeCellRenderer {
+class MapDataTreeCellRenderer extends DefaultTreeCellRenderer {
 
     /**
      * Constructor.

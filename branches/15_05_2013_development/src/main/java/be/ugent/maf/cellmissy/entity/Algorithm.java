@@ -103,10 +103,7 @@ public class Algorithm implements Serializable {
             return false;
         }
         final Algorithm other = (Algorithm) obj;
-        if (!Objects.equals(this.algorithmid, other.algorithmid)) {
-            return false;
-        }
-        return Objects.equals(this.algorithmName, other.algorithmName);
+        return Objects.equals(this.algorithmid, other.algorithmid) && Objects.equals(this.algorithmName, other.algorithmName);
     }
 
     @Override

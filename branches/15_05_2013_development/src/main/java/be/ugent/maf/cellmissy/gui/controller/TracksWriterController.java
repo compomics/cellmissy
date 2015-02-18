@@ -17,6 +17,7 @@ import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+import java.awt.Color;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,13 +41,13 @@ import org.springframework.stereotype.Controller;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Controller("tracksWriterController")
-public class TracksWriterController {
+class TracksWriterController {
 
     private static final Logger LOG = Logger.getLogger(TracksWriterController.class);
     // model
     private LinkedHashMap<Project, List<Experiment>> projectMap;
     private File directory;
-    private HashMap<Experiment, List<TrackDataHolder>> computationsMap;
+    private LinkedHashMap<Experiment, List<List<TrackDataHolder>>> computationsMap;
     // view
     private TracksWriterDialog tracksWriterDialog;
     // parent controller
@@ -68,7 +69,7 @@ public class TracksWriterController {
      */
     public void init() {
         projectMap = new LinkedHashMap<>();
-        computationsMap = new HashMap<>();
+        computationsMap = new LinkedHashMap<>();
         // initialize main view component
         tracksWriterDialog = new TracksWriterDialog(cellMissyController.getCellMissyFrame(), false);
         initTracksWriterDialog();
@@ -119,18 +120,6 @@ public class TracksWriterController {
         });
 
         /**
-         * Retrieve the selected experiments, and do the computations for them.
-         */
-        tracksWriterDialog.getComputeButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                getExperimentsForComputation();
-                doTheComputations();
-            }
-        });
-
-        /**
          * Choose directory to create data files.
          */
         tracksWriterDialog.getChooseDirectoryButton().addActionListener(new ActionListener() {
@@ -141,14 +130,14 @@ public class TracksWriterController {
         });
 
         /**
-         * For each experiment selected, create a file and write cell
-         * tracks-data to the file. Metadata have to be reported as well for
-         * efficient downstream data analysis.
+         * Retrieve the selected experiments, and do the computations for them.
          */
-        tracksWriterDialog.getWriteDataToFileButton().addActionListener(new ActionListener() {
+        tracksWriterDialog.getComputeAndWriteButton().addActionListener(new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
-                writeData();
+                initComputationsMap();
+                computeAndWriteToFile();
             }
         });
     }
@@ -182,32 +171,25 @@ public class TracksWriterController {
     }
 
     /**
-     * For the experiments selected, write the computations to file.
-     */
-    private void writeData() {
-        for (Experiment experiment : computationsMap.keySet()) {
-            writeDataForExperiment(experiment);
-        }
-    }
-
-    /**
      * Write data for a specific experiment.
      *
      * @param experiment
      */
     private void writeDataForExperiment(Experiment experiment) {
+        directory = new File("E:\\data_14022015");
         // get the data out of the map
-        List<TrackDataHolder> trackDataHolders = computationsMap.get(experiment);
-        if (!trackDataHolders.isEmpty()) { // we only write a file if there are registered tracks in the experiment
-            // name for the file
-            String fileName = "cellmissy" + new SimpleDateFormat("yyyy-MM-dd hh-mm-ss").format(new Date()) + "_" + experiment + " [" + experiment.getProject() + "]" + ".csv";
+        List<List<TrackDataHolder>> list = computationsMap.get(experiment);
+        // name for the file
+        String fileName = "cellmissy" + new SimpleDateFormat("yyyy-MM-dd hh-mm-ss").format(new Date()) + "_" + experiment + " [" + experiment.getProject() + "]" + ".csv";
+        appendInfo("writing file: " + fileName + " to directory: " + directory);
+        // use a BufferedWriter
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(directory, fileName)))) {
 
-            appendInfo("writing file: " + fileName + " to directory: " + directory);
-            // use a BufferedWriter
-            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(directory, fileName)))) {
+            String header = "projid" + " expid" + " condid" + " wellid" + " trackid" + " length" + " xmin" + " xmax" + " ymin" + " ymax" + " xnd" + " ynd" + " cd" + " ed" + " diratio" + " medir" + " medspeed" + " medta" + " maxdisp" + " dr" + " or" + " perim" + " area" + " acirc" + " dir" + " v";
+            bufferedWriter.append(header);
+            bufferedWriter.newLine();
+            for (List<TrackDataHolder> trackDataHolders : list) {
 
-                String header = "expid" + " condid" + " wellid" + " trackid" + " length" + " xmin" + " xmax" + " ymin" + " ymax" + " xnd" + " ynd" + " cd" + " ed" + " diratio" + " medir" + " medspeed" + " medta" + " maxdisp" + "dr" + " or" + " perim" + " area" + " acirc" + " dir" + "v";
-                bufferedWriter.append(header);
                 // iterate through the data
                 for (TrackDataHolder trackDataHolder : trackDataHolders) {
                     CellCentricDataHolder cellCentricDataHolder = trackDataHolder.getCellCentricDataHolder();
@@ -215,23 +197,16 @@ public class TracksWriterController {
                     Well well = track.getWellHasImagingType().getWell();
                     PlateCondition condition = well.getPlateCondition();
 
-                    String data = experiment.getExperimentid() + " " + condition.getPlateConditionid() + " " + well.getWellid() + " " + track.getTrackid() + track.getTrackPointList().size() + " " + cellCentricDataHolder.getxMin() + " " + cellCentricDataHolder.getxMax() + " " + cellCentricDataHolder.getyMin() + " " + cellCentricDataHolder.getyMax() + " " + cellCentricDataHolder.getxNetDisplacement() + " " + cellCentricDataHolder.getyNetDisplacement() + " " + cellCentricDataHolder.getCumulativeDistance() + " " + cellCentricDataHolder.getEuclideanDistance() + " " + cellCentricDataHolder.getEndPointDirectionalityRatio() + " " + cellCentricDataHolder.getMedianDirectionalityRatio() + " " + cellCentricDataHolder.getMedianSpeed() + " " + cellCentricDataHolder.getMedianTurningAngle() + " " + cellCentricDataHolder.getConvexHull().getMostDistantPointsPair().getMaxSpan() + " " + cellCentricDataHolder.getDisplacementRatio() + " " + cellCentricDataHolder.getOutreachRatio() + " " + cellCentricDataHolder.getConvexHull().getPerimeter() + " " + cellCentricDataHolder.getConvexHull().getArea() + " " + cellCentricDataHolder.getConvexHull().getAcircularity() + " " + cellCentricDataHolder.getConvexHull().getDirectionality() + " " + cellCentricDataHolder.getConvexHull().getHullSize();
+                    String data = experiment.getProject().getProjectid() + " " + experiment.getExperimentid() + " " + condition.getPlateConditionid() + " " + well.getWellid() + " " + track.getTrackid() + " " + track.getTrackPointList().size() + " " + cellCentricDataHolder.getxMin() + " " + cellCentricDataHolder.getxMax() + " " + cellCentricDataHolder.getyMin() + " " + cellCentricDataHolder.getyMax() + " " + cellCentricDataHolder.getxNetDisplacement() + " " + cellCentricDataHolder.getyNetDisplacement() + " " + cellCentricDataHolder.getCumulativeDistance() + " " + cellCentricDataHolder.getEuclideanDistance() + " " + cellCentricDataHolder.getEndPointDirectionalityRatio() + " " + cellCentricDataHolder.getMedianDirectionalityRatio() + " " + cellCentricDataHolder.getMedianSpeed() + " " + cellCentricDataHolder.getMedianTurningAngle() + " " + cellCentricDataHolder.getConvexHull().getMostDistantPointsPair().getMaxSpan() + " " + cellCentricDataHolder.getDisplacementRatio() + " " + cellCentricDataHolder.getOutreachRatio() + " " + cellCentricDataHolder.getConvexHull().getPerimeter() + " " + cellCentricDataHolder.getConvexHull().getArea() + " " + cellCentricDataHolder.getConvexHull().getAcircularity() + " " + cellCentricDataHolder.getConvexHull().getDirectionality() + " " + cellCentricDataHolder.getConvexHull().getHullSize();
 
                     bufferedWriter.append(data);
                     bufferedWriter.newLine();
                 }
-            } catch (IOException ex) {
-                LOG.error(ex.getMessage(), ex);
-                appendInfo("ERROR WRITING DATA TO FILE");
             }
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
+            appendInfo("ERROR WRITING DATA TO FILE !!!");
         }
-    }
-
-    /**
-     * Select all the projects (and therefore all the experiments)
-     */
-    private void selectAllProjects() {
-        tracksWriterDialog.getDataTree().setSelectionInterval(0, tracksWriterDialog.getDataTree().getRowCount());
     }
 
     /**
@@ -239,12 +214,14 @@ public class TracksWriterController {
      *
      * @return
      */
-    private void getExperimentsForComputation() {
+    private void initComputationsMap() {
         for (Project project : projectMap.keySet()) {
-            List<Experiment> exps = projectMap.get(project);
-            if (exps != null && !exps.isEmpty()) {
-                for (Experiment exp : exps) {
-                    computationsMap.put(exp, new ArrayList<TrackDataHolder>());
+            if (project.getProjectid() == 1L) { // ************************
+                List<Experiment> exps = projectMap.get(project);
+                if (exps != null && !exps.isEmpty()) {
+                    for (Experiment exp : exps) {
+                        computationsMap.put(exp, new ArrayList());
+                    }
                 }
             }
         }
@@ -257,12 +234,11 @@ public class TracksWriterController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            Set<Experiment> experiments = computationsMap.keySet();
-            for (Experiment experiment : experiments) {
-//                if (experiment.getProject().getProjectid() == 3L) {
-                String info = "STARTING COMPUTATIONS";
-                appendInfo(info);
-                info = "Starting querying data from EXPERIMENT: " + experiment + " [" + experiment.getProject() + "]";
+            Iterator<Experiment> iterator = computationsMap.keySet().iterator();
+            while (iterator.hasNext()) {
+                List<List<TrackDataHolder>> list = new ArrayList();
+                Experiment experiment = iterator.next();
+                String info = "Starting querying data from EXPERIMENT: " + experiment + " [" + experiment.getProject() + "]";
                 appendInfo(info);
                 // compute the conversion factor
                 double conversionFactor = experiment.getInstrument().getConversionFactor() * experiment.getMagnification().getMagnificationValue() / 10;
@@ -280,12 +256,11 @@ public class TracksWriterController {
                     plateCondition.setWellList(wells);
                     info = "Data fully queried for CONDITION: " + plateCondition;
                     appendInfo(info);
-                }
-                info = "... COMPUTING stuff now ...";
-                appendInfo(info);
-                // now do the computations
-                int totTracks = 0;
-                for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+
+                    info = "... COMPUTING stuff now ...";
+                    appendInfo(info);
+                    // now do the computations
+                    int totTracks = 0;
                     info = "Starting computations for CONDITION: " + plateCondition;
                     appendInfo(info);
                     // create a new object to hold pre-processing results
@@ -294,7 +269,8 @@ public class TracksWriterController {
                     singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition, conversionFactor, experiment.getExperimentInterval());
                     info = "track data holders generated...";
                     appendInfo(info);
-                    if (!singleCellPreProcessingResults.getTrackDataHolders().isEmpty()) {
+                    List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+                    if (!trackDataHolders.isEmpty()) {
                         singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
                         info = "data structure generated ...\n*****";
                         appendInfo(info);
@@ -324,21 +300,24 @@ public class TracksWriterController {
                         singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
                         info = "angles data computed...";
                         appendInfo(info);
-                        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
                         totTracks += trackDataHolders.size();
+                        list.add(trackDataHolders);
                         appendInfo("$$$ nr. tracks for CONDITION: " + trackDataHolders.size());
                         appendInfo("*-*-* CONDITION " + plateCondition + " processed!");
-                        computationsMap.get(experiment).addAll(trackDataHolders);
                         appendInfo("TOTAL nr. of cell tracks: " + totTracks);
                     } else {
-                        info = "No Tracks... skipping computations. Next?";
+                        tracksWriterDialog.getLogTextArea().setForeground(Color.red);
+                        info = "No Tracks... skipping computations, moving to next!";
                         appendInfo(info);
+                        tracksWriterDialog.getLogTextArea().setForeground(Color.black);
                     }
                 }
-//                }
+                computationsMap.get(experiment).addAll(list);
+                appendInfo("WRITING data for: " + experiment);
+                writeDataForExperiment(experiment);
+                iterator.remove();
             }
-            appendInfo("Computations OK for all the selected experiments! Good!");
-            appendInfo("If you want to write these data to file, feel free.");
+            appendInfo("DONE !!!");
             return null;
         }
 
@@ -365,9 +344,10 @@ public class TracksWriterController {
 
     /**
      * For a specific list of selected experiments, compute the track data. This
-     * basically calls a SwingWorker and execute it.
+     * basically calls a SwingWorker and execute it. For each experiment, write
+     * the data to a single file in the chosen directory.
      */
-    private void doTheComputations() {
+    private void computeAndWriteToFile() {
         ComputationsSwingWorker computationsSwingWorker = new ComputationsSwingWorker();
         computationsSwingWorker.execute();
     }

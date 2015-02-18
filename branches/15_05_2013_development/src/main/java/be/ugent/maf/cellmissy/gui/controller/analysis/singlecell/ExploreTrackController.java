@@ -25,7 +25,6 @@ import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -141,10 +141,7 @@ public class Project implements Serializable, Comparable<Project> {
             return false;
         }
         final Project other = (Project) obj;
-        if (!Objects.equals(this.projectid, other.projectid)) {
-            return false;
-        }
-        return this.projectNumber == other.projectNumber;
+        return Objects.equals(this.projectid, other.projectid) && this.projectNumber == other.projectNumber;
     }
 
     @Override

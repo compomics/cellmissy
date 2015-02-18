@@ -81,7 +81,6 @@ public class SingleCellMainController {
     private PlateCondition currentCondition;
     private ObservableList<Algorithm> algorithmBindingList;
     private ObservableList<ImagingType> imagingTypeBindingList;
-    private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
     private List<PlateCondition> plateConditionList;
     private BindingGroup bindingGroup;
@@ -234,6 +233,7 @@ public class SingleCellMainController {
      * Using the wellService, fetch track points from DB for selected condition
      * Use only imaged wells, i.e. wells with a non empty collection of
      * WellHasImagingType.
+     * @param plateCondition
      */
     public void fetchTrackPoints(PlateCondition plateCondition) {
         List<Well> imagedWells = plateCondition.getImagedWells();
@@ -403,7 +403,7 @@ public class SingleCellMainController {
         //init projectJList: find all the projects from DB and sort them
         List<Project> allProjects = projectService.findAll();
         Collections.sort(allProjects);
-        projectBindingList = ObservableCollections.observableList(allProjects);
+        ObservableList<Project> projectBindingList = ObservableCollections.observableList(allProjects);
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, projectBindingList, metadataSingleCellPanel.getProjectsList());
         bindingGroup.addBinding(jListBinding);
 

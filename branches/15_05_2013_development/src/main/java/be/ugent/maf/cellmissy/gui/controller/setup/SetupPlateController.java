@@ -46,7 +46,6 @@ class SetupPlateController {
 
     //model
     private ObservableList<PlateFormat> plateFormatBindingList;
-    private Rectangle rectangle;
     private BindingGroup bindingGroup;
     private boolean configurationIsRandom;
     private boolean selectionStarted;
@@ -438,7 +437,7 @@ class SetupPlateController {
                 int y = Math.min(setupPlatePanel.getStartPoint().y, setupPlatePanel.getEndPoint().y);
                 int width = Math.abs(setupPlatePanel.getStartPoint().x - setupPlatePanel.getEndPoint().x);
                 int height = Math.abs(setupPlatePanel.getStartPoint().y - setupPlatePanel.getEndPoint().y);
-                rectangle = new Rectangle(x, y, width, height);
+                Rectangle rectangle = new Rectangle(x, y, width, height);
                 if (rectangle.width != 0 || rectangle.height != 0) {
                     //if the selection of wells is valid (wells do not already have a condition set), add the rectangle to the map
                     if (setupExperimentController.updateWellList(setupExperimentController.getCurrentCondition(), rectangle)) {

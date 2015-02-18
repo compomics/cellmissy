@@ -76,13 +76,10 @@ public class ExperimentServiceImpl implements ExperimentService {
     private File projectFolder;
     private File experimentFolder;
     private File miaFolder;
-    private File outputFolder;
     private File rawFolder;
     private File microscopeFolder;
     private File setupFolder;
-    private File algoNullFolder;
     private File mainDirectory;
-    private String projectFolderName;
 
     /**
      * create experiment obsepFolders from microscope directory
@@ -93,6 +90,7 @@ public class ExperimentServiceImpl implements ExperimentService {
     public void createFolderStructure(Experiment newExperiment) throws CellMiaFoldersException {
         //create main folder for experiment
         experimentFolder = null;
+        String projectFolderName;
         if (newExperiment.getProject().getProjectDescription().length() == 0) {
             projectFolderName = "CM_" + newExperiment.getProject().toString();
         } else {
@@ -126,7 +124,7 @@ public class ExperimentServiceImpl implements ExperimentService {
             if (mkdir) {
                 LOG.debug("Mia Folder is created: " + miaFolder.getName());
             }
-            outputFolder = new File(experimentFolder, experimentFolder.getName() + "_output");
+            File outputFolder = new File(experimentFolder, experimentFolder.getName() + "_output");
             boolean mkdir1 = outputFolder.mkdir();
             if (mkdir1) {
                 LOG.debug("Output folder is created: " + outputFolder.getName());
@@ -154,7 +152,7 @@ public class ExperimentServiceImpl implements ExperimentService {
             }
 
             //create algo-0 subfolder in the MIA folder
-            algoNullFolder = new File(miaFolder, miaFolder.getName() + "_algo-0");
+            File algoNullFolder = new File(miaFolder, miaFolder.getName() + "_algo-0");
             boolean mkdir5 = algoNullFolder.mkdir();
             if (mkdir5) {
                 LOG.debug("AlgoNull folder is created: " + algoNullFolder.getName());
