@@ -287,7 +287,7 @@ public class LoadExperimentFromCellMiaController {
                 //update info message (the user needs to click again on forward)
                 updateInfoLabel(loadFromCellMiaPanel.getInfolabel(), "Click again on Forward to process imaging data.");
                 //set boolean isFirtTime to false
-                cellMiaImagedPlateController.setIsFirtTime(false);
+                cellMiaImagedPlateController.setIsFirtTime();
                 //disable and enable buttons
                 loadFromCellMiaPanel.getFinishButton().setEnabled(false);
                 loadFromCellMiaPanel.getForwardButton().setEnabled(true);

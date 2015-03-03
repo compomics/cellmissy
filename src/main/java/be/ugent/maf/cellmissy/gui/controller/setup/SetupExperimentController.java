@@ -113,10 +113,7 @@ public class SetupExperimentController {
     private Experiment experimentFromXMLFile;
     private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
-    private ObservableList<Instrument> instrumentBindingList;
-    private ObservableList<Magnification> magnificationBindingList;
     private BindingGroup bindingGroup;
-    private File mainDirectory;
     private boolean setupSaved;
     //view
     private SetupExperimentPanel setupExperimentPanel;
@@ -153,7 +150,7 @@ public class SetupExperimentController {
     public void init() {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        mainDirectory = new File(PropertiesConfigurationHolder.getInstance().getString("mainDirectory"));
+        File mainDirectory = new File(PropertiesConfigurationHolder.getInstance().getString("mainDirectory"));
         experimentService.init(mainDirectory);
         setupSaved = false;
         //create panels
@@ -534,11 +531,13 @@ public class SetupExperimentController {
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, experimentInfoPanel.getProjectsList());
         bindingGroup.addBinding(jListBinding);
         //init instrument combo box
-        instrumentBindingList = ObservableCollections.observableList(instrumentService.findAll());
+        ObservableList<Instrument> instrumentBindingList = ObservableCollections.observableList(instrumentService
+                .findAll());
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, instrumentBindingList, experimentInfoPanel.getInstrumentComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         //init magnification combo box
-        magnificationBindingList = ObservableCollections.observableList(instrumentService.findAllMagnifications());
+        ObservableList<Magnification> magnificationBindingList = ObservableCollections.observableList
+                (instrumentService.findAllMagnifications());
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ_WRITE, magnificationBindingList, experimentInfoPanel.getMagnificationComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         // do the binding

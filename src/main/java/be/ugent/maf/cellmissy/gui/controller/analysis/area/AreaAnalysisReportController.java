@@ -526,7 +526,7 @@ class AreaAnalysisReportController {
         List<PlateCondition> plateConditonsList = areaAnalysisController.getProcessedConditions();
         MeasuredAreaType measuredAreaType = areaAnalysisController.getMeasuredAreaType();
         // create chart (for all conditions, error bars on top, both lines and points)
-        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, useCorrectedData, plotErrorBars, true, plotPoints, measuredAreaType);
+        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChart(plateConditonsList, useCorrectedData, plotErrorBars, plotPoints, measuredAreaType);
         // add chart as image
         addImageFromChart(globalAreaChart, chartWidth, chartHeight);
     }
@@ -541,7 +541,7 @@ class AreaAnalysisReportController {
         List<PlateCondition> plateConditonsList = areaAnalysisController.getProcessedConditions();
         MeasuredAreaType measuredAreaType = areaAnalysisController.getMeasuredAreaType();
         // create chart (for all conditions, error bars on top, both lines and points)
-        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChartInTimeInterval(plateConditonsList, useCorrectedData, plotErrorBars, true, plotPoints, measuredAreaType);
+        JFreeChart globalAreaChart = areaAnalysisController.createGlobalAreaChartInTimeInterval(plateConditonsList, useCorrectedData, plotErrorBars, plotPoints, measuredAreaType);
         // add chart as image
         addImageFromChart(globalAreaChart, chartWidth, chartHeight);
     }

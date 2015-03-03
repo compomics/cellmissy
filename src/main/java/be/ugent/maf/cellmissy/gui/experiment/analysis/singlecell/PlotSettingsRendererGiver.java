@@ -51,7 +51,7 @@ public class PlotSettingsRendererGiver {
         boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
         Float selectedLineWidth = plotSettingsMenuBar.getSelectedLineWidth();
 
-        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = null;
+        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer;
         String menuItemText = ((JMenuItem) e.getSource()).getText();
         if (menuItemText.equalsIgnoreCase("plot lines")) {
             if (e.getStateChange() == ItemEvent.SELECTED) {

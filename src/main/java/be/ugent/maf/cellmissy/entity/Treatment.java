@@ -175,10 +175,8 @@ public class Treatment implements Serializable {
         if (!Objects.equals(this.drugSolvent, other.drugSolvent)) {
             return false;
         }
-        if (!Objects.equals(this.drugSolventConcentration, other.drugSolventConcentration)) {
-            return false;
-        }
-        return Objects.equals(this.treatmentType, other.treatmentType) && Objects.equals(this.concentrationUnit, other.concentrationUnit);
+        return Objects.equals(this.drugSolventConcentration, other.drugSolventConcentration) && Objects.equals(this
+                .treatmentType, other.treatmentType) && Objects.equals(this.concentrationUnit, other.concentrationUnit);
     }
 
     @Override

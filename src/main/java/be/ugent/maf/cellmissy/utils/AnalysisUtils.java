@@ -170,7 +170,7 @@ public class AnalysisUtils {
      * @param data
      * @return sd
      */
-    public static double computeStandardDeviation(double[] data) {
+    private static double computeStandardDeviation(double[] data) {
         double sum = 0;
         double mean = computeMean(data);
         for (double aData : data) {

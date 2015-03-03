@@ -54,7 +54,7 @@ public class CheckBoxesConditionsTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Object result = null;
+        Object result;
         // If we have the second column
         // return checkbox
         if (columnIndex == 1) {

@@ -134,7 +134,7 @@ class ImportExportController {
     public void init() {
         bindingGroup = new BindingGroup();
         // make a new waiting dialog here
-        waitingDialog = new WaitingDialog(cellMissyController.getCellMissyFrame(), false);
+        waitingDialog = new WaitingDialog(cellMissyController.getCellMissyFrame(), true);
         // init views
         initExportExperimentDialog();
         initImportExperimentDialog();

@@ -96,8 +96,8 @@ class CellMiaImagedPlateController {
         return loadFromCellMiaPlatePanel;
     }
 
-    public void setIsFirtTime(boolean isFirtTime) {
-        this.isFirtTime = isFirtTime;
+    public void setIsFirtTime() {
+        this.isFirtTime = false;
     }
 
     /**

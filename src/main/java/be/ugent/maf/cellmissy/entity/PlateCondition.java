@@ -198,7 +198,8 @@ public class PlateCondition implements Serializable {
 
     @Override
     public String toString() {
-        return cellLine.getCellLineType() + ", " + assay.getMatrixDimension() + ", " + assay + ", " + treatmentList;
+//        return cellLine.getCellLineType() + ", " + assay.getMatrixDimension() + ", " + assay + ", " + treatmentList;
+        return cellLine.getCellLineType() + " - " + treatmentList;
     }
 
     public Integer getConditionIndex() {

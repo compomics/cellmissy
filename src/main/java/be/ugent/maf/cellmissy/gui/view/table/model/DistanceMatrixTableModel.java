@@ -56,7 +56,7 @@ public class DistanceMatrixTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Object result = null;
+        Object result;
         // If we have the last row (one beyond last real data)
         // return checkbox
         if (rowIndex == data.length - 1 && columnIndex != 0) {

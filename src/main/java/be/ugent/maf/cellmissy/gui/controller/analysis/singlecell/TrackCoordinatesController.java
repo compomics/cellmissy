@@ -9,11 +9,10 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingRe
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
-import be.ugent.maf.cellmissy.gui.CellMissyFrame;
-import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsMenuBar;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsRendererGiver;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
+import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
@@ -32,12 +31,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -79,8 +78,6 @@ class TrackCoordinatesController {
     private ObservableList<Well> wellBindingList;
     private JTable coordinatesTable;
     private ObservableList<TrackDataHolder> trackDataHolderBindingList;
-    private Double[][] experimentRawCoordinatesRanges;
-    private Double[][] experimentShiftedCoordinatesRanges;
     // view
     private TrackCoordinatesPanel trackCoordinatesPanel;
     private PlotSettingsMenuBar plotSettingsMenuBar;
@@ -91,6 +88,8 @@ class TrackCoordinatesController {
     // child controllers
     @Autowired
     private ExploreTrackController exploreTrackController;
+    @Autowired
+    private GlobalViewController globalViewController;
     // services
     private GridBagConstraints gridBagConstraints;
 
@@ -105,8 +104,8 @@ class TrackCoordinatesController {
         initTrackCoordinatesPanel();
         // init child controllers
         exploreTrackController.init();
+        globalViewController.init();
     }
-
 
     /**
      * Getters
@@ -128,33 +127,16 @@ class TrackCoordinatesController {
         singleCellPreProcessingController.setCursor(cursor);
     }
 
-    public void setExperimentShiftedCoordinatesRanges(Double[][] experimentShiftedCoordinatesRanges) {
-        this.experimentShiftedCoordinatesRanges = experimentShiftedCoordinatesRanges;
-    }
-
-    public Double[][] getExperimentShiftedCoordinatesRanges() {
-        return experimentShiftedCoordinatesRanges;
-    }
-
-    /**
-     *
-     * @param plateCondition
-     * @return
-     */
-    public SingleCellPreProcessingResults getPreProcessingResults(PlateCondition plateCondition) {
-        return singleCellPreProcessingController.getPreProcessingResults(plateCondition);
-    }
-
     public void handleUnexpectedError(Exception ex) {
         singleCellPreProcessingController.handleUnexpectedError(ex);
     }
 
-    /**
-     *
-     * @return
-     */
-    public CellMissyFrame getMainFrame() {
-        return singleCellPreProcessingController.getMainFrame();
+    public void controlGuiComponents(boolean enabled) {
+        singleCellPreProcessingController.controlGuiComponents(enabled);
+    }
+
+    public JList getConditionsList() {
+        return singleCellPreProcessingController.getConditionsList();
     }
 
     /**
@@ -188,6 +170,22 @@ class TrackCoordinatesController {
         return categoryToPlot;
     }
 
+    public AnalysisPlatePanel getAnalysisPlatePanel() {
+        return singleCellPreProcessingController.getAnalysisPlatePanel();
+    }
+
+    public PlateCondition getCurrentCondition() {
+        return singleCellPreProcessingController.getCurrentCondition();
+    }
+
+    public void setCurrentCondition(PlateCondition currentCondition) {
+        singleCellPreProcessingController.setCurrentCondition(currentCondition);
+    }
+
+    public SingleCellPreProcessingResults getPreProcessingResults(PlateCondition plateCondition) {
+        return singleCellPreProcessingController.getPreProcessingResults(plateCondition);
+    }
+
     /**
      * Iterate through the current track data holders and get the endpoints of
      * the correspondent tracks.
@@ -218,8 +216,8 @@ class TrackCoordinatesController {
     /**
      * Show the number of total tracks for the current selected condition.
      */
-    public void updateTracksNumberInfo() {
-        int trackNumber = getTrackNumberForCondition(singleCellPreProcessingController.getCurrentCondition());
+    public void updateTracksNumberInfo(PlateCondition plateCondition) {
+        int trackNumber = getTrackNumberForCondition(plateCondition);
         trackCoordinatesPanel.getTracksNumberConditionTextField().setText("" + trackNumber);
     }
 
@@ -291,12 +289,13 @@ class TrackCoordinatesController {
      * while 1 is the well level.
      *
      * @param category: can be 0 or 1
+     * @param plateCondition: the condition to generate the tracks from
      */
-    public void generateRandomTrackDataHolders(int category) {
+    public void generateRandomTrackDataHolders(int category, PlateCondition plateCondition) {
         // check if tracks need to be generated from within the same well or not
         switch (category) {
             case 0:
-                generateRandomTrackHoldersForCondition(singleCellPreProcessingController.getCurrentCondition());
+                generateRandomTrackHoldersForCondition(plateCondition);
                 break;
             case 1:
                 generateRandomTrackDataHoldersForWell();
@@ -319,7 +318,7 @@ class TrackCoordinatesController {
         int categoryToPlot = getCategoryToplot();
         // if we don't actually have tracks to plot, we generate them
         if (trackDataHolderBindingList.isEmpty()) {
-            generateRandomTrackDataHolders(categoryToPlot);
+            generateRandomTrackDataHolders(categoryToPlot, plateCondition);
         }
         // generate the xy collection for the plot
         XYSeriesCollection xYSeriesCollectionForPlot = generateXYSeriesCollectionForPlot(useRawCoordinates);
@@ -361,7 +360,7 @@ class TrackCoordinatesController {
     }
 
     /**
-     *
+     * Show the tracks currently plotted in a table.
      */
     public void showPlottedTracksInTable() {
         JTableBinding trackHoldersTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackDataHolderBindingList, trackCoordinatesPanel.getPlottedTracksTable());
@@ -519,7 +518,7 @@ class TrackCoordinatesController {
         trackCoordinatesPanel.getScaleToExperimentRadioButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                scaleAxesToExperiment(coordinatesChartPanel.getChart());
+                scaleAxesToExperiment(coordinatesChartPanel.getChart(), trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected());
             }
         });
 
@@ -535,13 +534,13 @@ class TrackCoordinatesController {
         trackCoordinatesPanel.getRandomAndPlotButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+                PlateCondition selectedCondition = singleCellPreProcessingController.getSelectedCondition();
                 boolean useRawData = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
                 int categoryToPlot = getCategoryToplot();
-                if (currentCondition != null) {
+                if (selectedCondition != null) {
                     resetTracksList();
-                    generateRandomTrackDataHolders(categoryToPlot);
-                    plotRandomTrackCoordinates(currentCondition, useRawData);
+                    generateRandomTrackDataHolders(categoryToPlot, selectedCondition);
+                    plotRandomTrackCoordinates(selectedCondition, useRawData);
                 }
             }
         });
@@ -551,8 +550,8 @@ class TrackCoordinatesController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Well selectedWell = (Well) trackCoordinatesPanel.getWellsComboBox().getSelectedItem();
-                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-                List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForWell(currentCondition, selectedWell);
+                PlateCondition selectedCondition = singleCellPreProcessingController.getSelectedCondition();
+                List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForWell(selectedCondition, selectedWell);
                 int numberTracksForCurrentWell = trackHoldersForCurrentWell.size();
                 // update info with number of tracks for current selected well
                 trackCoordinatesPanel.getTracksNumberWellTextField().setText(" " + numberTracksForCurrentWell);
@@ -588,7 +587,7 @@ class TrackCoordinatesController {
      * @param useRawCoordinates
      * @return a XYSeriesCollection
      */
-    public XYSeriesCollection generateXYSeriesCollectionForPlot(boolean useRawCoordinates) {
+    XYSeriesCollection generateXYSeriesCollectionForPlot(boolean useRawCoordinates) {
         XYSeriesCollection xYSeriesCollection = new XYSeriesCollection();
         // the matrix to use is either the raw coordinates matrix or the shifted matrix
         Double[][] coordinatesMatrix;
@@ -619,6 +618,26 @@ class TrackCoordinatesController {
             xYSeriesCollection.addSeries(xySeries);
         }
         return xYSeriesCollection;
+    }
+
+    /**
+     * Scale the axes to the experiment coordinates ranges.
+     *
+     * @param chart
+     */
+    public void scaleAxesToExperiment(JFreeChart chart, boolean useRawData) {
+        Double[][] coordinatesRanges;
+        if (useRawData) {
+            coordinatesRanges = singleCellPreProcessingController.getExperimentRawCoordinatesRanges();
+        } else {
+            coordinatesRanges = singleCellPreProcessingController.getExperimentShiftedCoordinatesRanges();
+        }
+        XYPlot xYPlot = chart.getXYPlot();
+        Double[] xCoords = coordinatesRanges[0];
+        Double[] yCoords = coordinatesRanges[1];
+        xYPlot.getDomainAxis().setRange(new Range(yCoords[0], yCoords[1]));
+        xYPlot.getRangeAxis().setRange(new Range(xCoords[0], xCoords[1]));
+        JFreeChartUtils.setupTrackChart(chart);
     }
 
     /**
@@ -765,7 +784,7 @@ class TrackCoordinatesController {
      * For the current condition, generate the list with all the track data
      * holders.
      */
-    public void generateAllTrackHoldersForCondition(PlateCondition plateCondition) {
+    private void generateAllTrackHoldersForCondition(PlateCondition plateCondition) {
         List<TrackDataHolder> trackHoldersForCurrentCondition = getTrackHoldersForCondition(plateCondition);
         trackDataHolderBindingList.addAll(trackHoldersForCurrentCondition);
     }
@@ -806,7 +825,7 @@ class TrackCoordinatesController {
         if (trackCoordinatesPanel.getScaleToConditionRadioButton().isSelected()) {
             scaleAxesToCondition(firstCoordinatesChart, singleCellPreProcessingController.getCurrentCondition());
         } else if (trackCoordinatesPanel.getScaleToExperimentRadioButton().isSelected()) {
-            scaleAxesToExperiment(firstCoordinatesChart);
+            scaleAxesToExperiment(firstCoordinatesChart, trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected());
         }
         JFreeChartUtils.setupTrackChart(firstCoordinatesChart);
         JFreeChart secondCoordinatesChart = ChartFactory.createXYLineChart(title, "x (µm)", "y (µm)", xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
@@ -843,131 +862,7 @@ class TrackCoordinatesController {
     }
 
     /**
-     * Scale the axes to the experiment coordinates ranges.
-     *
-     * @param chart
-     */
-    private void scaleAxesToExperiment(JFreeChart chart) {
-        if (experimentRawCoordinatesRanges == null | experimentShiftedCoordinatesRanges == null) {
-            // we need to compute them
-            computeExperimentCoordinatesRanges();
-        } else {
-            boolean useRawData = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
-            Double[][] coordinatesRanges;
-            if (useRawData) {
-                coordinatesRanges = experimentRawCoordinatesRanges;
-            } else {
-                coordinatesRanges = experimentShiftedCoordinatesRanges;
-            }
-            XYPlot xYPlot = chart.getXYPlot();
-            Double[] xCoords = coordinatesRanges[0];
-            Double[] yCoords = coordinatesRanges[1];
-            xYPlot.getDomainAxis().setRange(new Range(yCoords[0], yCoords[1]));
-            xYPlot.getRangeAxis().setRange(new Range(xCoords[0], xCoords[1]));
-            JFreeChartUtils.setupTrackChart(coordinatesChartPanel.getChart());
-        }
-    }
-
-    /**
-     * Compute both raw and shifted experiment coordinates ranges.
-     */
-    private void computeExperimentCoordinatesRanges() {
-        FetchAllConditionsSwingWorker fetchAllConditionsSwingWorker = new FetchAllConditionsSwingWorker();
-        fetchAllConditionsSwingWorker.execute();
-    }
-
-    /**
-     *
-     */
-    private class FetchAllConditionsSwingWorker extends SwingWorker<Void, Void> {
-
-        final WaitingDialog waitingDialog = new WaitingDialog(singleCellPreProcessingController.getMainFrame(), false);
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            waitingDialog.setTitle("Please wait, computing in background...");
-            GuiUtils.centerDialogOnFrame(singleCellPreProcessingController.getMainFrame(), waitingDialog);
-            waitingDialog.setVisible(true);
-            // get all the conditions and do the computations
-            List<PlateCondition> plateConditionList = singleCellPreProcessingController.getPlateConditionList();
-            for (PlateCondition plateCondition : plateConditionList) {
-                singleCellPreProcessingController.fetchTracks(plateCondition);
-                singleCellPreProcessingController.updateMapWithCondition(plateCondition);
-            }
-            experimentRawCoordinatesRanges = new Double[2][2];
-            experimentShiftedCoordinatesRanges = new Double[2][2];
-            List<Double> xRawMinList = new ArrayList<>();
-            List<Double> xRawMaxList = new ArrayList<>();
-            List<Double> yRawMinList = new ArrayList<>();
-            List<Double> yRawMaxList = new ArrayList<>();
-
-            List<Double> xShifMinList = new ArrayList<>();
-            List<Double> xShifMaxList = new ArrayList<>();
-            List<Double> yShifMinList = new ArrayList<>();
-            List<Double> yShifMaxList = new ArrayList<>();
-
-            for (PlateCondition plateCondition : plateConditionList) {
-                // now get back the coordinates and compute the ranges
-                SingleCellPreProcessingResults preProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
-                Double[][] rawCoordinatesRanges = preProcessingResults.getRawCoordinatesRanges();
-                Double[][] shiftedCoordinatesRanges = preProcessingResults.getShiftedCoordinatesRanges();
-
-                xRawMinList.add(rawCoordinatesRanges[0][0]);
-                xRawMaxList.add(rawCoordinatesRanges[0][1]);
-                yRawMinList.add(rawCoordinatesRanges[1][0]);
-                yRawMaxList.add(rawCoordinatesRanges[1][1]);
-
-                xShifMinList.add(shiftedCoordinatesRanges[0][0]);
-                xShifMaxList.add(shiftedCoordinatesRanges[0][1]);
-                yShifMinList.add(shiftedCoordinatesRanges[1][0]);
-                yShifMaxList.add(shiftedCoordinatesRanges[1][1]);
-            }
-            Double xRawMin = Collections.min(xRawMinList);
-            Double xRawMax = Collections.max(xRawMaxList);
-            Double yRawMin = Collections.min(yRawMinList);
-            Double yRawMax = Collections.max(yRawMaxList);
-            experimentRawCoordinatesRanges[0] = new Double[]{xRawMin, xRawMax};
-            experimentRawCoordinatesRanges[1] = new Double[]{yRawMin, yRawMax};
-
-            Double xShifMin = Collections.min(xShifMinList);
-            Double xShifMax = Collections.max(xShifMaxList);
-            Double yShifMin = Collections.min(yShifMinList);
-            Double yShifMax = Collections.max(yShifMaxList);
-            experimentShiftedCoordinatesRanges[0] = new Double[]{xShifMin, xShifMax};
-            experimentShiftedCoordinatesRanges[1] = new Double[]{yShifMin, yShifMax};
-
-            boolean useRawData = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
-            Double[][] coordinatesRanges;
-            if (useRawData) {
-                coordinatesRanges = experimentRawCoordinatesRanges;
-            } else {
-                coordinatesRanges = experimentShiftedCoordinatesRanges;
-            }
-            XYPlot xYPlot = coordinatesChartPanel.getChart().getXYPlot();
-            Double[] xCoords = coordinatesRanges[0];
-            Double[] yCoords = coordinatesRanges[1];
-            xYPlot.getDomainAxis().setRange(new Range(yCoords[0], yCoords[1]));
-            xYPlot.getRangeAxis().setRange(new Range(xCoords[0], xCoords[1]));
-
-            JFreeChartUtils.setupTrackChart(coordinatesChartPanel.getChart());
-
-            return null;
-        }
-
-        @Override
-        protected void done() {
-            try {
-                get();
-                waitingDialog.setVisible(false);
-            } catch (InterruptedException | ExecutionException ex) {
-                LOG.error(ex.getMessage(), ex);
-                singleCellPreProcessingController.handleUnexpectedError(ex);
-            }
-        }
-    }
-
-    /**
-     * Swing Worker to plot all track together!
+     * Swing Worker to plot all tracks together at once!
      */
     private class PlotAllTracksConditionSwingWorker extends SwingWorker<Void, Void> {
 

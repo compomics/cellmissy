@@ -52,7 +52,7 @@ public class JFreeChartUtils {
     // dashed line
     private static final BasicStroke dashedLine = new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[]{6.0f, 6.0f}, 0.0f);
     // font for the chart elements
-    private static final Font chartFont = new Font("Tahoma", Font.BOLD, 12);
+    private static final Font chartFont = new Font("Tahoma", Font.BOLD, 20);
     // line widths
     private static final List<Float> lineWidths = Arrays.asList(1.0f, 1.5f, 2.0f, 2.5f, 3.0f);
     // decimal format for the plot axis
@@ -346,13 +346,14 @@ public class JFreeChartUtils {
     public static void setupTrackChart(JFreeChart chart) {
         // set title font
         chart.getTitle().setFont(chartFont);
+
         XYPlot xYPlot = chart.getXYPlot();
         setupXYPlot(xYPlot);
         xYPlot.setBackgroundPaint(Color.white);
-        xYPlot.setOutlinePaint(Color.black);
+//        xYPlot.setOutlinePaint(Color.black);
         xYPlot.setOutlineStroke(wideLine);
-//        xYPlot.setRangeGridlinePaint(Color.black);
-//        xYPlot.setDomainGridlinePaint(Color.black);
+        xYPlot.setRangeGridlinePaint(Color.black);
+        xYPlot.setDomainGridlinePaint(Color.black);
         Range maxRange = computeMaxRange(xYPlot);
         xYPlot.getDomainAxis().setRange(maxRange);
         xYPlot.getRangeAxis().setRange(maxRange);

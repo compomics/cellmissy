@@ -56,7 +56,7 @@ public class PValuesTableModel extends AbstractTableModel {
      * Initialize table
      */
     private void initTable(boolean adjusted) {
-        Double[][] pValuesMatrix = null;
+        Double[][] pValuesMatrix;
         //take data according to boolean: are p -values adjusted or not?
         if (!adjusted) {
             // p-values matrix of analysis group

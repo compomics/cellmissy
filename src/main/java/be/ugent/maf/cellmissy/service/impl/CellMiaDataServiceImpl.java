@@ -23,7 +23,6 @@ import java.util.Map;
 import be.ugent.maf.cellmissy.service.MicroscopeDataService;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
