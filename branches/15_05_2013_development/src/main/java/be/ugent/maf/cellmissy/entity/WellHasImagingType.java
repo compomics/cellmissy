@@ -193,10 +193,8 @@ public class WellHasImagingType implements Serializable {
             return false;
         }
         final WellHasImagingType other = (WellHasImagingType) obj;
-        if (!Objects.equals(this.well, other.well)) {
-            return false;
-        }
-        return Objects.equals(this.imagingType, other.imagingType) && Objects.equals(this.algorithm, other.algorithm);
+        return Objects.equals(this.well, other.well) && Objects.equals(this.imagingType, other.imagingType) &&
+                Objects.equals(this.algorithm, other.algorithm);
     }
 
     @Override

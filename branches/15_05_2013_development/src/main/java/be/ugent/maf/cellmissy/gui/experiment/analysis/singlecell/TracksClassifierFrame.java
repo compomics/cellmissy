@@ -62,6 +62,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.context.ApplicationContext;
@@ -342,7 +343,35 @@ class TracksClassifierFrame extends javax.swing.JFrame {
         XYPlot xyPlot = convexHullChart.getXYPlot();
         xyPlot.setDataset(0, coordinatesDataset);
         xyPlot.setDataset(1, hullDataset);
+        setupConvexHullChart(convexHullChart, trackDataHolder);
         convexHullChartPanel.setChart(convexHullChart);
+    }
+
+    private void setupConvexHullChart(JFreeChart convexHullChart, TrackDataHolder trackDataHolder) {
+        XYPlot xyPlot = convexHullChart.getXYPlot();
+        JFreeChartUtils.setupXYPlot(xyPlot);
+//        xyPlot.setDomainGridlinePaint(Color.black);
+        // set title font
+        convexHullChart.getTitle().setFont(JFreeChartUtils.getChartFont());
+
+        // assign 2 renderers: one for the coordinates line and one for the convex hull plot
+        XYLineAndShapeRenderer coordinatesRenderer = new XYLineAndShapeRenderer();
+        coordinatesRenderer.setSeriesStroke(0, JFreeChartUtils.getWideLine());
+
+        coordinatesRenderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[1]);
+        // show both lines and points
+        coordinatesRenderer.setSeriesLinesVisible(0, true);
+        coordinatesRenderer.setSeriesShapesVisible(0, true);
+        xyPlot.setRenderer(0, coordinatesRenderer);
+
+        XYLineAndShapeRenderer convexHullRenderer = new XYLineAndShapeRenderer();
+        convexHullRenderer.setSeriesStroke(0, JFreeChartUtils.getDashedLine());
+        convexHullRenderer.setSeriesPaint(0, Color.black);
+        xyPlot.setRenderer(1, convexHullRenderer);
+        XYSeriesCollection dataset = (XYSeriesCollection) xyPlot.getDataset(0);
+        double minY = dataset.getSeries(0).getMinY();
+        double maxY = dataset.getSeries(0).getMaxY();
+        xyPlot.getRangeAxis().setRange(minY, maxY);
     }
 
     /**
@@ -489,24 +518,30 @@ class TracksClassifierFrame extends javax.swing.JFrame {
      * Write the dataset to file
      */
     private void writeDatasetToFile() {
-        File folder = new File("C:\\Users\\paola\\Desktop\\cells_classification\\new_data_muppet");
+        File folder = new File("E:\\");
         Project project = (Project) projectsList.getSelectedValue();
         String fileName = project + "_" + experiment + "_" + "data_label.csv";
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(folder, fileName)))) {
             // header of the file
-            bufferedWriter.append("id" + " " + "label" + " " + "dur" + " " + "xmin" + " " + "xmax" + " " + "ymin" + " " + "ymax" + " "
-                    + "xnd" + " " + "ynd" + " " + "cd" + " " + "ed" + " " + "dir" + " " + "md" + " " + "ms" + " " + "mta" + " " + "maxdis" + " "
-                    + "dr" + " " + "or" + " " + "perim" + " " + "area" + " " + "acirc" + " " + "dir2" + " " + "vertices");
+            bufferedWriter.append("expid" + " " + "condid" + " " + "sampleid" + " " + "trackid" + " " + "label" + " " + "steps" + " " + "xmin" + " " + "xmax" + " " + "ymin" + " " + "ymax" + " " + "xnd" + " " + "ynd" + " " + "cumdist" + " " + "eucldist" + " " + "endpointdir" + " " + "meddirect" + " " + "meddispl" + " " + "medspeed" + " " + "medturnangle" + " " + "maxdis" + " " + "displratio" + " " + "outrratio" + " " + "perim" + " " + "area" + " " + "acirc" + " " + "direct" + " " + "vertices");
             // new line
             bufferedWriter.newLine();
             for (TrackDataHolder trackDataHolder : trackDatasetList) {
                 Track track = trackDataHolder.getTrack();
                 CellCentricDataHolder cellCentricDataHolder = trackDataHolder.getCellCentricDataHolder();
+                bufferedWriter.append("" + experiment.getExperimentid());
+                bufferedWriter.append(" ");
+                bufferedWriter.append("" + track.getWellHasImagingType().getWell().getPlateCondition().getPlateConditionid());
+                bufferedWriter.append(" ");
+                bufferedWriter.append("" + track.getWellHasImagingType().getWellHasImagingTypeid());
+                bufferedWriter.append(" ");
                 bufferedWriter.append("" + track.getTrackid());
                 bufferedWriter.append(" ");
+
                 bufferedWriter.append("" + cellCentricDataHolder.getLabel());
                 bufferedWriter.append(" ");
-                bufferedWriter.append("" + cellCentricDataHolder.getTrackDuration());
+
+                bufferedWriter.append("" + trackDataHolder.getTrack().getTrackPointList().size());
                 bufferedWriter.append(" ");
                 bufferedWriter.append("" + cellCentricDataHolder.getxMin());
                 bufferedWriter.append(" ");
@@ -526,6 +561,8 @@ class TracksClassifierFrame extends javax.swing.JFrame {
                 bufferedWriter.append(" ");
                 bufferedWriter.append("" + cellCentricDataHolder.getEndPointDirectionalityRatio());
                 bufferedWriter.append(" ");
+                bufferedWriter.append("" + cellCentricDataHolder.getMedianDirectionalityRatio());
+                bufferedWriter.append(" ");
                 bufferedWriter.append("" + cellCentricDataHolder.getMedianDisplacement());
                 bufferedWriter.append(" ");
                 bufferedWriter.append("" + cellCentricDataHolder.getMedianSpeed());
@@ -535,7 +572,7 @@ class TracksClassifierFrame extends javax.swing.JFrame {
                 bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getMostDistantPointsPair().getMaxSpan());
                 bufferedWriter.append(" ");
                 bufferedWriter.append("" + cellCentricDataHolder.getDisplacementRatio());
-                bufferedWriter.append("\t");
+                bufferedWriter.append(" ");
                 bufferedWriter.append("" + cellCentricDataHolder.getOutreachRatio());
                 bufferedWriter.append(" ");
                 bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getPerimeter());
@@ -546,7 +583,6 @@ class TracksClassifierFrame extends javax.swing.JFrame {
                 bufferedWriter.append(" ");
                 bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getDirectionality());
                 bufferedWriter.append(" ");
-//                        bufferedWriter.append("-1");
                 bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getHullSize());
                 bufferedWriter.newLine();
             }

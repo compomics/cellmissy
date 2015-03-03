@@ -125,10 +125,8 @@ public class Well implements Serializable {
             return false;
         }
         final Well other = (Well) obj;
-        if (!Objects.equals(this.wellid, other.wellid)) {
-            return false;
-        }
-        return Objects.equals(this.columnNumber, other.columnNumber) && Objects.equals(this.rowNumber, other.rowNumber);
+        return Objects.equals(this.wellid, other.wellid) && Objects.equals(this.columnNumber, other.columnNumber) &&
+                Objects.equals(this.rowNumber, other.rowNumber);
     }
 
     @Override

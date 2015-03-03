@@ -39,9 +39,12 @@ public class GuiUtils {
     // color for not-imaged wells
     private static final Color nonImagedColor = new Color(169, 169, 169);
     // Available colors (for set-up the experiment)
-    private static final Color[] availableColors = {new Color(0, 0, 139), new Color(255, 0, 0), new Color(34, 139, 34), new Color(148, 0, 211), new Color(255, 140, 0), new Color(30, 144, 255), new Color(255, 0, 255), new Color(0, 140, 140), new Color(128, 0, 0), new Color(128, 128, 0)};
+    private static final Color[] availableColors = {new Color(0, 0, 139), new Color(255, 0, 0), new Color(34, 139,
+            34), new Color(148, 0, 211), new Color(255, 140, 0), new Color(30, 144, 255), new Color(255, 0, 255), new
+            Color(0, 140, 140), new Color(128, 0, 0), new Color(128, 128, 0)};
     // Colors used for Imaging Type Rendering
-    private static final Color[] imagingTypeColors = {new Color(138, 43, 226), new Color(135, 206, 250), new Color(255, 0, 255)};
+    private static final Color[] imagingTypeColors = {new Color(138, 43, 226), new Color(135, 206, 250), new Color
+            (255, 0, 255)};
     // Font for highlighted labels
     private static final Font boldFont = new Font("Tahoma", Font.BOLD, 14);
     // Font for normal labels
@@ -120,14 +123,14 @@ public class GuiUtils {
      * Center the dialog on the parent frame.
      *
      * @param parentFrame the parent frame
-     * @param dialog the dialog
+     * @param dialog      the dialog
      */
     public static void centerDialogOnFrame(JFrame parentFrame, JDialog dialog) {
         Point topLeft = parentFrame.getLocationOnScreen();
         Dimension parentSize = parentFrame.getSize();
         Dimension dialogSize = dialog.getSize();
-        int x = 0;
-        int y = 0;
+        int x;
+        int y;
         if (parentSize.width > dialogSize.width) {
             x = ((parentSize.width - dialogSize.width) / 2) + topLeft.x;
         } else {
@@ -209,15 +212,16 @@ public class GuiUtils {
      * widest cell in the column (the computation is done per row, then). Margin
      * pixels are added to the left and right (resulting in an additional width
      * of 2*margin pixels).
-     *  @param table
+     *
+     * @param table
      * @param colIndex
      */
     public static void packColumn(JTable table, int colIndex) {
         // get column model and then column
         DefaultTableColumnModel columnModel = (DefaultTableColumnModel) table.getColumnModel();
         TableColumn column = columnModel.getColumn(colIndex);
-        // initialize width to zero
-        int width = 0;
+        // initialize width
+        int width;
         // get width of column header
         TableCellRenderer renderer = column.getHeaderRenderer();
         // if the header is null, just get the default one from the table
@@ -225,14 +229,16 @@ public class GuiUtils {
             renderer = table.getTableHeader().getDefaultRenderer();
         }
         // get the component used to draw the cell -- for the header, row and coumn: zero
-        Component component = renderer.getTableCellRendererComponent(table, column.getHeaderValue(), false, false, 0, 0);
+        Component component = renderer.getTableCellRendererComponent(table, column.getHeaderValue(), false, false, 0,
+                0);
         width = component.getPreferredSize().width;
         // get maximum width of column data
         // iterate through the rows
         for (int r = 0; r < table.getRowCount(); r++) {
             renderer = table.getCellRenderer(r, colIndex);
             // get the component used to draw the cell -- for the current cell: row and coumn are index r and colIndex
-            component = renderer.getTableCellRendererComponent(table, table.getValueAt(r, colIndex), false, false, r, colIndex);
+            component = renderer.getTableCellRendererComponent(table, table.getValueAt(r, colIndex), false, false, r,
+                    colIndex);
             width = Math.max(width, component.getPreferredSize().width);
         }
         // add margin

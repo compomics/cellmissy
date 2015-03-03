@@ -106,7 +106,7 @@ public class GeometricPoint implements Comparable<GeometricPoint> {
      * @param s third point
      * @return twice the signed area of the triangle q-r-s.
      */
-    public static double computeSignedArea(GeometricPoint q, GeometricPoint r, GeometricPoint s) {
+    private static double computeSignedArea(GeometricPoint q, GeometricPoint r, GeometricPoint s) {
         return (r.getX() - q.getX()) * (s.getY() - q.getY()) - (r.getY() - q.getY()) * (s.getX() - q.getX());
     }
 

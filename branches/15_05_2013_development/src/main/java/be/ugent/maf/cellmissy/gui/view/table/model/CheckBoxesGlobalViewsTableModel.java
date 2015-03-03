@@ -52,7 +52,7 @@ public class CheckBoxesGlobalViewsTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Object result = null;
+        Object result;
         // If we do not have the first column
         // return checkbox
         if (columnIndex != 0) {

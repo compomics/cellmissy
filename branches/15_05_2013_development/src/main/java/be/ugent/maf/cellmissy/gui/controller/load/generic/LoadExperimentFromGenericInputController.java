@@ -7,7 +7,6 @@ package be.ugent.maf.cellmissy.gui.controller.load.generic;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
@@ -21,7 +20,6 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

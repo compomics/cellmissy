@@ -65,7 +65,7 @@ public class AreaStatisticsAnalyzerImpl implements AreaStatisticsAnalyzer {
     @Override
     public void detectSignificance(AreaAnalysisGroup analysisGroup, String statisticalTestName, double alpha, boolean isAdjusted) {
         StatisticsCalculator statisticsCalculator = StatisticsTestFactory.getInstance().getStatisticsCalculator(statisticalTestName);
-        Double[][] dataToLook = null;
+        Double[][] dataToLook;
         if (!isAdjusted) {
             dataToLook = analysisGroup.getpValuesMatrix();
         } else {

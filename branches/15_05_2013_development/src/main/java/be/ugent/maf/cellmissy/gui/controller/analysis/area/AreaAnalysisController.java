@@ -153,12 +153,12 @@ class AreaAnalysisController {
         return areaMainController.getPreProcessingMap();
     }
 
-    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType) {
-        return areaMainController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+    public JFreeChart createGlobalAreaChart(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotPoints, MeasuredAreaType measuredAreaType) {
+        return areaMainController.createGlobalAreaChart(plateConditionList, useCorrectedData, plotErrorBars, true, plotPoints, measuredAreaType);
     }
 
-    public JFreeChart createGlobalAreaChartInTimeInterval(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotLines, boolean plotPoints, MeasuredAreaType measuredAreaType) {
-        return areaMainController.createGlobalAreaChartInTimeInterval(plateConditionList, useCorrectedData, plotErrorBars, plotLines, plotPoints, measuredAreaType);
+    public JFreeChart createGlobalAreaChartInTimeInterval(List<PlateCondition> plateConditionList, boolean useCorrectedData, boolean plotErrorBars, boolean plotPoints, MeasuredAreaType measuredAreaType) {
+        return areaMainController.createGlobalAreaChartInTimeInterval(plateConditionList, useCorrectedData, plotErrorBars, true, plotPoints, measuredAreaType);
     }
 
     public JFreeChart createRawAreaChart(PlateCondition plateCondition) {
@@ -670,7 +670,7 @@ class AreaAnalysisController {
      * @param correctionMethodName
      */
     private void updateTestDescriptionPane(String correctionMethodName) {
-        String testDescription = "";
+        String testDescription;
         switch (correctionMethodName) {
             case "none":
                 testDescription = "No correction is applied for multiple comparisons.";

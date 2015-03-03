@@ -89,8 +89,9 @@ public class WaitingDialog extends javax.swing.JDialog {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                WaitingDialog dialog = new WaitingDialog(new javax.swing.JFrame(), true);
+                WaitingDialog dialog = new WaitingDialog(new javax.swing.JFrame(), false);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

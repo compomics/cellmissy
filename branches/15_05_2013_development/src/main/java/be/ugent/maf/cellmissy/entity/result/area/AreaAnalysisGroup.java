@@ -124,10 +124,9 @@ public class AreaAnalysisGroup {
             return false;
         }
         final AreaAnalysisGroup other = (AreaAnalysisGroup) obj;
-        if (!Objects.equals(this.plateConditions, other.plateConditions)) {
-            return false;
-        }
-        return Objects.equals(this.areaAnalysisResults, other.areaAnalysisResults) && Objects.equals(this.correctionMethodName, other.correctionMethodName);
+        return Objects.equals(this.plateConditions, other.plateConditions) && Objects.equals(this
+                .areaAnalysisResults, other.areaAnalysisResults) && Objects.equals(this.correctionMethodName, other
+                .correctionMethodName);
     }
 
     @Override

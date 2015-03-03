@@ -176,7 +176,7 @@ class TracksWriterController {
      * @param experiment
      */
     private void writeDataForExperiment(Experiment experiment) {
-        directory = new File("E:\\data_14022015");
+        directory = new File("E:\\");
         // get the data out of the map
         List<List<TrackDataHolder>> list = computationsMap.get(experiment);
         // name for the file
@@ -216,7 +216,7 @@ class TracksWriterController {
      */
     private void initComputationsMap() {
         for (Project project : projectMap.keySet()) {
-            if (project.getProjectid() == 1L) { // ************************
+            if (project.getProjectNumber() == 16) { // ************************
                 List<Experiment> exps = projectMap.get(project);
                 if (exps != null && !exps.isEmpty()) {
                     for (Experiment exp : exps) {
@@ -238,84 +238,87 @@ class TracksWriterController {
             while (iterator.hasNext()) {
                 List<List<TrackDataHolder>> list = new ArrayList();
                 Experiment experiment = iterator.next();
-                String info = "Starting querying data from EXPERIMENT: " + experiment + " [" + experiment.getProject() + "]";
-                appendInfo(info);
-                // compute the conversion factor
-                double conversionFactor = experiment.getInstrument().getConversionFactor() * experiment.getMagnification().getMagnificationValue() / 10;
-                // fetch the migration data
-                for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
-                    info = "Starting querying data from CONDITION: " + plateCondition;
+                if (experiment.getExperimentNumber() == 17) {
+                    String info = "Starting querying data from EXPERIMENT: " + experiment + " [" + experiment.getProject() + "]";
                     appendInfo(info);
-                    List<Well> wells = new ArrayList<>();
-                    for (Well well : plateCondition.getWellList()) {
-                        Well fetchedWell = wellService.fetchMigrationData(well.getWellid());
-                        wells.add(fetchedWell);
-                        info = "Starting querying data from WELL: " + fetchedWell;
+                    // compute the conversion factor
+                    double conversionFactor = experiment.getInstrument().getConversionFactor() * experiment.getMagnification().getMagnificationValue() / 10;
+                    // fetch the migration data
+                    for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+                        info = "Starting querying data from CONDITION: " + plateCondition;
                         appendInfo(info);
-                    }
-                    plateCondition.setWellList(wells);
-                    info = "Data fully queried for CONDITION: " + plateCondition;
-                    appendInfo(info);
+                        List<Well> wells = new ArrayList<>();
+                        for (Well well : plateCondition.getWellList()) {
+                            Well fetchedWell = wellService.fetchMigrationData(well.getWellid());
+                            wells.add(fetchedWell);
+                            info = "Starting querying data from WELL: " + fetchedWell;
+                            appendInfo(info);
+                        }
+                        plateCondition.setWellList(wells);
+                        info = "Data fully queried for CONDITION: " + plateCondition;
+                        appendInfo(info);
 
-                    info = "... COMPUTING stuff now ...";
-                    appendInfo(info);
-                    // now do the computations
-                    int totTracks = 0;
-                    info = "Starting computations for CONDITION: " + plateCondition;
-                    appendInfo(info);
-                    // create a new object to hold pre-processing results
-                    SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
-                    // do the computations
-                    singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition, conversionFactor, experiment.getExperimentInterval());
-                    info = "track data holders generated...";
-                    appendInfo(info);
-                    List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-                    if (!trackDataHolders.isEmpty()) {
-                        singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
-                        info = "data structure generated ...\n*****";
+                        info = "... COMPUTING stuff now ...";
                         appendInfo(info);
-                        singleCellPreProcessor.operateOnStepsAndCells(singleCellPreProcessingResults);
-                        info = "step-centric and cell-centric operations performed ...";
+                        // now do the computations
+                        int totTracks = 0;
+                        info = "Starting computations for CONDITION: " + plateCondition;
                         appendInfo(info);
-                        singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
-                        info = "tracks coordinates computed...";
+                        // create a new object to hold pre-processing results
+                        SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
+                        // do the computations
+                        singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition, conversionFactor, experiment.getExperimentInterval());
+                        info = "track data holders generated...";
                         appendInfo(info);
-                        singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateDirectionalityRatiosVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateMedianDirectionalityRatiosVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateEndPointDirectionalityRatiosVector(singleCellPreProcessingResults);
-                        info = "displacements, speeds and directionalities computed...";
-                        appendInfo(info);
-                        singleCellPreProcessor.generateConvexHullsVector(singleCellPreProcessingResults);
-                        info = "convex hulls computed...";
-                        appendInfo(info);
-                        singleCellPreProcessor.generateDisplacementRatiosVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateOutreachRatiosVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
-                        info = "angles data computed...";
-                        appendInfo(info);
-                        totTracks += trackDataHolders.size();
-                        list.add(trackDataHolders);
-                        appendInfo("$$$ nr. tracks for CONDITION: " + trackDataHolders.size());
-                        appendInfo("*-*-* CONDITION " + plateCondition + " processed!");
-                        appendInfo("TOTAL nr. of cell tracks: " + totTracks);
-                    } else {
-                        tracksWriterDialog.getLogTextArea().setForeground(Color.red);
-                        info = "No Tracks... skipping computations, moving to next!";
-                        appendInfo(info);
-                        tracksWriterDialog.getLogTextArea().setForeground(Color.black);
+                        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+                        if (!trackDataHolders.isEmpty()) {
+                            singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
+                            info = "data structure generated ...\n*****";
+                            appendInfo(info);
+                            singleCellPreProcessor.operateOnStepsAndCells(singleCellPreProcessingResults);
+                            info = "step-centric and cell-centric operations performed ...";
+                            appendInfo(info);
+                            singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults);
+                            singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
+                            info = "tracks coordinates computed...";
+                            appendInfo(info);
+                            singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
+                            singleCellPreProcessor.generateDirectionalityRatiosVector(singleCellPreProcessingResults);
+                            singleCellPreProcessor.generateMedianDirectionalityRatiosVector(singleCellPreProcessingResults);
+                            singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
+                            singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
+                            singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
+                            singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
+                            singleCellPreProcessor.generateEndPointDirectionalityRatiosVector(singleCellPreProcessingResults);
+                            info = "displacements, speeds and directionalities computed...";
+                            appendInfo(info);
+                            singleCellPreProcessor.generateConvexHullsVector(singleCellPreProcessingResults);
+                            info = "convex hulls computed...";
+                            appendInfo(info);
+                            singleCellPreProcessor.generateDisplacementRatiosVector(singleCellPreProcessingResults);
+                            singleCellPreProcessor.generateOutreachRatiosVector(singleCellPreProcessingResults);
+                            singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
+                            singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
+                            info = "angles data computed...";
+                            appendInfo(info);
+                            totTracks += trackDataHolders.size();
+                            list.add(trackDataHolders);
+                            appendInfo("$$$ nr. tracks for CONDITION: " + trackDataHolders.size());
+                            appendInfo("*-*-* CONDITION " + plateCondition + " processed!");
+                            appendInfo("TOTAL nr. of cell tracks: " + totTracks);
+                        } else {
+                            tracksWriterDialog.getLogTextArea().setForeground(Color.red);
+                            info = "No Tracks... skipping computations, moving to next!";
+                            appendInfo(info);
+                            tracksWriterDialog.getLogTextArea().setForeground(Color.black);
+                        }
                     }
+                    computationsMap.get(experiment).addAll(list);
+                    appendInfo("WRITING data for: " + experiment);
+                    writeDataForExperiment(experiment);
+                    iterator.remove();
                 }
-                computationsMap.get(experiment).addAll(list);
-                appendInfo("WRITING data for: " + experiment);
-                writeDataForExperiment(experiment);
-                iterator.remove();
+
             }
             appendInfo("DONE !!!");
             return null;

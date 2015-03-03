@@ -667,7 +667,7 @@ class SetupConditionsController {
         //set assay and ecm (get the values according to the last selected ones)
         Ecm ecm = new Ecm();
         Assay assay = null;
-        BottomMatrix bottomMatrix = null;
+        BottomMatrix bottomMatrix;
         //need to set different values according to matrix dimension: 2D or 3D or 2.5D
         switch (assayEcmController.getMatrixDimensionBindingList().get(setupConditionsPanel.getEcmDimensionComboBox().getSelectedIndex()).getDimension()) {
             case "2D":

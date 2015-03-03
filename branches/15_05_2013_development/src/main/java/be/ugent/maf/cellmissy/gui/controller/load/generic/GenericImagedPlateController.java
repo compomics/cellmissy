@@ -602,8 +602,8 @@ class GenericImagedPlateController {
                 // last selected node
                 DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) dataTree.getLastSelectedPathComponent();
                 // dataset and imaging type to remove
-                Algorithm algoToRemove = null;
-                ImagingType imagingToRemove = null;
+                Algorithm algoToRemove;
+                ImagingType imagingToRemove;
 
                 // check that a node is actually selected
                 if (selectedNode != null) {

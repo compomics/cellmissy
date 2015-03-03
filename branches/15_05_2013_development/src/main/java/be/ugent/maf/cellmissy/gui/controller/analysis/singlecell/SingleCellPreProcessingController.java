@@ -14,9 +14,11 @@ import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
+import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplacementsPanel;
+import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -27,12 +29,12 @@ import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.text.Format;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
+import java.util.concurrent.ExecutionException;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
@@ -62,6 +64,8 @@ class SingleCellPreProcessingController {
     private ObservableList<Track> tracksBindingList;
     private ObservableList<TrackPoint> trackPointsBindingList;
     private Map<PlateCondition, SingleCellPreProcessingResults> preProcessingMap;
+    private Double[][] experimentRawCoordinatesRanges;
+    private Double[][] experimentShiftedCoordinatesRanges;
     // view
     private SingleCellAnalysisPanel singleCellAnalysisPanel;
     // parent controller
@@ -117,6 +121,18 @@ class SingleCellPreProcessingController {
         return singleCellMainController.getCurrentCondition();
     }
 
+    public void setCurrentCondition(PlateCondition currentCondition) {
+        singleCellMainController.setCurrentCondition(currentCondition);
+    }
+
+    public AnalysisPlatePanel getAnalysisPlatePanel() {
+        return singleCellMainController.getAnalysisPlatePanel();
+    }
+
+    public PlateCondition getSelectedCondition() {
+        return singleCellMainController.getSelectedCondition();
+    }
+
     public Format getFormat() {
         return singleCellMainController.getFormat();
     }
@@ -133,8 +149,8 @@ class SingleCellPreProcessingController {
         trackCoordinatesController.showRawTrackCoordinatesInTable(plateCondition);
     }
 
-    public void updateTracksNumberInfo() {
-        trackCoordinatesController.updateTracksNumberInfo();
+    public void updateTracksNumberInfo(PlateCondition plateCondition) {
+        trackCoordinatesController.updateTracksNumberInfo(plateCondition);
     }
 
     public void updateWellBindingList(PlateCondition plateCondition) {
@@ -165,12 +181,20 @@ class SingleCellPreProcessingController {
         displacementsController.showTrackSpeedsInTable(plateCondition);
     }
 
-    public CellMissyFrame getMainFrame() {
+    CellMissyFrame getMainFrame() {
         return singleCellMainController.getCellMissyFrame();
     }
 
     public ObservableList<TrackDataHolder> getTrackDataHolderBindingList() {
         return trackCoordinatesController.getTrackDataHolderBindingList();
+    }
+
+    public Double[][] getExperimentRawCoordinatesRanges() {
+        return experimentRawCoordinatesRanges;
+    }
+
+    public Double[][] getExperimentShiftedCoordinatesRanges() {
+        return experimentShiftedCoordinatesRanges;
     }
 
     public void fetchTracks(PlateCondition plateCondition) {
@@ -184,7 +208,7 @@ class SingleCellPreProcessingController {
      *
      * @return
      */
-    public int getCategoryToplot() {
+    public int getCategoryToPlot() {
         return trackCoordinatesController.getCategoryToplot();
     }
 
@@ -195,6 +219,14 @@ class SingleCellPreProcessingController {
      */
     public void handleUnexpectedError(Exception exception) {
         singleCellMainController.handleUnexpectedError(exception);
+    }
+
+    public void controlGuiComponents(boolean enabled) {
+        singleCellMainController.controlGuiComponents(enabled);
+    }
+
+    public JList getConditionsList() {
+        return singleCellMainController.getDataAnalysisPanel().getConditionsList();
     }
 
     /**
@@ -231,9 +263,19 @@ class SingleCellPreProcessingController {
      * random track data holders.
      *
      * @param category: can be 0 or 1
+     * @param plateCondition: the condition to generate the tracks from
      */
-    public void generateRandomTrackDataHolders(int category) {
-        trackCoordinatesController.generateRandomTrackDataHolders(category);
+    public void generateRandomTrackDataHolders(int category, PlateCondition plateCondition) {
+        trackCoordinatesController.generateRandomTrackDataHolders(category, plateCondition);
+    }
+
+    /**
+     * This method pre-processes the entire experiment: data are retrieved from
+     * DB for all the conditions, and basic computations are performed.
+     */
+    public void preProcessExperiment(Experiment experiment) {
+        PreProcessExperimentSwingWorker preProcessExperimentSwingWorker = new PreProcessExperimentSwingWorker(experiment);
+        preProcessExperimentSwingWorker.execute();
     }
 
     /**
@@ -253,7 +295,8 @@ class SingleCellPreProcessingController {
             double conversionFactor = computeConversionFactor();
             Double timeLapse = singleCellMainController.getExperiment().getExperimentInterval();
             appendInfo("generating data holders...");
-            singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition, conversionFactor, timeLapse);
+            singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition,
+                    conversionFactor, timeLapse);
             singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
             int numberOfTracks = singleCellPreProcessingResults.getTrackDataHolders().size();
             appendInfo("--> total number of cell tracks: " + numberOfTracks);
@@ -306,9 +349,11 @@ class SingleCellPreProcessingController {
      */
     public void showTracksInTable() {
         // table binding
-        JTableBinding tracksTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, tracksBindingList, singleCellAnalysisPanel.getTracksTable());
+        JTableBinding tracksTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ,
+                tracksBindingList, singleCellAnalysisPanel.getTracksTable());
         // add column bindings
-        ColumnBinding columnBinding = tracksTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.well.columnNumber}"));
+        ColumnBinding columnBinding = tracksTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType"
+                + ".well.columnNumber}"));
         columnBinding.setColumnName("Column");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
@@ -340,7 +385,8 @@ class SingleCellPreProcessingController {
     public void appendInfo(String info) {
         String newLine = JFreeChartUtils.getNewLine();
         singleCellAnalysisPanel.getLogTextArea().append(info + newLine);
-        singleCellAnalysisPanel.getLogTextArea().setCaretPosition(singleCellAnalysisPanel.getLogTextArea().getDocument().getLength());
+        singleCellAnalysisPanel.getLogTextArea().setCaretPosition(singleCellAnalysisPanel.getLogTextArea()
+                .getDocument().getLength());
     }
 
     /**
@@ -372,15 +418,16 @@ class SingleCellPreProcessingController {
 
         preProcessingMap = new LinkedHashMap<>();
 
-        // if you clisk on a row, the relative track points are fetched from Db and shown in another table
+        // if you click on a row, the relative track points are fetched from Db and shown in another table
         singleCellAnalysisPanel.getTracksTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     int selectedRow = singleCellAnalysisPanel.getTracksTable().getSelectedRow();
+                    PlateCondition selectedCondition = singleCellMainController.getSelectedCondition();
                     if (selectedRow != -1) {
                         Track selectedTrack = tracksBindingList.get(selectedRow);
-                        singleCellMainController.updateTrackPointsList(singleCellMainController.getCurrentCondition(), selectedTrack);
+                        singleCellMainController.updateTrackPointsList(selectedCondition, selectedTrack);
                         showTrackPointsInTable();
                     }
                 }
@@ -388,7 +435,8 @@ class SingleCellPreProcessingController {
         });
 
         // add view to parent panel
-        singleCellMainController.getDataAnalysisPanel().getAreaAnalysisParentPanel().add(singleCellAnalysisPanel, gridBagConstraints);
+        singleCellMainController.getDataAnalysisPanel().getAreaAnalysisParentPanel().add(singleCellAnalysisPanel,
+                gridBagConstraints);
     }
 
     /**
@@ -396,13 +444,16 @@ class SingleCellPreProcessingController {
      */
     private void showTrackPointsInTable() {
         // get the tracking coordinates unit of measuremet
-        TrackCoordinatesUnitOfMeasurement coordinatesUnitOfMeasurement = singleCellMainController.getCoordinatesUnitOfMeasurement();
+        TrackCoordinatesUnitOfMeasurement coordinatesUnitOfMeasurement = singleCellMainController
+                .getCoordinatesUnitOfMeasurement();
         String unitOfMeasurementString = coordinatesUnitOfMeasurement.getUnitOfMeasurementString();
 
         // table binding
-        JTableBinding trackPointsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, trackPointsBindingList, singleCellAnalysisPanel.getTrackPointsTable());
+        JTableBinding trackPointsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ,
+                trackPointsBindingList, singleCellAnalysisPanel.getTrackPointsTable());
 
-        ColumnBinding columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${track.trackNumber}"));
+        ColumnBinding columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${track"
+                + ".trackNumber}"));
         columnBinding.setColumnName("Track");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
@@ -440,7 +491,8 @@ class SingleCellPreProcessingController {
         // this is the case of having imported micrometers results to the DB
         double conversionFactor = 1;
         // get the actual unit of measurement: if its pixels, override the conversion factor
-        TrackCoordinatesUnitOfMeasurement coordinatesUnitOfMeasurement = singleCellMainController.getCoordinatesUnitOfMeasurement();
+        TrackCoordinatesUnitOfMeasurement coordinatesUnitOfMeasurement = singleCellMainController
+                .getCoordinatesUnitOfMeasurement();
         if (coordinatesUnitOfMeasurement.equals(TrackCoordinatesUnitOfMeasurement.PIXELS)) {
             // conversion factor needs to be set according to conversion factor of instrument and magnification used
             // actual conversion factor = instrument conversion factor x magnification / 10
@@ -450,5 +502,104 @@ class SingleCellPreProcessingController {
             conversionFactor = instrumentConversionFactor * magnificationValue / 10;
         }
         return conversionFactor;
+    }
+
+    /**
+     * Compute both raw and shifted experiment coordinates ranges.
+     */
+    private void computeExperimentCoordinatesRanges() {
+        experimentRawCoordinatesRanges = new Double[2][2];
+        experimentShiftedCoordinatesRanges = new Double[2][2];
+        List<Double> xRawMinList = new ArrayList<>();
+        List<Double> xRawMaxList = new ArrayList<>();
+        List<Double> yRawMinList = new ArrayList<>();
+        List<Double> yRawMaxList = new ArrayList<>();
+
+        List<Double> xShifMinList = new ArrayList<>();
+        List<Double> xShifMaxList = new ArrayList<>();
+        List<Double> yShifMinList = new ArrayList<>();
+        List<Double> yShifMaxList = new ArrayList<>();
+
+        for (PlateCondition plateCondition : getPlateConditionList()) {
+            // now get back the coordinates and compute the ranges
+            SingleCellPreProcessingResults preProcessingResults = getPreProcessingResults(plateCondition);
+            Double[][] rawCoordinatesRanges = preProcessingResults.getRawCoordinatesRanges();
+            Double[][] shiftedCoordinatesRanges = preProcessingResults.getShiftedCoordinatesRanges();
+
+            xRawMinList.add(rawCoordinatesRanges[0][0]);
+            xRawMaxList.add(rawCoordinatesRanges[0][1]);
+            yRawMinList.add(rawCoordinatesRanges[1][0]);
+            yRawMaxList.add(rawCoordinatesRanges[1][1]);
+
+            xShifMinList.add(shiftedCoordinatesRanges[0][0]);
+            xShifMaxList.add(shiftedCoordinatesRanges[0][1]);
+            yShifMinList.add(shiftedCoordinatesRanges[1][0]);
+            yShifMaxList.add(shiftedCoordinatesRanges[1][1]);
+        }
+        Double xRawMin = Collections.min(xRawMinList);
+        Double xRawMax = Collections.max(xRawMaxList);
+        Double yRawMin = Collections.min(yRawMinList);
+        Double yRawMax = Collections.max(yRawMaxList);
+        experimentRawCoordinatesRanges[0] = new Double[]{xRawMin, xRawMax};
+        experimentRawCoordinatesRanges[1] = new Double[]{yRawMin, yRawMax};
+
+        Double xShifMin = Collections.min(xShifMinList);
+        Double xShifMax = Collections.max(xShifMaxList);
+        Double yShifMin = Collections.min(yShifMinList);
+        Double yShifMax = Collections.max(yShifMaxList);
+        experimentShiftedCoordinatesRanges[0] = new Double[]{xShifMin, xShifMax};
+        experimentShiftedCoordinatesRanges[1] = new Double[]{yShifMin, yShifMax};
+        appendInfo("raw range x: (" + xRawMin + ", " + xRawMax + ")" + "; y: (" + yRawMin + ", " + yRawMax + ")");
+        appendInfo("shifted range x: (" + xShifMin + ", " + xShifMax + ")" + "; y: (" + yShifMin + ", " + yShifMax + ")");
+    }
+
+    /**
+     * A swing worker to pre-process the entire experiment (i.e. all its
+     * conditions at once).
+     */
+    private class PreProcessExperimentSwingWorker extends SwingWorker<Void, Void> {
+
+        private final Experiment experiment;
+        private final WaitingDialog waitingDialog = new WaitingDialog(getMainFrame(), false);
+
+        public PreProcessExperimentSwingWorker(Experiment experiment) {
+            this.experiment = experiment;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            waitingDialog.setTitle("Please wait, I am getting data and computing...");
+            GuiUtils.centerDialogOnFrame(getMainFrame(), waitingDialog);
+            waitingDialog.setVisible(true);
+            // show a waiting cursor, disable GUI components
+            singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            singleCellMainController.controlGuiComponents(false);
+            // for each condition, get the data from database and do computations
+            for (PlateCondition condition : experiment.getPlateConditionList()) {
+                fetchTracks(condition);
+                updateMapWithCondition(condition);
+            }
+            // finally, compute the experiment ranges
+            computeExperimentCoordinatesRanges();
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                waitingDialog.setVisible(false);
+                // when done, enable back the list, but keep buttons disabled!
+                singleCellMainController.showMessage("Computations done!\nSelect a condition to start!",
+                        "computations "
+                        + "done", JOptionPane.INFORMATION_MESSAGE);
+                singleCellMainController.getDataAnalysisPanel().getConditionsList().setEnabled(true);
+                singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                singleCellMainController.showInfoMessage("Computations are done. Select a condition to start the analysis.");
+            } catch (InterruptedException | ExecutionException ex) {
+                LOG.error(ex.getMessage(), ex);
+                singleCellMainController.handleUnexpectedError(ex);
+            }
+        }
     }
 }
