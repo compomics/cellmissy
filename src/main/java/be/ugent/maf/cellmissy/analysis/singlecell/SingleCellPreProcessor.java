@@ -5,10 +5,11 @@
 package be.ugent.maf.cellmissy.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 
 /**
- * Interface for single cell pre-processing.
+ * Interface for single cell pre-processing: uses the track pre-processor interface to bring together all the
+ * pre-processing to a plate condition level.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -17,154 +18,59 @@ public interface SingleCellPreProcessor {
     /**
      * Put all together the track data holders for a certain plate condition.
      *
-     * @param singleCellPreProcessingResults
-     * @param plateCondition: we need here a plate condition because this can be
-     * done only on the single cell analysed wells. We'll get these wells having
-     * the condition.
-     * @param conversionFactor
-     * @param timeLapse
+     * @param singleCellConditionDataHolder
+     * @param plateCondition:               we need here a plate condition because this can be done only on the
+     *                                      single cell analysed wells. We'll get these wells having the condition.
      */
-    public void generateTrackDataHolders(SingleCellPreProcessingResults singleCellPreProcessingResults, PlateCondition plateCondition, double conversionFactor, Double timeLapse);
+    public void generateTrackDataHolders(SingleCellConditionDataHolder singleCellConditionDataHolder,
+                                         PlateCondition plateCondition);
 
     /**
      * Generate the data structure: this will put together the well of the
      * track, the track number and its time index.
      *
-     * @param singleCellPreProcessingResults
+     * @param singleCellConditionDataHolder
      */
-    public void generateDataStructure(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateDataStructure(SingleCellConditionDataHolder singleCellConditionDataHolder);
 
     /**
      * This will perform all the operations required on the step-centric and
      * cell-centric level.
      *
-     * @param singleCellPreProcessingResults
+     * @param singleCellConditionDataHolder
+     * @param conversionFactor:             required for coordinates matrix computation
+     * @param timeLapse:                    required for track duration computations
      */
-    public void operateOnStepsAndCells(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void preProcessStepsAndCells(SingleCellConditionDataHolder singleCellConditionDataHolder,
+                                        double conversionFactor, double timeLapse);
 
     /**
      * Generate the track coordinates matrix.
      *
-     * @param singleCellPreProcessingResults
+     * @param singleCellConditionDataHolder
      */
-    public void generateRawTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateRawTrackCoordinatesMatrix(SingleCellConditionDataHolder singleCellConditionDataHolder);
 
     /**
      * Generate the shifted track coordinates matrix.
      *
-     * @param singleCellPreProcessingResults
+     * @param singleCellConditionDataHolder
      */
-    public void generateShiftedTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateShiftedTrackCoordinatesMatrix(SingleCellConditionDataHolder singleCellConditionDataHolder);
 
     /**
      * Generate raw coordinates ranges.
      *
-     * @param singleCellPreProcessingResults
+     * @param singleCellConditionDataHolder
      */
-    public void generateRawCoordinatesRanges(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateRawCoordinatesRanges(SingleCellConditionDataHolder singleCellConditionDataHolder);
 
     /**
      * Generate shifted coordinates ranges.
      *
-     * @param singleCellPreProcessingResults
+     * @param singleCellConditionDataHolder
      */
-    public void generateShiftedCoordinatesRanges(SingleCellPreProcessingResults singleCellPreProcessingResults);
+    public void generateShiftedCoordinatesRanges(SingleCellConditionDataHolder singleCellConditionDataHolder);
 
-    /**
-     * Generate the instantaneous displacement Vector.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateInstantaneousDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 
-    /**
-     * Generate the directionality ratios vector.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateDirectionalityRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
-     * Generate the median directionality ratios vector.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateMedianDirectionalityRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
-     * Generate a vector with track displacements.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateTrackDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
-     * Generate cumulative distances vector.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateCumulativeDistancesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
-     * Generate Euclidean distances vector.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateEuclideanDistancesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
-     * Generate a vector with the median track speeds.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateTrackSpeedsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
-     * Generate directionality vector.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateEndPointDirectionalityRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
-     * Generate vector with convex hulls.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateConvexHullsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
-     * Generate vector with displacement ratios.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateDisplacementRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
-     * Generate vector with outreach ratios.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateOutreachRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
-     * Generate turning angles vector.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateTurningAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
-     * Generate track angles vector.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateMedianTurningAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
-
-    /**
-     * Generate vector with the median direction autocorrelations.
-     *
-     * @param singleCellPreProcessingResults
-     */
-    public void generateMedianDirectionAutocorrelationsVector(SingleCellPreProcessingResults singleCellPreProcessingResults);
 }

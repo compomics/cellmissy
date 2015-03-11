@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.view.table.model;
 
-import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -25,14 +25,14 @@ public class TrackDataTableModel extends AbstractTableModel {
      * Constructor
      *
      * @param columnNames: the names to give to the columns of the table
-     * @param singleCellPreProcessingResults: the results holder from where to
+     * @param singleCellConditionDataHolder: the results holder from where to
      * get the track information
      * @param dataVector: the extra vector we want to add to the table as last
      * column (this can be the displacements vector or the speeds vector)
      */
-    public TrackDataTableModel(String[] columnNames, SingleCellPreProcessingResults singleCellPreProcessingResults, Object[] dataVector) {
+    public TrackDataTableModel(String[] columnNames, SingleCellConditionDataHolder singleCellConditionDataHolder, Object[] dataVector) {
         this.columnNames = columnNames;
-        initTable(singleCellPreProcessingResults, dataVector);
+        initTable(singleCellConditionDataHolder, dataVector);
     }
 
     @Override
@@ -58,8 +58,8 @@ public class TrackDataTableModel extends AbstractTableModel {
     /**
      * Define the structure for the table.
      */
-    private void initTable(SingleCellPreProcessingResults singleCellPreProcessingResults, Object[] dataVector) {
-        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+    private void initTable(SingleCellConditionDataHolder singleCellConditionDataHolder, Object[] dataVector) {
+        List<TrackDataHolder> trackDataHolders = singleCellConditionDataHolder.getTrackDataHolders();
         data = new Object[trackDataHolders.size()][3];
         for (int row = 0; row < data.length; row++) {
             TrackDataHolder trackDataHolder = trackDataHolders.get(row);

@@ -29,9 +29,6 @@ public class TrackOperatorImpl implements TrackOperator {
     @Override
     public void operateOnSteps(TrackDataHolder trackDataHolder) {
         StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
-        stepCentricOperator.generateTimeIndexes(stepCentricDataHolder);
-        stepCentricOperator.generateCoordinatesMatrix(stepCentricDataHolder);
-        stepCentricOperator.computeShiftedCoordinatesMatrix(stepCentricDataHolder);
         stepCentricOperator.computeDeltaMovements(stepCentricDataHolder);
         stepCentricOperator.computeInstantaneousDisplacements(stepCentricDataHolder);
         stepCentricOperator.computeTurningAngles(stepCentricDataHolder);
@@ -45,8 +42,6 @@ public class TrackOperatorImpl implements TrackOperator {
     public void operateOnCells(TrackDataHolder trackDataHolder) {
         StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
         CellCentricDataHolder cellCentricDataHolder = trackDataHolder.getCellCentricDataHolder();
-        cellCentricOperator.computeTrackDuration(stepCentricDataHolder, cellCentricDataHolder);
-        cellCentricOperator.computeCoordinatesRange(stepCentricDataHolder, cellCentricDataHolder);
         cellCentricOperator.computeMedianDisplacement(stepCentricDataHolder, cellCentricDataHolder);
         cellCentricOperator.computeCumulativeDistance(stepCentricDataHolder, cellCentricDataHolder);
         cellCentricOperator.computeEuclideanDistance(stepCentricDataHolder, cellCentricDataHolder);

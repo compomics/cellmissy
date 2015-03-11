@@ -33,9 +33,9 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     private ConvexHullOperator convexHullOperator;
 
     @Override
-    public void computeTrackDuration(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
+    public void computeTrackDuration(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder
+            cellCentricDataHolder, double timeLapse) {
         double[] timeIndexes = stepCentricDataHolder.getTimeIndexes();
-        Double timeLapse = stepCentricDataHolder.getTimeLapse();
         int numberOfPoints = timeIndexes.length;
         double duration = (numberOfPoints - 1) * timeLapse;
         cellCentricDataHolder.setTrackDuration(duration);
@@ -45,10 +45,8 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     public void computeCoordinatesRange(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
         Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
         Double[][] transposedCoordinatesMatrix = AnalysisUtils.transpose2DArray(coordinatesMatrix);
-        Double[] xCoordinates = transposedCoordinatesMatrix[0];
-        Double[] yCoordinates = transposedCoordinatesMatrix[1];
-        List<Double> xCoordAsList = Arrays.asList(xCoordinates);
-        List<Double> yCoordAsList = Arrays.asList(yCoordinates);
+        List<Double> xCoordAsList = Arrays.asList(transposedCoordinatesMatrix[0]);
+        List<Double> yCoordAsList = Arrays.asList( transposedCoordinatesMatrix[1]);
         Double xMin = Collections.min(xCoordAsList);
         Double xMax = Collections.max(xCoordAsList);
         Double yMin = Collections.min(yCoordAsList);

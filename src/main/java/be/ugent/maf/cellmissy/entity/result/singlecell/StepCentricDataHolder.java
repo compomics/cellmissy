@@ -5,21 +5,18 @@
 package be.ugent.maf.cellmissy.entity.result.singlecell;
 
 import be.ugent.maf.cellmissy.entity.Track;
+
 import java.util.List;
 
 /**
- * This class keeps the instantaneous measurements about a certain track.
+ * This class keeps the instantaneous measurements about a certain track, i.e. step-centric measurements.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public class StepCentricDataHolder {
-    // the track on which the computations are to be done
 
+    // the track on which the computations are to be done
     private Track track;
-    // the conversion factor (from pixel to another unit of measuremnt)
-    private double conversionFactor;
-    // acquisition frame
-    private Double timeLapse;
     // time indexes
     // the temporal indexes in which the cell has been detected and tracked by the imaging sofware
     private double[] timeIndexes;
@@ -33,43 +30,41 @@ public class StepCentricDataHolder {
     // differences between location (x[n], y[n]) and location (x[n-1], y[n-1])
     private Double[][] deltaMovements;
     // array for  the instantaneous cell displacements
-    // for a track, the minimal instantaneous speeds are derived from the displacement of the cell centroid between adjacent time points
+    // for a track, the minimal instantaneous speeds are derived from the displacement of the cell centroid between
+    // adjacent time points
     private Double[] instantaneousDisplacements;
     // array for turning angles
-    // a turning angle is the observed turning angle of a cell between sequential time points (it is an instantaneous angle)
+    // a turning angle is the observed turning angle of a cell between sequential time points (it is an instantaneous
+    // angle)
     private Double[] turningAngles;
     // array for directionality ratios
-    // this is the consistency of motion: the ratio between the net displacement and the cumulative distance at each travelled time point
+    // this is the consistency of motion: the ratio between the net displacement and the cumulative distance at each
+    // travelled time point
     // the math concept is the same as for the end point directionality vector, but this is computed in time
     private Double[] directionalityRatios;
     // array for the MSD values
     private Double[] meanSquareDisplacements;
     // list of arrays for the direction autocorrelations
-    // a direction autocorrelation is defined as the cosine of the difference between turning angles at successive time points
+    // a direction autocorrelation is defined as the cosine of the difference between turning angles at successive
+    // time points
     private List<Double[]> directionAutocorrelations;
     // an array for the mean values of the direction autocorrelations
     // per each time point (overlapping time interval), a mean DA is computed
     private Double[] medianDirectionAutocorrelations;
 
     /**
-     * Constructor
+     * Empty Constructor
      */
     public StepCentricDataHolder() {
     }
 
+    /**
+     * Constructor takes a track
+     *
+     * @param track
+     */
     public StepCentricDataHolder(Track track) {
         this.track = track;
-    }
-
-    public StepCentricDataHolder(Track track, double conversionFactor) {
-        this.track = track;
-        this.conversionFactor = conversionFactor;
-    }
-
-    public StepCentricDataHolder(Track track, double conversionFactor, Double timeLapse) {
-        this.track = track;
-        this.conversionFactor = conversionFactor;
-        this.timeLapse = timeLapse;
     }
 
     /**
@@ -83,22 +78,6 @@ public class StepCentricDataHolder {
 
     public void setTrack(Track track) {
         this.track = track;
-    }
-
-    public double getConversionFactor() {
-        return conversionFactor;
-    }
-
-    public void setConversionFactor(double conversionFactor) {
-        this.conversionFactor = conversionFactor;
-    }
-
-    public Double getTimeLapse() {
-        return timeLapse;
-    }
-
-    public void setTimeLapse(Double timeLapse) {
-        this.timeLapse = timeLapse;
     }
 
     public double[] getTimeIndexes() {

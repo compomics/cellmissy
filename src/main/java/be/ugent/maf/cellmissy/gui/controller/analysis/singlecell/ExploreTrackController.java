@@ -459,7 +459,7 @@ class ExploreTrackController {
      * @param trackDataHolder
      */
     private void updateConvexHullData(TrackDataHolder trackDataHolder) {
-        // upate convex hull data in table
+        // update convex hull data in table
         ConvexHull convexHull = trackDataHolder.getCellCentricDataHolder().getConvexHull();
         exploreTrackPanel.getConvexHullTable().setModel(new ConvexHullTableModel(convexHull));
         SingleCellDataTableRenderer singleCellDataTableRenderer = new SingleCellDataTableRenderer(new DecimalFormat("###.###"));

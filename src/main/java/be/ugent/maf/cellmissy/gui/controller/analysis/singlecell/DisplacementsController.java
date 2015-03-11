@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplacementsPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
@@ -70,10 +70,10 @@ class DisplacementsController {
      * @param plateCondition
      */
     public void showInstantaneousDisplInTable(PlateCondition plateCondition) {
-        SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
-        if (singleCellPreProcessingResults != null) {
-            Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-            Double[] instantaneousDisplacementsVector = singleCellPreProcessingResults.getInstantaneousDisplacementsVector();
+        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        if (singleCellConditionDataHolder != null) {
+            Object[][] dataStructure = singleCellConditionDataHolder.getDataStructure();
+            Double[] instantaneousDisplacementsVector = singleCellConditionDataHolder.getInstantaneousDisplacementsVector();
             displacementsTable.setModel(new DisplacementsTableModel(dataStructure, instantaneousDisplacementsVector));
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
@@ -93,9 +93,9 @@ class DisplacementsController {
      * @param plateCondition
      */
     public void showTrackDisplInTable(PlateCondition plateCondition) {
-        SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
-        if (singleCellPreProcessingResults != null) {
-            Double[] trackDisplacementsVector = singleCellPreProcessingResults.getTrackDisplacementsVector();
+        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        if (singleCellConditionDataHolder != null) {
+            Double[] trackDisplacementsVector = singleCellConditionDataHolder.getTrackDisplacementsVector();
             String[] columnNames = {"well", "track", "track displacement (µm)"};
             showTrackDataInTable(plateCondition, columnNames, trackDisplacementsVector);
         }
@@ -106,9 +106,9 @@ class DisplacementsController {
      * @param plateCondition
      */
     public void showTrackSpeedsInTable(PlateCondition plateCondition) {
-        SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
-        if (singleCellPreProcessingResults != null) {
-            Double[] trackSpeedsVector = singleCellPreProcessingResults.getTrackSpeedsVector();
+        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        if (singleCellConditionDataHolder != null) {
+            Double[] trackSpeedsVector = singleCellConditionDataHolder.getTrackSpeedsVector();
             String[] columnNames = {"well", "track", "track speed (µm/min)"};
             showTrackDataInTable(plateCondition, columnNames, trackSpeedsVector);
         }
@@ -193,9 +193,9 @@ class DisplacementsController {
      * @param dataToShow:     the data to be shown.
      */
     private void showTrackDataInTable(PlateCondition plateCondition, String columnNames[], Double[] dataToShow) {
-        SingleCellPreProcessingResults singleCellPreProcessingResults = singleCellPreProcessingController.getPreProcessingResults(plateCondition);
-        if (singleCellPreProcessingResults != null) {
-            TrackDataTableModel trackDataTableModel = new TrackDataTableModel(columnNames, singleCellPreProcessingResults, dataToShow);
+        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        if (singleCellConditionDataHolder != null) {
+            TrackDataTableModel trackDataTableModel = new TrackDataTableModel(columnNames, singleCellConditionDataHolder, dataToShow);
             displacementsTable.setModel(trackDataTableModel);
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);

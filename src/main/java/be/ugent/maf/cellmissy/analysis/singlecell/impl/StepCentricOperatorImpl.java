@@ -35,9 +35,8 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     }
 
     @Override
-    public void generateCoordinatesMatrix(StepCentricDataHolder stepCentricDataHolder) {
+    public void generateCoordinatesMatrix(StepCentricDataHolder stepCentricDataHolder, double conversionFactor) {
         Track track = stepCentricDataHolder.getTrack();
-        double conversionFactor = stepCentricDataHolder.getConversionFactor();
         List<TrackPoint> trackPointList = track.getTrackPointList();
         Double[][] coordinatesMatrix = new Double[trackPointList.size()][2];
         for (int i = 0; i < coordinatesMatrix.length; i++) {

@@ -21,8 +21,10 @@ public interface CellCentricOperator {
      *
      * @param stepCentricDataHolder
      * @param cellCentricDataHolder
+     * @param timeLapse
      */
-    public void computeTrackDuration(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+    public void computeTrackDuration(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder
+            cellCentricDataHolder, double timeLapse);
 
     /**
      * Compute the min and max x and y coordinates, along with the net

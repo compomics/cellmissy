@@ -7,14 +7,15 @@ package be.ugent.maf.cellmissy.entity.result.singlecell;
 import java.util.List;
 
 /**
- * This class is holding the results from the pre processing of single cell
- * analysis. This object stays associated to a certain biological condition and
+ * This class is holding the results from the pre processing + initial computations
+ * of single cell analysis.
+ * This object stays associated to a certain biological condition and
  * keeps all the track-related data. The data are computed for a single track
  * data holder and then brought all together in this class.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class SingleCellPreProcessingResults {
+public class SingleCellConditionDataHolder {
 
     // list of track data holders
     private List<TrackDataHolder> trackDataHolders;

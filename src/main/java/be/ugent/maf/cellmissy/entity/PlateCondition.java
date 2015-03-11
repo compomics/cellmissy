@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 /**
- *
  * @author Paola
  */
 @Entity
@@ -42,8 +42,9 @@ import org.hibernate.annotations.FetchMode;
 @XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
-    @NamedQuery(name = "PlateCondition.findAll", query = "SELECT p FROM PlateCondition p"),
-    @NamedQuery(name = "PlateCondition.findByPlateConditionid", query = "SELECT p FROM PlateCondition p WHERE p.plateConditionid = :plateConditionid")})
+        @NamedQuery(name = "PlateCondition.findAll", query = "SELECT p FROM PlateCondition p"),
+        @NamedQuery(name = "PlateCondition.findByPlateConditionid", query = "SELECT p FROM PlateCondition p WHERE p" +
+                ".plateConditionid = :plateConditionid")})
 public class PlateCondition implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -88,6 +89,9 @@ public class PlateCondition implements Serializable {
     @Transient
     @XmlTransient
     private boolean loaded;
+    @Transient
+    @XmlTransient
+    private boolean computed;
 
     public PlateCondition() {
     }
@@ -176,6 +180,14 @@ public class PlateCondition implements Serializable {
         this.loaded = loaded;
     }
 
+    public boolean isComputed() {
+        return computed;
+    }
+
+    public void setComputed(boolean computed) {
+        this.computed = computed;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -198,8 +210,7 @@ public class PlateCondition implements Serializable {
 
     @Override
     public String toString() {
-//        return cellLine.getCellLineType() + ", " + assay.getMatrixDimension() + ", " + assay + ", " + treatmentList;
-        return cellLine.getCellLineType() + " - " + treatmentList;
+        return cellLine.getCellLineType() + " - " + assay.getMatrixDimension() + " - " + assay + ", " + treatmentList;
     }
 
     public Integer getConditionIndex() {

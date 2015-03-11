@@ -66,14 +66,14 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
         GuiUtils.setGraphics(g2d);
         List<PlateCondition> plateConditions = experiment.getPlateConditionList();
 
-        int lenght = GuiUtils.getAvailableColors().length;
+        int length = GuiUtils.getAvailableColors().length;
 
         for (PlateCondition plateCondition : plateConditions) {
             for (Well well : plateCondition.getWellList()) {
                 for (WellGui wellGui : wellGuiList) {
                     if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
                         int conditionIndex = plateConditions.indexOf(plateCondition);
-                        int indexOfColor = conditionIndex % lenght;
+                        int indexOfColor = conditionIndex % length;
                         g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
 
                         int x = (int) wellGui.getEllipsi().get(0).getX() - AnalysisPlatePanel.pixelsGrid / 4;
@@ -102,7 +102,7 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
     protected void reDrawWells(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
-        int lenght = GuiUtils.getAvailableColors().length;
+        int length = GuiUtils.getAvailableColors().length;
 
         // draw all the wells
         for (WellGui wellGui : wellGuiList) {
@@ -136,7 +136,7 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
                 //
                 if (plateCondition.equals(currentCondition)) {
                     int conditionIndex = plateConditions.indexOf(currentCondition);
-                    int indexOfColor = conditionIndex % lenght;
+                    int indexOfColor = conditionIndex % length;
                     g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
 
                     List<Well> wells = plateCondition.getWellList();

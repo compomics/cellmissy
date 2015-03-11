@@ -4,6 +4,7 @@
 */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.analysis.singlecell.SingleCellOperator;
 import be.ugent.maf.cellmissy.analysis.singlecell.SingleCellPreProcessor;
 import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
@@ -13,7 +14,7 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
-import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
@@ -47,12 +48,15 @@ class Playground {
         ExperimentService experimentService = (ExperimentService) context.getBean("experimentService");
         ProjectService projectService = (ProjectService) context.getBean("projectService");
         WellService wellService = (WellService) context.getBean("wellService");
-        SingleCellPreProcessor singleCellPreProcessor = (SingleCellPreProcessor) context.getBean("singleCellPreProcessor");
+        SingleCellPreProcessor singleCellPreProcessor = (SingleCellPreProcessor) context.getBean
+                ("singleCellPreProcessor");
+        SingleCellOperator singleCellOperator = (SingleCellOperator) context.getBean("singleCellOperator");
         // get all the experiments from DB
         Project immuneCellsProject = projectService.findById(5L);
 //        List<Experiment> experiments = experimentService.findAll();
         // find the experiments by project id
-        List<Experiment> experiments = experimentService.findExperimentsByProjectId(immuneCellsProject.getProjectid()); // immune cells, project id 5
+        List<Experiment> experiments = experimentService.findExperimentsByProjectId(immuneCellsProject.getProjectid()
+        ); // immune cells, project id 5
         for (Experiment experiment : experiments) {
             Magnification magnification = experiment.getMagnification();
             double instrumentConversionFactor = experiment.getInstrument().getConversionFactor();
@@ -81,10 +85,12 @@ class Playground {
             for (Algorithm algorithm : algorithms) {
                 for (ImagingType imagingType : imagingTypes) {
                     //**************************************************************************
-//                    File trackDataFolder = new File(trackFolder, project + "_" + experiment + "_" + "trackFiles_" + algorithm + "_" + imagingType);
+//                    File trackDataFolder = new File(trackFolder, project + "_" + experiment + "_" + "trackFiles_" +
+// algorithm + "_" + imagingType);
 //                    trackDataFolder.mkdir();
                     //**************************************************************************
-                    File globalDataFolder = new File(globalFolder, immuneCellsProject + "_" + experiment + "_" + "globalFiles" + algorithm + "_" + imagingType);
+                    File globalDataFolder = new File(globalFolder, immuneCellsProject + "_" + experiment + "_" +
+                            "globalFiles" + algorithm + "_" + imagingType);
                     globalDataFolder.mkdir();
 
                     for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
@@ -93,42 +99,51 @@ class Playground {
                         for (int i = 0; i < plateCondition.getWellList().size(); i++) {
                             Well currentWell = plateCondition.getWellList().get(i);
                             //fetch tracks collection for the wellhasimagingtype of interest
-                            wellService.fetchTracks(currentWell, algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
-                            wellService.fetchTrackPoints(currentWell, algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
+                            wellService.fetchTracks(currentWell, algorithm.getAlgorithmid(), imagingType
+                                    .getImagingTypeid());
+                            wellService.fetchTrackPoints(currentWell, algorithm.getAlgorithmid(), imagingType
+                                    .getImagingTypeid());
                             numbersOfTrackPoints.add(AnalysisUtils.getNumbersOfTrackPoints(currentWell));
                             numberOfTracks.add(AnalysisUtils.getNumbersOfTracks(currentWell));
                         }
                         // create a new object to hold pre-processing results
-                        SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
+                        SingleCellConditionDataHolder singleCellConditionDataHolder = new
+                                SingleCellConditionDataHolder();
                         // do computations
-                        singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition, conversionFactor, experiment.getExperimentInterval());
-                        singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
-                        singleCellPreProcessor.operateOnStepsAndCells(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateDirectionalityRatiosVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateMedianDirectionalityRatiosVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateEndPointDirectionalityRatiosVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateConvexHullsVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateDisplacementRatiosVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateOutreachRatiosVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
-                        singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
+                        singleCellPreProcessor.generateTrackDataHolders(singleCellConditionDataHolder, plateCondition);
+                        singleCellPreProcessor.generateDataStructure(singleCellConditionDataHolder);
+                        singleCellPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder, conversionFactor,
+                                experiment.getExperimentInterval());
+                        singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
+                        singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellConditionDataHolder);
+                        singleCellOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
+                        singleCellOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
+                        singleCellOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
+                        singleCellOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
+                        singleCellOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
+                        singleCellOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
+                        singleCellOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
+                        singleCellOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
+                        singleCellOperator.generateConvexHullsVector(singleCellConditionDataHolder);
+                        singleCellOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
+                        singleCellOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
+                        singleCellOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
+                        singleCellOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
                         // we create a file for each condition
                         String name1 = immuneCellsProject + "_" + experiment + "_" + plateCondition + ".txt";
-                        Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-                        Double[][] rawTrackCoordinatesMatrix = singleCellPreProcessingResults.getRawTrackCoordinatesMatrix();
-                        Double[][] shiftedTrackCoordinatesMatrix = singleCellPreProcessingResults.getShiftedTrackCoordinatesMatrix();
-                        Double[] instantaneousDisplacementsVector = singleCellPreProcessingResults.getInstantaneousDisplacementsVector();
-                        Double[] turningAnglesVector = singleCellPreProcessingResults.getTurningAnglesVector();
-//                        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(trackDataFolder, name1)))) {
+                        Object[][] dataStructure = singleCellConditionDataHolder.getDataStructure();
+                        Double[][] rawTrackCoordinatesMatrix = singleCellConditionDataHolder
+                                .getRawTrackCoordinatesMatrix();
+                        Double[][] shiftedTrackCoordinatesMatrix = singleCellConditionDataHolder
+                                .getShiftedTrackCoordinatesMatrix();
+                        Double[] instantaneousDisplacementsVector = singleCellConditionDataHolder
+                                .getInstantaneousDisplacementsVector();
+                        Double[] turningAnglesVector = singleCellConditionDataHolder.getTurningAnglesVector();
+//                        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File
+// (trackDataFolder, name1)))) {
 //                            // HEADER
-//                            bufferedWriter.append("well" + "\t" + "track" + "\t" + "time" + "\t" + "location" + "\t" + "x" + "\t" + "y" + "\t" + "shiftX" + "\t" + "shiftY" + "\t" + "instDispl" + "\t" + "turningAngle");
+//                            bufferedWriter.append("well" + "\t" + "track" + "\t" + "time" + "\t" + "location" +
+// "\t" + "x" + "\t" + "y" + "\t" + "shiftX" + "\t" + "shiftY" + "\t" + "instDispl" + "\t" + "turningAngle");
 //                            bufferedWriter.newLine();
 //                            int counter = 0;
 //                            for (List<Integer> list : numbersOfTrackPoints) {
@@ -167,18 +182,24 @@ class Playground {
 //                            Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
 //                        }
                         String name2 = immuneCellsProject + "_" + experiment + "_" + plateCondition + ".txt";
-                        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-                        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(globalDataFolder, name2)))) {
+                        List<TrackDataHolder> trackDataHolders = singleCellConditionDataHolder.getTrackDataHolders();
+                        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File
+                                (globalDataFolder, name2)))) {
                             // HEADER
-                            bufferedWriter.append("w" + "\t" + "tr" + "\t" + "loc" + "\t" + "cd" + "\t" + "ed" + "\t" + "dir" + "\t" + "md" + "\t" + "ms" + "\t" + "mta" + "\t" + "max dis" + "\t" + "dr" + "\t" + "or" + "\t" + "perim" + "\t" + "area" + "\t" + "acirc" + "\t" + "dir2");
+                            bufferedWriter.append("w" + "\t" + "tr" + "\t" + "loc" + "\t" + "cd" + "\t" + "ed" + "\t"
+                                    + "dir" + "\t" + "md" + "\t" + "ms" + "\t" + "mta" + "\t" + "max dis" + "\t" +
+                                    "dr" + "\t" + "or" + "\t" + "perim" + "\t" + "area" + "\t" + "acirc" + "\t" +
+                                    "dir2");
                             bufferedWriter.newLine();
                             int counter = 0;
                             for (List<Integer> list : numberOfTracks) {
                                 for (Integer currentNumber : list) {
                                     for (int row = counter; row < counter + currentNumber; row++) {
                                         TrackDataHolder trackDataHolder = trackDataHolders.get(row);
-                                        CellCentricDataHolder cellCentricDataHolder = trackDataHolder.getCellCentricDataHolder();
-                                        bufferedWriter.append(trackDataHolder.getTrack().getWellHasImagingType().getWell().toString());
+                                        CellCentricDataHolder cellCentricDataHolder = trackDataHolder
+                                                .getCellCentricDataHolder();
+                                        bufferedWriter.append(trackDataHolder.getTrack().getWellHasImagingType()
+                                                .getWell().toString());
                                         bufferedWriter.append("\t");
                                         bufferedWriter.append("" + trackDataHolder.getTrack().getTrackNumber());
                                         bufferedWriter.append("\t");
@@ -188,7 +209,8 @@ class Playground {
                                         bufferedWriter.append("\t");
                                         bufferedWriter.append("" + cellCentricDataHolder.getEuclideanDistance());
                                         bufferedWriter.append("\t");
-                                        bufferedWriter.append("" + cellCentricDataHolder.getEndPointDirectionalityRatio());
+                                        bufferedWriter.append("" + cellCentricDataHolder
+                                                .getEndPointDirectionalityRatio());
                                         bufferedWriter.append("\t");
                                         bufferedWriter.append("" + cellCentricDataHolder.getMedianDisplacement());
                                         bufferedWriter.append("\t");
@@ -196,19 +218,23 @@ class Playground {
                                         bufferedWriter.append("\t");
                                         bufferedWriter.append("" + cellCentricDataHolder.getMedianTurningAngle());
                                         bufferedWriter.append("\t");
-                                        bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getMostDistantPointsPair().getMaxSpan());
+                                        bufferedWriter.append("" + cellCentricDataHolder.getConvexHull()
+                                                .getMostDistantPointsPair().getMaxSpan());
                                         bufferedWriter.append("\t");
                                         bufferedWriter.append("" + cellCentricDataHolder.getDisplacementRatio());
                                         bufferedWriter.append("\t");
                                         bufferedWriter.append("" + cellCentricDataHolder.getOutreachRatio());
                                         bufferedWriter.append("\t");
-                                        bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getPerimeter());
+                                        bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getPerimeter
+                                                ());
                                         bufferedWriter.append("\t");
                                         bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getArea());
                                         bufferedWriter.append("\t");
-                                        bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getAcircularity());
+                                        bufferedWriter.append("" + cellCentricDataHolder.getConvexHull()
+                                                .getAcircularity());
                                         bufferedWriter.append("\t");
-                                        bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getDirectionality());
+                                        bufferedWriter.append("" + cellCentricDataHolder.getConvexHull()
+                                                .getDirectionality());
                                         bufferedWriter.newLine();
                                     }
                                     counter += currentNumber;
@@ -219,7 +245,8 @@ class Playground {
                         }
                         System.out.println(immuneCellsProject + "_" + experiment + "_" + plateCondition + " processed");
                     }
-                    System.out.println("****" + immuneCellsProject + "_" + experiment + "_" + algorithm + ", " + imagingType + " processed");
+                    System.out.println("****" + immuneCellsProject + "_" + experiment + "_" + algorithm + ", " +
+                            imagingType + " processed");
                 }
             }
             System.out.println("*-*-*-*-*" + immuneCellsProject + "_" + experiment + " processed");
@@ -240,11 +267,13 @@ class Playground {
         //
         //
         //        try {
-        //            experimentService.exportExperimentToXMLFile(experiment, new File("C:\\Users\\paola\\Desktop\\test.xml"));
+        //            experimentService.exportExperimentToXMLFile(experiment, new File
+        // ("C:\\Users\\paola\\Desktop\\test.xml"));
         //        } catch (JAXBException | FileNotFoundException ex) {
         //            Logger.getLogger(Playground.class.getName()).log(Level.SEVERE, null, ex);
         //        }
-        //        LocalContainerEntityManagerFactoryBean fb = (LocalContainerEntityManagerFactoryBean) context.getBean("&entityManagerFactory");
+        //        LocalContainerEntityManagerFactoryBean fb = (LocalContainerEntityManagerFactoryBean) context
+        // .getBean("&entityManagerFactory");
         //        Ejb3Configuration cfg = new Ejb3Configuration();
         //        Ejb3Configuration configured = cfg.configure(fb.getPersistenceUnitInfo(), fb.getJpaPropertyMap());
         //        // export the database schema
