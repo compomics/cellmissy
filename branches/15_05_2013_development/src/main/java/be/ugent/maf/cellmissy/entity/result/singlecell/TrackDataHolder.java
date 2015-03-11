@@ -17,7 +17,6 @@ import be.ugent.maf.cellmissy.entity.Well;
  */
 public class TrackDataHolder {
 
-    // track
     // the track from which the data are being computed-kept in memory
     private final Track track;
     // the step-centric measurements
@@ -26,7 +25,7 @@ public class TrackDataHolder {
     private CellCentricDataHolder cellCentricDataHolder;
 
     /**
-     * Constructor, takes a track as argument.
+     * Constructor
      *
      * @param track
      * @param stepCentricDataHolder
@@ -65,7 +64,6 @@ public class TrackDataHolder {
 
     @Override
     public String toString() {
-        int trackNumber = track.getTrackNumber();
         Well well = track.getWellHasImagingType().getWell();
         return "track " + track.getTrackid() + ", well " + well;
     }

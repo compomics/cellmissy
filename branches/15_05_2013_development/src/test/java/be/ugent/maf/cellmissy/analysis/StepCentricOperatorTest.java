@@ -52,12 +52,11 @@ public class StepCentricOperatorTest {
         Track track = new Track();
         track.setTrackPointList(trackPoints);
         stepCentricDataHolder.setTrack(track);
-        stepCentricDataHolder.setConversionFactor(1.0);
     }
 
     @Test
     public void testComputations() {
-        stepCentricOperator.generateCoordinatesMatrix(stepCentricDataHolder);
+        stepCentricOperator.generateCoordinatesMatrix(stepCentricDataHolder, 1.0);
         stepCentricOperator.computeDeltaMovements(stepCentricDataHolder);
         stepCentricOperator.computeInstantaneousDisplacements(stepCentricDataHolder);
         stepCentricOperator.computeDirectionalityRatios(stepCentricDataHolder);

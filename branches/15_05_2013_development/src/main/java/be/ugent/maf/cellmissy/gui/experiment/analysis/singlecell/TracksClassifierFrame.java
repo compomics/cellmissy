@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
+import be.ugent.maf.cellmissy.analysis.singlecell.SingleCellOperator;
 import be.ugent.maf.cellmissy.analysis.singlecell.SingleCellPreProcessor;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
@@ -14,7 +15,7 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
-import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.SingleCellDataTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
@@ -88,6 +89,7 @@ class TracksClassifierFrame extends javax.swing.JFrame {
     private final ExperimentService experimentService = context.getBean("experimentService", ExperimentService.class);
     private final WellService wellService = context.getBean("wellService", WellService.class);
     private final SingleCellPreProcessor singleCellPreProcessor = (SingleCellPreProcessor) context.getBean("singleCellPreProcessor");
+    private final SingleCellOperator singleCellOperator = (SingleCellOperator) context.getBean("singleCellOperator");
 
     /**
      * Creates new form TracksClassifierFrame
@@ -407,41 +409,42 @@ class TracksClassifierFrame extends javax.swing.JFrame {
                 info = "starting computations for condition: " + plateCondition;
                 appendInfo(info);
                 // create a new object to hold pre-processing results
-                SingleCellPreProcessingResults singleCellPreProcessingResults = new SingleCellPreProcessingResults();
+                SingleCellConditionDataHolder singleCellConditionDataHolder = new SingleCellConditionDataHolder();
                 // do the computations
-                singleCellPreProcessor.generateTrackDataHolders(singleCellPreProcessingResults, plateCondition, conversionFactor, experiment.getExperimentInterval());
+                singleCellPreProcessor.generateTrackDataHolders(singleCellConditionDataHolder, plateCondition);
                 info = "track data holders generated...";
                 appendInfo(info);
-                singleCellPreProcessor.generateDataStructure(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateDataStructure(singleCellConditionDataHolder);
                 info = "data structure generated ...\n*****";
                 appendInfo(info);
-                singleCellPreProcessor.operateOnStepsAndCells(singleCellPreProcessingResults);
+                singleCellPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder, conversionFactor,
+                        experiment.getExperimentInterval());
                 info = "step-centric and cell-centric operations performed ...";
                 appendInfo(info);
-                singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellPreProcessingResults);
-                singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellPreProcessingResults);
+                singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
+                singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellConditionDataHolder);
                 info = "tracks coordinates computed...";
                 appendInfo(info);
-                singleCellPreProcessor.generateInstantaneousDisplacementsVector(singleCellPreProcessingResults);
-                singleCellPreProcessor.generateDirectionalityRatiosVector(singleCellPreProcessingResults);
-                singleCellPreProcessor.generateMedianDirectionalityRatiosVector(singleCellPreProcessingResults);
-                singleCellPreProcessor.generateTrackDisplacementsVector(singleCellPreProcessingResults);
-                singleCellPreProcessor.generateCumulativeDistancesVector(singleCellPreProcessingResults);
-                singleCellPreProcessor.generateEuclideanDistancesVector(singleCellPreProcessingResults);
-                singleCellPreProcessor.generateTrackSpeedsVector(singleCellPreProcessingResults);
-                singleCellPreProcessor.generateEndPointDirectionalityRatiosVector(singleCellPreProcessingResults);
+                singleCellOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
+                singleCellOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
+                singleCellOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
+                singleCellOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
+                singleCellOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
+                singleCellOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
+                singleCellOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
+                singleCellOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
                 info = "displacements, speeds and directionalities computed...";
                 appendInfo(info);
-                singleCellPreProcessor.generateConvexHullsVector(singleCellPreProcessingResults);
+                singleCellOperator.generateConvexHullsVector(singleCellConditionDataHolder);
                 info = "convex hulls computed...";
                 appendInfo(info);
-                singleCellPreProcessor.generateDisplacementRatiosVector(singleCellPreProcessingResults);
-                singleCellPreProcessor.generateOutreachRatiosVector(singleCellPreProcessingResults);
-                singleCellPreProcessor.generateTurningAnglesVector(singleCellPreProcessingResults);
-                singleCellPreProcessor.generateMedianTurningAnglesVector(singleCellPreProcessingResults);
+                singleCellOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
+                singleCellOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
+                singleCellOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
+                singleCellOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
                 info = "angles data computed...";
                 appendInfo(info);
-                List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
+                List<TrackDataHolder> trackDataHolders = singleCellConditionDataHolder.getTrackDataHolders();
                 // add tracks to list
                 trackDataHolderBindingList.addAll(trackDataHolders);
                 totTracks += trackDataHolders.size();

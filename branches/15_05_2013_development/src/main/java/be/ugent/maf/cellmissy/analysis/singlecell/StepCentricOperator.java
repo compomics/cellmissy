@@ -29,7 +29,7 @@ public interface StepCentricOperator {
      *
      * @param stepCentricDataHolder
      */
-    public void generateCoordinatesMatrix(StepCentricDataHolder stepCentricDataHolder);
+    public void generateCoordinatesMatrix(StepCentricDataHolder stepCentricDataHolder, double conversionFactor);
 
     /**
      * Compute shifted track coordinates starting from the track coordinates

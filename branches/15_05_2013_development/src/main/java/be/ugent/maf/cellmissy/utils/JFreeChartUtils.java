@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.utils;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -14,6 +15,7 @@ import java.awt.Stroke;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -50,9 +52,10 @@ public class JFreeChartUtils {
     // new line, enter
     private final static String newLine = "\n";
     // dashed line
-    private static final BasicStroke dashedLine = new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[]{6.0f, 6.0f}, 0.0f);
+    private static final BasicStroke dashedLine = new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke
+            .JOIN_ROUND, 1.0f, new float[]{6.0f, 6.0f}, 0.0f);
     // font for the chart elements
-    private static final Font chartFont = new Font("Tahoma", Font.BOLD, 20);
+    private static final Font chartFont = new Font("Tahoma", Font.BOLD, 12);
     // line widths
     private static final List<Float> lineWidths = Arrays.asList(1.0f, 1.5f, 2.0f, 2.5f, 3.0f);
     // decimal format for the plot axis
@@ -79,6 +82,7 @@ public class JFreeChartUtils {
     }
 
     // public methods
+
     /**
      * Setup a x-y plot
      *
@@ -114,9 +118,11 @@ public class JFreeChartUtils {
      * @param chartTitle
      * @return the chart
      */
-    public static JFreeChart generateDensityFunctionChart(PlateCondition plateCondition, int conditionIndex, XYSeriesCollection xYSeriesCollection, String chartTitle) {
+    public static JFreeChart generateDensityFunctionChart(PlateCondition plateCondition, int conditionIndex,
+                                                          XYSeriesCollection xYSeriesCollection, String chartTitle) {
         String specificChartTitle = chartTitle + " Condition " + conditionIndex + " (replicates)";
-        JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, "% increase (Area)", "Density", xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, "% increase (Area)", "Density",
+                xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         densityChart.getTitle().setFont(chartFont);
         //XYplot
         XYPlot xYPlot = densityChart.getXYPlot();
@@ -125,7 +131,8 @@ public class JFreeChartUtils {
         xYPlot.getRangeAxis().setAutoRange(false);
         setupXYPlot(xYPlot);
         //set ranges for x and y axes
-        xYPlot.getDomainAxis().setRange(xYSeriesCollection.getDomainLowerBound(true) - 0.05, xYSeriesCollection.getDomainUpperBound(true) + 0.05);
+        xYPlot.getDomainAxis().setRange(xYSeriesCollection.getDomainLowerBound(true) - 0.05, xYSeriesCollection
+                .getDomainUpperBound(true) + 0.05);
         xYPlot.getRangeAxis().setUpperBound(computeMaxY(xYSeriesCollection) + 0.05);
         xYPlot.setBackgroundPaint(Color.white);
         //renderer for wide line
@@ -272,11 +279,12 @@ public class JFreeChartUtils {
     /**
      * Setup replicates area chart
      *
-     * @param chart: chart to setup
-     * @param wellList: keep track of wells added, removed: list needed
+     * @param chart:     chart to setup
+     * @param wellList:  keep track of wells added, removed: list needed
      * @param plotLines: show lines on plot?
      */
-    public static void setupReplicatesAreaChart(JFreeChart chart, List<Well> wellList, boolean plotLines, boolean plotPoints) {
+    public static void setupReplicatesAreaChart(JFreeChart chart, List<Well> wellList, boolean plotLines, boolean
+            plotPoints) {
         // set title font
         chart.getTitle().setFont(chartFont);
         // put legend on the right edge
@@ -306,7 +314,7 @@ public class JFreeChartUtils {
     /**
      * Setup global area chart
      *
-     * @param chart: chart to setup
+     * @param chart:     chart to setup
      * @param plotLines: show lines on plot?
      */
     public static void setupGlobalAreaChart(JFreeChart chart, boolean plotLines, boolean plotPoints) {
@@ -346,11 +354,9 @@ public class JFreeChartUtils {
     public static void setupTrackChart(JFreeChart chart) {
         // set title font
         chart.getTitle().setFont(chartFont);
-
         XYPlot xYPlot = chart.getXYPlot();
         setupXYPlot(xYPlot);
         xYPlot.setBackgroundPaint(Color.white);
-//        xYPlot.setOutlinePaint(Color.black);
         xYPlot.setOutlineStroke(wideLine);
         xYPlot.setRangeGridlinePaint(Color.black);
         xYPlot.setDomainGridlinePaint(Color.black);
@@ -390,7 +396,8 @@ public class JFreeChartUtils {
      * @param valuesCollection
      * @param verticalErrors
      */
-    public static void plotVerticalErrorBars(JFreeChart chart, XYSeriesCollection valuesCollection, List<Double[]> verticalErrors) {
+    public static void plotVerticalErrorBars(JFreeChart chart, XYSeriesCollection valuesCollection, List<Double[]>
+            verticalErrors) {
         Stroke stroke = new BasicStroke();
         // get the plot from the chart
         XYPlot plot = chart.getXYPlot();
@@ -408,7 +415,8 @@ public class JFreeChartUtils {
                 int conditionIndex = Integer.parseInt(subString) - 1;
                 int indexOfColor = conditionIndex % lenght;
                 // add vertical annotation on plot
-                XYLineAnnotation vertical = new XYLineAnnotation(x, y - dy, x, y + dy, stroke, GuiUtils.getAvailableColors()[indexOfColor]);
+                XYLineAnnotation vertical = new XYLineAnnotation(x, y - dy, x, y + dy, stroke, GuiUtils
+                        .getAvailableColors()[indexOfColor]);
                 plot.addAnnotation(vertical);
             }
         }
@@ -451,10 +459,10 @@ public class JFreeChartUtils {
     /**
      * Set up the single track plot.
      *
-     * @param chart: the chart to get the plot from
+     * @param chart:      the chart to get the plot from
      * @param trackIndex: we need this to get the right color
-     * @param inTime: if true, the plot is in time, thus background is set to
-     * white and range does not have to be kept squared
+     * @param inTime:     if true, the plot is in time, thus background is set to
+     *                    white and range does not have to be kept squared
      */
     public static void setupSingleTrackPlot(JFreeChart chart, int trackIndex, boolean inTime) {
         // set up the plot

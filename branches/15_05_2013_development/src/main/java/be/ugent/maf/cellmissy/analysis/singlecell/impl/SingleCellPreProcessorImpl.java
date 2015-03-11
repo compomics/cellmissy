@@ -5,22 +5,23 @@
 package be.ugent.maf.cellmissy.analysis.singlecell.impl;
 
 import be.ugent.maf.cellmissy.analysis.singlecell.SingleCellPreProcessor;
-import be.ugent.maf.cellmissy.analysis.singlecell.TrackOperator;
+import be.ugent.maf.cellmissy.analysis.singlecell.TrackPreProcessor;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellPreProcessingResults;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
-import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,10 +36,11 @@ import org.springframework.stereotype.Component;
 public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
 
     @Autowired
-    private TrackOperator trackOperator;
+    private TrackPreProcessor trackPreProcessor;
 
     @Override
-    public void generateTrackDataHolders(SingleCellPreProcessingResults singleCellPreProcessingResults, PlateCondition plateCondition, double conversionFactor, Double timeLapse) {
+    public void generateTrackDataHolders(SingleCellConditionDataHolder singleCellConditionDataHolder,
+                                         PlateCondition plateCondition) {
         List<TrackDataHolder> trackDataHolders = new ArrayList<>();
         List<Well> singleCellAnalyzedWells = plateCondition.getSingleCellAnalyzedWells();
         for (Well singleCellAnalyzedWell : singleCellAnalyzedWells) {
@@ -46,24 +48,25 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
             for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
                 List<Track> trackList = wellHasImagingType.getTrackList();
                 for (Track track : trackList) {
-                    StepCentricDataHolder stepCentricDataHolder = new StepCentricDataHolder(track, conversionFactor, timeLapse);
+                    StepCentricDataHolder stepCentricDataHolder = new StepCentricDataHolder(track);
                     CellCentricDataHolder cellCentricDataHolder = new CellCentricDataHolder();
                     // generate a new track data holder for this track and add it to the list
-                    TrackDataHolder trackDataHolder = new TrackDataHolder(track, stepCentricDataHolder, cellCentricDataHolder);
+                    TrackDataHolder trackDataHolder = new TrackDataHolder(track, stepCentricDataHolder,
+                            cellCentricDataHolder);
                     trackDataHolders.add(trackDataHolder);
                 }
             }
         }
-        singleCellPreProcessingResults.setTrackDataHolders(trackDataHolders);
+        singleCellConditionDataHolder.setTrackDataHolders(trackDataHolders);
     }
 
     @Override
-    public void generateDataStructure(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void generateDataStructure(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         // for a single condition, compute first the total number of track points
-        int trackPointsNumber = computeTotalTrackPointsNumber(singleCellPreProcessingResults);
+        int trackPointsNumber = computeTotalTrackPointsNumber(singleCellConditionDataHolder);
         Object[][] dataStructure = new Object[trackPointsNumber][3];
         int counter = 0;
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+        for (TrackDataHolder trackDataHolder : singleCellConditionDataHolder.getTrackDataHolders()) {
             List<TrackPoint> trackPointList = trackDataHolder.getTrack().getTrackPointList();
             for (TrackPoint trackPoint : trackPointList) {
                 dataStructure[counter][0] = trackDataHolder.getTrack().getWellHasImagingType().getWell().toString();
@@ -72,23 +75,24 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
                 counter++;
             }
         }
-        singleCellPreProcessingResults.setDataStructure(dataStructure);
+        singleCellConditionDataHolder.setDataStructure(dataStructure);
     }
 
     @Override
-    public void operateOnStepsAndCells(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            trackOperator.operateOnSteps(trackDataHolder);
-            trackOperator.operateOnCells(trackDataHolder);
+    public void preProcessStepsAndCells(SingleCellConditionDataHolder singleCellConditionDataHolder, double
+            conversionFactor, double timeLapse) {
+        for (TrackDataHolder trackDataHolder : singleCellConditionDataHolder.getTrackDataHolders()) {
+            trackPreProcessor.preProcessSteps(trackDataHolder, conversionFactor);
+            trackPreProcessor.preProcessCells(trackDataHolder, timeLapse);
         }
     }
 
     @Override
-    public void generateRawTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
+    public void generateRawTrackCoordinatesMatrix(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        Object[][] dataStructure = singleCellConditionDataHolder.getDataStructure();
         Double[][] rawTrackCoordinatesMatrix = new Double[dataStructure.length][2];
         int counter = 0;
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+        for (TrackDataHolder trackDataHolder : singleCellConditionDataHolder.getTrackDataHolders()) {
             StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
             Double[][] trackCoordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
             for (Double[] aTrackCoordinatesMatrix : trackCoordinatesMatrix) {
@@ -96,252 +100,70 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
                 counter++;
             }
         }
-        singleCellPreProcessingResults.setRawTrackCoordinatesMatrix(rawTrackCoordinatesMatrix);
+        singleCellConditionDataHolder.setRawTrackCoordinatesMatrix(rawTrackCoordinatesMatrix);
     }
 
     @Override
-    public void generateShiftedTrackCoordinatesMatrix(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
+    public void generateShiftedTrackCoordinatesMatrix(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        Object[][] dataStructure = singleCellConditionDataHolder.getDataStructure();
         Double[][] shiftedTrackCoordinatesMatrix = new Double[dataStructure.length][2];
         int counter = 0;
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            Double[][] shiftedTrackCoordinates = trackDataHolder.getStepCentricDataHolder().getShiftedCooordinatesMatrix();
+        for (TrackDataHolder trackDataHolder : singleCellConditionDataHolder.getTrackDataHolders()) {
+            Double[][] shiftedTrackCoordinates = trackDataHolder.getStepCentricDataHolder()
+                    .getShiftedCooordinatesMatrix();
             for (Double[] shiftedTrackCoordinate : shiftedTrackCoordinates) {
                 shiftedTrackCoordinatesMatrix[counter] = shiftedTrackCoordinate;
                 counter++;
             }
         }
-        singleCellPreProcessingResults.setShiftedTrackCoordinatesMatrix(shiftedTrackCoordinatesMatrix);
+        singleCellConditionDataHolder.setShiftedTrackCoordinatesMatrix(shiftedTrackCoordinatesMatrix);
     }
 
     @Override
-    public void generateRawCoordinatesRanges(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void generateRawCoordinatesRanges(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         // get the raw tracks coordinates
-        Double[][] rawTrackCoordinatesMatrix = singleCellPreProcessingResults.getRawTrackCoordinatesMatrix();
+        Double[][] rawTrackCoordinatesMatrix = singleCellConditionDataHolder.getRawTrackCoordinatesMatrix();
         // get the x and the y values, first needs to be transposed
         Double[][] transposedMatrix = AnalysisUtils.transpose2DArray(rawTrackCoordinatesMatrix);
-        Double[] xCoord = transposedMatrix[0];
-        Double[] yCoord = transposedMatrix[1];
         // compute the min and the max coordinates
-        Double xMin = Collections.min(Arrays.asList(xCoord));
-        Double xMax = Collections.max(Arrays.asList(xCoord));
-        Double ymin = Collections.min(Arrays.asList(yCoord));
-        Double yMax = Collections.max(Arrays.asList(yCoord));
+        Double xMin = Collections.min(Arrays.asList(transposedMatrix[0]));
+        Double xMax = Collections.max(Arrays.asList(transposedMatrix[0]));
+        Double yMin = Collections.min(Arrays.asList(transposedMatrix[1]));
+        Double yMax = Collections.max(Arrays.asList(transposedMatrix[1]));
         Double[][] rawCoordinatesRanges = new Double[2][2];
         rawCoordinatesRanges[0] = new Double[]{xMin, xMax};
-        rawCoordinatesRanges[1] = new Double[]{ymin, yMax};
-        singleCellPreProcessingResults.setRawCoordinatesRanges(rawCoordinatesRanges);
+        rawCoordinatesRanges[1] = new Double[]{yMin, yMax};
+        singleCellConditionDataHolder.setRawCoordinatesRanges(rawCoordinatesRanges);
     }
 
     @Override
-    public void generateShiftedCoordinatesRanges(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    public void generateShiftedCoordinatesRanges(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         // get the raw tracks coordinates
-        Double[][] shiftedTrackCoordinatesMatrix = singleCellPreProcessingResults.getShiftedTrackCoordinatesMatrix();
+        Double[][] shiftedTrackCoordinatesMatrix = singleCellConditionDataHolder.getShiftedTrackCoordinatesMatrix();
         // get the x and the y values, first needs to be transposed
         Double[][] transposedMatrix = AnalysisUtils.transpose2DArray(shiftedTrackCoordinatesMatrix);
-        Double[] xCoord = transposedMatrix[0];
-        Double[] yCoord = transposedMatrix[1];
         // compute the min and the max coordinates
-        Double xMin = Collections.min(Arrays.asList(xCoord));
-        Double xMax = Collections.max(Arrays.asList(xCoord));
-        Double ymin = Collections.min(Arrays.asList(yCoord));
-        Double yMax = Collections.max(Arrays.asList(yCoord));
+        Double xMin = Collections.min(Arrays.asList(transposedMatrix[0]));
+        Double xMax = Collections.max(Arrays.asList(transposedMatrix[0]));
+        Double yMin = Collections.min(Arrays.asList(transposedMatrix[1]));
+        Double yMax = Collections.max(Arrays.asList(transposedMatrix[1]));
         Double[][] shiftedCoordinatesRanges = new Double[2][2];
         shiftedCoordinatesRanges[0] = new Double[]{xMin, xMax};
-        shiftedCoordinatesRanges[1] = new Double[]{ymin, yMax};
-        singleCellPreProcessingResults.setShiftedCoordinatesRanges(shiftedCoordinatesRanges);
-    }
-
-    @Override
-    public void generateInstantaneousDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-        Double[] instantaneousDisplacementsVector = new Double[dataStructure.length];
-        int counter = 0;
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            Double[] instantaneousDisplacements = trackDataHolder.getStepCentricDataHolder().getInstantaneousDisplacements();
-            for (Double instantaneousDisplacement : instantaneousDisplacements) {
-                instantaneousDisplacementsVector[counter] = instantaneousDisplacement;
-                counter++;
-            }
-        }
-        singleCellPreProcessingResults.setInstantaneousDisplacementsVector(instantaneousDisplacementsVector);
-    }
-
-    @Override
-    public void generateDirectionalityRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-        Double[] directionalityRatiosVector = new Double[dataStructure.length];
-        int counter = 0;
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            Double[] directionalityRatios = trackDataHolder.getStepCentricDataHolder().getDirectionalityRatios();
-            for (Double directionalityRatio : directionalityRatios) {
-                directionalityRatiosVector[counter] = directionalityRatio;
-                counter++;
-            }
-        }
-        singleCellPreProcessingResults.setDirectionalityRatiosVector(directionalityRatiosVector);
-    }
-
-    @Override
-    public void generateMedianDirectionalityRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] medianDirectionalityRatiosVector = new Double[trackDataHolders.size()];
-        for (int i = 0; i < medianDirectionalityRatiosVector.length; i++) {
-            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double trackAngle = trackDataHolder.getCellCentricDataHolder().getMedianDirectionalityRatio();
-            medianDirectionalityRatiosVector[i] = trackAngle;
-        }
-        singleCellPreProcessingResults.setMedianDirectionalityRatiosVector(medianDirectionalityRatiosVector);
-    }
-
-    @Override
-    public void generateTrackDisplacementsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] trackDisplacementsVector = new Double[trackDataHolders.size()];
-        for (int i = 0; i < trackDisplacementsVector.length; i++) {
-            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double trackMeanDisplacement = trackDataHolder.getCellCentricDataHolder().getMedianDisplacement();
-            trackDisplacementsVector[i] = trackMeanDisplacement;
-        }
-        singleCellPreProcessingResults.setTrackDisplacementsVector(trackDisplacementsVector);
-    }
-
-    @Override
-    public void generateCumulativeDistancesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] cumulativeDistancesVector = new Double[trackDataHolders.size()];
-        for (int i = 0; i < cumulativeDistancesVector.length; i++) {
-            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double cumulativeDistance = trackDataHolder.getCellCentricDataHolder().getCumulativeDistance();
-            cumulativeDistancesVector[i] = cumulativeDistance;
-        }
-        singleCellPreProcessingResults.setCumulativeDistancesVector(cumulativeDistancesVector);
-    }
-
-    @Override
-    public void generateEuclideanDistancesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] euclideanDistancesVector = new Double[trackDataHolders.size()];
-        for (int i = 0; i < euclideanDistancesVector.length; i++) {
-            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double euclideanDistance = trackDataHolder.getCellCentricDataHolder().getEuclideanDistance();
-            euclideanDistancesVector[i] = euclideanDistance;
-        }
-        singleCellPreProcessingResults.setEuclideanDistancesVector(euclideanDistancesVector);
-    }
-
-    @Override
-    public void generateTrackSpeedsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] trackDisplacementsVector = singleCellPreProcessingResults.getTrackDisplacementsVector();
-        Double[] trackSpeedsVector = new Double[trackDisplacementsVector.length];
-        for (int i = 0; i < trackDisplacementsVector.length; i++) {
-            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double trackMeanSpeed = trackDataHolder.getCellCentricDataHolder().getMedianSpeed();
-            trackSpeedsVector[i] = trackMeanSpeed;
-        }
-        singleCellPreProcessingResults.setTrackSpeedsVector(trackSpeedsVector);
-    }
-
-    @Override
-    public void generateEndPointDirectionalityRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] endPointDirectionalityRatios = new Double[trackDataHolders.size()];
-        for (int i = 0; i < endPointDirectionalityRatios.length; i++) {
-            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double endPointDirectionalityRatio = trackDataHolder.getCellCentricDataHolder().getEndPointDirectionalityRatio();
-            endPointDirectionalityRatios[i] = endPointDirectionalityRatio;
-        }
-        singleCellPreProcessingResults.setEndPointDirectionalityRatios(endPointDirectionalityRatios);
-    }
-
-    @Override
-    public void generateConvexHullsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        ConvexHull[] convexHullsVector = new ConvexHull[trackDataHolders.size()];
-        for (int i = 0; i < convexHullsVector.length; i++) {
-            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            ConvexHull convexHull = trackDataHolder.getCellCentricDataHolder().getConvexHull();
-            convexHullsVector[i] = convexHull;
-        }
-        singleCellPreProcessingResults.setConvexHullsVector(convexHullsVector);
-    }
-
-    @Override
-    public void generateDisplacementRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] displacementRatiosVector = new Double[trackDataHolders.size()];
-        for (int i = 0; i < displacementRatiosVector.length; i++) {
-            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double displacementRatio = trackDataHolder.getCellCentricDataHolder().getDisplacementRatio();
-            displacementRatiosVector[i] = displacementRatio;
-        }
-        singleCellPreProcessingResults.setDisplacementRatiosVector(displacementRatiosVector);
-    }
-
-    @Override
-    public void generateOutreachRatiosVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] outreachRatiosVector = new Double[trackDataHolders.size()];
-        for (int i = 0; i < outreachRatiosVector.length; i++) {
-            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double outreachRatio = trackDataHolder.getCellCentricDataHolder().getOutreachRatio();
-            outreachRatiosVector[i] = outreachRatio;
-        }
-        singleCellPreProcessingResults.setOutreachRatiosVector(outreachRatiosVector);
-    }
-
-    @Override
-    public void generateTurningAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        Object[][] dataStructure = singleCellPreProcessingResults.getDataStructure();
-        Double[] turningAnglesVector = new Double[dataStructure.length];
-        int counter = 0;
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
-            Double[] turningAngles = trackDataHolder.getStepCentricDataHolder().getTurningAngles();
-            for (Double turningAngle : turningAngles) {
-                turningAnglesVector[counter] = turningAngle;
-                counter++;
-            }
-        }
-        singleCellPreProcessingResults.setTurningAnglesVector(turningAnglesVector);
-    }
-
-    @Override
-    public void generateMedianTurningAnglesVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] medianTurningAnglesVector = new Double[trackDataHolders.size()];
-        for (int i = 0; i < medianTurningAnglesVector.length; i++) {
-            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double medianTurningAngle = trackDataHolder.getCellCentricDataHolder().getMedianTurningAngle();
-            medianTurningAnglesVector[i] = medianTurningAngle;
-        }
-        singleCellPreProcessingResults.setMedianTurningAnglesVector(medianTurningAnglesVector);
-    }
-
-    @Override
-    public void generateMedianDirectionAutocorrelationsVector(SingleCellPreProcessingResults singleCellPreProcessingResults) {
-        List<TrackDataHolder> trackDataHolders = singleCellPreProcessingResults.getTrackDataHolders();
-        Double[] medianDirectionAutocorrelationsVector = new Double[trackDataHolders.size()];
-        for (int i = 0; i < medianDirectionAutocorrelationsVector.length; i++) {
-            TrackDataHolder trackDataHolder = trackDataHolders.get(i);
-            double medianDirectionAutocorrelation = trackDataHolder.getCellCentricDataHolder().getMedianDirectionAutocorrelation();
-            medianDirectionAutocorrelationsVector[i] = medianDirectionAutocorrelation;
-        }
-        singleCellPreProcessingResults.setMedianDirectionAutocorrelationsVector(medianDirectionAutocorrelationsVector);
+        shiftedCoordinatesRanges[1] = new Double[]{yMin, yMax};
+        singleCellConditionDataHolder.setShiftedCoordinatesRanges(shiftedCoordinatesRanges);
     }
 
     /**
      * Calculate the total number of track points.
      *
-     * @param singleCellPreProcessingResults
+     * @param singleCellConditionDataHolder
      * @return an integer
      */
-    private int computeTotalTrackPointsNumber(SingleCellPreProcessingResults singleCellPreProcessingResults) {
+    private int computeTotalTrackPointsNumber(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         int trackPointsNumber = 0;
-        for (TrackDataHolder trackDataHolder : singleCellPreProcessingResults.getTrackDataHolders()) {
+        for (TrackDataHolder trackDataHolder : singleCellConditionDataHolder.getTrackDataHolders()) {
             trackPointsNumber += trackDataHolder.getTrack().getTrackPointList().size();
         }
         return trackPointsNumber;
     }
-
 }

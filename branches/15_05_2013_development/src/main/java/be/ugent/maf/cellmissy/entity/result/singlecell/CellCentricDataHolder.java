@@ -5,8 +5,8 @@
 package be.ugent.maf.cellmissy.entity.result.singlecell;
 
 /**
- * This class keeps the measurements about a certain track, averaged across all
- * the time points.
+ * This class keeps the measurements about a certain track, on a cell-centric level,
+ * i.e. averaged across all the time points.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -49,7 +49,7 @@ public class CellCentricDataHolder {
     private ConvexHull convexHull;
     // displacement ratio: displacement/maximal displacement
     private double displacementRatio;
-    // outreach ratio: maximal displacement/path lenght
+    // outreach ratio: maximal displacement/path length
     private double outreachRatio;
     // track angle: the median turning angle computed from all time intervals throughout a track
     private double medianTurningAngle;
@@ -61,7 +61,7 @@ public class CellCentricDataHolder {
     private double medianDirectionAutocorrelation;
 
     /**
-     * Constructor
+     * Empty Constructor
      */
     public CellCentricDataHolder() {
     }
