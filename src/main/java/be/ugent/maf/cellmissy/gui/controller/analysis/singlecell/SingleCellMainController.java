@@ -652,50 +652,57 @@ public class SingleCellMainController {
     }
 
     /**
-     * Action on selected condition:
+     * Action on selected condition: check if computations were already perfomed on the selected condition. If this
+     * is the case, skip the computations, else just go for it.
+     * already
      *
      * @param selectedCondition
      */
     private void onSelectedCondition(PlateCondition selectedCondition) {
-        // if we are clicking for the first time, current condition is still null
-        // check also that we are not clicking again the same condition
-        if (currentCondition == null || !currentCondition.equals(selectedCondition)) {
-            if (!selectedCondition.isComputed()) {
-                singleCellPreProcessingController.operateOnCondition(selectedCondition);
-            }
-
-            // clean track points list if not empty
-            if (!singleCellPreProcessingController.getTrackPointsBindingList().isEmpty()) {
-                singleCellPreProcessingController.getTrackPointsBindingList().clear();
-            }
-            if (!singleCellPreProcessingController.getTracksBindingList().isEmpty()) {
-                // since we are moving from one condition to another one,
-                // we clear the list of tracks to plot, if it's not empty
-                if (!singleCellPreProcessingController.getTrackDataHolderBindingList().isEmpty()) {
-                    singleCellPreProcessingController.getTrackDataHolderBindingList().clear();
+        // first check that this condition is in the map, i.e. it has some data!
+        if (singleCellPreProcessingController.getConditionDataHolder(selectedCondition) != null) {
+            // if we are clicking for the first time, current condition is still null
+            // check also that we are not clicking again the same condition
+            if (currentCondition == null || !currentCondition.equals(selectedCondition)) {
+                // if computations for the condition were not performed yet, do so now
+                if (!selectedCondition.isComputed()) {
+                    singleCellPreProcessingController.operateOnCondition(selectedCondition);
                 }
+                // empty the track points list if not empty
+                if (!singleCellPreProcessingController.getTrackPointsBindingList().isEmpty()) {
+                    singleCellPreProcessingController.getTrackPointsBindingList().clear();
+                }
+                if (!singleCellPreProcessingController.getTracksBindingList().isEmpty()) {
+                    // since we are moving from one condition to another one,
+                    // we clear the list of tracks to plot, if it's not empty
+                    if (!singleCellPreProcessingController.getTrackDataHolderBindingList().isEmpty()) {
+                        singleCellPreProcessingController.getTrackDataHolderBindingList().clear();
+                    }
+                }
+                // and we finally generate the random tracks to plot again
+                // note that this is not done on the card switch method itself, because there we want
+                // to keep the same random tracks every time we switch from one view to another one.
+                singleCellPreProcessingController.generateRandomTrackDataHolders(singleCellPreProcessingController
+                        .getCategoryToPlot(), selectedCondition);
+                // update the tracks list for the current condition
+                updateTracksList(selectedCondition);
+                //Select the first row of the table to show first track as default
+                singleCellPreProcessingController.getSingleCellAnalysisPanel().getTracksTable()
+                        .setRowSelectionInterval(0, 0);
+                // update GUI according to current view on the Card Layout
+                onCardSwitch();
+                // the condition is loaded, and plate view is refreshed
+                showNotImagedWells(selectedCondition);
+                showWellsForCurrentCondition(selectedCondition);
             }
-
-            // we get the category to plot from the selected tab in the GUI
-            int categoryToPlot = singleCellPreProcessingController.getCategoryToPlot();
-            // and we finally generate the random tracks to plot again
-            // note that this is not done on the card switch method itself, because there we want
-            // to keep the same random tracks every time we switch from one view to another one.
-            singleCellPreProcessingController.generateRandomTrackDataHolders(categoryToPlot, selectedCondition);
-            // update the tracks list for the current condition
-            updateTracksList(selectedCondition);
-            //Select the first row of the table to show first track as default
-            singleCellPreProcessingController.getSingleCellAnalysisPanel().getTracksTable()
-                    .setRowSelectionInterval(0, 0);
-
-            // update GUI according to current view on the Card Layout
-            onCardSwitch();
-            // the condition is loaded, and plate view is refreshed
-            showNotImagedWells(selectedCondition);
-            showWellsForCurrentCondition(selectedCondition);
+            currentCondition = selectedCondition;
+            singleCellPreProcessingController.showTracksInTable();
+        } else {
+            // inform the user and ignore the selection
+            showInfoMessage("Condition: " + selectedCondition + " was not imaged/processed! Select another condition!");
+            showMessage("Condition: " + selectedCondition + " was not imaged/processed!\nNo computations to" +
+                    " perform!", "no data to show" , JOptionPane.WARNING_MESSAGE);
         }
-        currentCondition = selectedCondition;
-        singleCellPreProcessingController.showTracksInTable();
     }
 
     /**

@@ -255,7 +255,7 @@ class SingleCellPreProcessingController {
     }
 
     /**
-     * Operate on a specific plateCondition
+     * Operate on a specific plate condition.
      *
      * @param plateCondition
      */
@@ -331,7 +331,8 @@ class SingleCellPreProcessingController {
             } else {
                 // remove the plateCondition from the map and inform the user
                 preProcessingMap.remove(plateCondition);
-                appendInfo("No tracks recorded for plateCondition: " + plateCondition + "; computations skipped!");
+                appendInfo("No tracks recorded for condition: " + plateCondition + "; no coordinates to retrieve from" +
+                        " DB!");
             }
         }
     }
@@ -523,7 +524,8 @@ class SingleCellPreProcessingController {
     }
 
     /**
-     * A swing worker to pre-process the entire experiment (i.e. all its
+     * A class extending a swing worker to pre-process the entire experiment (i.e. all its
+     * A class extending a swing worker to pre-process the entire experiment (i.e. all its
      * conditions at once).
      */
     private class PreProcessExperimentSwingWorker extends SwingWorker<Void, Void> {
@@ -601,36 +603,44 @@ class SingleCellPreProcessingController {
             singleCellMainController.controlGuiComponents(false);
             // actually do the computations on the plateCondition
             SingleCellConditionDataHolder singleCellConditionDataHolder = preProcessingMap.get(plateCondition);
-            appendInfo("Operating now on plateCondition: " + plateCondition);
-            appendInfo("operating on steps and cells...");
-            singleCellOperator.operateOnStepsAndCells(singleCellConditionDataHolder);
-            appendInfo("generating instantaneous displacements...");
-            singleCellOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
-            appendInfo("generating directionality ratios...");
-            singleCellOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
-            appendInfo("generating track displacements...");
-            singleCellOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
-            appendInfo("generating median directionality ratios...");
-            singleCellOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
-            appendInfo("generating cumulative distances...");
-            singleCellOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
-            appendInfo("generating euclidean distances...");
-            singleCellOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
-            appendInfo("generating track speeds...");
-            singleCellOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
-            appendInfo("generating track end-point directionality ratios...");
-            singleCellOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
-            appendInfo("generating convex hulls...");
-            singleCellOperator.generateConvexHullsVector(singleCellConditionDataHolder);
-            appendInfo("generating track displacements...");
-            singleCellOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
-            appendInfo("generating outreach ratios...");
-            singleCellOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
-            appendInfo("generating turning angles...");
-            singleCellOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
-            appendInfo("generating median turning angles...");
-            singleCellOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
-            plateCondition.setComputed(true);
+            // check if the condition is actually to be analyzed
+            if (singleCellConditionDataHolder != null) {
+                appendInfo("Operating now on plateCondition: " + plateCondition);
+                appendInfo("operating on steps and cells...");
+                singleCellOperator.operateOnStepsAndCells(singleCellConditionDataHolder);
+                appendInfo("generating instantaneous displacements...");
+                singleCellOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
+                appendInfo("generating directionality ratios...");
+                singleCellOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
+                appendInfo("generating track displacements...");
+                singleCellOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
+                appendInfo("generating median directionality ratios...");
+                singleCellOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
+                appendInfo("generating cumulative distances...");
+                singleCellOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
+                appendInfo("generating euclidean distances...");
+                singleCellOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
+                appendInfo("generating track speeds...");
+                singleCellOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
+                appendInfo("generating track end-point directionality ratios...");
+                singleCellOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
+                appendInfo("generating convex hulls...");
+                singleCellOperator.generateConvexHullsVector(singleCellConditionDataHolder);
+                appendInfo("generating track displacements...");
+                singleCellOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
+                appendInfo("generating outreach ratios...");
+                singleCellOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
+                appendInfo("generating turning angles...");
+                singleCellOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
+                appendInfo("generating median turning angles...");
+                singleCellOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
+                plateCondition.setComputed(true);
+            } else {
+                // if not, just inform the user and skip the computation
+                appendInfo("Apparently this condition was not imaged/analyzed!");
+                singleCellMainController.showInfoMessage("Apparently this condition was not imaged/analyzed!\nNothing" +
+                        " to compute!");
+            }
             return null;
         }
 
