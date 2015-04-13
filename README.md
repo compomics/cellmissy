@@ -3,6 +3,7 @@
 
  * [Project Description](#project-description)
  * [Downloads](#downloads)
+ * [News](#news)
  * [Usage](#usage)
  * [Project Support](#project-support)
 
@@ -12,15 +13,21 @@
 
 *CellMissy* is a cross-platform data management system for cell migration/invasion data that simplifies and fully automates data management, storage and analysis, from experimental set-up to data visualization and exploration. 
 *CellMissy* is a client-server application with a graphical user interface on the client, and a relational database in the back-end to store the data. The client application is composed of three modules that cover the different functions of *CellMissy*: the Experiment Manager, the Data Loader and the Data Analyzer. On top of these modules, *CellMissy* provides tools for import/export of full experiments and templates.
-See the manual in the [Downloads section](#downloads) for further information on how to use the tool.
+
+See the manual in the [downloads section](#downloads) for further information on how to use the tool.
 The current version of *CellMissy* focuses on wound healing data from scratch assay or cell zone exclusion assays of different types.
 
 [Go to top of page](#cellmissy)
 
 ----
 
+## News
+**November 30, 2013**: 
+[https://code.google.com/p/cellmissy/downloads/detail?name=CellMissy-1.0.4.zip&can=2&q= CellMissy 1.0.4] is now available!
+**CellMissy**: DB schema has been modified to take into account users privileges in relation to projects and experiments. Download the new SQL script to create your *CellMissy* DB (see more in the [downloads section](#downloads)).
+
 ## Downloads
-Download jTraML 1.0.4 [here](http://genesis.ugent.be/maven2/com/compomics/jtraml/jtraml-core/1.0.4/jtraml-core-1.0.4.zip).
+Download CellMissy 1.0.4 [here](http://genesis.ugent.be/maven2/com/compomics/jtraml/jtraml-core/1.0.4/jtraml-core-1.0.4.zip).
 
 ### Example Files
   * [Example transition file - TraML 0.9.5 document](http://genesis.ugent.be/uvpublicdata/jtraml/tsq_example_095.traml)
