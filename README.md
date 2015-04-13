@@ -23,7 +23,7 @@
 
 ## News
 **November 30, 2013**: 
-[https://code.google.com/p/cellmissy/downloads/detail?name=CellMissy-1.0.4.zip&can=2&q= CellMissy 1.0.4] is now available!
+[CellMissy 1.0.4](http://genesis.ugent.be/uvpublicdata/cellmissy/CellMissy-1.0.4.zip) is now available!
 
 **CellMissy**: DB schema has been modified to take into account users privileges in relation to projects and experiments. Download the new SQL script to create your *CellMissy* DB (see more in the [downloads section](#downloads)).
 
