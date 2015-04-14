@@ -44,6 +44,7 @@ public interface AreaPreProcessor {
      * Compute normalised Corrected Area values for a certain Condition
      *
      * @param areaPreProcessingResults
+     * @param outlierHandlerBeanName
      */
     public void normalizeCorrectedArea(AreaPreProcessingResults areaPreProcessingResults, String outlierHandlerBeanName);
 
@@ -86,6 +87,7 @@ public interface AreaPreProcessor {
      * Excel algorithms for example.
      *
      * @param data
+     * @param outliersHandlerBeanName
      * @return a matrix with corrected value
      */
     public Double[][] correctForOutliers(Double[][] data, String outliersHandlerBeanName);
@@ -96,6 +98,7 @@ public interface AreaPreProcessor {
      * or something else.
      *
      * @param data
+     * @param kernelDensityEstimatorBeanName
      * @return a list of doubles[] containing x and y values for the function.
      */
     public List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName);

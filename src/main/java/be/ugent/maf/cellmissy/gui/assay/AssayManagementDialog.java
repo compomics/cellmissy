@@ -89,7 +89,7 @@ public class AssayManagementDialog extends javax.swing.JDialog {
         jScrollPane1.setPreferredSize(new java.awt.Dimension(45, 100));
 
         assaysList.setModel(new javax.swing.AbstractListModel() {
-            final String[] strings = { "Item 1", "Item 2" };
+            String[] strings = { "Item 1", "Item 2" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
@@ -157,7 +157,7 @@ public class AssayManagementDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, addAssayButton, deleteAssayButton, saveAssayButton);
+        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addAssayButton, deleteAssayButton, saveAssayButton});
 
         detailsPanelLayout.setVerticalGroup(
             detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -222,9 +222,9 @@ public class AssayManagementDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(assaysPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(detailsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(detailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(infoPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(infoPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -275,12 +275,9 @@ public class AssayManagementDialog extends javax.swing.JDialog {
     private javax.swing.JPanel detailsPanel;
     private javax.swing.JComboBox dimensionComboBox;
     private javax.swing.JLabel ecmDimensionLabel;
-    private javax.swing.JPanel infoPanel;
     private javax.swing.JPanel infoPanel1;
-    private javax.swing.JTextPane infoTextPane;
     private javax.swing.JTextPane infoTextPane1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JTextField nameTextField;
