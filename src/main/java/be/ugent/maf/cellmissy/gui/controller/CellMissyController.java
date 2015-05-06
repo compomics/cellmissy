@@ -57,6 +57,7 @@ public class CellMissyController {
     private static final Logger LOG = Logger.getLogger(CellMissyController.class);
     // model
     // model
+    private boolean genericArea;
     private boolean firstSetup;
     private boolean firstAreaAnalysis;
     private boolean firstSingleCellAnalysis;
@@ -123,6 +124,10 @@ public class CellMissyController {
 
     public void addNewProjectToList(Project project) {
         overviewController.getProjectBindingList().add(project);
+    }
+
+    public boolean isGenericArea() {
+        return genericArea;
     }
 
     /**
@@ -356,8 +361,10 @@ public class CellMissyController {
         cellMissyFrame.getNewExperimentMenuItem().addActionListener(itemActionListener);
         // import data from cell mia
         cellMissyFrame.getCellMiaMenuItem().addActionListener(itemActionListener);
-        // import data from generic input
-        cellMissyFrame.getGenericInputMenuItem().addActionListener(itemActionListener);
+        // import area data from generic input
+        cellMissyFrame.getAreaGenericMenuItem().addActionListener(itemActionListener);
+        // import tracks (single cell data) from generic input
+        cellMissyFrame.getSingleCellGenericMenuItem().addActionListener(itemActionListener);
         // area analysis
         cellMissyFrame.getAreaAnalysisMenuItem().addActionListener(itemActionListener);
         // single cell analysis
@@ -540,10 +547,12 @@ public class CellMissyController {
                 onAreaAnalysis();
             } else if (menuItemText.equalsIgnoreCase("... single cell") && switchCard(menuItemText)) {
                 onSingleCellAnalysis();
-            } else if (menuItemText.equalsIgnoreCase("... from CELLMIA") && switchCard(menuItemText)) {
+            } else if (menuItemText.equalsIgnoreCase("... data from CELLMIA") && switchCard(menuItemText)) {
                 onLoadingFromCellMia();
-            } else if (menuItemText.equalsIgnoreCase("... from generic input") && switchCard(menuItemText)) {
+                // we keep it general for the generic input: can have both area and tracks importing
+            } else if (menuItemText.contains("generic input") && switchCard(menuItemText)) {
                 onLoadingFromGenericInput();
+                genericArea = menuItemText.equalsIgnoreCase("... area from generic input");
             }
         }
     }

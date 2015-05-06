@@ -17,8 +17,8 @@ import be.ugent.maf.cellmissy.entity.result.TimeInterval;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public class AreaPreProcessingResults {
+    
     // time frames
-
     private double[] processedTimeFrames;
     // Area Raw Data (from DB)
     private Double[][] areaRawData;

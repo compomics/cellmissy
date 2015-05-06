@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static junit.framework.Assert.*;
 
 /**
+ * A test unit for the CELLMIA file parser.
  *
  * @author Paola
  */
@@ -27,7 +28,8 @@ public class CellMiaFileParserTest {
     private CellMiaFileParser cellMiaFileParser;
 
     /**
-     * Test CellMiaFileParserClass: get List of Tracks and TimeSteps parsing cellMia files
+     * Test CellMiaFileParserClass: get List of Tracks and TimeSteps parsing
+     * cellMia files
      */
     @Test
     public void testCellMiaFileParser() {

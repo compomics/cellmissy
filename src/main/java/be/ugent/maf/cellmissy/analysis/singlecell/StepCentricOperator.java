@@ -28,6 +28,7 @@ public interface StepCentricOperator {
      * and no actual conversion is taken up.
      *
      * @param stepCentricDataHolder
+     * @param conversionFactor
      */
     public void generateCoordinatesMatrix(StepCentricDataHolder stepCentricDataHolder, double conversionFactor);
 

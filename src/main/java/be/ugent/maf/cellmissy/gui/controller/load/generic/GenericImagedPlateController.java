@@ -7,18 +7,14 @@ package be.ugent.maf.cellmissy.gui.controller.load.generic;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.ImagingType;
-import be.ugent.maf.cellmissy.entity.TimeStep;
-import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
-import be.ugent.maf.cellmissy.exception.FileParserException;
+import be.ugent.maf.cellmissy.gui.controller.load.generic.area.GenericAreaImagedPlateController;
+import be.ugent.maf.cellmissy.gui.controller.load.generic.singlecell.GenericSingleCellImagedPlateController;
 import be.ugent.maf.cellmissy.gui.experiment.load.generic.LoadFromGenericInputPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.gui.view.renderer.tree.LoadDataTreeCellRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
-import be.ugent.maf.cellmissy.parser.GenericInputFileParser;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 
@@ -49,29 +45,24 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.log4j.Logger;
-import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.BindingGroup;
-import org.jdesktop.beansbinding.ELProperty;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
-import org.jdesktop.swingbinding.JTableBinding;
-import org.jdesktop.swingbinding.SwingBindings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
+ * A controller to take care of loading data from a generic input, both area and
+ * single cell data.
+ *
  * @author Paola Masuzzo
  */
-@Component("genericImagedPlatePanel")
-class GenericImagedPlateController {
+@Component("genericImagedPlateController")
+public class GenericImagedPlateController {
 
     private static final Logger LOG = Logger.getLogger(GenericImagedPlateController.class);
     //model
     private ObservableList<Algorithm> algorithmsBindingList;
     private ObservableList<ImagingType> imagingTypesBindingList;
-    private BindingGroup bindingGroup;
-    private ObservableList<TimeStep> timeStepsBindingList;
-    private JTableBinding timeStepsTableBinding;
     private Format format;
     private ImagingType currentImagingType;
     private Algorithm currentAlgorithm;
@@ -81,11 +72,14 @@ class GenericImagedPlateController {
     // parent controller
     @Autowired
     private LoadExperimentFromGenericInputController loadExperimentFromGenericInputController;
+    // child controllers
+    @Autowired
+    private GenericAreaImagedPlateController genericAreaImagedPlateController;
+    @Autowired
+    private GenericSingleCellImagedPlateController genericSingleCellImagedPlateController;
     //services
     @Autowired
     private PlateService plateService;
-    @Autowired
-    private GenericInputFileParser genericInputFileParser;
     private GridBagConstraints gridBagConstraints;
     private boolean mouseListenerEnabled;
 
@@ -94,12 +88,14 @@ class GenericImagedPlateController {
      */
     public void init() {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        bindingGroup = new BindingGroup();
         imagedPlatePanel = new ImagedPlatePanel();
         loadFromGenericInputPlatePanel = new LoadFromGenericInputPlatePanel();
         //disable mouse Listener
         mouseListenerEnabled = false;
         format = new DecimalFormat(PropertiesConfigurationHolder.getInstance().getString("dataFormat"));
+        // init child controllers
+        genericAreaImagedPlateController.init();
+        genericSingleCellImagedPlateController.init();
         // init views
         initLoadDataPlatePanel();
         initAlgoImagingPanel();
@@ -116,6 +112,14 @@ class GenericImagedPlateController {
 
     public LoadFromGenericInputPlatePanel getLoadFromGenericInputPlatePanel() {
         return loadFromGenericInputPlatePanel;
+    }
+
+    public Format getFormat() {
+        return format;
+    }
+
+    public void showMessage(String message, String title, Integer messageType) {
+        loadExperimentFromGenericInputController.showMessage(message, title, messageType);
     }
 
     /**
@@ -145,25 +149,7 @@ class GenericImagedPlateController {
      * carefully!!
      */
     public void resetData() {
-        // empty timesteps list
-        timeStepsBindingList.clear();
-        // resetData view on the plate
-        // empty wellhasimagingtype collection of each well
-        List<WellGui> wellGuiList = imagedPlatePanel.getWellGuiList();
-        for (WellGui wellGui : wellGuiList) {
-            // clear the wellhasimagingtype collection
-            wellGui.getWell().getWellHasImagingTypeList().clear();
-            List<Ellipse2D> ellipsi = wellGui.getEllipsi();
-            Iterator<Ellipse2D> iterator = ellipsi.iterator();
-            while (iterator.hasNext()) {
-                // only the default, bigger ellipse needs to stay in the repaint
-                if (!iterator.next().equals(ellipsi.get(0))) {
-                    iterator.remove();
-                }
-            }
-        }
-        // repaint the plate view
-        imagedPlatePanel.repaint();
+        genericAreaImagedPlateController.resetData();
     }
 
     /**
@@ -206,24 +192,32 @@ class GenericImagedPlateController {
                             // get the list of WellHasImagingType for the selected well
                             List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
                             //
-                            reloadData(selectedWellGui);
+                            if (loadExperimentFromGenericInputController.isGenericArea()) {
+                                genericAreaImagedPlateController.reloadData(selectedWellGui);
+                            }
+
                             // check if the wellHasImagingType was already processed
                             // this is comparing objects with column, row numbers, and algorithm,imaging types
                             if (!wellHasImagingTypeList.contains(newWellHasImagingType)) {
                                 // if it was not already processed, choose a file to parse
-                                File bulkCellFile = chooseData();
-                                if (bulkCellFile != null) {
-                                    // load data
-                                    loadData(bulkCellFile, newWellHasImagingType, selectedWellGui);
+                                File dataFile = chooseData();
+                                if (dataFile != null) {
+                                    // if it's area that we need to load...
+                                    if (loadExperimentFromGenericInputController.isGenericArea()) {
+                                        genericAreaImagedPlateController.loadData(dataFile, newWellHasImagingType, selectedWellGui);
+                                        // check if table still has to be initialized
+                                        if (genericAreaImagedPlateController.getTimeStepsTableBinding() == null) {
+                                            genericAreaImagedPlateController.showRawDataInTable();
+                                        }
+                                    } else {
+                                        // call the other controller 
+                                    }
+
                                     // update relation with algorithm and imaging type
                                     currentAlgorithm.getWellHasImagingTypeList().add(newWellHasImagingType);
                                     currentImagingType.getWellHasImagingTypeList().add(newWellHasImagingType);
                                     // highlight imaged well
                                     highlightImagedWell(selectedWellGui);
-                                    // check if table still has to be initialized
-                                    if (timeStepsTableBinding == null) {
-                                        showRawDataInTable();
-                                    }
                                 }
                             } else {
                                 // warn the user that data was already loaded for the selected combination of well/dataset/imaging type
@@ -234,20 +228,34 @@ class GenericImagedPlateController {
                                         // choose another file to parse (another dataset to load)
                                         File newFile = chooseData();
                                         if (newFile != null) {
-                                            // remove from the list the old data
-                                            removeOldDataFromList(newWellHasImagingType);
+                                            if (loadExperimentFromGenericInputController.isGenericArea()) {
+                                                genericAreaImagedPlateController.removeOldDataFromList(newWellHasImagingType);
+                                            } else {
+                                                // call the other controller
+                                            }
+
                                             // remove the data from the well
                                             selectedWellGui.getWell().getWellHasImagingTypeList().remove(newWellHasImagingType);
                                             // update relation with algorithm and imaging type
                                             currentAlgorithm.getWellHasImagingTypeList().remove(newWellHasImagingType);
                                             currentImagingType.getWellHasImagingTypeList().remove(newWellHasImagingType);
-                                            // load new data
-                                            loadData(newFile, newWellHasImagingType, selectedWellGui);
+
+                                            if (loadExperimentFromGenericInputController.isGenericArea()) {
+                                                genericAreaImagedPlateController.loadData(newFile, newWellHasImagingType, selectedWellGui);
+                                            } else {
+                                                // call the other controller
+                                            }
                                         }
                                         break;
                                     case 1: // clear data for current algorithm/imaging type
                                         if (!imagingTypeIsNotLast(selectedWellGui)) {
-                                            List<WellHasImagingType> oldSamples = removeOldDataFromList(newWellHasImagingType);
+                                            List<WellHasImagingType> oldSamples = null;
+                                            if (loadExperimentFromGenericInputController.isGenericArea()) {
+                                                oldSamples = genericAreaImagedPlateController.removeOldDataFromList(newWellHasImagingType);
+                                            } else {
+                                                // call the other controller
+                                            }
+
                                             // remove the data from the well
                                             selectedWellGui.getWell().getWellHasImagingTypeList().removeAll(oldSamples);
                                             // update relation with algorithm and imaging type
@@ -267,8 +275,12 @@ class GenericImagedPlateController {
                                         // choose another file to parse (another dataset to load)
                                         newFile = chooseData();
                                         if (newFile != null) {
-                                            // load new data
-                                            loadData(newFile, newWellHasImagingType, selectedWellGui);
+                                            if (loadExperimentFromGenericInputController.isGenericArea()) {
+                                                genericAreaImagedPlateController.loadData(newFile, newWellHasImagingType, selectedWellGui);
+                                            } else {
+                                                // call the other controller
+                                            }
+
                                         }
                                         break;
                                     // cancel: do nothing
@@ -332,36 +344,6 @@ class GenericImagedPlateController {
     }
 
     /**
-     * This is parsing a certain file, for a certain selected well and a
-     * wellHasImagingType (i.e. dataset and imaging type are chosen)
-     *
-     * @param bulkCellFile
-     * @param newWellHasImagingType
-     * @param selectedWellGui
-     */
-    private void loadData(File bulkCellFile, WellHasImagingType newWellHasImagingType, WellGui selectedWellGui) {
-        List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
-        // parse raw data for selected well
-        try {
-            List<TimeStep> timeSteps = genericInputFileParser.parseBulkCellFile(bulkCellFile);
-            // set the timeStepList and add the wellHasImagingType to the list
-            newWellHasImagingType.setTimeStepList(timeSteps);
-            wellHasImagingTypeList.add(newWellHasImagingType);
-            for (TimeStep timeStep : timeSteps) {
-                timeStep.setWellHasImagingType(newWellHasImagingType);
-            }
-            // if the list is not empty and does not contain the selected well, clear it before adding the new timeSteps
-            if (!timeStepsBindingList.isEmpty() && !containsWell(selectedWellGui)) {
-                timeStepsBindingList.clear();
-            }
-            timeStepsBindingList.addAll(timeSteps);
-        } catch (FileParserException ex) {
-            LOG.error(ex.getMessage());
-            loadExperimentFromGenericInputController.showMessage(ex.getMessage(), "Generic input file error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    /**
      * Opening a dialog to select file to parse and load data parsing the
      * selected file
      */
@@ -396,59 +378,6 @@ class GenericImagedPlateController {
             loadExperimentFromGenericInputController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
         }
         return bulkCellFile;
-    }
-
-    /**
-     * Reload data already parsed for a selected well
-     *
-     * @param selectedWellGui
-     */
-    private void reloadData(WellGui selectedWellGui) {
-        // empty the list
-        timeStepsBindingList.clear();
-        List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
-        for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
-            for (TimeStep timeStep : wellHasImagingType.getTimeStepList()) {
-                timeStepsBindingList.add(timeStep);
-            }
-        }
-    }
-
-    /**
-     * remove timeSteps from List: this is called when the user wants to
-     * overwrite data or to clear data.
-     *
-     * @param wellHasImagingTypeToOverwrite
-     */
-    private List<WellHasImagingType> removeOldDataFromList(WellHasImagingType wellHasImagingTypeToOverwrite) {
-        List<WellHasImagingType> list = new ArrayList<>();
-        Iterator<TimeStep> iterator = timeStepsBindingList.iterator();
-        while (iterator.hasNext()) {
-            WellHasImagingType wellHasImagingType = iterator.next().getWellHasImagingType();
-            if (wellHasImagingType.equals(wellHasImagingTypeToOverwrite)) {
-                list.add(wellHasImagingType);
-                iterator.remove();
-            }
-        }
-        return list;
-    }
-
-    /**
-     * Check if the TimeStepsList contains the selected well
-     *
-     * @param selectedWellGui
-     * @return
-     */
-    private boolean containsWell(WellGui selectedWellGui) {
-        boolean containsWell = false;
-        Well selectedWell = selectedWellGui.getWell();
-        for (TimeStep timeStep : timeStepsBindingList) {
-            if (timeStep.getWellHasImagingType().getWell().equals(selectedWell)) {
-                containsWell = true;
-                break;
-            }
-        }
-        return containsWell;
     }
 
     /**
@@ -544,8 +473,6 @@ class GenericImagedPlateController {
      * interaction is here required)
      */
     private void initAlgoImagingPanel() {
-        //init timeStepsBindingList
-        timeStepsBindingList = ObservableCollections.observableList(new ArrayList<TimeStep>());
         // init algo list
         algorithmsBindingList = ObservableCollections.observableList(new ArrayList<Algorithm>());
         //init imaging type list
@@ -779,49 +706,5 @@ class GenericImagedPlateController {
             }
         }
         return foundDataset;
-    }
-
-    /**
-     * Show Area values in table
-     */
-    private void showRawDataInTable() {
-        //table binding
-        timeStepsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, timeStepsBindingList, loadFromGenericInputPlatePanel.getRawDataTable());
-        //add column bindings
-        JTableBinding.ColumnBinding columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.well.columnNumber}"));
-        columnBinding.setColumnName("Column");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Integer.class);
-
-        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.well.rowNumber}"));
-        columnBinding.setColumnName("Row");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Integer.class);
-
-        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.algorithm.algorithmName}"));
-        columnBinding.setColumnName("Dataset");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(String.class);
-        columnBinding.setRenderer(new AlignedTableRenderer(SwingConstants.RIGHT));
-
-        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.imagingType.name}"));
-        columnBinding.setColumnName("Imaging type");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(String.class);
-        columnBinding.setRenderer(new AlignedTableRenderer(SwingConstants.RIGHT));
-
-        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${timeStepSequence}"));
-        columnBinding.setColumnName("Time sequence");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Integer.class);
-
-        columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${area}"));
-        columnBinding.setColumnName("Area");
-        columnBinding.setEditable(false);
-        columnBinding.setColumnClass(Double.class);
-        columnBinding.setRenderer(new FormatRenderer(format, SwingConstants.RIGHT));
-
-        bindingGroup.addBinding(timeStepsTableBinding);
-        bindingGroup.bind();
     }
 }

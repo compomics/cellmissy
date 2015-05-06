@@ -39,6 +39,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
+ * A controller to take care of experiment metadata at loading stage from a
+ * generic input.
+ *
  * @author Paola Masuzzo
  */
 @Controller("genericExperimentDataController")

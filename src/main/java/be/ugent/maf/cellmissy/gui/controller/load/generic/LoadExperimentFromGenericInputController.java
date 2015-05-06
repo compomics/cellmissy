@@ -39,6 +39,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
+ * Main controller to load data from a generic input.
+ *
  * @author Paola Masuzzo
  */
 @Controller("loadExperimentFromGenericInputController")
@@ -62,8 +64,6 @@ public class LoadExperimentFromGenericInputController {
     @Autowired
     private ExperimentService experimentService;
     private GridBagConstraints gridBagConstraints;
-
-    //services
 
     /**
      * Initialize controller
@@ -94,6 +94,10 @@ public class LoadExperimentFromGenericInputController {
 
     public void showMessage(String message, String title, Integer messageType) {
         cellMissyController.showMessage(message, title, messageType);
+    }
+
+    public boolean isGenericArea() {
+        return cellMissyController.isGenericArea();
     }
 
     void handleUnexpectedError(Exception ex) {
@@ -190,7 +194,6 @@ public class LoadExperimentFromGenericInputController {
         experimentListener.registerDoc(genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getDurationTextField().getDocument());
         experimentListener.registerDoc(genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getIntervalTextField().getDocument());
         experimentListener.registerDoc(genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getTimeFramesTextField().getDocument());
-
 
         // add action listeners
         /**

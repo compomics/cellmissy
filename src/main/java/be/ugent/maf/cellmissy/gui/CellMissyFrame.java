@@ -68,8 +68,12 @@ public class CellMissyFrame extends javax.swing.JFrame {
         return plateMenuItem;
     }
 
-    public JMenuItem getGenericInputMenuItem() {
-        return genericInputMenuItem;
+    public JMenuItem getAreaGenericMenuItem() {
+        return areaGenericMenuItem;
+    }
+
+    public JMenuItem getSingleCellGenericMenuItem() {
+        return singleCellGenericMenuItem;
     }
 
     public JPanel getAreaAnalysisParentPanel() {
@@ -161,7 +165,9 @@ public class CellMissyFrame extends javax.swing.JFrame {
         newExperimentMenuItem = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         loadDataMenu = new javax.swing.JMenu();
-        genericInputMenuItem = new javax.swing.JMenuItem();
+        areaGenericMenuItem = new javax.swing.JMenuItem();
+        singleCellGenericMenuItem = new javax.swing.JMenuItem();
+        jSeparator6 = new javax.swing.JPopupMenu.Separator();
         cellMiaMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         jMenu1 = new javax.swing.JMenu();
@@ -319,15 +325,20 @@ public class CellMissyFrame extends javax.swing.JFrame {
         fileMenu.add(jSeparator3);
 
         loadDataMenu.setMnemonic('L');
-        loadDataMenu.setText("Load Data...");
+        loadDataMenu.setText("Load");
         loadDataMenu.setIconTextGap(2);
 
-        genericInputMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
-        genericInputMenuItem.setText("... from generic input");
-        loadDataMenu.add(genericInputMenuItem);
+        areaGenericMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_MASK));
+        areaGenericMenuItem.setText("... area from generic input");
+        loadDataMenu.add(areaGenericMenuItem);
+
+        singleCellGenericMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
+        singleCellGenericMenuItem.setText("... tracks from generic input");
+        loadDataMenu.add(singleCellGenericMenuItem);
+        loadDataMenu.add(jSeparator6);
 
         cellMiaMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
-        cellMiaMenuItem.setText("... from CELLMIA");
+        cellMiaMenuItem.setText("... data from CELLMIA");
         loadDataMenu.add(cellMiaMenuItem);
 
         fileMenu.add(loadDataMenu);
@@ -471,6 +482,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuItem areaAnalysisMenuItem;
     private javax.swing.JPanel areaAnalysisParentPanel;
+    private javax.swing.JMenuItem areaGenericMenuItem;
     private javax.swing.JMenuItem assayMenuItem;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JMenuItem cellMiaMenuItem;
@@ -481,7 +493,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JMenu exportMenu;
     private javax.swing.JMenuItem exportTemplateMenuItem;
     private javax.swing.JMenu fileMenu;
-    private javax.swing.JMenuItem genericInputMenuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JPanel homePanel;
@@ -501,6 +512,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
+    private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JPopupMenu.Separator jSeparator9;
     private javax.swing.JMenu loadDataMenu;
@@ -512,6 +524,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JPanel setupExperimentParentPanel;
     private javax.swing.JMenuItem singleCellAnalysisMenuItem;
     private javax.swing.JPanel singleCellAnalysisParentPanel;
+    private javax.swing.JMenuItem singleCellGenericMenuItem;
     private javax.swing.JMenuItem userMenuItem;
     // End of variables declaration//GEN-END:variables
 }
