@@ -67,31 +67,8 @@ public class GenericAreaImagedPlateController {
         return timeStepsTableBinding;
     }
 
-    /**
-     * Reset data loading and plate view (e.g. if user was importing data from a
-     * wrong folder and so on..) The user is warned first, this should be used
-     * carefully!!
-     */
-    public void resetData() {
-        // empty timesteps list
-        timeStepsBindingList.clear();
-        // resetData view on the plate
-        // empty wellhasimagingtype collection of each well
-        List<WellGui> wellGuiList = genericImagedPlateController.getImagedPlatePanel().getWellGuiList();
-        for (WellGui wellGui : wellGuiList) {
-            // clear the wellhasimagingtype collection
-            wellGui.getWell().getWellHasImagingTypeList().clear();
-            List<Ellipse2D> ellipsi = wellGui.getEllipsi();
-            Iterator<Ellipse2D> iterator = ellipsi.iterator();
-            while (iterator.hasNext()) {
-                // only the default, bigger ellipse needs to stay in the repaint
-                if (!iterator.next().equals(ellipsi.get(0))) {
-                    iterator.remove();
-                }
-            }
-        }
-        // repaint the plate view
-        genericImagedPlateController.getImagedPlatePanel().repaint();
+    public ObservableList<TimeStep> getTimeStepsBindingList() {
+        return timeStepsBindingList;
     }
 
     /**
@@ -190,7 +167,7 @@ public class GenericAreaImagedPlateController {
      * overwrite data or to clear data.
      *
      * @param wellHasImagingTypeToOverwrite
-     * @return 
+     * @return
      */
     public List<WellHasImagingType> removeOldDataFromList(WellHasImagingType wellHasImagingTypeToOverwrite) {
         List<WellHasImagingType> list = new ArrayList<>();

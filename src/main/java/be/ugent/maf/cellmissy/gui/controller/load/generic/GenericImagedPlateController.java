@@ -149,7 +149,30 @@ public class GenericImagedPlateController {
      * carefully!!
      */
     public void resetData() {
-        genericAreaImagedPlateController.resetData();
+
+        if (loadExperimentFromGenericInputController.isGenericArea()) {
+            genericAreaImagedPlateController.getTimeStepsBindingList().clear();
+        } else {
+            genericSingleCellImagedPlateController.getTrackPointsBindingList().clear();
+        }
+
+        // resetData view on the plate
+        // empty wellhasimagingtype collection of each well
+        List<WellGui> wellGuiList = imagedPlatePanel.getWellGuiList();
+        for (WellGui wellGui : wellGuiList) {
+            // clear the wellhasimagingtype collection
+            wellGui.getWell().getWellHasImagingTypeList().clear();
+            List<Ellipse2D> ellipsi = wellGui.getEllipsi();
+            Iterator<Ellipse2D> iterator = ellipsi.iterator();
+            while (iterator.hasNext()) {
+                // only the default, bigger ellipse needs to stay in the repaint
+                if (!iterator.next().equals(ellipsi.get(0))) {
+                    iterator.remove();
+                }
+            }
+        }
+        // repaint the plate view
+        imagedPlatePanel.repaint();
     }
 
     /**
@@ -191,9 +214,11 @@ public class GenericImagedPlateController {
                             WellHasImagingType newWellHasImagingType = new WellHasImagingType(selectedWellGui.getWell(), currentImagingType, currentAlgorithm);
                             // get the list of WellHasImagingType for the selected well
                             List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
-                            //
+                            // check which controller we need to call
                             if (loadExperimentFromGenericInputController.isGenericArea()) {
                                 genericAreaImagedPlateController.reloadData(selectedWellGui);
+                            } else {
+                                genericSingleCellImagedPlateController.reloadData(selectedWellGui);
                             }
 
                             // check if the wellHasImagingType was already processed
@@ -210,7 +235,12 @@ public class GenericImagedPlateController {
                                             genericAreaImagedPlateController.showRawDataInTable();
                                         }
                                     } else {
-                                        // call the other controller 
+                                        // call the other controller
+                                        genericSingleCellImagedPlateController.loadData(dataFile, newWellHasImagingType, selectedWellGui);
+                                        // check if table still has to be initialized
+                                        if (genericSingleCellImagedPlateController.getTrackPointsTableBinding()== null) {
+                                            genericSingleCellImagedPlateController.showRawDataInTable();
+                                        }
                                     }
 
                                     // update relation with algorithm and imaging type
@@ -232,8 +262,8 @@ public class GenericImagedPlateController {
                                                 genericAreaImagedPlateController.removeOldDataFromList(newWellHasImagingType);
                                             } else {
                                                 // call the other controller
+                                                genericSingleCellImagedPlateController.removeOldDataFromList(newWellHasImagingType);
                                             }
-
                                             // remove the data from the well
                                             selectedWellGui.getWell().getWellHasImagingTypeList().remove(newWellHasImagingType);
                                             // update relation with algorithm and imaging type
@@ -244,6 +274,7 @@ public class GenericImagedPlateController {
                                                 genericAreaImagedPlateController.loadData(newFile, newWellHasImagingType, selectedWellGui);
                                             } else {
                                                 // call the other controller
+                                                genericSingleCellImagedPlateController.loadData(newFile, newWellHasImagingType, selectedWellGui);
                                             }
                                         }
                                         break;
@@ -254,6 +285,7 @@ public class GenericImagedPlateController {
                                                 oldSamples = genericAreaImagedPlateController.removeOldDataFromList(newWellHasImagingType);
                                             } else {
                                                 // call the other controller
+                                                oldSamples = genericSingleCellImagedPlateController.removeOldDataFromList(newWellHasImagingType);
                                             }
 
                                             // remove the data from the well
@@ -279,6 +311,7 @@ public class GenericImagedPlateController {
                                                 genericAreaImagedPlateController.loadData(newFile, newWellHasImagingType, selectedWellGui);
                                             } else {
                                                 // call the other controller
+                                                genericSingleCellImagedPlateController.loadData(newFile, newWellHasImagingType, selectedWellGui);
                                             }
 
                                         }
@@ -381,6 +414,8 @@ public class GenericImagedPlateController {
     }
 
     /**
+     * Highlight the imaged well for which we are importing data.
+     *
      * @param selectedWellGui
      */
     private void highlightImagedWell(WellGui selectedWellGui) {
