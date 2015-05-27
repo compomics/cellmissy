@@ -112,6 +112,8 @@ public interface WellService extends GenericService<Well, Long> {
     /**
      * Fetch both time steps and tracks (track points as well).
      *
+     * @param wellId
+     * @return 
      */
     public Well fetchMigrationData(Long wellId);
 

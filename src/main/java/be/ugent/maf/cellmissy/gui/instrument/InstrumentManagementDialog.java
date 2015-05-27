@@ -91,7 +91,7 @@ public class InstrumentManagementDialog extends javax.swing.JDialog {
         jScrollPane1.setPreferredSize(new java.awt.Dimension(45, 100));
 
         instrumentsList.setModel(new javax.swing.AbstractListModel() {
-            final String[] strings = { "Item 1", "Item 2" };
+            String[] strings = { "Item 1", "Item 2" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
@@ -159,7 +159,7 @@ public class InstrumentManagementDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, addInstrumentButton, deleteInstrumentButton, saveInstrumentButton);
+        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addInstrumentButton, deleteInstrumentButton, saveInstrumentButton});
 
         detailsPanelLayout.setVerticalGroup(
             detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

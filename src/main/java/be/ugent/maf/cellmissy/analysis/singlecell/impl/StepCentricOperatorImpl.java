@@ -117,9 +117,11 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
             // Returns the angle theta from the conversion of rectangular coordinates (x, y)
             // to polar coordinates (r, theta).
             // This method computes the phase theta by computing an arc tangent of y/x in the range of -pi to pi.
-            Double angleRadians = Math.atan(deltaY / deltaX);
+            double division = deltaY / deltaX; // if division is 0, the cell is going exactly back on its path!
+            Double angleRadians = Math.atan(division) + 0; // need to add 0 to avoid signed 0 in Java
             // go from radians to degrees
             Double angleDegrees = Math.toDegrees(angleRadians);
+            // if the angle is NaN (both deltaX and deltaY are zero), the cell stays exactly on place 
             if (angleDegrees < 0) {
                 angleDegrees = angleDegrees + 360;
             }

@@ -33,8 +33,7 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     private ConvexHullOperator convexHullOperator;
 
     @Override
-    public void computeTrackDuration(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder
-            cellCentricDataHolder, double timeLapse) {
+    public void computeTrackDuration(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder, double timeLapse) {
         double[] timeIndexes = stepCentricDataHolder.getTimeIndexes();
         int numberOfPoints = timeIndexes.length;
         double duration = (numberOfPoints - 1) * timeLapse;
@@ -46,7 +45,7 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
         Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
         Double[][] transposedCoordinatesMatrix = AnalysisUtils.transpose2DArray(coordinatesMatrix);
         List<Double> xCoordAsList = Arrays.asList(transposedCoordinatesMatrix[0]);
-        List<Double> yCoordAsList = Arrays.asList( transposedCoordinatesMatrix[1]);
+        List<Double> yCoordAsList = Arrays.asList(transposedCoordinatesMatrix[1]);
         Double xMin = Collections.min(xCoordAsList);
         Double xMax = Collections.max(xCoordAsList);
         Double yMin = Collections.min(yCoordAsList);
@@ -112,8 +111,11 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     public void computeMedianDirectionalityRatio(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
         Double[] directionalityRatios = stepCentricDataHolder.getDirectionalityRatios();
         Double[] excludeNullValues = AnalysisUtils.excludeNullValues(directionalityRatios);
-        double medianDirectionalityRatio = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
-        cellCentricDataHolder.setMedianDirectionalityRatio(medianDirectionalityRatio);
+        Double[] excludeNaNvalues = AnalysisUtils.excludeNaNvalues(excludeNullValues);
+        if (excludeNaNvalues.length != 0) {
+            double medianDirectionalityRatio = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNaNvalues));
+            cellCentricDataHolder.setMedianDirectionalityRatio(medianDirectionalityRatio);
+        }
     }
 
     @Override
@@ -152,16 +154,17 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     public void computeMedianTurningAngle(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
         Double[] turningAngles = stepCentricDataHolder.getTurningAngles();
         Double[] excludeNullValues = AnalysisUtils.excludeNullValues(turningAngles);
+        Double[] excludeNaNvalues = AnalysisUtils.excludeNaNvalues(excludeNullValues);
         // simply compute the median of the turning angles
-        double medianTurningAngle = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(excludeNullValues));
+        double medianTurningAngle = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(excludeNaNvalues));
         cellCentricDataHolder.setMedianTurningAngle(medianTurningAngle);
     }
 
     @Override
     public void computeMedianDirectionAutocorrelation(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
         List<Double[]> directionAutocorrelationsList = stepCentricDataHolder.getDirectionAutocorrelations();
-        Double[] directionAutocorrelations ;
-        if(directionAutocorrelationsList.size()>1){
+        Double[] directionAutocorrelations;
+        if (directionAutocorrelationsList.size() > 1) {
             directionAutocorrelations = directionAutocorrelationsList.get(1);
         } else {
             directionAutocorrelations = directionAutocorrelationsList.get(0);

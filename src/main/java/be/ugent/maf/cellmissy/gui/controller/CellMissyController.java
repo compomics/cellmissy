@@ -471,8 +471,8 @@ public class CellMissyController {
             }
         });
 
-        // load data from generic input
-        startupDialog.getGenericInputButton().addActionListener(new ActionListener() {
+        // load area from generic input
+        startupDialog.getLoadAreaButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 startupDialog.setVisible(false);
@@ -480,6 +480,15 @@ public class CellMissyController {
             }
         });
 
+         // load tracks from generic input
+        startupDialog.getLoadTracksButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startupDialog.setVisible(false);
+                onLoadingFromGenericInput();
+            }
+        });
+        
         // load data from CELLMIA
         startupDialog.getCellMiaButton().addActionListener(new ActionListener() {
             @Override

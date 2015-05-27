@@ -38,6 +38,22 @@ public class AnalysisUtils {
     }
 
     /**
+     * Exclude NaN values from an array of Double
+     *
+     * @param data
+     * @return another Double array with no longer NaN values
+     */
+    public static Double[] excludeNaNvalues(Double[] data) {
+        List<Double> list = new ArrayList<>();
+        for (Double value : data) {
+            if (value != Double.NaN) {
+                list.add(value);
+            }
+        }
+        return list.toArray(new Double[list.size()]);
+    }
+
+    /**
      * Transpose a 2D array of double
      *
      * @param data

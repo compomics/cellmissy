@@ -107,7 +107,8 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
                         currentTrackPointList.add(trackPoint);
                         //set the currentTrack trackpoint List
                         currentTrack.setTrackPointList(currentTrackPointList);
-
+                        // set the lenght of the track
+                        currentTrack.setTrackLength(currentTrackPointList.size());
                     } catch (NumberFormatException ex) {
                         LOG.error(ex.getMessage(), ex);
                         throw new FileParserException("Please make sure each line of your import file contains numbers!");

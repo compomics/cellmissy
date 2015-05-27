@@ -36,8 +36,12 @@ public class StartupDialog extends javax.swing.JDialog {
         return singleCellAnalysisButton;
     }
 
-    public JButton getGenericInputButton() {
-        return genericInputButton;
+    public JButton getLoadAreaButton() {
+        return loadAreaButton;
+    }
+
+    public JButton getLoadTracksButton() {
+        return loadTracksButton;
     }
 
     public JButton getOverviewButton() {
@@ -63,12 +67,13 @@ public class StartupDialog extends javax.swing.JDialog {
 
         createExpButton = new javax.swing.JButton();
         areaAnalysisButton = new javax.swing.JButton();
-        genericInputButton = new javax.swing.JButton();
+        loadAreaButton = new javax.swing.JButton();
         cellMiaButton = new javax.swing.JButton();
         overviewButton = new javax.swing.JButton();
         aboutButton = new javax.swing.JButton();
         singleCellAnalysisButton = new javax.swing.JButton();
         writeCellTracksToFileButton = new javax.swing.JButton();
+        loadTracksButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Getting started - CellMissy");
@@ -76,19 +81,19 @@ public class StartupDialog extends javax.swing.JDialog {
         setResizable(false);
 
         createExpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/newIcon.png"))); // NOI18N
-        createExpButton.setText("Create Experiment");
+        createExpButton.setText("New Experiment");
 
         areaAnalysisButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/ccm.png"))); // NOI18N
         areaAnalysisButton.setText("Area Analysis");
 
-        genericInputButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/genericInputIcon.png"))); // NOI18N
-        genericInputButton.setText("Generic Input");
+        loadAreaButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/genericInputIcon.png"))); // NOI18N
+        loadAreaButton.setText("Load Area");
 
         cellMiaButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/cellmia.png"))); // NOI18N
         cellMiaButton.setText("CELLMIA");
 
         overviewButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/overviewIcon.png"))); // NOI18N
-        overviewButton.setText("Overview Projects");
+        overviewButton.setText("Overview");
 
         aboutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/informationIcon.png"))); // NOI18N
         aboutButton.setText("About CellMissy");
@@ -97,7 +102,10 @@ public class StartupDialog extends javax.swing.JDialog {
         singleCellAnalysisButton.setText("Single Cell Analysis");
 
         writeCellTracksToFileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/wtf.png"))); // NOI18N
-        writeCellTracksToFileButton.setText("Write cell tracks to file...");
+        writeCellTracksToFileButton.setText("Write tracks to file...");
+
+        loadTracksButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/genericInputIcon.png"))); // NOI18N
+        loadTracksButton.setText("Load Tracks");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -106,21 +114,23 @@ public class StartupDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(writeCellTracksToFileButton)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(areaAnalysisButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(createExpButton, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-                        .addComponent(genericInputButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cellMiaButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(overviewButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-                    .addComponent(singleCellAnalysisButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(aboutButton, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(aboutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(writeCellTracksToFileButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(areaAnalysisButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(loadAreaButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(createExpButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cellMiaButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(singleCellAnalysisButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(loadTracksButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(overviewButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {aboutButton, areaAnalysisButton, cellMiaButton, createExpButton, genericInputButton, overviewButton, singleCellAnalysisButton, writeCellTracksToFileButton});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {areaAnalysisButton, singleCellAnalysisButton});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -131,20 +141,22 @@ public class StartupDialog extends javax.swing.JDialog {
                     .addComponent(overviewButton, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(genericInputButton)
-                    .addComponent(cellMiaButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(loadAreaButton)
+                    .addComponent(loadTracksButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(areaAnalysisButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(singleCellAnalysisButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(writeCellTracksToFileButton)
-                    .addComponent(aboutButton))
+                    .addComponent(cellMiaButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(aboutButton)
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {aboutButton, areaAnalysisButton, cellMiaButton, createExpButton, genericInputButton, overviewButton, singleCellAnalysisButton, writeCellTracksToFileButton});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {aboutButton, areaAnalysisButton, cellMiaButton, createExpButton, loadAreaButton, overviewButton, singleCellAnalysisButton, writeCellTracksToFileButton});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -190,7 +202,8 @@ public class StartupDialog extends javax.swing.JDialog {
     private javax.swing.JButton areaAnalysisButton;
     private javax.swing.JButton cellMiaButton;
     private javax.swing.JButton createExpButton;
-    private javax.swing.JButton genericInputButton;
+    private javax.swing.JButton loadAreaButton;
+    private javax.swing.JButton loadTracksButton;
     private javax.swing.JButton overviewButton;
     private javax.swing.JButton singleCellAnalysisButton;
     private javax.swing.JButton writeCellTracksToFileButton;

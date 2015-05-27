@@ -5,7 +5,6 @@
 package be.ugent.maf.cellmissy.gui.controller.load.generic;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
-import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.ProjectHasUser;
@@ -13,6 +12,7 @@ import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.experiment.load.generic.LoadFromGenericInputMetadataPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.ConditionsLoadListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.list.ExperimentsOverviewListRenderer;
 import be.ugent.maf.cellmissy.parser.impl.ObsepFileParserImpl.CycleTimeUnit;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
@@ -98,6 +98,9 @@ class GenericExperimentDataController {
         ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         loadFromGenericInputMetadataPanel.getInfoLabel().setIcon(scaledIcon);
         loadFromGenericInputMetadataPanel.getInfoLabel1().setIcon(scaledIcon);
+        ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new ExperimentsOverviewListRenderer(false);
+        loadFromGenericInputMetadataPanel.getExperimentsList().setCellRenderer(experimentsOverviewListRenderer);
+
         //init projectJList
         List<Project> allProjects = projectService.findAll();
         Collections.sort(allProjects);
@@ -151,7 +154,7 @@ class GenericExperimentDataController {
                             // if the experiment is still null, it is being selected for the first time
                             onSelectedExperiment(selectedExperiment);
                             // otherwise, if a different experiment has being selected, reset and recall the onselected experiment
-                        } else if (selectedExperiment != null && loadExperimentFromGenericInputController.getExperiment().equals(selectedExperiment)) {
+                        } else if (selectedExperiment != null && !loadExperimentFromGenericInputController.getExperiment().equals(selectedExperiment)) {
                             resetOnANewExperiment();
                             onSelectedExperiment(selectedExperiment);
                         }
@@ -211,6 +214,17 @@ class GenericExperimentDataController {
      * @param selectedExperiment
      */
     private void onSelectedExperiment(Experiment selectedExperiment) {
+        // first inform the user if the expeirment already has some data loaded or not!
+        String message = "";
+        switch (selectedExperiment.getExperimentStatus()) {
+            case IN_PROGRESS:
+                message = "This experiment has no loaded migration data yet.\nPlease proceed loading NEW DATA.";
+                break;
+            case PERFORMED:
+                message = "This experiment has already some loaded data.\nYou can now load ADDITIONAL DATA.";
+                break;
+        }
+        loadExperimentFromGenericInputController.showMessage(message, "data loading info", JOptionPane.INFORMATION_MESSAGE);
         proceedToLoading(selectedExperiment);
     }
 
@@ -246,7 +260,7 @@ class GenericExperimentDataController {
         loadFromGenericInputMetadataPanel.getProjectDescriptionTextArea().setText(projectDescription);
         // show relative experiments
         Long projectid = selectedProject.getProjectid();
-        List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.IN_PROGRESS);
+        List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
         if (experimentList != null) {
             Collections.sort(experimentList);
             experimentBindingList = ObservableCollections.observableList(experimentList);
@@ -264,7 +278,7 @@ class GenericExperimentDataController {
             if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                 experimentBindingList.clear();
             }
-            loadExperimentFromGenericInputController.showMessage("There are no experiments in progress for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
+            loadExperimentFromGenericInputController.showMessage("There are no experiments for this project!", "No experiments found", JOptionPane.WARNING_MESSAGE);
         }
     }
 

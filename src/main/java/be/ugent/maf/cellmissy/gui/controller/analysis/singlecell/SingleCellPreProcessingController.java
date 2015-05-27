@@ -580,7 +580,7 @@ class SingleCellPreProcessingController {
      */
     private class ConditionOperatorSwingWorker extends SwingWorker<Void, Void> {
 
-        private PlateCondition plateCondition;
+        private final PlateCondition plateCondition;
         private final WaitingDialog waitingDialog = new WaitingDialog(getMainFrame(), false);
 
         /**

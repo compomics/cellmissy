@@ -5,7 +5,6 @@
 package be.ugent.maf.cellmissy.gui.controller.load.cellmia;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
-import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.ProjectHasUser;
@@ -94,11 +93,6 @@ class CellMiaExperimentDataController {
         return experimentBindingList;
     }
 
-    public void setExpListRenderer(User currentUser) {
-        ExperimentsListRenderer experimentsListRenderer = new ExperimentsListRenderer(currentUser);
-        loadFromCellMiaMetadataPanel.getExperimentsList().setCellRenderer(experimentsListRenderer);
-    }
-
     /**
      * Reset after user has chosen another project/experiment
      */
@@ -140,7 +134,7 @@ class CellMiaExperimentDataController {
         ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         loadFromCellMiaMetadataPanel.getInfoLabel().setIcon(scaledIcon);
         loadFromCellMiaMetadataPanel.getInfoLabel1().setIcon(scaledIcon);
-
+        
         //init projectJList
         projectBindingList = ObservableCollections.observableList(projectService.findAll());
         JListBinding jListBinding = SwingBindings.createJListBinding(UpdateStrategy.READ_WRITE, projectBindingList, loadFromCellMiaMetadataPanel.getProjectsList());
@@ -239,6 +233,17 @@ class CellMiaExperimentDataController {
      * @param selectedExperiment
      */
     private void onSelectedExperiment(Experiment selectedExperiment) {
+        // first inform the user if the expeirment already has some data loaded or not!
+        String message = "";
+        switch (selectedExperiment.getExperimentStatus()) {
+            case IN_PROGRESS:
+                message = "This experiment has no loaded migration data yet.\nPlease proceed loading NEW DATA.";
+                break;
+            case PERFORMED:
+                message = "This experiment has already some loaded data.\nYou can now load ADDITIONAL DATA.";
+                break;
+        }
+        loadExperimentFromCellMiaController.showMessage(message, "data loading info", JOptionPane.INFORMATION_MESSAGE);
         proceedToLoading(selectedExperiment);
     }
 
@@ -288,9 +293,10 @@ class CellMiaExperimentDataController {
         // show project description
         String projectDescription = selectedProject.getProjectDescription();
         loadFromCellMiaMetadataPanel.getProjectDescriptionTextArea().setText(projectDescription);
+        loadFromCellMiaMetadataPanel.getExperimentsList().setCellRenderer(new ExperimentsListRenderer(loadExperimentFromCellMiaController.getCurrentUser()));
         // show relative experiments
         Long projectid = selectedProject.getProjectid();
-        List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.IN_PROGRESS);
+        List<Experiment> experimentList = experimentService.findExperimentsByProjectId(projectid);
         //init experimentJList
         if (experimentList != null) {
             Collections.sort(experimentList);
@@ -309,7 +315,7 @@ class CellMiaExperimentDataController {
             if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
                 experimentBindingList.clear();
             }
-            loadExperimentFromCellMiaController.showMessage("There are no experiments in progress for this project!", "No experiments found", JOptionPane.INFORMATION_MESSAGE);
+            loadExperimentFromCellMiaController.showMessage("There are no experiments for this project!", "No experiments found", JOptionPane.WARNING_MESSAGE);
         }
     }
 

@@ -80,10 +80,8 @@ public class NewProjectDialog extends javax.swing.JDialog {
         createProjectButton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
         removeButton = new javax.swing.JButton();
-        sourceUsersPanel = new javax.swing.JPanel();
         sourceUsersScrollPane = new javax.swing.JScrollPane();
         sourceUsersList = new javax.swing.JList();
-        destinationUsersPanel = new javax.swing.JPanel();
         destinationUsersScrollPane = new javax.swing.JScrollPane();
         destinationUsersList = new javax.swing.JList();
         questionButton = new javax.swing.JButton();
@@ -93,10 +91,11 @@ public class NewProjectDialog extends javax.swing.JDialog {
 
         jLabel5.setText("Project Number*");
 
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Description"));
+        jScrollPane1.setBorder(null);
 
         descriptionTextArea.setColumns(20);
         descriptionTextArea.setRows(5);
+        descriptionTextArea.setBorder(javax.swing.BorderFactory.createTitledBorder("Insert Project Description"));
         jScrollPane1.setViewportView(descriptionTextArea);
 
         infoLabel.setText("Enter a significant project description (e.g. MDA-MB-231 compounds screening)");
@@ -107,51 +106,15 @@ public class NewProjectDialog extends javax.swing.JDialog {
 
         removeButton.setText("Remove <<");
 
-        sourceUsersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("CellMissy Users"));
-
         sourceUsersScrollPane.setBorder(null);
 
+        sourceUsersList.setBorder(javax.swing.BorderFactory.createTitledBorder("CellMissy Users"));
         sourceUsersScrollPane.setViewportView(sourceUsersList);
-
-        javax.swing.GroupLayout sourceUsersPanelLayout = new javax.swing.GroupLayout(sourceUsersPanel);
-        sourceUsersPanel.setLayout(sourceUsersPanelLayout);
-        sourceUsersPanelLayout.setHorizontalGroup(
-            sourceUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sourceUsersPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(sourceUsersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        sourceUsersPanelLayout.setVerticalGroup(
-            sourceUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(sourceUsersPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(sourceUsersScrollPane)
-                .addContainerGap())
-        );
-
-        destinationUsersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("New Project Users"));
 
         destinationUsersScrollPane.setBorder(null);
 
+        destinationUsersList.setBorder(javax.swing.BorderFactory.createTitledBorder("New Project Users"));
         destinationUsersScrollPane.setViewportView(destinationUsersList);
-
-        javax.swing.GroupLayout destinationUsersPanelLayout = new javax.swing.GroupLayout(destinationUsersPanel);
-        destinationUsersPanel.setLayout(destinationUsersPanelLayout);
-        destinationUsersPanelLayout.setHorizontalGroup(
-            destinationUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, destinationUsersPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(destinationUsersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        destinationUsersPanelLayout.setVerticalGroup(
-            destinationUsersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(destinationUsersPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(destinationUsersScrollPane)
-                .addContainerGap())
-        );
 
         questionButton.setBorderPainted(false);
         questionButton.setContentAreaFilled(false);
@@ -163,27 +126,32 @@ public class NewProjectDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(projectNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(infoLabel, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(sourceUsersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(addButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(removeButton, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addComponent(jLabel5)
+                            .addGap(18, 18, 18)
+                            .addComponent(projectNumberTextField))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(createProjectButton)
+                                .addComponent(sourceUsersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(questionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(destinationUsersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(removeButton))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(destinationUsersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(infoLabel)
+                                .addGap(103, 103, 103))))
+                    .addComponent(createProjectButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(questionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {destinationUsersScrollPane, sourceUsersScrollPane});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -193,26 +161,27 @@ public class NewProjectDialog extends javax.swing.JDialog {
                     .addComponent(projectNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(infoLabel)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(infoLabel)
-                        .addGap(11, 11, 11)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(sourceUsersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(29, 29, 29)
-                                .addComponent(addButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(removeButton))
-                            .addComponent(destinationUsersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
-                        .addComponent(createProjectButton))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(destinationUsersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(sourceUsersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(questionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18))
+                        .addGap(78, 78, 78)
+                        .addComponent(addButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(removeButton)))
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(questionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(createProjectButton))
+                .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {destinationUsersScrollPane, sourceUsersScrollPane});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -258,7 +227,6 @@ public class NewProjectDialog extends javax.swing.JDialog {
     private javax.swing.JButton createProjectButton;
     private javax.swing.JTextArea descriptionTextArea;
     private javax.swing.JList destinationUsersList;
-    private javax.swing.JPanel destinationUsersPanel;
     private javax.swing.JScrollPane destinationUsersScrollPane;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel jLabel5;
@@ -267,7 +235,6 @@ public class NewProjectDialog extends javax.swing.JDialog {
     private javax.swing.JButton questionButton;
     private javax.swing.JButton removeButton;
     private javax.swing.JList sourceUsersList;
-    private javax.swing.JPanel sourceUsersPanel;
     private javax.swing.JScrollPane sourceUsersScrollPane;
     // End of variables declaration//GEN-END:variables
 }
