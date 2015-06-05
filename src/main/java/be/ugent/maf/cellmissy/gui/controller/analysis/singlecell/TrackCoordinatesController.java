@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.JColorChooser;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -73,13 +74,13 @@ import org.springframework.stereotype.Controller;
 @Controller("trackCoordinatesController")
 class TrackCoordinatesController {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TrackCoordinatesController
-            .class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TrackCoordinatesController.class);
     // model
     private BindingGroup bindingGroup;
     private ObservableList<Well> wellBindingList;
     private JTable coordinatesTable;
     private ObservableList<TrackDataHolder> trackDataHolderBindingList;
+    private Color chosenColor;
     // view
     private TrackCoordinatesPanel trackCoordinatesPanel;
     private PlotSettingsMenuBar plotSettingsMenuBar;
@@ -277,8 +278,8 @@ class TrackCoordinatesController {
             }
             coordinatesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
         }
-        trackCoordinatesPanel.getTableInfoLabel().setText("Tracks Coordinates with origins of migration superimposed " +
-                "at (0, 0) ");
+        trackCoordinatesPanel.getTableInfoLabel().setText("Tracks Coordinates with origins of migration superimposed "
+                + "at (0, 0) ");
     }
 
     /**
@@ -286,7 +287,7 @@ class TrackCoordinatesController {
      * category we want to generate the plot from: 0 is the condition level,
      * while 1 is the well level.
      *
-     * @param category:       can be 0 or 1
+     * @param category: can be 0 or 1
      * @param plateCondition: the condition to generate the tracks from
      */
     public void generateRandomTrackDataHolders(int category, PlateCondition plateCondition) {
@@ -306,9 +307,9 @@ class TrackCoordinatesController {
      * data need to be used and if points and/or lines need to be shown on the
      * plot.
      *
-     * @param plateCondition:    the plate condition to plot the tracks from
+     * @param plateCondition: the plate condition to plot the tracks from
      * @param useRawCoordinates: if true, plot raw data, else take the shifted
-     *                           to zero coordinates.
+     * to zero coordinates.
      */
     public void plotRandomTrackCoordinates(PlateCondition plateCondition, boolean useRawCoordinates) {
         // we get the selected index from the tabbed pane
@@ -332,8 +333,8 @@ class TrackCoordinatesController {
                 if (useRawCoordinates) {
                     chartTitle = numberOfTracks + " tracks - condition " + conditionIndex;
                 } else {
-                    chartTitle = numberOfTracks + " tracks, coordinates shifted to (0, 0) - condition " +
-                            conditionIndex;
+                    chartTitle = numberOfTracks + " tracks, coordinates shifted to (0, 0) - condition "
+                            + conditionIndex;
                 }
                 break;
             case 1:
@@ -362,8 +363,7 @@ class TrackCoordinatesController {
      * Show the tracks currently plotted in a table.
      */
     public void showPlottedTracksInTable() {
-        JTableBinding trackHoldersTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy
-                .READ_WRITE, trackDataHolderBindingList, trackCoordinatesPanel.getPlottedTracksTable());
+        JTableBinding trackHoldersTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackDataHolderBindingList, trackCoordinatesPanel.getPlottedTracksTable());
         // add column bindings
         BeanProperty index = BeanProperty.create("index");
         JTableBinding.ColumnBinding columnBinding = trackHoldersTableBinding.addColumnBinding(index);
@@ -375,8 +375,8 @@ class TrackCoordinatesController {
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Track.class);
 
-        columnBinding = trackHoldersTableBinding.addColumnBinding(ELProperty.create("${track.wellHasImagingType" +
-                ".well}"));
+        columnBinding = trackHoldersTableBinding.addColumnBinding(ELProperty.create("${track.wellHasImagingType"
+                + ".well}"));
         columnBinding.setColumnName("well");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Well.class);
@@ -385,8 +385,7 @@ class TrackCoordinatesController {
         // do the binding
         bindingGroup.bind();
         //set renderer for first column
-        trackCoordinatesPanel.getPlottedTracksTable().getColumnModel().getColumn(0).setCellRenderer(new
-                RectIconCellRenderer());
+        trackCoordinatesPanel.getPlottedTracksTable().getColumnModel().getColumn(0).setCellRenderer(new RectIconCellRenderer());
     }
 
     /**
@@ -401,6 +400,30 @@ class TrackCoordinatesController {
             PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(selectedTrackIndex,
                     plotSettingsMenuBar, endPoints);
             TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
+            renderer.setChosenColor(chosenColor);
+            coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
+        }
+    }
+
+    /**
+     * For the color menu item, a Color Chooser has to be shown for the user to
+     * select the color to use.
+     */
+    private class ColorItemActionListener implements ItemListener {
+
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            int selectedTrackIndex = -1;
+            List<Integer> endPoints = getEndPoints();
+            PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(selectedTrackIndex,
+                    plotSettingsMenuBar, endPoints);
+            TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
+            // show the color chooser only if the item is being selected
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                // show a color chooser
+                chosenColor = JColorChooser.showDialog(null, "pick a color", Color.BLACK);
+            }
+            renderer.setChosenColor(chosenColor);
             coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
         }
     }
@@ -418,11 +441,14 @@ class TrackCoordinatesController {
         plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().addItemListener(itemActionListener);
         plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().addItemListener(itemActionListener);
         plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().addItemListener(itemActionListener);
+
         for (Enumeration<AbstractButton> buttons = plotSettingsMenuBar.getLinesButtonGroup().getElements(); buttons
-                .hasMoreElements(); ) {
+                .hasMoreElements();) {
             AbstractButton button = buttons.nextElement();
             button.addItemListener(itemActionListener);
         }
+
+        plotSettingsMenuBar.getUseSingleColorCheckBoxMenuItem().addItemListener(new ColorItemActionListener());
     }
 
     /**
@@ -446,8 +472,7 @@ class TrackCoordinatesController {
         wellBindingList = ObservableCollections.observableList(new ArrayList<Well>());
         trackDataHolderBindingList = ObservableCollections.observableList(new ArrayList<TrackDataHolder>());
         // init jcombo box binding: wells
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy
-                .READ_WRITE, wellBindingList, trackCoordinatesPanel.getWellsComboBox());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, wellBindingList, trackCoordinatesPanel.getWellsComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         // do the binding
         bindingGroup.bind();
@@ -572,8 +597,7 @@ class TrackCoordinatesController {
             public void actionPerformed(ActionEvent e) {
                 // we check for the selected tabbed pane and execute a swing worker to plot all tracks together
                 if (getCategoryToPlot() == 0) {
-                    PlotAllTracksConditionSwingWorker plotAllTracksConditionSwingWorker = new
-                            PlotAllTracksConditionSwingWorker();
+                    PlotAllTracksConditionSwingWorker plotAllTracksConditionSwingWorker = new PlotAllTracksConditionSwingWorker();
                     plotAllTracksConditionSwingWorker.execute();
                 } else {
                     PlotAllTracksWellSwingWorker plotAllTracksWellSwingWorker = new PlotAllTracksWellSwingWorker();
@@ -585,8 +609,7 @@ class TrackCoordinatesController {
         trackCoordinatesPanel.getPlotSettingsPanel().add(plotSettingsMenuBar, BorderLayout.CENTER);
 
         // add view to parent panel
-        singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesParentPanel().add
-                (trackCoordinatesPanel, gridBagConstraints);
+        singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesParentPanel().add(trackCoordinatesPanel, gridBagConstraints);
     }
 
     /**
@@ -607,7 +630,7 @@ class TrackCoordinatesController {
             if (useRawCoordinates) {
                 coordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getCoordinatesMatrix();
             } else {
-                coordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getShiftedCooordinatesMatrix();
+                coordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getShiftedCoordinatesMatrix();
             }
             XYSeries xySeries = JFreeChartUtils.generateXYSeries(coordinatesMatrix);
             Track track = trackDataHolder.getTrack();
@@ -671,19 +694,17 @@ class TrackCoordinatesController {
                 randomTracksNumber = Integer.parseInt(text);
             } catch (NumberFormatException ex) {
                 LOG.error(ex.getMessage());
-                String message = "Please insert a valid number of tracks!" + "\nDefault set back to: " +
-                        defaultNumberOfTracks + " tracks";
-                singleCellPreProcessingController.showMessage(message, "error setting number of tracks", JOptionPane
-                        .ERROR_MESSAGE);
+                String message = "Please insert a valid number of tracks!" + "\nDefault set back to: "
+                        + defaultNumberOfTracks + " tracks";
+                singleCellPreProcessingController.showMessage(message, "error setting number of tracks", JOptionPane.ERROR_MESSAGE);
             }
         }
         // the # of tracks that you want to plot need to be less or equal to # of tracks for the current well
         // else, show an info message and set the number back to default
         if (randomTracksNumber > numberTracksForCurrentWell) {
-            String message = "This well has " + numberTracksForCurrentWell + " tracks" + "\nI cannot plot " +
-                    randomTracksNumber + " tracks!" + "\nDefault set back to: " + defaultNumberOfTracks + " tracks";
-            singleCellPreProcessingController.showMessage(message, "error in setting number of tracks", JOptionPane
-                    .WARNING_MESSAGE);
+            String message = "This well has " + numberTracksForCurrentWell + " tracks" + "\nI cannot plot "
+                    + randomTracksNumber + " tracks!" + "\nDefault set back to: " + defaultNumberOfTracks + " tracks";
+            singleCellPreProcessingController.showMessage(message, "error in setting number of tracks", JOptionPane.WARNING_MESSAGE);
             randomTracksNumber = defaultNumberOfTracks;
         }
         // update text field
@@ -721,17 +742,15 @@ class TrackCoordinatesController {
                 randomTracksNumber = Integer.parseInt(text);
             } catch (NumberFormatException ex) {
                 LOG.error(ex.getMessage());
-                String message = "Please insert a valid number of tracks!" + "\nDefault set back to: " +
-                        defaultNumberOfTracks + " tracks";
-                singleCellPreProcessingController.showMessage(message, "error setting number of tracks", JOptionPane
-                        .ERROR_MESSAGE);
+                String message = "Please insert a valid number of tracks!" + "\nDefault set back to: "
+                        + defaultNumberOfTracks + " tracks";
+                singleCellPreProcessingController.showMessage(message, "error setting number of tracks", JOptionPane.ERROR_MESSAGE);
             }
         }
         if (randomTracksNumber > tracksNumberForCondition) {
-            String message = "This condition has " + tracksNumberForCondition + " tracks" + "\nI cannot plot " +
-                    randomTracksNumber + " tracks!" + "\nDefault set back to: " + defaultNumberOfTracks + " tracks";
-            singleCellPreProcessingController.showMessage(message, "error in setting number of tracks", JOptionPane
-                    .WARNING_MESSAGE);
+            String message = "This condition has " + tracksNumberForCondition + " tracks" + "\nI cannot plot "
+                    + randomTracksNumber + " tracks!" + "\nDefault set back to: " + defaultNumberOfTracks + " tracks";
+            singleCellPreProcessingController.showMessage(message, "error in setting number of tracks", JOptionPane.WARNING_MESSAGE);
             randomTracksNumber = defaultNumberOfTracks;
         }
         // update text field
@@ -839,6 +858,7 @@ class TrackCoordinatesController {
         boolean plotLines = plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().isSelected();
         boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
         boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
+        boolean useSingleColor = plotSettingsMenuBar.getUseSingleColorCheckBoxMenuItem().isSelected();
         Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
         JFreeChart firstCoordinatesChart = ChartFactory.createXYLineChart(title, "x (µm)", "y (µm)",
                 xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
@@ -854,7 +874,8 @@ class TrackCoordinatesController {
                 xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         JFreeChartUtils.setupTrackChart(secondCoordinatesChart);
         TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines,
-                plotPoints, showEndPoints, getEndPoints(), -1, lineWidth);
+                plotPoints, showEndPoints, getEndPoints(), -1, lineWidth, useSingleColor);
+        trackXYLineAndShapeRenderer.setChosenColor(chosenColor);
         firstCoordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
         secondCoordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
         coordinatesChartPanel.setChart(firstCoordinatesChart);
@@ -870,8 +891,7 @@ class TrackCoordinatesController {
      * @param plateCondition
      */
     private void scaleAxesToCondition(JFreeChart chart, PlateCondition plateCondition) {
-        SingleCellConditionDataHolder preProcessingResults = singleCellPreProcessingController.getConditionDataHolder
-                (plateCondition);
+        SingleCellConditionDataHolder preProcessingResults = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         boolean useRawData = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected();
         Double[][] coordinatesRanges;
         if (useRawData) {
@@ -910,14 +930,13 @@ class TrackCoordinatesController {
                 get();
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
                 // Plot Logic
-                int conditionIndex = singleCellPreProcessingController.getPlateConditionList().indexOf
-                        (currentCondition) + 1;
+                int conditionIndex = singleCellPreProcessingController.getPlateConditionList().indexOf(currentCondition) + 1;
                 String chartTitle;
                 if (useRawCoordinates) {
                     chartTitle = trackDataHolderBindingList.size() + " tracks - condition " + conditionIndex;
                 } else {
-                    chartTitle = trackDataHolderBindingList.size() + " tracks, coordinates shifted to (0, 0) - " +
-                            "condition " + conditionIndex;
+                    chartTitle = trackDataHolderBindingList.size() + " tracks, coordinates shifted to (0, 0) - "
+                            + "condition " + conditionIndex;
                 }
                 setChartsWithXyCollection(chartTitle, xYSeriesCollection);
                 singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -956,8 +975,8 @@ class TrackCoordinatesController {
                 if (useRawCoordinates) {
                     chartTitle = trackDataHolderBindingList.size() + " tracks - well " + selectedWell.toString();
                 } else {
-                    chartTitle = trackDataHolderBindingList.size() + " tracks,  coordinates shifted to (0, 0) - well " +
-                            "" + selectedWell.toString();
+                    chartTitle = trackDataHolderBindingList.size() + " tracks,  coordinates shifted to (0, 0) - well "
+                            + "" + selectedWell.toString();
                 }
                 setChartsWithXyCollection(chartTitle, xYSeriesCollection);
                 singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

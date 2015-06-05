@@ -110,7 +110,7 @@ public class SingleCellPreProcessorImpl implements SingleCellPreProcessor {
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellConditionDataHolder.getTrackDataHolders()) {
             Double[][] shiftedTrackCoordinates = trackDataHolder.getStepCentricDataHolder()
-                    .getShiftedCooordinatesMatrix();
+                    .getShiftedCoordinatesMatrix();
             for (Double[] shiftedTrackCoordinate : shiftedTrackCoordinates) {
                 shiftedTrackCoordinatesMatrix[counter] = shiftedTrackCoordinate;
                 counter++;

@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.AbstractButton;
+import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
@@ -85,6 +86,7 @@ class ExploreTrackController {
     // model
     private BindingGroup bindingGroup;
     private PlayTrackSwingWorker playTrackSwingWorker;
+    private Color chosenColor;
     // view
     private ExploreTrackPanel exploreTrackPanel;
     private PlotSettingsMenuBar plotSettingsMenuBar;
@@ -139,7 +141,6 @@ class ExploreTrackController {
 //        trackCoordinatesController.setCursor(cursor);
 //    }
 // --Commented out by Inspection STOP (06/02/2015 13:35)
-
 // --Commented out by Inspection START (06/02/2015 13:35):
 //    /**
 //     * Show message through the main controller
@@ -152,7 +153,6 @@ class ExploreTrackController {
 //        trackCoordinatesController.showMessage(message, title, messageType);
 //    }
 // --Commented out by Inspection STOP (06/02/2015 13:35)
-
     /**
      * Private methods
      */
@@ -172,7 +172,8 @@ class ExploreTrackController {
         boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
         boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
         Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
-        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, trackCoordinatesController.getEndPoints(), selectedTrackIndex, lineWidth);
+        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints,
+                showEndPoints, trackCoordinatesController.getEndPoints(), selectedTrackIndex, lineWidth, false);
         coordinatesChartPanel.getChart().getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
     }
 
@@ -189,10 +190,13 @@ class ExploreTrackController {
         plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().addItemListener(itemActionListener);
         plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().addItemListener(itemActionListener);
         plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().addItemListener(itemActionListener);
-        for (Enumeration<AbstractButton> buttons = plotSettingsMenuBar.getLinesButtonGroup().getElements(); buttons.hasMoreElements(); ) {
+        for (Enumeration<AbstractButton> buttons = plotSettingsMenuBar.getLinesButtonGroup().getElements(); buttons.hasMoreElements();) {
             AbstractButton button = buttons.nextElement();
             button.addItemListener(itemActionListener);
         }
+
+        plotSettingsMenuBar.getUseSingleColorCheckBoxMenuItem().addItemListener(new ColorItemActionListener());
+
     }
 
     /**
@@ -225,7 +229,6 @@ class ExploreTrackController {
 
         exploreTrackPanel.getxYTCoordinatesParentPanel().add(xYTCoordinateChartPanel, gridBagConstraints);
         exploreTrackPanel.getDisplacementTParentPanel().add(displacementTChartPanel, gridBagConstraints);
-
 
         exploreTrackPanel.getCoordinatesParentPanel().add(singleTrackCoordinatesChartPanel, gridBagConstraints);
         exploreTrackPanel.getConvexHullGraphicsParentPanel().add(convexHullChartPanel, gridBagConstraints);
@@ -342,9 +345,12 @@ class ExploreTrackController {
         boolean plotLines = plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().isSelected();
         boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
         boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
+        boolean useSingleColor = plotSettingsMenuBar.getUseSingleColorCheckBoxMenuItem().isSelected();
         int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
         Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
-        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, trackCoordinatesController.getEndPoints(), selectedTrackIndex, lineWidth);
+        TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints,
+                trackCoordinatesController.getEndPoints(), selectedTrackIndex, lineWidth, useSingleColor);
+        trackXYLineAndShapeRenderer.setChosenColor(chosenColor);
         coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
         // @todo: reset the time slider, null pointer exception !
 //        exploreTrackPanel.getTimeSlider().setLabelTable(null);
@@ -361,6 +367,30 @@ class ExploreTrackController {
             List<Integer> endPoints = trackCoordinatesController.getEndPoints();
             PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(selectedTrackIndex, plotSettingsMenuBar, endPoints);
             TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
+            renderer.setChosenColor(chosenColor);
+            coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
+        }
+    }
+
+    /**
+     * For the color menu item, a Color Chooser has to be shown for the user to
+     * select the color to use.
+     */
+    private class ColorItemActionListener implements ItemListener {
+
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            int selectedTrackIndex = -1;
+            List<Integer> endPoints = trackCoordinatesController.getEndPoints();
+            PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(selectedTrackIndex,
+                    plotSettingsMenuBar, endPoints);
+            TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
+            // show the color chooser only if the item is being selected
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                // show a color chooser
+                chosenColor = JColorChooser.showDialog(null, "pick a color", Color.BLACK);
+            }
+            renderer.setChosenColor(chosenColor);
             coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
         }
     }
@@ -413,7 +443,7 @@ class ExploreTrackController {
      * cell is followed in time and a spot is highlighted.
      *
      * @param selectedTrackIndex: the series (track) index
-     * @param timePoint:          the actual time point to highlight
+     * @param timePoint: the actual time point to highlight
      */
     private void showTrackPointInTime(int selectedTrackIndex, int timePoint) {
         // get the xyplot from the chart and set it up
@@ -568,7 +598,7 @@ class ExploreTrackController {
      */
     private void plotCoordinatesInSpace(TrackDataHolder trackDataHolder) {
         // get the coordinates matrix
-        Double[][] shiftedCoordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getShiftedCooordinatesMatrix();
+        Double[][] shiftedCoordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getShiftedCoordinatesMatrix();
         XYSeries xYSeries = JFreeChartUtils.generateXYSeries(shiftedCoordinatesMatrix);
         Track track = trackDataHolder.getTrack();
         int trackNumber = track.getTrackNumber();

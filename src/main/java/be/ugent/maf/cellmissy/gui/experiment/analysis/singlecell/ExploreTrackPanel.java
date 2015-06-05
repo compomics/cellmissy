@@ -171,9 +171,9 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             .addGroup(rightPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(plotSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(clearSelectionButton))
-                .addContainerGap())
+                    .addComponent(clearSelectionButton)
+                    .addComponent(plotSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         rightPanelLayout.setVerticalGroup(
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -362,7 +362,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, playButton, stopButton);
+        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {playButton, stopButton});
 
         timeSliderPanelLayout.setVerticalGroup(
             timeSliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -388,7 +388,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                 .addContainerGap(124, Short.MAX_VALUE))
         );
 
-        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, playButton, stopButton);
+        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {playButton, stopButton});
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.gui.view.renderer.jfreechart;
 
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -15,9 +16,9 @@ import org.jfree.util.ShapeUtilities;
 
 /**
  * This class extends a JFreeChart XYLineAndShapeRenderer and it is used to
- * customise the tracks plot. If a certain track is selected in the tracks list,
+ * customize the tracks plot. If a certain track is selected in the tracks list,
  * the correspondent series paint is set to a certain color, and all the tracks
- * left in the background are simply in shadow (coloured in gray). Also, the
+ * left in the background are simply in shadow (colored in gray). Also, the
  * lines and points are controlled depending on check box selections. Finally,
  * endpoints of tracks can be shown or not depending on a boolean. If yes, a
  * list of integers is passed to the class, containing all the endpoints.
@@ -32,6 +33,8 @@ public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
     private final List<Integer> endPoints; //integers for the endpoints
     private final int selectedTrackIndex; //index for the currently selected track
     private final float lineWidth; // thickness for the line
+    private final boolean useSingleColor; // a single color for all the tracks plotted?
+    private Color chosenColor; // if a single color, the one chosen by the user
 
     /**
      * Constructor
@@ -43,14 +46,38 @@ public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
      * @param selectedTrackIndex: index for the current series (i.e. the track
      * to highlight in the plot)
      * @param lineWidth: thickness to render the line
+     * @param useSingleColor: use single color or not?
      */
-    public TrackXYLineAndShapeRenderer(boolean plotLines, boolean plotPoints, boolean showEndPoints, List<Integer> endPoints, int selectedTrackIndex, float lineWidth) {
+//    public TrackXYLineAndShapeRenderer(boolean plotLines, boolean plotPoints, boolean showEndPoints, List<Integer> endPoints, int selectedTrackIndex, float lineWidth) {
+//        this.plotLines = plotLines;
+//        this.plotPoints = plotPoints;
+//        this.showEndPoints = showEndPoints;
+//        this.endPoints = endPoints;
+//        this.selectedTrackIndex = selectedTrackIndex;
+//        this.lineWidth = lineWidth;
+//    }
+    public TrackXYLineAndShapeRenderer(boolean plotLines, boolean plotPoints, boolean showEndPoints, List<Integer> endPoints, int selectedTrackIndex, float lineWidth, boolean useSingleColor) {
         this.plotLines = plotLines;
         this.plotPoints = plotPoints;
         this.showEndPoints = showEndPoints;
         this.endPoints = endPoints;
         this.selectedTrackIndex = selectedTrackIndex;
         this.lineWidth = lineWidth;
+        this.useSingleColor = useSingleColor;
+    }
+
+    /**
+     * Set the chosen color: this is chosen by the user through a Color Chooser
+     * Dialog.
+     *
+     * @param chosenColor
+     */
+    public void setChosenColor(Color chosenColor) {
+        this.chosenColor = chosenColor;
+    }
+
+    public Color getChosenColor() {
+        return chosenColor;
     }
 
     @Override
@@ -75,14 +102,18 @@ public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
     public Paint getSeriesPaint(int series) {
         int length = GuiUtils.getAvailableColors().length;
         int colorIndex = series % length;
-        if (selectedTrackIndex != -1) {
-            if (selectedTrackIndex == series) {
+        if (selectedTrackIndex != -1) { // a track has actually been selected
+            if (selectedTrackIndex == series) { // this is the track to highlight
                 return GuiUtils.getAvailableColors()[colorIndex];
-            } else {
+            } else { // the other tracks will all be gray (background)
                 return GuiUtils.getNonImagedColor();
             }
-        } else {
-            return GuiUtils.getAvailableColors()[colorIndex];
+        } else { // no track is selected
+            if (useSingleColor) {
+                return chosenColor;
+            } else {
+                return GuiUtils.getAvailableColors()[colorIndex];
+            }
         }
     }
 

@@ -54,8 +54,7 @@ import org.springframework.stereotype.Controller;
 @Controller("singleCellPreProcessingController")
 class SingleCellPreProcessingController {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger
-            (SingleCellPreProcessingController.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SingleCellPreProcessingController.class);
     // model
     private BindingGroup bindingGroup;
     private ObservableList<Track> tracksBindingList;
@@ -275,7 +274,7 @@ class SingleCellPreProcessingController {
      * Given a certain category (selected index in a tabbed pane) generate the
      * random track data holders.
      *
-     * @param category:       can be 0 or 1
+     * @param category: can be 0 or 1
      * @param plateCondition: the plateCondition to generate the tracks from
      */
     public void generateRandomTrackDataHolders(int category, PlateCondition plateCondition) {
@@ -287,14 +286,14 @@ class SingleCellPreProcessingController {
      * DB for all the conditions, and basic computations are performed.
      */
     public void preProcessExperiment(Experiment experiment) {
-        PreProcessExperimentSwingWorker preProcessExperimentSwingWorker = new PreProcessExperimentSwingWorker
-                (experiment);
+        PreProcessExperimentSwingWorker preProcessExperimentSwingWorker = new PreProcessExperimentSwingWorker(experiment);
         preProcessExperimentSwingWorker.execute();
     }
 
     /**
      * When a plateCondition is selected pre processing results are computed and
-     * plateCondition is put into the map together with its results holder object
+     * plateCondition is put into the map together with its results holder
+     * object
      *
      * @param plateCondition
      */
@@ -327,12 +326,12 @@ class SingleCellPreProcessingController {
                 // fill in the map
                 preProcessingMap.put(plateCondition, singleCellConditionDataHolder);
                 appendInfo("**************************");
-                appendInfo("Plate plateCondition processed!");
+                appendInfo("plate condition: " + plateCondition + " processed!");
             } else {
                 // remove the plateCondition from the map and inform the user
                 preProcessingMap.remove(plateCondition);
-                appendInfo("No tracks recorded for condition: " + plateCondition + "; no coordinates to retrieve from" +
-                        " DB!");
+                appendInfo("No tracks recorded for condition: " + plateCondition + "; no coordinates to retrieve from"
+                        + " DB!");
             }
         }
     }
@@ -519,14 +518,14 @@ class SingleCellPreProcessingController {
         experimentShiftedCoordinatesRanges[0] = new Double[]{xShiftMin, xShiftMax};
         experimentShiftedCoordinatesRanges[1] = new Double[]{yShiftMin, yShiftMax};
         appendInfo("raw range x: (" + xRawMin + ", " + xRawMax + ")" + "; y: (" + yRawMin + ", " + yRawMax + ")");
-        appendInfo("shifted range x: (" + xShiftMin + ", " + xShiftMax + ")" + "; y: (" + yShiftMin + ", " + yShiftMax +
-                ")");
+        appendInfo("shifted range x: (" + xShiftMin + ", " + xShiftMax + ")" + "; y: (" + yShiftMin + ", " + yShiftMax
+                + ")");
     }
 
     /**
-     * A class extending a swing worker to pre-process the entire experiment (i.e. all its
-     * A class extending a swing worker to pre-process the entire experiment (i.e. all its
-     * conditions at once).
+     * A class extending a swing worker to pre-process the entire experiment
+     * (i.e. all its A class extending a swing worker to pre-process the entire
+     * experiment (i.e. all its conditions at once).
      */
     private class PreProcessExperimentSwingWorker extends SwingWorker<Void, Void> {
 
@@ -562,12 +561,12 @@ class SingleCellPreProcessingController {
                 get();
                 waitingDialog.setVisible(false);
                 // when done, enable back the list, but keep buttons disabled!
-                singleCellMainController.showMessage("Tracks retrieved!\nSelect a condition to start with the" +
-                        "analysis.", "tracks retrieved", JOptionPane.INFORMATION_MESSAGE);
+                singleCellMainController.showMessage("Tracks retrieved!\nSelect a condition to start with the"
+                        + "analysis.", "tracks retrieved", JOptionPane.INFORMATION_MESSAGE);
                 singleCellMainController.getDataAnalysisPanel().getConditionsList().setEnabled(true);
                 singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                singleCellMainController.showInfoMessage("Tracks retrieved from DB. Select a condition to " +
-                        "start the analysis.");
+                singleCellMainController.showInfoMessage("Tracks retrieved from DB. Select a condition to "
+                        + "start the analysis.");
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 singleCellMainController.handleUnexpectedError(ex);
@@ -576,7 +575,8 @@ class SingleCellPreProcessingController {
     }
 
     /**
-     * A class extending a swing worker to operate (i.e. perform some basic computations) on a specific plateCondition.
+     * A class extending a swing worker to operate (i.e. perform some basic
+     * computations) on a specific plateCondition.
      */
     private class ConditionOperatorSwingWorker extends SwingWorker<Void, Void> {
 
@@ -584,7 +584,8 @@ class SingleCellPreProcessingController {
         private final WaitingDialog waitingDialog = new WaitingDialog(getMainFrame(), false);
 
         /**
-         * Constructor: takes the plate plateCondition to perform the operations on.
+         * Constructor: takes the plate plateCondition to perform the operations
+         * on.
          *
          * @param plateCondition
          */
@@ -638,8 +639,8 @@ class SingleCellPreProcessingController {
             } else {
                 // if not, just inform the user and skip the computation
                 appendInfo("Apparently this condition was not imaged/analyzed!");
-                singleCellMainController.showInfoMessage("Apparently this condition was not imaged/analyzed!\nNothing" +
-                        " to compute!");
+                singleCellMainController.showInfoMessage("Apparently this condition was not imaged/analyzed!\nNothing"
+                        + " to compute!");
             }
             return null;
         }

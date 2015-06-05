@@ -25,7 +25,7 @@ public class StepCentricDataHolder {
     private Double[][] coordinatesMatrix;
     // matrix for shifted track coordinates
     // same as the coordinatesMatrix, but the origins of migration are superimposed at (0, 0)
-    private Double[][] shiftedCooordinatesMatrix;
+    private Double[][] shiftedCoordinatesMatrix;
     // matrix for delta movements in (x, y) direction
     // differences between location (x[n], y[n]) and location (x[n-1], y[n-1])
     private Double[][] deltaMovements;
@@ -96,12 +96,12 @@ public class StepCentricDataHolder {
         this.coordinatesMatrix = coordinatesMatrix;
     }
 
-    public Double[][] getShiftedCooordinatesMatrix() {
-        return shiftedCooordinatesMatrix;
+    public Double[][] getShiftedCoordinatesMatrix() {
+        return shiftedCoordinatesMatrix;
     }
 
-    public void setShiftedCooordinatesMatrix(Double[][] shiftedCooordinatesMatrix) {
-        this.shiftedCooordinatesMatrix = shiftedCooordinatesMatrix;
+    public void setShiftedCoordinatesMatrix(Double[][] shiftedCoordinatesMatrix) {
+        this.shiftedCoordinatesMatrix = shiftedCoordinatesMatrix;
     }
 
     public Double[][] getDeltaMovements() {

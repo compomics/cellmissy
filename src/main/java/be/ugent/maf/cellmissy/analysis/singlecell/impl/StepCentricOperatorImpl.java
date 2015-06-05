@@ -66,7 +66,7 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
             double currentY = coordinatesMatrix[row][1];
             shiftedCoordinatesMatrix[row] = new Double[]{currentX - x0, currentY - y0};
         }
-        stepCentricDataHolder.setShiftedCooordinatesMatrix(shiftedCoordinatesMatrix);
+        stepCentricDataHolder.setShiftedCoordinatesMatrix(shiftedCoordinatesMatrix);
     }
 
     @Override
