@@ -59,7 +59,7 @@ class GlobalViewController {
     private List<List<TrackDataHolder>> trackDataHoldersList;
     private List<XYSeriesCollection> xYSeriesCollections;
     private boolean firstView;
-    private Color chosenColor;
+    private List<Color> chosenColors;
     // view
     private PlotSettingsMenuBar plotSettingsMenuBar;
     private List<ChartPanel> coordinatesChartPanels;
@@ -75,6 +75,7 @@ class GlobalViewController {
         coordinatesChartPanels = new ArrayList<>();
         trackDataHoldersList = new ArrayList<>();
         xYSeriesCollections = new ArrayList<>();
+        chosenColors = new ArrayList<>();
         firstView = true;
         // init views
         initPlotSettingsMenuBar();
@@ -221,14 +222,15 @@ class GlobalViewController {
         @Override
         public void itemStateChanged(ItemEvent e) {
             // iterate through the charts plotted and set the renderer for each of them
-            for (ChartPanel coordinatesChartPanel : coordinatesChartPanels) {
+            for (int i = 0; i < coordinatesChartPanels.size(); i++) {
+                ChartPanel coordinatesChartPanel = coordinatesChartPanels.get(i);
                 JFreeChart chart = coordinatesChartPanel.getChart();
                 XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) chart.getXYPlot().getDataset();
                 List<Integer> endPoints = getEndPoints(xYSeriesCollection);
                 PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(-1,
                         plotSettingsMenuBar, endPoints);
                 TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
-                renderer.setChosenColor(chosenColor);
+                renderer.setChosenColor(chosenColors.get(i));
                 coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
             }
         }
@@ -243,7 +245,10 @@ class GlobalViewController {
         @Override
         public void itemStateChanged(ItemEvent e) {
             int selectedTrackIndex = -1;
-            for (ChartPanel coordinatesChartPanel : coordinatesChartPanels) {
+
+            for (int i = 0; i < coordinatesChartPanels.size(); i++) {
+                Color chosenColor = null;
+                ChartPanel coordinatesChartPanel = coordinatesChartPanels.get(i);
                 JFreeChart chart = coordinatesChartPanel.getChart();
                 XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) chart.getXYPlot().getDataset();
                 List<Integer> endPoints = getEndPoints(xYSeriesCollection);
@@ -253,7 +258,8 @@ class GlobalViewController {
                 // show the color chooser only if the item is being selected
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     // show a color chooser
-                    chosenColor = JColorChooser.showDialog(null, "pick a color", Color.BLACK);
+                    chosenColor = JColorChooser.showDialog(null, "pick a color for chart: " + (i + 1), Color.BLACK);
+                    chosenColors.add(chosenColor);
                 }
                 renderer.setChosenColor(chosenColor);
                 coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
@@ -311,10 +317,6 @@ class GlobalViewController {
             // generate track data holders and data for the plots
             generateTrackDataHolders();
             generateDataForPlots(true);
-            /*// use the data to set the charts
-             int nCols = Integer.parseInt((String) trackCoordinatesController.getTrackCoordinatesPanel()
-             .getnColsComboBox().getSelectedItem());
-             setChartsWithCollections(nCols);*/
             return null;
         }
 
@@ -327,7 +329,6 @@ class GlobalViewController {
                 int nCols = Integer.parseInt((String) trackCoordinatesController.getTrackCoordinatesPanel()
                         .getnColsComboBox().getSelectedItem());
                 setChartsWithCollections(nCols);
-
                 waitingDialog.setVisible(false);
                 trackCoordinatesController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 trackCoordinatesController.controlGuiComponents(true);
@@ -426,7 +427,11 @@ class GlobalViewController {
             JFreeChartUtils.setupTrackChart(coordinatesChart);
             TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines,
                     plotPoints, showEndPoints, getEndPoints(collection), -1, lineWidth, useSingleColor);
-            trackXYLineAndShapeRenderer.setChosenColor(chosenColor);
+            if (!chosenColors.isEmpty()) {
+                trackXYLineAndShapeRenderer.setChosenColor(chosenColors.get(i));
+            } else {
+                plotSettingsMenuBar.getUseSingleColorCheckBoxMenuItem().setSelected(false);
+            }
             coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
             coordinatesChartPanel.setChart(coordinatesChart);
 
