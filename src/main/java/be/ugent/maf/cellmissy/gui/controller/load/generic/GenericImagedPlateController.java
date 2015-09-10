@@ -381,7 +381,7 @@ public class GenericImagedPlateController {
      * selected file
      */
     private File chooseData() {
-        File bulkCellFile = null;
+        File dataFile = null;
         JFileChooser fileChooser = new JFileChooser();
         // to select only txt files
         fileChooser.setFileFilter(new FileFilter() {
@@ -406,11 +406,11 @@ public class GenericImagedPlateController {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             // load selected data
             // file to parse
-            bulkCellFile = fileChooser.getSelectedFile();
+            dataFile = fileChooser.getSelectedFile();
         } else {
             loadExperimentFromGenericInputController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
         }
-        return bulkCellFile;
+        return dataFile;
     }
 
     /**

@@ -22,8 +22,8 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.RectIconCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackCoordinatesTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
-
 import java.awt.BorderLayout;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
@@ -607,7 +607,6 @@ class TrackCoordinatesController {
         });
 
         trackCoordinatesPanel.getPlotSettingsPanel().add(plotSettingsMenuBar, BorderLayout.CENTER);
-
         // add view to parent panel
         singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesParentPanel().add(trackCoordinatesPanel, gridBagConstraints);
     }

@@ -46,7 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Main Controller Child Controllers: User Management, Setup Experiment, Load
+ * Main Controller. Child Controllers: User Management, Setup Experiment, Load
  * Experiment, Data Analysis - controllers
  *
  * @author Paola
@@ -55,7 +55,6 @@ import org.springframework.stereotype.Controller;
 public class CellMissyController {
 
     private static final Logger LOG = Logger.getLogger(CellMissyController.class);
-    // model
     // model
     private boolean genericArea;
     private boolean firstSetup;
@@ -480,7 +479,7 @@ public class CellMissyController {
             }
         });
 
-         // load tracks from generic input
+        // load tracks from generic input
         startupDialog.getLoadTracksButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -488,7 +487,7 @@ public class CellMissyController {
                 onLoadingFromGenericInput();
             }
         });
-        
+
         // load data from CELLMIA
         startupDialog.getCellMiaButton().addActionListener(new ActionListener() {
             @Override

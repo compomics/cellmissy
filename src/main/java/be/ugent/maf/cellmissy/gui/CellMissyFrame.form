@@ -17,6 +17,7 @@
           <Properties>
             <Property name="mnemonic" type="int" value="70"/>
             <Property name="text" type="java.lang.String" value="File"/>
+            <Property name="toolTipText" type="java.lang.String" value="Main CellMissy menu"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="newExperimentMenuItem">
@@ -118,6 +119,7 @@
           <Properties>
             <Property name="mnemonic" type="int" value="88"/>
             <Property name="text" type="java.lang.String" value="Export"/>
+            <Property name="toolTipText" type="java.lang.String" value="Click to export experiments and/or setups"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="exportExperimentMenuItem">
@@ -136,6 +138,7 @@
           <Properties>
             <Property name="mnemonic" type="int" value="73"/>
             <Property name="text" type="java.lang.String" value="Import"/>
+            <Property name="toolTipText" type="java.lang.String" value="Click to import experiments and/or setups"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="importExperimentMenuItem">
@@ -159,6 +162,7 @@
           <Properties>
             <Property name="mnemonic" type="int" value="69"/>
             <Property name="text" type="java.lang.String" value="Edit"/>
+            <Property name="toolTipText" type="java.lang.String" value="Some management utilities"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="assayMenuItem">

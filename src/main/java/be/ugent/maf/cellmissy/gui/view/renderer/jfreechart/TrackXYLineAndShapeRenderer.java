@@ -48,14 +48,6 @@ public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
      * @param lineWidth: thickness to render the line
      * @param useSingleColor: use single color or not?
      */
-//    public TrackXYLineAndShapeRenderer(boolean plotLines, boolean plotPoints, boolean showEndPoints, List<Integer> endPoints, int selectedTrackIndex, float lineWidth) {
-//        this.plotLines = plotLines;
-//        this.plotPoints = plotPoints;
-//        this.showEndPoints = showEndPoints;
-//        this.endPoints = endPoints;
-//        this.selectedTrackIndex = selectedTrackIndex;
-//        this.lineWidth = lineWidth;
-//    }
     public TrackXYLineAndShapeRenderer(boolean plotLines, boolean plotPoints, boolean showEndPoints, List<Integer> endPoints, int selectedTrackIndex, float lineWidth, boolean useSingleColor) {
         this.plotLines = plotLines;
         this.plotPoints = plotPoints;

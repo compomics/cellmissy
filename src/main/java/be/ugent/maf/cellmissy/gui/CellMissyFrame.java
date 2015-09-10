@@ -315,6 +315,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         fileMenu.setMnemonic('F');
         fileMenu.setText("File");
+        fileMenu.setToolTipText("Main CellMissy menu");
 
         newExperimentMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         newExperimentMenuItem.setMnemonic('E');
@@ -372,6 +373,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         exportMenu.setMnemonic('X');
         exportMenu.setText("Export");
+        exportMenu.setToolTipText("Click to export experiments and/or setups");
 
         exportExperimentMenuItem.setText("Export Experiment...");
         exportMenu.add(exportExperimentMenuItem);
@@ -383,6 +385,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         importMenu.setMnemonic('I');
         importMenu.setText("Import");
+        importMenu.setToolTipText("Click to import experiments and/or setups");
 
         importExperimentMenuItem.setText("Import Experiment...");
         importMenu.add(importExperimentMenuItem);
@@ -397,6 +400,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
 
         editMenu.setMnemonic('E');
         editMenu.setText("Edit");
+        editMenu.setToolTipText("Some management utilities");
 
         assayMenuItem.setText("Assay");
         editMenu.add(assayMenuItem);

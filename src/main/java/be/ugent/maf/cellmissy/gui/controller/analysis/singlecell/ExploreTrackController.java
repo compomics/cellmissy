@@ -132,27 +132,6 @@ class ExploreTrackController {
         return trackCoordinatesController.getTrackDataHolderBindingList();
     }
 
-// --Commented out by Inspection START (06/02/2015 13:35):
-//    /**
-//     * Set cursor from main controller
-//     *
-//     */
-//    public void setCursor(Cursor cursor) {
-//        trackCoordinatesController.setCursor(cursor);
-//    }
-// --Commented out by Inspection STOP (06/02/2015 13:35)
-// --Commented out by Inspection START (06/02/2015 13:35):
-//    /**
-//     * Show message through the main controller
-//     *
-//     * @param message
-//     * @param title
-//     * @param messageType
-//     */
-//    public void showMessage(String message, String title, Integer messageType) {
-//        trackCoordinatesController.showMessage(message, title, messageType);
-//    }
-// --Commented out by Inspection STOP (06/02/2015 13:35)
     /**
      * Private methods
      */
