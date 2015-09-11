@@ -29,6 +29,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JFileChooser;
@@ -45,8 +46,12 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.log4j.Logger;
+import org.jdesktop.beansbinding.AutoBinding;
+import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
+import org.jdesktop.swingbinding.JListBinding;
+import org.jdesktop.swingbinding.SwingBindings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -66,6 +71,8 @@ public class GenericImagedPlateController {
     private Format format;
     private ImagingType currentImagingType;
     private Algorithm currentAlgorithm;
+    private boolean isDirectoryLoaded;
+    private BindingGroup bindingGroup;
     //view
     private ImagedPlatePanel imagedPlatePanel;
     private LoadFromGenericInputPlatePanel loadFromGenericInputPlatePanel;
@@ -87,6 +94,7 @@ public class GenericImagedPlateController {
      * Initialize controller
      */
     public void init() {
+        bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         imagedPlatePanel = new ImagedPlatePanel();
         loadFromGenericInputPlatePanel = new LoadFromGenericInputPlatePanel();
@@ -238,7 +246,7 @@ public class GenericImagedPlateController {
                                         // call the other controller
                                         genericSingleCellImagedPlateController.loadData(dataFile, newWellHasImagingType, selectedWellGui);
                                         // check if table still has to be initialized
-                                        if (genericSingleCellImagedPlateController.getTrackPointsTableBinding()== null) {
+                                        if (genericSingleCellImagedPlateController.getTrackPointsTableBinding() == null) {
                                             genericSingleCellImagedPlateController.showRawDataInTable();
                                         }
                                     }
@@ -316,7 +324,7 @@ public class GenericImagedPlateController {
 
                                         }
                                         break;
-                                    // cancel: do nothing
+                                    //cancel: do nothing
                                 }
                             }
                         } else {
@@ -515,7 +523,16 @@ public class GenericImagedPlateController {
         // set imaging type list for plate
         imagedPlatePanel.setImagingTypeList(imagingTypesBindingList);
         // set cell renderer for the JTree
-        loadFromGenericInputPlatePanel.getDataTree().setCellRenderer(new LoadDataTreeCellRenderer(imagingTypesBindingList));
+        loadFromGenericInputPlatePanel.getDirectoryTree().setCellRenderer(new LoadDataTreeCellRenderer(imagingTypesBindingList));
+        loadFromGenericInputPlatePanel.getDirectoryTree().setDragEnabled(true);
+
+        // bind algorithms and imaging types to the Jlists
+        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, algorithmsBindingList, loadFromGenericInputPlatePanel.getAlgorithmList());
+        bindingGroup.addBinding(jListBinding);
+        jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, imagingTypesBindingList, loadFromGenericInputPlatePanel.getImagingTypeList());
+        bindingGroup.addBinding(jListBinding);
+
+        bindingGroup.bind();
 
         // allow only one node to be selected
         loadFromGenericInputPlatePanel.getDataTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -651,8 +668,149 @@ public class GenericImagedPlateController {
                 }
             }
         });
+
+        /**
+         * Load the DATA directory into the JTree.
+         */
+        loadFromGenericInputPlatePanel.getLoadDirectoryButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // first, we let the user choose the directory to load
+                // we check if the directory was already loaded before
+                if (!isDirectoryLoaded) {
+                    File chooseDirectory = chooseDirectory();
+                    // and then we use this directory to load the data into the JTree
+                    loadDataIntoTree(chooseDirectory);
+                } else {
+                    // warn the user and reload the directory, if needed
+                    reloadDirectory();
+                }
+            }
+        });
+
         loadFromGenericInputPlatePanel.getRawDataTable().getTableHeader().setReorderingAllowed(false);
         loadFromGenericInputPlatePanel.getRawDataTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+    }
+
+    /**
+     * Choose and return the directory to load into the JTree
+     *
+     * @return
+     */
+    private File chooseDirectory() {
+        File dataDirectory = null;
+        JFileChooser fileChooser = new JFileChooser();
+        String chooserTitle = "Please select a root folder";
+        fileChooser.setDialogTitle(chooserTitle);
+        // allow for directories only
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        // removing "All Files" option from FileType
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        int returnVal = fileChooser.showOpenDialog(loadExperimentFromGenericInputController.getCellMissyFrame());
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            // load selected data
+            // file to parse
+            dataDirectory = fileChooser.getSelectedFile();
+        } else {
+            loadExperimentFromGenericInputController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+        }
+        return dataDirectory;
+    }
+
+    /**
+     * Given the chosen directory, read all its folders/files and load the data
+     * into the JTree
+     *
+     * @param directory
+     */
+    private void loadDataIntoTree(File directory) {
+        DefaultTreeModel model = (DefaultTreeModel) loadFromGenericInputPlatePanel.getDirectoryTree().getModel();
+        DefaultMutableTreeNode rootNote = (DefaultMutableTreeNode) model.getRoot();
+        // change name (user object) of root node
+        rootNote.setUserObject(directory.getName());
+        // list the files in the directory 
+        // first level of information is the algorithm level
+        File[] algoFolders = directory.listFiles();
+        // check that the directory is not empty
+        if (algoFolders.length != 0) {
+            // iterate through the files and check if they are directories or files
+            for (File algoFolder : algoFolders) {
+                if (algoFolder.isDirectory()) {
+                    // create the node and add it to the root
+                    DefaultMutableTreeNode algoNode = new DefaultMutableTreeNode(algoFolder.getName(), Boolean.TRUE);
+                    rootNote.add(algoNode);
+                    // also, add the algo to the list
+                    Algorithm algorithm = new Algorithm();
+                    algorithm.setAlgorithmName(algoFolder.getName());
+                    algorithmsBindingList.add(algorithm);
+                    // algo folder --> imaging folder(s)
+                    File[] imagingFolders = algoFolder.listFiles();
+                    for (File imagingFolder : imagingFolders) {
+                        // create the node and add it to the root
+                        DefaultMutableTreeNode imagingNode = new DefaultMutableTreeNode(imagingFolder.getName(), Boolean.TRUE);
+                        algoNode.add(imagingNode);
+                        // also, add the imaging type to the list
+                        ImagingType imagingType = new ImagingType();
+                        imagingType.setName(imagingFolder.getName());
+                        if (!imagingTypesBindingList.contains(imagingType)) {
+                            imagingTypesBindingList.add(imagingType);
+                        }
+                        // imaging folder --> text files containing the data to actually load
+                        File[] dataFiles = imagingFolder.listFiles(new java.io.FileFilter() {
+                            @Override
+                            public boolean accept(File f) {
+                                int index = f.getName().lastIndexOf(".");
+                                String extension = f.getName().substring(index + 1);
+                                return extension.equals("txt");
+                            }
+                        });
+                        for (File dataFile : dataFiles) {
+                            DefaultMutableTreeNode dataNode = new DefaultMutableTreeNode(dataFile.getName(), Boolean.FALSE);
+                            imagingNode.add(dataNode);
+                        }
+                    }
+                } else {
+                    // if not even one folder was found, something is wrong: inform the user and quit the process
+                    loadExperimentFromGenericInputController.showMessage("I was expecting at least one folder!", "", JOptionPane.WARNING_MESSAGE);
+                    break;
+                }
+            }
+        } else {
+            // warn the user and do nothing
+            loadExperimentFromGenericInputController.showMessage("This directory is empty!", "", JOptionPane.WARNING_MESSAGE);
+        }
+
+        model.reload();
+        isDirectoryLoaded = true;
+        loadExperimentFromGenericInputController.showMessage("Directory successful loaded!", "", JOptionPane.INFORMATION_MESSAGE);
+        for (int row = 0; row < loadFromGenericInputPlatePanel.getDirectoryTree().getRowCount(); row++) {
+            loadFromGenericInputPlatePanel.getDirectoryTree().expandRow(row);
+        }
+    }
+
+    /**
+     * If the user wants to reload a directory, the already loaded one will be
+     * deleted.
+     */
+    private void reloadDirectory() {
+        // otherwise we ask the user if they want to reload the directory
+        Object[] options = {"Load a different directory", "Cancel"};
+        int showOptionDialog = JOptionPane.showOptionDialog(null, "It seems a directory was already loaded.\nWhat do you want to do?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+        switch (showOptionDialog) {
+            case 0: // load a different directory:
+                // reset algo and imaging type lists
+                algorithmsBindingList.clear();
+                imagingTypesBindingList.clear();
+                // reset the model of the directory tree
+                DefaultTreeModel model = (DefaultTreeModel) loadFromGenericInputPlatePanel.getDirectoryTree().getModel();
+                DefaultMutableTreeNode rootNote = (DefaultMutableTreeNode) model.getRoot();
+                rootNote.removeAllChildren();
+                model.reload();
+                File newDirectory = chooseDirectory();
+                loadDataIntoTree(newDirectory);
+                break;  // cancel: do nothing
+        }
     }
 
     /**

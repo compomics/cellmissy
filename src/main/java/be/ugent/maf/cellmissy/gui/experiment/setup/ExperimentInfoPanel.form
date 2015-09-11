@@ -481,14 +481,12 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="CELLMIA"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JRadioButton" name="genericRadioButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="another image software"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
       </SubComponents>

@@ -304,11 +304,9 @@ public class ExperimentInfoPanel extends javax.swing.JPanel {
 
         cellMiaRadioButton.setText("CELLMIA");
         cellMiaRadioButton.setContentAreaFilled(false);
-        cellMiaRadioButton.setOpaque(false);
 
         genericRadioButton.setText("another image software");
         genericRadioButton.setContentAreaFilled(false);
-        genericRadioButton.setOpaque(false);
 
         javax.swing.GroupLayout imageAnalysisDataPanelLayout = new javax.swing.GroupLayout(imageAnalysisDataPanel);
         imageAnalysisDataPanel.setLayout(imageAnalysisDataPanelLayout);

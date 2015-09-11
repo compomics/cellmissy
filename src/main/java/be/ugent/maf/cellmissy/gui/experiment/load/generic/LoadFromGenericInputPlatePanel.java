@@ -27,6 +27,22 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         return addImagingButton;
     }
 
+    public JTree getDirectoryTree() {
+        return directoryTree;
+    }
+
+    public JButton getLoadDirectoryButton() {
+        return loadDirectoryButton;
+    }
+
+    public JList getAlgorithmList() {
+        return algorithmList;
+    }
+
+    public JList getImagingTypeList() {
+        return imagingTypeList;
+    }
+
     public JList getConditionsList() {
         return conditionsList;
     }
@@ -85,7 +101,6 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         experimentMetadataPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         projNumberLabel = new javax.swing.JLabel();
         expNumberLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -105,6 +120,13 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         addImagingButton = new javax.swing.JButton();
         imagingNameTextField = new javax.swing.JTextField();
         removeButton = new javax.swing.JButton();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        directoryTree = new javax.swing.JTree();
+        loadDirectoryButton = new javax.swing.JButton();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        algorithmList = new javax.swing.JList();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        imagingTypeList = new javax.swing.JList();
         rawDataPanel = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         rawDataTable = new javax.swing.JTable();
@@ -123,16 +145,16 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setText("Project");
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel3.setText("Purpose");
-
         projNumberLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         expNumberLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
+        jScrollPane1.setBorder(null);
+
         purposeTextArea.setEditable(false);
         purposeTextArea.setColumns(20);
         purposeTextArea.setRows(5);
+        purposeTextArea.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1), "Experiment Purpose", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
         purposeTextArea.setFocusable(false);
         jScrollPane1.setViewportView(purposeTextArea);
 
@@ -142,15 +164,16 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
             experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(experimentMetadataPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(projNumberLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(expNumberLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1))
+                .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+                    .addGroup(experimentMetadataPanelLayout.createSequentialGroup()
+                        .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addGap(12, 12, 12)
+                        .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(projNumberLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                            .addComponent(expNumberLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         experimentMetadataPanelLayout.setVerticalGroup(
@@ -165,11 +188,7 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
                     .addComponent(jLabel1)
                     .addComponent(expNumberLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(experimentMetadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(experimentMetadataPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -192,7 +211,7 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         jScrollPane2.setBorder(null);
 
         conditionsList.setModel(new javax.swing.AbstractListModel() {
-            final String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
@@ -204,14 +223,14 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
             conditionsOverviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(conditionsOverviewPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
                 .addContainerGap())
         );
         conditionsOverviewPanelLayout.setVerticalGroup(
             conditionsOverviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(conditionsOverviewPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -266,36 +285,62 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
 
         removeButton.setText("Remove Dataset / Imaging Type");
 
+        treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Root (data)");
+        directoryTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jScrollPane5.setViewportView(directoryTree);
+
+        loadDirectoryButton.setText("Load Directory");
+
+        jScrollPane6.setBorder(null);
+
+        algorithmList.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Algorithms"));
+        algorithmList.setEnabled(false);
+        jScrollPane6.setViewportView(algorithmList);
+
+        jScrollPane7.setBorder(null);
+
+        imagingTypeList.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Imaging Types"));
+        imagingTypeList.setEnabled(false);
+        jScrollPane7.setViewportView(imagingTypeList);
+
         javax.swing.GroupLayout userInputPanelLayout = new javax.swing.GroupLayout(userInputPanel);
         userInputPanel.setLayout(userInputPanelLayout);
         userInputPanelLayout.setHorizontalGroup(
             userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(userInputPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(removeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3))
-                .addGap(18, 18, 18)
                 .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(imagingNameTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(addImagingButton, javax.swing.GroupLayout.Alignment.TRAILING))
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel4)
-                    .addComponent(datasetNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addDatasetButton, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(userInputPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(imagingNameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel4)
+                            .addComponent(datasetNameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                            .addComponent(addDatasetButton, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(addImagingButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                    .addComponent(removeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane5)
+                    .addComponent(loadDirectoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, addDatasetButton, addImagingButton, datasetNameTextField, imagingNameTextField);
+        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addDatasetButton, addImagingButton, datasetNameTextField, imagingNameTextField});
 
-        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jLabel4, jLabel5);
+        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel4, jLabel5});
 
         userInputPanelLayout.setVerticalGroup(
             userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, userInputPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane5)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
                     .addGroup(userInputPanelLayout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -308,12 +353,18 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
                         .addComponent(imagingNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(addImagingButton)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(removeButton)
+                .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(removeButton)
+                    .addComponent(loadDirectoryButton))
                 .addContainerGap())
         );
+
+        userInputPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jScrollPane6, jScrollPane7});
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -349,14 +400,14 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
             rawDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rawDataPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 810, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 900, Short.MAX_VALUE)
                 .addContainerGap())
         );
         rawDataPanelLayout.setVerticalGroup(
             rawDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rawDataPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -384,22 +435,28 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addDatasetButton;
     private javax.swing.JButton addImagingButton;
+    private javax.swing.JList algorithmList;
     private javax.swing.JList conditionsList;
     private javax.swing.JPanel conditionsOverviewPanel;
     private javax.swing.JTree dataTree;
     private javax.swing.JTextField datasetNameTextField;
+    private javax.swing.JTree directoryTree;
     private javax.swing.JLabel expNumberLabel;
     private javax.swing.JPanel experimentMetadataPanel;
     private javax.swing.JTextField imagingNameTextField;
+    private javax.swing.JList imagingTypeList;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JButton loadDirectoryButton;
     private javax.swing.JPanel plateParentPanel;
     private javax.swing.JLabel projNumberLabel;
     private javax.swing.JTextArea purposeTextArea;
