@@ -5,6 +5,9 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.load.generic;
 
+import be.ugent.maf.cellmissy.entity.Algorithm;
+import be.ugent.maf.cellmissy.entity.ImagingType;
+import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import java.awt.Cursor;
@@ -21,12 +24,15 @@ import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.geom.Ellipse2D;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import org.apache.log4j.Logger;
+import org.jdesktop.observablecollections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +47,8 @@ public class DragAndDropController {
 
     private static final Logger LOG = Logger.getLogger(DragAndDropController.class);
     // model
+    private ImagingType currentImagingType;
+    private Algorithm currentAlgorithm;
     // view
     // parent controller
     @Autowired
@@ -89,9 +97,11 @@ public class DragAndDropController {
                 cursor = DragSource.DefaultCopyDrop;
             }
             // the selected element in the JTree
-            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) directoryTree.getSelectionPath().getLastPathComponent();
+            DefaultMutableTreeNode draggedNode = (DefaultMutableTreeNode) directoryTree.getSelectionPath().getLastPathComponent();
+            // set the combination of current imaging type - algorithm
+            setCombinationImagingTypeAlgorithm(draggedNode);
             // initiate a drag operation
-            dge.startDrag(cursor, new TransferableNode(selectedNode));
+            dge.startDrag(cursor, new TransferableNode(draggedNode));
         }
     }
 
@@ -166,18 +176,10 @@ public class DragAndDropController {
                     event.acceptDrop(DnDConstants.ACTION_COPY);
                     // the drop location
                     Point location = event.getLocation();
-                    WellGui wellGuiDropTarget = getWellGuiDropTarget(location);
-
-                    if (validateDropTarget(wellGuiDropTarget)) {
-                        // add everything here...!!!
-                        // look other controller(s)
-                        System.out.println("validate! " + wellGuiDropTarget);
-                    } else {
-                        System.out.println("try again!!!");
-                    }
-
+                    // action on drop
+                    actionOnDrop(location, node);
+                    // drop is complete
                     event.dropComplete(true);
-
                     return;
                 }
                 event.rejectDrop();
@@ -188,15 +190,145 @@ public class DragAndDropController {
     }
 
     /**
+     * Action on drop onto the target component: 1. get the wellGui
+     * correspondent to the point location; 2. validate this wellGui
      *
-     * @param location
+     * @param point
+     * @param node
+     */
+    private void actionOnDrop(Point point, DefaultMutableTreeNode node) {
+        WellGui wellGuiDropTarget = getWellGuiDropTarget(point);
+        if (validateDropTarget(wellGuiDropTarget)) {
+            // new wellHasImagingType (for selected well and current imaging type/algorithm)
+            WellHasImagingType newWellHasImagingType = new WellHasImagingType(wellGuiDropTarget.getWell(), currentImagingType, currentAlgorithm);
+            // get the list of WellHasImagingType for the selected well
+            List<WellHasImagingType> wellHasImagingTypeList = wellGuiDropTarget.getWell().getWellHasImagingTypeList();
+            genericImagedPlateController.reloadData(wellGuiDropTarget);
+            // check if the wellHasImagingType was already processed
+            // this is comparing objects with column, row numbers, and algorithm,imaging types
+            if (!wellHasImagingTypeList.contains(newWellHasImagingType)) {
+                genericImagedPlateController.loadData(getDataFile(node), newWellHasImagingType, wellGuiDropTarget);
+                // update relation with algorithm and imaging type
+                currentAlgorithm.getWellHasImagingTypeList().add(newWellHasImagingType);
+                currentImagingType.getWellHasImagingTypeList().add(newWellHasImagingType);
+                // highlight imaged well
+                highlightImagedWell(wellGuiDropTarget);
+            } else {
+                // warn the user that data was already loaded for the selected combination of well/dataset/imaging type
+                Object[] options = {"Overwrite", "Clear data", "Add location on same well", "Cancel"};
+                int showOptionDialog = JOptionPane.showOptionDialog(null, "Data already loaded for this well / dataset / imaging type.\nWhat do you want to do now?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[3]);
+                switch (showOptionDialog) {
+                    case 0: // overwrite loaded data:
+                        genericImagedPlateController.overwriteData(getDataFile(node), wellGuiDropTarget, newWellHasImagingType);
+                        break;
+                    case 1: // clear data for current algorithm/imaging type
+                        genericImagedPlateController.clearData(wellGuiDropTarget, newWellHasImagingType);
+                        break;
+                    case 2: // select another file to parse, adding location on the same well
+                        genericImagedPlateController.loadData(getDataFile(node), newWellHasImagingType, wellGuiDropTarget);
+                        break;
+                    //cancel: do nothing
+                }
+            }
+        } else {
+            //show a warning message
+            String message = "The well you selected does not belong to a condition.\nPlease drag somewhere else!";
+            genericImagedPlateController.showMessage(message, "Well's selection error", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    /**
+     * Highlight the imaged well for which we are importing data.
+     *
+     * @param selectedWellGui
+     */
+    private void highlightImagedWell(WellGui selectedWellGui) {
+        List<Ellipse2D> ellipsi = selectedWellGui.getEllipsi();
+        List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
+        ImagedPlatePanel imagedPlatePanel = genericImagedPlateController.getImagedPlatePanel();
+        List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(wellHasImagingTypeList);
+        // if size is one, only one imaging type was processed: do not add eny ellipsi
+        if (uniqueImagingTypes.size() != 1) {
+            if (ellipsi.size() < uniqueImagingTypes.size()) {
+                int lastIndex = uniqueImagingTypes.size() - 2;
+                Ellipse2D lastEllipse = ellipsi.get(lastIndex);
+                // calculate factors for new ellipse
+                double size = lastEllipse.getHeight();
+                double newSize = (size / uniqueImagingTypes.size());
+                double newTopLeftX = lastEllipse.getCenterX() - (newSize / 2);
+                double newTopLeftY = lastEllipse.getCenterY() - (newSize / 2);
+                if (newSize != size) {
+                    Ellipse2D ellipseToAdd = new Ellipse2D.Double(newTopLeftX, newTopLeftY, newSize, newSize);
+                    // add the new Ellipse2D to the ellipsi List
+                    ellipsi.add(ellipseToAdd);
+                }
+            }
+        }
+        imagedPlatePanel.repaint();
+    }
+
+    /**
+     * Taking the directory of the parent controller, and knowing the current
+     * combination imaging type-algorithm, get the data file to parse.
+     *
+     * @param node
      * @return
      */
-    private WellGui getWellGuiDropTarget(Point location) {
+    private File getDataFile(DefaultMutableTreeNode node) {
+        String directoryPath = genericImagedPlateController.getDirectory().getAbsolutePath();
+        JTree directoryTree = genericImagedPlateController.getLoadFromGenericInputPlatePanel().getDirectoryTree();
+        String textFile = "" + node.getUserObject();
+        return new File(directoryPath + File.separator + currentAlgorithm + File.separator + currentImagingType + File.separator + textFile);
+    }
+
+    /**
+     * Given the node being dragged,
+     *
+     * @param node
+     */
+    private void setCombinationImagingTypeAlgorithm(DefaultMutableTreeNode draggedNode) {
+        // look for imaging type selected
+        ObservableList<ImagingType> imagingTypesBindingList = genericImagedPlateController.getImagingTypesBindingList();
+        for (ImagingType imagingType : imagingTypesBindingList) {
+            if (imagingType.getName().equals(draggedNode.getParent().toString())) {
+                // imaging type that was selected
+                currentImagingType = imagingType;
+                // look for associated algorithm
+                currentAlgorithm = findAlgorithm(draggedNode);
+            }
+        }
+    }
+
+    /**
+     * Given an imaging node, find the upper dataset
+     *
+     * @param draggedNode
+     * @return
+     */
+    private Algorithm findAlgorithm(DefaultMutableTreeNode draggedNode) {
+        ObservableList<Algorithm> algorithmsBindingList = genericImagedPlateController.getAlgorithmsBindingList();
+        Algorithm foundAlgorithm = null;
+        DefaultMutableTreeNode algoNode = (DefaultMutableTreeNode) draggedNode.getParent().getParent();
+        for (Algorithm algorithm : algorithmsBindingList) {
+            if (algorithm.getAlgorithmName().equals(algoNode.toString())) {
+                foundAlgorithm = algorithm;
+            }
+        }
+        return foundAlgorithm;
+    }
+
+    /**
+     * Given a location (point), get the wellGui correspondent on the plate
+     * panel.
+     *
+     * @param point
+     * @return the wellGui correspondent
+     */
+    private WellGui getWellGuiDropTarget(Point point) {
         WellGui wellGuiDropTarget = null;
         for (WellGui wellGui : genericImagedPlateController.getImagedPlatePanel().getWellGuiList()) {
             List<Ellipse2D> ellipsi = wellGui.getEllipsi();
-            if (ellipsi.get(0).contains(location.getX(), location.getY())) {
+            if (ellipsi.get(0).contains(point.getX(), point.getY())) {
                 wellGuiDropTarget = wellGui;
                 break;
             }
