@@ -29,7 +29,6 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JFileChooser;
@@ -84,6 +83,8 @@ public class GenericImagedPlateController {
     private GenericAreaImagedPlateController genericAreaImagedPlateController;
     @Autowired
     private GenericSingleCellImagedPlateController genericSingleCellImagedPlateController;
+    @Autowired
+    private DragAndDropController dragAndDropController;
     //services
     @Autowired
     private PlateService plateService;
@@ -104,6 +105,7 @@ public class GenericImagedPlateController {
         // init child controllers
         genericAreaImagedPlateController.init();
         genericSingleCellImagedPlateController.init();
+        dragAndDropController.init();
         // init views
         initLoadDataPlatePanel();
         initAlgoImagingPanel();
@@ -522,9 +524,11 @@ public class GenericImagedPlateController {
         imagingTypesBindingList = ObservableCollections.observableList(new ArrayList<ImagingType>());
         // set imaging type list for plate
         imagedPlatePanel.setImagingTypeList(imagingTypesBindingList);
-        // set cell renderer for the JTree
+        // set cell renderer for the JrTree
         loadFromGenericInputPlatePanel.getDirectoryTree().setCellRenderer(new LoadDataTreeCellRenderer(imagingTypesBindingList));
-        loadFromGenericInputPlatePanel.getDirectoryTree().setDragEnabled(true);
+//        loadFromGenericInputPlatePanel.getDirectoryTree().setDragEnabled(true);
+//        loadFromGenericInputPlatePanel.getDirectoryTree().setTransferHandler(new DirectoryTreeTransferHandler());
+        loadFromGenericInputPlatePanel.getDirectoryTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         // bind algorithms and imaging types to the Jlists
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, algorithmsBindingList, loadFromGenericInputPlatePanel.getAlgorithmList());
@@ -679,9 +683,9 @@ public class GenericImagedPlateController {
                 // first, we let the user choose the directory to load
                 // we check if the directory was already loaded before
                 if (!isDirectoryLoaded) {
-                    File chooseDirectory = chooseDirectory();
+                    File directory = chooseDirectory();
                     // and then we use this directory to load the data into the JTree
-                    loadDataIntoTree(chooseDirectory);
+                    loadDataIntoTree(directory);
                 } else {
                     // warn the user and reload the directory, if needed
                     reloadDirectory();

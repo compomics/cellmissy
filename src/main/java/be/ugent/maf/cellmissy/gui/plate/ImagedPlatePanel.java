@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class is used in the loading data step: imaged wells are shown with related imaging types
+ * This class is used in the loading data step: imaged wells are shown with
+ * related imaging types
  *
  * @author Paola Masuzzo
  */
@@ -113,7 +114,9 @@ public class ImagedPlatePanel extends AbstractPlatePanel {
     }
 
     /**
-     * render wells Override method from Abstract Plate Panel: if wells have already been rendered, redraw them taking into account full color for imaged wells
+     * render wells Override method from Abstract Plate Panel: if wells have
+     * already been rendered, redraw them taking into account full color for
+     * imaged wells
      *
      * @param g
      */
