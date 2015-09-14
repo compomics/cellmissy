@@ -206,7 +206,7 @@ public class LoadExperimentFromGenericInputController {
                 // if everything is valid, update the experiment, else show a message
                 List<String> messages = validateExperimentMetadata();
                 if (messages.isEmpty()) {
-                    cellMissyController.updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Add datasets and imaging types to start the import. Click on each well to choose file(s) to import.");
+                    cellMissyController.updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Please choose a directory containing the motility data you want to import.");
                     LoadFromGenericInputPlatePanel loadFromGenericInputPlatePanel = genericImagedPlateController.getLoadFromGenericInputPlatePanel(); // update labels with experiment metadata
                     loadFromGenericInputPlatePanel.getProjNumberLabel().setText(experiment.getProject().toString());
                     loadFromGenericInputPlatePanel.getExpNumberLabel().setText(experiment.toString());

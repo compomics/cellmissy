@@ -6,7 +6,6 @@
 package be.ugent.maf.cellmissy.gui.controller.load.generic.area;
 
 import be.ugent.maf.cellmissy.entity.TimeStep;
-import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import be.ugent.maf.cellmissy.gui.controller.load.generic.GenericImagedPlateController;
@@ -71,22 +70,6 @@ public class GenericAreaImagedPlateController {
     }
 
     /**
-     * Reload data already parsed for a selected well
-     *
-     * @param selectedWellGui
-     */
-    public void reloadData(WellGui selectedWellGui) {
-        // empty the list
-        timeStepsBindingList.clear();
-        List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
-        for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
-            for (TimeStep timeStep : wellHasImagingType.getTimeStepList()) {
-                timeStepsBindingList.add(timeStep);
-            }
-        }
-    }
-
-    /**
      * Show Area values in table
      */
     public void showRawDataInTable() {
@@ -105,7 +88,7 @@ public class GenericAreaImagedPlateController {
         columnBinding.setColumnClass(Integer.class);
 
         columnBinding = timeStepsTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType.algorithm.algorithmName}"));
-        columnBinding.setColumnName("Dataset");
+        columnBinding.setColumnName("Algorithm");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(String.class);
         columnBinding.setRenderer(new AlignedTableRenderer(SwingConstants.RIGHT));
@@ -150,10 +133,6 @@ public class GenericAreaImagedPlateController {
             for (TimeStep timeStep : timeSteps) {
                 timeStep.setWellHasImagingType(newWellHasImagingType);
             }
-            // if the list is not empty and does not contain the selected well, clear it before adding the new timeSteps
-            if (!timeStepsBindingList.isEmpty() && !containsWell(selectedWellGui)) {
-                timeStepsBindingList.clear();
-            }
             timeStepsBindingList.addAll(timeSteps);
         } catch (FileParserException ex) {
             LOG.error(ex.getMessage());
@@ -179,23 +158,5 @@ public class GenericAreaImagedPlateController {
             }
         }
         return list;
-    }
-
-    /**
-     * Check if the TimeStepsList contains the selected well
-     *
-     * @param selectedWellGui
-     * @return
-     */
-    private boolean containsWell(WellGui selectedWellGui) {
-        boolean containsWell = false;
-        Well selectedWell = selectedWellGui.getWell();
-        for (TimeStep timeStep : timeStepsBindingList) {
-            if (timeStep.getWellHasImagingType().getWell().equals(selectedWell)) {
-                containsWell = true;
-                break;
-            }
-        }
-        return containsWell;
     }
 }

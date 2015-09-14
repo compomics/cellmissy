@@ -64,6 +64,17 @@ public class DragAndDropController {
     }
 
     /**
+     * Public methods
+     */
+    public ImagingType getCurrentImagingType() {
+        return currentImagingType;
+    }
+
+    public Algorithm getCurrentAlgorithm() {
+        return currentAlgorithm;
+    }
+
+    /**
      * Private methods and classes
      */
     /**
@@ -153,7 +164,6 @@ public class DragAndDropController {
         // we need to connect the target with a component
         DropTarget dropTarget;
         // in our case, the component is a JPanel
-        private final JPanel panel;
 
         /**
          * The constructor
@@ -161,7 +171,7 @@ public class DragAndDropController {
          * @param panel: the drop target
          */
         public JPanelDropTargetListener(JPanel panel) {
-            this.panel = panel;
+
             // construct a new drop target
             dropTarget = new DropTarget(panel, DnDConstants.ACTION_COPY, this, true);
         }
@@ -191,49 +201,50 @@ public class DragAndDropController {
 
     /**
      * Action on drop onto the target component: 1. get the wellGui
-     * correspondent to the point location; 2. validate this wellGui
+     * correspondent to the drop-point location; 2. validate this wellGui; 3.
      *
      * @param point
      * @param node
      */
     private void actionOnDrop(Point point, DefaultMutableTreeNode node) {
         WellGui wellGuiDropTarget = getWellGuiDropTarget(point);
-        if (validateDropTarget(wellGuiDropTarget)) {
-            // new wellHasImagingType (for selected well and current imaging type/algorithm)
-            WellHasImagingType newWellHasImagingType = new WellHasImagingType(wellGuiDropTarget.getWell(), currentImagingType, currentAlgorithm);
-            // get the list of WellHasImagingType for the selected well
-            List<WellHasImagingType> wellHasImagingTypeList = wellGuiDropTarget.getWell().getWellHasImagingTypeList();
-            genericImagedPlateController.reloadData(wellGuiDropTarget);
-            // check if the wellHasImagingType was already processed
-            // this is comparing objects with column, row numbers, and algorithm,imaging types
-            if (!wellHasImagingTypeList.contains(newWellHasImagingType)) {
-                genericImagedPlateController.loadData(getDataFile(node), newWellHasImagingType, wellGuiDropTarget);
-                // update relation with algorithm and imaging type
-                currentAlgorithm.getWellHasImagingTypeList().add(newWellHasImagingType);
-                currentImagingType.getWellHasImagingTypeList().add(newWellHasImagingType);
-                // highlight imaged well
-                highlightImagedWell(wellGuiDropTarget);
-            } else {
-                // warn the user that data was already loaded for the selected combination of well/dataset/imaging type
-                Object[] options = {"Overwrite", "Clear data", "Add location on same well", "Cancel"};
-                int showOptionDialog = JOptionPane.showOptionDialog(null, "Data already loaded for this well / dataset / imaging type.\nWhat do you want to do now?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[3]);
-                switch (showOptionDialog) {
-                    case 0: // overwrite loaded data:
-                        genericImagedPlateController.overwriteData(getDataFile(node), wellGuiDropTarget, newWellHasImagingType);
-                        break;
-                    case 1: // clear data for current algorithm/imaging type
-                        genericImagedPlateController.clearData(wellGuiDropTarget, newWellHasImagingType);
-                        break;
-                    case 2: // select another file to parse, adding location on the same well
-                        genericImagedPlateController.loadData(getDataFile(node), newWellHasImagingType, wellGuiDropTarget);
-                        break;
-                    //cancel: do nothing
+        if (wellGuiDropTarget != null) {
+            if (validateDropTarget(wellGuiDropTarget)) {
+                // new wellHasImagingType (for selected well and current imaging type/algorithm)
+                WellHasImagingType newWellHasImagingType = new WellHasImagingType(wellGuiDropTarget.getWell(), currentImagingType, currentAlgorithm);
+                // get the list of WellHasImagingType for the selected well
+                List<WellHasImagingType> wellHasImagingTypeList = wellGuiDropTarget.getWell().getWellHasImagingTypeList();
+                // check if the wellHasImagingType was already processed
+                // this is comparing objects with column, row numbers, and algorithm,imaging types
+                if (!wellHasImagingTypeList.contains(newWellHasImagingType)) {
+                    genericImagedPlateController.loadData(getDataFile(node), newWellHasImagingType, wellGuiDropTarget);
+                    // update relation with algorithm and imaging type
+                    currentAlgorithm.getWellHasImagingTypeList().add(newWellHasImagingType);
+                    currentImagingType.getWellHasImagingTypeList().add(newWellHasImagingType);
+                    // highlight imaged well
+                    highlightImagedWell(wellGuiDropTarget);
+                } else {
+                    // warn the user that data was already loaded for the selected combination of well/dataset/imaging type
+                    Object[] options = {"Overwrite", "Clear data for this well", "Add location on same well", "Cancel"};
+                    int showOptionDialog = JOptionPane.showOptionDialog(null, "Data already loaded for this well / dataset / imaging type.\nWhat do you want to do now?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[3]);
+                    switch (showOptionDialog) {
+                        case 0: // overwrite loaded data:
+                            genericImagedPlateController.overwriteDataForWell(getDataFile(node), wellGuiDropTarget, newWellHasImagingType);
+                            break;
+                        case 1: // clear data for current algorithm/imaging type
+                            genericImagedPlateController.clearDataForWell(wellGuiDropTarget);
+                            break;
+                        case 2: // select another file to parse, adding location on the same well
+                            genericImagedPlateController.loadData(getDataFile(node), newWellHasImagingType, wellGuiDropTarget);
+                            break;
+                        //cancel: do nothing
+                    }
                 }
+            } else {
+                //show a warning message
+                String message = "The well you selected does not belong to a condition.\nPlease drag somewhere else!";
+                genericImagedPlateController.showMessage(message, "Well's selection error", JOptionPane.WARNING_MESSAGE);
             }
-        } else {
-            //show a warning message
-            String message = "The well you selected does not belong to a condition.\nPlease drag somewhere else!";
-            genericImagedPlateController.showMessage(message, "Well's selection error", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -276,7 +287,6 @@ public class DragAndDropController {
      */
     private File getDataFile(DefaultMutableTreeNode node) {
         String directoryPath = genericImagedPlateController.getDirectory().getAbsolutePath();
-        JTree directoryTree = genericImagedPlateController.getLoadFromGenericInputPlatePanel().getDirectoryTree();
         String textFile = "" + node.getUserObject();
         return new File(directoryPath + File.separator + currentAlgorithm + File.separator + currentImagingType + File.separator + textFile);
     }

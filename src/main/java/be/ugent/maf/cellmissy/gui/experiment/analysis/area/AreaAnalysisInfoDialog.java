@@ -14,6 +14,7 @@ public class AreaAnalysisInfoDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form AreaAnalysisInfoDialog
+     * @param parent
      */
     public AreaAnalysisInfoDialog(Frame parent) {
         super(parent, true);

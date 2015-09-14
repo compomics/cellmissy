@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.controller.load.generic.area.GenericAreaImagedPlateController;
 import be.ugent.maf.cellmissy.gui.controller.load.generic.singlecell.GenericSingleCellImagedPlateController;
+import be.ugent.maf.cellmissy.gui.experiment.load.generic.GenericImportInfoDialog;
 import be.ugent.maf.cellmissy.gui.experiment.load.generic.LoadFromGenericInputPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
@@ -22,8 +23,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.text.DecimalFormat;
@@ -31,17 +30,14 @@ import java.text.Format;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTree;
 import javax.swing.SwingConstants;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.log4j.Logger;
@@ -76,6 +72,7 @@ public class GenericImagedPlateController {
     //view
     private ImagedPlatePanel imagedPlatePanel;
     private LoadFromGenericInputPlatePanel loadFromGenericInputPlatePanel;
+    private GenericImportInfoDialog genericImportInfoDialog;
     // parent controller
     @Autowired
     private LoadExperimentFromGenericInputController loadExperimentFromGenericInputController;
@@ -99,6 +96,7 @@ public class GenericImagedPlateController {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         imagedPlatePanel = new ImagedPlatePanel();
+        genericImportInfoDialog = new GenericImportInfoDialog(loadExperimentFromGenericInputController.getCellMissyFrame());
         loadFromGenericInputPlatePanel = new LoadFromGenericInputPlatePanel();
         //disable mouse Listener
         mouseListenerEnabled = false;
@@ -146,18 +144,7 @@ public class GenericImagedPlateController {
     }
 
     /**
-     *
-     * @param selectedWellGui
-     */
-    public void reloadData(WellGui selectedWellGui) {
-        if (loadExperimentFromGenericInputController.isGenericArea()) {
-            genericAreaImagedPlateController.reloadData(selectedWellGui);
-        } else {
-            genericSingleCellImagedPlateController.reloadData(selectedWellGui);
-        }
-    }
-
-    /**
+     * Load the data.
      *
      * @param dataFile
      * @param newWellHasImagingType
@@ -187,7 +174,7 @@ public class GenericImagedPlateController {
      * @param selectedWellGui
      * @param newWellHasImagingType
      */
-    public void overwriteData(File newFile, WellGui selectedWellGui, WellHasImagingType newWellHasImagingType) {
+    public void overwriteDataForWell(File newFile, WellGui selectedWellGui, WellHasImagingType newWellHasImagingType) {
         if (loadExperimentFromGenericInputController.isGenericArea()) {
             genericAreaImagedPlateController.removeOldDataFromList(newWellHasImagingType);
         } else {
@@ -197,8 +184,8 @@ public class GenericImagedPlateController {
         // remove the data from the well
         selectedWellGui.getWell().getWellHasImagingTypeList().remove(newWellHasImagingType);
         // update relation with algorithm and imaging type
-        currentAlgorithm.getWellHasImagingTypeList().remove(newWellHasImagingType);
-        currentImagingType.getWellHasImagingTypeList().remove(newWellHasImagingType);
+        dragAndDropController.getCurrentAlgorithm().getWellHasImagingTypeList().remove(newWellHasImagingType);
+        dragAndDropController.getCurrentImagingType().getWellHasImagingTypeList().remove(newWellHasImagingType);
 
         if (loadExperimentFromGenericInputController.isGenericArea()) {
             genericAreaImagedPlateController.loadData(newFile, newWellHasImagingType, selectedWellGui);
@@ -211,32 +198,15 @@ public class GenericImagedPlateController {
     /**
      *
      * @param selectedWellGui
-     * @param newWellHasImagingType
      */
-    public void clearData(WellGui selectedWellGui, WellHasImagingType newWellHasImagingType) {
-        if (!imagingTypeIsNotLast(selectedWellGui)) {
-            List<WellHasImagingType> oldSamples = null;
-            if (loadExperimentFromGenericInputController.isGenericArea()) {
-                oldSamples = genericAreaImagedPlateController.removeOldDataFromList(newWellHasImagingType);
-            } else {
-                // call the other controller
-                oldSamples = genericSingleCellImagedPlateController.removeOldDataFromList(newWellHasImagingType);
-            }
-
-            // remove the data from the well
-            selectedWellGui.getWell().getWellHasImagingTypeList().removeAll(oldSamples);
-            // update relation with algorithm and imaging type
-            currentAlgorithm.getWellHasImagingTypeList().remove(newWellHasImagingType);
-            currentImagingType.getWellHasImagingTypeList().remove(newWellHasImagingType);
-            onCancel(selectedWellGui);
-        } else {
-            List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(selectedWellGui.getWell().getWellHasImagingTypeList());
-            ImagingType lastImagingType = uniqueImagingTypes.get(uniqueImagingTypes.size() - 1);
-            loadExperimentFromGenericInputController.showMessage("Please remove first last added imaging type " + "(" + lastImagingType.getName() + ")", "", JOptionPane.WARNING_MESSAGE);
-            List<Algorithm> uniqueAlgorithms = getUniqueAlgorithms(selectedWellGui.getWell().getWellHasImagingTypeList());
-            Algorithm lastAlgorithm = uniqueAlgorithms.get(uniqueAlgorithms.size() - 1);
-            selectImagingTypeOnTree(lastImagingType, lastAlgorithm);
+    public void clearDataForWell(WellGui selectedWellGui) {
+        List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
+        for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
+            dragAndDropController.getCurrentAlgorithm().getWellHasImagingTypeList().remove(wellHasImagingType);
+            dragAndDropController.getCurrentImagingType().getWellHasImagingTypeList().remove(wellHasImagingType);
         }
+        resetDataForWellGui(selectedWellGui);
+        imagedPlatePanel.repaint();
     }
 
     /**
@@ -266,7 +236,6 @@ public class GenericImagedPlateController {
      * carefully!!
      */
     public void resetData() {
-
         if (loadExperimentFromGenericInputController.isGenericArea()) {
             genericAreaImagedPlateController.getTimeStepsBindingList().clear();
         } else {
@@ -277,19 +246,32 @@ public class GenericImagedPlateController {
         // empty wellhasimagingtype collection of each well
         List<WellGui> wellGuiList = imagedPlatePanel.getWellGuiList();
         for (WellGui wellGui : wellGuiList) {
-            // clear the wellhasimagingtype collection
-            wellGui.getWell().getWellHasImagingTypeList().clear();
-            List<Ellipse2D> ellipsi = wellGui.getEllipsi();
-            Iterator<Ellipse2D> iterator = ellipsi.iterator();
-            while (iterator.hasNext()) {
-                // only the default, bigger ellipse needs to stay in the repaint
-                if (!iterator.next().equals(ellipsi.get(0))) {
-                    iterator.remove();
-                }
-            }
+            resetDataForWellGui(wellGui);
         }
         // repaint the plate view
         imagedPlatePanel.repaint();
+        for (ImagingType imagingType : imagingTypesBindingList) {
+            imagingType.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
+        }
+        for (Algorithm algorithm : algorithmsBindingList) {
+            algorithm.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
+        }
+    }
+
+    /**
+     *
+     * @param wellGui
+     */
+    private void resetDataForWellGui(WellGui wellGui) {
+        wellGui.getWell().getWellHasImagingTypeList().clear();
+        List<Ellipse2D> ellipsi = wellGui.getEllipsi();
+        Iterator<Ellipse2D> iterator = ellipsi.iterator();
+        while (iterator.hasNext()) {
+            // only the default, bigger ellipse needs to stay in the repaint
+            if (!iterator.next().equals(ellipsi.get(0))) {
+                iterator.remove();
+            }
+        }
     }
 
     /**
@@ -307,317 +289,6 @@ public class GenericImagedPlateController {
         for (WellGui wellGui : wellGuiList) {
             wellGui.getWell().setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
         }
-        /**
-         * Mouse Listener for imaged plate panel
-         */
-        imagedPlatePanel.addMouseListener(new MouseAdapter() {
-            // if the mouse has been pressed and released on a wellGui, show a dialog to choose file to parse
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (mouseListenerEnabled) {
-                    WellGui selectedWellGui = null;
-                    for (WellGui wellGui : imagedPlatePanel.getWellGuiList()) {
-                        List<Ellipse2D> ellipsi = wellGui.getEllipsi();
-                        if ((e.getButton() == 1) && ellipsi.get(0).contains(e.getX(), e.getY())) {
-                            selectedWellGui = wellGui;
-                            break;
-                        }
-                    }
-                    // check if the selected wellGui is actually not null
-                    if (selectedWellGui != null) {
-                        // check if well belongs to condition (otherwise selection is not valid)
-                        if (validateSelection(selectedWellGui)) {
-                            // new wellHasImagingType (for selected well and current imaging type/algorithm)
-                            WellHasImagingType newWellHasImagingType = new WellHasImagingType(selectedWellGui.getWell(), currentImagingType, currentAlgorithm);
-                            // get the list of WellHasImagingType for the selected well
-                            List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
-                            // check which controller we need to call
-                            if (loadExperimentFromGenericInputController.isGenericArea()) {
-                                genericAreaImagedPlateController.reloadData(selectedWellGui);
-                            } else {
-                                genericSingleCellImagedPlateController.reloadData(selectedWellGui);
-                            }
-
-                            // check if the wellHasImagingType was already processed
-                            // this is comparing objects with column, row numbers, and algorithm,imaging types
-                            if (!wellHasImagingTypeList.contains(newWellHasImagingType)) {
-                                // if it was not already processed, choose a file to parse
-                                File dataFile = chooseData();
-                                if (dataFile != null) {
-                                    // if it's area that we need to load...
-                                    if (loadExperimentFromGenericInputController.isGenericArea()) {
-                                        genericAreaImagedPlateController.loadData(dataFile, newWellHasImagingType, selectedWellGui);
-                                        // check if table still has to be initialized
-                                        if (genericAreaImagedPlateController.getTimeStepsTableBinding() == null) {
-                                            genericAreaImagedPlateController.showRawDataInTable();
-                                        }
-                                    } else {
-                                        // call the other controller
-                                        genericSingleCellImagedPlateController.loadData(dataFile, newWellHasImagingType, selectedWellGui);
-                                        // check if table still has to be initialized
-                                        if (genericSingleCellImagedPlateController.getTrackPointsTableBinding() == null) {
-                                            genericSingleCellImagedPlateController.showRawDataInTable();
-                                        }
-                                    }
-
-                                    // update relation with algorithm and imaging type
-                                    currentAlgorithm.getWellHasImagingTypeList().add(newWellHasImagingType);
-                                    currentImagingType.getWellHasImagingTypeList().add(newWellHasImagingType);
-                                    // highlight imaged well
-                                    highlightImagedWell(selectedWellGui);
-                                }
-                            } else {
-                                // warn the user that data was already loaded for the selected combination of well/dataset/imaging type
-                                Object[] options = {"Overwrite", "Clear data", "Add location on same well", "Cancel"};
-                                int showOptionDialog = JOptionPane.showOptionDialog(null, "Data already loaded for this well / dataset / imaging type.\nWhat do you want to do now?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[3]);
-                                switch (showOptionDialog) {
-                                    case 0: // overwrite loaded data:
-                                        // choose another file to parse (another dataset to load)
-                                        File newFile = chooseData();
-                                        if (newFile != null) {
-                                            if (loadExperimentFromGenericInputController.isGenericArea()) {
-                                                genericAreaImagedPlateController.removeOldDataFromList(newWellHasImagingType);
-                                            } else {
-                                                // call the other controller
-                                                genericSingleCellImagedPlateController.removeOldDataFromList(newWellHasImagingType);
-                                            }
-                                            // remove the data from the well
-                                            selectedWellGui.getWell().getWellHasImagingTypeList().remove(newWellHasImagingType);
-                                            // update relation with algorithm and imaging type
-                                            currentAlgorithm.getWellHasImagingTypeList().remove(newWellHasImagingType);
-                                            currentImagingType.getWellHasImagingTypeList().remove(newWellHasImagingType);
-
-                                            if (loadExperimentFromGenericInputController.isGenericArea()) {
-                                                genericAreaImagedPlateController.loadData(newFile, newWellHasImagingType, selectedWellGui);
-                                            } else {
-                                                // call the other controller
-                                                genericSingleCellImagedPlateController.loadData(newFile, newWellHasImagingType, selectedWellGui);
-                                            }
-                                        }
-                                        break;
-                                    case 1: // clear data for current algorithm/imaging type
-                                        if (!imagingTypeIsNotLast(selectedWellGui)) {
-                                            List<WellHasImagingType> oldSamples = null;
-                                            if (loadExperimentFromGenericInputController.isGenericArea()) {
-                                                oldSamples = genericAreaImagedPlateController.removeOldDataFromList(newWellHasImagingType);
-                                            } else {
-                                                // call the other controller
-                                                oldSamples = genericSingleCellImagedPlateController.removeOldDataFromList(newWellHasImagingType);
-                                            }
-
-                                            // remove the data from the well
-                                            selectedWellGui.getWell().getWellHasImagingTypeList().removeAll(oldSamples);
-                                            // update relation with algorithm and imaging type
-                                            currentAlgorithm.getWellHasImagingTypeList().remove(newWellHasImagingType);
-                                            currentImagingType.getWellHasImagingTypeList().remove(newWellHasImagingType);
-                                            onCancel(selectedWellGui);
-                                        } else {
-                                            List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(selectedWellGui.getWell().getWellHasImagingTypeList());
-                                            ImagingType lastImagingType = uniqueImagingTypes.get(uniqueImagingTypes.size() - 1);
-                                            loadExperimentFromGenericInputController.showMessage("Please remove first last added imaging type " + "(" + lastImagingType.getName() + ")", "", JOptionPane.WARNING_MESSAGE);
-                                            List<Algorithm> uniqueAlgorithms = getUniqueAlgorithms(wellHasImagingTypeList);
-                                            Algorithm lastAlgorithm = uniqueAlgorithms.get(uniqueAlgorithms.size() - 1);
-                                            selectImagingTypeOnTree(lastImagingType, lastAlgorithm);
-                                        }
-                                        break;
-                                    case 2: // select another file to parse, adding location on the same well
-                                        // choose another file to parse (another dataset to load)
-                                        newFile = chooseData();
-                                        if (newFile != null) {
-                                            if (loadExperimentFromGenericInputController.isGenericArea()) {
-                                                genericAreaImagedPlateController.loadData(newFile, newWellHasImagingType, selectedWellGui);
-                                            } else {
-                                                // call the other controller
-                                                genericSingleCellImagedPlateController.loadData(newFile, newWellHasImagingType, selectedWellGui);
-                                            }
-
-                                        }
-                                        break;
-                                    //cancel: do nothing
-                                }
-                            }
-                        } else {
-                            //show a warning message
-                            String message = "The well you selected does not belong to a condition.\nPlease select another well.";
-                            loadExperimentFromGenericInputController.showMessage(message, "Well's selection error", JOptionPane.WARNING_MESSAGE);
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * Get unique algorithms from a list of samples
-     *
-     * @param wellHasImagingTypes
-     * @return
-     */
-    private List<Algorithm> getUniqueAlgorithms(List<WellHasImagingType> wellHasImagingTypes) {
-        List<Algorithm> algorithms = new ArrayList<>();
-
-        for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
-            if (!algorithms.contains(wellHasImagingType.getAlgorithm())) {
-                algorithms.add(wellHasImagingType.getAlgorithm());
-            }
-        }
-        return algorithms;
-    }
-
-    /**
-     * Select a specific imaging type on the JTree, according to a certain
-     * algorithm
-     *
-     * @param imagingType
-     * @param algorithm
-     */
-    private void selectImagingTypeOnTree(ImagingType imagingType, Algorithm algorithm) {
-        // jtree structure
-        JTree dataTree = loadFromGenericInputPlatePanel.getDataTree();
-        // model of JTree
-        DefaultTreeModel model = (DefaultTreeModel) dataTree.getModel();
-        // root (Data) node
-        DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) model.getRoot();
-        // iterate through dataset nodes
-        for (int n = 0; n < model.getChildCount(rootNode); n++) {
-            DefaultMutableTreeNode datasetNode = (DefaultMutableTreeNode) model.getChild(rootNode, n);
-            if (datasetNode.toString().equals(algorithm.toString())) {
-                // iterate through imaging type node
-                for (int m = 0; m < datasetNode.getChildCount(); m++) {
-                    DefaultMutableTreeNode imagingNode = (DefaultMutableTreeNode) datasetNode.getChildAt(m);
-                    if (imagingNode.toString().equals(imagingType.toString())) {
-                        dataTree.setSelectionPath(new TreePath(imagingNode.getPath()));
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Opening a dialog to select file to parse and load data parsing the
-     * selected file
-     */
-    private File chooseData() {
-        File dataFile = null;
-        JFileChooser fileChooser = new JFileChooser();
-        // to select only txt files
-        fileChooser.setFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                if (f.isDirectory()) {
-                    return true;
-                }
-                int index = f.getName().lastIndexOf(".");
-                String extension = f.getName().substring(index + 1);
-                return extension.equals("txt");
-            }
-
-            @Override
-            public String getDescription() {
-                return ("text files only");
-            }
-        });
-        // Removing "All Files" option from FileType
-        fileChooser.setAcceptAllFileFilterUsed(false);
-        int returnVal = fileChooser.showOpenDialog(loadExperimentFromGenericInputController.getCellMissyFrame());
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            // load selected data
-            // file to parse
-            dataFile = fileChooser.getSelectedFile();
-        } else {
-            loadExperimentFromGenericInputController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
-        }
-        return dataFile;
-    }
-
-    /**
-     * Highlight the imaged well for which we are importing data.
-     *
-     * @param selectedWellGui
-     */
-    private void highlightImagedWell(WellGui selectedWellGui) {
-        List<Ellipse2D> ellipsi = selectedWellGui.getEllipsi();
-        List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
-        List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(wellHasImagingTypeList);
-        // if size is one, only one imaging type was processed: do not add eny ellipsi
-        if (uniqueImagingTypes.size() != 1) {
-            if (ellipsi.size() < uniqueImagingTypes.size()) {
-                int lastIndex = uniqueImagingTypes.size() - 2;
-                Ellipse2D lastEllipse = ellipsi.get(lastIndex);
-                // calculate factors for new ellipse
-                double size = lastEllipse.getHeight();
-                double newSize = (size / uniqueImagingTypes.size());
-                double newTopLeftX = lastEllipse.getCenterX() - (newSize / 2);
-                double newTopLeftY = lastEllipse.getCenterY() - (newSize / 2);
-                if (newSize != size) {
-                    Ellipse2D ellipseToAdd = new Ellipse2D.Double(newTopLeftX, newTopLeftY, newSize, newSize);
-                    // add the new Ellipse2D to the ellipsi List
-                    ellipsi.add(ellipseToAdd);
-                }
-            }
-        }
-        imagedPlatePanel.repaint();
-    }
-
-    /**
-     * On cancel: delete data and, if necessary, repaint the plate view
-     *
-     * @param wellGui
-     */
-    private void onCancel(WellGui wellGui) {
-        List<WellHasImagingType> wellHasImagingTypeList = wellGui.getWell().getWellHasImagingTypeList();
-        Iterator<WellHasImagingType> iterator = wellHasImagingTypeList.iterator();
-        while (iterator.hasNext()) {
-            if (iterator.next().getImagingType().equals(imagedPlatePanel.getCurrentImagingType())) {
-                iterator.remove();
-            }
-        }
-        // get unique imaging types from the collection
-        List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(wellHasImagingTypeList);
-        // index of last added ellipse
-        int lastIndex = uniqueImagingTypes.size();
-        // if the ellipse is the first one, do not remove it, neither if it still contains the current imaging type
-        if (lastIndex != 0 && !containsImagingType(wellHasImagingTypeList, currentImagingType)) {
-            // ellipse to remove
-            Ellipse2D ellipseToRemove = wellGui.getEllipsi().get(lastIndex);
-            wellGui.getEllipsi().remove(ellipseToRemove);
-        }
-        imagedPlatePanel.repaint();
-    }
-
-    /**
-     * Check if the imaging type the user is attempting to delete is the first
-     * one
-     *
-     * @return
-     */
-    private boolean imagingTypeIsNotLast(WellGui wellGui) {
-        List<WellHasImagingType> wellHasImagingTypeList = wellGui.getWell().getWellHasImagingTypeList();
-        List<ImagingType> uniqueImagingTypes = imagedPlatePanel.getUniqueImagingTypes(wellHasImagingTypeList);
-        boolean isNotLast = false;
-        int numberOfImagingTypes = uniqueImagingTypes.size();
-        int currentImagingIndex = uniqueImagingTypes.indexOf(currentImagingType);
-        if (numberOfImagingTypes != 1 && currentImagingIndex < uniqueImagingTypes.size() - 1) {
-            isNotLast = true;
-        }
-        return isNotLast;
-    }
-
-    /**
-     * Check if a collection of wellhasImagingTypes contains a certain imaging
-     * type
-     *
-     * @param wellHasImagingTypes
-     * @param imagingType
-     * @return
-     */
-    private boolean containsImagingType(List<WellHasImagingType> wellHasImagingTypes, ImagingType imagingType) {
-        for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
-            if (wellHasImagingType.getImagingType().equals(imagingType)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -633,10 +304,10 @@ public class GenericImagedPlateController {
         imagedPlatePanel.setImagingTypeList(imagingTypesBindingList);
         // set cell renderer for the JrTree
         loadFromGenericInputPlatePanel.getDirectoryTree().setCellRenderer(new LoadDataTreeCellRenderer(imagingTypesBindingList));
-//        loadFromGenericInputPlatePanel.getDirectoryTree().setDragEnabled(true);
-//        loadFromGenericInputPlatePanel.getDirectoryTree().setTransferHandler(new DirectoryTreeTransferHandler());
         loadFromGenericInputPlatePanel.getDirectoryTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-
+        // set icon for the question button
+        Icon questionIcon = UIManager.getIcon("OptionPane.questionIcon");
+        loadFromGenericInputPlatePanel.getQuestionButton().setIcon(GuiUtils.getScaledIcon(questionIcon));
         // bind algorithms and imaging types to the Jlists
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, algorithmsBindingList, loadFromGenericInputPlatePanel.getAlgorithmList());
         bindingGroup.addBinding(jListBinding);
@@ -645,141 +316,9 @@ public class GenericImagedPlateController {
 
         bindingGroup.bind();
 
-        // allow only one node to be selected
-        loadFromGenericInputPlatePanel.getDataTree().getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        loadFromGenericInputPlatePanel.getDataTree().setRootVisible(true);
-        loadFromGenericInputPlatePanel.getDataTree().setShowsRootHandles(true);
-
-        // listen to tree selection (imaging type)
-        loadFromGenericInputPlatePanel.getDataTree().addTreeSelectionListener(new TreeSelectionListener() {
-            @Override
-            public void valueChanged(TreeSelectionEvent e) {
-                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) loadFromGenericInputPlatePanel.getDataTree().getLastSelectedPathComponent();
-                if (selectedNode == null) {
-                    // nothing is selected, return
-                    return;
-                }
-                // look for imaging type selected
-                for (ImagingType imagingType : imagingTypesBindingList) {
-                    if (imagingType.getName().equals(selectedNode.toString())) {
-                        // imaging type that was selected
-                        currentImagingType = imagingType;
-                        // look for associated dataset
-                        currentAlgorithm = findDataset(selectedNode);
-                        // if mouse listener was still not enabled, enable it, together with main panel buttons
-                        if (!mouseListenerEnabled) {
-                            mouseListenerEnabled = true;
-                            loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getResetButton().setEnabled(true);
-                            loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getFinishButton().setEnabled(true);
-                        }
-                    }
-                }
-            }
-        });
-
         /**
-         * If error occurred, remove dataset
+         * Action Listeners.
          */
-        loadFromGenericInputPlatePanel.getRemoveButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // jtree structure
-                JTree dataTree = loadFromGenericInputPlatePanel.getDataTree();
-                // model of JTree
-                DefaultTreeModel model = (DefaultTreeModel) dataTree.getModel();
-                // root (Data) node
-                DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) model.getRoot();
-                // last selected node
-                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) dataTree.getLastSelectedPathComponent();
-                // dataset and imaging type to remove
-                Algorithm algoToRemove;
-                ImagingType imagingToRemove;
-
-                // check that a node is actually selected
-                if (selectedNode != null) {
-                    // iterate through the algorithms
-                    for (int i = 0; i < algorithmsBindingList.size(); i++) {
-                        if (selectedNode.toString().equals(algorithmsBindingList.get(i).getAlgorithmName())) {
-                            algoToRemove = algorithmsBindingList.get(i);
-                            algorithmsBindingList.remove(algoToRemove);
-                        }
-                    }
-                    // iterate through the imaging types
-                    for (int j = 0; j < imagingTypesBindingList.size(); j++) {
-                        if (selectedNode.toString().equals(imagingTypesBindingList.get(j).getName())) {
-                            imagingToRemove = imagingTypesBindingList.get(j);
-                            imagingTypesBindingList.remove(imagingToRemove);
-                        }
-                    }
-
-                    // remove selected node from tree & update model
-                    selectedNode.removeFromParent();
-                    // if an imaging node is deleted in one dataset, it has to be deleted as well in the other(s)
-                    for (int n = 0; n < model.getChildCount(rootNode); n++) {
-                        DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) model.getChild(rootNode, n);
-                        for (int m = 0; m < childNode.getChildCount(); m++) {
-                            DefaultMutableTreeNode imagingNode = (DefaultMutableTreeNode) childNode.getChildAt(m);
-                            if (selectedNode.toString().equals(imagingNode.toString())) {
-                                imagingNode.removeFromParent();
-                            }
-                        }
-                    }
-                    model.reload();
-                } else {
-                    loadExperimentFromGenericInputController.showMessage("Select a dataset / imaging type you want to remove!", "", JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        });
-
-        /**
-         * Add a dataset to DATA
-         */
-        loadFromGenericInputPlatePanel.getAddDatasetButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String datasetName = loadFromGenericInputPlatePanel.getDatasetNameTextField().getText();
-                if (!datasetName.isEmpty()) {
-                    Algorithm newAlgorithm = new Algorithm();
-                    newAlgorithm.setAlgorithmName(datasetName);
-                    newAlgorithm.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
-                    // add algo to list and to data tree
-                    addDataset(newAlgorithm);
-                    loadFromGenericInputPlatePanel.getDatasetNameTextField().setText("");
-                } else {
-                    loadExperimentFromGenericInputController.showMessage("Please insert a name for the dataset.", "", JOptionPane.INFORMATION_MESSAGE);
-                    loadFromGenericInputPlatePanel.getDatasetNameTextField().requestFocusInWindow();
-                }
-            }
-        });
-
-        /**
-         * Add an imaging type to DATA
-         */
-        loadFromGenericInputPlatePanel.getAddImagingButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String imagingName = loadFromGenericInputPlatePanel.getImagingNameTextField().getText();
-                // check that at least one dataset is present
-                if (!algorithmsBindingList.isEmpty()) {
-                    if (!imagingName.isEmpty()) {
-                        ImagingType newImagingType = new ImagingType();
-                        newImagingType.setName(imagingName);
-                        newImagingType.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
-                        // exposure time and light intensity are not set
-                        // add imaging type to list and to data tree
-                        addImagingType(newImagingType);
-                        loadFromGenericInputPlatePanel.getImagingNameTextField().setText("");
-                    } else {
-                        loadExperimentFromGenericInputController.showMessage("Please insert a name for the imaging type.", "", JOptionPane.INFORMATION_MESSAGE);
-                        loadFromGenericInputPlatePanel.getImagingNameTextField().requestFocusInWindow();
-                    }
-                } else {
-                    loadExperimentFromGenericInputController.showMessage("Please insert first a dataset.", "", JOptionPane.INFORMATION_MESSAGE);
-                    loadFromGenericInputPlatePanel.getDatasetNameTextField().requestFocusInWindow();
-                }
-            }
-        });
-
         /**
          * Load the DATA directory into the JTree.
          */
@@ -790,13 +329,43 @@ public class GenericImagedPlateController {
                 // first, we let the user choose the directory to load
                 // we check if the directory was already loaded before
                 if (!isDirectoryLoaded) {
-                    chooseDirectory();
-                    // and then we use this directory to load the data into the JTree
-                    loadDataIntoTree();
+                    chooseDirectoryAndLoadData();
                 } else {
-                    // warn the user and reload the directory, if needed
-                    reloadDirectory();
+                    // otherwise we ask the user if they want to reload the directory
+                    Object[] options = {"Load a different directory", "Cancel"};
+                    int showOptionDialog = JOptionPane.showOptionDialog(null, "It seems a directory was already loaded.\nLoading a different directory will RESET the plate!\nWhat do you want to do?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                    switch (showOptionDialog) {
+                        case 0: // load a different directory:
+                            // reset data
+                            resetData();
+                            // clear algo and imaging type lists
+                            algorithmsBindingList.clear();
+                            imagingTypesBindingList.clear();
+                            // reset the model of the directory tree
+                            DefaultTreeModel model = (DefaultTreeModel) loadFromGenericInputPlatePanel.getDirectoryTree().getModel();
+                            DefaultMutableTreeNode rootNote = (DefaultMutableTreeNode) model.getRoot();
+                            rootNote.removeAllChildren();
+                            model.reload();
+                            chooseDirectoryAndLoadData();
+                            break;  // cancel: do nothing
+                    }
                 }
+                // we can now enable the reset and finish buttons
+                loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getResetButton().setEnabled(true);
+                loadExperimentFromGenericInputController.getLoadFromGenericInputPanel().getFinishButton().setEnabled(true);
+            }
+        });
+
+        /**
+         * Show some info on clicking on the question button.
+         */
+        loadFromGenericInputPlatePanel.getQuestionButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // pack and show info dialog
+                GuiUtils.centerDialogOnFrame(loadExperimentFromGenericInputController.getCellMissyFrame(), genericImportInfoDialog);
+                genericImportInfoDialog.setVisible(true);
             }
         });
 
@@ -809,7 +378,7 @@ public class GenericImagedPlateController {
      *
      * @return
      */
-    private void chooseDirectory() {
+    private void chooseDirectoryAndLoadData() {
         JFileChooser fileChooser = new JFileChooser();
         String chooserTitle = "Please select a root folder";
         fileChooser.setDialogTitle(chooserTitle);
@@ -821,8 +390,7 @@ public class GenericImagedPlateController {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             // the directory for the data
             directory = fileChooser.getSelectedFile();
-            // set the JTextField here!!! 
-
+            loadDataIntoTree();
         } else {
             loadExperimentFromGenericInputController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -853,6 +421,7 @@ public class GenericImagedPlateController {
                     // also, add the algo to the list
                     Algorithm algorithm = new Algorithm();
                     algorithm.setAlgorithmName(algoFolder.getName());
+                    algorithm.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
                     algorithmsBindingList.add(algorithm);
                     // algo folder --> imaging folder(s)
                     File[] imagingFolders = algoFolder.listFiles();
@@ -863,6 +432,7 @@ public class GenericImagedPlateController {
                         // also, add the imaging type to the list
                         ImagingType imagingType = new ImagingType();
                         imagingType.setName(imagingFolder.getName());
+                        imagingType.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
                         if (!imagingTypesBindingList.contains(imagingType)) {
                             imagingTypesBindingList.add(imagingType);
                         }
@@ -893,121 +463,10 @@ public class GenericImagedPlateController {
 
         model.reload();
         isDirectoryLoaded = true;
-        loadExperimentFromGenericInputController.showMessage("Directory successful loaded!", "", JOptionPane.INFORMATION_MESSAGE);
         for (int row = 0; row < loadFromGenericInputPlatePanel.getDirectoryTree().getRowCount(); row++) {
             loadFromGenericInputPlatePanel.getDirectoryTree().expandRow(row);
         }
-    }
-
-    /**
-     * If the user wants to reload a directory, the already loaded one will be
-     * deleted.
-     */
-    private void reloadDirectory() {
-        // otherwise we ask the user if they want to reload the directory
-        Object[] options = {"Load a different directory", "Cancel"};
-        int showOptionDialog = JOptionPane.showOptionDialog(null, "It seems a directory was already loaded.\nWhat do you want to do?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-        switch (showOptionDialog) {
-            case 0: // load a different directory:
-                // reset algo and imaging type lists
-                algorithmsBindingList.clear();
-                imagingTypesBindingList.clear();
-                // reset the model of the directory tree
-                DefaultTreeModel model = (DefaultTreeModel) loadFromGenericInputPlatePanel.getDirectoryTree().getModel();
-                DefaultMutableTreeNode rootNote = (DefaultMutableTreeNode) model.getRoot();
-                rootNote.removeAllChildren();
-                model.reload();
-                chooseDirectory();
-                loadDataIntoTree();
-                break;  // cancel: do nothing
-        }
-    }
-
-    /**
-     * This method validates the selection of a well on the plate
-     *
-     * @return true if the selection is valid
-     */
-    private boolean validateSelection(WellGui selectedWellGui) {
-        boolean isSelectionValid = true;
-        //check if the imaged wellGui has a condition
-        if (selectedWellGui.getRectangle() == null) {
-            isSelectionValid = false;
-        }
-        return isSelectionValid;
-    }
-
-    /**
-     * Add a new dataset to list and to data tree
-     *
-     * @param datasetToAdd
-     */
-    private void addDataset(Algorithm datasetToAdd) {
-        if (!algorithmsBindingList.contains(datasetToAdd)) {
-            // add dataset to list
-            algorithmsBindingList.add(datasetToAdd);
-            // model of JTree
-            DefaultTreeModel model = (DefaultTreeModel) loadFromGenericInputPlatePanel.getDataTree().getModel();
-            // add dataset node to data tree
-            DefaultMutableTreeNode rootNote = (DefaultMutableTreeNode) model.getRoot();
-            DefaultMutableTreeNode datasetNode = new DefaultMutableTreeNode(datasetToAdd.getAlgorithmName());
-            rootNote.add(datasetNode);
-            // add also imaging types node if present
-            if (!imagingTypesBindingList.isEmpty()) {
-                for (ImagingType imagingType : imagingTypesBindingList) {
-                    DefaultMutableTreeNode imagingNode = new DefaultMutableTreeNode(imagingType.getName());
-                    datasetNode.add(imagingNode);
-                }
-            }
-            // reload the model
-            model.reload();
-            loadFromGenericInputPlatePanel.getDataTree().scrollPathToVisible(new TreePath(datasetNode.getPath()));
-        } else {
-            loadExperimentFromGenericInputController.showMessage("This dataset was already added!", "", JOptionPane.WARNING_MESSAGE);
-        }
-    }
-
-    /**
-     * Add a new imaging type to list and to data tree
-     *
-     * @param imagingToAdd
-     */
-    private void addImagingType(ImagingType imagingToAdd) {
-        if (!imagingTypesBindingList.contains(imagingToAdd)) {
-            // add imaging type to list
-            imagingTypesBindingList.add(imagingToAdd);
-            // model of JTree
-            DefaultTreeModel model = (DefaultTreeModel) loadFromGenericInputPlatePanel.getDataTree().getModel();
-            // add imaging type node to data tree
-            DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) model.getRoot();
-            // imaging type node is added for each dataset node
-            for (int i = 0; i < algorithmsBindingList.size(); i++) {
-                DefaultMutableTreeNode datasetNode = (DefaultMutableTreeNode) model.getChild(rootNode, i);
-                DefaultMutableTreeNode imagingNode = new DefaultMutableTreeNode(imagingToAdd.getName());
-                datasetNode.add(imagingNode);
-                // reload the model
-                model.reload();
-                loadFromGenericInputPlatePanel.getDataTree().scrollPathToVisible(new TreePath(imagingNode.getPath()));
-            }
-        } else {
-            loadExperimentFromGenericInputController.showMessage("This imaging type was already added!", "", JOptionPane.WARNING_MESSAGE);
-        }
-    }
-
-    /**
-     * Given an imaging node, find the upper dataset
-     *
-     * @param imagingNode
-     * @return
-     */
-    private Algorithm findDataset(DefaultMutableTreeNode imagingNode) {
-        Algorithm foundDataset = null;
-        DefaultMutableTreeNode datasetNode = (DefaultMutableTreeNode) imagingNode.getParent();
-        for (Algorithm algorithm : algorithmsBindingList) {
-            if (algorithm.getAlgorithmName().equals(datasetNode.toString())) {
-                foundDataset = algorithm;
-            }
-        }
-        return foundDataset;
+        loadFromGenericInputPlatePanel.getDirectoryTextArea().setText(directory.getAbsolutePath());
+        loadExperimentFromGenericInputController.showMessage("Directory successful loaded!", "", JOptionPane.INFORMATION_MESSAGE);
     }
 }

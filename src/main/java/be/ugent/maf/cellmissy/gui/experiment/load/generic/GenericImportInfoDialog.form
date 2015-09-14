@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="2"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="infoScrollPane" alignment="0" pref="350" max="32767" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="infoScrollPane" min="-2" pref="383" max="-2" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JScrollPane" name="infoScrollPane">
+      <AuxValues>
+        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+      </AuxValues>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JEditorPane" name="infoEditorPane">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+            <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;   &lt;head&gt;&#xa;      &lt;TITLE&gt;&lt;/TITLE&gt;&#xa;   &lt;/head&gt;&#xa;   &lt;body&gt;&#xa;      &lt;a name=&quot;#top&quot;/&gt;&#xa;      &lt;i&gt;CellMissy, generic import of migration data ...&lt;/i&gt;&#xa;      &lt;hr&gt;&#xa;&#xa;      &lt;br&gt;&#xa;      &lt;p align=&quot;left&quot;&gt;&#xa;        Please load a directory containing the migration files you want to import.&#xa;        CellMissy expects this directory to contain folders on two levels:&#xa;       &lt;/br&gt;&#xa;       &lt;br&gt;&#xa;        1. &apos;algorithm&apos; folders&#xa;        &lt;/br&gt;&#xa;        &lt;br&gt;&#xa;        2. &apos;imaging type&apos; folders&#xa;         &lt;/br&gt;&#xa;         &lt;br&gt;&#xa;         &lt;/br&gt;&#xa;         &lt;br&gt;&#xa;         Inside &apos;imaging type&apos; folders, CellMissy expects to see at least one migration file to load (either containing single cell tracks or collective migration measurements, i.e., area values in time).&#xa;         &lt;/br&gt;&#xa;         &lt;br&gt;&#xa;         Once the directory is loaded, you can start dragging the text files and dropping them into the plate panel, inside the correspondent well. &#xa;         &lt;/br&gt;&#xa;         &lt;br&gt;&#xa;         When you&apos;re done with this drag&amp;drop procedure, click the Finish button: this will save the migration data to the CellMissy database.&#xa;         &lt;/br&gt;&#xa;      &lt;/p&gt;&#xa;   &lt;/body&gt;&#xa;&lt;/html&gt;"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>

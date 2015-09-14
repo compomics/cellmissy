@@ -7,7 +7,6 @@ package be.ugent.maf.cellmissy.gui.controller.load.generic.singlecell;
 
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
-import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import be.ugent.maf.cellmissy.gui.controller.load.generic.GenericImagedPlateController;
@@ -60,6 +59,7 @@ public class GenericSingleCellImagedPlateController {
     public void init() {
         bindingGroup = new BindingGroup();
         trackPointsBindingList = ObservableCollections.observableList(new ArrayList<TrackPoint>());
+
     }
 
     public JTableBinding getTrackPointsTableBinding() {
@@ -71,24 +71,6 @@ public class GenericSingleCellImagedPlateController {
     }
 
     /**
-     * Reload data already parsed for a selected well
-     *
-     * @param selectedWellGui
-     */
-    public void reloadData(WellGui selectedWellGui) {
-        // empty the list
-        trackPointsBindingList.clear();
-        List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
-        for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
-            for (Track track : wellHasImagingType.getTrackList()) {
-                for (TrackPoint trackPoint : track.getTrackPointList()) {
-                    trackPointsBindingList.add(trackPoint);
-                }
-            }
-        }
-    }
-
-    /**
      * Show Area values in table
      */
     public void showRawDataInTable() {
@@ -96,6 +78,7 @@ public class GenericSingleCellImagedPlateController {
         //table binding
         trackPointsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ, trackPointsBindingList, loadFromGenericInputPlatePanel.getRawDataTable());
         //add column bindings
+
         JTableBinding.ColumnBinding columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${track.wellHasImagingType.well.columnNumber}"));
         columnBinding.setColumnName("Column");
         columnBinding.setEditable(false);
@@ -107,7 +90,7 @@ public class GenericSingleCellImagedPlateController {
         columnBinding.setColumnClass(Integer.class);
 
         columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${track.wellHasImagingType.algorithm.algorithmName}"));
-        columnBinding.setColumnName("Dataset");
+        columnBinding.setColumnName("Algorithm");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(String.class);
         columnBinding.setRenderer(new AlignedTableRenderer(SwingConstants.RIGHT));
@@ -153,19 +136,15 @@ public class GenericSingleCellImagedPlateController {
      * @param selectedWellGui
      */
     public void loadData(File trackFile, WellHasImagingType newWellHasImagingType, WellGui selectedWellGui) {
-        List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
+        List<WellHasImagingType> wellHasImagingTypes = selectedWellGui.getWell().getWellHasImagingTypeList();
         // parse raw data for selected well
         try {
             List<Track> tracks = genericInputFileParser.parseTrackFile(trackFile);
             // set the track list and add the wellHasImagingType to the list
             newWellHasImagingType.setTrackList(tracks);
-            wellHasImagingTypeList.add(newWellHasImagingType);
+            wellHasImagingTypes.add(newWellHasImagingType);
             for (Track track : tracks) {
                 track.setWellHasImagingType(newWellHasImagingType);
-            }
-            // if the list is not empty and does not contain the selected well, clear it before adding the new data
-            if (!trackPointsBindingList.isEmpty() && !containsWell(selectedWellGui)) {
-                trackPointsBindingList.clear();
             }
             for (Track track : tracks) {
                 trackPointsBindingList.addAll(track.getTrackPointList());
@@ -177,7 +156,7 @@ public class GenericSingleCellImagedPlateController {
     }
 
     /**
-     * remove timeSteps from List: this is called when the user wants to
+     * Remove timeSteps from List: this is called when the user wants to
      * overwrite data or to clear data.
      *
      * @param wellHasImagingTypeToOverwrite
@@ -194,23 +173,5 @@ public class GenericSingleCellImagedPlateController {
             }
         }
         return list;
-    }
-
-    /**
-     * Check if the TimeStepsList contains the selected well
-     *
-     * @param selectedWellGui
-     * @return
-     */
-    private boolean containsWell(WellGui selectedWellGui) {
-        boolean containsWell = false;
-        Well selectedWell = selectedWellGui.getWell();
-        for (TrackPoint trackPoint : trackPointsBindingList) {
-            if (trackPoint.getTrack().getWellHasImagingType().getWell().equals(selectedWell)) {
-                containsWell = true;
-                break;
-            }
-        }
-        return containsWell;
     }
 }
