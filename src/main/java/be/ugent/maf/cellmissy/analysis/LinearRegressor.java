@@ -19,5 +19,5 @@ public interface LinearRegressor {
      * @param data
      * @return a list of double containing: slopes and R2 coefficients
      */
-    public List<Double> estimateLinearModel(double[][] data);
+    List<Double> estimateLinearModel(double[][] data);
 }

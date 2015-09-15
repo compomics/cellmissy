@@ -19,5 +19,5 @@ public interface DistanceMetricOperator {
      * @param secondVector
      * @return
      */
-    public double computeDistanceMetric(Double[] firstVector, Double[] secondVector);
+    double computeDistanceMetric(Double[] firstVector, Double[] secondVector);
 }

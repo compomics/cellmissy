@@ -17,6 +17,7 @@ import be.ugent.maf.cellmissy.gui.experiment.load.generic.LoadFromGenericInputPl
 import be.ugent.maf.cellmissy.gui.plate.ImagedPlatePanel;
 import be.ugent.maf.cellmissy.gui.plate.WellGui;
 import be.ugent.maf.cellmissy.service.ExperimentService;
+import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 
 import java.awt.Cursor;
@@ -63,6 +64,8 @@ public class LoadExperimentFromGenericInputController {
     // services
     @Autowired
     private ExperimentService experimentService;
+    @Autowired
+    private WellService wellService;
     private GridBagConstraints gridBagConstraints;
 
     /**
@@ -254,9 +257,17 @@ public class LoadExperimentFromGenericInputController {
             public void actionPerformed(ActionEvent e) {
                 // check if data loading is valid
                 if (genericImagedPlateController.validateDataLoading()) {
+                    switch (experiment.getExperimentStatus()) {
+                        case PERFORMED:
+                            setMigrationDataForPerformedExperiment();
+                            break;
+                        case IN_PROGRESS:
+                            setMigrationDataForInProgressExperiment();
+                            break;
+                    }
                     // if data loading is valid, set motility data and update the experiment
                     //set motility Data
-                    setMotilityData();
+//                    setMigrationData();
                     //set experiment status to "performed" and update it to DB
                     experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
                     //launch a swing worker to update the experiment in the background thread
@@ -267,16 +278,22 @@ public class LoadExperimentFromGenericInputController {
                     Object[] options = {"Continue", "Cancel"};
                     int showOptionDialog = JOptionPane.showOptionDialog(null, "Some wells still do not have any data.\nDo you want to proceed with storage?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                     switch (showOptionDialog) {
-                        case 0: // set motility data and proceed with storage
-                            //set motility Data
-                            setMotilityData();
+                        case 0: // set migration data and proceed with storage
+                            switch (experiment.getExperimentStatus()) {
+                                case PERFORMED:
+                                    setMigrationDataForPerformedExperiment();
+                                    break;
+                                case IN_PROGRESS:
+                                    setMigrationDataForInProgressExperiment();
+                                    break;
+                            }
+//                            setMigrationData();
                             //set experiment status to "performed" and update it to DB
                             experiment.setExperimentStatus(ExperimentStatus.PERFORMED);
                             //launch a swing worker to update the experiment in the background thread
                             SaveExperimentWorker worker = new SaveExperimentWorker();
                             worker.execute();
                             break;
-                        case 1:
                     }
                 }
             }
@@ -319,10 +336,10 @@ public class LoadExperimentFromGenericInputController {
             loadFromGenericInputPanel.getSaveDataProgressBar().setVisible(true);
             loadFromGenericInputPanel.getSaveDataProgressBar().setIndeterminate(true);
             // update message
-            updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Please wait, data is being saved!");
+            updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Please wait, migration data are being saved!");
             // show a waiting cursor
             cellMissyController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            // save motility data
+            // save to DB
             experimentService.saveMigrationDataForExperiment(experiment);
             // update experiment
             experiment = experimentService.update(experiment);
@@ -348,44 +365,132 @@ public class LoadExperimentFromGenericInputController {
         }
     }
 
+//    /**
+//     * Set migration data of wells, before the experiment is saved to the
+//     * CellMissy DB.
+//     */
+//    private void setMigrationData() {
+//
+//        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+//            List<Well> wells = new ArrayList<>();
+//            for (WellGui wellGui : genericImagedPlateController.getImagedPlatePanel().getWellGuiList()) {
+//
+//                //if the wellGui has a well with a NOT empty List of wellHasImagingTypes, the well has been imaged
+//                //if the wellGui has a rectangle, the well belongs to a certain condition
+//                //only if these two conditions are true, motility data must be set and stored to DB
+//                if (!wellGui.getWell().getWellHasImagingTypeList().isEmpty() && wellGui.getRectangle() != null) {
+//
+//                    for (Well well : plateCondition.getWellList()) {
+//                        //check for coordinates
+//                        if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
+//                            // behave differently, according to experiment STATUS
+//                            switch (experiment.getExperimentStatus()) {
+//                                case PERFORMED:
+//
+//                                    // if the experiment is performed, some migration data have already been loaded
+//                                    // fetch them from the DB and update the well
+//                                    Well fetchedWell = wellService.fetchMigrationData(well.getWellid());
+//                                    fetchedWell.getWellHasImagingTypeList().addAll(wellGui.getWell().getWellHasImagingTypeList());
+//                                    wells.add(fetchedWell);
+//                                    plateCondition.setWellList(wells);
+//                                    //the other way around: set the well for each wellHasImagingType
+//                                    for (WellHasImagingType wellHasImagingType : fetchedWell.getWellHasImagingTypeList()) {
+//                                        if (wellHasImagingType.getWell().getWellid() == null) {
+//                                            wellHasImagingType.setWell(fetchedWell);
+//                                        }
+//                                    }
+//                                    break;
+//                                case IN_PROGRESS:
+//                                    //just set collection of wellHasImagingType to the well of the plateCondition
+//                                    well.setWellHasImagingTypeList(wellGui.getWell().getWellHasImagingTypeList());
+//                                    //the other way around: set the well for each wellHasImagingType
+//                                    for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+//                                        wellHasImagingType.setWell(well);
+//                                    }
+//                                    break;
+//                            }
+//                        }
+//
+//                    } // what if the well was not imaged? data were not loaded for it...
+//                } else if (wellGui.getWell().getWellHasImagingTypeList().isEmpty() && wellGui.getRectangle() != null) {
+//
+//                    for (Well well : plateCondition.getWellList()) {
+//                        //check for coordinates
+//                        if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
+//                            switch (experiment.getExperimentStatus()) {
+//                                case PERFORMED:
+//                                    // do nothing
+//                                    break;
+//                                case IN_PROGRESS:
+//                                    //set List of wellHasImagingType to the well of the plateCondition
+//                                    List<WellHasImagingType> list = new ArrayList<>();
+//                                    well.setWellHasImagingTypeList(list);
+//                                    break;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
     /**
-     * this method sets Migration data of wells, before the experiment is saved
-     * to DB
+     *
      */
-    private void setMotilityData() {
-
+    private void setMigrationDataForInProgressExperiment() {
         for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
             for (WellGui wellGui : genericImagedPlateController.getImagedPlatePanel().getWellGuiList()) {
-
-                //if the wellGui has a well with a NOT empty List of wellHasImagingTypes, the well has been imaged
-                //if the wellGui has a rectangle, the well belongs to a certain condition
-                //only if these two conditions are true, motility data must be set and stored to DB
                 if (!wellGui.getWell().getWellHasImagingTypeList().isEmpty() && wellGui.getRectangle() != null) {
-
                     for (Well well : plateCondition.getWellList()) {
                         //check for coordinates
                         if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
-                            //set collection of wellHasImagingType to the well of the plateCondition
+                            //just set collection of wellHasImagingType to the well of the plateCondition
                             well.setWellHasImagingTypeList(wellGui.getWell().getWellHasImagingTypeList());
-
                             //the other way around: set the well for each wellHasImagingType
                             for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
                                 wellHasImagingType.setWell(well);
                             }
                         }
-
-                    } // what if the well was not imaged? data were not loaded for it...
+                    }
                 } else if (wellGui.getWell().getWellHasImagingTypeList().isEmpty() && wellGui.getRectangle() != null) {
                     for (Well well : plateCondition.getWellList()) {
-                        //check for coordinates
                         if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
-                            //set List of wellHasImagingType to the well of the plateCondition
                             List<WellHasImagingType> list = new ArrayList<>();
                             well.setWellHasImagingTypeList(list);
                         }
                     }
                 }
             }
+        }
+    }
+
+    /**
+     *
+     */
+    private void setMigrationDataForPerformedExperiment() {
+        for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+            List<Well> wells = new ArrayList<>();
+            for (WellGui wellGui : genericImagedPlateController.getImagedPlatePanel().getWellGuiList()) {
+
+                if (!wellGui.getWell().getWellHasImagingTypeList().isEmpty() && wellGui.getRectangle() != null) {
+                    for (Well well : plateCondition.getWellList()) {
+                        //check for coordinates
+                        if (well.getColumnNumber() == wellGui.getColumnNumber() && well.getRowNumber() == wellGui.getRowNumber()) {
+                            // if the experiment is performed, some migration data have already been loaded
+                            // fetch them from the DB and update the well
+                            Well fetchedWell = wellService.fetchMigrationData(well.getWellid());
+                            fetchedWell.getWellHasImagingTypeList().addAll(wellGui.getWell().getWellHasImagingTypeList());
+                            wells.add(fetchedWell);
+                            //the other way around: set the well for each wellHasImagingType
+                            for (WellHasImagingType wellHasImagingType : fetchedWell.getWellHasImagingTypeList()) {
+                                if (wellHasImagingType.getWell().getWellid() == null) {
+                                    wellHasImagingType.setWell(fetchedWell);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            plateCondition.setWellList(wells);
         }
     }
 

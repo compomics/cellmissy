@@ -302,7 +302,7 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
                 .addGap(33, 33, 33))
         );
 
-        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {algoScrollPane, imagingScrollPane});
+        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, algoScrollPane, imagingScrollPane);
 
         userInputPanelLayout.setVerticalGroup(
             userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

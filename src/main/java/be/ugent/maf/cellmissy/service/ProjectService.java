@@ -23,14 +23,14 @@ public interface ProjectService extends GenericService<Project, Long> {
      * @param projectDirectory
      * @return
      */
-    public Project setupProject(int projectNumber, String description, File projectDirectory);
+    Project setupProject(int projectNumber, String description, File projectDirectory);
 
     /**
      * Save the users for a certain project
      *
      * @param entity
      */
-    public void saveProjectUsers(Project entity);
+    void saveProjectUsers(Project entity);
 
     /**
      * Find projects by user id
@@ -38,7 +38,7 @@ public interface ProjectService extends GenericService<Project, Long> {
      * @param userid
      * @return a list of projects for those users
      */
-    public List<Project> findProjectsByUserid(Long userid);
+    List<Project> findProjectsByUserid(Long userid);
 
     /**
      * Delete users from a project
@@ -46,7 +46,7 @@ public interface ProjectService extends GenericService<Project, Long> {
      * @param users
      * @param project
      */
-    public void deleteUsersFromProject(List<User> users, Project project);
+    void deleteUsersFromProject(List<User> users, Project project);
 
     /**
      * Add users to a project
@@ -54,5 +54,5 @@ public interface ProjectService extends GenericService<Project, Long> {
      * @param users
      * @param project
      */
-    public void addUsersToProject(List<User> users, Project project);
+    void addUsersToProject(List<User> users, Project project);
 }

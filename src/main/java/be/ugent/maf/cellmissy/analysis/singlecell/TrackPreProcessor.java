@@ -18,7 +18,7 @@ public interface TrackPreProcessor {
      * @param trackDataHolder
      * @param conversionFactor
      */
-    public void preProcessSteps(TrackDataHolder trackDataHolder, double conversionFactor);
+    void preProcessSteps(TrackDataHolder trackDataHolder, double conversionFactor);
 
     /**
      * Pre-process cells (i.e. entire cell trajectories): uses a cell-centric operator interface and computes track
@@ -28,5 +28,5 @@ public interface TrackPreProcessor {
      * @param trackDataHolder
      * @param timeLapse
      */
-    public void preProcessCells(TrackDataHolder trackDataHolder, double timeLapse);
+    void preProcessCells(TrackDataHolder trackDataHolder, double timeLapse);
 }

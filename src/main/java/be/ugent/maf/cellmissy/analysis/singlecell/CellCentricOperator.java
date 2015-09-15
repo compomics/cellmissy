@@ -23,7 +23,7 @@ public interface CellCentricOperator {
      * @param cellCentricDataHolder
      * @param timeLapse
      */
-    public void computeTrackDuration(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder
+    void computeTrackDuration(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder
             cellCentricDataHolder, double timeLapse);
 
     /**
@@ -33,7 +33,7 @@ public interface CellCentricOperator {
      * @param stepCentricDataHolder
      * @param cellCentricDataHolder
      */
-    public void computeCoordinatesRange(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+    void computeCoordinatesRange(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute track median displacement.
@@ -41,7 +41,7 @@ public interface CellCentricOperator {
      * @param stepCentricDataHolder
      * @param cellCentricDataHolder
      */
-    public void computeMedianDisplacement(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+    void computeMedianDisplacement(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute cumulative distance between start and end point of track. This is
@@ -51,7 +51,7 @@ public interface CellCentricOperator {
      * @param stepCentricDataHolder
      * @param cellCentricDataHolder
      */
-    public void computeCumulativeDistance(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+    void computeCumulativeDistance(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute Euclidean distance between start and end point. This is the real
@@ -60,14 +60,14 @@ public interface CellCentricOperator {
      * @param stepCentricDataHolder
      * @param cellCentricDataHolder
      */
-    public void computeEuclideanDistance(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+    void computeEuclideanDistance(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute track median speed.
      *
      * @param cellCentricDataHolder
      */
-    public void computeMedianSpeed(CellCentricDataHolder cellCentricDataHolder);
+    void computeMedianSpeed(CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute directionality of a certain track as the ratio between the
@@ -75,7 +75,7 @@ public interface CellCentricOperator {
      *
      * @param cellCentricDataHolder
      */
-    public void computeEndPointDirectionalityRatio(CellCentricDataHolder cellCentricDataHolder);
+    void computeEndPointDirectionalityRatio(CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute the median directionality ratio: the directionality ratio is
@@ -84,7 +84,7 @@ public interface CellCentricOperator {
      * @param stepCentricDataHolder
      * @param cellCentricDataHolder
      */
-    public void computeMedianDirectionalityRatio(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+    void computeMedianDirectionalityRatio(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute convex hull and relative measurements for a certain track.
@@ -92,7 +92,7 @@ public interface CellCentricOperator {
      * @param stepCentricDataHolder
      * @param cellCentricDataHolder
      */
-    public void computeConvexHull(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+    void computeConvexHull(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute displacement ratio of a certain track: the net displacement
@@ -102,7 +102,7 @@ public interface CellCentricOperator {
      *
      * @param cellCentricDataHolder
      */
-    public void computeDisplacementRatio(CellCentricDataHolder cellCentricDataHolder);
+    void computeDisplacementRatio(CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute outreach ratio of a certain track: the max span (the length of
@@ -111,7 +111,7 @@ public interface CellCentricOperator {
      *
      * @param cellCentricDataHolder
      */
-    public void computeOutreachRatio(CellCentricDataHolder cellCentricDataHolder);
+    void computeOutreachRatio(CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute track angle: median across all angles for the track.
@@ -119,7 +119,7 @@ public interface CellCentricOperator {
      * @param stepCentricDataHolder
      * @param cellCentricDataHolder
      */
-    public void computeMedianTurningAngle(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+    void computeMedianTurningAngle(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute median direction autocorrelations at time interval of size (step)
@@ -128,5 +128,5 @@ public interface CellCentricOperator {
      * @param stepCentricDataHolder
      * @param cellCentricDataHolder
      */
-    public void computeMedianDirectionAutocorrelation(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+    void computeMedianDirectionAutocorrelation(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 }

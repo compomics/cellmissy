@@ -39,7 +39,7 @@ public class ObsepFileParserImpl implements ObsepFileParser {
         HOURS(1), MINUTES(2), SECONDS(3), MILLISECONDS(4);
         private final int unitValue;
 
-        private CycleTimeUnit(int unitValue) {
+        CycleTimeUnit(int unitValue) {
             this.unitValue = unitValue;
         }
     }

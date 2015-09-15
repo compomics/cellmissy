@@ -221,7 +221,7 @@ class GenericExperimentDataController {
                 message = "This experiment has no loaded migration data yet.\nPlease proceed loading NEW DATA.";
                 break;
             case PERFORMED:
-                message = "This experiment has already some loaded data.\nYou can now load ADDITIONAL DATA.";
+                message = "This experiment has already some loaded migration data.\nYou can now load ADDITIONAL DATA.";
                 break;
         }
         loadExperimentFromGenericInputController.showMessage(message, "data loading info", JOptionPane.INFORMATION_MESSAGE);
@@ -246,8 +246,7 @@ class GenericExperimentDataController {
     }
 
     /**
-     * Action on selected project, find all relative in progress experiments, if
-     * any
+     * Action on selected project.
      *
      * @param selectedProject
      */

@@ -14,7 +14,7 @@ public enum TrackCoordinatesUnitOfMeasurement {
     MICRO_METERS(1), PIXELS(2);
     private final int unit;
 
-    private TrackCoordinatesUnitOfMeasurement(int unit) {
+    TrackCoordinatesUnitOfMeasurement(int unit) {
         this.unit = unit;
     }
 

@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface ProjectHasUserRepository extends GenericRepository<ProjectHasUser, Long> {
 
-    public List<Project> findProjectsByUserid(Long userid);
+    List<Project> findProjectsByUserid(Long userid);
 
-    public List<User> findUsersByProjectid(Long projectid);
+    List<User> findUsersByProjectid(Long projectid);
 }

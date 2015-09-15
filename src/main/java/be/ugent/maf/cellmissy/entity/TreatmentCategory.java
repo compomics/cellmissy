@@ -17,7 +17,7 @@ public enum TreatmentCategory {
 
     private final int databaseValue;
 
-    private TreatmentCategory(int databaseValue){
+    TreatmentCategory(int databaseValue){
         this.databaseValue = databaseValue;
     }
 

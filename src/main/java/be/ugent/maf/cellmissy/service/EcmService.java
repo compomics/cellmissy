@@ -18,33 +18,33 @@ import java.util.List;
  */
 public interface EcmService extends GenericService<Ecm, Long> {
 
-    public List<MatrixDimension> findAllMatrixDimension();
+    List<MatrixDimension> findAllMatrixDimension();
 
-    public List<EcmComposition> findEcmCompositionByMatrixDimensionName(String matrixDimensionName);
+    List<EcmComposition> findEcmCompositionByMatrixDimensionName(String matrixDimensionName);
 
-    public void saveEcmComposition(EcmComposition ecmComposition);
+    void saveEcmComposition(EcmComposition ecmComposition);
 
-    public void saveBottomMatrix(BottomMatrix bottomMatrix);
+    void saveBottomMatrix(BottomMatrix bottomMatrix);
 
-    public void saveEcmDensity(EcmDensity ecmDensity);
+    void saveEcmDensity(EcmDensity ecmDensity);
 
-    public List<BottomMatrix> findAllBottomMatrix();
+    List<BottomMatrix> findAllBottomMatrix();
 
-    public BottomMatrix findBottomMatrixByType(String bottomMatrixType);
+    BottomMatrix findBottomMatrixByType(String bottomMatrixType);
 
-    public List<BottomMatrix> findNewBottomMatrices(Experiment experiment);
+    List<BottomMatrix> findNewBottomMatrices(Experiment experiment);
 
-    public EcmComposition findEcmCompositionByType(String ecmCompositionType);
+    EcmComposition findEcmCompositionByType(String ecmCompositionType);
 
-    public EcmComposition findEcmCompositionByTypeAndMatrixDimensionName(String type, String matrixDimensionName);
+    EcmComposition findEcmCompositionByTypeAndMatrixDimensionName(String type, String matrixDimensionName);
 
-    public List<EcmComposition> findNewEcmCompositions(Experiment experiment);
+    List<EcmComposition> findNewEcmCompositions(Experiment experiment);
 
-    public List<EcmDensity> findAllEcmDensity();
+    List<EcmDensity> findAllEcmDensity();
 
-    public EcmDensity findByEcmDensity(Double ecmDensity);
+    EcmDensity findByEcmDensity(Double ecmDensity);
 
-    public List<EcmDensity> findNewEcmDensities(Experiment experiment);
+    List<EcmDensity> findNewEcmDensities(Experiment experiment);
 
-    public List<String> findAllPolimerysationPh();
+    List<String> findAllPolimerysationPh();
 }

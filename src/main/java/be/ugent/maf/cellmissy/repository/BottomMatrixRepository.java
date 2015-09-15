@@ -12,5 +12,5 @@ import be.ugent.maf.cellmissy.entity.BottomMatrix;
  */
 public interface BottomMatrixRepository extends GenericRepository<BottomMatrix, Long> {
 
-    public BottomMatrix findBottomMatrixByType(String bottomMatrixType);
+    BottomMatrix findBottomMatrixByType(String bottomMatrixType);
 }

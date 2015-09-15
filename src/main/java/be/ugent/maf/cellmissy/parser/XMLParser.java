@@ -28,7 +28,7 @@ public interface XMLParser {
      * @throws JAXBException
      * @throws FileNotFoundException
      */
-    public <T> void marshal(Class<T> clazz, T t, File file) throws JAXBException, FileNotFoundException;
+    <T> void marshal(Class<T> clazz, T t, File file) throws JAXBException, FileNotFoundException;
 
     /**
      * This method creates a tree of content objects that represents the content
@@ -41,7 +41,7 @@ public interface XMLParser {
      * @throws SAXException
      * @throws IOException
      */
-    public <T> T unmarshal(Class<T> clazz, File xmlFile) throws JAXBException, SAXException, IOException;
+    <T> T unmarshal(Class<T> clazz, File xmlFile) throws JAXBException, SAXException, IOException;
 
     /**
      * Get a list of error messages (if any) that are produced by the
@@ -49,5 +49,5 @@ public interface XMLParser {
      *
      * @return
      */
-    public List<String> getValidationErrorMesage();
+    List<String> getValidationErrorMesage();
 }

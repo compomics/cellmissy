@@ -19,7 +19,7 @@ public interface StepCentricOperator {
      *
      * @param stepCentricDataHolder
      */
-    public void generateTimeIndexes(StepCentricDataHolder stepCentricDataHolder);
+    void generateTimeIndexes(StepCentricDataHolder stepCentricDataHolder);
 
     /**
      * Generate Track Point Matrix for a track. This is already scaling
@@ -30,7 +30,7 @@ public interface StepCentricOperator {
      * @param stepCentricDataHolder
      * @param conversionFactor
      */
-    public void generateCoordinatesMatrix(StepCentricDataHolder stepCentricDataHolder, double conversionFactor);
+    void generateCoordinatesMatrix(StepCentricDataHolder stepCentricDataHolder, double conversionFactor);
 
     /**
      * Compute shifted track coordinates starting from the track coordinates
@@ -38,54 +38,54 @@ public interface StepCentricOperator {
      *
      * @param stepCentricDataHolder
      */
-    public void computeShiftedCoordinatesMatrix(StepCentricDataHolder stepCentricDataHolder);
+    void computeShiftedCoordinatesMatrix(StepCentricDataHolder stepCentricDataHolder);
 
     /**
      * Compute delta movements matrix.
      *
      * @param stepCentricDataHolder
      */
-    public void computeDeltaMovements(StepCentricDataHolder stepCentricDataHolder);
+    void computeDeltaMovements(StepCentricDataHolder stepCentricDataHolder);
 
     /**
      * Compute minimal instantaneous cell displacements.
      *
      * @param stepCentricDataHolder
      */
-    public void computeInstantaneousDisplacements(StepCentricDataHolder stepCentricDataHolder);
+    void computeInstantaneousDisplacements(StepCentricDataHolder stepCentricDataHolder);
 
     /**
      * Compute turning angles.
      *
      * @param stepCentricDataHolder
      */
-    public void computeTurningAngles(StepCentricDataHolder stepCentricDataHolder);
+    void computeTurningAngles(StepCentricDataHolder stepCentricDataHolder);
 
     /**
      * Compute directionality ratios.
      *
      * @param stepCentricDataHolder
      */
-    public void computeDirectionalityRatios(StepCentricDataHolder stepCentricDataHolder);
+    void computeDirectionalityRatios(StepCentricDataHolder stepCentricDataHolder);
 
     /**
      * Compute MSD values.
      *
      * @param stepCentricDataHolder
      */
-    public void computeMeanSquareDisplacements(StepCentricDataHolder stepCentricDataHolder);
+    void computeMeanSquareDisplacements(StepCentricDataHolder stepCentricDataHolder);
 
     /**
      * Compute direction autocorrelation values.
      *
      * @param stepCentricDataHolder
      */
-    public void computeDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder);
+    void computeDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder);
 
     /**
      * Compute mean direction autocorrelations values.
      *
      * @param stepCentricDataHolder
      */
-    public void computeMeanDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder);
+    void computeMeanDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder);
 }

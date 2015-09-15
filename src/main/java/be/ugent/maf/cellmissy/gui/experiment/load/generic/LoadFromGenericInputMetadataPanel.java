@@ -230,7 +230,7 @@ public class LoadFromGenericInputMetadataPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {metadataPanel, overviewPanel});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, metadataPanel, overviewPanel);
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

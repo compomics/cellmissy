@@ -20,12 +20,12 @@ public interface InstrumentService extends GenericService<Instrument, Long> {
      *
      * @return
      */
-    public List<Magnification> findAllMagnifications();
+    List<Magnification> findAllMagnifications();
 
     /**
      * For a given instrument, fetch all the experiments
      *
      * @param instrument
      */
-    public Instrument fetchExperiments(Instrument instrument);
+    Instrument fetchExperiments(Instrument instrument);
 }

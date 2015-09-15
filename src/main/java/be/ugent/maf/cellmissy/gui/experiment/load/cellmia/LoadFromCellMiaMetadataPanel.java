@@ -133,7 +133,7 @@ public class LoadFromCellMiaMetadataPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        overviewPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jScrollPane1, jScrollPane2});
+        overviewPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jScrollPane1, jScrollPane2);
 
         overviewPanelLayout.setVerticalGroup(
             overviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

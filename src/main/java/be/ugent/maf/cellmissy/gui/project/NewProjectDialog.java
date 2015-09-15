@@ -150,7 +150,7 @@ public class NewProjectDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {destinationUsersScrollPane, sourceUsersScrollPane});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, destinationUsersScrollPane, sourceUsersScrollPane);
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -181,7 +181,7 @@ public class NewProjectDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {destinationUsersScrollPane, sourceUsersScrollPane});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, destinationUsersScrollPane, sourceUsersScrollPane);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

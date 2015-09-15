@@ -20,7 +20,7 @@ public interface UserService extends GenericService<User, Long> {
      * @param lastName
      * @return found User, if any
      */
-    public User findByFullName(String firstName, String lastName);
+    User findByFullName(String firstName, String lastName);
 
     /**
      * find an User by firstName
@@ -28,7 +28,7 @@ public interface UserService extends GenericService<User, Long> {
      * @param firstName
      * @return found User, if any
      */
-    public User findByFirstName(String firstName);
+    User findByFirstName(String firstName);
 
     /**
      * find an User by lastName
@@ -36,7 +36,7 @@ public interface UserService extends GenericService<User, Long> {
      * @param lastName
      * @return found User, if any
      */
-    public User findByLastName(String lastName);
+    User findByLastName(String lastName);
 
     /**
      * Find the user by login credentials.
@@ -45,7 +45,7 @@ public interface UserService extends GenericService<User, Long> {
      * @param password the user password
      * @return the found user
      */
-    public User findByLoginCredentials(String userName, String password);
+    User findByLoginCredentials(String userName, String password);
 
     /**
      * Find List of users busy with a certain project, given the project id.
@@ -53,5 +53,5 @@ public interface UserService extends GenericService<User, Long> {
      * @param projectid
      * @return
      */
-    public List<User> findUsersByProjectid(Long projectid);
+    List<User> findUsersByProjectid(Long projectid);
 }

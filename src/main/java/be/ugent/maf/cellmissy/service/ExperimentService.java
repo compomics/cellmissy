@@ -28,7 +28,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      *
      * @param microscopeDirectory
      */
-    public void init(File microscopeDirectory);
+    void init(File microscopeDirectory);
 
     /**
      * Create Folder Structure (if folders do not exist) for a new Experiment
@@ -36,7 +36,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @param newExperiment
      * @throws CellMiaFoldersException
      */
-    public void createFolderStructure(Experiment newExperiment) throws CellMiaFoldersException;
+    void createFolderStructure(Experiment newExperiment) throws CellMiaFoldersException;
 
     /**
      * Load existing folders for a certain experiment
@@ -44,12 +44,12 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @param experiment
      * @throws CellMiaFoldersException if directory structure is not OK.
      */
-    public void loadFolderStructure(Experiment experiment) throws CellMiaFoldersException;
+    void loadFolderStructure(Experiment experiment) throws CellMiaFoldersException;
 
     /**
      * Reset folders to null
      */
-    public void resetFolders();
+    void resetFolders();
 
     /**
      * Finds all experiments numbers by id of a certain project
@@ -57,7 +57,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @param projectId
      * @return
      */
-    public List<Integer> findExperimentNumbersByProjectId(Long projectId);
+    List<Integer> findExperimentNumbersByProjectId(Long projectId);
 
     /**
      * Find all experiments by project id
@@ -65,7 +65,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @param projectId
      * @return
      */
-    public List<Experiment> findExperimentsByProjectId(Long projectId);
+    List<Experiment> findExperimentsByProjectId(Long projectId);
 
     /**
      * Find certain experiments that belong to a project and that have a certain
@@ -75,7 +75,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @param experimentStatus
      * @return
      */
-    public List<Experiment> findExperimentsByProjectIdAndStatus(Long projectId, ExperimentStatus experimentStatus);
+    List<Experiment> findExperimentsByProjectIdAndStatus(Long projectId, ExperimentStatus experimentStatus);
 
     /**
      * Save motility data for an already performed experiment This experiment
@@ -83,7 +83,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      *
      * @param entity
      */
-    public void saveMigrationDataForExperiment(Experiment entity);
+    void saveMigrationDataForExperiment(Experiment entity);
 
     /**
      * Copy the setup settings from an experiment to a new one. This method is
@@ -94,7 +94,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * copied
      * @param newExperiment: the experiment to which settings
      */
-    public void copySetupSettingsFromOtherExperiment(Experiment experimentToCopy, Experiment newExperiment);
+    void copySetupSettingsFromOtherExperiment(Experiment experimentToCopy, Experiment newExperiment);
 
     /**
      * Export the setup template to an XML file for a given experiment. The
@@ -105,7 +105,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @throws FileNotFoundException
      * @throws JAXBException
      */
-    public void exportExperimentToXMLFile(Experiment experiment, File xmlFile) throws JAXBException, FileNotFoundException;
+    void exportExperimentToXMLFile(Experiment experiment, File xmlFile) throws JAXBException, FileNotFoundException;
 
     /**
      * Unmarshaling an XML file, we get the experiment back.
@@ -116,7 +116,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @throws SAXException
      * @throws IOException
      */
-    public Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException, SAXException, IOException;
+    Experiment getExperimentFromXMLFile(File xmlFile) throws JAXBException, SAXException, IOException;
 
     /**
      * Get all the errors (if any) that come from a not successful
@@ -124,7 +124,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      *
      * @return a List of Error Messages
      */
-    public List<String> getXmlValidationErrorMesages();
+    List<String> getXmlValidationErrorMesages();
 
     /**
      * Copy the setup settings from an experiment to a new one. This method is
@@ -136,7 +136,7 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      * @param xmlExperiment
      * @param newExperiment
      */
-    public void copySetupSettingsFromXMLExperiment(Experiment xmlExperiment, Experiment newExperiment);
+    void copySetupSettingsFromXMLExperiment(Experiment xmlExperiment, Experiment newExperiment);
 
     /**
      * Copy an experiment from XML file to another experiment: along with set-up
@@ -144,19 +144,19 @@ public interface ExperimentService extends GenericService<Experiment, Long> {
      *
      * @param xmlExperiment
      */
-    public void copyExperimentFromXML(Experiment xmlExperiment);
+    void copyExperimentFromXML(Experiment xmlExperiment);
 
     /**
      *
      * @param experiment
      * @return
      */
-    public List<Algorithm> getAlgorithms(Experiment experiment);
+    List<Algorithm> getAlgorithms(Experiment experiment);
 
     /**
      *
      * @param experiment
      * @return
      */
-    public List<ImagingType> getImagingTypes(Experiment experiment);
+    List<ImagingType> getImagingTypes(Experiment experiment);
 }

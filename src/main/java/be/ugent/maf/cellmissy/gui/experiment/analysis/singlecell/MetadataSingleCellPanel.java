@@ -236,7 +236,7 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {instrumentTextField, timeFramesTextField, userTextField});
+        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, instrumentTextField, timeFramesTextField, userTextField);
 
         detailsPanelLayout.setVerticalGroup(
             detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -304,7 +304,7 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
                 .addContainerGap(76, Short.MAX_VALUE))
         );
 
-        userSelectionPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {algorithmComboBox, coordinatesUnitOfMeasurementComboBox, imagingTypeComboBox});
+        userSelectionPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, algorithmComboBox, coordinatesUnitOfMeasurementComboBox, imagingTypeComboBox);
 
         userSelectionPanelLayout.setVerticalGroup(
             userSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

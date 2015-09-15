@@ -20,12 +20,12 @@ public interface TrackOperator {
      *
      * @param trackDataHolder
      */
-    public void operateOnSteps(TrackDataHolder trackDataHolder);
+    void operateOnSteps(TrackDataHolder trackDataHolder);
 
     /**
      * Do the operations on the cell-centric level, i.e. compute all the features related to aggregated measurements.
      *
      * @param trackDataHolder
      */
-    public void operateOnCells(TrackDataHolder trackDataHolder);
+    void operateOnCells(TrackDataHolder trackDataHolder);
 }

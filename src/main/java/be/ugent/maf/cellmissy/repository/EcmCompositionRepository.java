@@ -13,11 +13,11 @@ import java.util.List;
  */
 public interface EcmCompositionRepository extends GenericRepository<EcmComposition, Long> {
 
-    public List<EcmComposition> findByMatrixDimensionName(String matrixDimensionName);
+    List<EcmComposition> findByMatrixDimensionName(String matrixDimensionName);
 
-    public void saveEcmComposition(EcmComposition ecmComposition);
+    void saveEcmComposition(EcmComposition ecmComposition);
 
-    public EcmComposition findEcmCompositionByType(String ecmCompositionType);
+    EcmComposition findEcmCompositionByType(String ecmCompositionType);
 
-    public EcmComposition findEcmCompositionByTypeAndMatrixDimensionName(String type, String matrixDimensionName);
+    EcmComposition findEcmCompositionByTypeAndMatrixDimensionName(String type, String matrixDimensionName);
 }

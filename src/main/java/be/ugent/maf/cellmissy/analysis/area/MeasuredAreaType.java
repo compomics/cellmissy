@@ -14,7 +14,7 @@ public enum MeasuredAreaType {
     CELL_COVERED_AREA(1), OPEN_AREA(2);
     private final int type;
 
-    private MeasuredAreaType(int type) {
+    MeasuredAreaType(int type) {
         this.type = type;
     }
 

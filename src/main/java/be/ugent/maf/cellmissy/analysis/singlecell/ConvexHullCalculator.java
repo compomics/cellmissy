@@ -22,14 +22,14 @@ public interface ConvexHullCalculator {
      * @param convexHull: the convex hull object for which the hull is being
      * calculated
      */
-    public void computeHull(Track track, ConvexHull convexHull);
+    void computeHull(Track track, ConvexHull convexHull);
 
     /**
      * Compute the size of the convex hull, i.e. the number of vertices.
      *
      * @param convexHull
      */
-    public void computeHullSize(ConvexHull convexHull);
+    void computeHullSize(ConvexHull convexHull);
 
     /**
      * Find the pair of geometric points that are most distant from each other
@@ -39,5 +39,5 @@ public interface ConvexHullCalculator {
      * @param track
      * @param convexHull
      */
-    public void findMostDistantPoints(Track track, ConvexHull convexHull);
+    void findMostDistantPoints(Track track, ConvexHull convexHull);
 }

@@ -115,7 +115,7 @@ public class TracksWriterDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {chooseDirectoryButton, computeAndWriteButton, deselectAllButton, selectAllButton});
+        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, chooseDirectoryButton, computeAndWriteButton, deselectAllButton, selectAllButton);
 
         userInputPanelLayout.setVerticalGroup(
             userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

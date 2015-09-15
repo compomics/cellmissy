@@ -25,5 +25,5 @@ public interface CellLineService extends GenericService<CellLine, Long> {
 
     List<String> findAllSera();
 
-    public List<CellLineType> findNewCellLines(Experiment experiment);
+    List<CellLineType> findNewCellLines(Experiment experiment);
 }

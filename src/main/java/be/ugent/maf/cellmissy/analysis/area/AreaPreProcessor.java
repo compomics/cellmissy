@@ -23,7 +23,7 @@ public interface AreaPreProcessor {
      *
      * @param areaPreProcessingResults
      */
-    public void computeNormalizedArea(AreaPreProcessingResults areaPreProcessingResults);
+    void computeNormalizedArea(AreaPreProcessingResults areaPreProcessingResults);
 
     /**
      * Compute increments of Area from one time frame to the following one
@@ -31,14 +31,14 @@ public interface AreaPreProcessor {
      *
      * @param areaPreProcessingResults
      */
-    public void computeDeltaArea(AreaPreProcessingResults areaPreProcessingResults);
+    void computeDeltaArea(AreaPreProcessingResults areaPreProcessingResults);
 
     /**
      * Compute %area increase for a certain condition
      *
      * @param areaPreProcessingResults
      */
-    public void computeAreaIncrease(AreaPreProcessingResults areaPreProcessingResults);
+    void computeAreaIncrease(AreaPreProcessingResults areaPreProcessingResults);
 
     /**
      * Compute normalised Corrected Area values for a certain Condition
@@ -46,7 +46,7 @@ public interface AreaPreProcessor {
      * @param areaPreProcessingResults
      * @param outlierHandlerBeanName
      */
-    public void normalizeCorrectedArea(AreaPreProcessingResults areaPreProcessingResults, String outlierHandlerBeanName);
+    void normalizeCorrectedArea(AreaPreProcessingResults areaPreProcessingResults, String outlierHandlerBeanName);
 
     /**
      * For normalised and Corrected Area, compute distance matrix containing all
@@ -56,7 +56,7 @@ public interface AreaPreProcessor {
      * @param areaPreProcessingResults
      * @param distanceMetricBeanName
      */
-    public void computeDistanceMatrix(AreaPreProcessingResults areaPreProcessingResults, String distanceMetricBeanName);
+    void computeDistanceMatrix(AreaPreProcessingResults areaPreProcessingResults, String distanceMetricBeanName);
 
     /**
      * Check if a replicate can be considered as an Outlier. This will depend on
@@ -67,7 +67,7 @@ public interface AreaPreProcessor {
      * @param plateCondition
      * @param outliersHandlerBeanName
      */
-    public void excludeReplicates(AreaPreProcessingResults areaPreProcessingResults, PlateCondition plateCondition, String outliersHandlerBeanName);
+    void excludeReplicates(AreaPreProcessingResults areaPreProcessingResults, PlateCondition plateCondition, String outliersHandlerBeanName);
 
     /**
      * Detect outliers for a 2D array of double (one condition). This will
@@ -79,7 +79,7 @@ public interface AreaPreProcessor {
      * @return a matrix of Boolean (true if the data point is detected as an
      * outlier, false if not)
      */
-    public boolean[][] detectOutliers(Double[][] data, String outliersHandlerBeanName);
+    boolean[][] detectOutliers(Double[][] data, String outliersHandlerBeanName);
 
     /**
      * Making use of the detect outliers method, correct data set for outliers.
@@ -90,7 +90,7 @@ public interface AreaPreProcessor {
      * @param outliersHandlerBeanName
      * @return a matrix with corrected value
      */
-    public Double[][] correctForOutliers(Double[][] data, String outliersHandlerBeanName);
+    Double[][] correctForOutliers(Double[][] data, String outliersHandlerBeanName);
 
     /**
      * Estimate the probability density function, according to name of the bean
@@ -101,14 +101,14 @@ public interface AreaPreProcessor {
      * @param kernelDensityEstimatorBeanName
      * @return a list of doubles[] containing x and y values for the function.
      */
-    public List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName);
+    List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName);
 
     /**
      * Set time frame interval for a condition
      *
      * @param areaPreProcessingResults
      */
-    public void setTimeInterval(AreaPreProcessingResults areaPreProcessingResults);
+    void setTimeInterval(AreaPreProcessingResults areaPreProcessingResults);
 
     /**
      * Recompute time interval for a condition; this will recompute the interval
@@ -116,5 +116,5 @@ public interface AreaPreProcessor {
      *
      * @param areaPreProcessingResults
      */
-    public void recomputeTimeInterval(AreaPreProcessingResults areaPreProcessingResults);
+    void recomputeTimeInterval(AreaPreProcessingResults areaPreProcessingResults);
 }

@@ -20,7 +20,7 @@ public interface StatisticsCalculator {
      * @param y
      * @return p-value associated with the test
      */
-    public double executeStatisticalTest(double[] x, double[] y);
+    double executeStatisticalTest(double[] x, double[] y);
 
     /**
      * Given data and alpha level, detect significance.
@@ -29,7 +29,7 @@ public interface StatisticsCalculator {
      * @param alpha
      * @return a 2D array of boolean
      */
-    public boolean[][] detectSignificance(Double[][] data, double alpha);
+    boolean[][] detectSignificance(Double[][] data, double alpha);
 
     /**
      * Get Statistical summary for a distribution of doubles x.
@@ -37,5 +37,5 @@ public interface StatisticsCalculator {
      * @param x
      * @return
      */
-    public StatisticalSummary getSummaryStatistics(double[] x);
+    StatisticalSummary getSummaryStatistics(double[] x);
 }

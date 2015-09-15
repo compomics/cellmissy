@@ -12,5 +12,5 @@ import be.ugent.maf.cellmissy.entity.EcmDensity;
  */
 public interface EcmDensityRepository extends GenericRepository<EcmDensity, Long> {
 
-    public EcmDensity findByEcmDensity(Double ecmDensity);
+    EcmDensity findByEcmDensity(Double ecmDensity);
 }

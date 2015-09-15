@@ -32,7 +32,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @throws FileParserException
      * @throws PositionListMismatchException
      */
-    public void init(Experiment experiment) throws FileParserException, PositionListMismatchException;
+    void init(Experiment experiment) throws FileParserException, PositionListMismatchException;
 
     /**
      * This method uses the plate format and the first WellGui selected by the
@@ -43,7 +43,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @param firstWellGui
      * @param wellGUIList
      */
-    public void updateWellGuiListWithImagingType(ImagingType imagingType, PlateFormat plateFormat, WellGui firstWellGui, List<WellGui> wellGUIList);
+    void updateWellGuiListWithImagingType(ImagingType imagingType, PlateFormat plateFormat, WellGui firstWellGui, List<WellGui> wellGUIList);
 
     /**
      * This method gets a list of imaging types from the map in output from
@@ -51,7 +51,7 @@ public interface WellService extends GenericService<Well, Long> {
      *
      * @return a List of Imaging Types
      */
-    public List<ImagingType> getImagingTypes();
+    List<ImagingType> getImagingTypes();
 
     /**
      * This method gets a map between algorithms and samples (indexed by imaging
@@ -62,7 +62,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @throws PositionListMismatchException
      * @throws CellMiaDataLoadingException
      */
-    public Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException, CellMiaDataLoadingException;
+    Map<Algorithm, Map<ImagingType, List<WellHasImagingType>>> getMap() throws FileParserException, PositionListMismatchException, CellMiaDataLoadingException;
 
     /**
      * Find all algorithms for one wellId
@@ -70,7 +70,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @param wellId
      * @return
      */
-    public List<Algorithm> findAlgosByWellId(Long wellId);
+    List<Algorithm> findAlgosByWellId(Long wellId);
 
     /**
      * Find all imaging types for one wellId
@@ -78,7 +78,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @param wellId
      * @return
      */
-    public List<ImagingType> findImagingTypesByWellId(Long wellId);
+    List<ImagingType> findImagingTypesByWellId(Long wellId);
 
     /**
      * Fetch time steps collection only for some wellHasImagingTypes according
@@ -88,7 +88,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @param AlgorithmId
      * @param ImagingTpeId
      */
-    public void fetchTimeSteps(Well well, Long AlgorithmId, Long ImagingTpeId);
+    void fetchTimeSteps(Well well, Long AlgorithmId, Long ImagingTpeId);
 
     /**
      * Fetch tracks collection only for some wellHasImagingTypes according to
@@ -98,7 +98,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @param AlgorithmId
      * @param ImagingTpeId
      */
-    public void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId);
+    void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId);
 
     /**
      * Fetch track points only for some wellHasImagingTypes
@@ -107,7 +107,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @param AlgorithmId
      * @param ImagingTpeId
      */
-    public void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId);
+    void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId);
 
     /**
      * Fetch both time steps and tracks (track points as well).
@@ -115,7 +115,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @param wellId
      * @return 
      */
-    public Well fetchMigrationData(Long wellId);
+    Well fetchMigrationData(Long wellId);
 
     /**
      * Get number of samples to parse

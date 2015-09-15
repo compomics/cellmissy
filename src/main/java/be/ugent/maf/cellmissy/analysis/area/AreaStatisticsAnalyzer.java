@@ -19,7 +19,7 @@ public interface AreaStatisticsAnalyzer {
      * @param areaAnalysisGroup
      * @param statisticalTestName
      */
-    public void generateSummaryStatistics(AreaAnalysisGroup areaAnalysisGroup, String statisticalTestName);
+    void generateSummaryStatistics(AreaAnalysisGroup areaAnalysisGroup, String statisticalTestName);
 
     /**
      * Compute a p values matrix for a certain analysis group.
@@ -27,7 +27,7 @@ public interface AreaStatisticsAnalyzer {
      * @param areaAnalysisGroup
      * @param statisticalTestName
      */
-    public void executePairwiseComparisons(AreaAnalysisGroup areaAnalysisGroup, String statisticalTestName);
+    void executePairwiseComparisons(AreaAnalysisGroup areaAnalysisGroup, String statisticalTestName);
 
     /**
      * For a certain analysis group and an alpha level, get significance for non
@@ -39,7 +39,7 @@ public interface AreaStatisticsAnalyzer {
      * @param alpha
      * @param isAdjusted
      */
-    public void detectSignificance(AreaAnalysisGroup areaAnalysisGroup, String statisticalTestName, double alpha, boolean isAdjusted);
+    void detectSignificance(AreaAnalysisGroup areaAnalysisGroup, String statisticalTestName, double alpha, boolean isAdjusted);
 
     /**
      * Correct p values for multiple comparisons. This is performed differently
@@ -48,5 +48,5 @@ public interface AreaStatisticsAnalyzer {
      * @param areaAnalysisGroup
      * @param correctionMethodName
      */
-    public void correctForMultipleComparisons(AreaAnalysisGroup areaAnalysisGroup, String correctionMethodName);
+    void correctForMultipleComparisons(AreaAnalysisGroup areaAnalysisGroup, String correctionMethodName);
 }

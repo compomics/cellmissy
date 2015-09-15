@@ -17,23 +17,23 @@ public interface Cache<K, V> {
      * @param key the key
      * @param value the value
      */
-    public void putInCache(K key, V value);
+    void putInCache(K key, V value);
 
     /**
      * Get a Value from Cache, returns null if no value was found
      * @param key
      * @return the found value
      */
-    public V getFromCache(K key);
+    V getFromCache(K key);
 
     /**
      * Get the cache size
      * @return the cache size value
      */
-    public int getCacheSize();
+    int getCacheSize();
 
     /**
      * Clear the cache
      */
-    public void clearCache();
+    void clearCache();
 }

@@ -32,7 +32,6 @@ import java.text.Format;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
 import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -67,8 +66,6 @@ public class GenericImagedPlateController {
     private ObservableList<Algorithm> algorithmsBindingList;
     private ObservableList<ImagingType> imagingTypesBindingList;
     private Format format;
-    private ImagingType currentImagingType;
-    private Algorithm currentAlgorithm;
     private boolean isDirectoryLoaded;
     private BindingGroup bindingGroup;
     private File directory;

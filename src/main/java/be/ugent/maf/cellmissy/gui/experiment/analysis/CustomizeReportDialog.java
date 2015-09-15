@@ -140,7 +140,7 @@ class CustomizeReportDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addGlobalViewButton, removeGlobalViewButton});
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, addGlobalViewButton, removeGlobalViewButton);
 
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

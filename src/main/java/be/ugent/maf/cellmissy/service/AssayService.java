@@ -14,13 +14,13 @@ import java.util.List;
  */
 public interface AssayService extends GenericService<Assay, Long> {
 
-    public List<Assay> findByMatrixDimensionName(String matrixDimensionName);
+    List<Assay> findByMatrixDimensionName(String matrixDimensionName);
 
-    public Assay findByAssayType(String assayType);
+    Assay findByAssayType(String assayType);
 
-    public Assay findByAssayTypeAndMatrixDimensionName(String assayType, String matrixDimensionName);
+    Assay findByAssayTypeAndMatrixDimensionName(String assayType, String matrixDimensionName);
 
-    public List<Assay> findNewAssays(Experiment experiment);
+    List<Assay> findNewAssays(Experiment experiment);
 
-    public Assay fetchPlateConditions(Assay assay);
+    Assay fetchPlateConditions(Assay assay);
 }

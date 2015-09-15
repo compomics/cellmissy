@@ -130,7 +130,7 @@ public class StartupDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {areaAnalysisButton, singleCellAnalysisButton});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, areaAnalysisButton, singleCellAnalysisButton);
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -156,7 +156,7 @@ public class StartupDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {aboutButton, areaAnalysisButton, cellMiaButton, createExpButton, loadAreaButton, overviewButton, singleCellAnalysisButton, writeCellTracksToFileButton});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, aboutButton, areaAnalysisButton, cellMiaButton, createExpButton, loadAreaButton, overviewButton, singleCellAnalysisButton, writeCellTracksToFileButton);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

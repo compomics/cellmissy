@@ -297,7 +297,7 @@ class SingleCellPreProcessingController {
      *
      * @param plateCondition
      */
-    public void updateMapWithCondition(PlateCondition plateCondition) {
+    private void updateMapWithCondition(PlateCondition plateCondition) {
         // fetch the track points from DB
         singleCellMainController.fetchTrackPoints(plateCondition);
         if (preProcessingMap.get(plateCondition) == null) {
@@ -307,14 +307,14 @@ class SingleCellPreProcessingController {
             appendInfo("generating track data holders...");
             singleCellPreProcessor.generateTrackDataHolders(singleCellConditionDataHolder, plateCondition);
             appendInfo("--> current total number of cell tracks: " + singleCellConditionDataHolder
-                    .getTrackDataHolders().size());
+                      .getTrackDataHolders().size());
             // it can very well be that a plateCondition and/or a sample have been imaged, but there are no tracks in it
             // if this is not the case, go for the computation
             if (!singleCellConditionDataHolder.getTrackDataHolders().isEmpty()) {
                 singleCellPreProcessor.generateDataStructure(singleCellConditionDataHolder);
                 appendInfo("pre-process step-centric and cell-centric data...");
                 singleCellPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder, singleCellMainController
-                        .getConversionFactor(), singleCellMainController.getExperiment().getExperimentInterval());
+                          .getConversionFactor(), singleCellMainController.getExperiment().getExperimentInterval());
                 appendInfo("generating raw coordinates matrix...");
                 singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
                 appendInfo("computing shifted-to-zero coordinates matrix...");
@@ -331,7 +331,7 @@ class SingleCellPreProcessingController {
                 // remove the plateCondition from the map and inform the user
                 preProcessingMap.remove(plateCondition);
                 appendInfo("No tracks recorded for condition: " + plateCondition + "; no coordinates to retrieve from"
-                        + " DB!");
+                          + " DB!");
             }
         }
     }
@@ -343,10 +343,10 @@ class SingleCellPreProcessingController {
     public void showTracksInTable() {
         // table binding
         JTableBinding tracksTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ,
-                tracksBindingList, singleCellAnalysisPanel.getTracksTable());
+                  tracksBindingList, singleCellAnalysisPanel.getTracksTable());
         // add column bindings
         ColumnBinding columnBinding = tracksTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType"
-                + ".well.columnNumber}"));
+                  + ".well.columnNumber}"));
         columnBinding.setColumnName("Column");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
@@ -379,7 +379,7 @@ class SingleCellPreProcessingController {
         String newLine = JFreeChartUtils.getNewLine();
         singleCellAnalysisPanel.getLogTextArea().append(info + newLine);
         singleCellAnalysisPanel.getLogTextArea().setCaretPosition(singleCellAnalysisPanel.getLogTextArea()
-                .getDocument().getLength());
+                  .getDocument().getLength());
     }
 
     /**
@@ -429,7 +429,7 @@ class SingleCellPreProcessingController {
 
         // add view to parent panel
         singleCellMainController.getDataAnalysisPanel().getAreaAnalysisParentPanel().add(singleCellAnalysisPanel,
-                gridBagConstraints);
+                  gridBagConstraints);
     }
 
     /**
@@ -438,15 +438,15 @@ class SingleCellPreProcessingController {
     private void showTrackPointsInTable() {
         // get the tracking coordinates unit of measurement
         TrackCoordinatesUnitOfMeasurement coordinatesUnitOfMeasurement = singleCellMainController
-                .getCoordinatesUnitOfMeasurement();
+                  .getCoordinatesUnitOfMeasurement();
         String unitOfMeasurementString = coordinatesUnitOfMeasurement.getUnitOfMeasurementString();
 
         // table binding
         JTableBinding trackPointsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ,
-                trackPointsBindingList, singleCellAnalysisPanel.getTrackPointsTable());
+                  trackPointsBindingList, singleCellAnalysisPanel.getTrackPointsTable());
 
         ColumnBinding columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${track"
-                + ".trackNumber}"));
+                  + ".trackNumber}"));
         columnBinding.setColumnName("Track");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
@@ -519,7 +519,7 @@ class SingleCellPreProcessingController {
         experimentShiftedCoordinatesRanges[1] = new Double[]{yShiftMin, yShiftMax};
         appendInfo("raw range x: (" + xRawMin + ", " + xRawMax + ")" + "; y: (" + yRawMin + ", " + yRawMax + ")");
         appendInfo("shifted range x: (" + xShiftMin + ", " + xShiftMax + ")" + "; y: (" + yShiftMin + ", " + yShiftMax
-                + ")");
+                  + ")");
     }
 
     /**
@@ -550,8 +550,6 @@ class SingleCellPreProcessingController {
                 updateMapWithCondition(condition);
                 singleCellMainController.showNotImagedWells(condition);
             }
-            // finally, compute the experiment ranges
-            computeExperimentCoordinatesRanges();
             return null;
         }
 
@@ -560,13 +558,23 @@ class SingleCellPreProcessingController {
             try {
                 get();
                 waitingDialog.setVisible(false);
+                // finally, compute the experiment ranges
+                if (!preProcessingMap.isEmpty()) {
+                    computeExperimentCoordinatesRanges();
+                } else {
+                    singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    showMessage("Sorry, I did not find any single cell tracks in the DB!\n"
+                              + "Please make sure you select the right combination of algorithm-imaging type.", "error-nothing to analyze", JOptionPane.ERROR_MESSAGE);
+                    // should get back here to the main window....!!!
+                    return;
+                }
                 // when done, enable back the list, but keep buttons disabled!
-                singleCellMainController.showMessage("Tracks retrieved!\nSelect a condition to start with the"
-                        + "analysis.", "tracks retrieved", JOptionPane.INFORMATION_MESSAGE);
+                showMessage("Tracks retrieved!\nSelect a condition to start with the"
+                          + "analysis.", "tracks retrieved", JOptionPane.INFORMATION_MESSAGE);
                 singleCellMainController.getDataAnalysisPanel().getConditionsList().setEnabled(true);
                 singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 singleCellMainController.showInfoMessage("Tracks retrieved from DB. Select a condition to "
-                        + "start the analysis.");
+                          + "start the analysis.");
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 singleCellMainController.handleUnexpectedError(ex);
@@ -640,7 +648,7 @@ class SingleCellPreProcessingController {
                 // if not, just inform the user and skip the computation
                 appendInfo("Apparently this condition was not imaged/analyzed!");
                 singleCellMainController.showInfoMessage("Apparently this condition was not imaged/analyzed!\nNothing"
-                        + " to compute!");
+                          + " to compute!");
             }
             return null;
         }
