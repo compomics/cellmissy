@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.exception.GenericImportDirectoryException;
 import be.ugent.maf.cellmissy.gui.controller.load.generic.area.GenericAreaImagedPlateController;
 import be.ugent.maf.cellmissy.gui.controller.load.generic.singlecell.GenericSingleCellImagedPlateController;
 import be.ugent.maf.cellmissy.gui.experiment.load.generic.GenericImportInfoDialog;
@@ -25,11 +26,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
 import java.io.File;
+import java.io.FileFilter;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -169,10 +172,12 @@ public class GenericImagedPlateController {
     }
 
     /**
+     * Overwrite data for a specific well.
      *
-     * @param newFile
-     * @param selectedWellGui
-     * @param newWellHasImagingType
+     * @param newFile: the new file to parse to load the new data.
+     * @param selectedWellGui: the well to overwrite the data for.
+     * @param newWellHasImagingType: the new sample created to load the new
+     * data.
      */
     public void overwriteDataForWell(File newFile, WellGui selectedWellGui, WellHasImagingType newWellHasImagingType) {
         if (loadExperimentFromGenericInputController.isGenericArea()) {
@@ -196,16 +201,25 @@ public class GenericImagedPlateController {
     }
 
     /**
+     * Given a certain wellGui (and thus a well), just clear all the data loaded
+     * for it (reset the well).
      *
      * @param selectedWellGui
      */
     public void clearDataForWell(WellGui selectedWellGui) {
         List<WellHasImagingType> wellHasImagingTypeList = selectedWellGui.getWell().getWellHasImagingTypeList();
         for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
+
+            if (loadExperimentFromGenericInputController.isGenericArea()) {
+                genericAreaImagedPlateController.removeOldDataFromList(wellHasImagingType);
+            } else {
+                genericSingleCellImagedPlateController.removeOldDataFromList(wellHasImagingType);
+            }
             dragAndDropController.getCurrentAlgorithm().getWellHasImagingTypeList().remove(wellHasImagingType);
             dragAndDropController.getCurrentImagingType().getWellHasImagingTypeList().remove(wellHasImagingType);
         }
-        resetDataForWellGui(selectedWellGui);
+
+        resetWellGui(selectedWellGui);
         imagedPlatePanel.repaint();
     }
 
@@ -246,7 +260,7 @@ public class GenericImagedPlateController {
         // empty wellhasimagingtype collection of each well
         List<WellGui> wellGuiList = imagedPlatePanel.getWellGuiList();
         for (WellGui wellGui : wellGuiList) {
-            resetDataForWellGui(wellGui);
+            resetWellGui(wellGui);
         }
         // repaint the plate view
         imagedPlatePanel.repaint();
@@ -259,10 +273,12 @@ public class GenericImagedPlateController {
     }
 
     /**
+     * Given a wellGui, reset both its data and its layout (just retain the
+     * biggest ellipse).
      *
      * @param wellGui
      */
-    private void resetDataForWellGui(WellGui wellGui) {
+    private void resetWellGui(WellGui wellGui) {
         wellGui.getWell().getWellHasImagingTypeList().clear();
         List<Ellipse2D> ellipsi = wellGui.getEllipsi();
         Iterator<Ellipse2D> iterator = ellipsi.iterator();
@@ -390,7 +406,12 @@ public class GenericImagedPlateController {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             // the directory for the data
             directory = fileChooser.getSelectedFile();
-            loadDataIntoTree();
+            try {
+                loadDataIntoTree();
+            } catch (GenericImportDirectoryException ex) {
+                LOG.error(ex.getMessage());
+                showMessage(ex.getMessage(), "wrong directory structure error", JOptionPane.ERROR_MESSAGE);
+            }
         } else {
             loadExperimentFromGenericInputController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -402,7 +423,7 @@ public class GenericImagedPlateController {
      *
      * @param directory
      */
-    private void loadDataIntoTree() {
+    private void loadDataIntoTree() throws GenericImportDirectoryException {
         DefaultTreeModel model = (DefaultTreeModel) loadFromGenericInputPlatePanel.getDirectoryTree().getModel();
         DefaultMutableTreeNode rootNote = (DefaultMutableTreeNode) model.getRoot();
         // change name (user object) of root node
@@ -415,58 +436,68 @@ public class GenericImagedPlateController {
             // iterate through the files and check if they are directories or files
             for (File algoFolder : algoFolders) {
                 if (algoFolder.isDirectory()) {
-                    // create the node and add it to the root
-                    DefaultMutableTreeNode algoNode = new DefaultMutableTreeNode(algoFolder.getName(), Boolean.TRUE);
-                    rootNote.add(algoNode);
-                    // also, add the algo to the list
-                    Algorithm algorithm = new Algorithm();
-                    algorithm.setAlgorithmName(algoFolder.getName());
-                    algorithm.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
-                    algorithmsBindingList.add(algorithm);
                     // algo folder --> imaging folder(s)
-                    File[] imagingFolders = algoFolder.listFiles();
-                    for (File imagingFolder : imagingFolders) {
-                        // create the node and add it to the root
-                        DefaultMutableTreeNode imagingNode = new DefaultMutableTreeNode(imagingFolder.getName(), Boolean.TRUE);
-                        algoNode.add(imagingNode);
-                        // also, add the imaging type to the list
-                        ImagingType imagingType = new ImagingType();
-                        imagingType.setName(imagingFolder.getName());
-                        imagingType.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
-                        if (!imagingTypesBindingList.contains(imagingType)) {
-                            imagingTypesBindingList.add(imagingType);
+                    File[] imagingFolders = algoFolder.listFiles(new FileFilter() {
+                        @Override
+                        public boolean accept(File f) {
+                            return f.isDirectory();
                         }
-                        // imaging folder --> text files containing the data to actually load
-                        File[] dataFiles = imagingFolder.listFiles(new java.io.FileFilter() {
-                            @Override
-                            public boolean accept(File f) {
-                                int index = f.getName().lastIndexOf(".");
-                                String extension = f.getName().substring(index + 1);
-                                return extension.equals("txt");
+                    });
+                    if (imagingFolders.length != 0) {
+                        for (File imagingFolder : imagingFolders) {
+
+                            // imaging folder --> text files containing the data to actually load
+                            File[] dataFiles = imagingFolder.listFiles(new FileFilter() {
+                                @Override
+                                public boolean accept(File f) {
+                                    int index = f.getName().lastIndexOf(".");
+                                    String extension = f.getName().substring(index + 1);
+                                    return extension.equals("txt");
+                                }
+                            });
+                            if (dataFiles.length != 0) {
+                                // create the node and add it to the root
+                                DefaultMutableTreeNode algoNode = new DefaultMutableTreeNode(algoFolder.getName(), Boolean.TRUE);
+                                rootNote.add(algoNode);
+                                // also, add the algo to the list
+                                Algorithm algorithm = new Algorithm();
+                                algorithm.setAlgorithmName(algoFolder.getName());
+                                algorithm.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
+                                algorithmsBindingList.add(algorithm);
+                                // create the node and add it to the root
+                                DefaultMutableTreeNode imagingNode = new DefaultMutableTreeNode(imagingFolder.getName(), Boolean.TRUE);
+                                algoNode.add(imagingNode);
+                                // also, add the imaging type to the list
+                                ImagingType imagingType = new ImagingType();
+                                imagingType.setName(imagingFolder.getName());
+                                imagingType.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
+                                if (!imagingTypesBindingList.contains(imagingType)) {
+                                    imagingTypesBindingList.add(imagingType);
+                                }
+                                for (File dataFile : dataFiles) {
+                                    DefaultMutableTreeNode dataNode = new DefaultMutableTreeNode(dataFile.getName(), Boolean.FALSE);
+                                    imagingNode.add(dataNode);
+                                }
+                            } else {
+                                throw new GenericImportDirectoryException("Sorry, this directory structure doesn't seem quite correct!");
                             }
-                        });
-                        for (File dataFile : dataFiles) {
-                            DefaultMutableTreeNode dataNode = new DefaultMutableTreeNode(dataFile.getName(), Boolean.FALSE);
-                            imagingNode.add(dataNode);
                         }
+                    } else {
+                        throw new GenericImportDirectoryException("Sorry, this directory structure doesn't seem quite correct!");
                     }
                 } else {
-                    // if not even one folder was found, something is wrong: inform the user and quit the process
-                    loadExperimentFromGenericInputController.showMessage("I was expecting at least one folder!", "", JOptionPane.WARNING_MESSAGE);
-                    break;
+                    throw new GenericImportDirectoryException("Sorry, this directory structure doesn't seem quite correct!");
                 }
             }
         } else {
-            // warn the user and do nothing
-            loadExperimentFromGenericInputController.showMessage("This directory is empty!", "", JOptionPane.WARNING_MESSAGE);
+            throw new GenericImportDirectoryException("This directory seems to be empty!\nPlease load something else!");
         }
-
         model.reload();
         isDirectoryLoaded = true;
         for (int row = 0; row < loadFromGenericInputPlatePanel.getDirectoryTree().getRowCount(); row++) {
             loadFromGenericInputPlatePanel.getDirectoryTree().expandRow(row);
         }
         loadFromGenericInputPlatePanel.getDirectoryTextArea().setText(directory.getAbsolutePath());
-        loadExperimentFromGenericInputController.showMessage("Directory successful loaded!", "", JOptionPane.INFORMATION_MESSAGE);
+        loadExperimentFromGenericInputController.showMessage("Directory successful loaded!\nYou can start dragging and dropping files into your plate!", "", JOptionPane.INFORMATION_MESSAGE);
     }
 }

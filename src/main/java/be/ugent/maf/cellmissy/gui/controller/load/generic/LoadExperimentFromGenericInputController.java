@@ -180,7 +180,7 @@ public class LoadExperimentFromGenericInputController {
         genericImagedPlateController.getLoadFromGenericInputPlatePanel().getPurposeTextArea().setLineWrap(true);
         genericImagedPlateController.getLoadFromGenericInputPlatePanel().getPurposeTextArea().setWrapStyleWord(true);
         //update info message
-        cellMissyController.updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Select project/experiment in progress to load data; provide experiment metadata to start with the import.");
+        cellMissyController.updateInfoLabel(loadFromGenericInputPanel.getInfolabel(), "Select project/experiment in progress to load data; please provide experiment metadata to start with the import.");
         // disable buttons
         loadFromGenericInputPanel.getResetButton().setEnabled(false);
         loadFromGenericInputPanel.getFinishButton().setEnabled(false);

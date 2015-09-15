@@ -146,7 +146,7 @@ public class DragAndDropController {
 
         @Override
         public Object getTransferData(DataFlavor flavor)
-                throws UnsupportedFlavorException, IOException {
+                  throws UnsupportedFlavorException, IOException {
             if (flavor.equals(DataFlavor.stringFlavor)) {
                 return selectedNode;
             } else {
@@ -202,6 +202,12 @@ public class DragAndDropController {
     /**
      * Action on drop onto the target component: 1. get the wellGui
      * correspondent to the drop-point location; 2. validate this wellGui; 3.
+     * check if the well has already some data. If this is not the case, just
+     * load new data into it, otherwise, ask the user how to proceed. In this
+     * last case, 3 things are possible: 1. Overwrite the data (drag&drop was
+     * wrong, e;g.); 2. Clear data for the well (just reset the well); 3. Add
+     * more data to the well (same combination of algorithm-imaging type: a new
+     * location).
      *
      * @param point
      * @param node
@@ -225,17 +231,17 @@ public class DragAndDropController {
                     highlightImagedWell(wellGuiDropTarget);
                 } else {
                     // warn the user that data was already loaded for the selected combination of well/dataset/imaging type
-                    Object[] options = {"Overwrite", "Clear data for this well", "Add location on same well", "Cancel"};
+                    Object[] options = {"Overwrite", "Add location on same well", "Clear data for this well", "Cancel"};
                     int showOptionDialog = JOptionPane.showOptionDialog(null, "Data already loaded for this well / dataset / imaging type.\nWhat do you want to do now?", "", JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[3]);
                     switch (showOptionDialog) {
                         case 0: // overwrite loaded data:
                             genericImagedPlateController.overwriteDataForWell(getDataFile(node), wellGuiDropTarget, newWellHasImagingType);
                             break;
-                        case 1: // clear data for current algorithm/imaging type
-                            genericImagedPlateController.clearDataForWell(wellGuiDropTarget);
-                            break;
-                        case 2: // select another file to parse, adding location on the same well
+                        case 1: // add location on the same well:
                             genericImagedPlateController.loadData(getDataFile(node), newWellHasImagingType, wellGuiDropTarget);
+                            break;
+                        case 2: // clear data for current well
+                            genericImagedPlateController.clearDataForWell(wellGuiDropTarget);
                             break;
                         //cancel: do nothing
                     }

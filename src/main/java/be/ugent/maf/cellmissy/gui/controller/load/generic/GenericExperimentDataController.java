@@ -98,7 +98,7 @@ class GenericExperimentDataController {
         ImageIcon scaledIcon = GuiUtils.getScaledIcon(icon);
         loadFromGenericInputMetadataPanel.getInfoLabel().setIcon(scaledIcon);
         loadFromGenericInputMetadataPanel.getInfoLabel1().setIcon(scaledIcon);
-        ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new ExperimentsOverviewListRenderer(false);
+        ExperimentsOverviewListRenderer experimentsOverviewListRenderer = new ExperimentsOverviewListRenderer(true);
         loadFromGenericInputMetadataPanel.getExperimentsList().setCellRenderer(experimentsOverviewListRenderer);
 
         //init projectJList

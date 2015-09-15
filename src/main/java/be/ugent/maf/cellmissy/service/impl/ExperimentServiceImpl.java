@@ -85,6 +85,7 @@ public class ExperimentServiceImpl implements ExperimentService {
      * create experiment obsepFolders from microscope directory
      *
      * @param newExperiment
+     * @throws be.ugent.maf.cellmissy.exception.CellMiaFoldersException
      */
     @Override
     public void createFolderStructure(Experiment newExperiment) throws CellMiaFoldersException {

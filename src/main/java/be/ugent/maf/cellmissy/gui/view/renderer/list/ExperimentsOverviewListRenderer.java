@@ -19,6 +19,11 @@ public class ExperimentsOverviewListRenderer extends DefaultListCellRenderer {
 
     private final boolean selectable;
 
+    /**
+     * Constructor
+     *
+     * @param selectable
+     */
     public ExperimentsOverviewListRenderer(boolean selectable) {
         this.selectable = selectable;
         setOpaque(true);

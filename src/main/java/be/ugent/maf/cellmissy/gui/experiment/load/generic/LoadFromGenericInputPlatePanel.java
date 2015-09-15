@@ -96,14 +96,14 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         rightPanel = new javax.swing.JPanel();
         plateParentPanel = new javax.swing.JPanel();
         userInputPanel = new javax.swing.JPanel();
-        jScrollPane5 = new javax.swing.JScrollPane();
+        directoryScrollPane = new javax.swing.JScrollPane();
         directoryTree = new javax.swing.JTree();
         loadDirectoryButton = new javax.swing.JButton();
-        jScrollPane6 = new javax.swing.JScrollPane();
+        algoScrollPane = new javax.swing.JScrollPane();
         algorithmList = new javax.swing.JList();
-        jScrollPane7 = new javax.swing.JScrollPane();
+        imagingScrollPane = new javax.swing.JScrollPane();
         imagingTypeList = new javax.swing.JList();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        currentDirectoryScrollPane = new javax.swing.JScrollPane();
         directoryTextArea = new javax.swing.JTextArea();
         questionButton = new javax.swing.JButton();
         rawDataPanel = new javax.swing.JPanel();
@@ -248,33 +248,36 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         userInputPanel.setOpaque(false);
         userInputPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
+        directoryScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Data Tree"));
+
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Root (data)");
         directoryTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        jScrollPane5.setViewportView(directoryTree);
+        directoryScrollPane.setViewportView(directoryTree);
 
         loadDirectoryButton.setText("Load Directory");
 
-        jScrollPane6.setBorder(null);
+        algoScrollPane.setBorder(null);
 
         algorithmList.setBorder(javax.swing.BorderFactory.createTitledBorder("Algorithms"));
         algorithmList.setEnabled(false);
-        jScrollPane6.setViewportView(algorithmList);
+        algoScrollPane.setViewportView(algorithmList);
 
-        jScrollPane7.setBorder(null);
+        imagingScrollPane.setBorder(null);
 
         imagingTypeList.setBorder(javax.swing.BorderFactory.createTitledBorder("Imaging Types"));
         imagingTypeList.setEnabled(false);
-        jScrollPane7.setViewportView(imagingTypeList);
+        imagingScrollPane.setViewportView(imagingTypeList);
 
-        jScrollPane3.setBorder(null);
+        currentDirectoryScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Current Directory"));
 
         directoryTextArea.setEditable(false);
         directoryTextArea.setColumns(20);
-        directoryTextArea.setForeground(new java.awt.Color(102, 102, 102));
         directoryTextArea.setLineWrap(true);
         directoryTextArea.setRows(5);
-        directoryTextArea.setBorder(javax.swing.BorderFactory.createTitledBorder("Current Directory"));
-        jScrollPane3.setViewportView(directoryTextArea);
+        directoryTextArea.setBorder(null);
+        directoryTextArea.setCaretColor(new java.awt.Color(255, 255, 255));
+        directoryTextArea.setEnabled(false);
+        currentDirectoryScrollPane.setViewportView(directoryTextArea);
 
         questionButton.setBorderPainted(false);
         questionButton.setContentAreaFilled(false);
@@ -286,43 +289,39 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, userInputPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(userInputPanelLayout.createSequentialGroup()
-                        .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(20, 20, 20))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, userInputPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, Short.MAX_VALUE)))
-                .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(imagingScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(algoScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(currentDirectoryScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(userInputPanelLayout.createSequentialGroup()
                         .addComponent(loadDirectoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(questionButton))
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(31, Short.MAX_VALUE))
+                    .addComponent(directoryScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
+                .addGap(33, 33, 33))
         );
+
+        userInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {algoScrollPane, imagingScrollPane});
+
         userInputPanelLayout.setVerticalGroup(
             userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, userInputPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(userInputPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 59, Short.MAX_VALUE))
-                    .addComponent(jScrollPane5))
+                        .addComponent(algoScrollPane)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(imagingScrollPane)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(currentDirectoryScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(directoryScrollPane))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(userInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(loadDirectoryButton)
                     .addComponent(questionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addGap(4, 4, 4))
         );
-
-        userInputPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jScrollPane6, jScrollPane7});
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -391,23 +390,23 @@ public class LoadFromGenericInputPlatePanel extends javax.swing.JPanel {
         add(rightPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane algoScrollPane;
     private javax.swing.JList algorithmList;
     private javax.swing.JList conditionsList;
     private javax.swing.JPanel conditionsOverviewPanel;
+    private javax.swing.JScrollPane currentDirectoryScrollPane;
+    private javax.swing.JScrollPane directoryScrollPane;
     private javax.swing.JTextArea directoryTextArea;
     private javax.swing.JTree directoryTree;
     private javax.swing.JLabel expNumberLabel;
     private javax.swing.JPanel experimentMetadataPanel;
+    private javax.swing.JScrollPane imagingScrollPane;
     private javax.swing.JList imagingTypeList;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JButton loadDirectoryButton;
     private javax.swing.JPanel plateParentPanel;
     private javax.swing.JLabel projNumberLabel;
