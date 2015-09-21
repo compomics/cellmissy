@@ -44,7 +44,7 @@ public class GuiUtils {
             Color(0, 140, 140), new Color(128, 0, 0), new Color(128, 128, 0)};
     // Colors used for Imaging Type Rendering
     private static final Color[] imagingTypeColors = {new Color(138, 43, 226), new Color(135, 206, 250), new Color
-            (255, 0, 255)};
+            (255, 0, 255), new Color(255, 204, 51)};
     // Font for highlighted labels
     private static final Font boldFont = new Font("Tahoma", Font.BOLD, 14);
     // Font for normal labels
