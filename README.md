@@ -9,7 +9,7 @@
 
 ----
 
-## Project Description
+## Project Descriptions
 
 *CellMissy* is a cross-platform data management system for cell migration/invasion data that simplifies and fully automates data management, storage and analysis, from experimental set-up to data visualization and exploration. 
 *CellMissy* is a client-server application with a graphical user interface on the client, and a relational database in the back-end to store the data. The client application is composed of three modules that cover the different functions of *CellMissy*: the Experiment Manager, the Data Loader and the Data Analyzer. On top of these modules, *CellMissy* provides tools for import/export of full experiments and templates.
