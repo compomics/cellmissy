@@ -77,7 +77,7 @@ public class PlateManagementDialog extends javax.swing.JDialog {
         setTitle("Plate Management");
         setMinimumSize(new java.awt.Dimension(750, 650));
         setModal(true);
-        setPreferredSize(new java.awt.Dimension(750, 650));
+        setPreferredSize(new java.awt.Dimension(850, 750));
 
         platesPanel.setBackground(new java.awt.Color(255, 255, 255));
         platesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plate Formats"));

@@ -74,8 +74,7 @@ public class TimeFramesSelectionDialog extends javax.swing.JDialog {
         warningLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Select time frames");
-        setAlwaysOnTop(true);
+        setTitle("Select Time Frames");
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
         setResizable(false);
         getContentPane().setLayout(new java.awt.GridBagLayout());
