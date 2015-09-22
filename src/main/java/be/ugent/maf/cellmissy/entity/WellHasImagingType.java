@@ -193,8 +193,8 @@ public class WellHasImagingType implements Serializable {
             return false;
         }
         final WellHasImagingType other = (WellHasImagingType) obj;
-        return Objects.equals(this.well, other.well) && Objects.equals(this.imagingType, other.imagingType) &&
-                Objects.equals(this.algorithm, other.algorithm);
+        return Objects.equals(this.well, other.well) && Objects.equals(this.imagingType, other.imagingType)
+                  && Objects.equals(this.algorithm, other.algorithm);
     }
 
     @Override
@@ -208,7 +208,6 @@ public class WellHasImagingType implements Serializable {
 
     @Override
     public String toString() {
-//        return sequenceNumber + "_" + imagingType.getName() + "_" + algorithm.getAlgorithmName();
         return imagingType.getName() + "_" + algorithm.getAlgorithmName();
     }
 }

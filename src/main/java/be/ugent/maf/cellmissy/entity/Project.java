@@ -36,8 +36,8 @@ import org.hibernate.annotations.FetchMode;
  * @author Paola
  */
 @Entity
-@Table(name = "project", uniqueConstraints =
-        @UniqueConstraint(columnNames = "project_number"))
+@Table(name = "project", uniqueConstraints
+          = @UniqueConstraint(columnNames = "project_number"))
 @XmlType(namespace = "http://maf.ugent.be/beans/cellmissy")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NamedQueries({
@@ -129,7 +129,10 @@ public class Project implements Serializable, Comparable<Project> {
 
     @Override
     public int hashCode() {
-        return 3;
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.projectid);
+        hash = 67 * hash + this.projectNumber;
+        return hash;
     }
 
     @Override
