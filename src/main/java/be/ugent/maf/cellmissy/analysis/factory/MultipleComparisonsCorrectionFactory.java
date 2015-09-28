@@ -34,6 +34,7 @@ public class MultipleComparisonsCorrectionFactory {
 
     /**
      * Get an instance.
+     * @return 
      */
     public static MultipleComparisonsCorrectionFactory getInstance() {
         return multipleComparisonsCorrectionFactory;
@@ -42,6 +43,7 @@ public class MultipleComparisonsCorrectionFactory {
     /**
      * Get the corrector according to the correction bean name.
      *
+     * @param beanName
      * @return
      */
     public MultipleComparisonsCorrector getCorrector(String beanName) {

@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 /**
+ * Main frame for the application.
  *
  * @author Paola
  */

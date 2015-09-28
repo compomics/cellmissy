@@ -65,11 +65,11 @@ public class CellMissyController {
     //view
     //main frame
     private CellMissyFrame cellMissyFrame;
+    // subviews
     // startup dialog with functionalities of the software
     private StartupDialog startupDialog;
     private HelpDialog helpDialog;
     private AboutDialog aboutDialog;
-    // subviews
     //child controllers
     @Autowired
     private LoginController loginController;
