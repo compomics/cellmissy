@@ -82,7 +82,7 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="standardHillslopeTextField" min="-2" pref="33" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="plotCurveButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="plotGraphButton" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" attributes="0">
                           <EmptySpace min="24" pref="24" max="-2" attributes="0"/>
@@ -119,7 +119,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="topTextField" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="plotCurveButton" min="-2" max="-2" attributes="0"/>
+                  <Component id="plotGraphButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -157,9 +157,9 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="plotCurveButton">
+        <Component class="javax.swing.JButton" name="plotGraphButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Plot Curve"/>
+            <Property name="text" type="java.lang.String" value="Plot New Graph"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel1">
@@ -167,7 +167,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="13" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Constrain"/>
+            <Property name="text" type="java.lang.String" value="Constrain Fit"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="bottomCheckBox">
@@ -202,12 +202,12 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="706" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="776" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="334" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="379" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>

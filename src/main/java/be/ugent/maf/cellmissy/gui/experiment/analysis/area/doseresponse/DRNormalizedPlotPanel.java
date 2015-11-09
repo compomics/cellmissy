@@ -5,6 +5,13 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+
 /**
  *
  * @author Gwendolien
@@ -17,7 +24,52 @@ public class DRNormalizedPlotPanel extends javax.swing.JPanel {
     public DRNormalizedPlotPanel() {
         initComponents();
     }
+    
+    public JPanel getDoseResponseChartParentPanel() {
+        return doseResponseChartParentPanel;
+    }
+    
+    public JRadioButton getStandardHillslopeRadioButton() {
+        return standardHillslopeRadioButton;
+    }
+    
+    public JTextField getStandardHillslopeTextField() {
+        return standardHillslopeTextField;
+    }
+    
+    public JRadioButton getVariableHillslopeRadioButton() {
+        return variableHillslopeRadioButton;
+    }
+    
+    public JComboBox getBottomComboBox() {
+        return bottomComboBox;
+    }
+    
+    public JTextField getBottomTextField() {
+        return bottomTextField;
+    }
+    
+    public JCheckBox getBottomConstrainCheckBox() {
+        return bottomConstrainCheckBox;
+    }
+    
+    public JComboBox getTopComboBox() {
+        return topComboBox;
+    }
+    
+    public JTextField getTopTextField() {
+        return topTextField;
+    }
+    
+    public JCheckBox getTopConstrainCheckBox() {
+        return topConstrainCheckBox;
+    }
 
+    public JButton getPlotGraphButton() {
+        return plotGraphButton;
+    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,21 +80,125 @@ public class DRNormalizedPlotPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         leftPanel = new javax.swing.JPanel();
+        hillslopeLabel = new javax.swing.JLabel();
+        standardHillslopeRadioButton = new javax.swing.JRadioButton();
+        variableHillslopeRadioButton = new javax.swing.JRadioButton();
+        standardHillslopeTextField = new javax.swing.JTextField();
+        plotGraphButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        bottomComboBox = new javax.swing.JComboBox();
+        topComboBox = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        bottomConstrainCheckBox = new javax.swing.JCheckBox();
+        topConstrainCheckBox = new javax.swing.JCheckBox();
+        bottomTextField = new javax.swing.JTextField();
+        topTextField = new javax.swing.JTextField();
         doseResponseChartParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
         leftPanel.setBackground(new java.awt.Color(255, 255, 255));
+        leftPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        leftPanel.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+
+        hillslopeLabel.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        hillslopeLabel.setText("Hillslope");
+
+        standardHillslopeRadioButton.setBackground(new java.awt.Color(255, 255, 255));
+        standardHillslopeRadioButton.setText("Standard:");
+
+        variableHillslopeRadioButton.setBackground(new java.awt.Color(255, 255, 255));
+        variableHillslopeRadioButton.setText("Variable");
+
+        standardHillslopeTextField.setBorder(null);
+
+        plotGraphButton.setText("Plot New Graph");
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        jLabel1.setText("Normalization");
+
+        bottomComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Smallest Mean Value", "Other Value" }));
+
+        topComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Largest Mean Value", "Other Value" }));
+
+        jLabel2.setText("0 %");
+
+        jLabel3.setText("100 %");
+
+        bottomConstrainCheckBox.setBackground(new java.awt.Color(255, 255, 255));
+        bottomConstrainCheckBox.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        bottomConstrainCheckBox.setText("Constrain Fit");
+
+        topConstrainCheckBox.setBackground(new java.awt.Color(255, 255, 255));
+        topConstrainCheckBox.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        topConstrainCheckBox.setText("Constrain Fit");
 
         javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
         leftPanel.setLayout(leftPanelLayout);
         leftPanelLayout.setHorizontalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 164, Short.MAX_VALUE)
+            .addGroup(leftPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(hillslopeLabel)
+                    .addGroup(leftPanelLayout.createSequentialGroup()
+                        .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(standardHillslopeRadioButton)
+                            .addComponent(variableHillslopeRadioButton))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(standardHillslopeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(plotGraphButton)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addGroup(leftPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(leftPanelLayout.createSequentialGroup()
+                                .addComponent(bottomComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bottomTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(bottomConstrainCheckBox)
+                            .addGroup(leftPanelLayout.createSequentialGroup()
+                                .addComponent(topComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(topTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(topConstrainCheckBox))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 334, Short.MAX_VALUE)
+            .addGroup(leftPanelLayout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(hillslopeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(standardHillslopeRadioButton)
+                    .addComponent(standardHillslopeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(variableHillslopeRadioButton)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bottomComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bottomTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(bottomConstrainCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(topComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(topTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(topConstrainCheckBox)
+                .addGap(18, 18, 18)
+                .addComponent(plotGraphButton)
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         doseResponseChartParentPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -51,7 +207,7 @@ public class DRNormalizedPlotPanel extends javax.swing.JPanel {
         doseResponseChartParentPanel.setLayout(doseResponseChartParentPanelLayout);
         doseResponseChartParentPanelLayout.setHorizontalGroup(
             doseResponseChartParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 725, Short.MAX_VALUE)
+            .addGap(0, 896, Short.MAX_VALUE)
         );
         doseResponseChartParentPanelLayout.setVerticalGroup(
             doseResponseChartParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -76,7 +232,21 @@ public class DRNormalizedPlotPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox bottomComboBox;
+    private javax.swing.JCheckBox bottomConstrainCheckBox;
+    private javax.swing.JTextField bottomTextField;
     private javax.swing.JPanel doseResponseChartParentPanel;
+    private javax.swing.JLabel hillslopeLabel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel leftPanel;
+    private javax.swing.JButton plotGraphButton;
+    private javax.swing.JRadioButton standardHillslopeRadioButton;
+    private javax.swing.JTextField standardHillslopeTextField;
+    private javax.swing.JComboBox topComboBox;
+    private javax.swing.JCheckBox topConstrainCheckBox;
+    private javax.swing.JTextField topTextField;
+    private javax.swing.JRadioButton variableHillslopeRadioButton;
     // End of variables declaration//GEN-END:variables
 }

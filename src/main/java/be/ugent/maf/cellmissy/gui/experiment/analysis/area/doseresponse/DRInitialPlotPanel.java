@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
@@ -21,6 +22,10 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
      */
     public DRInitialPlotPanel() {
         initComponents();
+    }
+    
+    public JPanel getDoseResponseChartParentPanel() {
+        return doseResponseChartParentPanel;
     }
     
     public JRadioButton getStandardHillslopeRadioButton() {
@@ -51,8 +56,8 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
         return topTextField;
     }
     
-    public JButton getPlotCurveButton() {
-        return plotCurveButton;
+    public JButton getPlotGraphButton() {
+        return plotGraphButton;
     }
 
     /**
@@ -70,7 +75,7 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
         standardHillslopeRadioButton = new javax.swing.JRadioButton();
         variableHillslopeRadioButton = new javax.swing.JRadioButton();
         standardHillslopeTextField = new javax.swing.JTextField();
-        plotCurveButton = new javax.swing.JButton();
+        plotGraphButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         bottomCheckBox = new javax.swing.JCheckBox();
         topCheckBox = new javax.swing.JCheckBox();
@@ -97,10 +102,10 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
 
         standardHillslopeTextField.setBorder(null);
 
-        plotCurveButton.setText("Plot Curve");
+        plotGraphButton.setText("Plot New Graph");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
-        jLabel1.setText("Constrain");
+        jLabel1.setText("Constrain Fit");
 
         bottomCheckBox.setBackground(new java.awt.Color(255, 255, 255));
         bottomCheckBox.setText("Bottom");
@@ -124,7 +129,7 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
                             .addComponent(variableHillslopeRadioButton))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(standardHillslopeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(plotCurveButton)
+                    .addComponent(plotGraphButton)
                     .addComponent(jLabel1)
                     .addGroup(leftPanelLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
@@ -155,7 +160,7 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(topTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(plotCurveButton)
+                .addComponent(plotGraphButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -165,11 +170,11 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
         doseResponseChartParentPanel.setLayout(doseResponseChartParentPanelLayout);
         doseResponseChartParentPanelLayout.setHorizontalGroup(
             doseResponseChartParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 706, Short.MAX_VALUE)
+            .addGap(0, 776, Short.MAX_VALUE)
         );
         doseResponseChartParentPanelLayout.setVerticalGroup(
             doseResponseChartParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 334, Short.MAX_VALUE)
+            .addGap(0, 379, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -197,7 +202,7 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel leftPanel;
-    private javax.swing.JButton plotCurveButton;
+    private javax.swing.JButton plotGraphButton;
     private javax.swing.JRadioButton standardHillslopeRadioButton;
     private javax.swing.JTextField standardHillslopeTextField;
     private javax.swing.JCheckBox topCheckBox;

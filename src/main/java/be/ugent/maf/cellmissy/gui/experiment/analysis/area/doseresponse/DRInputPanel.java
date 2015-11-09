@@ -10,6 +10,8 @@ import javax.swing.JButton;
 import javax.swing.JRadioButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 
 /**
@@ -48,6 +50,14 @@ public class DRInputPanel extends javax.swing.JPanel {
     public JList getConditionsList() {
         return conditionsList;
     }
+    
+    public JScrollPane getSlopesTableScrollPane() {
+        return slopesTableScrollPane;
+    }
+    
+    public JTable getSlopesTable() {
+        return slopesTable;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -69,6 +79,8 @@ public class DRInputPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         rightPanel = new javax.swing.JPanel();
+        slopesTableScrollPane = new javax.swing.JScrollPane();
+        slopesTable = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -118,7 +130,7 @@ public class DRInputPanel extends javax.swing.JPanel {
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(leftPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(25, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
@@ -138,16 +150,39 @@ public class DRInputPanel extends javax.swing.JPanel {
         );
 
         rightPanel.setBackground(new java.awt.Color(255, 255, 255));
+        rightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        rightPanel.setOpaque(false);
+
+        slopesTableScrollPane.setBackground(new java.awt.Color(255, 255, 255));
+
+        slopesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        slopesTableScrollPane.setViewportView(slopesTable);
 
         javax.swing.GroupLayout rightPanelLayout = new javax.swing.GroupLayout(rightPanel);
         rightPanel.setLayout(rightPanelLayout);
         rightPanelLayout.setHorizontalGroup(
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 583, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rightPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(slopesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 666, Short.MAX_VALUE)
+                .addContainerGap())
         );
         rightPanelLayout.setVerticalGroup(
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(rightPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(slopesTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -164,6 +199,8 @@ public class DRInputPanel extends javax.swing.JPanel {
             .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(rightPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
+
+        rightPanel.getAccessibleContext().setAccessibleName("Conditions included in further analysis");
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -177,6 +214,8 @@ public class DRInputPanel extends javax.swing.JPanel {
     private javax.swing.JPanel leftPanel;
     private javax.swing.JButton removeConditionButton;
     private javax.swing.JPanel rightPanel;
+    private javax.swing.JTable slopesTable;
+    private javax.swing.JScrollPane slopesTableScrollPane;
     private javax.swing.JRadioButton stimulationRadioButton;
     private javax.swing.JLabel typeExperimentLabel;
     // End of variables declaration//GEN-END:variables
