@@ -118,9 +118,9 @@ public class DRNormalizedPlotPanel extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         jLabel1.setText("Normalization");
 
-        bottomComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Smallest Mean Value", "Other Value" }));
+        bottomComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Smallest Mean Value", "Smallest Median Value", "Other Value" }));
 
-        topComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Largest Mean Value", "Other Value" }));
+        topComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Largest Mean Value", "Largest Median Value", "Other Value" }));
 
         jLabel2.setText("0 %");
 

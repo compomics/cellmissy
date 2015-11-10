@@ -179,9 +179,10 @@
         <Component class="javax.swing.JComboBox" name="bottomComboBox">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="2">
+              <StringArray count="3">
                 <StringItem index="0" value="Smallest Mean Value"/>
-                <StringItem index="1" value="Other Value"/>
+                <StringItem index="1" value="Smallest Median Value"/>
+                <StringItem index="2" value="Other Value"/>
               </StringArray>
             </Property>
           </Properties>
@@ -189,9 +190,10 @@
         <Component class="javax.swing.JComboBox" name="topComboBox">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="2">
+              <StringArray count="3">
                 <StringItem index="0" value="Largest Mean Value"/>
-                <StringItem index="1" value="Other Value"/>
+                <StringItem index="1" value="Largest Median Value"/>
+                <StringItem index="2" value="Other Value"/>
               </StringArray>
             </Property>
           </Properties>
