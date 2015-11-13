@@ -120,6 +120,8 @@ public class AreaMainController {
     private AreaPreProcessingController areaPreProcessingController;
     @Autowired
     private AreaAnalysisController areaAnalysisController;
+    @Autowired
+    private DoseResponseController doseResponseController;
     //services
     @Autowired
     private ExperimentService experimentService;
@@ -157,6 +159,7 @@ public class AreaMainController {
         //init child controllers
         areaPreProcessingController.init();
         areaAnalysisController.init();
+        doseResponseController.init();
         // init other view
         initPlatePanel();
         initMainPanel();
@@ -478,6 +481,7 @@ public class AreaMainController {
                 GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
                 GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getDoseResponseLabel());                
                 updateInfoMessage("Area values are shown for each well, together with (column, row) coordinates");
                 break;
             case "preprocessingPanel":
@@ -498,6 +502,7 @@ public class AreaMainController {
                 GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
                 GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
                 GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getDoseResponseLabel());                
                 updateInfoMessage("Area values are normalized and outliers correction is performed (see %Area increase)");
                 break;
             case "globalViewPanel":
@@ -513,11 +518,12 @@ public class AreaMainController {
                 GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getResultsImportingLabel());
                 GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getDoseResponseLabel());
                 updateInfoMessage("Temporal evolution of the area is plotted for each biological condition");
                 break;
             case "linearModelPanel":
-                // disable next button
-                analysisExperimentPanel.getNextButton().setEnabled(false);
+                // enable next button
+                analysisExperimentPanel.getNextButton().setEnabled(true);
                 // disable conditions list
                 dataAnalysisPanel.getConditionsList().setEnabled(false);
                 dataAnalysisPanel.getConditionsList().clearSelection();
@@ -528,7 +534,24 @@ public class AreaMainController {
                 GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
                 GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
                 GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getDoseResponseLabel());
                 updateInfoMessage("Choose conditions from the linear regression table and assign them to a group to perform statistics");
+                break;
+            case "doseResponsePanel":
+                areaPreProcessingController.onDoseResponse(); // put in separate DR controller instead of PreProcss
+                // disable next button
+                analysisExperimentPanel.getNextButton().setEnabled(false);
+                // disable conditions list
+                dataAnalysisPanel.getConditionsList().setEnabled(false);
+                dataAnalysisPanel.getConditionsList().clearSelection();
+                analysisPlatePanel.setCurrentCondition(null);
+                analysisPlatePanel.repaint();
+                GuiUtils.highlightLabel(areaPreProcessingController.getAreaAnalysisPanel().getDoseResponseLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getGlobalViewLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getPreProcessingLabel());
+                GuiUtils.resetLabel(areaPreProcessingController.getAreaAnalysisPanel().getLinearRegressionModelLabel());
+                updateInfoMessage("Fit the velocities of selected conditions to a dose-response model to quantify the effect of a drug");
                 break;
         }
     }
@@ -614,6 +637,7 @@ public class AreaMainController {
     private void onCancel() {
         areaPreProcessingController.resetOnCancel();
         areaAnalysisController.resetOnCancel();
+        doseResponseController.resetOnCancel();
         String message = "Please select a project and an experiment to analyse motility data.";
         updateInfoMessage(message);
         algorithmBindingList.clear();
