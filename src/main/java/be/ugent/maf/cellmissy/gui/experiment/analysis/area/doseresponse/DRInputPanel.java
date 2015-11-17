@@ -8,11 +8,9 @@ package be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JRadioButton;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-
 
 /**
  *
@@ -26,35 +24,35 @@ public class DRInputPanel extends javax.swing.JPanel {
     public DRInputPanel() {
         initComponents();
     }
-    
+
     public JPanel getRightPanel() {
         return rightPanel;
     }
-    
+
     public JButton getAddConditionButton() {
         return addConditionButton;
     }
-    
+
     public JButton getRemoveConditionButton() {
         return removeConditionButton;
     }
-    
+
     public JRadioButton getInhibitionRadioButton() {
         return inhibitionRadioButton;
     }
-    
+
     public JRadioButton getStimulationRadioButton() {
         return stimulationRadioButton;
     }
-    
+
     public JList getConditionsList() {
         return conditionsList;
     }
-    
+
     public JScrollPane getSlopesTableScrollPane() {
         return slopesTableScrollPane;
     }
-    
+
     public JTable getSlopesTable() {
         return slopesTable;
     }
@@ -67,6 +65,7 @@ public class DRInputPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         leftPanel = new javax.swing.JPanel();
         addConditionButton = new javax.swing.JButton();
@@ -83,6 +82,7 @@ public class DRInputPanel extends javax.swing.JPanel {
         slopesTable = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setLayout(new java.awt.GridBagLayout());
 
         leftPanel.setBackground(new java.awt.Color(255, 255, 255));
         leftPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -149,6 +149,13 @@ public class DRInputPanel extends javax.swing.JPanel {
                 .addGap(24, 24, 24))
         );
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipady = 12;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        add(leftPanel, gridBagConstraints);
+
         rightPanel.setBackground(new java.awt.Color(255, 255, 255));
         rightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         rightPanel.setOpaque(false);
@@ -185,21 +192,14 @@ public class DRInputPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(leftPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(rightPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(rightPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 639;
+        gridBagConstraints.ipady = 370;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
+        add(rightPanel, gridBagConstraints);
         rightPanel.getAccessibleContext().setAccessibleName("Conditions included in further analysis");
     }// </editor-fold>//GEN-END:initComponents
 

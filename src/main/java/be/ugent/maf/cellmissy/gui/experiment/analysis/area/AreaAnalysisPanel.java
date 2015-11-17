@@ -125,7 +125,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
     public JLabel getPreProcessingLabel() {
         return preProcessingLabel;
     }
-    
+
     public JLabel getResultsImportingLabel() {
         return resultsImportingLabel;
     }
@@ -149,33 +149,13 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
     public JCheckBox getShowTimeIntervalCheckBox() {
         return showTimeIntervalCheckBox;
     }
-    
-    public JLabel getDoseResponseLabel(){
+
+    public JLabel getDoseResponseLabel() {
         return doseResponseLabel;
     }
-    
-    public JRadioButton getInputDRButton(){
-        return inputDRButton;
-    }
-    
-    public JRadioButton getInitialPlotDRButton(){
-        return initialPlotDRButton;
-    }
-    
-    public JRadioButton getNormalizedPlotDRButton(){
-        return normalizedPlotDRButton;
-    }
-    
-    public JRadioButton getResultsDRButton(){
-        return resultsDRButton;
-    }
-    
-    public JPanel getDatatableDRPanel(){
-        return datatableDRPanel;
-    }
-    
-    public JPanel getGraphicsDRParentPanel(){
-        return graphicsDRParentPanel;
+
+    public JPanel getDoseResponseParentPanel() {
+        return doseResponseParentPanel;
     }
 
     /**
@@ -231,15 +211,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         showTimeIntervalCheckBox = new javax.swing.JCheckBox();
         globalAreaPanel = new javax.swing.JPanel();
         linearModelParentPanel = new javax.swing.JPanel();
-        doseResponsePanel = new javax.swing.JPanel();
-        radioButtonsDRPanel = new javax.swing.JPanel();
-        inputDRButton = new javax.swing.JRadioButton();
-        normalizedPlotDRButton = new javax.swing.JRadioButton();
-        resultsDRButton = new javax.swing.JRadioButton();
-        initialPlotDRButton = new javax.swing.JRadioButton();
-        tableInfoLabel1 = new javax.swing.JLabel();
-        datatableDRPanel = new javax.swing.JPanel();
-        graphicsDRParentPanel = new javax.swing.JPanel();
+        doseResponseParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setName(""); // NOI18N
@@ -644,96 +616,11 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
         linearModelParentPanel.setLayout(new java.awt.GridBagLayout());
         bottomPanel.add(linearModelParentPanel, "linearModelPanel");
 
-        doseResponsePanel.setBackground(new java.awt.Color(255, 255, 255));
-        doseResponsePanel.setLayout(new java.awt.GridBagLayout());
-
-        radioButtonsDRPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        radioButtonsDRPanel.setOpaque(false);
-        radioButtonsDRPanel.setPreferredSize(new java.awt.Dimension(436, 90));
-
-        inputDRButton.setText("Input data");
-        inputDRButton.setOpaque(false);
-
-        normalizedPlotDRButton.setText("Normalized Plot");
-        normalizedPlotDRButton.setOpaque(false);
-
-        resultsDRButton.setText("Results");
-        resultsDRButton.setOpaque(false);
-
-        initialPlotDRButton.setText("Initial Plot");
-        initialPlotDRButton.setOpaque(false);
-
-        tableInfoLabel1.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
-        tableInfoLabel1.setMinimumSize(new java.awt.Dimension(20, 20));
-        tableInfoLabel1.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        javax.swing.GroupLayout radioButtonsDRPanelLayout = new javax.swing.GroupLayout(radioButtonsDRPanel);
-        radioButtonsDRPanel.setLayout(radioButtonsDRPanelLayout);
-        radioButtonsDRPanelLayout.setHorizontalGroup(
-            radioButtonsDRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(radioButtonsDRPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(radioButtonsDRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tableInfoLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 536, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(radioButtonsDRPanelLayout.createSequentialGroup()
-                        .addComponent(inputDRButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(initialPlotDRButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(normalizedPlotDRButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(resultsDRButton)))
-                .addContainerGap(318, Short.MAX_VALUE))
-        );
-        radioButtonsDRPanelLayout.setVerticalGroup(
-            radioButtonsDRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(radioButtonsDRPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(radioButtonsDRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(normalizedPlotDRButton, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(resultsDRButton)
-                    .addComponent(initialPlotDRButton)
-                    .addComponent(inputDRButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tableInfoLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 846;
-        gridBagConstraints.ipady = 37;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
-        doseResponsePanel.add(radioButtonsDRPanel, gridBagConstraints);
-
-        datatableDRPanel.setBackground(new java.awt.Color(255, 255, 255));
-        datatableDRPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        datatableDRPanel.setLayout(new java.awt.BorderLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.ipadx = 877;
-        gridBagConstraints.ipady = 229;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(7, 12, 0, 1);
-        doseResponsePanel.add(datatableDRPanel, gridBagConstraints);
-
-        graphicsDRParentPanel.setBackground(new java.awt.Color(255, 255, 255));
-        graphicsDRParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.ipadx = 877;
-        gridBagConstraints.ipady = 360;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(7, 12, 0, 1);
-        doseResponsePanel.add(graphicsDRParentPanel, gridBagConstraints);
-
-        bottomPanel.add(doseResponsePanel, "card6");
+        doseResponseParentPanel.setBackground(new java.awt.Color(255, 255, 255));
+        doseResponseParentPanel.setName("doseResponseParentPanel"); // NOI18N
+        doseResponseParentPanel.setLayout(new java.awt.GridBagLayout());
+        bottomPanel.add(doseResponseParentPanel, "doseResponseParentPanel");
+        doseResponseParentPanel.getAccessibleContext().setAccessibleName("doseResponseParentPanel");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -757,18 +644,14 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel dataInspectingPanel;
     private javax.swing.JTabbedPane dataInspectingTabbedPane;
     private javax.swing.JPanel dataTablePanel;
-    private javax.swing.JPanel datatableDRPanel;
     private javax.swing.JRadioButton deltaAreaButton;
     private javax.swing.JLabel doseResponseLabel;
-    private javax.swing.JPanel doseResponsePanel;
+    private javax.swing.JPanel doseResponseParentPanel;
     private javax.swing.JTextField firstTimeFrameTextField;
     private javax.swing.JPanel globalAreaPanel;
     private javax.swing.JLabel globalViewLabel;
     private javax.swing.JPanel globalViewPanel;
-    private javax.swing.JPanel graphicsDRParentPanel;
     private javax.swing.JPanel graphicsParentPanel;
-    private javax.swing.JRadioButton initialPlotDRButton;
-    private javax.swing.JRadioButton inputDRButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
@@ -780,7 +663,6 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel linearModelParentPanel;
     private javax.swing.JLabel linearRegressionModelLabel;
     private javax.swing.JRadioButton normalizeAreaButton;
-    private javax.swing.JRadioButton normalizedPlotDRButton;
     private javax.swing.JRadioButton percentageAreaIncreaseButton;
     private javax.swing.JButton plotAllConditionsButton;
     private javax.swing.JCheckBox plotErrorBarsCheckBox;
@@ -789,13 +671,10 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JButton plotSelectedConditionsButton;
     private javax.swing.JLabel preProcessingLabel;
     private javax.swing.JPanel preprocessingPanel;
-    private javax.swing.JPanel radioButtonsDRPanel;
     private javax.swing.JPanel radioButtonsPanel;
-    private javax.swing.JRadioButton resultsDRButton;
     private javax.swing.JLabel resultsImportingLabel;
     private javax.swing.JCheckBox showTimeIntervalCheckBox;
     private javax.swing.JLabel tableInfoLabel;
-    private javax.swing.JLabel tableInfoLabel1;
     private javax.swing.JTable timeStepsTable;
     private javax.swing.JScrollPane timeStepsTableScrollPane;
     private javax.swing.JPanel topPanel;

@@ -20,11 +20,11 @@ public class DRResultsPanel extends javax.swing.JPanel {
     public DRResultsPanel() {
         initComponents();
     }
-    
+
     public JPanel getDoseResponseChartParentPanel() {
         return doseResponseChartParentPanel;
     }
-    
+
     public JButton getCreateReportButton() {
         return createReportButton;
     }
@@ -37,46 +37,33 @@ public class DRResultsPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         createReportButton = new javax.swing.JButton();
         doseResponseChartParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setLayout(new java.awt.GridBagLayout());
 
         createReportButton.setText("Create & Save PDF Report");
         createReportButton.setToolTipText("Create a PDF report for this analysis and save it");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(7, 757, 13, 0);
+        add(createReportButton, gridBagConstraints);
 
         doseResponseChartParentPanel.setBackground(new java.awt.Color(255, 255, 255));
-
-        javax.swing.GroupLayout doseResponseChartParentPanelLayout = new javax.swing.GroupLayout(doseResponseChartParentPanel);
-        doseResponseChartParentPanel.setLayout(doseResponseChartParentPanelLayout);
-        doseResponseChartParentPanelLayout.setHorizontalGroup(
-            doseResponseChartParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        doseResponseChartParentPanelLayout.setVerticalGroup(
-            doseResponseChartParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 343, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(757, Short.MAX_VALUE)
-                .addComponent(createReportButton)
-                .addContainerGap())
-            .addComponent(doseResponseChartParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(doseResponseChartParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(createReportButton)
-                .addContainerGap())
-        );
+        doseResponseChartParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.ipadx = 952;
+        gridBagConstraints.ipady = 343;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        add(doseResponseChartParentPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
 

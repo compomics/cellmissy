@@ -23,39 +23,39 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
     public DRInitialPlotPanel() {
         initComponents();
     }
-    
+
     public JPanel getDoseResponseChartParentPanel() {
         return doseResponseChartParentPanel;
     }
-    
+
     public JRadioButton getStandardHillslopeRadioButton() {
         return standardHillslopeRadioButton;
     }
-    
+
     public JTextField getStandardHillslopeTextField() {
         return standardHillslopeTextField;
     }
-    
+
     public JRadioButton getVariableHillslopeRadioButton() {
         return variableHillslopeRadioButton;
     }
-    
+
     public JCheckBox getBottomCheckBox() {
         return bottomCheckBox;
     }
-    
+
     public JTextField getBottomTextField() {
         return bottomTextField;
     }
-    
+
     public JCheckBox getTopCheckBox() {
         return topCheckBox;
     }
-    
+
     public JTextField getTopTextField() {
         return topTextField;
     }
-    
+
     public JButton getPlotGraphButton() {
         return plotGraphButton;
     }
@@ -68,6 +68,7 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jComboBox1 = new javax.swing.JComboBox();
         leftPanel = new javax.swing.JPanel();
@@ -86,6 +87,7 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setLayout(new java.awt.GridBagLayout());
 
         leftPanel.setBackground(new java.awt.Color(255, 255, 255));
         leftPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -164,33 +166,23 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipady = 54;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        add(leftPanel, gridBagConstraints);
+
         doseResponseChartParentPanel.setBackground(new java.awt.Color(255, 255, 255));
-
-        javax.swing.GroupLayout doseResponseChartParentPanelLayout = new javax.swing.GroupLayout(doseResponseChartParentPanel);
-        doseResponseChartParentPanel.setLayout(doseResponseChartParentPanelLayout);
-        doseResponseChartParentPanelLayout.setHorizontalGroup(
-            doseResponseChartParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 776, Short.MAX_VALUE)
-        );
-        doseResponseChartParentPanelLayout.setVerticalGroup(
-            doseResponseChartParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 379, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(leftPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(doseResponseChartParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(leftPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(doseResponseChartParentPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        doseResponseChartParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 776;
+        gridBagConstraints.ipady = 379;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
+        add(doseResponseChartParentPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
 
