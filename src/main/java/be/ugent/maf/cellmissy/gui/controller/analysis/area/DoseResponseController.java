@@ -5,33 +5,21 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
-import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInitialPlotPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRNormalizedPlotPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRResultsPanel;
-import be.ugent.maf.cellmissy.gui.view.renderer.list.RectIconListRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JScrollPane;
 
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
-
-import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.BindingGroup;
-import org.jdesktop.observablecollections.ObservableCollections;
-import org.jdesktop.observablecollections.ObservableList;
-import org.jdesktop.swingbinding.JListBinding;
-import org.jdesktop.swingbinding.SwingBindings;
 
 import org.jfree.chart.ChartPanel;
 
@@ -51,7 +39,7 @@ public class DoseResponseController {
     private JTable dataTable;
     //view
     private DRPanel dRPanel;
-
+    
     // move to child controllers 
     private DRInitialPlotPanel dRInitialPlotPanel;
     private DRNormalizedPlotPanel dRNormalizedPlotPanel;
@@ -82,17 +70,16 @@ public class DoseResponseController {
         //init child controllers
         dRInputController.init();
     }
-
+    
     /**
-     * getters and setters
-     *
-     * @return
+     * Getters and setters
+     * @return 
      */
-    // move to child controllers
-    public DRInputPanel getDRInputPanel() {
-        return dRInputPanel;
+    public DRPanel getDRPanel() {
+        return dRPanel;
     }
 
+    // move to child controllers
     public DRInitialPlotPanel getDRInitialPlotPanel() {
         return dRInitialPlotPanel;
     }
@@ -133,8 +120,7 @@ public class DoseResponseController {
         //dataTable.setColumnSelectionAllowed(false);
         //dataTable.setRowSelectionAllowed(false);
         dRPanel.getDatatableDRPanel().add(scrollPane);
-        
-        
+
         /**
          * When button is selected, switch view to corresponding subview
          */
@@ -142,36 +128,12 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+
             }
         });
-        
+
         //add view to parent panel
         areaMainController.getAreaAnalysisPanel().getDoseResponseParentPanel().add(dRPanel, gridBagConstraints);
     }
-
-    /**
-     * Initialize panel where conditions for further analysis will be selected
-     * by the user
-     */
-    //move to child controller
-//    private void initDRInputPanel() {
-//        dRInputPanel = new DRInputPanel();
-//        List<PlateCondition> processedConditions = getProcessedConditions();
-//        List<PlateCondition> selectedConditions = getSelectedConditions();
-//        List<Integer> numberOfReplicates = getNumberOfReplicates();
-//        // control opaque property of table
-//        dRInputPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
-//        JTable slopesTable = dRInputPanel.getSlopesTable();
-//        slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
-//        slopesTable.getTableHeader().setReorderingAllowed(false);
-//        slopesTable.setFillsViewportHeight(true);
-//        // put conditions in selectable list
-//        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
-//        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, dRInputPanel.getConditionsList());
-//        bindingGroup.addBinding(jListBinding);
-//        bindingGroup.bind();
-//        dRInputPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, numberOfReplicates));
-//    }
 
 }
