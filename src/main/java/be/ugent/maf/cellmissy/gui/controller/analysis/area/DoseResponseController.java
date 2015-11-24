@@ -5,8 +5,8 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInitialPlotPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRNormalizedPlotPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRResultsPanel;
@@ -16,7 +16,9 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
 import javax.swing.JTable;
@@ -39,19 +41,17 @@ public class DoseResponseController {
     private JTable dataTable;
     //view
     private DRPanel dRPanel;
-    
+
     // move to child controllers 
-    private DRInitialPlotPanel dRInitialPlotPanel;
-    private DRNormalizedPlotPanel dRNormalizedPlotPanel;
     private DRResultsPanel dRResultsPanel;
-    private ChartPanel initialChartPanel;
-    private ChartPanel normalizedChartPanel;
     private ChartPanel resultsChartPanel;
     // parent controller
     @Autowired
     private AreaMainController areaMainController;
     // child controller
     private DRInputController dRInputController;
+    private DRInitialController dRInitialController;
+    private DRNormalizedController dRNormalizedController;
     // services
     private GridBagConstraints gridBagConstraints;
 
@@ -63,33 +63,55 @@ public class DoseResponseController {
         //init view
         initMainView();
 //        // init subviews
-//        initDRInputPanel();
-//        initDRInitialPlotPanel();
-//        initDRNormalizedPlotPanel();
 //        initDRResultsPanel();
         //init child controllers
         dRInputController.init();
+        dRInitialController.init();
+        dRNormalizedController.init();
     }
-    
+
     /**
      * Getters and setters
-     * @return 
+     *
+     * @return
      */
     public DRPanel getDRPanel() {
         return dRPanel;
     }
 
     // move to child controllers
-    public DRInitialPlotPanel getDRInitialPlotPanel() {
-        return dRInitialPlotPanel;
-    }
-
-    public DRNormalizedPlotPanel getDRNormalizedPlotPanel() {
-        return dRNormalizedPlotPanel;
-    }
-
+    
     public DRResultsPanel getDRResultsPanel() {
         return dRResultsPanel;
+    }
+
+    /**
+     * update information message above table. Message will be different for
+     * each subview
+     *
+     * @param messageToShow
+     */
+    public void updateTableInfoMessage(String messageToShow) {
+        dRPanel.getTableInfoLabel().setText(messageToShow);
+    }
+
+    /**
+     * Populate the table. Each subview uses this method to show different data.
+     */
+    public void populateTable() {
+
+    }
+
+    /**
+     * Gets conditions that were processed in previous area analysis steps. This
+     * is nessesary to populate table when on input panel.
+     *
+     * @return list of all processed conditions viable for dose-response
+     * analysis
+     */
+    public List<PlateCondition> getProcessedConditions() {
+        List<PlateCondition> processedConditions = areaMainController.getProcessedConditions();
+        return processedConditions;
     }
 
     /**
@@ -125,6 +147,30 @@ public class DoseResponseController {
          * When button is selected, switch view to corresponding subview
          */
         dRPanel.getInputDRButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+        dRPanel.getInitialPlotDRButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+        dRPanel.getNormalizedPlotDRButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+        dRPanel.getResultsDRButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {

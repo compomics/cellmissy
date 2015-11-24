@@ -46,8 +46,8 @@ public class DRPanel extends javax.swing.JPanel {
         return resultsDRButton;
     }
 
-    public JLabel getTableInfoLabel1() {
-        return tableInfoLabel1;
+    public JLabel getTableInfoLabel() {
+        return tableInfoLabel;
     }
 
     /**
@@ -65,7 +65,7 @@ public class DRPanel extends javax.swing.JPanel {
         normalizedPlotDRButton = new javax.swing.JRadioButton();
         resultsDRButton = new javax.swing.JRadioButton();
         initialPlotDRButton = new javax.swing.JRadioButton();
-        tableInfoLabel1 = new javax.swing.JLabel();
+        tableInfoLabel = new javax.swing.JLabel();
         datatableDRPanel = new javax.swing.JPanel();
         graphicsDRParentPanel = new javax.swing.JPanel();
 
@@ -88,9 +88,9 @@ public class DRPanel extends javax.swing.JPanel {
         initialPlotDRButton.setText("Initial Plot");
         initialPlotDRButton.setOpaque(false);
 
-        tableInfoLabel1.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
-        tableInfoLabel1.setMinimumSize(new java.awt.Dimension(20, 20));
-        tableInfoLabel1.setPreferredSize(new java.awt.Dimension(20, 20));
+        tableInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
+        tableInfoLabel.setMinimumSize(new java.awt.Dimension(20, 20));
+        tableInfoLabel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         javax.swing.GroupLayout radioButtonsDRPanelLayout = new javax.swing.GroupLayout(radioButtonsDRPanel);
         radioButtonsDRPanel.setLayout(radioButtonsDRPanelLayout);
@@ -99,7 +99,7 @@ public class DRPanel extends javax.swing.JPanel {
             .addGroup(radioButtonsDRPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(radioButtonsDRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tableInfoLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 536, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 536, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(radioButtonsDRPanelLayout.createSequentialGroup()
                         .addComponent(inputDRButton)
                         .addGap(18, 18, 18)
@@ -120,7 +120,7 @@ public class DRPanel extends javax.swing.JPanel {
                     .addComponent(initialPlotDRButton)
                     .addComponent(inputDRButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tableInfoLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -168,6 +168,6 @@ public class DRPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton normalizedPlotDRButton;
     private javax.swing.JPanel radioButtonsDRPanel;
     private javax.swing.JRadioButton resultsDRButton;
-    private javax.swing.JLabel tableInfoLabel1;
+    private javax.swing.JLabel tableInfoLabel;
     // End of variables declaration//GEN-END:variables
 }

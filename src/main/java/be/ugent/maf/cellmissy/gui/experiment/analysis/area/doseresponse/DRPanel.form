@@ -43,7 +43,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="tableInfoLabel1" alignment="0" min="-2" pref="536" max="-2" attributes="0"/>
+                      <Component id="tableInfoLabel" alignment="0" min="-2" pref="536" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="inputDRButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -69,7 +69,7 @@
                       <Component id="inputDRButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="tableInfoLabel1" min="-2" max="-2" attributes="0"/>
+                  <Component id="tableInfoLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -100,7 +100,7 @@
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="tableInfoLabel1">
+        <Component class="javax.swing.JLabel" name="tableInfoLabel">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="12" style="2"/>

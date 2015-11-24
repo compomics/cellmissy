@@ -75,10 +75,13 @@ public class DRInputController {
      */
     private void initDRInputPanel() {
         dRInputPanel = new DRInputPanel();
-        List<PlateCondition> processedConditions = getProcessedConditions();
+        //get data
+        List<PlateCondition> processedConditions = doseResponseController.getProcessedConditions();
         List<PlateCondition> selectedConditions = getSelectedConditions();
         List<Integer> numberOfReplicates = getNumberOfReplicates();
         
+        //update table info label
+        doseResponseController.updateTableInfoMessage("This table contains all conditions and their respective slopes");
         // control opaque property of table
         dRInputPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
         JTable slopesTable = dRInputPanel.getSlopesTable();
