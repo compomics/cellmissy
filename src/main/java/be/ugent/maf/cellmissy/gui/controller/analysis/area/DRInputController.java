@@ -75,11 +75,14 @@ public class DRInputController {
      */
     private void initDRInputPanel() {
         dRInputPanel = new DRInputPanel();
-        //get data
+        //get conditions processed in area analysis
         List<PlateCondition> processedConditions = doseResponseController.getProcessedConditions();
+        //variable that constains selected indices in list:
+        //these conditions will be added or removed from dose-response analysis on corresponding button press
         List<PlateCondition> selectedConditions = getSelectedConditions();
+        //number of replicates per condition will be added to list as information
         List<Integer> numberOfReplicates = getNumberOfReplicates();
-        
+
         //update table info label
         doseResponseController.updateTableInfoMessage("This table contains all conditions and their respective slopes");
         // control opaque property of table
@@ -88,14 +91,14 @@ public class DRInputController {
         slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         slopesTable.getTableHeader().setReorderingAllowed(false);
         slopesTable.setFillsViewportHeight(true);
-        
+
         // put conditions in selectable list
         ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, dRInputPanel.getConditionsList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
         dRInputPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, numberOfReplicates));
-        
+
         //create a ButtonGroup for the radioButtons used for analysis
         ButtonGroup experimentTypeRadioButtonGroup = new ButtonGroup();
         //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
@@ -103,11 +106,10 @@ public class DRInputController {
         experimentTypeRadioButtonGroup.add(dRInputPanel.getInhibitionRadioButton());
         //select as default first button (Stimulation)
         dRInputPanel.getStimulationRadioButton().setSelected(true);
-        
-        
+
         /*
-        * Action listeners for buttons
-        */
+         * Action listeners for buttons
+         */
         dRInputPanel.getAddConditionButton().addActionListener(new ActionListener() {
 
             @Override
@@ -116,7 +118,7 @@ public class DRInputController {
                 addToDRAnalysis();
             }
         });
-        
+
         dRInputPanel.getRemoveConditionButton().addActionListener(new ActionListener() {
 
             @Override
@@ -125,55 +127,56 @@ public class DRInputController {
                 removeFromDRAnalysis();
             }
         });
-        
+
+        /**
+         * Choosing stimulation or inhibition type experiment defines standard
+         * hillslope parameter
+         */
         dRInputPanel.getStimulationRadioButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+                doseResponseController.setStandardHillslope(1);
             }
         });
-        
+
         dRInputPanel.getInhibitionRadioButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+                doseResponseController.setStandardHillslope(-1);
             }
         });
-        
+
         //add view to parent panel
         doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInputPanel, gridBagConstraints);
     }
-    
-    
-    
+
     /**
      * Add selected conditions to the dose-response analysis group
      */
     private void addToDRAnalysis() {
         List<PlateCondition> selectedConditions = getSelectedConditions();
-        
+
     }
-    
+
     /**
      * Remove selected condition from the dose-response analysis group
      */
     private void removeFromDRAnalysis() {
         List<PlateCondition> selectedConditions = getSelectedConditions();
-        
+
     }
-    
+
     /**
      * Get drug IDs for all conditions
      */
     private List<String> getDrugIDs() {
         List<String> drugIDs = new ArrayList<>();
-        
+
         return drugIDs;
     }
-        
-    
+
     /**
      * Get List of Selected conditions from RectIcon List
      *

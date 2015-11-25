@@ -538,7 +538,7 @@ public class AreaMainController {
                 updateInfoMessage("Choose conditions from the linear regression table and assign them to a group to perform statistics");
                 break;
             case "doseResponseParentPanel":
-//                doseResponseController.onDoseResponse();
+                doseResponseController.onDoseResponse();
                 // disable next button
                 analysisExperimentPanel.getNextButton().setEnabled(false);
                 // disable conditions list
@@ -637,7 +637,7 @@ public class AreaMainController {
     private void onCancel() {
         areaPreProcessingController.resetOnCancel();
         areaAnalysisController.resetOnCancel();
-//        doseResponseController.resetOnCancel();
+        doseResponseController.resetOnCancel();
         String message = "Please select a project and an experiment to analyse motility data.";
         updateInfoMessage(message);
         algorithmBindingList.clear();

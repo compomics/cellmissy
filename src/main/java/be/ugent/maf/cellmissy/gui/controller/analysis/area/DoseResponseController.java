@@ -6,8 +6,6 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInitialPlotPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRNormalizedPlotPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRResultsPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -18,7 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
 import javax.swing.JTable;
@@ -39,12 +36,9 @@ public class DoseResponseController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DoseResponseController.class);
     //model
     private JTable dataTable;
+    private int standardHillslope;
     //view
     private DRPanel dRPanel;
-
-    // move to child controllers 
-    private DRResultsPanel dRResultsPanel;
-    private ChartPanel resultsChartPanel;
     // parent controller
     @Autowired
     private AreaMainController areaMainController;
@@ -52,6 +46,7 @@ public class DoseResponseController {
     private DRInputController dRInputController;
     private DRInitialController dRInitialController;
     private DRNormalizedController dRNormalizedController;
+    private DRResultsController dRResultsController;
     // services
     private GridBagConstraints gridBagConstraints;
 
@@ -62,12 +57,11 @@ public class DoseResponseController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         //init view
         initMainView();
-//        // init subviews
-//        initDRResultsPanel();
         //init child controllers
         dRInputController.init();
         dRInitialController.init();
         dRNormalizedController.init();
+        dRResultsController.init();
     }
 
     /**
@@ -79,12 +73,20 @@ public class DoseResponseController {
         return dRPanel;
     }
 
-    // move to child controllers
-    
-    public DRResultsPanel getDRResultsPanel() {
-        return dRResultsPanel;
+    public int getStandardHillslope() {
+        return standardHillslope;
     }
 
+    public void setStandardHillslope(int standardHillslope) {
+        this.standardHillslope = standardHillslope;
+    }
+
+    /**
+     * Called by parent controller, show dose-response panels
+     */
+    public void onDoseResponse() {
+        
+    }
     /**
      * update information message above table. Message will be different for
      * each subview
@@ -101,6 +103,13 @@ public class DoseResponseController {
     public void populateTable() {
 
     }
+    
+    /**
+     * Plots the fitted data.
+     */
+    public void plotDoseResponse() {
+        
+    }
 
     /**
      * Gets conditions that were processed in previous area analysis steps. This
@@ -113,7 +122,14 @@ public class DoseResponseController {
         List<PlateCondition> processedConditions = areaMainController.getProcessedConditions();
         return processedConditions;
     }
-
+    
+    /**
+     * Reset views on cancel
+     */
+    public void resetOnCancel() {
+        
+    }
+    
     /**
      * private methods
      */
@@ -138,7 +154,7 @@ public class DoseResponseController {
         dataTable.setFillsViewportHeight(true);
         scrollPane.getViewport().setBackground(Color.white);
         dataTable.getTableHeader().setReorderingAllowed(false);
-        //row an column selection must be false
+        //row and column selection must be false
         //dataTable.setColumnSelectionAllowed(false);
         //dataTable.setRowSelectionAllowed(false);
         dRPanel.getDatatableDRPanel().add(scrollPane);

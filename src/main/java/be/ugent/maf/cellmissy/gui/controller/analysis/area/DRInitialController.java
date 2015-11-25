@@ -59,7 +59,8 @@ public class DRInitialController {
      */
     private void initDRInitialPanel() {
         dRInitialPlotPanel = new DRInitialPlotPanel();
-
+        //update table info label
+        doseResponseController.updateTableInfoMessage("Concentrations of conditions selected previously have been log-transformed, slopes have not been changed");
         //create a ButtonGroup for the radioButtons of the hillslope choice
         ButtonGroup hillslopeRadioButtonGroup = new ButtonGroup();
         //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
@@ -68,6 +69,14 @@ public class DRInitialController {
         //select as default first button (standard hillslope)
         dRInitialPlotPanel.getStandardHillslopeRadioButton().setSelected(true);
 
+        //Log transform concentrations, keeping slopes the same
+        
+        //Populate table with the data
+        
+        //Fit data according to initial parameters (standard hillslope, no constraints)
+        
+        //Plot fitted data in dose-response curve, along with R² annotation
+        
         /**
          * Action listeners for buttons
          */
@@ -79,7 +88,7 @@ public class DRInitialController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+
             }
         });
         /**
