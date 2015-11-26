@@ -27,6 +27,24 @@ public class DoseResponseAnalysisGroup {
     private List<DoseResponseAnalysisResults> doseResponseAnalysisResults;
     
     /**
+     * Constructor
+     */
+    public DoseResponseAnalysisGroup() {
+    }
+    
+    /**
+     * Constructor
+     *
+     * @param plateConditions
+     * @param areaAnalysisResults
+     */
+    public DoseResponseAnalysisGroup(List<PlateCondition> plateConditions, List<AreaAnalysisResults> areaAnalysisResults) {
+        this.plateConditions = plateConditions;
+        this.areaAnalysisResults = areaAnalysisResults;
+    }
+    
+    
+    /**
      * Getters and setters
      * 
      * @return 

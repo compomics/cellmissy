@@ -25,6 +25,7 @@ import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisExperimentPanel;
@@ -284,6 +285,11 @@ public class AreaMainController {
 
     void setDistanceMetricBeanName(String distanceMetricBeanName) {
         this.distanceMetricBeanName = distanceMetricBeanName;
+    }
+    
+    //Dose-response input needs this mapping to initialize DR analysis group
+    public Map<PlateCondition, AreaAnalysisResults> getLinearResultsAnalysisMap() {
+        return areaAnalysisController.getAnalysisMap();
     }
 
     /**

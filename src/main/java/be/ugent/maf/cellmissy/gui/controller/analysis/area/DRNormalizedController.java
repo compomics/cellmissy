@@ -71,6 +71,9 @@ public class DRNormalizedController {
         hillslopeRadioButtonGroup.add(dRNormalizedPlotPanel.getVariableHillslopeRadioButton());
         //select as default first button (standard hillslope)
         dRNormalizedPlotPanel.getStandardHillslopeRadioButton().setSelected(true);
+        //set text field for standard hillslope and make uneditable
+        dRNormalizedPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
+        dRNormalizedPlotPanel.getStandardHillslopeTextField().setEditable(false);
         
         //Perform initial normalization (mean values)
         

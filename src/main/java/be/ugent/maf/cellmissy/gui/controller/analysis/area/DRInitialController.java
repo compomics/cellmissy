@@ -68,6 +68,9 @@ public class DRInitialController {
         hillslopeRadioButtonGroup.add(dRInitialPlotPanel.getVariableHillslopeRadioButton());
         //select as default first button (standard hillslope)
         dRInitialPlotPanel.getStandardHillslopeRadioButton().setSelected(true);
+        //set text field for standard hillslope and make uneditable
+        dRInitialPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
+        dRInitialPlotPanel.getStandardHillslopeTextField().setEditable(false);
 
         //Log transform concentrations, keeping slopes the same
         

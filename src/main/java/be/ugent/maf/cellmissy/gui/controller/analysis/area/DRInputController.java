@@ -6,6 +6,8 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
+import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.RectIconListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
@@ -33,7 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Controller for input panel of dose-response analysis
+ * Controller for input panel of dose-response analysis Here the analysis group
+ * is created according to the user's choice
  *
  * @author Gwendolien
  */
@@ -42,7 +45,9 @@ public class DRInputController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DRInputController.class);
     //model
-    BindingGroup bindingGroup;
+    private BindingGroup bindingGroup;
+    private List<PlateCondition> plateConditionsList;
+    private List<AreaAnalysisResults> areaAnalysisResultsList;
     //view
     private DRInputPanel dRInputPanel;
     // parent controller
@@ -75,6 +80,7 @@ public class DRInputController {
      */
     private void initDRInputPanel() {
         dRInputPanel = new DRInputPanel();
+
         //get conditions processed in area analysis
         List<PlateCondition> processedConditions = doseResponseController.getProcessedConditions();
         //variable that constains selected indices in list:
@@ -153,10 +159,24 @@ public class DRInputController {
     }
 
     /**
-     * Add selected conditions to the dose-response analysis group
+     * Get conditions according to selection in list and add to the
+     * dose-response analysis group
      */
     private void addToDRAnalysis() {
+        //selected conditions
         List<PlateCondition> selectedConditions = getSelectedConditions();
+        for (PlateCondition selectedCondition : selectedConditions) {
+            //only add to list if list does not contain this condition already
+            if (!plateConditionsList.contains(selectedCondition)) {
+                plateConditionsList.add(selectedCondition);
+                AreaAnalysisResults areaAnalysisResults = doseResponseController.getLinearResultsAnalysisMap().get(selectedCondition);
+                areaAnalysisResultsList.add(areaAnalysisResults);
+            }
+        }
+        // make a new analysis group, with those conditions and those results
+        // override variable if one existed already
+        DoseResponseAnalysisGroup dRAnalysisGroup = new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList);
+        // populate bottom table with the analysis group
 
     }
 
@@ -164,12 +184,23 @@ public class DRInputController {
      * Remove selected condition from the dose-response analysis group
      */
     private void removeFromDRAnalysis() {
+        //selected conditions
         List<PlateCondition> selectedConditions = getSelectedConditions();
-
+        for (PlateCondition selectedCondition : selectedConditions) {
+            //only possible to remove if group contains selected condition
+            if (plateConditionsList.contains(selectedCondition)) {
+                plateConditionsList.remove(selectedCondition);
+                AreaAnalysisResults areaAnalysisResults = doseResponseController.getLinearResultsAnalysisMap().get(selectedCondition);
+                areaAnalysisResultsList.remove(areaAnalysisResults);
+            }
+        }
+        DoseResponseAnalysisGroup dRAnalysisGroup = new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList);
+        // populate bottom table with the analysis group
     }
 
     /**
-     * Get drug IDs for all conditions
+     * Get drug IDs for all conditions. It is necessary to show this in case of
+     * an experiment where different drugs were used.
      */
     private List<String> getDrugIDs() {
         List<String> drugIDs = new ArrayList<>();
@@ -187,7 +218,7 @@ public class DRInputController {
         int[] selectedIndices = dRInputPanel.getConditionsList().getSelectedIndices();
         List<PlateCondition> selectedConditions = new ArrayList<>();
         for (int selectedIndex : selectedIndices) {
-            PlateCondition selectedCondition = areaMainController.getPlateConditionList().get(selectedIndex);
+            PlateCondition selectedCondition = doseResponseController.getPlateConditionList().get(selectedIndex);
             selectedConditions.add(selectedCondition);
         }
         return selectedConditions;

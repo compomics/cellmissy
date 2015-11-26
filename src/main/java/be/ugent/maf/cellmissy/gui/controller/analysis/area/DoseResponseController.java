@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRResultsPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -15,6 +16,7 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Map;
 import javax.swing.ButtonGroup;
 import javax.swing.JScrollPane;
 
@@ -81,12 +83,21 @@ public class DoseResponseController {
         this.standardHillslope = standardHillslope;
     }
 
+    public Map<PlateCondition, AreaAnalysisResults> getLinearResultsAnalysisMap() {
+        return areaMainController.getLinearResultsAnalysisMap();
+    }
+
+    public List<PlateCondition> getPlateConditionList() {
+        return areaMainController.getPlateConditionList();
+    }
+
     /**
      * Called by parent controller, show dose-response panels
      */
     public void onDoseResponse() {
-        
+
     }
+
     /**
      * update information message above table. Message will be different for
      * each subview
@@ -103,12 +114,12 @@ public class DoseResponseController {
     public void populateTable() {
 
     }
-    
+
     /**
      * Plots the fitted data.
      */
     public void plotDoseResponse() {
-        
+
     }
 
     /**
@@ -122,14 +133,14 @@ public class DoseResponseController {
         List<PlateCondition> processedConditions = areaMainController.getProcessedConditions();
         return processedConditions;
     }
-    
+
     /**
      * Reset views on cancel
      */
     public void resetOnCancel() {
-        
+
     }
-    
+
     /**
      * private methods
      */
