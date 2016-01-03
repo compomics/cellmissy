@@ -4,8 +4,8 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.CellCentricOperator;
-import be.ugent.maf.cellmissy.analysis.singlecell.StepCentricOperator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.CellCentricOperator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;

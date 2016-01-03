@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis.singlecell.impl;
+package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.ConvexHullCalculator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.ConvexHullCalculator;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;

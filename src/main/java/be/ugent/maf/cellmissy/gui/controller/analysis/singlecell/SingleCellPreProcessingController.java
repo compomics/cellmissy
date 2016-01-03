@@ -4,8 +4,8 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.SingleCellOperator;
-import be.ugent.maf.cellmissy.analysis.singlecell.SingleCellPreProcessor;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellOperator;
+import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellPreProcessor;
 import be.ugent.maf.cellmissy.analysis.singlecell.TrackCoordinatesUnitOfMeasurement;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;

@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis.singlecell.impl;
+package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.SingleCellPreProcessor;
-import be.ugent.maf.cellmissy.analysis.singlecell.TrackPreProcessor;
+import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellPreProcessor;
+import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackPreProcessor;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.Track;

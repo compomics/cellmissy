@@ -1,4 +1,4 @@
-package be.ugent.maf.cellmissy.analysis.singlecell;
+package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing;
 
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 

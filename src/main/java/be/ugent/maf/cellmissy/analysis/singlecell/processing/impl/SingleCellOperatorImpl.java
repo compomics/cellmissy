@@ -1,7 +1,7 @@
-package be.ugent.maf.cellmissy.analysis.singlecell.impl;
+package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.SingleCellOperator;
-import be.ugent.maf.cellmissy.analysis.singlecell.TrackOperator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellOperator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.TrackOperator;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;

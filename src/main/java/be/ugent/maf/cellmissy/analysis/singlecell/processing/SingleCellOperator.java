@@ -1,4 +1,4 @@
-package be.ugent.maf.cellmissy.analysis.singlecell;
+package be.ugent.maf.cellmissy.analysis.singlecell.processing;
 
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 

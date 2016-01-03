@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis.singlecell.impl;
+package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.ConvexHullOperator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.ConvexHullOperator;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import org.springframework.stereotype.Component;

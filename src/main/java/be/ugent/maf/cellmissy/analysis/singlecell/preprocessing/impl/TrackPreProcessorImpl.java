@@ -1,8 +1,8 @@
-package be.ugent.maf.cellmissy.analysis.singlecell.impl;
+package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.CellCentricOperator;
-import be.ugent.maf.cellmissy.analysis.singlecell.StepCentricOperator;
-import be.ugent.maf.cellmissy.analysis.singlecell.TrackPreProcessor;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.CellCentricOperator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator;
+import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackPreProcessor;
 import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
