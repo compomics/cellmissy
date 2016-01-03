@@ -17,6 +17,8 @@ import java.util.List;
  */
 public class SingleCellConditionDataHolder {
 
+    // list of single cell well data holders
+    private List<SingleCellWellDataHolder> singleCellWellDataHolders;
     // list of track data holders
     private List<TrackDataHolder> trackDataHolders;
     // data structure containing wells, tracks numbers and time indexes
@@ -58,6 +60,14 @@ public class SingleCellConditionDataHolder {
     private Double[] medianTurningAnglesVector;
     // array with the median direction autocorrelations
     private Double[] medianDirectionAutocorrelationsVector;
+
+    public List<SingleCellWellDataHolder> getSingleCellWellDataHolders() {
+        return singleCellWellDataHolders;
+    }
+
+    public void setSingleCellWellDataHolders(List<SingleCellWellDataHolder> singleCellWellDataHolders) {
+        this.singleCellWellDataHolders = singleCellWellDataHolders;
+    }
 
     public List<TrackDataHolder> getTrackDataHolders() {
         return trackDataHolders;
