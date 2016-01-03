@@ -6,7 +6,8 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplacementsPanel;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplSpeedPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
@@ -18,10 +19,19 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
+import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,14 +42,15 @@ import org.springframework.stereotype.Controller;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-@Controller("displacementsController")
-class DisplacementsController {
+@Controller("displSpeedController")
+class DisplSpeedController {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisplacementsController.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DisplSpeedController.class);
     // model
     private JTable displacementsTable;
     // view
-    private DisplacementsPanel displacementsPanel;
+    private DisplSpeedPanel displSpeedPanel;
+    private ChartPanel boxPlotChartPanel;
     // parent controller
     @Autowired
     private SingleCellPreProcessingController singleCellPreProcessingController;
@@ -52,15 +63,16 @@ class DisplacementsController {
      */
     public void init() {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
+        boxPlotChartPanel = new ChartPanel(null);
         // init views
-        initSpeedsPanel();
+        initDisplSpeedPanel();
     }
 
     /**
      * Getters
      */
-    public DisplacementsPanel getSpeedsPanel() {
-        return displacementsPanel;
+    public DisplSpeedPanel getDisplSpeedPanel() {
+        return displSpeedPanel;
     }
 
     /**
@@ -83,7 +95,27 @@ class DisplacementsController {
             displacementsTable.getColumnModel().getColumn(3).setCellRenderer(formatRenderer);
             displacementsTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
         }
-        displacementsPanel.getTableInfoLabel().setText("Instantaneous Single Cell Displacements (for each time step)");
+        displSpeedPanel.getTableInfoLabel().setText("Instantaneous Single Cell Displacements (for each time step)");
+    }
+
+    /**
+     *
+     * @param plateCondition
+     */
+    public void showBoxPlot(PlateCondition plateCondition) {
+        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        if (singleCellConditionDataHolder != null) {
+            DefaultBoxAndWhiskerCategoryDataset boxPlotDataset = getBoxPlotDataset(singleCellConditionDataHolder);
+            CategoryAxis xAxis = new CategoryAxis("Well");
+            NumberAxis yAxis = new NumberAxis("Inst. Displ.");
+            yAxis.setAutoRangeIncludesZero(false);
+            BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
+            renderer.setFillBox(true);
+            CategoryPlot boxPlot = new CategoryPlot(boxPlotDataset, xAxis, yAxis, renderer);
+            JFreeChart boxPlotChart = new JFreeChart("Box-and-Whisker Inst. Displ", boxPlot);
+            boxPlotChartPanel.setChart(boxPlotChart);
+            displSpeedPanel.getGraphicsParentPanel().add(boxPlotChartPanel, gridBagConstraints);
+        }
     }
 
     /**
@@ -99,7 +131,7 @@ class DisplacementsController {
             String[] columnNames = {"well", "track", "track displacement (µm)"};
             showTrackDataInTable(plateCondition, columnNames, trackDisplacementsVector);
         }
-        displacementsPanel.getTableInfoLabel().setText("Track Displacements (mean of instantaneous displacements)");
+        displSpeedPanel.getTableInfoLabel().setText("Track Displacements (mean of instantaneous displacements)");
     }
 
     /**
@@ -112,15 +144,15 @@ class DisplacementsController {
             String[] columnNames = {"well", "track", "track speed (µm/min)"};
             showTrackDataInTable(plateCondition, columnNames, trackSpeedsVector);
         }
-        displacementsPanel.getTableInfoLabel().setText("Track Speeds (mean of instantaneous speeds)");
+        displSpeedPanel.getTableInfoLabel().setText("Track Speeds (mean of instantaneous speeds)");
     }
 
     /**
      * Initialise main panel
      */
-    private void initSpeedsPanel() {
+    private void initDisplSpeedPanel() {
         // create main view
-        displacementsPanel = new DisplacementsPanel();
+        displSpeedPanel = new DisplSpeedPanel();
         //init dataTable
         displacementsTable = new JTable();
         JScrollPane scrollPane = new JScrollPane(displacementsTable);
@@ -131,33 +163,34 @@ class DisplacementsController {
         //row selection must be false && column selection true to be able to select through columns
         displacementsTable.setColumnSelectionAllowed(true);
         displacementsTable.setRowSelectionAllowed(false);
-        displacementsPanel.getDataTablePanel().add(scrollPane);
+        displSpeedPanel.getDataTablePanel().add(scrollPane);
         //create a ButtonGroup for the radioButtons used for analysis
         ButtonGroup radioButtonGroup = new ButtonGroup();
         //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
-        radioButtonGroup.add(displacementsPanel.getInstantaneousDisplRadioButton());
-        radioButtonGroup.add(displacementsPanel.getTrackDisplRadioButton());
-        radioButtonGroup.add(displacementsPanel.getTrackSpeedsRadioButton());
+        radioButtonGroup.add(displSpeedPanel.getInstantaneousDisplRadioButton());
+        radioButtonGroup.add(displSpeedPanel.getTrackDisplRadioButton());
+        radioButtonGroup.add(displSpeedPanel.getTrackSpeedsRadioButton());
         //select as default first button (raw data track coordinates Computation)
-        displacementsPanel.getInstantaneousDisplRadioButton().setSelected(true);
+        displSpeedPanel.getInstantaneousDisplRadioButton().setSelected(true);
 
         /**
          * Add action listeners
          */
         // show raw data speeds
-        displacementsPanel.getInstantaneousDisplRadioButton().addActionListener(new ActionListener() {
+        displSpeedPanel.getInstantaneousDisplRadioButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
                 //check that a condition is selected
                 if (currentCondition != null) {
                     showInstantaneousDisplInTable(currentCondition);
+                    showBoxPlot(currentCondition);
                 }
             }
         });
 
         // show track displacements
-        displacementsPanel.getTrackDisplRadioButton().addActionListener(new ActionListener() {
+        displSpeedPanel.getTrackDisplRadioButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
@@ -169,7 +202,7 @@ class DisplacementsController {
         });
 
         // show track speeds
-        displacementsPanel.getTrackSpeedsRadioButton().addActionListener(new ActionListener() {
+        displSpeedPanel.getTrackSpeedsRadioButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
@@ -181,16 +214,16 @@ class DisplacementsController {
         });
 
         // add view to parent panel
-        singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocitiesParentPanel().add(displacementsPanel, gridBagConstraints);
+        singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedParentPanel().add(displSpeedPanel, gridBagConstraints);
     }
 
     /**
      * Show the track data in a table.
      *
      * @param plateCondition: the condition from which the data needs to be
-     *                        shown.
-     * @param columnNames:    the names for the columns of the table model.
-     * @param dataToShow:     the data to be shown.
+     * shown.
+     * @param columnNames: the names for the columns of the table model.
+     * @param dataToShow: the data to be shown.
      */
     private void showTrackDataInTable(PlateCondition plateCondition, String columnNames[], Double[] dataToShow) {
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
@@ -205,5 +238,18 @@ class DisplacementsController {
             displacementsTable.getColumnModel().getColumn(2).setCellRenderer(formatRenderer);
             displacementsTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
         }
+    }
+
+    /**
+     *
+     * @param singleCellConditionDataHolder
+     * @return
+     */
+    private DefaultBoxAndWhiskerCategoryDataset getBoxPlotDataset(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+            dataset.add(Arrays.asList(singleCellWellDataHolder.getInstantaneousDisplacementsVector()), singleCellWellDataHolder.getWell().toString(), "");
+        }
+        return dataset;
     }
 }

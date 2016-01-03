@@ -40,21 +40,30 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         return inspectingDataLabel;
     }
 
-    public JLabel getTrackCoordinatesLabel() {
-        return trackCoordinatesLabel;
+    public JLabel getCellTracksLabel() {
+        return cellTracksLabel;
     }
 
-    public JPanel getTrackCoordinatesParentPanel() {
-        return trackCoordinatesParentPanel;
+    public JPanel getCellTracksParentPanel() {
+        return cellTracksParentPanel;
     }
 
-    public JPanel getVelocitiesParentPanel() {
-        return velocitiesParentPanel;
+    public JPanel getDisplSpeedParentPanel() {
+        return displSpeedParentPanel;
     }
 
-    public JLabel getVelocitiesLabel() {
-        return velocitiesLabel;
+    public JLabel getDisplSpeedLabel() {
+        return displSpeedLabel;
     }
+
+    public JLabel getAngleDirectLabel() {
+        return angleDirectLabel;
+    }
+
+    public JPanel getAngleDirectParentPanel() {
+        return angleDirectParentPanel;
+    }
+    
 
     public JTextArea getLogTextArea() {
         return logTextArea;
@@ -79,8 +88,9 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
 
         topPanel = new javax.swing.JPanel();
         inspectingDataLabel = new javax.swing.JLabel();
-        trackCoordinatesLabel = new javax.swing.JLabel();
-        velocitiesLabel = new javax.swing.JLabel();
+        cellTracksLabel = new javax.swing.JLabel();
+        displSpeedLabel = new javax.swing.JLabel();
+        angleDirectLabel = new javax.swing.JLabel();
         bottomPanel = new javax.swing.JPanel();
         inspectingDataPanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -91,8 +101,9 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         trackPointsTable = new javax.swing.JTable();
         jScrollPane6 = new javax.swing.JScrollPane();
         logTextArea = new javax.swing.JTextArea();
-        trackCoordinatesParentPanel = new javax.swing.JPanel();
-        velocitiesParentPanel = new javax.swing.JPanel();
+        cellTracksParentPanel = new javax.swing.JPanel();
+        displSpeedParentPanel = new javax.swing.JPanel();
+        angleDirectParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -105,13 +116,17 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         inspectingDataLabel.setText("1. Inspecting Data");
         inspectingDataLabel.setToolTipText("Data loaded from DB");
 
-        trackCoordinatesLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        trackCoordinatesLabel.setText("2. Track Coordinates");
-        trackCoordinatesLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
+        cellTracksLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        cellTracksLabel.setText("2. Cell Tracks");
+        cellTracksLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
-        velocitiesLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        velocitiesLabel.setText("3. Single Cell Velocities");
-        velocitiesLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
+        displSpeedLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        displSpeedLabel.setText("3. Displacement/Speed");
+        displSpeedLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
+
+        angleDirectLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        angleDirectLabel.setText("4. Turning Angle/Directionality");
+        angleDirectLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);
@@ -121,10 +136,12 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(inspectingDataLabel)
                 .addGap(18, 18, 18)
-                .addComponent(trackCoordinatesLabel)
+                .addComponent(cellTracksLabel)
                 .addGap(18, 18, 18)
-                .addComponent(velocitiesLabel)
-                .addContainerGap(663, Short.MAX_VALUE))
+                .addComponent(displSpeedLabel)
+                .addGap(18, 18, 18)
+                .addComponent(angleDirectLabel)
+                .addContainerGap(517, Short.MAX_VALUE))
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -132,8 +149,9 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(inspectingDataLabel)
-                    .addComponent(trackCoordinatesLabel)
-                    .addComponent(velocitiesLabel))
+                    .addComponent(cellTracksLabel)
+                    .addComponent(displSpeedLabel)
+                    .addComponent(angleDirectLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -257,20 +275,26 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         bottomPanel.add(inspectingDataPanel, "inspectingDataPanel");
         inspectingDataPanel.getAccessibleContext().setAccessibleName("inspectingDataPanel");
 
-        trackCoordinatesParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        trackCoordinatesParentPanel.setName("trackCoordinatesParentPanel"); // NOI18N
-        trackCoordinatesParentPanel.setOpaque(false);
-        trackCoordinatesParentPanel.setLayout(new java.awt.GridBagLayout());
-        bottomPanel.add(trackCoordinatesParentPanel, "trackCoordinatesParentPanel");
-        trackCoordinatesParentPanel.getAccessibleContext().setAccessibleName("trackCoordinatesParentPanel");
+        cellTracksParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        cellTracksParentPanel.setName("cellTracksParentPanel"); // NOI18N
+        cellTracksParentPanel.setOpaque(false);
+        cellTracksParentPanel.setLayout(new java.awt.GridBagLayout());
+        bottomPanel.add(cellTracksParentPanel, "cellTracksParentPanel");
+        cellTracksParentPanel.getAccessibleContext().setAccessibleName("cellTracksParentPanel");
 
-        velocitiesParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        velocitiesParentPanel.setName("velocitiesParentPanel"); // NOI18N
-        velocitiesParentPanel.setOpaque(false);
-        velocitiesParentPanel.setLayout(new java.awt.GridBagLayout());
-        bottomPanel.add(velocitiesParentPanel, "velocitiesParentPanel");
-        velocitiesParentPanel.getAccessibleContext().setAccessibleName("velocitiesParentPanel");
-        velocitiesParentPanel.getAccessibleContext().setAccessibleDescription("");
+        displSpeedParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        displSpeedParentPanel.setName("displSpeedParentPanel"); // NOI18N
+        displSpeedParentPanel.setOpaque(false);
+        displSpeedParentPanel.setLayout(new java.awt.GridBagLayout());
+        bottomPanel.add(displSpeedParentPanel, "displSpeedParentPanel");
+        displSpeedParentPanel.getAccessibleContext().setAccessibleName("displSpeedParentPanel");
+        displSpeedParentPanel.getAccessibleContext().setAccessibleDescription("");
+
+        angleDirectParentPanel.setName("angleDirectParentPanel"); // NOI18N
+        angleDirectParentPanel.setOpaque(false);
+        angleDirectParentPanel.setLayout(new java.awt.GridBagLayout());
+        bottomPanel.add(angleDirectParentPanel, "angleDirectParentPanel");
+        angleDirectParentPanel.getAccessibleContext().setAccessibleName("angleDirectParentPanel");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -283,7 +307,13 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         add(bottomPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel angleDirectLabel;
+    private javax.swing.JPanel angleDirectParentPanel;
     private javax.swing.JPanel bottomPanel;
+    private javax.swing.JLabel cellTracksLabel;
+    private javax.swing.JPanel cellTracksParentPanel;
+    private javax.swing.JLabel displSpeedLabel;
+    private javax.swing.JPanel displSpeedParentPanel;
     private javax.swing.JLabel inspectingDataLabel;
     private javax.swing.JPanel inspectingDataPanel;
     private javax.swing.JPanel jPanel1;
@@ -291,13 +321,9 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTextArea logTextArea;
     private javax.swing.JPanel topPanel;
-    private javax.swing.JLabel trackCoordinatesLabel;
-    private javax.swing.JPanel trackCoordinatesParentPanel;
     private javax.swing.JScrollPane trackPointsScrollPane;
     private javax.swing.JTable trackPointsTable;
     private javax.swing.JScrollPane tracksScrollPane;
     private javax.swing.JTable tracksTable;
-    private javax.swing.JLabel velocitiesLabel;
-    private javax.swing.JPanel velocitiesParentPanel;
     // End of variables declaration//GEN-END:variables
 }

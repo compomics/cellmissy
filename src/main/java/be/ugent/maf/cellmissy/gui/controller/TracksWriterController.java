@@ -5,8 +5,8 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellOperator;
-import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellPreProcessor;
+import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellConditionPreProcessor;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellConditionOperator;
 import be.ugent.maf.cellmissy.entity.*;
 import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
@@ -63,9 +63,9 @@ class TracksWriterController {
     @Autowired
     private WellService wellService;
     @Autowired
-    private SingleCellPreProcessor singleCellPreProcessor;
+    private SingleCellConditionPreProcessor singleCellConditionPreProcessor;
     @Autowired
-    private SingleCellOperator singleCellOperator;
+    private SingleCellConditionOperator singleCellConditionOperator;
 
     /**
      * Initialize controller
@@ -270,40 +270,40 @@ class TracksWriterController {
                         // create a new object to hold pre-processing results
                         SingleCellConditionDataHolder singleCellConditionDataHolder = new SingleCellConditionDataHolder();
                         // do the computations
-                        singleCellPreProcessor.generateTrackDataHolders(singleCellConditionDataHolder, plateCondition);
+                        singleCellConditionPreProcessor.generateDataHolders(singleCellConditionDataHolder);
                         info = "track data holders generated...";
                         appendInfo(info);
                         List<TrackDataHolder> trackDataHolders = singleCellConditionDataHolder.getTrackDataHolders();
                         if (!trackDataHolders.isEmpty()) {
-                            singleCellPreProcessor.generateDataStructure(singleCellConditionDataHolder);
+                            singleCellConditionPreProcessor.generateDataStructure(singleCellConditionDataHolder);
                             info = "data structure generated ...\n*****";
                             appendInfo(info);
-                            singleCellPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder,
+                            singleCellConditionPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder,
                                     conversionFactor, experiment.getExperimentInterval());
                             info = "step-centric and cell-centric operations performed ...";
                             appendInfo(info);
-                            singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
-                            singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellConditionDataHolder);
+                            singleCellConditionPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
+                            singleCellConditionPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellConditionDataHolder);
                             info = "tracks coordinates computed...";
                             appendInfo(info);
-                            singleCellOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
-                            singleCellOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
-                            singleCellOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
-                            singleCellOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
-                            singleCellOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
-                            singleCellOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
-                            singleCellOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
-                            singleCellOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
                             info = "displacements, speeds and directionalities computed...";
                             appendInfo(info);
-                            singleCellOperator.generateConvexHullsVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
                             info = "convex hulls computed...";
                             appendInfo(info);
-                            singleCellOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
-                            singleCellOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
-                            singleCellOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
-                            singleCellOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
-                            singleCellOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
+                            singleCellConditionOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
                             info = "angles data computed...";
                             appendInfo(info);
                             totTracks += trackDataHolders.size();

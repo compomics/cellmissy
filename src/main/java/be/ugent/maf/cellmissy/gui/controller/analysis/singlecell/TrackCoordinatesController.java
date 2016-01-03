@@ -608,7 +608,7 @@ class TrackCoordinatesController {
 
         trackCoordinatesPanel.getPlotSettingsPanel().add(plotSettingsMenuBar, BorderLayout.CENTER);
         // add view to parent panel
-        singleCellPreProcessingController.getSingleCellAnalysisPanel().getTrackCoordinatesParentPanel().add(trackCoordinatesPanel, gridBagConstraints);
+        singleCellPreProcessingController.getSingleCellAnalysisPanel().getCellTracksParentPanel().add(trackCoordinatesPanel, gridBagConstraints);
     }
 
     /**

@@ -12,7 +12,7 @@ import javax.swing.JRadioButton;
  *
  * @author paola
  */
-public class DisplacementsPanel extends javax.swing.JPanel {
+public class DisplSpeedPanel extends javax.swing.JPanel {
 
     public JPanel getDataTablePanel() {
         return dataTablePanel;
@@ -41,7 +41,7 @@ public class DisplacementsPanel extends javax.swing.JPanel {
     /**
      * Creates new form DisplacementsPanel
      */
-    public DisplacementsPanel() {
+    public DisplSpeedPanel() {
         initComponents();
     }
 

@@ -19,7 +19,7 @@ public class SingleCellWellDataHolder {
     private Well well;
     // list of track data holders
     private List<TrackDataHolder> trackDataHolders;
-    // data structure containing wells, tracks numbers and time indexes
+    // data structure containing tracks numbers and time indexes
     // this data structure is on the track point level
     private Object[][] dataStructure;
     // raw data track coordinates
@@ -58,5 +58,183 @@ public class SingleCellWellDataHolder {
     private Double[] medianTurningAnglesVector;
     // array with the median direction autocorrelations
     private Double[] medianDirectionAutocorrelationsVector;
+
+    /**
+     * Empty Constructor.
+     */
+    public SingleCellWellDataHolder() {
+    }
+
+    public SingleCellWellDataHolder(Well well) {
+        this.well = well;
+    }
+
+    public Well getWell() {
+        return well;
+    }
+
+    public void setWell(Well well) {
+        this.well = well;
+    }
+
+    public List<TrackDataHolder> getTrackDataHolders() {
+        return trackDataHolders;
+    }
+
+    public void setTrackDataHolders(List<TrackDataHolder> trackDataHolders) {
+        this.trackDataHolders = trackDataHolders;
+    }
+
+    public Object[][] getDataStructure() {
+        return dataStructure;
+    }
+
+    public void setDataStructure(Object[][] dataStructure) {
+        this.dataStructure = dataStructure;
+    }
+
+    public Double[][] getRawTrackCoordinatesMatrix() {
+        return rawTrackCoordinatesMatrix;
+    }
+
+    public void setRawTrackCoordinatesMatrix(Double[][] rawTrackCoordinatesMatrix) {
+        this.rawTrackCoordinatesMatrix = rawTrackCoordinatesMatrix;
+    }
+
+    public Double[][] getShiftedTrackCoordinatesMatrix() {
+        return shiftedTrackCoordinatesMatrix;
+    }
+
+    public void setShiftedTrackCoordinatesMatrix(Double[][] shiftedTrackCoordinatesMatrix) {
+        this.shiftedTrackCoordinatesMatrix = shiftedTrackCoordinatesMatrix;
+    }
+
+    public Double[][] getRawCoordinatesRanges() {
+        return rawCoordinatesRanges;
+    }
+
+    public void setRawCoordinatesRanges(Double[][] rawCoordinatesRanges) {
+        this.rawCoordinatesRanges = rawCoordinatesRanges;
+    }
+
+    public Double[][] getShiftedCoordinatesRanges() {
+        return shiftedCoordinatesRanges;
+    }
+
+    public void setShiftedCoordinatesRanges(Double[][] shiftedCoordinatesRanges) {
+        this.shiftedCoordinatesRanges = shiftedCoordinatesRanges;
+    }
+
+    public Double[] getInstantaneousDisplacementsVector() {
+        return instantaneousDisplacementsVector;
+    }
+
+    public void setInstantaneousDisplacementsVector(Double[] instantaneousDisplacementsVector) {
+        this.instantaneousDisplacementsVector = instantaneousDisplacementsVector;
+    }
+
+    public Double[] getDirectionalityRatiosVector() {
+        return directionalityRatiosVector;
+    }
+
+    public void setDirectionalityRatiosVector(Double[] directionalityRatiosVector) {
+        this.directionalityRatiosVector = directionalityRatiosVector;
+    }
+
+    public Double[] getMedianDirectionalityRatiosVector() {
+        return medianDirectionalityRatiosVector;
+    }
+
+    public void setMedianDirectionalityRatiosVector(Double[] medianDirectionalityRatiosVector) {
+        this.medianDirectionalityRatiosVector = medianDirectionalityRatiosVector;
+    }
+
+    public Double[] getTrackDisplacementsVector() {
+        return trackDisplacementsVector;
+    }
+
+    public void setTrackDisplacementsVector(Double[] trackDisplacementsVector) {
+        this.trackDisplacementsVector = trackDisplacementsVector;
+    }
+
+    public Double[] getTrackSpeedsVector() {
+        return trackSpeedsVector;
+    }
+
+    public void setTrackSpeedsVector(Double[] trackSpeedsVector) {
+        this.trackSpeedsVector = trackSpeedsVector;
+    }
+
+    public Double[] getCumulativeDistancesVector() {
+        return cumulativeDistancesVector;
+    }
+
+    public void setCumulativeDistancesVector(Double[] cumulativeDistancesVector) {
+        this.cumulativeDistancesVector = cumulativeDistancesVector;
+    }
+
+    public Double[] getEuclideanDistancesVector() {
+        return euclideanDistancesVector;
+    }
+
+    public void setEuclideanDistancesVector(Double[] euclideanDistancesVector) {
+        this.euclideanDistancesVector = euclideanDistancesVector;
+    }
+
+    public Double[] getEndPointDirectionalityRatios() {
+        return endPointDirectionalityRatios;
+    }
+
+    public void setEndPointDirectionalityRatios(Double[] endPointDirectionalityRatios) {
+        this.endPointDirectionalityRatios = endPointDirectionalityRatios;
+    }
+
+    public ConvexHull[] getConvexHullsVector() {
+        return convexHullsVector;
+    }
+
+    public void setConvexHullsVector(ConvexHull[] convexHullsVector) {
+        this.convexHullsVector = convexHullsVector;
+    }
+
+    public Double[] getDisplacementRatiosVector() {
+        return displacementRatiosVector;
+    }
+
+    public void setDisplacementRatiosVector(Double[] displacementRatiosVector) {
+        this.displacementRatiosVector = displacementRatiosVector;
+    }
+
+    public Double[] getOutreachRatiosVector() {
+        return outreachRatiosVector;
+    }
+
+    public void setOutreachRatiosVector(Double[] outreachRatiosVector) {
+        this.outreachRatiosVector = outreachRatiosVector;
+    }
+
+    public Double[] getTurningAnglesVector() {
+        return turningAnglesVector;
+    }
+
+    public void setTurningAnglesVector(Double[] turningAnglesVector) {
+        this.turningAnglesVector = turningAnglesVector;
+    }
+
+    public Double[] getMedianTurningAnglesVector() {
+        return medianTurningAnglesVector;
+    }
+
+    public void setMedianTurningAnglesVector(Double[] medianTurningAnglesVector) {
+        this.medianTurningAnglesVector = medianTurningAnglesVector;
+    }
+
+    public Double[] getMedianDirectionAutocorrelationsVector() {
+        return medianDirectionAutocorrelationsVector;
+    }
+
+    public void setMedianDirectionAutocorrelationsVector(Double[] medianDirectionAutocorrelationsVector) {
+        this.medianDirectionAutocorrelationsVector = medianDirectionAutocorrelationsVector;
+    }
 
 }

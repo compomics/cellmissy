@@ -4,8 +4,8 @@
 */
 package be.ugent.maf.cellmissy.gui.controller;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellOperator;
-import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellPreProcessor;
+import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellConditionPreProcessor;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellConditionOperator;
 import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
@@ -44,13 +44,13 @@ class Playground {
 
         // get the application context
         ApplicationContext context = ApplicationContextProvider.getInstance().getApplicationContext();
-        // get the services we need
+        // get the services we nee
         ExperimentService experimentService = (ExperimentService) context.getBean("experimentService");
         ProjectService projectService = (ProjectService) context.getBean("projectService");
         WellService wellService = (WellService) context.getBean("wellService");
-        SingleCellPreProcessor singleCellPreProcessor = (SingleCellPreProcessor) context.getBean
+        SingleCellConditionPreProcessor singleCellConditionPreProcessor = (SingleCellConditionPreProcessor) context.getBean
                 ("singleCellPreProcessor");
-        SingleCellOperator singleCellOperator = (SingleCellOperator) context.getBean("singleCellOperator");
+        SingleCellConditionOperator singleCellConditionOperator = (SingleCellConditionOperator) context.getBean("singleCellOperator");
         // get all the experiments from DB
         Project immuneCellsProject = projectService.findById(5L);
 //        List<Experiment> experiments = experimentService.findAll();
@@ -110,25 +110,25 @@ class Playground {
                         SingleCellConditionDataHolder singleCellConditionDataHolder = new
                                 SingleCellConditionDataHolder();
                         // do computations
-                        singleCellPreProcessor.generateTrackDataHolders(singleCellConditionDataHolder, plateCondition);
-                        singleCellPreProcessor.generateDataStructure(singleCellConditionDataHolder);
-                        singleCellPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder, conversionFactor,
+                        singleCellConditionPreProcessor.generateDataHolders(singleCellConditionDataHolder);
+                        singleCellConditionPreProcessor.generateDataStructure(singleCellConditionDataHolder);
+                        singleCellConditionPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder, conversionFactor,
                                 experiment.getExperimentInterval());
-                        singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
-                        singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellConditionDataHolder);
-                        singleCellOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
-                        singleCellOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
-                        singleCellOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
-                        singleCellOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
-                        singleCellOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
-                        singleCellOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
-                        singleCellOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
-                        singleCellOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
-                        singleCellOperator.generateConvexHullsVector(singleCellConditionDataHolder);
-                        singleCellOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
-                        singleCellOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
-                        singleCellOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
-                        singleCellOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
+                        singleCellConditionPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
+                        singleCellConditionPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellConditionDataHolder);
+                        singleCellConditionOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
+                        singleCellConditionOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
+                        singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
+                        singleCellConditionOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
+                        singleCellConditionOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
+                        singleCellConditionOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
+                        singleCellConditionOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
+                        singleCellConditionOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
+                        singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
+                        singleCellConditionOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
+                        singleCellConditionOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
+                        singleCellConditionOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
+                        singleCellConditionOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
                         // we create a file for each condition
                         String name1 = immuneCellsProject + "_" + experiment + "_" + plateCondition + ".txt";
                         Object[][] dataStructure = singleCellConditionDataHolder.getDataStructure();

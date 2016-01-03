@@ -44,10 +44,12 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="inspectingDataLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="trackCoordinatesLabel" min="-2" max="-2" attributes="0"/>
+                  <Component id="cellTracksLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="velocitiesLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="663" max="32767" attributes="0"/>
+                  <Component id="displSpeedLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="angleDirectLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="517" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -57,8 +59,9 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="inspectingDataLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="trackCoordinatesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="velocitiesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cellTracksLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="displSpeedLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="angleDirectLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -75,21 +78,30 @@
             <Property name="toolTipText" type="java.lang.String" value="Data loaded from DB"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="trackCoordinatesLabel">
+        <Component class="javax.swing.JLabel" name="cellTracksLabel">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="12" style="0"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="2. Track Coordinates"/>
+            <Property name="text" type="java.lang.String" value="2. Cell Tracks"/>
             <Property name="toolTipText" type="java.lang.String" value="Data pre-processing: normalization and outliers detection"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="velocitiesLabel">
+        <Component class="javax.swing.JLabel" name="displSpeedLabel">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="12" style="0"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="3. Single Cell Velocities"/>
+            <Property name="text" type="java.lang.String" value="3. Displacement/Speed"/>
+            <Property name="toolTipText" type="java.lang.String" value="Data pre-processing: normalization and outliers detection"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="angleDirectLabel">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="12" style="0"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="4. Turning Angle/Directionality"/>
             <Property name="toolTipText" type="java.lang.String" value="Data pre-processing: normalization and outliers detection"/>
           </Properties>
         </Component>
@@ -298,40 +310,56 @@
             </Container>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="trackCoordinatesParentPanel">
+        <Container class="javax.swing.JPanel" name="cellTracksParentPanel">
           <Properties>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[20, 20]"/>
             </Property>
-            <Property name="name" type="java.lang.String" value="trackCoordinatesParentPanel" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="cellTracksParentPanel" noResource="true"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="trackCoordinatesParentPanel"/>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="cellTracksParentPanel"/>
           </AccessibilityProperties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-              <CardConstraints cardName="trackCoordinatesParentPanel"/>
+              <CardConstraints cardName="cellTracksParentPanel"/>
             </Constraint>
           </Constraints>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
         </Container>
-        <Container class="javax.swing.JPanel" name="velocitiesParentPanel">
+        <Container class="javax.swing.JPanel" name="displSpeedParentPanel">
           <Properties>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[20, 20]"/>
             </Property>
-            <Property name="name" type="java.lang.String" value="velocitiesParentPanel" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="displSpeedParentPanel" noResource="true"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="velocitiesParentPanel"/>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="displSpeedParentPanel"/>
             <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value=""/>
           </AccessibilityProperties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-              <CardConstraints cardName="velocitiesParentPanel"/>
+              <CardConstraints cardName="displSpeedParentPanel"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+        </Container>
+        <Container class="javax.swing.JPanel" name="angleDirectParentPanel">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="angleDirectParentPanel" noResource="true"/>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
+          <AccessibilityProperties>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="angleDirectParentPanel"/>
+          </AccessibilityProperties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+              <CardConstraints cardName="angleDirectParentPanel"/>
             </Constraint>
           </Constraints>
 

@@ -4,19 +4,22 @@
  */
 package be.ugent.maf.cellmissy.entity.result.singlecell;
 
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import java.util.List;
 
 /**
- * This class is holding the results from the pre processing + initial computations
- * of single cell analysis.
- * This object stays associated to a certain biological condition and
- * keeps all the track-related data. The data are computed for a single track
- * data holder and then brought all together in this class.
+ * This class is holding the results from the pre processing + initial
+ * computations of single cell analysis. This object stays associated to a
+ * certain biological condition and keeps all the track-related data. The data
+ * are computed for a single track data holder and then brought all together in
+ * this class.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 public class SingleCellConditionDataHolder {
 
+    // the plate condition
+    private PlateCondition plateCondition;
     // list of single cell well data holders
     private List<SingleCellWellDataHolder> singleCellWellDataHolders;
     // list of track data holders
@@ -60,6 +63,24 @@ public class SingleCellConditionDataHolder {
     private Double[] medianTurningAnglesVector;
     // array with the median direction autocorrelations
     private Double[] medianDirectionAutocorrelationsVector;
+
+    /**
+     * Empty Constructor.
+     */
+    public SingleCellConditionDataHolder() {
+    }
+
+    public SingleCellConditionDataHolder(PlateCondition plateCondition) {
+        this.plateCondition = plateCondition;
+    }
+
+    public PlateCondition getPlateCondition() {
+        return plateCondition;
+    }
+
+    public void setPlateCondition(PlateCondition plateCondition) {
+        this.plateCondition = plateCondition;
+    }
 
     public List<SingleCellWellDataHolder> getSingleCellWellDataHolders() {
         return singleCellWellDataHolders;

@@ -61,8 +61,7 @@ import org.springframework.stereotype.Controller;
 @Controller("singleCellMainController")
 public class SingleCellMainController {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SingleCellMainController
-            .class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SingleCellMainController.class);
     // model
     private Experiment experiment;
     private PlateCondition currentCondition;
@@ -146,7 +145,7 @@ public class SingleCellMainController {
 
     public TrackCoordinatesUnitOfMeasurement getCoordinatesUnitOfMeasurement() {
         return (TrackCoordinatesUnitOfMeasurement) metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox()
-                .getSelectedItem();
+                  .getSelectedItem();
     }
 
     public double getConversionFactor() {
@@ -251,7 +250,7 @@ public class SingleCellMainController {
             String info = "** fetching cell track points for sample: " + imagedWell + " **";
             singleCellPreProcessingController.appendInfo(info);
             wellService.fetchTrackPoints(imagedWell, selectedAlgorithm.getAlgorithmid(), selectedImagingType
-                    .getImagingTypeid());
+                      .getImagingTypeid());
         }
     }
 
@@ -368,7 +367,7 @@ public class SingleCellMainController {
                 analysisExperimentPanel.getCancelButton().setEnabled(true);
                 // switch between the two panels
                 GuiUtils.switchChildPanels(analysisExperimentPanel.getTopPanel(), dataAnalysisPanel,
-                        metadataSingleCellPanel);
+                          metadataSingleCellPanel);
                 analysisExperimentPanel.getTopPanel().repaint();
                 analysisExperimentPanel.getTopPanel().revalidate();
                 getCardLayout().first(singleCellPreProcessingController.getSingleCellAnalysisPanel().getBottomPanel());
@@ -390,7 +389,7 @@ public class SingleCellMainController {
             public void actionPerformed(ActionEvent e) {
                 // go back of one step
                 getCardLayout().previous(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                        .getBottomPanel());
+                          .getBottomPanel());
                 onCardSwitch();
             }
         });
@@ -415,9 +414,9 @@ public class SingleCellMainController {
                 // warn the user and reset everything
                 Object[] options = {"Yes", "No"};
                 int showOptionDialog = JOptionPane.showOptionDialog(null, "Current analysis won't be saved. "
-                                + "Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null,
-                        options,
-                        options[1]);
+                          + "Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null,
+                          options,
+                          options[1]);
                 if (showOptionDialog == 0) {
                     // reset everything
                     //onCancel();
@@ -426,7 +425,7 @@ public class SingleCellMainController {
         });
 
         cellMissyController.getCellMissyFrame().getSingleCellAnalysisParentPanel().add(analysisExperimentPanel,
-                gridBagConstraints);
+                  gridBagConstraints);
     }
 
     /**
@@ -442,36 +441,32 @@ public class SingleCellMainController {
         Collections.sort(allProjects);
         ObservableList<Project> projectBindingList = ObservableCollections.observableList(allProjects);
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE,
-                projectBindingList, metadataSingleCellPanel.getProjectsList());
+                  projectBindingList, metadataSingleCellPanel.getProjectsList());
         bindingGroup.addBinding(jListBinding);
 
         //init algorithms combobox
         algorithmBindingList = ObservableCollections.observableList(new ArrayList<Algorithm>());
-        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy
-                .READ_WRITE, algorithmBindingList, metadataSingleCellPanel.getAlgorithmComboBox());
+        JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, algorithmBindingList, metadataSingleCellPanel.getAlgorithmComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
 
         //init imagingtypes combo box
         imagingTypeBindingList = ObservableCollections.observableList(new ArrayList<ImagingType>());
         jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE,
-                imagingTypeBindingList, metadataSingleCellPanel.getImagingTypeComboBox());
+                  imagingTypeBindingList, metadataSingleCellPanel.getImagingTypeComboBox());
         bindingGroup.addBinding(jComboBoxBinding);
         //do the binding
         bindingGroup.bind();
 
         // add track coordinates unit of measure to combo box
         for (TrackCoordinatesUnitOfMeasurement trackCoordinatesUnitOfMeasurement : TrackCoordinatesUnitOfMeasurement
-                .values()) {
-            metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox().addItem
-                    (trackCoordinatesUnitOfMeasurement);
+                  .values()) {
+            metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox().addItem(trackCoordinatesUnitOfMeasurement);
         }
 
-        metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox().setRenderer(new
-                CoordinatesUnitOfMeasurementComboBoxRenderer());
+        metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox().setRenderer(new CoordinatesUnitOfMeasurementComboBoxRenderer());
         // set default unit of measurement: pixels
         // then a conversion is applied to go to micrometers !
-        metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox().setSelectedItem
-                (TrackCoordinatesUnitOfMeasurement.PIXELS);
+        metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox().setSelectedItem(TrackCoordinatesUnitOfMeasurement.PIXELS);
 
         /**
          * add mouse listeners
@@ -485,7 +480,7 @@ public class SingleCellMainController {
                     Project selectedProject = (Project) metadataSingleCellPanel.getProjectsList().getSelectedValue();
                     if (selectedProject != null) {
                         if (experiment == null || !selectedProject.equals(experiment.getProject())
-                                || experimentBindingList.isEmpty()) {
+                                  || experimentBindingList.isEmpty()) {
                             // project is being selected for the first time
                             onSelectedProject(selectedProject);
                         }
@@ -502,7 +497,7 @@ public class SingleCellMainController {
                 if (!e.getValueIsAdjusting()) {
                     // retrieve selected experiment
                     Experiment selectedExperiment = (Experiment) metadataSingleCellPanel.getExperimentsList()
-                            .getSelectedValue();
+                              .getSelectedValue();
                     if (selectedExperiment != null) {
                         if (experiment == null || !selectedExperiment.equals(experiment)) {
                             onSelectedExperiment(selectedExperiment);
@@ -524,23 +519,23 @@ public class SingleCellMainController {
         // bind information fields
         // exp user
         Binding binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metadataSingleCellPanel
-                .getExperimentsList(), BeanProperty.create("selectedElement.user.firstName"), metadataSingleCellPanel
-                .getUserTextField(), BeanProperty.create("text"), "experimentuserbinding");
+                  .getExperimentsList(), BeanProperty.create("selectedElement.user.firstName"), metadataSingleCellPanel
+                  .getUserTextField(), BeanProperty.create("text"), "experimentuserbinding");
         bindingGroup.addBinding(binding);
         // exp purpose
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metadataSingleCellPanel
-                .getExperimentsList(), BeanProperty.create("selectedElement.purpose"), metadataSingleCellPanel
-                .getPurposeTextArea(), BeanProperty.create("text"), "experimentpurposebinding");
+                  .getExperimentsList(), BeanProperty.create("selectedElement.purpose"), metadataSingleCellPanel
+                  .getPurposeTextArea(), BeanProperty.create("text"), "experimentpurposebinding");
         bindingGroup.addBinding(binding);
         // instrument
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metadataSingleCellPanel
-                        .getExperimentsList(), BeanProperty.create("selectedElement.instrument.name"),
-                metadataSingleCellPanel.getInstrumentTextField(), BeanProperty.create("text"), "instrumentbinding");
+                  .getExperimentsList(), BeanProperty.create("selectedElement.instrument.name"),
+                  metadataSingleCellPanel.getInstrumentTextField(), BeanProperty.create("text"), "instrumentbinding");
         bindingGroup.addBinding(binding);
         // exp time frames
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metadataSingleCellPanel
-                .getExperimentsList(), BeanProperty.create("selectedElement.timeFrames"), metadataSingleCellPanel
-                .getTimeFramesTextField(), BeanProperty.create("text"), "experimentimeframesbinding");
+                  .getExperimentsList(), BeanProperty.create("selectedElement.timeFrames"), metadataSingleCellPanel
+                  .getTimeFramesTextField(), BeanProperty.create("text"), "experimentimeframesbinding");
         bindingGroup.addBinding(binding);
         // do the binding
         bindingGroup.bind();
@@ -559,7 +554,7 @@ public class SingleCellMainController {
                 controlGuiComponents(true);
                 if (!e.getValueIsAdjusting()) {
                     PlateCondition selectedCondition = (PlateCondition) dataAnalysisPanel.getConditionsList()
-                            .getSelectedValue();
+                              .getSelectedValue();
                     if (selectedCondition != null) {
                         onSelectedCondition(selectedCondition);
                     }
@@ -589,12 +584,12 @@ public class SingleCellMainController {
         // show relative experiments, fetch them from DB and then sort them
         Long projectid = selectedProject.getProjectid();
         List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid,
-                ExperimentStatus.PERFORMED);
+                  ExperimentStatus.PERFORMED);
         if (experimentList != null) {
             Collections.sort(experimentList);
             experimentBindingList = ObservableCollections.observableList(experimentList);
             JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE,
-                    experimentBindingList, metadataSingleCellPanel.getExperimentsList());
+                      experimentBindingList, metadataSingleCellPanel.getExperimentsList());
             bindingGroup.addBinding(jListBinding);
             bindingGroup.bind();// check if the user has privileges on the selected project
             // if not, show a message and disable the experiments list
@@ -652,9 +647,9 @@ public class SingleCellMainController {
     }
 
     /**
-     * Action on selected condition: check if computations were already perfomed on the selected condition. If this
-     * is the case, skip the computations, else just go for it.
-     * already
+     * Action on selected condition: check if computations were already perfomed
+     * on the selected condition. If this is the case, skip the computations,
+     * else just go for it. already
      *
      * @param selectedCondition
      */
@@ -683,12 +678,12 @@ public class SingleCellMainController {
                 // note that this is not done on the card switch method itself, because there we want
                 // to keep the same random tracks every time we switch from one view to another one.
                 singleCellPreProcessingController.generateRandomTrackDataHolders(singleCellPreProcessingController
-                        .getCategoryToPlot(), selectedCondition);
+                          .getCategoryToPlot(), selectedCondition);
                 // update the tracks list for the current condition
                 updateTracksList(selectedCondition);
                 //Select the first row of the table to show first track as default
                 singleCellPreProcessingController.getSingleCellAnalysisPanel().getTracksTable()
-                        .setRowSelectionInterval(0, 0);
+                          .setRowSelectionInterval(0, 0);
                 // update GUI according to current view on the Card Layout
                 onCardSwitch();
                 // the condition is loaded, and plate view is refreshed
@@ -700,8 +695,8 @@ public class SingleCellMainController {
         } else {
             // inform the user and ignore the selection
             showInfoMessage("Condition: " + selectedCondition + " was not imaged/processed! Select another condition!");
-            showMessage("Condition: " + selectedCondition + " was not imaged/processed!\nNo computations to" +
-                    " perform!", "no data to show" , JOptionPane.WARNING_MESSAGE);
+            showMessage("Condition: " + selectedCondition + " was not imaged/processed!\nNo computations to"
+                      + " perform!", "no data to show", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -776,8 +771,7 @@ public class SingleCellMainController {
         // this is the case of having imported micrometers results to the DB
         conversionFactor = 1;
         // get the actual unit of measurement: if its pixels, override the conversion factor
-        TrackCoordinatesUnitOfMeasurement coordinatesUnitOfMeasurement = (TrackCoordinatesUnitOfMeasurement)
-                metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox().getSelectedItem();
+        TrackCoordinatesUnitOfMeasurement coordinatesUnitOfMeasurement = (TrackCoordinatesUnitOfMeasurement) metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox().getSelectedItem();
         if (coordinatesUnitOfMeasurement.equals(TrackCoordinatesUnitOfMeasurement.PIXELS)) {
             // conversion factor needs to be set according to conversion factor of instrument and magnification used
             // actual conversion factor = instrument conversion factor x magnification / 10
@@ -817,10 +811,9 @@ public class SingleCellMainController {
     private void showConditionsList() {
         //set cell renderer for the List
         dataAnalysisPanel.getConditionsList().setCellRenderer(new ConditionsAnalysisListRenderer(plateConditionList));
-        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList
-                (plateConditionList);
+        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(plateConditionList);
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE,
-                plateConditionBindingList, dataAnalysisPanel.getConditionsList());
+                  plateConditionBindingList, dataAnalysisPanel.getConditionsList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
     }
@@ -830,7 +823,7 @@ public class SingleCellMainController {
      */
     private void onCardSwitch() {
         String currentCardName = GuiUtils.getCurrentCardName(singleCellPreProcessingController
-                .getSingleCellAnalysisPanel().getBottomPanel());
+                  .getSingleCellAnalysisPanel().getBottomPanel());
         PlateCondition selectedCondition = getSelectedCondition();
         switch (currentCardName) {
             case "inspectingDataPanel":
@@ -839,27 +832,29 @@ public class SingleCellMainController {
                 // enable next button
                 analysisExperimentPanel.getNextButton().setEnabled(true);
                 GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                        .getInspectingDataLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocitiesLabel
-                        ());
+                          .getInspectingDataLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                        .getTrackCoordinatesLabel());
+                          .getCellTracksLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getAngleDirectLabel());
                 showInfoMessage("Tracks are shown for each well, together with (column, row) coordinates");
                 singleCellPreProcessingController.showTracksInTable();
                 break;
-            case "trackCoordinatesParentPanel":
+            case "cellTracksParentPanel":
                 GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                        .getTrackCoordinatesLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getVelocitiesLabel
-                        ());
+                          .getCellTracksLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                        .getInspectingDataLabel());
+                          .getInspectingDataLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getAngleDirectLabel());
                 showInfoMessage("Track Coordinates are shown for each well");
                 singleCellPreProcessingController.updateTracksNumberInfo(selectedCondition);
                 singleCellPreProcessingController.updateWellBindingList(selectedCondition);
                 //check which button is selected for analysis:
                 boolean useRawCoordinates = singleCellPreProcessingController.getTrackCoordinatesPanel()
-                        .getUnshiftedCoordinatesRadioButton().isSelected();
+                          .getUnshiftedCoordinatesRadioButton().isSelected();
                 singleCellPreProcessingController.plotRandomTrackCoordinates(selectedCondition, useRawCoordinates);
                 singleCellPreProcessingController.showPlottedTracksInTable();
                 if (useRawCoordinates) {
@@ -868,24 +863,33 @@ public class SingleCellMainController {
                     singleCellPreProcessingController.showShiftedTrackCoordinatesInTable(selectedCondition);
                 }
                 break;
-            case "velocitiesParentPanel":
+            case "displSpeedParentPanel":
                 GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                        .getVelocitiesLabel());
+                          .getDisplSpeedLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                        .getInspectingDataLabel());
+                          .getInspectingDataLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                        .getTrackCoordinatesLabel());
+                          .getCellTracksLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getAngleDirectLabel());
                 showInfoMessage("Single Cell Displacements and Speeds");
                 // check which button is selected for analysis
-                if (singleCellPreProcessingController.getSpeedsPanel().getInstantaneousDisplRadioButton().isSelected
-                        ()) {
+                if (singleCellPreProcessingController.getDisplSpeedPanel().getInstantaneousDisplRadioButton().isSelected()) {
                     singleCellPreProcessingController.showInstantaneousSpeedsInTable(selectedCondition);
-                } else if (singleCellPreProcessingController.getSpeedsPanel().getTrackDisplRadioButton().isSelected()) {
+                } else if (singleCellPreProcessingController.getDisplSpeedPanel().getTrackDisplRadioButton().isSelected()) {
                     singleCellPreProcessingController.showTrackDisplInTable(selectedCondition);
-                } else if (singleCellPreProcessingController.getSpeedsPanel().getTrackSpeedsRadioButton().isSelected
-                        ()) {
+                } else if (singleCellPreProcessingController.getDisplSpeedPanel().getTrackSpeedsRadioButton().isSelected()) {
                     singleCellPreProcessingController.showTrackSpeedsInTable(selectedCondition);
                 }
+                break;
+            case "angleDirectParentPanel":
+                GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getAngleDirectLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getCellTracksLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getInspectingDataLabel());
                 break;
         }
     }

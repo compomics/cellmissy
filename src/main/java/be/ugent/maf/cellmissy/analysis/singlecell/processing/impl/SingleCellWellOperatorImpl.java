@@ -5,10 +5,196 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellWellOperator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.TrackOperator;
+import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
+import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 /**
+ * An implementation for the single cell well operator.
  *
  * @author Paola
  */
-public class SingleCellWellOperatorImpl {
-    
+@Component("singleCellWellOperator")
+public class SingleCellWellOperatorImpl implements SingleCellWellOperator {
+
+    @Autowired
+    private TrackOperator trackOperator;
+
+    @Override
+    public void operateOnStepsAndCells(SingleCellWellDataHolder singleCellWellDataHolder) {
+        for (TrackDataHolder trackDataHolder : singleCellWellDataHolder.getTrackDataHolders()) {
+            trackOperator.operateOnSteps(trackDataHolder);
+            trackOperator.operateOnCells(trackDataHolder);
+        }
+    }
+
+    @Override
+    public void generateInstantaneousDisplacementsVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        Double[] instantaneousDisplacementsVector = new Double[singleCellWellDataHolder.getDataStructure().length];
+        int counter = 0;
+        for (TrackDataHolder trackDataHolder : singleCellWellDataHolder.getTrackDataHolders()) {
+            Double[] instantaneousDisplacements = trackDataHolder.getStepCentricDataHolder()
+                      .getInstantaneousDisplacements();
+            for (Double instantaneousDisplacement : instantaneousDisplacements) {
+                instantaneousDisplacementsVector[counter] = instantaneousDisplacement;
+                counter++;
+            }
+        }
+        singleCellWellDataHolder.setInstantaneousDisplacementsVector(instantaneousDisplacementsVector);
+    }
+
+    @Override
+    public void generateDirectionalityRatiosVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        Double[] directionalityRatiosVector = new Double[singleCellWellDataHolder.getDataStructure().length];
+        int counter = 0;
+        for (TrackDataHolder trackDataHolder : singleCellWellDataHolder.getTrackDataHolders()) {
+            Double[] directionalityRatios = trackDataHolder.getStepCentricDataHolder().getDirectionalityRatios();
+            for (Double directionalityRatio : directionalityRatios) {
+                directionalityRatiosVector[counter] = directionalityRatio;
+                counter++;
+            }
+        }
+        singleCellWellDataHolder.setDirectionalityRatiosVector(directionalityRatiosVector);
+    }
+
+    @Override
+    public void generateMedianDirectionalityRatiosVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        Double[] medianDirectionalityRatiosVector = new Double[singleCellWellDataHolder.getTrackDataHolders().size()];
+        for (int i = 0; i < medianDirectionalityRatiosVector.length; i++) {
+            TrackDataHolder trackDataHolder = singleCellWellDataHolder.getTrackDataHolders().get(i);
+            double trackAngle = trackDataHolder.getCellCentricDataHolder().getMedianDirectionalityRatio();
+            medianDirectionalityRatiosVector[i] = trackAngle;
+        }
+        singleCellWellDataHolder.setMedianDirectionalityRatiosVector(medianDirectionalityRatiosVector);
+    }
+
+    @Override
+    public void generateTrackDisplacementsVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        Double[] trackDisplacementsVector = new Double[singleCellWellDataHolder.getTrackDataHolders().size()];
+        for (int i = 0; i < trackDisplacementsVector.length; i++) {
+            TrackDataHolder trackDataHolder = singleCellWellDataHolder.getTrackDataHolders().get(i);
+            double trackMeanDisplacement = trackDataHolder.getCellCentricDataHolder().getMedianDisplacement();
+            trackDisplacementsVector[i] = trackMeanDisplacement;
+        }
+        singleCellWellDataHolder.setTrackDisplacementsVector(trackDisplacementsVector);
+    }
+
+    @Override
+    public void generateCumulativeDistancesVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        Double[] cumulativeDistancesVector = new Double[singleCellWellDataHolder.getTrackDataHolders().size()];
+        for (int i = 0; i < cumulativeDistancesVector.length; i++) {
+            TrackDataHolder trackDataHolder = singleCellWellDataHolder.getTrackDataHolders().get(i);
+            double cumulativeDistance = trackDataHolder.getCellCentricDataHolder().getCumulativeDistance();
+            cumulativeDistancesVector[i] = cumulativeDistance;
+        }
+        singleCellWellDataHolder.setCumulativeDistancesVector(cumulativeDistancesVector);
+    }
+
+    @Override
+    public void generateEuclideanDistancesVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        Double[] euclideanDistancesVector = new Double[singleCellWellDataHolder.getTrackDataHolders().size()];
+        for (int i = 0; i < euclideanDistancesVector.length; i++) {
+            TrackDataHolder trackDataHolder = singleCellWellDataHolder.getTrackDataHolders().get(i);
+            double euclideanDistance = trackDataHolder.getCellCentricDataHolder().getEuclideanDistance();
+            euclideanDistancesVector[i] = euclideanDistance;
+        }
+        singleCellWellDataHolder.setEuclideanDistancesVector(euclideanDistancesVector);
+    }
+
+    @Override
+    public void generateTrackSpeedsVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        Double[] trackSpeedsVector = new Double[singleCellWellDataHolder.getTrackDisplacementsVector().length];
+        for (int i = 0; i < singleCellWellDataHolder.getTrackDisplacementsVector().length; i++) {
+            TrackDataHolder trackDataHolder = singleCellWellDataHolder.getTrackDataHolders().get(i);
+            double trackMeanSpeed = trackDataHolder.getCellCentricDataHolder().getMedianSpeed();
+            trackSpeedsVector[i] = trackMeanSpeed;
+        }
+        singleCellWellDataHolder.setTrackSpeedsVector(trackSpeedsVector);
+    }
+
+    @Override
+    public void generateEndPointDirectionalityRatiosVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        Double[] endPointDirectionalityRatios = new Double[singleCellWellDataHolder.getTrackDataHolders().size()];
+        for (int i = 0; i < endPointDirectionalityRatios.length; i++) {
+            TrackDataHolder trackDataHolder = singleCellWellDataHolder.getTrackDataHolders().get(i);
+            double endPointDirectionalityRatio = trackDataHolder.getCellCentricDataHolder()
+                      .getEndPointDirectionalityRatio();
+            endPointDirectionalityRatios[i] = endPointDirectionalityRatio;
+        }
+        singleCellWellDataHolder.setEndPointDirectionalityRatios(endPointDirectionalityRatios);
+    }
+
+    @Override
+    public void generateConvexHullsVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        ConvexHull[] convexHullsVector = new ConvexHull[singleCellWellDataHolder.getTrackDataHolders().size()];
+        for (int i = 0; i < convexHullsVector.length; i++) {
+            TrackDataHolder trackDataHolder = singleCellWellDataHolder.getTrackDataHolders().get(i);
+            ConvexHull convexHull = trackDataHolder.getCellCentricDataHolder().getConvexHull();
+            convexHullsVector[i] = convexHull;
+        }
+        singleCellWellDataHolder.setConvexHullsVector(convexHullsVector);
+    }
+
+    @Override
+    public void generateDisplacementRatiosVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        Double[] displacementRatiosVector = new Double[singleCellWellDataHolder.getTrackDataHolders().size()];
+        for (int i = 0; i < displacementRatiosVector.length; i++) {
+            TrackDataHolder trackDataHolder = singleCellWellDataHolder.getTrackDataHolders().get(i);
+            double displacementRatio = trackDataHolder.getCellCentricDataHolder().getDisplacementRatio();
+            displacementRatiosVector[i] = displacementRatio;
+        }
+        singleCellWellDataHolder.setDisplacementRatiosVector(displacementRatiosVector);
+    }
+
+    @Override
+    public void generateOutreachRatiosVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        Double[] outreachRatiosVector = new Double[singleCellWellDataHolder.getTrackDataHolders().size()];
+        for (int i = 0; i < outreachRatiosVector.length; i++) {
+            TrackDataHolder trackDataHolder = singleCellWellDataHolder.getTrackDataHolders().get(i);
+            double outreachRatio = trackDataHolder.getCellCentricDataHolder().getOutreachRatio();
+            outreachRatiosVector[i] = outreachRatio;
+        }
+        singleCellWellDataHolder.setOutreachRatiosVector(outreachRatiosVector);
+    }
+
+    @Override
+    public void generateTurningAnglesVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        Double[] turningAnglesVector = new Double[singleCellWellDataHolder.getDataStructure().length];
+        int counter = 0;
+        for (TrackDataHolder trackDataHolder : singleCellWellDataHolder.getTrackDataHolders()) {
+            Double[] turningAngles = trackDataHolder.getStepCentricDataHolder().getTurningAngles();
+            for (Double turningAngle : turningAngles) {
+                turningAnglesVector[counter] = turningAngle;
+                counter++;
+            }
+        }
+        singleCellWellDataHolder.setTurningAnglesVector(turningAnglesVector);
+    }
+
+    @Override
+    public void generateMedianTurningAnglesVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        Double[] medianTurningAnglesVector = new Double[singleCellWellDataHolder.getTrackDataHolders().size()];
+        for (int i = 0; i < medianTurningAnglesVector.length; i++) {
+            TrackDataHolder trackDataHolder = singleCellWellDataHolder.getTrackDataHolders().get(i);
+            double medianTurningAngle = trackDataHolder.getCellCentricDataHolder().getMedianTurningAngle();
+            medianTurningAnglesVector[i] = medianTurningAngle;
+        }
+        singleCellWellDataHolder.setMedianTurningAnglesVector(medianTurningAnglesVector);
+    }
+
+    @Override
+    public void generateMedianDirectionAutocorrelationsVector(SingleCellWellDataHolder singleCellWellDataHolder) {
+        Double[] medianDirectionAutocorrelationsVector = new Double[singleCellWellDataHolder.getTrackDataHolders().size()];
+        for (int i = 0; i < medianDirectionAutocorrelationsVector.length; i++) {
+            TrackDataHolder trackDataHolder = singleCellWellDataHolder.getTrackDataHolders().get(i);
+            double medianDirectionAutocorrelation = trackDataHolder.getCellCentricDataHolder()
+                      .getMedianDirectionAutocorrelation();
+            medianDirectionAutocorrelationsVector[i] = medianDirectionAutocorrelation;
+        }
+        singleCellWellDataHolder.setMedianDirectionAutocorrelationsVector(medianDirectionAutocorrelationsVector);
+    }
 }

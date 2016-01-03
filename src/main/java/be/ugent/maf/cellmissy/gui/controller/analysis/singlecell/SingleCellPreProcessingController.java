@@ -4,9 +4,9 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellOperator;
-import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellPreProcessor;
 import be.ugent.maf.cellmissy.analysis.singlecell.TrackCoordinatesUnitOfMeasurement;
+import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellConditionPreProcessor;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellConditionOperator;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
@@ -17,7 +17,7 @@ import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplacementsPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplSpeedPanel;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
@@ -71,12 +71,12 @@ class SingleCellPreProcessingController {
     @Autowired
     private TrackCoordinatesController trackCoordinatesController;
     @Autowired
-    private DisplacementsController displacementsController;
+    private DisplSpeedController displSpeedController;
     //services
     @Autowired
-    private SingleCellPreProcessor singleCellPreProcessor;
+    private SingleCellConditionPreProcessor singleCellConditionPreProcessor;
     @Autowired
-    private SingleCellOperator singleCellOperator;
+    private SingleCellConditionOperator singleCellConditionOperator;
     private GridBagConstraints gridBagConstraints;
 
     /**
@@ -89,7 +89,7 @@ class SingleCellPreProcessingController {
         initSingleCellAnalysisPanel();
         // init child controllers
         trackCoordinatesController.init();
-        displacementsController.init();
+        displSpeedController.init();
     }
 
     /**
@@ -103,8 +103,8 @@ class SingleCellPreProcessingController {
         return trackCoordinatesController.getTrackCoordinatesPanel();
     }
 
-    public DisplacementsPanel getSpeedsPanel() {
-        return displacementsController.getSpeedsPanel();
+    public DisplSpeedPanel getDisplSpeedPanel() {
+        return displSpeedController.getDisplSpeedPanel();
     }
 
     public ObservableList<Track> getTracksBindingList() {
@@ -168,15 +168,19 @@ class SingleCellPreProcessingController {
     }
 
     public void showInstantaneousSpeedsInTable(PlateCondition plateCondition) {
-        displacementsController.showInstantaneousDisplInTable(plateCondition);
+        displSpeedController.showInstantaneousDisplInTable(plateCondition);
+    }
+    
+    public void showBoxPlot(PlateCondition plateCondition){
+        displSpeedController.showBoxPlot(plateCondition);
     }
 
     public void showTrackDisplInTable(PlateCondition plateCondition) {
-        displacementsController.showTrackDisplInTable(plateCondition);
+        displSpeedController.showTrackDisplInTable(plateCondition);
     }
 
     public void showTrackSpeedsInTable(PlateCondition plateCondition) {
-        displacementsController.showTrackSpeedsInTable(plateCondition);
+        displSpeedController.showTrackSpeedsInTable(plateCondition);
     }
 
     CellMissyFrame getMainFrame() {
@@ -302,27 +306,27 @@ class SingleCellPreProcessingController {
         singleCellMainController.fetchTrackPoints(plateCondition);
         if (preProcessingMap.get(plateCondition) == null) {
             // create a new object to hold pre-processing results
-            SingleCellConditionDataHolder singleCellConditionDataHolder = new SingleCellConditionDataHolder();
+            SingleCellConditionDataHolder singleCellConditionDataHolder = new SingleCellConditionDataHolder(plateCondition);
             // do some pre-processing
             appendInfo("generating track data holders...");
-            singleCellPreProcessor.generateTrackDataHolders(singleCellConditionDataHolder, plateCondition);
+            singleCellConditionPreProcessor.generateDataHolders(singleCellConditionDataHolder);
             appendInfo("--> current total number of cell tracks: " + singleCellConditionDataHolder
                       .getTrackDataHolders().size());
             // it can very well be that a plateCondition and/or a sample have been imaged, but there are no tracks in it
             // if this is not the case, go for the computation
             if (!singleCellConditionDataHolder.getTrackDataHolders().isEmpty()) {
-                singleCellPreProcessor.generateDataStructure(singleCellConditionDataHolder);
+                singleCellConditionPreProcessor.generateDataStructure(singleCellConditionDataHolder);
                 appendInfo("pre-process step-centric and cell-centric data...");
-                singleCellPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder, singleCellMainController
+                singleCellConditionPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder, singleCellMainController
                           .getConversionFactor(), singleCellMainController.getExperiment().getExperimentInterval());
                 appendInfo("generating raw coordinates matrix...");
-                singleCellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
+                singleCellConditionPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
                 appendInfo("computing shifted-to-zero coordinates matrix...");
-                singleCellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellConditionDataHolder);
+                singleCellConditionPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellConditionDataHolder);
                 appendInfo("computing raw coordinates ranges...");
-                singleCellPreProcessor.generateRawCoordinatesRanges(singleCellConditionDataHolder);
+                singleCellConditionPreProcessor.generateRawCoordinatesRanges(singleCellConditionDataHolder);
                 appendInfo("computing shifted coordinates ranges...");
-                singleCellPreProcessor.generateShiftedCoordinatesRanges(singleCellConditionDataHolder);
+                singleCellConditionPreProcessor.generateShiftedCoordinatesRanges(singleCellConditionDataHolder);
                 // fill in the map
                 preProcessingMap.put(plateCondition, singleCellConditionDataHolder);
                 appendInfo("**************************");
@@ -616,33 +620,33 @@ class SingleCellPreProcessingController {
             if (singleCellConditionDataHolder != null) {
                 appendInfo("Operating now on plateCondition: " + plateCondition);
                 appendInfo("operating on steps and cells...");
-                singleCellOperator.operateOnStepsAndCells(singleCellConditionDataHolder);
+                singleCellConditionOperator.operateOnStepsAndCells(singleCellConditionDataHolder);
                 appendInfo("generating instantaneous displacements...");
-                singleCellOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
+                singleCellConditionOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
                 appendInfo("generating directionality ratios...");
-                singleCellOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
+                singleCellConditionOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
                 appendInfo("generating track displacements...");
-                singleCellOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
+                singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
                 appendInfo("generating median directionality ratios...");
-                singleCellOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
+                singleCellConditionOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
                 appendInfo("generating cumulative distances...");
-                singleCellOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
+                singleCellConditionOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
                 appendInfo("generating euclidean distances...");
-                singleCellOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
+                singleCellConditionOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
                 appendInfo("generating track speeds...");
-                singleCellOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
+                singleCellConditionOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
                 appendInfo("generating track end-point directionality ratios...");
-                singleCellOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
+                singleCellConditionOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
                 appendInfo("generating convex hulls...");
-                singleCellOperator.generateConvexHullsVector(singleCellConditionDataHolder);
+                singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
                 appendInfo("generating track displacements...");
-                singleCellOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
+                singleCellConditionOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
                 appendInfo("generating outreach ratios...");
-                singleCellOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
+                singleCellConditionOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
                 appendInfo("generating turning angles...");
-                singleCellOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
+                singleCellConditionOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
                 appendInfo("generating median turning angles...");
-                singleCellOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
+                singleCellConditionOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
                 plateCondition.setComputed(true);
             } else {
                 // if not, just inform the user and skip the computation
