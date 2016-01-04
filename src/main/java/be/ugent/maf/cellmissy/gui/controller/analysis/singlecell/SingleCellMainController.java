@@ -876,6 +876,7 @@ public class SingleCellMainController {
                 // check which button is selected for analysis
                 if (singleCellPreProcessingController.getDisplSpeedPanel().getInstantaneousDisplRadioButton().isSelected()) {
                     singleCellPreProcessingController.showInstantaneousSpeedsInTable(selectedCondition);
+                    singleCellPreProcessingController.showBoxPlot(selectedCondition);
                 } else if (singleCellPreProcessingController.getDisplSpeedPanel().getTrackDisplRadioButton().isSelected()) {
                     singleCellPreProcessingController.showTrackDisplInTable(selectedCondition);
                 } else if (singleCellPreProcessingController.getDisplSpeedPanel().getTrackSpeedsRadioButton().isSelected()) {

@@ -28,7 +28,6 @@ import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
@@ -36,8 +35,6 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.Range;
-import org.jfree.data.statistics.BoxAndWhiskerItem;
-import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
@@ -374,37 +371,18 @@ public class JFreeChartUtils {
     public static void setupBoxPlotChart(JFreeChart chart) {
         // set title font
         chart.getTitle().setFont(chartFont);
+        chart.getLegend().setItemPaint(Color.red);
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
-        BoxAndWhiskerRenderer renderer = (BoxAndWhiskerRenderer) plot.getRenderer();
-        renderer.setFillBox(true);
-//        renderer.setArtifactPaint(GuiUtils.getNonImagedColor());
-        renderer.setUseOutlinePaintForWhiskers(true);
-
-        renderer.setMaximumBarWidth(0.05);
-        renderer.setMeanVisible(false);
-//        renderer.setWhiskerWidth(0.2);
-        renderer.setSeriesOutlinePaint(0, Color.BLACK);
-        renderer.setSeriesOutlinePaint(2, Color.RED);
-//        renderer.setSeriesFillPaint(0, GuiUtils.getAvailableColors()[0]);
-
-        CategoryAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setLowerMargin(0.15);
-        domainAxis.setUpperMargin(0.15);
-        domainAxis.setCategoryMargin(0.25);
-
-//        renderer.setSeriesOutlineStroke(0, new BasicStroke(4f), true);
-//        renderer.setSeriesOutlineStroke(2, new BasicStroke(4f), true);
-        renderer.setBaseOutlinePaint(Color.blue, true); // change
-
-        DefaultBoxAndWhiskerCategoryDataset dataset = (DefaultBoxAndWhiskerCategoryDataset) plot.getDataset();
-
-        for (int i = 0; i < dataset.getRowCount(); i++) {
-            for (int j = 0; j < dataset.getColumnCount(); j++) {
-                BoxAndWhiskerItem item = dataset.getItem(i, j);
-
-            }
-
-        }
+        plot.setBackgroundPaint(Color.white);
+        plot.setOutlinePaint(Color.white);
+        // get domanin and range axes
+        CategoryAxis domainAxis = (CategoryAxis) plot.getDomainAxis();
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        // set their label font and color
+        rangeAxis.setLabelPaint(Color.black);
+        rangeAxis.setLabelFont(chartFont);
+        domainAxis.setLabelPaint(Color.black);
+        domainAxis.setLabelFont(chartFont);
     }
 
     /**

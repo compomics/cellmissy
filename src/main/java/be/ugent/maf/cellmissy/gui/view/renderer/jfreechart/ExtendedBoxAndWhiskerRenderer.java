@@ -6,7 +6,6 @@
 package be.ugent.maf.cellmissy.gui.view.renderer.jfreechart;
 
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
@@ -20,6 +19,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.jfree.chart.LegendItem;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
@@ -229,6 +229,48 @@ public class ExtendedBoxAndWhiskerRenderer extends BoxAndWhiskerRenderer {
                 g2.draw(triangle);
             }
         }
+    }
+
+    /**
+     * Returns a legend item for a series.
+     *
+     * @param datasetIndex the dataset index (zero-based).
+     * @param series the series index (zero-based).
+     *
+     * @return The legend item.
+     */
+    @Override
+    public LegendItem getLegendItem(int datasetIndex, int series) {
+
+        CategoryPlot cp = getPlot();
+        if (cp == null) {
+            return null;
+        }
+
+        CategoryDataset dataset;
+        dataset = cp.getDataset(datasetIndex);
+        dataset.getRowCount();
+
+        String label = getLegendItemLabelGenerator().generateLabel(dataset, series);
+        String description = label;
+        String toolTipText = null;
+        if (getLegendItemToolTipGenerator() != null) {
+            toolTipText = getLegendItemToolTipGenerator().generateLabel(dataset, series);
+        }
+        String urlText = null;
+        if (getLegendItemURLGenerator() != null) {
+            urlText = getLegendItemURLGenerator().generateLabel(dataset, series);
+        }
+        Shape shape = new Rectangle2D.Double(-4.0, -4.0, 8.0, 8.0);
+
+        // set the paint according to the right technical replicate
+        int length = GuiUtils.getAvailableColors().length;
+        int colorIndex = series % length;
+
+        Paint paint = GuiUtils.getAvailableColors()[colorIndex];
+        Stroke outlineStroke = getItemOutlineStroke(datasetIndex, series);
+
+        return new LegendItem(label, description, toolTipText, urlText, shape, paint, outlineStroke, paint);
     }
 
     /**

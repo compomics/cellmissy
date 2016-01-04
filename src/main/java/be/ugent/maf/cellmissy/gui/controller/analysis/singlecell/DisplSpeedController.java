@@ -109,14 +109,13 @@ class DisplSpeedController {
             CategoryAxis xAxis = new CategoryAxis("Well");
             NumberAxis yAxis = new NumberAxis("Inst. Displ.");
             yAxis.setAutoRangeIncludesZero(false);
-            CategoryPlot boxPlot = new CategoryPlot(boxPlotDataset, xAxis, yAxis,new ExtendedBoxAndWhiskerRenderer());
-//            boxPlot.setRenderer(new ExtendedBoxAndWhiskerRenderer());
+            CategoryPlot boxPlot = new CategoryPlot(boxPlotDataset, xAxis, yAxis, new ExtendedBoxAndWhiskerRenderer());
             JFreeChart boxPlotChart = new JFreeChart("Box-and-Whisker Inst. Displ", boxPlot);
-//            JFreeChartUtils.setupBoxPlotChart(boxPlotChart);
+            JFreeChartUtils.setupBoxPlotChart(boxPlotChart);
             boxPlotChartPanel.setChart(boxPlotChart);
-            displSpeedPanel.getGraphicsParentPanel().add(boxPlotChartPanel, gridBagConstraints);
-            displSpeedPanel.getGraphicsParentPanel().revalidate();
-            displSpeedPanel.getGraphicsParentPanel().repaint();
+            displSpeedPanel.getLeftPlotParentPanel().add(boxPlotChartPanel, gridBagConstraints);
+            displSpeedPanel.getLeftPlotParentPanel().revalidate();
+            displSpeedPanel.getLeftPlotParentPanel().repaint();
         }
     }
 
@@ -172,8 +171,6 @@ class DisplSpeedController {
         radioButtonGroup.add(displSpeedPanel.getInstantaneousDisplRadioButton());
         radioButtonGroup.add(displSpeedPanel.getTrackDisplRadioButton());
         radioButtonGroup.add(displSpeedPanel.getTrackSpeedsRadioButton());
-        //select as default first button (raw data track coordinates Computation)
-        displSpeedPanel.getInstantaneousDisplRadioButton().setSelected(true);
 
         /**
          * Add action listeners
@@ -215,6 +212,8 @@ class DisplSpeedController {
             }
         });
 
+        //select as default first button (raw data track coordinates Computation)
+        displSpeedPanel.getInstantaneousDisplRadioButton().setSelected(true);
         // add view to parent panel
         singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedParentPanel().add(displSpeedPanel, gridBagConstraints);
     }

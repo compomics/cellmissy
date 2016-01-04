@@ -18,8 +18,12 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
         return dataTablePanel;
     }
 
-    public JPanel getGraphicsParentPanel() {
-        return graphicsParentPanel;
+    public JPanel getLeftPlotParentPanel() {
+        return leftPlotParentPanel;
+    }
+
+    public JPanel getRightPlotParentPanel() {
+        return rightPlotParentPanel;
     }
 
     public JRadioButton getInstantaneousDisplRadioButton() {
@@ -60,8 +64,11 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
         tableInfoLabel = new javax.swing.JLabel();
         trackDisplRadioButton = new javax.swing.JRadioButton();
         trackSpeedsRadioButton = new javax.swing.JRadioButton();
+        jSplitPane1 = new javax.swing.JSplitPane();
         dataTablePanel = new javax.swing.JPanel();
-        graphicsParentPanel = new javax.swing.JPanel();
+        jSplitPane2 = new javax.swing.JSplitPane();
+        leftPlotParentPanel = new javax.swing.JPanel();
+        rightPlotParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(300, 250));
@@ -117,44 +124,48 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.1;
         add(radioButtonsPanel, gridBagConstraints);
 
-        dataTablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        dataTablePanel.setOpaque(false);
+        jSplitPane1.setDividerLocation(80);
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPane1.setMaximumSize(new java.awt.Dimension(20, 20));
+
         dataTablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
         dataTablePanel.setLayout(new java.awt.BorderLayout());
+        jSplitPane1.setLeftComponent(dataTablePanel);
+
+        jSplitPane2.setDividerLocation(400);
+
+        leftPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        leftPlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        jSplitPane2.setLeftComponent(leftPlotParentPanel);
+
+        rightPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        rightPlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        jSplitPane2.setRightComponent(rightPlotParentPanel);
+
+        jSplitPane1.setRightComponent(jSplitPane2);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.35;
-        add(dataTablePanel, gridBagConstraints);
-
-        graphicsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        graphicsParentPanel.setOpaque(false);
-        graphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        graphicsParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.55;
-        add(graphicsParentPanel, gridBagConstraints);
+        gridBagConstraints.weighty = 0.9;
+        add(jSplitPane1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel dataTablePanel;
-    private javax.swing.JPanel graphicsParentPanel;
     private javax.swing.JRadioButton instantaneousDisplRadioButton;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSplitPane jSplitPane2;
+    private javax.swing.JPanel leftPlotParentPanel;
     private javax.swing.JPanel radioButtonsPanel;
+    private javax.swing.JPanel rightPlotParentPanel;
     private javax.swing.JLabel tableInfoLabel;
     private javax.swing.JRadioButton trackDisplRadioButton;
     private javax.swing.JRadioButton trackSpeedsRadioButton;
