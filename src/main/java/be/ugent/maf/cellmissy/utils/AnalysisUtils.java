@@ -369,7 +369,7 @@ public class AnalysisUtils {
      * @param well
      * @return
      */
-    private static int getNumberOfSingleCellAnalyzedSamplesPerWell(Well well) {
+    public static int getNumberOfSingleCellAnalyzedSamplesPerWell(Well well) {
         int numberOfSamplesPerWell = 0;
         for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
             if (!wellHasImagingType.getTrackList().isEmpty()) {

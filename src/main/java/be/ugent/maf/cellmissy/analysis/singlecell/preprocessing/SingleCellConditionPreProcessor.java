@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing;
 
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
+import java.util.List;
 
 /**
  * An interface to preprocess data at a condition level, using the well level
@@ -68,4 +69,13 @@ public interface SingleCellConditionPreProcessor {
      * @param singleCellConditionDataHolder
      */
     void generateShiftedCoordinatesRanges(SingleCellConditionDataHolder singleCellConditionDataHolder);
+    
+      /**
+     * Estimate density function for a given array of data.
+     *
+     * @param data
+     * @param kernelDensityEstimatorBeanName
+     * @return
+     */
+    List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName);
 }

@@ -296,7 +296,7 @@ class AreaPreProcessingController {
 
     /**
      * Called from parent controller if a cancel is called while analysis is
-     * performed
+     * performed.
      */
     public void resetOnCancel() {
         proceedToAnalysis = false;
@@ -569,7 +569,7 @@ class AreaPreProcessingController {
      * Plot corrected data replicates
      *
      * @param showTimeInterval - use time interval chosen for current condition
-     *                         or use the entire experiment time frames range?
+     * or use the entire experiment time frames range?
      */
     public void plotCorrectedArea(PlateCondition plateCondition, boolean plotLines, boolean plotPoints, boolean showTimeInterval) {
         if (showTimeInterval) {
@@ -1762,7 +1762,6 @@ class AreaPreProcessingController {
                 }
             }
         });
-
 
         /**
          * Add item listener to use corrected data check box: use or not

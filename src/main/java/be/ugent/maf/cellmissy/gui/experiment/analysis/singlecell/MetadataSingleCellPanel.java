@@ -69,6 +69,18 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
         return questionButton;
     }
 
+    public JComboBox getDistanceMetricsComboBox() {
+        return distanceMetricsComboBox;
+    }
+
+    public JComboBox getKernelDensityEstimatorsComboBox() {
+        return kernelDensityEstimatorsComboBox;
+    }
+
+    public JComboBox getOutliersAlgorithmsComboBox() {
+        return outliersAlgorithmsComboBox;
+    }
+
     /**
      * Creates new form MetadataSingleCellPanel
      */

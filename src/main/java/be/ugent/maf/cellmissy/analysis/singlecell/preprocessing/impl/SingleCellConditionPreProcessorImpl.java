@@ -5,6 +5,8 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl;
 
+import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
+import be.ugent.maf.cellmissy.analysis.factory.KernelDensityEstimatorFactory;
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellConditionPreProcessor;
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellWellPreProcessor;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
@@ -145,6 +147,12 @@ public class SingleCellConditionPreProcessorImpl implements SingleCellConditionP
         shiftedCoordinatesRanges[0] = new Double[]{xMin, xMax};
         shiftedCoordinatesRanges[1] = new Double[]{yMin, yMax};
         singleCellConditionDataHolder.setShiftedCoordinatesRanges(shiftedCoordinatesRanges);
+    }
+
+    @Override
+    public List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName) {
+        KernelDensityEstimator kernelDensityEstimator = KernelDensityEstimatorFactory.getInstance().getKernelDensityEstimator(kernelDensityEstimatorBeanName);
+        return kernelDensityEstimator.estimateDensityFunction(data);
     }
 
     /**

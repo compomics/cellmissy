@@ -5,6 +5,8 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl;
 
+import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
+import be.ugent.maf.cellmissy.analysis.factory.KernelDensityEstimatorFactory;
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellWellPreProcessor;
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackPreProcessor;
 import be.ugent.maf.cellmissy.entity.Track;
@@ -131,6 +133,8 @@ public class SingleCellWellPreProcessorImpl implements SingleCellWellPreProcesso
         shiftedCoordinatesRanges[1] = new Double[]{yMin, yMax};
         singleCellWellDataHolder.setShiftedCoordinatesRanges(shiftedCoordinatesRanges);
     }
+
+   
 
     /**
      * Calculate the total number of track points.

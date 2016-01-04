@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing;
 
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
+import java.util.List;
 
 /**
  * An interface to preprocess data on a well level. It uses a

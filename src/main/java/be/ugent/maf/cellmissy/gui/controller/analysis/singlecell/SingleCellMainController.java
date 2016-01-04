@@ -4,6 +4,8 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
+import be.ugent.maf.cellmissy.analysis.factory.KernelDensityEstimatorFactory;
+import be.ugent.maf.cellmissy.analysis.factory.OutliersHandlerFactory;
 import be.ugent.maf.cellmissy.analysis.singlecell.TrackCoordinatesUnitOfMeasurement;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.*;
@@ -33,6 +35,7 @@ import java.text.Format;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -539,6 +542,43 @@ public class SingleCellMainController {
         bindingGroup.addBinding(binding);
         // do the binding
         bindingGroup.bind();
+        
+        // add the analysis preferences to the comboboxes
+        // these values are read from the spring XML config file
+        // get all the outliers correction and detection algoritms from the factory
+        Set<String> outliersHandlersBeanNames = OutliersHandlerFactory.getInstance().getOutliersHandlersBeanNames();
+        for (String outliersAlgorithm : outliersHandlersBeanNames) {
+            metadataSingleCellPanel.getOutliersAlgorithmsComboBox().addItem(outliersAlgorithm);
+        }
+
+        // add the action listener
+        metadataSingleCellPanel.getOutliersAlgorithmsComboBox().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedOutliersAlgorithm = metadataSingleCellPanel.getOutliersAlgorithmsComboBox().getSelectedItem().toString();
+                singleCellPreProcessingController.setOutliersHandlerBeanName(selectedOutliersAlgorithm);
+            }
+        });
+        // set as default the first one
+        metadataSingleCellPanel.getOutliersAlgorithmsComboBox().setSelectedIndex(0);
+
+        // do exactly the same for the kernel density estimation and the distance metric
+        Set<String> kernelDensityEstimatorsBeanNames = KernelDensityEstimatorFactory.getInstance().getKernelDensityEstimatorsBeanNames();
+        for (String estimatorName : kernelDensityEstimatorsBeanNames) {
+            metadataSingleCellPanel.getKernelDensityEstimatorsComboBox().addItem(estimatorName);
+        }
+
+        // add the action listener
+        metadataSingleCellPanel.getKernelDensityEstimatorsComboBox().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedKDEAlgorithm = metadataSingleCellPanel.getKernelDensityEstimatorsComboBox().getSelectedItem().toString();
+                singleCellPreProcessingController.setKernelDensityEstimatorBeanName(selectedKDEAlgorithm);
+            }
+        });
+        // set as default the first one
+        metadataSingleCellPanel.getKernelDensityEstimatorsComboBox().setSelectedIndex(0);
+
 
         analysisExperimentPanel.getTopPanel().add(metadataSingleCellPanel, gridBagConstraints);
     }
@@ -877,6 +917,7 @@ public class SingleCellMainController {
                 if (singleCellPreProcessingController.getDisplSpeedPanel().getInstantaneousDisplRadioButton().isSelected()) {
                     singleCellPreProcessingController.showInstantaneousSpeedsInTable(selectedCondition);
                     singleCellPreProcessingController.showBoxPlot(selectedCondition);
+                    singleCellPreProcessingController.plotInstDisplDensityFunctions(selectedCondition);
                 } else if (singleCellPreProcessingController.getDisplSpeedPanel().getTrackDisplRadioButton().isSelected()) {
                     singleCellPreProcessingController.showTrackDisplInTable(selectedCondition);
                 } else if (singleCellPreProcessingController.getDisplSpeedPanel().getTrackSpeedsRadioButton().isSelected()) {

@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.utils;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -141,6 +142,55 @@ public class JFreeChartUtils {
         int counter = 0;
         for (Well well : processedWells) {
             int numberOfSamplesPerWell = AnalysisUtils.getNumberOfAreaAnalyzedSamplesPerWell(well);
+            for (int i = counter; i < xYSeriesCollection.getSeriesCount(); i++) {
+                // wide line
+                renderer.setSeriesStroke(i, normalLine);
+                String wellCoordinates = getWellCoordinates(xYSeriesCollection, i);
+                int wellIndex = getWellIndex(wellCoordinates, processedWells);
+                int length = GuiUtils.getAvailableColors().length;
+                int colorIndex = wellIndex % length;
+                renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
+            }
+            counter += numberOfSamplesPerWell;
+        }
+        return densityChart;
+    }
+
+    /**
+     * This method is generating a chart for the density function given a
+     * certain index for the condition, a xYSeriesCollection made up of the
+     * density functions (x and y values) and a string for the main title.
+     *
+     * @param singleCellConditionDataHolder
+     * @param conditionIndex
+     * @param xYSeriesCollection
+     * @param chartTitle
+     * @return the chart
+     */
+    public static JFreeChart generateDensityFunctionChart(SingleCellConditionDataHolder singleCellConditionDataHolder, int conditionIndex,
+              XYSeriesCollection xYSeriesCollection, String chartTitle) {
+        String specificChartTitle = chartTitle + " Condition " + conditionIndex + " (replicates)";
+        JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, "% increase (Area)", "Density",
+                  xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+        densityChart.getTitle().setFont(chartFont);
+        //XYplot
+        XYPlot xYPlot = densityChart.getXYPlot();
+        //disable autorange for the axes
+        xYPlot.getDomainAxis().setAutoRange(false);
+        xYPlot.getRangeAxis().setAutoRange(false);
+        setupXYPlot(xYPlot);
+        //set ranges for x and y axes
+        xYPlot.getDomainAxis().setRange(xYSeriesCollection.getDomainLowerBound(true) - 0.05, xYSeriesCollection
+                  .getDomainUpperBound(true) + 0.05);
+        xYPlot.getRangeAxis().setUpperBound(computeMaxY(xYSeriesCollection) + 0.05);
+        xYPlot.setBackgroundPaint(Color.white);
+        //renderer for wide line
+        XYItemRenderer renderer = xYPlot.getRenderer();
+        // get imaged wells and number of samples for each one
+        List<Well> processedWells = singleCellConditionDataHolder.getPlateCondition().getSingleCellAnalyzedWells();
+        int counter = 0;
+        for (Well well : processedWells) {
+            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSingleCellAnalyzedSamplesPerWell(well);
             for (int i = counter; i < xYSeriesCollection.getSeriesCount(); i++) {
                 // wide line
                 renderer.setSeriesStroke(i, normalLine);
@@ -555,6 +605,4 @@ public class JFreeChartUtils {
         int lastIndexOf = toString.lastIndexOf(")");
         return toString.substring(0, lastIndexOf + 1);
     }
-
-//    private static String getWellCoordinates()
 }

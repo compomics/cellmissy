@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 import be.ugent.maf.cellmissy.analysis.singlecell.TrackCoordinatesUnitOfMeasurement;
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellConditionPreProcessor;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellConditionOperator;
+import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
@@ -62,6 +63,8 @@ class SingleCellPreProcessingController {
     private Map<PlateCondition, SingleCellConditionDataHolder> preProcessingMap;
     private Double[][] experimentRawCoordinatesRanges;
     private Double[][] experimentShiftedCoordinatesRanges;
+    private String kernelDensityEstimatorBeanName;
+    private String outliersHandlerBeanName;
     // view
     private SingleCellAnalysisPanel singleCellAnalysisPanel;
     // parent controller
@@ -143,6 +146,22 @@ class SingleCellPreProcessingController {
         return new ArrayList<>(preProcessingMap.keySet());
     }
 
+    public String getKernelDensityEstimatorBeanName() {
+        return kernelDensityEstimatorBeanName;
+    }
+
+    public void setKernelDensityEstimatorBeanName(String kernelDensityEstimatorBeanName) {
+        this.kernelDensityEstimatorBeanName = kernelDensityEstimatorBeanName;
+    }
+
+    public String getOutliersHandlerBeanName() {
+        return outliersHandlerBeanName;
+    }
+
+    public void setOutliersHandlerBeanName(String outliersHandlerBeanName) {
+        this.outliersHandlerBeanName = outliersHandlerBeanName;
+    }
+
     public void showRawTrackCoordinatesInTable(PlateCondition plateCondition) {
         trackCoordinatesController.showRawTrackCoordinatesInTable(plateCondition);
     }
@@ -170,9 +189,13 @@ class SingleCellPreProcessingController {
     public void showInstantaneousSpeedsInTable(PlateCondition plateCondition) {
         displSpeedController.showInstantaneousDisplInTable(plateCondition);
     }
-    
-    public void showBoxPlot(PlateCondition plateCondition){
+
+    public void showBoxPlot(PlateCondition plateCondition) {
         displSpeedController.showBoxPlot(plateCondition);
+    }
+
+    public void plotInstDisplDensityFunctions(PlateCondition plateCondition) {
+        displSpeedController.plotInstDisplDensityFunctions(plateCondition);
     }
 
     public void showTrackDisplInTable(PlateCondition plateCondition) {
@@ -201,6 +224,10 @@ class SingleCellPreProcessingController {
 
     public void fetchTracks(PlateCondition plateCondition) {
         singleCellMainController.fetchTracks(plateCondition);
+    }
+
+    public List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName) {
+        return singleCellConditionPreProcessor.estimateDensityFunction(data, kernelDensityEstimatorBeanName);
     }
 
     /**
