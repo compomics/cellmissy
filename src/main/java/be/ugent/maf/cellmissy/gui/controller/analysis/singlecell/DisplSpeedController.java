@@ -8,19 +8,20 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplSpeedPanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.ExtendedBoxAndWhiskerRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.DisplacementsTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
-import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -59,7 +60,7 @@ class DisplSpeedController {
     private GridBagConstraints gridBagConstraints;
 
     /**
-     * Initialise controller
+     * initialize controller
      */
     public void init() {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
@@ -76,7 +77,7 @@ class DisplSpeedController {
     }
 
     /**
-     * Show the instantaneous displacements for each time step for the plate
+     * Show the instantaneous displacements for each time step for a given plate
      * condition.
      *
      * @param plateCondition
@@ -84,9 +85,7 @@ class DisplSpeedController {
     public void showInstantaneousDisplInTable(PlateCondition plateCondition) {
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         if (singleCellConditionDataHolder != null) {
-            Object[][] dataStructure = singleCellConditionDataHolder.getDataStructure();
-            Double[] instantaneousDisplacementsVector = singleCellConditionDataHolder.getInstantaneousDisplacementsVector();
-            displacementsTable.setModel(new DisplacementsTableModel(dataStructure, instantaneousDisplacementsVector));
+            displacementsTable.setModel(new DisplacementsTableModel(singleCellConditionDataHolder.getDataStructure(), singleCellConditionDataHolder.getInstantaneousDisplacementsVector()));
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
             for (int i = 0; i < displacementsTable.getColumnModel().getColumnCount(); i++) {
@@ -99,6 +98,7 @@ class DisplSpeedController {
     }
 
     /**
+     * Show Box Plot of instantaneous displacements for a given plate condition.
      *
      * @param plateCondition
      */
@@ -109,12 +109,14 @@ class DisplSpeedController {
             CategoryAxis xAxis = new CategoryAxis("Well");
             NumberAxis yAxis = new NumberAxis("Inst. Displ.");
             yAxis.setAutoRangeIncludesZero(false);
-            BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
-            renderer.setFillBox(true);
-            CategoryPlot boxPlot = new CategoryPlot(boxPlotDataset, xAxis, yAxis, renderer);
+            CategoryPlot boxPlot = new CategoryPlot(boxPlotDataset, xAxis, yAxis,new ExtendedBoxAndWhiskerRenderer());
+//            boxPlot.setRenderer(new ExtendedBoxAndWhiskerRenderer());
             JFreeChart boxPlotChart = new JFreeChart("Box-and-Whisker Inst. Displ", boxPlot);
+//            JFreeChartUtils.setupBoxPlotChart(boxPlotChart);
             boxPlotChartPanel.setChart(boxPlotChart);
             displSpeedPanel.getGraphicsParentPanel().add(boxPlotChartPanel, gridBagConstraints);
+            displSpeedPanel.getGraphicsParentPanel().revalidate();
+            displSpeedPanel.getGraphicsParentPanel().repaint();
         }
     }
 
@@ -241,9 +243,11 @@ class DisplSpeedController {
     }
 
     /**
+     * Generate the dataset for the bow plot for a single plate condition data
+     * holder.
      *
      * @param singleCellConditionDataHolder
-     * @return
+     * @return a DefaultBoxAndWhiskerCategoryDataset
      */
     private DefaultBoxAndWhiskerCategoryDataset getBoxPlotDataset(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();

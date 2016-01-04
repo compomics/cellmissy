@@ -8,7 +8,8 @@ package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 
 /**
- * An interface to preprocess data on a well level.
+ * An interface to preprocess data on a well level. It uses a
+ * SingleCellWellDataHolder entity to keep all the data.
  *
  * @author Paola
  */

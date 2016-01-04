@@ -22,7 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * An implementation for the single cell condition preprocessor.
+ * An implementation for the single cell condition preprocessor. Uses a
+ * preprocessor one level down: SingleCellWellPreProcessor.
  *
  * @author Paola
  */
@@ -35,6 +36,7 @@ public class SingleCellConditionPreProcessorImpl implements SingleCellConditionP
     @Override
     public void generateDataHolders(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         List<SingleCellWellDataHolder> singleCellWellDataHolders = new ArrayList<>();
+        List<TrackDataHolder> trackDataHolders = new ArrayList<>();
         List<Well> singleCellAnalyzedWells = singleCellConditionDataHolder.getPlateCondition().getSingleCellAnalyzedWells();
         for (Well well : singleCellAnalyzedWells) {
             singleCellWellDataHolders.add(new SingleCellWellDataHolder(well));
@@ -42,9 +44,6 @@ public class SingleCellConditionPreProcessorImpl implements SingleCellConditionP
         singleCellConditionDataHolder.setSingleCellWellDataHolders(singleCellWellDataHolders);
         for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
             singleCellWellPreProcessor.generateTrackDataHolders(singleCellWellDataHolder);
-        }
-        List<TrackDataHolder> trackDataHolders = new ArrayList<>();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
             trackDataHolders.addAll(singleCellWellDataHolder.getTrackDataHolders());
         }
         singleCellConditionDataHolder.setTrackDataHolders(trackDataHolders);

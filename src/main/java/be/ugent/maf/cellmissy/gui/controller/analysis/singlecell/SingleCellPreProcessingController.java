@@ -574,7 +574,7 @@ class SingleCellPreProcessingController {
                 }
                 // when done, enable back the list, but keep buttons disabled!
                 showMessage("Tracks retrieved!\nSelect a condition to start with the"
-                          + "analysis.", "tracks retrieved", JOptionPane.INFORMATION_MESSAGE);
+                          + " analysis.", "tracks retrieved", JOptionPane.INFORMATION_MESSAGE);
                 singleCellMainController.getDataAnalysisPanel().getConditionsList().setEnabled(true);
                 singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 singleCellMainController.showInfoMessage("Tracks retrieved from DB. Select a condition to "

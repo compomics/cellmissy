@@ -20,6 +20,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYLineAnnotation;
+import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
@@ -27,6 +28,7 @@ import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
@@ -34,6 +36,8 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.Range;
+import org.jfree.data.statistics.BoxAndWhiskerItem;
+import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
@@ -52,8 +56,7 @@ public class JFreeChartUtils {
     // new line, enter
     private final static String newLine = "\n";
     // dashed line
-    private static final BasicStroke dashedLine = new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke
-            .JOIN_ROUND, 1.0f, new float[]{6.0f, 6.0f}, 0.0f);
+    private static final BasicStroke dashedLine = new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[]{6.0f, 6.0f}, 0.0f);
     // font for the chart elements
     private static final Font chartFont = new Font("Tahoma", Font.BOLD, 12);
     // line widths
@@ -82,7 +85,6 @@ public class JFreeChartUtils {
     }
 
     // public methods
-
     /**
      * Setup a x-y plot
      *
@@ -119,10 +121,10 @@ public class JFreeChartUtils {
      * @return the chart
      */
     public static JFreeChart generateDensityFunctionChart(PlateCondition plateCondition, int conditionIndex,
-                                                          XYSeriesCollection xYSeriesCollection, String chartTitle) {
+              XYSeriesCollection xYSeriesCollection, String chartTitle) {
         String specificChartTitle = chartTitle + " Condition " + conditionIndex + " (replicates)";
         JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, "% increase (Area)", "Density",
-                xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+                  xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         densityChart.getTitle().setFont(chartFont);
         //XYplot
         XYPlot xYPlot = densityChart.getXYPlot();
@@ -132,7 +134,7 @@ public class JFreeChartUtils {
         setupXYPlot(xYPlot);
         //set ranges for x and y axes
         xYPlot.getDomainAxis().setRange(xYSeriesCollection.getDomainLowerBound(true) - 0.05, xYSeriesCollection
-                .getDomainUpperBound(true) + 0.05);
+                  .getDomainUpperBound(true) + 0.05);
         xYPlot.getRangeAxis().setUpperBound(computeMaxY(xYSeriesCollection) + 0.05);
         xYPlot.setBackgroundPaint(Color.white);
         //renderer for wide line
@@ -279,12 +281,11 @@ public class JFreeChartUtils {
     /**
      * Setup replicates area chart
      *
-     * @param chart:     chart to setup
-     * @param wellList:  keep track of wells added, removed: list needed
+     * @param chart: chart to setup
+     * @param wellList: keep track of wells added, removed: list needed
      * @param plotLines: show lines on plot?
      */
-    public static void setupReplicatesAreaChart(JFreeChart chart, List<Well> wellList, boolean plotLines, boolean
-            plotPoints) {
+    public static void setupReplicatesAreaChart(JFreeChart chart, List<Well> wellList, boolean plotLines, boolean plotPoints) {
         // set title font
         chart.getTitle().setFont(chartFont);
         // put legend on the right edge
@@ -314,7 +315,7 @@ public class JFreeChartUtils {
     /**
      * Setup global area chart
      *
-     * @param chart:     chart to setup
+     * @param chart: chart to setup
      * @param plotLines: show lines on plot?
      */
     public static void setupGlobalAreaChart(JFreeChart chart, boolean plotLines, boolean plotPoints) {
@@ -366,6 +367,47 @@ public class JFreeChartUtils {
     }
 
     /**
+     * Setup a plot for a Box And Whisker.
+     *
+     * @param chart
+     */
+    public static void setupBoxPlotChart(JFreeChart chart) {
+        // set title font
+        chart.getTitle().setFont(chartFont);
+        CategoryPlot plot = (CategoryPlot) chart.getPlot();
+        BoxAndWhiskerRenderer renderer = (BoxAndWhiskerRenderer) plot.getRenderer();
+        renderer.setFillBox(true);
+//        renderer.setArtifactPaint(GuiUtils.getNonImagedColor());
+        renderer.setUseOutlinePaintForWhiskers(true);
+
+        renderer.setMaximumBarWidth(0.05);
+        renderer.setMeanVisible(false);
+//        renderer.setWhiskerWidth(0.2);
+        renderer.setSeriesOutlinePaint(0, Color.BLACK);
+        renderer.setSeriesOutlinePaint(2, Color.RED);
+//        renderer.setSeriesFillPaint(0, GuiUtils.getAvailableColors()[0]);
+
+        CategoryAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setLowerMargin(0.15);
+        domainAxis.setUpperMargin(0.15);
+        domainAxis.setCategoryMargin(0.25);
+
+//        renderer.setSeriesOutlineStroke(0, new BasicStroke(4f), true);
+//        renderer.setSeriesOutlineStroke(2, new BasicStroke(4f), true);
+        renderer.setBaseOutlinePaint(Color.blue, true); // change
+
+        DefaultBoxAndWhiskerCategoryDataset dataset = (DefaultBoxAndWhiskerCategoryDataset) plot.getDataset();
+
+        for (int i = 0; i < dataset.getRowCount(); i++) {
+            for (int j = 0; j < dataset.getColumnCount(); j++) {
+                BoxAndWhiskerItem item = dataset.getItem(i, j);
+
+            }
+
+        }
+    }
+
+    /**
      * Plot error bars in both directions, vertical and horizontal
      *
      * @param chart
@@ -396,8 +438,7 @@ public class JFreeChartUtils {
      * @param valuesCollection
      * @param verticalErrors
      */
-    public static void plotVerticalErrorBars(JFreeChart chart, XYSeriesCollection valuesCollection, List<Double[]>
-            verticalErrors) {
+    public static void plotVerticalErrorBars(JFreeChart chart, XYSeriesCollection valuesCollection, List<Double[]> verticalErrors) {
         Stroke stroke = new BasicStroke();
         // get the plot from the chart
         XYPlot plot = chart.getXYPlot();
@@ -416,7 +457,7 @@ public class JFreeChartUtils {
                 int indexOfColor = conditionIndex % lenght;
                 // add vertical annotation on plot
                 XYLineAnnotation vertical = new XYLineAnnotation(x, y - dy, x, y + dy, stroke, GuiUtils
-                        .getAvailableColors()[indexOfColor]);
+                          .getAvailableColors()[indexOfColor]);
                 plot.addAnnotation(vertical);
             }
         }
@@ -459,10 +500,10 @@ public class JFreeChartUtils {
     /**
      * Set up the single track plot.
      *
-     * @param chart:      the chart to get the plot from
+     * @param chart: the chart to get the plot from
      * @param trackIndex: we need this to get the right color
-     * @param inTime:     if true, the plot is in time, thus background is set to
-     *                    white and range does not have to be kept squared
+     * @param inTime: if true, the plot is in time, thus background is set to
+     * white and range does not have to be kept squared
      */
     public static void setupSingleTrackPlot(JFreeChart chart, int trackIndex, boolean inTime) {
         // set up the plot
@@ -536,4 +577,6 @@ public class JFreeChartUtils {
         int lastIndexOf = toString.lastIndexOf(")");
         return toString.substring(0, lastIndexOf + 1);
     }
+
+//    private static String getWellCoordinates()
 }

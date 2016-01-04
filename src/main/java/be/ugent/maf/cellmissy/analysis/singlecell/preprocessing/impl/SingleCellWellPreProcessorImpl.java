@@ -23,7 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * An implementation for the single cell well preprocessor.
+ * An implementation for the single cell well preprocessor. Uses an operator one
+ * level down (TrackPreProcessor).
  *
  * @author Paola
  */
