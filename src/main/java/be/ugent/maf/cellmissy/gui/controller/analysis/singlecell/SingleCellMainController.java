@@ -421,6 +421,12 @@ public class SingleCellMainController {
                           .getCellTracksLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                           .getInspectingDataLabel());
+                showInfoMessage("Single Cell Turning Angles and Directionality Measures");
+                // check which button is selected for analysis
+                if(singleCellPreProcessingController.getAngleDirectPanel().getInstTurnAngleRadioButton().isSelected()){
+                    singleCellPreProcessingController.showInstAngleInTable(selectedCondition);
+                }
+                singleCellPreProcessingController.plotAngleAndDirectData(selectedCondition);
                 break;
         }
     }

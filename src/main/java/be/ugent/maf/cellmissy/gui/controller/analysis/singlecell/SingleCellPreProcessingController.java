@@ -15,6 +15,7 @@ import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.WaitingDialog;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.AngleDirectPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplSpeedPanel;
@@ -74,6 +75,8 @@ class SingleCellPreProcessingController {
     private TrackCoordinatesController trackCoordinatesController;
     @Autowired
     private DisplSpeedController displSpeedController;
+    @Autowired
+    private AngleDirectController angleDirectController;
     //services
     @Autowired
     private SingleCellConditionPreProcessor singleCellConditionPreProcessor;
@@ -92,6 +95,7 @@ class SingleCellPreProcessingController {
         // init child controllers
         trackCoordinatesController.init();
         displSpeedController.init();
+        angleDirectController.init();
     }
 
     /**
@@ -107,6 +111,10 @@ class SingleCellPreProcessingController {
 
     public DisplSpeedPanel getDisplSpeedPanel() {
         return displSpeedController.getDisplSpeedPanel();
+    }
+
+    public AngleDirectPanel getAngleDirectPanel() {
+        return angleDirectController.getAngleDirectPanel();
     }
 
     public ObservableList<Track> getTracksBindingList() {
@@ -189,8 +197,16 @@ class SingleCellPreProcessingController {
         displSpeedController.showInstantaneousDisplInTable(plateCondition);
     }
 
+    public void showInstAngleInTable(PlateCondition plateCondition) {
+        angleDirectController.showInstAngleInTable(plateCondition);
+    }
+
     public void plotDisplAndSpeedData(PlateCondition plateCondition) {
         displSpeedController.plotDisplAndSpeedData(plateCondition);
+    }
+
+    public void plotAngleAndDirectData(PlateCondition plateCondition) {
+        angleDirectController.plotAngleAndDirectData(plateCondition);
     }
 
     public void showTrackDisplInTable(PlateCondition plateCondition) {

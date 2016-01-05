@@ -15,7 +15,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataTableModel;
-import be.ugent.maf.cellmissy.gui.view.table.model.DisplacementsTableModel;
+import be.ugent.maf.cellmissy.gui.view.table.model.InstantaneousDataTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
@@ -50,8 +50,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Controller for displacements logic. Parent controller is single cell
- * preprocessing controller.
+ * Controller for single cell displacement and speed logic. Parent controller is
+ * single cell preprocessing controller.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -111,7 +111,8 @@ class DisplSpeedController {
     public void showInstantaneousDisplInTable(PlateCondition plateCondition) {
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         if (singleCellConditionDataHolder != null) {
-            dataTable.setModel(new DisplacementsTableModel(singleCellConditionDataHolder.getDataStructure(), singleCellConditionDataHolder.getInstantaneousDisplacementsVector()));
+            dataTable.setModel(new InstantaneousDataTableModel(singleCellConditionDataHolder.getDataStructure(),
+                      singleCellConditionDataHolder.getInstantaneousDisplacementsVector(), "inst displ"));
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
             for (int i = 0; i < dataTable.getColumnModel().getColumnCount(); i++) {
@@ -154,6 +155,8 @@ class DisplSpeedController {
     }
 
     /**
+     * Show the track speed values in a table.
+     *
      * @param plateCondition
      */
     public void showTrackSpeedsInTable(PlateCondition plateCondition) {
@@ -193,15 +196,15 @@ class DisplSpeedController {
         /**
          * Add action listeners
          */
-        // show raw data speeds
+        // show instantaneous displacements
         displSpeedPanel.getInstantaneousDisplRadioButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
                 //check that a condition is selected
                 if (currentCondition != null) {
-                    showInstantaneousDisplInTable(currentCondition);
-                    plotDisplAndSpeedData(currentCondition);
+                    showInstantaneousDisplInTable(currentCondition); // show the data
+                    plotDisplAndSpeedData(currentCondition); // plot the data
                 }
             }
         });
@@ -213,8 +216,8 @@ class DisplSpeedController {
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
                 //check that a condition is selected
                 if (currentCondition != null) {
-                    showTrackDisplInTable(currentCondition);
-                    plotDisplAndSpeedData(currentCondition);
+                    showTrackDisplInTable(currentCondition); // show the data
+                    plotDisplAndSpeedData(currentCondition); // plot the data
                 }
             }
         });
@@ -226,13 +229,13 @@ class DisplSpeedController {
                 PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
                 //check that a condition is selected
                 if (currentCondition != null) {
-                    showTrackSpeedsInTable(currentCondition);
-                    plotDisplAndSpeedData(currentCondition);
+                    showTrackSpeedsInTable(currentCondition); // show the data
+                    plotDisplAndSpeedData(currentCondition); // plot the data
                 }
             }
         });
 
-        //select as default first button (raw data track coordinates Computation)
+        //select as default first button 
         displSpeedPanel.getInstantaneousDisplRadioButton().setSelected(true);
         // add view to parent panel
         singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedParentPanel().add(displSpeedPanel, gridBagConstraints);

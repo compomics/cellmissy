@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
@@ -10,13 +11,37 @@ import javax.swing.JRadioButton;
 
 /**
  *
- * @author paola
+ * @author Paola
  */
-public class DisplSpeedPanel extends javax.swing.JPanel {
+public class AngleDirectPanel extends javax.swing.JPanel {
+
+    /**
+     * Creates new form AngleDirPanel
+     */
+    public AngleDirectPanel() {
+        initComponents();
+    }
 
     public JPanel getDataTablePanel() {
         return dataTablePanel;
     }
+
+    public JRadioButton getDynamicDirectRatioRadioButton() {
+        return dynamicDirectRatioRadioButton;
+    }
+
+    public JRadioButton getEndPointDirectRatioRadioButton() {
+        return endPointDirectRatioRadioButton;
+    }
+
+    public JRadioButton getInstTurnAngleRadioButton() {
+        return instTurnAngleRadioButton;
+    }
+
+    public JRadioButton getTrackTurnAngleRadioButton() {
+        return trackTurnAngleRadioButton;
+    }
+
 
     public JPanel getLeftPlotParentPanel() {
         return leftPlotParentPanel;
@@ -26,27 +51,8 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
         return rightPlotParentPanel;
     }
 
-    public JRadioButton getInstantaneousDisplRadioButton() {
-        return instantaneousDisplRadioButton;
-    }
-
-    public JRadioButton getTrackDisplRadioButton() {
-        return trackDisplRadioButton;
-    }
-
-    public JRadioButton getTrackSpeedsRadioButton() {
-        return trackSpeedsRadioButton;
-    }
-
     public JLabel getTableInfoLabel() {
         return tableInfoLabel;
-    }
-
-    /**
-     * Creates new form DisplacementsPanel
-     */
-    public DisplSpeedPanel() {
-        initComponents();
     }
 
     /**
@@ -60,37 +66,32 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         radioButtonsPanel = new javax.swing.JPanel();
-        instantaneousDisplRadioButton = new javax.swing.JRadioButton();
         tableInfoLabel = new javax.swing.JLabel();
-        trackDisplRadioButton = new javax.swing.JRadioButton();
-        trackSpeedsRadioButton = new javax.swing.JRadioButton();
+        instTurnAngleRadioButton = new javax.swing.JRadioButton();
+        trackTurnAngleRadioButton = new javax.swing.JRadioButton();
+        dynamicDirectRatioRadioButton = new javax.swing.JRadioButton();
+        endPointDirectRatioRadioButton = new javax.swing.JRadioButton();
         bottomSplitPane = new javax.swing.JSplitPane();
         dataTablePanel = new javax.swing.JPanel();
         plotsSplitPane = new javax.swing.JSplitPane();
         leftPlotParentPanel = new javax.swing.JPanel();
         rightPlotParentPanel = new javax.swing.JPanel();
 
-        setBackground(new java.awt.Color(255, 255, 255));
-        setMinimumSize(new java.awt.Dimension(300, 250));
-        setPreferredSize(new java.awt.Dimension(600, 450));
         setLayout(new java.awt.GridBagLayout());
 
-        radioButtonsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        radioButtonsPanel.setOpaque(false);
         radioButtonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        instantaneousDisplRadioButton.setText("instantaneous displacements");
-        instantaneousDisplRadioButton.setOpaque(false);
 
         tableInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         tableInfoLabel.setMinimumSize(new java.awt.Dimension(20, 20));
         tableInfoLabel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        trackDisplRadioButton.setText("track displacements");
-        trackDisplRadioButton.setOpaque(false);
+        instTurnAngleRadioButton.setText("instantaneous turning angles");
 
-        trackSpeedsRadioButton.setText("track speeds");
-        trackSpeedsRadioButton.setOpaque(false);
+        trackTurnAngleRadioButton.setText("track turning angles");
+
+        dynamicDirectRatioRadioButton.setText("dynamic directionality ratios");
+
+        endPointDirectRatioRadioButton.setText("end-point directionality ratios");
 
         javax.swing.GroupLayout radioButtonsPanelLayout = new javax.swing.GroupLayout(radioButtonsPanel);
         radioButtonsPanel.setLayout(radioButtonsPanelLayout);
@@ -101,21 +102,24 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                        .addComponent(instantaneousDisplRadioButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(trackDisplRadioButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(trackSpeedsRadioButton)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(instTurnAngleRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(trackTurnAngleRadioButton)
+                        .addGap(34, 34, 34)
+                        .addComponent(dynamicDirectRatioRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(endPointDirectRatioRadioButton)))
+                .addContainerGap(436, Short.MAX_VALUE))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, radioButtonsPanelLayout.createSequentialGroup()
+                .addContainerGap(13, Short.MAX_VALUE)
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(instantaneousDisplRadioButton)
-                    .addComponent(trackDisplRadioButton)
-                    .addComponent(trackSpeedsRadioButton))
+                    .addComponent(instTurnAngleRadioButton)
+                    .addComponent(endPointDirectRatioRadioButton)
+                    .addComponent(dynamicDirectRatioRadioButton)
+                    .addComponent(trackTurnAngleRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -132,19 +136,15 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
 
         bottomSplitPane.setDividerLocation(80);
         bottomSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        bottomSplitPane.setMaximumSize(new java.awt.Dimension(20, 20));
 
-        dataTablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
         dataTablePanel.setLayout(new java.awt.BorderLayout());
         bottomSplitPane.setLeftComponent(dataTablePanel);
 
-        plotsSplitPane.setDividerLocation(600);
+        plotsSplitPane.setDividerLocation(400);
 
-        leftPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         leftPlotParentPanel.setLayout(new java.awt.GridBagLayout());
         plotsSplitPane.setLeftComponent(leftPlotParentPanel);
 
-        rightPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         rightPlotParentPanel.setLayout(new java.awt.GridBagLayout());
         plotsSplitPane.setRightComponent(rightPlotParentPanel);
 
@@ -159,16 +159,19 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.92;
         add(bottomSplitPane, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSplitPane bottomSplitPane;
     private javax.swing.JPanel dataTablePanel;
-    private javax.swing.JRadioButton instantaneousDisplRadioButton;
+    private javax.swing.JRadioButton dynamicDirectRatioRadioButton;
+    private javax.swing.JRadioButton endPointDirectRatioRadioButton;
+    private javax.swing.JRadioButton instTurnAngleRadioButton;
     private javax.swing.JPanel leftPlotParentPanel;
     private javax.swing.JSplitPane plotsSplitPane;
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JPanel rightPlotParentPanel;
     private javax.swing.JLabel tableInfoLabel;
-    private javax.swing.JRadioButton trackDisplRadioButton;
-    private javax.swing.JRadioButton trackSpeedsRadioButton;
+    private javax.swing.JRadioButton trackTurnAngleRadioButton;
     // End of variables declaration//GEN-END:variables
 }

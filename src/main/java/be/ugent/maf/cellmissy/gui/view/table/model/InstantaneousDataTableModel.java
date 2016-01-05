@@ -12,7 +12,7 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
-public class DisplacementsTableModel extends AbstractTableModel {
+public class InstantaneousDataTableModel extends AbstractTableModel {
 
     private Object[][] data;
     private String columnNames[];
@@ -21,11 +21,12 @@ public class DisplacementsTableModel extends AbstractTableModel {
      * Constructor
      *
      * @param dataStructure: the fixed track point data information
-     * @param velocitiesVector: the extra data vector we add to the table as
-     * last column
+     * @param dataVector: the extra data vector we add to the table as last
+     * column
+     * @param dataName
      */
-    public DisplacementsTableModel(Object[][] dataStructure, Object[] velocitiesVector) {
-        initTable(dataStructure, velocitiesVector);
+    public InstantaneousDataTableModel(Object[][] dataStructure, Object[] dataVector, String dataName) {
+        initTable(dataStructure, dataVector, dataName);
     }
 
     @Override
@@ -51,8 +52,8 @@ public class DisplacementsTableModel extends AbstractTableModel {
     /**
      * define structure for table
      */
-    private void initTable(Object[][] dataStructure, Object[] velocitiesVector) {
-        columnNames = new String[]{"well", "track", "time index", "displacement (µm)"};
+    private void initTable(Object[][] dataStructure, Object[] dataVector, String dataName) {
+        columnNames = new String[]{"well", "track", "time index", dataName};
         int firstLength = dataStructure[0].length;
         int secondLength = 1;
         int totalLength = firstLength + secondLength;
@@ -64,7 +65,7 @@ public class DisplacementsTableModel extends AbstractTableModel {
                 if (col < firstLength) {
                     data[row][col] = dataStructure[row][col];
                 } else {
-                    data[row][col] = velocitiesVector[row];
+                    data[row][col] = dataVector[row];
                 }
             }
         }
