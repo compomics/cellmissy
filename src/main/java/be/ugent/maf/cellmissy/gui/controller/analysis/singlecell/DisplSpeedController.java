@@ -4,8 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
-import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache;
-import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache.DataCategory;
+import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCacheSingleCell.DataCategory;
 import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCacheSingleCell;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
@@ -125,38 +124,16 @@ class DisplSpeedController {
     }
 
     /**
-     * Show Box Plot of instantaneous displacements for a given plate condition.
-     *
-     * @param plateCondition
-     */
-    public void showBoxPlot(PlateCondition plateCondition) {
-        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
-        if (singleCellConditionDataHolder != null) {
-            DefaultBoxAndWhiskerCategoryDataset boxPlotDataset = getBoxPlotDataset(singleCellConditionDataHolder);
-            CategoryAxis xAxis = new CategoryAxis("Well");
-            NumberAxis yAxis = new NumberAxis("Inst. Displ.");
-            yAxis.setAutoRangeIncludesZero(false);
-            CategoryPlot boxPlot = new CategoryPlot(boxPlotDataset, xAxis, yAxis, new ExtendedBoxAndWhiskerRenderer());
-            JFreeChart boxPlotChart = new JFreeChart("Box-and-Whisker Inst. Displ", boxPlot);
-            JFreeChartUtils.setupBoxPlotChart(boxPlotChart);
-            boxPlotChartPanel.setChart(boxPlotChart);
-            displSpeedPanel.getLeftPlotParentPanel().add(boxPlotChartPanel, gridBagConstraints);
-            displSpeedPanel.getLeftPlotParentPanel().revalidate();
-            displSpeedPanel.getLeftPlotParentPanel().repaint();
-        }
-    }
-
-    /**
      * Plot Density Functions for both raw and corrected area data. A Swing
      * Worker is used, and a cache to hold density functions values.
      *
      * @param plateCondition
      */
-    public void plotInstDisplDensityFunctions(PlateCondition plateCondition) {
+    public void plotDisplAndSpeedData(PlateCondition plateCondition) {
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         if (singleCellConditionDataHolder != null) {
-            PlotDensityFunctionSwingWorker plotDensityFunctionSwingWorker = new PlotDensityFunctionSwingWorker(singleCellConditionDataHolder);
-            plotDensityFunctionSwingWorker.execute();
+            PlotDataSwingWorker plotDataSwingWorker = new PlotDataSwingWorker(singleCellConditionDataHolder);
+            plotDataSwingWorker.execute();
         }
     }
 
@@ -190,7 +167,7 @@ class DisplSpeedController {
     }
 
     /**
-     * Initialise main panel
+     * Initialize main panel
      */
     private void initDisplSpeedPanel() {
         // create main view
@@ -224,8 +201,7 @@ class DisplSpeedController {
                 //check that a condition is selected
                 if (currentCondition != null) {
                     showInstantaneousDisplInTable(currentCondition);
-                    showBoxPlot(currentCondition);
-                    plotInstDisplDensityFunctions(currentCondition);
+                    plotDisplAndSpeedData(currentCondition);
                 }
             }
         });
@@ -238,6 +214,7 @@ class DisplSpeedController {
                 //check that a condition is selected
                 if (currentCondition != null) {
                     showTrackDisplInTable(currentCondition);
+                    plotDisplAndSpeedData(currentCondition);
                 }
             }
         });
@@ -250,6 +227,7 @@ class DisplSpeedController {
                 //check that a condition is selected
                 if (currentCondition != null) {
                     showTrackSpeedsInTable(currentCondition);
+                    plotDisplAndSpeedData(currentCondition);
                 }
             }
         });
@@ -284,13 +262,13 @@ class DisplSpeedController {
     }
 
     /**
-     * Generate the dataset for the bow plot for a single plate condition data
+     * Generate the dataset for the box plot for a single plate condition data
      * holder.
      *
      * @param singleCellConditionDataHolder
      * @return a DefaultBoxAndWhiskerCategoryDataset
      */
-    private DefaultBoxAndWhiskerCategoryDataset getBoxPlotDataset(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+    private DefaultBoxAndWhiskerCategoryDataset getInstDisplBoxPlotDataset(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
         for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
             dataset.add(Arrays.asList(singleCellWellDataHolder.getInstantaneousDisplacementsVector()), singleCellWellDataHolder.getWell().toString(), "");
@@ -299,48 +277,92 @@ class DisplSpeedController {
     }
 
     /**
-     * This is the only method that makes use of the kernel density estimator
-     * interface. Given a condition, this is estimating the density functions
-     * for both raw and corrected data.
+     * Generate the dataset for the box plot for a single plate condition data
+     * holder.
      *
      * @param singleCellConditionDataHolder
-     * @return a map of DataCategory (enum of type: raw data or corrected data)
-     * and a list of list of double arrays: each list of array of double has two
-     * components: x values and y values.
+     * @return a DefaultBoxAndWhiskerCategoryDataset
+     */
+    private DefaultBoxAndWhiskerCategoryDataset getTrackDisplBoxPlotDataset(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+            dataset.add(Arrays.asList(singleCellWellDataHolder.getTrackDisplacementsVector()), singleCellWellDataHolder.getWell().toString(), "");
+        }
+        return dataset;
+    }
+
+    /**
+     * Generate the dataset for the box plot for a single plate condition data
+     * holder.
+     *
+     * @param singleCellConditionDataHolder
+     * @return a DefaultBoxAndWhiskerCategoryDataset
+     */
+    private DefaultBoxAndWhiskerCategoryDataset getTrackSpeedBoxPlotDataset(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+            dataset.add(Arrays.asList(singleCellWellDataHolder.getTrackSpeedsVector()), singleCellWellDataHolder.getWell().toString(), "");
+        }
+        return dataset;
+    }
+
+    /**
+     * This is the only method that makes use of the kernel density estimator
+     * interface. Given a SingleCellConditionDataHolder, this is estimating the
+     * density function for
+     *
+     * @param singleCellConditionDataHolder
+     * @return a map of DataCategory and a list of list of double arrays: each
+     * list of array of double has two components: x values and y values.
      */
     private Map<DataCategory, List<List<double[]>>> estimateDensityFunctions(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        String outliersHandlerBeanName = singleCellPreProcessingController.getOutliersHandlerBeanName();
         String kernelDensityEstimatorBeanName = singleCellPreProcessingController.getKernelDensityEstimatorBeanName();
-
         Map<DataCategory, List<List<double[]>>> densityFunctions = new HashMap<>();
-        List<List<double[]>> rawDataDensityFunctions = new ArrayList<>();
-        List<List<double[]>> correctedDataDensityFunctions = new ArrayList<>();
-
+        List<List<double[]>> instDisplDensityFunctions = new ArrayList<>();
         for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
-            List<double[]> oneReplicateRawDataDensityFunction = singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getInstantaneousDisplacementsVector(),
+            List<double[]> oneReplicateInstDisplDensityFunction = singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getInstantaneousDisplacementsVector(),
                       kernelDensityEstimatorBeanName);
-            rawDataDensityFunctions.add(oneReplicateRawDataDensityFunction);
+            instDisplDensityFunctions.add(oneReplicateInstDisplDensityFunction);
         }
+        densityFunctions.put(DensityFunctionHolderCacheSingleCell.DataCategory.INST_DISPL, instDisplDensityFunctions);
 
-        // raw data density functions into map
-        densityFunctions.put(DensityFunctionHolderCache.DataCategory.RAW_DATA, rawDataDensityFunctions);
-        // corrected data density functions into map
-        densityFunctions.put(DensityFunctionHolderCache.DataCategory.CORRECTED_DATA, correctedDataDensityFunctions);
+        List<List<double[]>> trackDisplDensityFunctions = new ArrayList<>();
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+            List<double[]> oneReplicateTrackDisplDensityFunction = singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getTrackDisplacementsVector(),
+                      kernelDensityEstimatorBeanName);
+            trackDisplDensityFunctions.add(oneReplicateTrackDisplDensityFunction);
+        }
+        densityFunctions.put(DensityFunctionHolderCacheSingleCell.DataCategory.TRACK_DISPL, trackDisplDensityFunctions);
+
+        List<List<double[]>> trackSpeedDensityFunctions = new ArrayList<>();
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+            List<double[]> oneReplicateTrackSpeedDensityFunction = singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getTrackDisplacementsVector(),
+                      kernelDensityEstimatorBeanName);
+            trackSpeedDensityFunctions.add(oneReplicateTrackSpeedDensityFunction);
+        }
+        densityFunctions.put(DensityFunctionHolderCacheSingleCell.DataCategory.TRACK_SPEED, trackSpeedDensityFunctions);
+
+        // put the estimated functions into the map
         return densityFunctions;
     }
 
     /**
-     * Swing Worker for Density Function(s) Plot
+     * Swing Worker for plotting both displacement and speed data (the data
+     * concerned with this controller).
      */
-    private class PlotDensityFunctionSwingWorker extends SwingWorker<Void, Void> {
+    private class PlotDataSwingWorker extends SwingWorker<Void, Void> {
 
         private final SingleCellConditionDataHolder singleCellConditionDataHolder;
-        // xySeriesCollections needed for raw data and for corrected data
-        private XYSeriesCollection rawDataXYSeriesCollection;
-        private XYSeriesCollection correctedDataXYSeriesCollection;
+        private XYSeriesCollection instDisplCollection;
+        private XYSeriesCollection trackDisplCollection;
+        private XYSeriesCollection trackSpeedCollection;
+        private DefaultBoxAndWhiskerCategoryDataset instDisplDataset;
+        private DefaultBoxAndWhiskerCategoryDataset trackDisplDataset;
+        private DefaultBoxAndWhiskerCategoryDataset trackSpeedDataset;
+
         private Map<DataCategory, List<List<double[]>>> densityFunctionsMap;
 
-        public PlotDensityFunctionSwingWorker(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        public PlotDataSwingWorker(SingleCellConditionDataHolder singleCellConditionDataHolder) {
             this.singleCellConditionDataHolder = singleCellConditionDataHolder;
         }
 
@@ -352,13 +374,18 @@ class DisplSpeedController {
                 // if results are in cache, get them from cache
                 densityFunctionsMap = densityFunctionHolderCacheSingleCell.getFromCache(singleCellConditionDataHolder);
             } else {
+                singleCellPreProcessingController.showWaitingDialog("Please wait... density functions are being estimated");
                 // else estimate results and put them in cache
                 densityFunctionsMap = estimateDensityFunctions(singleCellConditionDataHolder);
                 densityFunctionHolderCacheSingleCell.putInCache(singleCellConditionDataHolder, densityFunctionsMap);
             }
             // set xyseriesCollections calling the generateDensityFunctions method
-            rawDataXYSeriesCollection = generateDensityFunction(singleCellConditionDataHolder, densityFunctionsMap, DataCategory.RAW_DATA);
-//            correctedDataXYSeriesCollection = generateDensityFunction(singleCellConditionDataHolder, densityFunctionsMap, DataCategory.CORRECTED_DATA);
+            instDisplCollection = generateDensityFunction(singleCellConditionDataHolder, densityFunctionsMap, DataCategory.INST_DISPL);
+            trackDisplCollection = generateDensityFunction(singleCellConditionDataHolder, densityFunctionsMap, DataCategory.TRACK_DISPL);
+            trackSpeedCollection = generateDensityFunction(singleCellConditionDataHolder, densityFunctionsMap, DataCategory.TRACK_SPEED);
+            instDisplDataset = getInstDisplBoxPlotDataset(singleCellConditionDataHolder);
+            trackDisplDataset = getTrackDisplBoxPlotDataset(singleCellConditionDataHolder);
+            trackSpeedDataset = getTrackSpeedBoxPlotDataset(singleCellConditionDataHolder);
             return null;
         }
 
@@ -367,13 +394,27 @@ class DisplSpeedController {
             try {
                 get();
                 // once xySeriesCollections are generated, generate also Charts and show results
-                int conditionIndex = singleCellPreProcessingController.getPlateConditionList().indexOf(singleCellConditionDataHolder.getPlateCondition()) + 1;
-                JFreeChart rawDensityChart = JFreeChartUtils.generateDensityFunctionChart(singleCellConditionDataHolder,
-                          conditionIndex, rawDataXYSeriesCollection, "KDE raw data");
-                plotRawDataDensityFunctions(rawDensityChart);
-//                JFreeChart correctedDensityChart = JFreeChartUtils.generateDensityFunctionChart(singleCellConditionDataHolder.getPlateCondition(),
-//                          conditionIndex, correctedDataXYSeriesCollection, "KDE corrected data");
-//                plotCorrectedDataDensityFunctions(correctedDensityChart);
+                JFreeChart densityChart;
+                JFreeChart boxPlotChart;
+                if (displSpeedPanel.getInstantaneousDisplRadioButton().isSelected()) {
+                    densityChart = JFreeChartUtils.generateDensityFunctionChart(singleCellConditionDataHolder,
+                              instDisplCollection, "KDE inst displ", "inst displ");
+                    boxPlotChart = generateBoxPlotChart(singleCellConditionDataHolder, instDisplDataset,
+                              "inst displ");
+                } else if (displSpeedPanel.getTrackDisplRadioButton().isSelected()) {
+                    densityChart = JFreeChartUtils.generateDensityFunctionChart(singleCellConditionDataHolder,
+                              trackDisplCollection, "KDE track displ", "track displ");
+                    boxPlotChart = generateBoxPlotChart(singleCellConditionDataHolder, trackDisplDataset,
+                              "track displ");
+                } else {
+                    densityChart = JFreeChartUtils.generateDensityFunctionChart(singleCellConditionDataHolder,
+                              trackSpeedCollection, "KDE track spped", "track speed");
+                    boxPlotChart = generateBoxPlotChart(singleCellConditionDataHolder, trackSpeedDataset,
+                              "track speed");
+                }
+                plotDensityChart(densityChart);
+                plotBoxPlotChart(boxPlotChart);
+                singleCellPreProcessingController.hideWaitingDialog();
                 singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
@@ -383,15 +424,46 @@ class DisplSpeedController {
     }
 
     /**
-     * Given a chart for the raw data density function, show it
+     * Given a chart for the data density function, show it.
      *
      * @param densityChart
      */
-    private void plotRawDataDensityFunctions(JFreeChart densityChart) {
+    private void plotDensityChart(JFreeChart densityChart) {
         densityPlotChartPanel.setChart(densityChart);
         displSpeedPanel.getRightPlotParentPanel().add(densityPlotChartPanel, gridBagConstraints);
         displSpeedPanel.getRightPlotParentPanel().revalidate();
         displSpeedPanel.getRightPlotParentPanel().repaint();
+    }
+
+    /**
+     * Given a chart for the box plot, show it.
+     *
+     * @param boxPlotChart
+     */
+    private void plotBoxPlotChart(JFreeChart boxPlotChart) {
+        boxPlotChartPanel.setChart(boxPlotChart);
+        displSpeedPanel.getLeftPlotParentPanel().add(boxPlotChartPanel, gridBagConstraints);
+        displSpeedPanel.getLeftPlotParentPanel().revalidate();
+        displSpeedPanel.getLeftPlotParentPanel().repaint();
+    }
+
+    /**
+     * Generate a box plot chart given the singleCellConditionDataHolder
+     *
+     * @param singleCellConditionDataHolder
+     * @param dataset
+     * @param title
+     * @param yLabel
+     * @return
+     */
+    private JFreeChart generateBoxPlotChart(SingleCellConditionDataHolder singleCellConditionDataHolder, DefaultBoxAndWhiskerCategoryDataset dataset, String yLabel) {
+        CategoryAxis xAxis = new CategoryAxis("well");
+        NumberAxis yAxis = new NumberAxis(yLabel);
+        yAxis.setAutoRangeIncludesZero(false);
+        CategoryPlot boxPlot = new CategoryPlot(dataset, xAxis, yAxis, new ExtendedBoxAndWhiskerRenderer());
+        JFreeChart boxPlotChart = new JFreeChart("Box-and-Whisker - " + singleCellConditionDataHolder.getPlateCondition() + " (replicates)", boxPlot);
+        JFreeChartUtils.setupBoxPlotChart(boxPlotChart);
+        return boxPlotChart;
     }
 
     /**
@@ -443,8 +515,6 @@ class DisplSpeedController {
             }
 
         }
-
         return xySeriesCollection;
     }
-
 }

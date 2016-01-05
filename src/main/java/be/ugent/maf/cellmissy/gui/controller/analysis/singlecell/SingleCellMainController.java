@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.analysis.singlecell.TrackCoordinatesUnitOfMeasurem
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.*;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
+import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
@@ -82,6 +83,7 @@ public class SingleCellMainController {
     private DataAnalysisPanel dataAnalysisPanel;
     private AnalysisPlatePanel analysisPlatePanel;
     private SingleCellAnalysisInfoDialog singleCellAnalysisInfoDialog;
+    private WaitingDialog waitingDialog;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -106,6 +108,8 @@ public class SingleCellMainController {
         analysisExperimentPanel = new AnalysisExperimentPanel();
         metadataSingleCellPanel = new MetadataSingleCellPanel();
         singleCellAnalysisInfoDialog = new SingleCellAnalysisInfoDialog(cellMissyController.getCellMissyFrame(), true);
+        // make a new waiting dialog here
+        waitingDialog = new WaitingDialog(cellMissyController.getCellMissyFrame(), false);
         // set icon for info labels
         Icon informationIcon = UIManager.getIcon("OptionPane.informationIcon");
         ImageIcon scaledInfoIcon = GuiUtils.getScaledIcon(informationIcon);
@@ -188,6 +192,25 @@ public class SingleCellMainController {
     }
 
     /**
+     * Show the waiting dialog: set the title and center the dialog on the main
+     * frame. Set the dialog to visible.
+     *
+     * @param title
+     */
+    public void showWaitingDialog(String title) {
+        waitingDialog.setTitle(title);
+        GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), waitingDialog);
+        waitingDialog.setVisible(true);
+    }
+
+    /**
+     * Hide the waiting dialog when a task has been processed.
+     */
+    public void hideWaitingDialog() {
+        waitingDialog.setVisible(false);
+    }
+
+    /**
      * Show message through the main controller
      *
      * @param message
@@ -222,7 +245,7 @@ public class SingleCellMainController {
      *
      * @param plateCondition
      */
-    void showNotImagedWells(PlateCondition plateCondition) {
+    public void showNotImagedWells(PlateCondition plateCondition) {
         plateCondition.setLoaded(true);
         analysisPlatePanel.repaint();
     }
@@ -233,7 +256,7 @@ public class SingleCellMainController {
      *
      * @param plateCondition
      */
-    void showWellsForCurrentCondition(PlateCondition plateCondition) {
+    public void showWellsForCurrentCondition(PlateCondition plateCondition) {
         analysisPlatePanel.setCurrentCondition(plateCondition);
         analysisPlatePanel.repaint();
     }
@@ -323,6 +346,83 @@ public class SingleCellMainController {
      */
     public void showInfoMessage(String messageToShow) {
         cellMissyController.updateInfoLabel(analysisExperimentPanel.getInfoLabel(), messageToShow);
+    }
+
+    /**
+     * Check for card name when switching.
+     */
+    public void onCardSwitch() {
+        String currentCardName = GuiUtils.getCurrentCardName(singleCellPreProcessingController
+                  .getSingleCellAnalysisPanel().getBottomPanel());
+        PlateCondition selectedCondition = getSelectedCondition();
+        switch (currentCardName) {
+            case "inspectingDataPanel":
+                // disable previous button
+                analysisExperimentPanel.getPreviousButton().setEnabled(false);
+                // enable next button
+                analysisExperimentPanel.getNextButton().setEnabled(true);
+                GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getInspectingDataLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getCellTracksLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getAngleDirectLabel());
+                showInfoMessage("Tracks are shown for each well, together with (column, row) coordinates");
+                singleCellPreProcessingController.showTracksInTable();
+                break;
+            case "cellTracksParentPanel":
+                GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getCellTracksLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getInspectingDataLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getAngleDirectLabel());
+                showInfoMessage("Track Coordinates are shown for each well");
+                singleCellPreProcessingController.updateTracksNumberInfo(selectedCondition);
+                singleCellPreProcessingController.updateWellBindingList(selectedCondition);
+                //check which button is selected for analysis:
+                boolean useRawCoordinates = singleCellPreProcessingController.getTrackCoordinatesPanel()
+                          .getUnshiftedCoordinatesRadioButton().isSelected();
+                singleCellPreProcessingController.plotRandomTrackCoordinates(selectedCondition, useRawCoordinates);
+                singleCellPreProcessingController.showPlottedTracksInTable();
+                if (useRawCoordinates) {
+                    singleCellPreProcessingController.showRawTrackCoordinatesInTable(selectedCondition);
+                } else {
+                    singleCellPreProcessingController.showShiftedTrackCoordinatesInTable(selectedCondition);
+                }
+                break;
+            case "displSpeedParentPanel":
+                GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getDisplSpeedLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getInspectingDataLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getCellTracksLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getAngleDirectLabel());
+                showInfoMessage("Single Cell Displacements and Speeds");
+                // check which button is selected for analysis
+                if (singleCellPreProcessingController.getDisplSpeedPanel().getInstantaneousDisplRadioButton().isSelected()) {
+                    singleCellPreProcessingController.showInstantaneousSpeedsInTable(selectedCondition);
+                } else if (singleCellPreProcessingController.getDisplSpeedPanel().getTrackDisplRadioButton().isSelected()) {
+                    singleCellPreProcessingController.showTrackDisplInTable(selectedCondition);
+                } else if (singleCellPreProcessingController.getDisplSpeedPanel().getTrackSpeedsRadioButton().isSelected()) {
+                    singleCellPreProcessingController.showTrackSpeedsInTable(selectedCondition);
+                }
+                singleCellPreProcessingController.plotDisplAndSpeedData(selectedCondition);
+                break;
+            case "angleDirectParentPanel":
+                GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getAngleDirectLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getCellTracksLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                          .getInspectingDataLabel());
+                break;
+        }
     }
 
     /**
@@ -542,7 +642,7 @@ public class SingleCellMainController {
         bindingGroup.addBinding(binding);
         // do the binding
         bindingGroup.bind();
-        
+
         // add the analysis preferences to the comboboxes
         // these values are read from the spring XML config file
         // get all the outliers correction and detection algoritms from the factory
@@ -578,7 +678,6 @@ public class SingleCellMainController {
         });
         // set as default the first one
         metadataSingleCellPanel.getKernelDensityEstimatorsComboBox().setSelectedIndex(0);
-
 
         analysisExperimentPanel.getTopPanel().add(metadataSingleCellPanel, gridBagConstraints);
     }
@@ -696,39 +795,42 @@ public class SingleCellMainController {
     private void onSelectedCondition(PlateCondition selectedCondition) {
         // first check that this condition is in the map, i.e. it has some data!
         if (singleCellPreProcessingController.getConditionDataHolder(selectedCondition) != null) {
+
+            // empty the track points list if not empty
+            if (!singleCellPreProcessingController.getTrackPointsBindingList().isEmpty()) {
+                singleCellPreProcessingController.getTrackPointsBindingList().clear();
+            }
+            if (!singleCellPreProcessingController.getTracksBindingList().isEmpty()) {
+                // since we are moving from one condition to another one,
+                // we clear the list of tracks to plot, if it's not empty
+                if (!singleCellPreProcessingController.getTrackDataHolderBindingList().isEmpty()) {
+                    singleCellPreProcessingController.getTrackDataHolderBindingList().clear();
+                }
+            }
+            // and we finally generate the random tracks to plot again
+            // note that this is not done on the card switch method itself, because there we want
+            // to keep the same random tracks every time we switch from one view to another one.
+            singleCellPreProcessingController.generateRandomTrackDataHolders(singleCellPreProcessingController
+                      .getCategoryToPlot(), selectedCondition);
+            // update the tracks list for the current condition
+            updateTracksList(selectedCondition);
+            //Select the first row of the table to show first track as default
+            singleCellPreProcessingController.getSingleCellAnalysisPanel().getTracksTable()
+                      .setRowSelectionInterval(0, 0);
+
             // if we are clicking for the first time, current condition is still null
             // check also that we are not clicking again the same condition
             if (currentCondition == null || !currentCondition.equals(selectedCondition)) {
                 // if computations for the condition were not performed yet, do so now
                 if (!selectedCondition.isComputed()) {
                     singleCellPreProcessingController.operateOnCondition(selectedCondition);
+                } else {
+                    // update GUI according to current view on the Card Layout
+                    onCardSwitch();
+                    // the condition is loaded, and plate view is refreshed
+                    showNotImagedWells(selectedCondition);
+                    showWellsForCurrentCondition(selectedCondition);
                 }
-                // empty the track points list if not empty
-                if (!singleCellPreProcessingController.getTrackPointsBindingList().isEmpty()) {
-                    singleCellPreProcessingController.getTrackPointsBindingList().clear();
-                }
-                if (!singleCellPreProcessingController.getTracksBindingList().isEmpty()) {
-                    // since we are moving from one condition to another one,
-                    // we clear the list of tracks to plot, if it's not empty
-                    if (!singleCellPreProcessingController.getTrackDataHolderBindingList().isEmpty()) {
-                        singleCellPreProcessingController.getTrackDataHolderBindingList().clear();
-                    }
-                }
-                // and we finally generate the random tracks to plot again
-                // note that this is not done on the card switch method itself, because there we want
-                // to keep the same random tracks every time we switch from one view to another one.
-                singleCellPreProcessingController.generateRandomTrackDataHolders(singleCellPreProcessingController
-                          .getCategoryToPlot(), selectedCondition);
-                // update the tracks list for the current condition
-                updateTracksList(selectedCondition);
-                //Select the first row of the table to show first track as default
-                singleCellPreProcessingController.getSingleCellAnalysisPanel().getTracksTable()
-                          .setRowSelectionInterval(0, 0);
-                // update GUI according to current view on the Card Layout
-                onCardSwitch();
-                // the condition is loaded, and plate view is refreshed
-                showNotImagedWells(selectedCondition);
-                showWellsForCurrentCondition(selectedCondition);
             }
             currentCondition = selectedCondition;
             singleCellPreProcessingController.showTracksInTable();
@@ -858,81 +960,4 @@ public class SingleCellMainController {
         bindingGroup.bind();
     }
 
-    /**
-     * Check for card name when switching.
-     */
-    private void onCardSwitch() {
-        String currentCardName = GuiUtils.getCurrentCardName(singleCellPreProcessingController
-                  .getSingleCellAnalysisPanel().getBottomPanel());
-        PlateCondition selectedCondition = getSelectedCondition();
-        switch (currentCardName) {
-            case "inspectingDataPanel":
-                // disable previous button
-                analysisExperimentPanel.getPreviousButton().setEnabled(false);
-                // enable next button
-                analysisExperimentPanel.getNextButton().setEnabled(true);
-                GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                          .getInspectingDataLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                          .getCellTracksLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                          .getAngleDirectLabel());
-                showInfoMessage("Tracks are shown for each well, together with (column, row) coordinates");
-                singleCellPreProcessingController.showTracksInTable();
-                break;
-            case "cellTracksParentPanel":
-                GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                          .getCellTracksLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                          .getInspectingDataLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                          .getAngleDirectLabel());
-                showInfoMessage("Track Coordinates are shown for each well");
-                singleCellPreProcessingController.updateTracksNumberInfo(selectedCondition);
-                singleCellPreProcessingController.updateWellBindingList(selectedCondition);
-                //check which button is selected for analysis:
-                boolean useRawCoordinates = singleCellPreProcessingController.getTrackCoordinatesPanel()
-                          .getUnshiftedCoordinatesRadioButton().isSelected();
-                singleCellPreProcessingController.plotRandomTrackCoordinates(selectedCondition, useRawCoordinates);
-                singleCellPreProcessingController.showPlottedTracksInTable();
-                if (useRawCoordinates) {
-                    singleCellPreProcessingController.showRawTrackCoordinatesInTable(selectedCondition);
-                } else {
-                    singleCellPreProcessingController.showShiftedTrackCoordinatesInTable(selectedCondition);
-                }
-                break;
-            case "displSpeedParentPanel":
-                GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                          .getDisplSpeedLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                          .getInspectingDataLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                          .getCellTracksLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                          .getAngleDirectLabel());
-                showInfoMessage("Single Cell Displacements and Speeds");
-                // check which button is selected for analysis
-                if (singleCellPreProcessingController.getDisplSpeedPanel().getInstantaneousDisplRadioButton().isSelected()) {
-                    singleCellPreProcessingController.showInstantaneousSpeedsInTable(selectedCondition);
-                    singleCellPreProcessingController.showBoxPlot(selectedCondition);
-                    singleCellPreProcessingController.plotInstDisplDensityFunctions(selectedCondition);
-                } else if (singleCellPreProcessingController.getDisplSpeedPanel().getTrackDisplRadioButton().isSelected()) {
-                    singleCellPreProcessingController.showTrackDisplInTable(selectedCondition);
-                } else if (singleCellPreProcessingController.getDisplSpeedPanel().getTrackSpeedsRadioButton().isSelected()) {
-                    singleCellPreProcessingController.showTrackSpeedsInTable(selectedCondition);
-                }
-                break;
-            case "angleDirectParentPanel":
-                GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                          .getAngleDirectLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                          .getCellTracksLabel());
-                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                          .getInspectingDataLabel());
-                break;
-        }
-    }
 }

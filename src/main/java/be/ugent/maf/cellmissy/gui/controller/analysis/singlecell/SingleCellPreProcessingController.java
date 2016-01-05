@@ -7,7 +7,6 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 import be.ugent.maf.cellmissy.analysis.singlecell.TrackCoordinatesUnitOfMeasurement;
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellConditionPreProcessor;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellConditionOperator;
-import be.ugent.maf.cellmissy.cache.impl.DensityFunctionHolderCache;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
@@ -190,12 +189,8 @@ class SingleCellPreProcessingController {
         displSpeedController.showInstantaneousDisplInTable(plateCondition);
     }
 
-    public void showBoxPlot(PlateCondition plateCondition) {
-        displSpeedController.showBoxPlot(plateCondition);
-    }
-
-    public void plotInstDisplDensityFunctions(PlateCondition plateCondition) {
-        displSpeedController.plotInstDisplDensityFunctions(plateCondition);
+    public void plotDisplAndSpeedData(PlateCondition plateCondition) {
+        displSpeedController.plotDisplAndSpeedData(plateCondition);
     }
 
     public void showTrackDisplInTable(PlateCondition plateCondition) {
@@ -228,6 +223,14 @@ class SingleCellPreProcessingController {
 
     public List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName) {
         return singleCellConditionPreProcessor.estimateDensityFunction(data, kernelDensityEstimatorBeanName);
+    }
+
+    public void showWaitingDialog(String title) {
+        singleCellMainController.showWaitingDialog(title);
+    }
+
+    public void hideWaitingDialog() {
+        singleCellMainController.hideWaitingDialog();
     }
 
     /**
@@ -620,7 +623,6 @@ class SingleCellPreProcessingController {
     private class ConditionOperatorSwingWorker extends SwingWorker<Void, Void> {
 
         private final PlateCondition plateCondition;
-        private final WaitingDialog waitingDialog = new WaitingDialog(getMainFrame(), false);
 
         /**
          * Constructor: takes the plate plateCondition to perform the operations
@@ -634,10 +636,8 @@ class SingleCellPreProcessingController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            // show a waiting dialog
-            waitingDialog.setTitle("Computing for: " + plateCondition);
-            GuiUtils.centerDialogOnFrame(getMainFrame(), waitingDialog);
-            waitingDialog.setVisible(true);
+            // show waiting dialog
+            singleCellMainController.showWaitingDialog("Computing for: " + plateCondition);
             // show a waiting cursor, disable GUI components
             singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             singleCellMainController.controlGuiComponents(false);
@@ -688,7 +688,12 @@ class SingleCellPreProcessingController {
         protected void done() {
             try {
                 get();
-                waitingDialog.setVisible(false);
+                singleCellMainController.hideWaitingDialog();
+                // update GUI according to current view on the Card Layout
+                singleCellMainController.onCardSwitch();
+                // the condition is loaded, and plate view is refreshed
+                singleCellMainController.showNotImagedWells(plateCondition);
+                singleCellMainController.showWellsForCurrentCondition(plateCondition);
                 // when done, enable back the list and put back cursor to default
                 singleCellMainController.getDataAnalysisPanel().getConditionsList().setEnabled(true);
                 singleCellMainController.controlGuiComponents(true);

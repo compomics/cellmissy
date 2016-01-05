@@ -18,24 +18,24 @@ import org.springframework.stereotype.Component;
  *
  * @author Paola
  */
-@Component("sensityFunctionHolderCacheSingleCell")
-public class DensityFunctionHolderCacheSingleCell extends LinkedHashMap<SingleCellConditionDataHolder, Map<DensityFunctionHolderCache.DataCategory, List<List<double[]>>>> implements Cache<SingleCellConditionDataHolder, Map<DensityFunctionHolderCache.DataCategory, List<List<double[]>>>> {
+@Component("densityFunctionHolderCacheSingleCell")
+public class DensityFunctionHolderCacheSingleCell extends LinkedHashMap<SingleCellConditionDataHolder, Map<DensityFunctionHolderCacheSingleCell.DataCategory, List<List<double[]>>>> implements Cache<SingleCellConditionDataHolder, Map<DensityFunctionHolderCacheSingleCell.DataCategory, List<List<double[]>>>> {
 
     /**
      * ENUM for data category: is it raw data or already corrected data?
      */
     public enum DataCategory {
 
-        RAW_DATA, CORRECTED_DATA
+        INST_DISPL, TRACK_DISPL, TRACK_SPEED;
     }
 
     @Override
-    public void putInCache(SingleCellConditionDataHolder singleCellConditionDataHolder, Map<DensityFunctionHolderCache.DataCategory, List<List<double[]>>> densityFunction) {
+    public void putInCache(SingleCellConditionDataHolder singleCellConditionDataHolder, Map<DensityFunctionHolderCacheSingleCell.DataCategory, List<List<double[]>>> densityFunction) {
         this.put(singleCellConditionDataHolder, densityFunction);
     }
 
     @Override
-    public Map<DensityFunctionHolderCache.DataCategory, List<List<double[]>>> getFromCache(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+    public Map<DensityFunctionHolderCacheSingleCell.DataCategory, List<List<double[]>>> getFromCache(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         return this.get(singleCellConditionDataHolder);
     }
 
@@ -46,7 +46,7 @@ public class DensityFunctionHolderCacheSingleCell extends LinkedHashMap<SingleCe
      * @return
      */
     @Override
-    protected boolean removeEldestEntry(Entry<SingleCellConditionDataHolder, Map<DensityFunctionHolderCache.DataCategory, List<List<double[]>>>> eldest) {
+    protected boolean removeEldestEntry(Entry<SingleCellConditionDataHolder, Map<DensityFunctionHolderCacheSingleCell.DataCategory, List<List<double[]>>>> eldest) {
         int maximumCacheSize = PropertiesConfigurationHolder.getInstance().getInt("densityFunctionCache.maximumCacheSize");
         return this.size() > maximumCacheSize;
     }

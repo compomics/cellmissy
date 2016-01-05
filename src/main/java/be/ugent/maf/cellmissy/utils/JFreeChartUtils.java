@@ -162,15 +162,14 @@ public class JFreeChartUtils {
      * density functions (x and y values) and a string for the main title.
      *
      * @param singleCellConditionDataHolder
-     * @param conditionIndex
      * @param xYSeriesCollection
      * @param chartTitle
+     * @param xLabel
      * @return the chart
      */
-    public static JFreeChart generateDensityFunctionChart(SingleCellConditionDataHolder singleCellConditionDataHolder, int conditionIndex,
-              XYSeriesCollection xYSeriesCollection, String chartTitle) {
-        String specificChartTitle = chartTitle + " Condition " + conditionIndex + " (replicates)";
-        JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, "% increase (Area)", "Density",
+    public static JFreeChart generateDensityFunctionChart(SingleCellConditionDataHolder singleCellConditionDataHolder, XYSeriesCollection xYSeriesCollection, String chartTitle, String xLabel) {
+        String specificChartTitle = chartTitle + " - " + singleCellConditionDataHolder.getPlateCondition() + " (replicates)";
+        JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, xLabel, "Density",
                   xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         densityChart.getTitle().setFont(chartFont);
         //XYplot
