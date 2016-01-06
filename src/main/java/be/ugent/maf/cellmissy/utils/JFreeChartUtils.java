@@ -36,6 +36,7 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.Range;
+import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
@@ -420,7 +421,6 @@ public class JFreeChartUtils {
     public static void setupBoxPlotChart(JFreeChart chart) {
         // set title font
         chart.getTitle().setFont(chartFont);
-        chart.getLegend().setItemPaint(Color.red);
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         plot.setBackgroundPaint(Color.white);
         plot.setOutlinePaint(Color.white);
@@ -432,6 +432,21 @@ public class JFreeChartUtils {
         rangeAxis.setLabelFont(chartFont);
         domainAxis.setLabelPaint(Color.black);
         domainAxis.setLabelFont(chartFont);
+    }
+
+    /**
+     *
+     * @param chart
+     * @param wellIndex
+     */
+    public static void setUpHistogramChart(JFreeChart chart, int wellIndex) {
+        chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
+        XYPlot plot = (XYPlot) chart.getPlot();
+        plot.setBackgroundPaint(Color.white);
+        plot.setOutlinePaint(Color.white);
+        int length = GuiUtils.getAvailableColors().length;
+        XYItemRenderer renderer = plot.getRenderer();
+        renderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[wellIndex % length]);
     }
 
     /**

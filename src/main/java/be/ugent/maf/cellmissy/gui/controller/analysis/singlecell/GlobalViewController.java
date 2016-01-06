@@ -89,17 +89,17 @@ class GlobalViewController {
         // add radiobuttons to a button group
         ButtonGroup scaleAxesButtonGroup = new ButtonGroup();
         scaleAxesButtonGroup.add(trackCoordinatesController.getTrackCoordinatesPanel()
-                .getDoNotScaleGlobViewRadioButton());
+                  .getDoNotScaleGlobViewRadioButton());
         scaleAxesButtonGroup.add(trackCoordinatesController.getTrackCoordinatesPanel().getScaleGlobViewRadioButton());
         trackCoordinatesController.getTrackCoordinatesPanel().getDoNotScaleGlobViewRadioButton().setSelected(true);
         // another button group for the shifted/unshifted coordinates
         ButtonGroup shiftedCoordinatesButtonGroup = new ButtonGroup();
         shiftedCoordinatesButtonGroup.add(trackCoordinatesController.getTrackCoordinatesPanel()
-                .getGlobalViewShiftedCoordinatesRadioButton());
+                  .getGlobalViewShiftedCoordinatesRadioButton());
         shiftedCoordinatesButtonGroup.add(trackCoordinatesController.getTrackCoordinatesPanel()
-                .getGlobalViewUnshiftedCoordinatesRadioButton());
+                  .getGlobalViewUnshiftedCoordinatesRadioButton());
         trackCoordinatesController.getTrackCoordinatesPanel().getGlobalViewUnshiftedCoordinatesRadioButton()
-                .setSelected(true);
+                  .setSelected(true);
 
         /**
          * Action listeners
@@ -110,9 +110,9 @@ class GlobalViewController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int nCols = Integer.parseInt((String) trackCoordinatesController.getTrackCoordinatesPanel()
-                        .getnColsComboBox().getSelectedItem());
+                          .getnColsComboBox().getSelectedItem());
                 boolean useRawData = trackCoordinatesController.getTrackCoordinatesPanel()
-                        .getGlobalViewUnshiftedCoordinatesRadioButton().isSelected();
+                          .getGlobalViewUnshiftedCoordinatesRadioButton().isSelected();
                 resetPlotLogic();
                 generateDataForPlots(useRawData);
                 // use the data to set the charts
@@ -126,7 +126,7 @@ class GlobalViewController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean useRawData = trackCoordinatesController.getTrackCoordinatesPanel()
-                        .getGlobalViewUnshiftedCoordinatesRadioButton().isSelected();
+                          .getGlobalViewUnshiftedCoordinatesRadioButton().isSelected();
                 for (ChartPanel chartPanel : coordinatesChartPanels) {
                     trackCoordinatesController.scaleAxesToExperiment(chartPanel.getChart(), useRawData);
                 }
@@ -135,33 +135,33 @@ class GlobalViewController {
 
         // shift the all coordinates to the origin
         trackCoordinatesController.getTrackCoordinatesPanel().getGlobalViewShiftedCoordinatesRadioButton()
-                .addActionListener(new ActionListener() {
+                  .addActionListener(new ActionListener() {
 
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int nCols = Integer.parseInt((String) trackCoordinatesController.getTrackCoordinatesPanel()
-                                .getnColsComboBox().getSelectedItem());
-                        resetPlotLogic();
-                        generateDataForPlots(false);
-                        // use the data to set the charts
-                        setChartsWithCollections(nCols);
-                    }
-                });
+                      @Override
+                      public void actionPerformed(ActionEvent e) {
+                          int nCols = Integer.parseInt((String) trackCoordinatesController.getTrackCoordinatesPanel()
+                                    .getnColsComboBox().getSelectedItem());
+                          resetPlotLogic();
+                          generateDataForPlots(false);
+                          // use the data to set the charts
+                          setChartsWithCollections(nCols);
+                      }
+                  });
 
         // replot the unshifted coordinates
         trackCoordinatesController.getTrackCoordinatesPanel().getGlobalViewUnshiftedCoordinatesRadioButton()
-                .addActionListener(new ActionListener() {
+                  .addActionListener(new ActionListener() {
 
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        int nCols = Integer.parseInt((String) trackCoordinatesController.getTrackCoordinatesPanel()
-                                .getnColsComboBox().getSelectedItem());
-                        resetPlotLogic();
-                        generateDataForPlots(true);
-                        // use the data to set the charts
-                        setChartsWithCollections(nCols);
-                    }
-                });
+                      @Override
+                      public void actionPerformed(ActionEvent e) {
+                          int nCols = Integer.parseInt((String) trackCoordinatesController.getTrackCoordinatesPanel()
+                                    .getnColsComboBox().getSelectedItem());
+                          resetPlotLogic();
+                          generateDataForPlots(true);
+                          // use the data to set the charts
+                          setChartsWithCollections(nCols);
+                      }
+                  });
 
         // replot with a different number of columns
         trackCoordinatesController.getTrackCoordinatesPanel().getnColsComboBox().addActionListener(new ActionListener() {
@@ -169,9 +169,9 @@ class GlobalViewController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int nCols = Integer.parseInt((String) trackCoordinatesController.getTrackCoordinatesPanel()
-                        .getnColsComboBox().getSelectedItem());
+                          .getnColsComboBox().getSelectedItem());
                 boolean useRawData = trackCoordinatesController.getTrackCoordinatesPanel()
-                        .getGlobalViewUnshiftedCoordinatesRadioButton().isSelected();
+                          .getGlobalViewUnshiftedCoordinatesRadioButton().isSelected();
                 resetPlotLogic();
                 generateDataForPlots(useRawData);
                 // use the data to set the charts
@@ -187,7 +187,7 @@ class GlobalViewController {
             @Override
             public void stateChanged(ChangeEvent e) {
                 if (trackCoordinatesController.getTrackCoordinatesPanel().getTrackCoordinatesTabbedPane()
-                        .getSelectedIndex() == 1 && firstView) {
+                          .getSelectedIndex() == 1 && firstView) {
                     renderGlobalView();
                     firstView = false;
                 }
@@ -228,7 +228,7 @@ class GlobalViewController {
                 XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) chart.getXYPlot().getDataset();
                 List<Integer> endPoints = getEndPoints(xYSeriesCollection);
                 PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(-1,
-                        plotSettingsMenuBar, endPoints);
+                          plotSettingsMenuBar, endPoints);
                 TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
                 renderer.setChosenColor(chosenColors.get(i));
                 coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
@@ -253,7 +253,7 @@ class GlobalViewController {
                 XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) chart.getXYPlot().getDataset();
                 List<Integer> endPoints = getEndPoints(xYSeriesCollection);
                 PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(selectedTrackIndex,
-                        plotSettingsMenuBar, endPoints);
+                          plotSettingsMenuBar, endPoints);
                 TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
                 // show the color chooser only if the item is being selected
                 if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -281,7 +281,7 @@ class GlobalViewController {
         plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().addItemListener(itemActionListener);
         plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().addItemListener(itemActionListener);
         for (Enumeration<AbstractButton> buttons = plotSettingsMenuBar.getLinesButtonGroup().getElements(); buttons
-                .hasMoreElements();) {
+                  .hasMoreElements();) {
             AbstractButton button = buttons.nextElement();
             button.addItemListener(itemActionListener);
         }
@@ -303,14 +303,9 @@ class GlobalViewController {
      */
     private class GlobalViewSwingWorker extends SwingWorker<Void, Void> {
 
-        private final WaitingDialog waitingDialog = new WaitingDialog(trackCoordinatesController.getMainFrame(), false);
-
         @Override
         protected Void doInBackground() throws Exception {
-            // show a waiting dialog
-            waitingDialog.setTitle("Rendering global view... ");
-            GuiUtils.centerDialogOnFrame(trackCoordinatesController.getMainFrame(), waitingDialog);
-            waitingDialog.setVisible(true);
+            trackCoordinatesController.showWaitingDialog("Rendering global view... ");
             // show a waiting cursor, disable GUI components
             trackCoordinatesController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             trackCoordinatesController.controlGuiComponents(false);
@@ -327,9 +322,9 @@ class GlobalViewController {
 
                 // use the data to set the charts
                 int nCols = Integer.parseInt((String) trackCoordinatesController.getTrackCoordinatesPanel()
-                        .getnColsComboBox().getSelectedItem());
+                          .getnColsComboBox().getSelectedItem());
                 setChartsWithCollections(nCols);
-                waitingDialog.setVisible(false);
+                trackCoordinatesController.hideWaitingDialog();
                 trackCoordinatesController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 trackCoordinatesController.controlGuiComponents(true);
 
@@ -347,7 +342,7 @@ class GlobalViewController {
         List<PlateCondition> plateConditionList = trackCoordinatesController.getPlateConditionList();
         for (PlateCondition plateCondition : plateConditionList) {
             SingleCellConditionDataHolder singleCellConditionDataHolder = trackCoordinatesController
-                    .getConditionDataHolder(plateCondition);
+                      .getConditionDataHolder(plateCondition);
             trackDataHoldersList.add(singleCellConditionDataHolder.getTrackDataHolders());
         }
     }
@@ -411,7 +406,7 @@ class GlobalViewController {
             String title = numberTracks + " tracks" + " - " + plateConditionList.get(i);
             // create a chart for each plate condition
             JFreeChart coordinatesChart = ChartFactory.createXYLineChart(title, "x (µm)", "y (µm)", collection,
-                    PlotOrientation.VERTICAL, false, true, false);
+                      PlotOrientation.VERTICAL, false, true, false);
             // and a new chart panel as well
             ChartPanel coordinatesChartPanel = new ChartPanel(null);
             coordinatesChartPanel.setOpaque(false);
@@ -419,14 +414,15 @@ class GlobalViewController {
             // compute the constraints
             GridBagConstraints gridBagConstraints = getGridBagConstraints(nPlots, i, nCols);
             trackCoordinatesController.getTrackCoordinatesPanel().getGraphicsParentPanel().add(coordinatesChartPanel,
-                    gridBagConstraints);
+                      gridBagConstraints);
+            // see if exes need to be scaled
             if (trackCoordinatesController.getTrackCoordinatesPanel().getScaleGlobViewRadioButton().isSelected()) {
                 trackCoordinatesController.scaleAxesToExperiment(coordinatesChart, trackCoordinatesController
-                        .getTrackCoordinatesPanel().getGlobalViewUnshiftedCoordinatesRadioButton().isSelected());
+                          .getTrackCoordinatesPanel().getGlobalViewUnshiftedCoordinatesRadioButton().isSelected());
             }
             JFreeChartUtils.setupTrackChart(coordinatesChart);
             TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines,
-                    plotPoints, showEndPoints, getEndPoints(collection), -1, lineWidth, useSingleColor);
+                      plotPoints, showEndPoints, getEndPoints(collection), -1, lineWidth, useSingleColor);
             if (!chosenColors.isEmpty()) {
                 trackXYLineAndShapeRenderer.setChosenColor(chosenColors.get(i));
             } else {

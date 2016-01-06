@@ -141,6 +141,14 @@ class TrackCoordinatesController {
         return singleCellPreProcessingController.getConditionsList();
     }
 
+    public void showWaitingDialog(String title) {
+        singleCellPreProcessingController.showWaitingDialog(title);
+    }
+
+    public void hideWaitingDialog() {
+        singleCellPreProcessingController.hideWaitingDialog();
+    }
+
     /**
      * @return
      */
@@ -234,13 +242,13 @@ class TrackCoordinatesController {
      */
     public void showRawTrackCoordinatesInTable(PlateCondition plateCondition) {
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController
-                .getConditionDataHolder(plateCondition);
+                  .getConditionDataHolder(plateCondition);
         if (singleCellConditionDataHolder != null) {
             Object[][] dataStructure = singleCellConditionDataHolder.getDataStructure();
             Double[][] rawTrackCoordinatesMatrix = singleCellConditionDataHolder.getRawTrackCoordinatesMatrix();
             coordinatesTable.setModel(new TrackCoordinatesTableModel(dataStructure, rawTrackCoordinatesMatrix));
             FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(),
-                    SwingConstants.CENTER);
+                      SwingConstants.CENTER);
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             for (int i = 0; i < 3; i++) {
                 coordinatesTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
@@ -261,14 +269,14 @@ class TrackCoordinatesController {
      */
     public void showShiftedTrackCoordinatesInTable(PlateCondition plateCondition) {
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController
-                .getConditionDataHolder(plateCondition);
+                  .getConditionDataHolder(plateCondition);
         if (singleCellConditionDataHolder != null) {
             Object[][] fixedDataStructure = singleCellConditionDataHolder.getDataStructure();
             Double[][] shiftedTrackCoordinatesMatrix = singleCellConditionDataHolder.getShiftedTrackCoordinatesMatrix();
             coordinatesTable.setModel(new TrackCoordinatesTableModel(fixedDataStructure,
-                    shiftedTrackCoordinatesMatrix));
+                      shiftedTrackCoordinatesMatrix));
             FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(),
-                    SwingConstants.CENTER);
+                      SwingConstants.CENTER);
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             for (int i = 0; i < 3; i++) {
                 coordinatesTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
@@ -279,7 +287,7 @@ class TrackCoordinatesController {
             coordinatesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
         }
         trackCoordinatesPanel.getTableInfoLabel().setText("Tracks Coordinates with origins of migration superimposed "
-                + "at (0, 0) ");
+                  + "at (0, 0) ");
     }
 
     /**
@@ -334,7 +342,7 @@ class TrackCoordinatesController {
                     chartTitle = numberOfTracks + " tracks - condition " + conditionIndex;
                 } else {
                     chartTitle = numberOfTracks + " tracks, coordinates shifted to (0, 0) - condition "
-                            + conditionIndex;
+                              + conditionIndex;
                 }
                 break;
             case 1:
@@ -376,7 +384,7 @@ class TrackCoordinatesController {
         columnBinding.setColumnClass(Track.class);
 
         columnBinding = trackHoldersTableBinding.addColumnBinding(ELProperty.create("${track.wellHasImagingType"
-                + ".well}"));
+                  + ".well}"));
         columnBinding.setColumnName("well");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Well.class);
@@ -398,7 +406,7 @@ class TrackCoordinatesController {
             int selectedTrackIndex = -1;
             List<Integer> endPoints = getEndPoints();
             PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(selectedTrackIndex,
-                    plotSettingsMenuBar, endPoints);
+                      plotSettingsMenuBar, endPoints);
             TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
             renderer.setChosenColor(chosenColor);
             coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
@@ -416,7 +424,7 @@ class TrackCoordinatesController {
             int selectedTrackIndex = -1;
             List<Integer> endPoints = getEndPoints();
             PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(selectedTrackIndex,
-                    plotSettingsMenuBar, endPoints);
+                      plotSettingsMenuBar, endPoints);
             TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
             // show the color chooser only if the item is being selected
             if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -443,7 +451,7 @@ class TrackCoordinatesController {
         plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().addItemListener(itemActionListener);
 
         for (Enumeration<AbstractButton> buttons = plotSettingsMenuBar.getLinesButtonGroup().getElements(); buttons
-                .hasMoreElements();) {
+                  .hasMoreElements();) {
             AbstractButton button = buttons.nextElement();
             button.addItemListener(itemActionListener);
         }
@@ -549,7 +557,7 @@ class TrackCoordinatesController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 scaleAxesToExperiment(coordinatesChartPanel.getChart(), trackCoordinatesPanel
-                        .getUnshiftedCoordinatesRadioButton().isSelected());
+                          .getUnshiftedCoordinatesRadioButton().isSelected());
             }
         });
 
@@ -558,7 +566,7 @@ class TrackCoordinatesController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 plotRandomTrackCoordinates(singleCellPreProcessingController.getCurrentCondition(),
-                        trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected());
+                          trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton().isSelected());
             }
         });
 
@@ -584,7 +592,7 @@ class TrackCoordinatesController {
                 Well selectedWell = (Well) trackCoordinatesPanel.getWellsComboBox().getSelectedItem();
                 PlateCondition selectedCondition = singleCellPreProcessingController.getSelectedCondition();
                 List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForWell(selectedCondition,
-                        selectedWell);
+                          selectedWell);
                 int numberTracksForCurrentWell = trackHoldersForCurrentWell.size();
                 // update info with number of tracks for current selected well
                 trackCoordinatesPanel.getTracksNumberWellTextField().setText(" " + numberTracksForCurrentWell);
@@ -679,7 +687,7 @@ class TrackCoordinatesController {
         // get only the track holders for the selected well
         Well selectedWell = (Well) trackCoordinatesPanel.getWellsComboBox().getSelectedItem();
         List<TrackDataHolder> trackHoldersForCurrentWell = getTrackHoldersForWell(singleCellPreProcessingController
-                .getCurrentCondition(), selectedWell);
+                  .getCurrentCondition(), selectedWell);
         int numberTracksForCurrentWell = trackHoldersForCurrentWell.size();
         // update info with number of tracks for current selected well
         trackCoordinatesPanel.getTracksNumberWellTextField().setText("" + numberTracksForCurrentWell);
@@ -694,7 +702,7 @@ class TrackCoordinatesController {
             } catch (NumberFormatException ex) {
                 LOG.error(ex.getMessage());
                 String message = "Please insert a valid number of tracks!" + "\nDefault set back to: "
-                        + defaultNumberOfTracks + " tracks";
+                          + defaultNumberOfTracks + " tracks";
                 singleCellPreProcessingController.showMessage(message, "error setting number of tracks", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -702,7 +710,7 @@ class TrackCoordinatesController {
         // else, show an info message and set the number back to default
         if (randomTracksNumber > numberTracksForCurrentWell) {
             String message = "This well has " + numberTracksForCurrentWell + " tracks" + "\nI cannot plot "
-                    + randomTracksNumber + " tracks!" + "\nDefault set back to: " + defaultNumberOfTracks + " tracks";
+                      + randomTracksNumber + " tracks!" + "\nDefault set back to: " + defaultNumberOfTracks + " tracks";
             singleCellPreProcessingController.showMessage(message, "error in setting number of tracks", JOptionPane.WARNING_MESSAGE);
             randomTracksNumber = defaultNumberOfTracks;
         }
@@ -742,13 +750,13 @@ class TrackCoordinatesController {
             } catch (NumberFormatException ex) {
                 LOG.error(ex.getMessage());
                 String message = "Please insert a valid number of tracks!" + "\nDefault set back to: "
-                        + defaultNumberOfTracks + " tracks";
+                          + defaultNumberOfTracks + " tracks";
                 singleCellPreProcessingController.showMessage(message, "error setting number of tracks", JOptionPane.ERROR_MESSAGE);
             }
         }
         if (randomTracksNumber > tracksNumberForCondition) {
             String message = "This condition has " + tracksNumberForCondition + " tracks" + "\nI cannot plot "
-                    + randomTracksNumber + " tracks!" + "\nDefault set back to: " + defaultNumberOfTracks + " tracks";
+                      + randomTracksNumber + " tracks!" + "\nDefault set back to: " + defaultNumberOfTracks + " tracks";
             singleCellPreProcessingController.showMessage(message, "error in setting number of tracks", JOptionPane.WARNING_MESSAGE);
             randomTracksNumber = defaultNumberOfTracks;
         }
@@ -814,7 +822,7 @@ class TrackCoordinatesController {
     private List<TrackDataHolder> getTrackHoldersForCondition(PlateCondition plateCondition) {
         // through the map, we get the pre processing results for the current condition
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController
-                .getConditionDataHolder(plateCondition);
+                  .getConditionDataHolder(plateCondition);
         return singleCellConditionDataHolder.getTrackDataHolders();
     }
 
@@ -860,20 +868,20 @@ class TrackCoordinatesController {
         boolean useSingleColor = plotSettingsMenuBar.getUseSingleColorCheckBoxMenuItem().isSelected();
         Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
         JFreeChart firstCoordinatesChart = ChartFactory.createXYLineChart(title, "x (µm)", "y (µm)",
-                xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+                  xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         // check if we need to scale axes to condition or to experiment
         if (trackCoordinatesPanel.getScaleToConditionRadioButton().isSelected()) {
             scaleAxesToCondition(firstCoordinatesChart, singleCellPreProcessingController.getCurrentCondition());
         } else if (trackCoordinatesPanel.getScaleToExperimentRadioButton().isSelected()) {
             scaleAxesToExperiment(firstCoordinatesChart, trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton()
-                    .isSelected());
+                      .isSelected());
         }
         JFreeChartUtils.setupTrackChart(firstCoordinatesChart);
         JFreeChart secondCoordinatesChart = ChartFactory.createXYLineChart(title, "x (µm)", "y (µm)",
-                xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+                  xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         JFreeChartUtils.setupTrackChart(secondCoordinatesChart);
         TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines,
-                plotPoints, showEndPoints, getEndPoints(), -1, lineWidth, useSingleColor);
+                  plotPoints, showEndPoints, getEndPoints(), -1, lineWidth, useSingleColor);
         trackXYLineAndShapeRenderer.setChosenColor(chosenColor);
         firstCoordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
         secondCoordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
@@ -911,7 +919,7 @@ class TrackCoordinatesController {
     private class PlotAllTracksConditionSwingWorker extends SwingWorker<Void, Void> {
 
         private final boolean useRawCoordinates = trackCoordinatesPanel.getUnshiftedCoordinatesRadioButton()
-                .isSelected();
+                  .isSelected();
         private XYSeriesCollection xYSeriesCollection;
 
         @Override
@@ -935,7 +943,7 @@ class TrackCoordinatesController {
                     chartTitle = trackDataHolderBindingList.size() + " tracks - condition " + conditionIndex;
                 } else {
                     chartTitle = trackDataHolderBindingList.size() + " tracks, coordinates shifted to (0, 0) - "
-                            + "condition " + conditionIndex;
+                              + "condition " + conditionIndex;
                 }
                 setChartsWithXyCollection(chartTitle, xYSeriesCollection);
                 singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -960,7 +968,7 @@ class TrackCoordinatesController {
             singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             resetTracksList();
             generateAllTrackHoldersForCurrentWell(singleCellPreProcessingController.getCurrentCondition(),
-                    selectedWell);
+                      selectedWell);
             xYSeriesCollection = generateXYSeriesCollectionForPlot(useRawCoordinates);
             return null;
         }
@@ -975,7 +983,7 @@ class TrackCoordinatesController {
                     chartTitle = trackDataHolderBindingList.size() + " tracks - well " + selectedWell.toString();
                 } else {
                     chartTitle = trackDataHolderBindingList.size() + " tracks,  coordinates shifted to (0, 0) - well "
-                            + "" + selectedWell.toString();
+                              + "" + selectedWell.toString();
                 }
                 setChartsWithXyCollection(chartTitle, xYSeriesCollection);
                 singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

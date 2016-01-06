@@ -114,7 +114,7 @@ public class AngleDirectPanel extends javax.swing.JPanel {
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, radioButtonsPanelLayout.createSequentialGroup()
-                .addContainerGap(13, Short.MAX_VALUE)
+                .addContainerGap(12, Short.MAX_VALUE)
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(instTurnAngleRadioButton)
                     .addComponent(endPointDirectRatioRadioButton)
@@ -136,6 +136,7 @@ public class AngleDirectPanel extends javax.swing.JPanel {
 
         bottomSplitPane.setDividerLocation(80);
         bottomSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        bottomSplitPane.setPreferredSize(new java.awt.Dimension(20, 20));
 
         dataTablePanel.setLayout(new java.awt.BorderLayout());
         bottomSplitPane.setLeftComponent(dataTablePanel);
