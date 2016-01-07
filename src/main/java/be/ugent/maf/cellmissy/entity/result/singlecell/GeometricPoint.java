@@ -35,6 +35,7 @@ public class GeometricPoint implements Comparable<GeometricPoint> {
 
     /**
      * Getters
+     * @return 
      */
     public double getX() {
         return x;
@@ -175,8 +176,8 @@ public class GeometricPoint implements Comparable<GeometricPoint> {
     }
 
     /**
-     * Compare other points (q, r) relative to the polar angle (between 0 and 2pi) they
-     * make with this point.
+     * Compare other points (q, r) relative to the polar angle (between 0 and
+     * 2pi) they make with this point.
      */
     private class PolarComparator implements Comparator<GeometricPoint> {
 

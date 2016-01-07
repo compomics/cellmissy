@@ -77,9 +77,9 @@ public class StepCentricOperatorTest {
         double lastTurningAngle = turningAngles[4];
         Assert.assertEquals(20.556, AnalysisUtils.roundThreeDecimals(firstTA));
         Assert.assertEquals(90.0, secondTA);
-        Assert.assertEquals(333.435, AnalysisUtils.roundThreeDecimals(thirdTA));
-        Assert.assertEquals(26.565, AnalysisUtils.roundThreeDecimals(fourthTA));
-        Assert.assertEquals(315.0, AnalysisUtils.roundThreeDecimals(lastTurningAngle));
+        Assert.assertEquals(153.435, AnalysisUtils.roundThreeDecimals(thirdTA));
+        Assert.assertEquals(-153.435, AnalysisUtils.roundThreeDecimals(fourthTA));
+        Assert.assertEquals(-45.0, AnalysisUtils.roundThreeDecimals(lastTurningAngle));
         // test direction autocorrelations
         double[] timeIndexes = new double[]{2, 3, 5, 6, 7, 10}; // time indexes of the track
         stepCentricDataHolder.setTimeIndexes(timeIndexes);
@@ -95,7 +95,7 @@ public class StepCentricOperatorTest {
         Double[] timeOne = directionAutocorrelations.get(1);
         Assert.assertEquals(timeIndexes.length - 2, timeOne.length);
         Assert.assertEquals(0.351, AnalysisUtils.roundThreeDecimals(timeOne[0]));
-        Assert.assertEquals(-0.447, AnalysisUtils.roundThreeDecimals(timeOne[1]));
+        Assert.assertEquals(0.447, AnalysisUtils.roundThreeDecimals(timeOne[1]));
         // last time interval: only one direction autocorrelation
         Double[] lastTime = directionAutocorrelations.get(size - 1);
         Assert.assertEquals(1, lastTime.length);

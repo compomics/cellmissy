@@ -23,6 +23,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYLineAnnotation;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.Plot;
@@ -58,6 +59,7 @@ public class JFreeChartUtils {
     private static final BasicStroke dashedLine = new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[]{6.0f, 6.0f}, 0.0f);
     // font for the chart elements
     private static final Font chartFont = new Font("Tahoma", Font.BOLD, 12);
+    private static final Font smallChartFont = new Font("Tahoma", Font.BOLD, 12);
     // line widths
     private static final List<Float> lineWidths = Arrays.asList(1.0f, 1.5f, 2.0f, 2.5f, 3.0f);
     // decimal format for the plot axis
@@ -440,10 +442,18 @@ public class JFreeChartUtils {
      * @param wellIndex
      */
     public static void setUpHistogramChart(JFreeChart chart, int wellIndex) {
-        chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 12));
+        chart.getTitle().setFont(chartFont);
         XYPlot plot = (XYPlot) chart.getPlot();
         plot.setBackgroundPaint(Color.white);
         plot.setOutlinePaint(Color.white);
+        ValueAxis domainAxis = plot.getDomainAxis();
+        ValueAxis rangeAxis = plot.getRangeAxis();
+        // set their label font and color
+        rangeAxis.setLabelPaint(Color.black);
+        rangeAxis.setLabelFont(smallChartFont);
+        domainAxis.setLabelPaint(Color.black);
+        domainAxis.setLabelFont(smallChartFont);
+
         int length = GuiUtils.getAvailableColors().length;
         XYItemRenderer renderer = plot.getRenderer();
         renderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[wellIndex % length]);

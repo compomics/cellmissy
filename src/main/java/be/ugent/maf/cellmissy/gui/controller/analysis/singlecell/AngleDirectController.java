@@ -35,7 +35,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +114,7 @@ public class AngleDirectController {
      * @param plateCondition
      */
     public void plotAngleAndDirectData(PlateCondition plateCondition) {
-        plotInstTurnAngles(plateCondition, 50);
+        plotInstTurnAngles(plateCondition);
         plotPolarPlots(plateCondition);
     }
 
@@ -198,15 +197,17 @@ public class AngleDirectController {
      *
      * @param plateCondition
      */
-    private void plotInstTurnAngles(PlateCondition plateCondition, int bins) {
+    private void plotInstTurnAngles(PlateCondition plateCondition) {
         angleDirectPanel.getLeftPlotParentPanel().removeAll();
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         List<ChartPanel> histChartPanels = new ArrayList<>();
         if (singleCellConditionDataHolder != null) {
-            List<HistogramDataset> histogramDatasets = getInstTurnAngleDatasets(singleCellConditionDataHolder, bins);
+            List<HistogramDataset> histogramDatasets = getInstTurnAngleDatasets(singleCellConditionDataHolder,
+                      getNumberOfBins(singleCellConditionDataHolder));
             for (int i = 0; i < histogramDatasets.size(); i++) {
-                JFreeChart chart = ChartFactory.createHistogram("", "", "inst turning angle",
+                JFreeChart chart = ChartFactory.createHistogram("", "", "inst turning angle - relative frequency",
                           histogramDatasets.get(i), PlotOrientation.VERTICAL, true, true, false);
+                JFreeChartUtils.setShadowVisible(chart, false);
                 JFreeChartUtils.setUpHistogramChart(chart, i);
                 ChartPanel histChartPanel = new ChartPanel(chart);
                 histChartPanels.add(histChartPanel);
@@ -217,6 +218,12 @@ public class AngleDirectController {
                 angleDirectPanel.getLeftPlotParentPanel().repaint();
             }
         }
+    }
+
+    private int getNumberOfBins(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        double[] toPrimitive = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(singleCellConditionDataHolder.getTurningAnglesVector()));
+        double range = Arrays.stream(toPrimitive).max().getAsDouble() - Arrays.stream(toPrimitive).min().getAsDouble();
+        return (int) range / 10;
     }
 
     private void plotPolarPlots(PlateCondition plateCondition) {
@@ -278,14 +285,32 @@ public class AngleDirectController {
     }
 
     private XYSeriesCollection getPolarDatasetForAWell(Double[] data) {
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        double[] dataX = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(data));
-        double[] dataY = new double[dataX.length];
-        Arrays.fill(dataY, 1);
-
-        XYSeries series = JFreeChartUtils.generateXYSeries(dataX, dataY);
-        dataset.addSeries(series);
+        final XYSeriesCollection dataset = new XYSeriesCollection();
+        final XYSeries series1 = createRandomData("Series 1", 75.0, 10.0);
+        final XYSeries series2 = createRandomData("Series 2", 50.0, 5.0);
+        final XYSeries series3 = createRandomData("Series 3", 25.0, 1.0);
+        dataset.addSeries(series1);
+        dataset.addSeries(series2);
+        dataset.addSeries(series3);
+//        XYSeriesCollection dataset = new XYSeriesCollection();
+//        double[] dataX = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(dataset));
+//        double[] dataY = new double[dataX.length];
+//        Arrays.fill(dataY, 1);
+//
+//        XYSeries series = JFreeChartUtils.generateXYSeries(dataX, dataY);
+//        dataset.addSeries(series);
         return dataset;
+    }
+
+    private XYSeries createRandomData(final String name,
+              final double baseRadius,
+              final double thetaInc) {
+        final XYSeries series = new XYSeries(name);
+        for (double theta = 0.0; theta < 360.0; theta += thetaInc) {
+            final double radius = baseRadius * (1.0 + Math.random());
+            series.add(theta, radius);
+        }
+        return series;
     }
 
     /**
