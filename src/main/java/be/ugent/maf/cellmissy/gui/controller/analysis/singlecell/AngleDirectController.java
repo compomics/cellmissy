@@ -205,7 +205,7 @@ public class AngleDirectController {
             List<HistogramDataset> histogramDatasets = getInstTurnAngleDatasets(singleCellConditionDataHolder,
                       getNumberOfBins(singleCellConditionDataHolder));
             for (int i = 0; i < histogramDatasets.size(); i++) {
-                JFreeChart chart = ChartFactory.createHistogram("", "", "inst turning angle - relative frequency",
+                JFreeChart chart = ChartFactory.createHistogram("", "", "ITA - RF",
                           histogramDatasets.get(i), PlotOrientation.VERTICAL, true, true, false);
                 JFreeChartUtils.setShadowVisible(chart, false);
                 JFreeChartUtils.setUpHistogramChart(chart, i);

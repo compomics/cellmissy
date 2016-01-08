@@ -11,9 +11,12 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHo
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Stroke;
+import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,8 +24,14 @@ import org.apache.commons.lang.ArrayUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYLineAnnotation;
+import org.jfree.chart.axis.AxisState;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTick;
+
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.axis.TickType;
+
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
@@ -37,7 +46,6 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.Range;
-import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
@@ -446,14 +454,37 @@ public class JFreeChartUtils {
         XYPlot plot = (XYPlot) chart.getPlot();
         plot.setBackgroundPaint(Color.white);
         plot.setOutlinePaint(Color.white);
-        ValueAxis domainAxis = plot.getDomainAxis();
         ValueAxis rangeAxis = plot.getRangeAxis();
         // set their label font and color
         rangeAxis.setLabelPaint(Color.black);
         rangeAxis.setLabelFont(smallChartFont);
+        // oveerride a domain axis to show only certain tick marks
+        NumberAxis domainAxis = new NumberAxis(plot.getDomainAxis().getLabel()) {
+            @Override
+            public List refreshTicks(Graphics2D g2, AxisState state, Rectangle2D dataArea, RectangleEdge edge) {
+
+                List allTicks = super.refreshTicks(g2, state, dataArea, edge);
+                List myTicks = new ArrayList();
+
+                for (Object tick : allTicks) {
+                    NumberTick numberTick = (NumberTick) tick;
+
+                    if ((numberTick.getValue() % 6 == 0)) {
+                        myTicks.add(new NumberTick(TickType.MINOR, numberTick.getValue(), "" + numberTick.getValue(),
+                                  numberTick.getTextAnchor(), numberTick.getRotationAnchor(),
+                                  numberTick.getAngle()));
+                        continue;
+                    }
+                    myTicks.add(tick);
+                }
+                return myTicks;
+            }
+        };
+
+        domainAxis.setTickUnit(new NumberTickUnit(60));
         domainAxis.setLabelPaint(Color.black);
         domainAxis.setLabelFont(smallChartFont);
-
+        plot.setDomainAxis(domainAxis);
         int length = GuiUtils.getAvailableColors().length;
         XYItemRenderer renderer = plot.getRenderer();
         renderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[wellIndex % length]);
