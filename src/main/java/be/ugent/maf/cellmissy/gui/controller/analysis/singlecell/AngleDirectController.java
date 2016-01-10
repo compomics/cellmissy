@@ -6,8 +6,10 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
+import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.AngleDirectPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
@@ -220,12 +222,23 @@ public class AngleDirectController {
         }
     }
 
+    /**
+     * Compute number of bins for the angle histogram, so that bin size is
+     * always of 10 degrees.
+     *
+     * @param singleCellConditionDataHolder
+     * @return the number of bins, int
+     */
     private int getNumberOfBins(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         double[] toPrimitive = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(singleCellConditionDataHolder.getTurningAnglesVector()));
         double range = Arrays.stream(toPrimitive).max().getAsDouble() - Arrays.stream(toPrimitive).min().getAsDouble();
         return (int) range / 10;
     }
 
+    /**
+     *
+     * @param plateCondition
+     */
     private void plotPolarPlots(PlateCondition plateCondition) {
         angleDirectPanel.getRightPlotParentPanel().removeAll();
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
@@ -262,20 +275,26 @@ public class AngleDirectController {
         return datasets;
     }
 
+    /**
+     * Create a list of datasets for the polar plots.
+     *
+     * @param singleCellConditionDataHolder
+     * @return
+     */
     private List<XYSeriesCollection> getInstTurnAngleDatasets(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         List<XYSeriesCollection> datasets = new ArrayList<>();
         for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
-            datasets.add(getPolarDatasetForAWell(singleCellWellDataHolder.getTurningAnglesVector()));
+            datasets.add(getPolarDatasetForAWell(singleCellWellDataHolder));
         }
         return datasets;
     }
 
     /**
-     * For a single well, create an histogram dataset.
+     * For a single well, generate an histogram dataset.
      *
      * @param data
      * @param seriesKey
-     * @return
+     * @return an HistogramDataset
      */
     private HistogramDataset getHistogramDatasetForAWell(String seriesKey, Double[] data, int bins) {
         HistogramDataset dataset = new HistogramDataset();
@@ -284,16 +303,18 @@ public class AngleDirectController {
         return dataset;
     }
 
-    private XYSeriesCollection getPolarDatasetForAWell(Double[] data) {
-        final XYSeriesCollection dataset = new XYSeriesCollection();
-        final XYSeries series1 = createRandomData("Series 1", 75.0, 10.0);
-        final XYSeries series2 = createRandomData("Series 2", 50.0, 5.0);
-        final XYSeries series3 = createRandomData("Series 3", 25.0, 1.0);
-        dataset.addSeries(series1);
-        dataset.addSeries(series2);
-        dataset.addSeries(series3);
-//        XYSeriesCollection dataset = new XYSeriesCollection();
-//        double[] dataX = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(dataset));
+    private XYSeriesCollection getPolarDatasetForAWell(SingleCellWellDataHolder singleCellWellDataHolder) {
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        XYSeries series = new XYSeries(singleCellWellDataHolder.getWell().toString());
+        for (TrackDataHolder holder : singleCellWellDataHolder.getTrackDataHolders()) {
+            for (TrackPoint point : holder.getTrack().getTrackPointList()) {
+                double polarRadius = point.getGeometricPoint().getPolarRadius();
+                double theta = point.getGeometricPoint().getTheta();
+                series.add(theta, polarRadius);
+            }
+        }
+        dataset.addSeries(series);
+//        double[] dataX = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(data));
 //        double[] dataY = new double[dataX.length];
 //        Arrays.fill(dataY, 1);
 //

@@ -102,36 +102,24 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         return scaleToExperimentRadioButton;
     }
 
-    public JPanel getGraphicsParentPanel() {
-        return graphicsParentPanel;
-    }
-
-    public JRadioButton getDoNotScaleGlobViewRadioButton() {
-        return doNotScaleGlobViewRadioButton;
-    }
-
-    public JRadioButton getScaleGlobViewRadioButton() {
-        return scaleGlobViewRadioButton;
-    }
-
-    public JPanel getGlobalViewPlotSettingsPanel() {
-        return globalViewPlotSettingsPanel;
+    public JPanel getGlobalViewExpParentPanel() {
+        return globalViewExpParentPanel;
     }
 
     public JTabbedPane getTrackCoordinatesTabbedPane() {
         return trackCoordinatesTabbedPane;
     }
 
-    public JComboBox getnColsComboBox() {
-        return nColsComboBox;
+    public JPanel getGlobalViewConditionParentPanel() {
+        return globalViewConditionParentPanel;
     }
 
-    public JRadioButton getGlobalViewShiftedCoordinatesRadioButton() {
-        return globalViewShiftedCoordinatesRadioButton;
+    public JPanel getOptionsConditionParentPanel() {
+        return optionsConditionParentPanel;
     }
 
-    public JRadioButton getGlobalViewUnshiftedCoordinatesRadioButton() {
-        return globalViewUnshiftedCoordinatesRadioButton;
+    public JPanel getOptionsExperimentParentPanel() {
+        return optionsExperimentParentPanel;
     }
 
     /**
@@ -174,16 +162,12 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         doNotScaleRadioButton = new javax.swing.JRadioButton();
         scaleToConditionRadioButton = new javax.swing.JRadioButton();
         scaleToExperimentRadioButton = new javax.swing.JRadioButton();
-        globalViewPanel = new javax.swing.JPanel();
-        optionsPanel = new javax.swing.JPanel();
-        globalViewPlotSettingsPanel = new javax.swing.JPanel();
-        doNotScaleGlobViewRadioButton = new javax.swing.JRadioButton();
-        scaleGlobViewRadioButton = new javax.swing.JRadioButton();
-        nColsComboBox = new javax.swing.JComboBox();
-        jLabel5 = new javax.swing.JLabel();
-        globalViewUnshiftedCoordinatesRadioButton = new javax.swing.JRadioButton();
-        globalViewShiftedCoordinatesRadioButton = new javax.swing.JRadioButton();
-        graphicsParentPanel = new javax.swing.JPanel();
+        globalViewConditionPanel = new javax.swing.JPanel();
+        optionsConditionParentPanel = new javax.swing.JPanel();
+        globalViewConditionParentPanel = new javax.swing.JPanel();
+        globalViewExperimentPanel = new javax.swing.JPanel();
+        optionsExperimentParentPanel = new javax.swing.JPanel();
+        globalViewExpParentPanel = new javax.swing.JPanel();
         exploreTrackParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -352,7 +336,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        otherOptionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, doNotScaleRadioButton, scaleToConditionRadioButton, scaleToExperimentRadioButton);
+        otherOptionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {doNotScaleRadioButton, scaleToConditionRadioButton, scaleToExperimentRadioButton});
 
         otherOptionsPanelLayout.setVerticalGroup(
             otherOptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -447,7 +431,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addComponent(plotAllTracksButton))
         );
 
-        trackingPlotPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, randomTracksNumberTextField, tracksNumberConditionTextField, tracksNumberWellTextField);
+        trackingPlotPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {randomTracksNumberTextField, tracksNumberConditionTextField, tracksNumberWellTextField});
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -470,70 +454,10 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
 
         trackCoordinatesTabbedPane.addTab("Overview", overviewPanel);
 
-        globalViewPanel.setLayout(new java.awt.GridBagLayout());
+        globalViewConditionPanel.setLayout(new java.awt.GridBagLayout());
 
-        optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plot Options"));
-        optionsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        optionsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        globalViewPlotSettingsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        globalViewPlotSettingsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        globalViewPlotSettingsPanel.setLayout(new java.awt.BorderLayout());
-
-        doNotScaleGlobViewRadioButton.setText("do not scale axes");
-
-        scaleGlobViewRadioButton.setText("scale axes to experiment");
-
-        nColsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "3", "4", "5" }));
-
-        jLabel5.setText("Number of Columns:");
-
-        globalViewUnshiftedCoordinatesRadioButton.setText("unshifted coordinates");
-        globalViewUnshiftedCoordinatesRadioButton.setOpaque(false);
-
-        globalViewShiftedCoordinatesRadioButton.setText("coordinates shifted to (0, 0)");
-        globalViewShiftedCoordinatesRadioButton.setOpaque(false);
-
-        javax.swing.GroupLayout optionsPanelLayout = new javax.swing.GroupLayout(optionsPanel);
-        optionsPanel.setLayout(optionsPanelLayout);
-        optionsPanelLayout.setHorizontalGroup(
-            optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(optionsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(doNotScaleGlobViewRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(scaleGlobViewRadioButton))
-                .addGap(28, 28, 28)
-                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(globalViewShiftedCoordinatesRadioButton)
-                    .addComponent(globalViewUnshiftedCoordinatesRadioButton))
-                .addGap(18, 18, 18)
-                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(optionsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(nColsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(globalViewPlotSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(311, 311, 311))
-        );
-        optionsPanelLayout.setVerticalGroup(
-            optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(optionsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(doNotScaleGlobViewRadioButton)
-                        .addComponent(globalViewUnshiftedCoordinatesRadioButton))
-                    .addComponent(globalViewPlotSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(scaleGlobViewRadioButton)
-                    .addComponent(globalViewShiftedCoordinatesRadioButton)
-                    .addComponent(jLabel5)
-                    .addComponent(nColsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-
+        optionsConditionParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        optionsConditionParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -541,12 +465,10 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.15;
-        globalViewPanel.add(optionsPanel, gridBagConstraints);
+        globalViewConditionPanel.add(optionsConditionParentPanel, gridBagConstraints);
 
-        graphicsParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Global View"));
-        graphicsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        graphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        graphicsParentPanel.setLayout(new java.awt.GridBagLayout());
+        globalViewConditionParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        globalViewConditionParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -554,9 +476,39 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.85;
-        globalViewPanel.add(graphicsParentPanel, gridBagConstraints);
+        globalViewConditionPanel.add(globalViewConditionParentPanel, gridBagConstraints);
 
-        trackCoordinatesTabbedPane.addTab("Global View", globalViewPanel);
+        trackCoordinatesTabbedPane.addTab("Global View-Condition", globalViewConditionPanel);
+
+        globalViewExperimentPanel.setLayout(new java.awt.GridBagLayout());
+
+        optionsExperimentParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plot Options"));
+        optionsExperimentParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        optionsExperimentParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        optionsExperimentParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.15;
+        globalViewExperimentPanel.add(optionsExperimentParentPanel, gridBagConstraints);
+
+        globalViewExpParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Global View"));
+        globalViewExpParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        globalViewExpParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        globalViewExpParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.85;
+        globalViewExperimentPanel.add(globalViewExpParentPanel, gridBagConstraints);
+
+        trackCoordinatesTabbedPane.addTab("Global View-Experiment", globalViewExperimentPanel);
 
         exploreTrackParentPanel.setLayout(new java.awt.GridBagLayout());
         trackCoordinatesTabbedPane.addTab("Explore", exploreTrackParentPanel);
@@ -577,23 +529,20 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton conditionRadioButton;
     private javax.swing.JPanel coordinatesParentPanel;
     private javax.swing.JPanel dataTablePanel;
-    private javax.swing.JRadioButton doNotScaleGlobViewRadioButton;
     private javax.swing.JRadioButton doNotScaleRadioButton;
     private javax.swing.JPanel exploreTrackParentPanel;
-    private javax.swing.JPanel globalViewPanel;
-    private javax.swing.JPanel globalViewPlotSettingsPanel;
-    private javax.swing.JRadioButton globalViewShiftedCoordinatesRadioButton;
-    private javax.swing.JRadioButton globalViewUnshiftedCoordinatesRadioButton;
-    private javax.swing.JPanel graphicsParentPanel;
+    private javax.swing.JPanel globalViewConditionPanel;
+    private javax.swing.JPanel globalViewConditionParentPanel;
+    private javax.swing.JPanel globalViewExpParentPanel;
+    private javax.swing.JPanel globalViewExperimentPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JComboBox nColsComboBox;
-    private javax.swing.JPanel optionsPanel;
+    private javax.swing.JPanel optionsConditionParentPanel;
+    private javax.swing.JPanel optionsExperimentParentPanel;
     private javax.swing.JPanel otherOptionsPanel;
     private javax.swing.JPanel overviewPanel;
     private javax.swing.JButton plotAllTracksButton;
@@ -602,7 +551,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JButton randomAndPlotButton;
     private javax.swing.JTextField randomTracksNumberTextField;
-    private javax.swing.JRadioButton scaleGlobViewRadioButton;
     private javax.swing.JRadioButton scaleToConditionRadioButton;
     private javax.swing.JRadioButton scaleToExperimentRadioButton;
     private javax.swing.JRadioButton shiftedCoordinatesRadioButton;

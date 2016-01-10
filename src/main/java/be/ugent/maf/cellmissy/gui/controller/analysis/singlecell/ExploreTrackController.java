@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.AbstractButton;
-import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
@@ -86,7 +85,6 @@ class ExploreTrackController {
     // model
     private BindingGroup bindingGroup;
     private PlayTrackSwingWorker playTrackSwingWorker;
-    private Color chosenColor;
     // view
     private ExploreTrackPanel exploreTrackPanel;
     private PlotSettingsMenuBar plotSettingsMenuBar;
@@ -152,7 +150,7 @@ class ExploreTrackController {
         boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
         Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
         TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints,
-                showEndPoints, trackCoordinatesController.getEndPoints(), selectedTrackIndex, lineWidth, false);
+                  showEndPoints, trackCoordinatesController.getEndPoints(), selectedTrackIndex, lineWidth, false);
         coordinatesChartPanel.getChart().getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
     }
 
@@ -174,7 +172,7 @@ class ExploreTrackController {
             button.addItemListener(itemActionListener);
         }
 
-        plotSettingsMenuBar.getUseSingleColorCheckBoxMenuItem().addItemListener(new ColorItemActionListener());
+        plotSettingsMenuBar.getUseCellMissyColors().addItemListener(new ColorItemActionListener());
 
     }
 
@@ -321,15 +319,17 @@ class ExploreTrackController {
         // refresh the plot
         JFreeChart coordinatesChart = coordinatesChartPanel.getChart();
         JFreeChartUtils.setupTrackChart(coordinatesChart);
+        int length = GuiUtils.getAvailableColors().length;
+        int conditionIndex = trackCoordinatesController.getPlateConditionList().indexOf(trackCoordinatesController.getCurrentCondition());
         boolean plotLines = plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().isSelected();
         boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
         boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
-        boolean useSingleColor = plotSettingsMenuBar.getUseSingleColorCheckBoxMenuItem().isSelected();
+        boolean useSingleColor = plotSettingsMenuBar.getUseCellMissyColors().isSelected();
         int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
         Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
         TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints,
-                trackCoordinatesController.getEndPoints(), selectedTrackIndex, lineWidth, useSingleColor);
-        trackXYLineAndShapeRenderer.setChosenColor(chosenColor);
+                  trackCoordinatesController.getEndPoints(), selectedTrackIndex, lineWidth, useSingleColor);
+        trackXYLineAndShapeRenderer.setChosenColor(GuiUtils.getAvailableColors()[conditionIndex % length]);
         coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
         // @todo: reset the time slider, null pointer exception !
 //        exploreTrackPanel.getTimeSlider().setLabelTable(null);
@@ -343,10 +343,12 @@ class ExploreTrackController {
         @Override
         public void itemStateChanged(ItemEvent e) {
             int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
+            int length = GuiUtils.getAvailableColors().length;
+            int conditionIndex = trackCoordinatesController.getPlateConditionList().indexOf(trackCoordinatesController.getCurrentCondition());
             List<Integer> endPoints = trackCoordinatesController.getEndPoints();
             PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(selectedTrackIndex, plotSettingsMenuBar, endPoints);
             TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
-            renderer.setChosenColor(chosenColor);
+            renderer.setChosenColor(GuiUtils.getAvailableColors()[conditionIndex % length]);
             coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
         }
     }
@@ -360,16 +362,15 @@ class ExploreTrackController {
         @Override
         public void itemStateChanged(ItemEvent e) {
             int selectedTrackIndex = -1;
+            int length = GuiUtils.getAvailableColors().length;
+            int conditionIndex = trackCoordinatesController.getPlateConditionList().indexOf(trackCoordinatesController.getCurrentCondition());
             List<Integer> endPoints = trackCoordinatesController.getEndPoints();
             PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(selectedTrackIndex,
-                    plotSettingsMenuBar, endPoints);
+                      plotSettingsMenuBar, endPoints);
             TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
-            // show the color chooser only if the item is being selected
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                // show a color chooser
-                chosenColor = JColorChooser.showDialog(null, "pick a color", Color.BLACK);
+                renderer.setChosenColor(GuiUtils.getAvailableColors()[conditionIndex % length]);
             }
-            renderer.setChosenColor(chosenColor);
             coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
         }
     }
@@ -598,7 +599,6 @@ class ExploreTrackController {
     private void setupConvexHullChart(JFreeChart convexHullChart, TrackDataHolder trackDataHolder) {
         XYPlot xyPlot = convexHullChart.getXYPlot();
         JFreeChartUtils.setupXYPlot(xyPlot);
-//        xyPlot.setDomainGridlinePaint(Color.black);
         // set title font
         convexHullChart.getTitle().setFont(JFreeChartUtils.getChartFont());
         // set up the chart

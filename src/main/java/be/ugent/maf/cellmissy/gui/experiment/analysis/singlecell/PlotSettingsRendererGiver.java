@@ -50,32 +50,32 @@ public class PlotSettingsRendererGiver {
         boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
         boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
         Float selectedLineWidth = plotSettingsMenuBar.getSelectedLineWidth();
-        boolean useSingleColor = plotSettingsMenuBar.getUseSingleColorCheckBoxMenuItem().isSelected();
+        boolean useCellMissyColors = plotSettingsMenuBar.getUseCellMissyColors().isSelected();
 
         TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer;
         String menuItemText = ((JMenuItem) e.getSource()).getText();
         if (menuItemText.equalsIgnoreCase("plot lines")) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, plotPoints, showEndPoints, endPoints, selectedTrackIndex, selectedLineWidth, useSingleColor);
+                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, plotPoints, showEndPoints, endPoints, selectedTrackIndex, selectedLineWidth, useCellMissyColors);
             } else {
                 // if the checkbox is being deselected, check for the points checkbox, if it's deselected, select it
                 if (!plotPoints) {
                     plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().setSelected(true);
                 }
-                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(false, true, false, null, selectedTrackIndex, selectedLineWidth, useSingleColor);
+                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(false, true, false, null, selectedTrackIndex, selectedLineWidth, useCellMissyColors);
             }
         } else if (menuItemText.equalsIgnoreCase("plot points")) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 if (showEndPoints) {
                     plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().setSelected(false);
                 }
-                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, true, false, null, selectedTrackIndex, selectedLineWidth, useSingleColor);
+                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, true, false, null, selectedTrackIndex, selectedLineWidth, useCellMissyColors);
             } else {
                 // if the checkbox is being deselected, check for the lines checkbox, if it's deselected, select it
                 if (!plotLines) {
                     plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().setSelected(true);
                 }
-                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, showEndPoints, endPoints, selectedTrackIndex, selectedLineWidth, useSingleColor);
+                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, showEndPoints, endPoints, selectedTrackIndex, selectedLineWidth, useCellMissyColors);
             }
         } else if (menuItemText.equalsIgnoreCase("show endpoints")) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -83,12 +83,12 @@ public class PlotSettingsRendererGiver {
                 if (plotPoints) { // first of all, to show the endpoints we need to have only lines and not points
                     plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().setSelected(false);
                 }
-                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, true, endPoints, selectedTrackIndex, selectedLineWidth, useSingleColor);
+                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(true, false, true, endPoints, selectedTrackIndex, selectedLineWidth, useCellMissyColors);
             } else {
                 // need to hide the endpoints
-                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, false, null, selectedTrackIndex, selectedLineWidth, useSingleColor);
+                trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, false, null, selectedTrackIndex, selectedLineWidth, useCellMissyColors);
             }
-        } else if (menuItemText.equalsIgnoreCase("use single color...")) {
+        } else if (menuItemText.equalsIgnoreCase("use cellmissy colors ...")) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, endPoints, -1, selectedLineWidth, true);
             } else {
@@ -98,7 +98,7 @@ public class PlotSettingsRendererGiver {
         } else {
             // line widths (floats): get the text, cast to float
             float lineWidth = Float.parseFloat(menuItemText);
-            trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, endPoints, selectedTrackIndex, lineWidth, useSingleColor);
+            trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines, plotPoints, showEndPoints, endPoints, selectedTrackIndex, lineWidth, useCellMissyColors);
         }
         return trackXYLineAndShapeRenderer;
     }

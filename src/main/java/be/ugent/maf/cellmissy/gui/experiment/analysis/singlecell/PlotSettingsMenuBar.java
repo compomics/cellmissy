@@ -34,7 +34,7 @@ public class PlotSettingsMenuBar extends JMenuBar {
     private JCheckBoxMenuItem plotPointsCheckBoxMenuItem;
     private JCheckBoxMenuItem plotLinesCheckBoxMenuItem;
     private JCheckBoxMenuItem showEndPointsCheckBoxMenuItem;
-    private JCheckBoxMenuItem useSingleColorCheckBoxMenuItem;
+    private JCheckBoxMenuItem useCellMissyColors;
     //a button group: a button for each line width of the jfreechart utils class
     private ButtonGroup linesButtonGroup;
 
@@ -47,7 +47,8 @@ public class PlotSettingsMenuBar extends JMenuBar {
 
     /**
      * Getters
-     * @return 
+     *
+     * @return
      */
     public JCheckBoxMenuItem getPlotPointsCheckBoxMenuItem() {
         return plotPointsCheckBoxMenuItem;
@@ -65,13 +66,14 @@ public class PlotSettingsMenuBar extends JMenuBar {
         return linesButtonGroup;
     }
 
-    public JCheckBoxMenuItem getUseSingleColorCheckBoxMenuItem() {
-        return useSingleColorCheckBoxMenuItem;
+    public JCheckBoxMenuItem getUseCellMissyColors() {
+        return useCellMissyColors;
     }
 
     /**
      * Public methods
-     * @return 
+     *
+     * @return
      */
     //Get the selected line width from the button group
     public Float getSelectedLineWidth() {
@@ -126,7 +128,7 @@ public class PlotSettingsMenuBar extends JMenuBar {
         plotLinesCheckBoxMenuItem = new JCheckBoxMenuItem("Plot Lines");
         plotPointsCheckBoxMenuItem = new JCheckBoxMenuItem("Plot Points");
         showEndPointsCheckBoxMenuItem = new JCheckBoxMenuItem("Show Endpoints");
-        useSingleColorCheckBoxMenuItem = new JCheckBoxMenuItem("Use Single Color...");
+        useCellMissyColors = new JCheckBoxMenuItem("Use CellMissy colors ...");
 
         //add the menu items to the main menu
         mainMenu.add(plotLinesCheckBoxMenuItem);
@@ -134,7 +136,7 @@ public class PlotSettingsMenuBar extends JMenuBar {
         mainMenu.add(new JSeparator());
         mainMenu.add(showEndPointsCheckBoxMenuItem);
         mainMenu.add(new JSeparator());
-        mainMenu.add(useSingleColorCheckBoxMenuItem);
+        mainMenu.add(useCellMissyColors);
 
         //by deafult lines and endpoints are shown (points are not shown)
         plotLinesCheckBoxMenuItem.setSelected(true);

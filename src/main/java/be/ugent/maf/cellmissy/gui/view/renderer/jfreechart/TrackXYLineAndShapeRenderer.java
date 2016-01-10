@@ -33,7 +33,7 @@ public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
     private final List<Integer> endPoints; //integers for the endpoints
     private final int selectedTrackIndex; //index for the currently selected track
     private final float lineWidth; // thickness for the line
-    private final boolean useSingleColor; // a single color for all the tracks plotted?
+    private final boolean useCellMissyColor; // use colors of cellmissy?
     private Color chosenColor; // if a single color, the one chosen by the user
 
     /**
@@ -46,16 +46,20 @@ public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
      * @param selectedTrackIndex: index for the current series (i.e. the track
      * to highlight in the plot)
      * @param lineWidth: thickness to render the line
-     * @param useSingleColor: use single color or not?
+     * @param useCellMissyColor: use single color or not? - the one CellMissy
+     * uses
+     * @param useCustomColor: use single color or not? the one the user will
+     * select
      */
-    public TrackXYLineAndShapeRenderer(boolean plotLines, boolean plotPoints, boolean showEndPoints, List<Integer> endPoints, int selectedTrackIndex, float lineWidth, boolean useSingleColor) {
+    public TrackXYLineAndShapeRenderer(boolean plotLines, boolean plotPoints, boolean showEndPoints, List<Integer> endPoints,
+              int selectedTrackIndex, float lineWidth, boolean useCellMissyColor) {
         this.plotLines = plotLines;
         this.plotPoints = plotPoints;
         this.showEndPoints = showEndPoints;
         this.endPoints = endPoints;
         this.selectedTrackIndex = selectedTrackIndex;
         this.lineWidth = lineWidth;
-        this.useSingleColor = useSingleColor;
+        this.useCellMissyColor = useCellMissyColor;
     }
 
     /**
@@ -101,7 +105,7 @@ public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
                 return GuiUtils.getNonImagedColor();
             }
         } else { // no track is selected
-            if (useSingleColor) {
+            if (useCellMissyColor) {
                 return chosenColor;
             } else {
                 return GuiUtils.getAvailableColors()[colorIndex];

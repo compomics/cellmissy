@@ -37,13 +37,14 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
-import javax.swing.JColorChooser;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.JTableHeader;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -80,7 +81,6 @@ class TrackCoordinatesController {
     private ObservableList<Well> wellBindingList;
     private JTable coordinatesTable;
     private ObservableList<TrackDataHolder> trackDataHolderBindingList;
-    private Color chosenColor;
     // view
     private TrackCoordinatesPanel trackCoordinatesPanel;
     private PlotSettingsMenuBar plotSettingsMenuBar;
@@ -92,7 +92,9 @@ class TrackCoordinatesController {
     @Autowired
     private ExploreTrackController exploreTrackController;
     @Autowired
-    private GlobalViewController globalViewController;
+    private GlobalViewExperimentController globalViewExperimentController;
+    @Autowired
+    private GlobalViewConditionController globalViewConditionController;
     // services
     private GridBagConstraints gridBagConstraints;
 
@@ -107,7 +109,8 @@ class TrackCoordinatesController {
         initTrackCoordinatesPanel();
         // init child controllers
         exploreTrackController.init();
-        globalViewController.init();
+        globalViewExperimentController.init();
+        globalViewConditionController.init();
     }
 
     /**
@@ -262,7 +265,7 @@ class TrackCoordinatesController {
     }
 
     /**
-     * For the given condition, show the normalised track coordinates in a
+     * For the given condition, show the normalized track coordinates in a
      * table.
      *
      * @param plateCondition
@@ -404,11 +407,13 @@ class TrackCoordinatesController {
         @Override
         public void itemStateChanged(ItemEvent e) {
             int selectedTrackIndex = -1;
+            int length = GuiUtils.getAvailableColors().length;
             List<Integer> endPoints = getEndPoints();
+            int conditionIndex = getPlateConditionList().indexOf(getCurrentCondition());
             PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(selectedTrackIndex,
                       plotSettingsMenuBar, endPoints);
             TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
-            renderer.setChosenColor(chosenColor);
+            renderer.setChosenColor(GuiUtils.getAvailableColors()[conditionIndex % length]);
             coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
         }
     }
@@ -422,16 +427,15 @@ class TrackCoordinatesController {
         @Override
         public void itemStateChanged(ItemEvent e) {
             int selectedTrackIndex = -1;
+            int length = GuiUtils.getAvailableColors().length;
+            int conditionIndex = getPlateConditionList().indexOf(getCurrentCondition());
             List<Integer> endPoints = getEndPoints();
             PlotSettingsRendererGiver plotSettingsRendererGiver = new PlotSettingsRendererGiver(selectedTrackIndex,
                       plotSettingsMenuBar, endPoints);
             TrackXYLineAndShapeRenderer renderer = plotSettingsRendererGiver.getRenderer(e);
-            // show the color chooser only if the item is being selected
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                // show a color chooser
-                chosenColor = JColorChooser.showDialog(null, "pick a color", Color.BLACK);
+                renderer.setChosenColor(GuiUtils.getAvailableColors()[conditionIndex % length]);
             }
-            renderer.setChosenColor(chosenColor);
             coordinatesChartPanel.getChart().getXYPlot().setRenderer(renderer);
         }
     }
@@ -456,7 +460,7 @@ class TrackCoordinatesController {
             button.addItemListener(itemActionListener);
         }
 
-        plotSettingsMenuBar.getUseSingleColorCheckBoxMenuItem().addItemListener(new ColorItemActionListener());
+        plotSettingsMenuBar.getUseCellMissyColors().addItemListener(new ColorItemActionListener());
     }
 
     /**
@@ -610,6 +614,23 @@ class TrackCoordinatesController {
                 } else {
                     PlotAllTracksWellSwingWorker plotAllTracksWellSwingWorker = new PlotAllTracksWellSwingWorker();
                     plotAllTracksWellSwingWorker.execute();
+                }
+            }
+        });
+
+        /**
+         * Change Listener to the Tabbed Pane
+         */
+        trackCoordinatesPanel.getTrackCoordinatesTabbedPane().addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (trackCoordinatesPanel.getTrackCoordinatesTabbedPane().getSelectedIndex() == 2
+                          && globalViewExperimentController.isFirstView()) {
+                    globalViewExperimentController.renderExperimentGlobalView();
+                    globalViewExperimentController.setFirstView(false);
+                } else if (trackCoordinatesPanel.getTrackCoordinatesTabbedPane().getSelectedIndex() == 1) {
+
                 }
             }
         });
@@ -865,8 +886,10 @@ class TrackCoordinatesController {
         boolean plotLines = plotSettingsMenuBar.getPlotLinesCheckBoxMenuItem().isSelected();
         boolean plotPoints = plotSettingsMenuBar.getPlotPointsCheckBoxMenuItem().isSelected();
         boolean showEndPoints = plotSettingsMenuBar.getShowEndPointsCheckBoxMenuItem().isSelected();
-        boolean useSingleColor = plotSettingsMenuBar.getUseSingleColorCheckBoxMenuItem().isSelected();
+        boolean useSingleColor = plotSettingsMenuBar.getUseCellMissyColors().isSelected();
         Float lineWidth = plotSettingsMenuBar.getSelectedLineWidth();
+        int length = GuiUtils.getAvailableColors().length;
+        int conditionIndex = getPlateConditionList().indexOf(getCurrentCondition());
         JFreeChart firstCoordinatesChart = ChartFactory.createXYLineChart(title, "x (µm)", "y (µm)",
                   xYSeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         // check if we need to scale axes to condition or to experiment
@@ -882,7 +905,7 @@ class TrackCoordinatesController {
         JFreeChartUtils.setupTrackChart(secondCoordinatesChart);
         TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines,
                   plotPoints, showEndPoints, getEndPoints(), -1, lineWidth, useSingleColor);
-        trackXYLineAndShapeRenderer.setChosenColor(chosenColor);
+        trackXYLineAndShapeRenderer.setChosenColor(GuiUtils.getAvailableColors()[conditionIndex % length]);
         firstCoordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
         secondCoordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
         coordinatesChartPanel.setChart(firstCoordinatesChart);
