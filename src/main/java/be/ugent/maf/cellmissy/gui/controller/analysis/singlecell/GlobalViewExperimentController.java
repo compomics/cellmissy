@@ -18,7 +18,6 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -301,14 +300,11 @@ class GlobalViewExperimentController {
         protected void done() {
             try {
                 get();
-
                 // use the data to set the charts
-                int nCols = Integer.parseInt((String) plotOptionsPanel.getnColsComboBox().getSelectedItem());
-                setChartsWithCollections(nCols);
+                setChartsWithCollections(Integer.parseInt((String) plotOptionsPanel.getnColsComboBox().getSelectedItem()));
                 trackCoordinatesController.hideWaitingDialog();
                 trackCoordinatesController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 trackCoordinatesController.controlGuiComponents(true);
-
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 trackCoordinatesController.handleUnexpectedError(ex);
@@ -405,12 +401,6 @@ class GlobalViewExperimentController {
             JFreeChartUtils.setupTrackChart(coordinatesChart);
             TrackXYLineAndShapeRenderer trackXYLineAndShapeRenderer = new TrackXYLineAndShapeRenderer(plotLines,
                       plotPoints, showEndPoints, getEndPoints(collection), -1, lineWidth, useCellMissyColor);
-//            if (!chosenColors.isEmpty()) {
-//                trackXYLineAndShapeRenderer.setChosenColor(chosenColors.get(i));
-//            } else {
-//                plotSettingsMenuBar.getUseCellMissyColors().setSelected(false);
-//            }
-
             trackXYLineAndShapeRenderer.setChosenColor(GuiUtils.getAvailableColors()[i % length]);
             coordinatesChart.getXYPlot().setRenderer(trackXYLineAndShapeRenderer);
             coordinatesChartPanel.setChart(coordinatesChart);

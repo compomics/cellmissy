@@ -249,6 +249,10 @@ class SingleCellPreProcessingController {
         singleCellMainController.hideWaitingDialog();
     }
 
+    public void renderConditionGlobalView(PlateCondition plateCondition) {
+        trackCoordinatesController.renderConditionGlobalView(plateCondition);
+    }
+
     /**
      * Get the category to plot for the tracks: normally 0, the plateCondition
      * category; if the well radio button is selected, set the category to plot

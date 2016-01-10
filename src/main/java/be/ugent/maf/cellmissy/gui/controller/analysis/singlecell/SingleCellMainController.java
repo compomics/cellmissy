@@ -392,6 +392,7 @@ public class SingleCellMainController {
                 } else {
                     singleCellPreProcessingController.showShiftedTrackCoordinatesInTable(selectedCondition);
                 }
+                singleCellPreProcessingController.renderConditionGlobalView(selectedCondition);
                 break;
             case "displSpeedParentPanel":
                 GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()

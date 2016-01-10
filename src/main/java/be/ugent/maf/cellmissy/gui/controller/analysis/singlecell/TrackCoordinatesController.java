@@ -190,6 +190,10 @@ class TrackCoordinatesController {
         return singleCellPreProcessingController.getConditionDataHolder(plateCondition);
     }
 
+    public void renderConditionGlobalView(PlateCondition plateCondition) {
+        globalViewConditionController.renderConditionGlobalView(plateCondition);
+    }
+
     /**
      * Iterate through the current track data holders and get the endpoints of
      * the correspondent tracks.
@@ -630,7 +634,7 @@ class TrackCoordinatesController {
                     globalViewExperimentController.renderExperimentGlobalView();
                     globalViewExperimentController.setFirstView(false);
                 } else if (trackCoordinatesPanel.getTrackCoordinatesTabbedPane().getSelectedIndex() == 1) {
-
+                    globalViewConditionController.renderConditionGlobalView(getCurrentCondition());
                 }
             }
         });
