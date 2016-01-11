@@ -14,7 +14,6 @@ import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.ExtendedBoxAndWhisker
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
-import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.InstantaneousDataTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -149,7 +148,7 @@ class DisplSpeedController {
         if (singleCellConditionDataHolder != null) {
             Double[] trackDisplacementsVector = singleCellConditionDataHolder.getTrackDisplacementsVector();
             String[] columnNames = {"well", "track", "track displacement (µm)"};
-            showTrackDataInTable(plateCondition, columnNames, trackDisplacementsVector);
+            singleCellPreProcessingController.showTrackDataInTable(plateCondition, dataTable, columnNames, trackDisplacementsVector);
         }
         displSpeedPanel.getTableInfoLabel().setText("Track Displacements (mean of instantaneous displacements)");
     }
@@ -164,7 +163,7 @@ class DisplSpeedController {
         if (singleCellConditionDataHolder != null) {
             Double[] trackSpeedsVector = singleCellConditionDataHolder.getTrackSpeedsVector();
             String[] columnNames = {"well", "track", "track speed (µm/min)"};
-            showTrackDataInTable(plateCondition, columnNames, trackSpeedsVector);
+            singleCellPreProcessingController.showTrackDataInTable(plateCondition, dataTable, columnNames, trackSpeedsVector);
         }
         displSpeedPanel.getTableInfoLabel().setText("Track Speeds (mean of instantaneous speeds)");
     }
@@ -239,29 +238,6 @@ class DisplSpeedController {
         displSpeedPanel.getInstantaneousDisplRadioButton().setSelected(true);
         // add view to parent panel
         singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedParentPanel().add(displSpeedPanel, gridBagConstraints);
-    }
-
-    /**
-     * Show the track data in a table.
-     *
-     * @param plateCondition: the condition from which the data needs to be
-     * shown.
-     * @param columnNames: the names for the columns of the table model.
-     * @param dataToShow: the data to be shown.
-     */
-    private void showTrackDataInTable(PlateCondition plateCondition, String columnNames[], Double[] dataToShow) {
-        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
-        if (singleCellConditionDataHolder != null) {
-            TrackDataTableModel trackDataTableModel = new TrackDataTableModel(columnNames, singleCellConditionDataHolder, dataToShow);
-            dataTable.setModel(trackDataTableModel);
-            AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
-            FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
-            for (int i = 0; i < dataTable.getColumnModel().getColumnCount(); i++) {
-                dataTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
-            }
-            dataTable.getColumnModel().getColumn(2).setCellRenderer(formatRenderer);
-            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
-        }
     }
 
     /**

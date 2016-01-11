@@ -6,11 +6,10 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
-import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.AngleDirectPanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.AngularHistogramRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
@@ -35,6 +34,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.PolarPlot;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
 import org.jfree.data.xy.XYSeries;
@@ -111,13 +111,30 @@ public class AngleDirectController {
     }
 
     /**
+     *
+     * @param plateCondition
+     */
+    public void showTrackAngleInTable(PlateCondition plateCondition) {
+        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        if (singleCellConditionDataHolder != null) {
+            Double[] turningAngleVector = singleCellConditionDataHolder.getMedianTurningAnglesVector();
+            String[] columnNames = {"well", "track", "turning angle"};
+            singleCellPreProcessingController.showTrackDataInTable(plateCondition, dataTable, columnNames, turningAngleVector);
+        }
+    }
+
+    /**
      * Plot the angle and the directionality data for a certain plate condition.
      *
      * @param plateCondition
      */
     public void plotAngleAndDirectData(PlateCondition plateCondition) {
-        plotInstTurnAngles(plateCondition);
-        plotPolarPlots(plateCondition);
+        if (angleDirectPanel.getInstTurnAngleRadioButton().isSelected()) {
+            plotInstTurnAngles(plateCondition);
+            plotPolarPlots(plateCondition);
+        } else if (angleDirectPanel.getTrackTurnAngleRadioButton().isSelected()) {
+            plotTrackTurningAngles(plateCondition);
+        }
     }
 
     /**
@@ -156,7 +173,21 @@ public class AngleDirectController {
                 //check that a condition is selected
                 if (currentCondition != null) {
                     showInstAngleInTable(currentCondition);
-                    plotAngleAndDirectData(currentCondition);
+                    plotInstTurnAngles(currentCondition);
+                }
+            }
+        });
+
+        // show and plot averaged-track turning angles
+        angleDirectPanel.getTrackTurnAngleRadioButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+                //check that a condition is selected
+                if (currentCondition != null) {
+                    showTrackAngleInTable(currentCondition);
+                    plotTrackTurningAngles(currentCondition);
                 }
             }
         });
@@ -204,10 +235,39 @@ public class AngleDirectController {
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         List<ChartPanel> histChartPanels = new ArrayList<>();
         if (singleCellConditionDataHolder != null) {
-            List<HistogramDataset> histogramDatasets = getInstTurnAngleDatasets(singleCellConditionDataHolder,
+            List<HistogramDataset> histogramDatasets = getInstTurnAngleHistDatasets(singleCellConditionDataHolder,
                       getNumberOfBins(singleCellConditionDataHolder));
             for (int i = 0; i < histogramDatasets.size(); i++) {
                 JFreeChart chart = ChartFactory.createHistogram("", "", "ITA - RF",
+                          histogramDatasets.get(i), PlotOrientation.VERTICAL, true, true, false);
+                JFreeChartUtils.setShadowVisible(chart, false);
+                JFreeChartUtils.setUpHistogramChart(chart, i);
+                ChartPanel histChartPanel = new ChartPanel(chart);
+                histChartPanels.add(histChartPanel);
+                // compute the constraints
+                GridBagConstraints tempConstraints = getGridBagConstraints(histogramDatasets.size(), i);
+                angleDirectPanel.getLeftPlotParentPanel().add(histChartPanel, tempConstraints);
+                angleDirectPanel.getLeftPlotParentPanel().revalidate();
+                angleDirectPanel.getLeftPlotParentPanel().repaint();
+            }
+        }
+    }
+
+    /**
+     * Plot the track turning angles for a certain condition. These are averaged
+     * (namely, the median is computed).
+     *
+     * @param plateCondition
+     */
+    private void plotTrackTurningAngles(PlateCondition plateCondition) {
+        angleDirectPanel.getLeftPlotParentPanel().removeAll();
+        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        List<ChartPanel> histChartPanels = new ArrayList<>();
+        if (singleCellConditionDataHolder != null) {
+            List<HistogramDataset> histogramDatasets = getTrackTurnAngleHistDatasets(singleCellConditionDataHolder,
+                      getNumberOfBins(singleCellConditionDataHolder));
+            for (int i = 0; i < histogramDatasets.size(); i++) {
+                JFreeChart chart = ChartFactory.createHistogram("", "", "MTA - RF",
                           histogramDatasets.get(i), PlotOrientation.VERTICAL, true, true, false);
                 JFreeChartUtils.setShadowVisible(chart, false);
                 JFreeChartUtils.setUpHistogramChart(chart, i);
@@ -244,9 +304,16 @@ public class AngleDirectController {
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         List<ChartPanel> polarChartPanels = new ArrayList<>();
         if (singleCellConditionDataHolder != null) {
+            List<List<Double>> counts = getCounts(singleCellConditionDataHolder);
             List<XYSeriesCollection> datasets = getInstTurnAngleDatasets(singleCellConditionDataHolder);
             for (int i = 0; i < datasets.size(); i++) {
                 JFreeChart chart = ChartFactory.createPolarChart("", datasets.get(i), true, true, false);
+
+                List<Double> frequencies = counts.get(i);
+
+                PolarPlot plot = (PolarPlot) chart.getPlot();
+                plot.setRenderer(new AngularHistogramRenderer(frequencies));
+
 //                JFreeChartUtils.setUpHistogramChart(chart, i);
                 ChartPanel polarChartPanel = new ChartPanel(chart);
                 polarChartPanels.add(polarChartPanel);
@@ -257,20 +324,53 @@ public class AngleDirectController {
                 angleDirectPanel.getRightPlotParentPanel().repaint();
             }
         }
+//            for (int i = 0; i < datasets.size(); i++) {
+//
+//                JFreeChart chart = ChartFactory.createPolarChart("", datasets.get(i), true, true, false);
+//                PolarPlot plot = (PolarPlot) chart.getPlot();
+//                plot.setRenderer(new AngularHistogramRenderer());
+//
+////                JFreeChartUtils.setUpHistogramChart(chart, i);
+//                ChartPanel polarChartPanel = new ChartPanel(chart);
+//                polarChartPanels.add(polarChartPanel);
+//                // compute the constraints
+//                GridBagConstraints tempConstraints = getGridBagConstraints(datasets.size(), i);
+//                angleDirectPanel.getRightPlotParentPanel().add(polarChartPanel, tempConstraints);
+//                angleDirectPanel.getRightPlotParentPanel().revalidate();
+//                angleDirectPanel.getRightPlotParentPanel().repaint();
+//            }
     }
 
     /**
-     * Create a list of datasets for the histograms.
+     * Create a list of datasets for the histograms (for the instantaneous
+     * turning angles).
      *
      * @param singleCellConditionDataHolder
      * @param bins
      * @return
      */
-    private List<HistogramDataset> getInstTurnAngleDatasets(SingleCellConditionDataHolder singleCellConditionDataHolder, int bins) {
+    private List<HistogramDataset> getInstTurnAngleHistDatasets(SingleCellConditionDataHolder singleCellConditionDataHolder, int bins) {
         List<HistogramDataset> datasets = new ArrayList<>();
         for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
             datasets.add(getHistogramDatasetForAWell(singleCellWellDataHolder.getWell().toString(),
-                      singleCellWellDataHolder.getTurningAnglesVector(), bins));
+                      singleCellWellDataHolder.getTurningAnglesVector(), bins, HistogramType.RELATIVE_FREQUENCY));
+        }
+        return datasets;
+    }
+
+    /**
+     * Create a list of datasets for the histograms (for the track median
+     * turning angles).
+     *
+     * @param singleCellConditionDataHolder
+     * @param bins
+     * @return
+     */
+    private List<HistogramDataset> getTrackTurnAngleHistDatasets(SingleCellConditionDataHolder singleCellConditionDataHolder, int bins) {
+        List<HistogramDataset> datasets = new ArrayList<>();
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+            datasets.add(getHistogramDatasetForAWell(singleCellWellDataHolder.getWell().toString(),
+                      singleCellWellDataHolder.getMedianTurningAnglesVector(), bins, HistogramType.RELATIVE_FREQUENCY));
         }
         return datasets;
     }
@@ -282,11 +382,11 @@ public class AngleDirectController {
      * @return
      */
     private List<XYSeriesCollection> getInstTurnAngleDatasets(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        List<XYSeriesCollection> datasets = new ArrayList<>();
+        List<XYSeriesCollection> list = new ArrayList<>();
         for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
-            datasets.add(getPolarDatasetForAWell(singleCellWellDataHolder));
+            list.add(getPolarDatasetForAWell(singleCellWellDataHolder));
         }
-        return datasets;
+        return list;
     }
 
     /**
@@ -296,42 +396,47 @@ public class AngleDirectController {
      * @param seriesKey
      * @return an HistogramDataset
      */
-    private HistogramDataset getHistogramDatasetForAWell(String seriesKey, Double[] data, int bins) {
+    private HistogramDataset getHistogramDatasetForAWell(String seriesKey, Double[] data, int bins, HistogramType type) {
         HistogramDataset dataset = new HistogramDataset();
-        dataset.setType(HistogramType.RELATIVE_FREQUENCY);
+        dataset.setType(type);
         dataset.addSeries(seriesKey, ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(data)), bins);
         return dataset;
     }
 
     private XYSeriesCollection getPolarDatasetForAWell(SingleCellWellDataHolder singleCellWellDataHolder) {
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        XYSeries series = new XYSeries(singleCellWellDataHolder.getWell().toString());
-        for (TrackDataHolder holder : singleCellWellDataHolder.getTrackDataHolders()) {
-            for (TrackPoint point : holder.getTrack().getTrackPointList()) {
-                double polarRadius = point.getGeometricPoint().getPolarRadius();
-                double theta = point.getGeometricPoint().getTheta();
-                series.add(theta, polarRadius);
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        HistogramDataset histogramDataset = getHistogramDatasetForAWell(singleCellWellDataHolder.getWell().toString(),
+                  singleCellWellDataHolder.getTurningAnglesVector(), 25, HistogramType.FREQUENCY);
+        for (int i = 0; i < histogramDataset.getSeriesCount(); i++) { // normally I only have one series here
+            XYSeries series = new XYSeries(singleCellWellDataHolder.getWell().toString(), false);
+            int itemCount = histogramDataset.getItemCount(i); // this is the number of bins
+            for (int j = 0; j < itemCount; j++) {
+                double startX = (double) histogramDataset.getStartX(i, j);
+                double endX = (double) histogramDataset.getEndX(i, j);
+                series.add(startX, endX);
             }
+            xySeriesCollection.addSeries(series);
         }
-        dataset.addSeries(series);
-//        double[] dataX = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(data));
-//        double[] dataY = new double[dataX.length];
-//        Arrays.fill(dataY, 1);
-//
-//        XYSeries series = JFreeChartUtils.generateXYSeries(dataX, dataY);
-//        dataset.addSeries(series);
-        return dataset;
+        return xySeriesCollection;
     }
 
-    private XYSeries createRandomData(final String name,
-              final double baseRadius,
-              final double thetaInc) {
-        final XYSeries series = new XYSeries(name);
-        for (double theta = 0.0; theta < 360.0; theta += thetaInc) {
-            final double radius = baseRadius * (1.0 + Math.random());
-            series.add(theta, radius);
+    private List<List<Double>> getCounts(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        List<List<Double>> list = new ArrayList<>();
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+            List<Double> counts = new ArrayList<>();
+            HistogramDataset histogramDataset = getHistogramDatasetForAWell(singleCellWellDataHolder.getWell().toString(),
+                      singleCellWellDataHolder.getTurningAnglesVector(), 25, HistogramType.FREQUENCY);
+            for (int i = 0; i < histogramDataset.getSeriesCount(); i++) { // normally I only have one series here
+                int itemCount = histogramDataset.getItemCount(i); // this is the number of bins
+                for (int j = 0; j < itemCount; j++) {
+
+                    Double count = (Double) histogramDataset.getY(i, j);
+                    counts.add(count);
+                }
+            }
+            list.add(counts);
         }
-        return series;
+        return list;
     }
 
     /**

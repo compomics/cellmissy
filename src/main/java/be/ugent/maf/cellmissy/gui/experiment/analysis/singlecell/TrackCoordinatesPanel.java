@@ -165,10 +165,10 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         globalViewConditionPanel = new javax.swing.JPanel();
         optionsConditionParentPanel = new javax.swing.JPanel();
         globalViewConditionParentPanel = new javax.swing.JPanel();
+        exploreTrackParentPanel = new javax.swing.JPanel();
         globalViewExperimentPanel = new javax.swing.JPanel();
         optionsExperimentParentPanel = new javax.swing.JPanel();
         globalViewExpParentPanel = new javax.swing.JPanel();
-        exploreTrackParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(1000, 680));
@@ -480,6 +480,9 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
 
         trackCoordinatesTabbedPane.addTab("Global View-Condition", globalViewConditionPanel);
 
+        exploreTrackParentPanel.setLayout(new java.awt.GridBagLayout());
+        trackCoordinatesTabbedPane.addTab("Explore Tracks", exploreTrackParentPanel);
+
         globalViewExperimentPanel.setLayout(new java.awt.GridBagLayout());
 
         optionsExperimentParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plot Options"));
@@ -509,9 +512,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         globalViewExperimentPanel.add(globalViewExpParentPanel, gridBagConstraints);
 
         trackCoordinatesTabbedPane.addTab("Global View-Experiment", globalViewExperimentPanel);
-
-        exploreTrackParentPanel.setLayout(new java.awt.GridBagLayout());
-        trackCoordinatesTabbedPane.addTab("Explore", exploreTrackParentPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

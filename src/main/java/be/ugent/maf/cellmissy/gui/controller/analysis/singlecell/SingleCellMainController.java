@@ -424,8 +424,12 @@ public class SingleCellMainController {
                           .getInspectingDataLabel());
                 showInfoMessage("Single Cell Turning Angles and Directionality Measures");
                 // check which button is selected for analysis
-                if(singleCellPreProcessingController.getAngleDirectPanel().getInstTurnAngleRadioButton().isSelected()){
+                if (singleCellPreProcessingController.getAngleDirectPanel().getInstTurnAngleRadioButton().isSelected()) {
                     singleCellPreProcessingController.showInstAngleInTable(selectedCondition);
+                } else if (singleCellPreProcessingController.getAngleDirectPanel().getTrackTurnAngleRadioButton().isSelected()) {
+                    singleCellPreProcessingController.showTrackAngleInTable(selectedCondition);
+                } else if (singleCellPreProcessingController.getAngleDirectPanel().getDynamicDirectRatioRadioButton().isSelected()) {
+
                 }
                 singleCellPreProcessingController.plotAngleAndDirectData(selectedCondition);
                 break;

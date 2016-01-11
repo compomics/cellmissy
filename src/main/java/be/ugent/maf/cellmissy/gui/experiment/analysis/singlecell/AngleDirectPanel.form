@@ -43,9 +43,11 @@
                           <Component id="dynamicDirectRatioRadioButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="endPointDirectRatioRadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="directionAutocorrelationRadioButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="436" max="32767" attributes="0"/>
+                  <EmptySpace pref="275" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -58,6 +60,7 @@
                       <Component id="endPointDirectRatioRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="dynamicDirectRatioRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="trackTurnAngleRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="directionAutocorrelationRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="tableInfoLabel" min="-2" max="-2" attributes="0"/>
@@ -98,6 +101,11 @@
         <Component class="javax.swing.JRadioButton" name="endPointDirectRatioRadioButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="end-point directionality ratios"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="directionAutocorrelationRadioButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="direction autocorrelation"/>
           </Properties>
         </Component>
       </SubComponents>

@@ -629,12 +629,12 @@ class TrackCoordinatesController {
 
             @Override
             public void stateChanged(ChangeEvent e) {
-                if (trackCoordinatesPanel.getTrackCoordinatesTabbedPane().getSelectedIndex() == 2
+                if (trackCoordinatesPanel.getTrackCoordinatesTabbedPane().getSelectedIndex() == 1) {
+                    globalViewConditionController.renderConditionGlobalView(getCurrentCondition());
+                } else if (trackCoordinatesPanel.getTrackCoordinatesTabbedPane().getSelectedIndex() == 3
                           && globalViewExperimentController.isFirstView()) {
                     globalViewExperimentController.renderExperimentGlobalView();
                     globalViewExperimentController.setFirstView(false);
-                } else if (trackCoordinatesPanel.getTrackCoordinatesTabbedPane().getSelectedIndex() == 1) {
-                    globalViewConditionController.renderConditionGlobalView(getCurrentCondition());
                 }
             }
         });

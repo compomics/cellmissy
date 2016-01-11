@@ -336,7 +336,6 @@ public class GlobalViewConditionController {
         boolean useCellMissyColor = plotSettingsMenuBar.getUseCellMissyColors().isSelected();
         int nPlots = xYSeriesCollections.size();
         int length = GuiUtils.getAvailableColors().length;
-        List<PlateCondition> plateConditionList = trackCoordinatesController.getPlateConditionList();
         for (int i = 0; i < nPlots; i++) {
             XYSeriesCollection collection = xYSeriesCollections.get(i);
             int numberTracks = collection.getSeries().size();

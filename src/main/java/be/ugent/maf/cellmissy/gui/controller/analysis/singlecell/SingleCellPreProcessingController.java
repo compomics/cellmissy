@@ -20,8 +20,10 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnaly
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplSpeedPanel;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 
@@ -200,6 +202,10 @@ class SingleCellPreProcessingController {
     public void showInstAngleInTable(PlateCondition plateCondition) {
         angleDirectController.showInstAngleInTable(plateCondition);
     }
+    
+    public void showTrackAngleInTable(PlateCondition plateCondition){
+        angleDirectController.showTrackAngleInTable(plateCondition);
+    }
 
     public void plotDisplAndSpeedData(PlateCondition plateCondition) {
         displSpeedController.plotDisplAndSpeedData(plateCondition);
@@ -208,7 +214,7 @@ class SingleCellPreProcessingController {
     public void plotAngleAndDirectData(PlateCondition plateCondition) {
         angleDirectController.plotAngleAndDirectData(plateCondition);
     }
-
+    
     public void showTrackDisplInTable(PlateCondition plateCondition) {
         displSpeedController.showTrackDisplInTable(plateCondition);
     }
@@ -251,6 +257,29 @@ class SingleCellPreProcessingController {
 
     public void renderConditionGlobalView(PlateCondition plateCondition) {
         trackCoordinatesController.renderConditionGlobalView(plateCondition);
+    }
+
+    /**
+     * Show track data in a table.
+     *
+     * @param plateCondition: the condition to show the data for
+     * @param dataTable: the actual JTable
+     * @param columnNames: the header for the table
+     * @param dataToShow: the data to show in the table
+     */
+    public void showTrackDataInTable(PlateCondition plateCondition, JTable dataTable, String columnNames[], Double[] dataToShow) {
+        SingleCellConditionDataHolder singleCellConditionDataHolder = getConditionDataHolder(plateCondition);
+        if (singleCellConditionDataHolder != null) {
+            TrackDataTableModel trackDataTableModel = new TrackDataTableModel(columnNames, singleCellConditionDataHolder, dataToShow);
+            dataTable.setModel(trackDataTableModel);
+            AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
+            FormatRenderer formatRenderer = new FormatRenderer(getFormat(), SwingConstants.CENTER);
+            for (int i = 0; i < dataTable.getColumnModel().getColumnCount(); i++) {
+                dataTable.getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
+            }
+            dataTable.getColumnModel().getColumn(2).setCellRenderer(formatRenderer);
+            dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
+        }
     }
 
     /**

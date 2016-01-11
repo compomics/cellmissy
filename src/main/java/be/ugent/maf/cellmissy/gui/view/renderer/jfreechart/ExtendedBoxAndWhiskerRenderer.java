@@ -85,8 +85,6 @@ public class ExtendedBoxAndWhiskerRenderer extends BoxAndWhiskerRenderer {
         double categoryStart = domainAxis.getCategoryStart(column, getColumnCount(), dataArea, plot.getDomainAxisEdge());
         double categoryWidth = categoryEnd - categoryStart;
 
-//        domainAxis.setLowerMargin(0.3);
-//        domainAxis.setUpperMargin(0.3);
         domainAxis.setCategoryMargin(0.25);
 
         rangeAxis.setUpperMargin(0.3);
