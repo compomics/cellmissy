@@ -46,12 +46,8 @@ public class AngleDirectPanel extends javax.swing.JPanel {
         return directionAutocorrelationRadioButton;
     }
 
-    public JPanel getLeftPlotParentPanel() {
-        return leftPlotParentPanel;
-    }
-
-    public JPanel getRightPlotParentPanel() {
-        return rightPlotParentPanel;
+    public JPanel getTurningAngleParentPanel() {
+        return turningAngleParentPanel;
     }
 
     public JLabel getTableInfoLabel() {
@@ -77,12 +73,13 @@ public class AngleDirectPanel extends javax.swing.JPanel {
         directionAutocorrelationRadioButton = new javax.swing.JRadioButton();
         bottomSplitPane = new javax.swing.JSplitPane();
         dataTablePanel = new javax.swing.JPanel();
-        plotsSplitPane = new javax.swing.JSplitPane();
-        leftPlotParentPanel = new javax.swing.JPanel();
-        rightPlotParentPanel = new javax.swing.JPanel();
+        turningAngleParentPanel = new javax.swing.JPanel();
 
+        setMinimumSize(new java.awt.Dimension(300, 250));
+        setPreferredSize(new java.awt.Dimension(600, 450));
         setLayout(new java.awt.GridBagLayout());
 
+        radioButtonsPanel.setOpaque(false);
         radioButtonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         tableInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
@@ -117,12 +114,12 @@ public class AngleDirectPanel extends javax.swing.JPanel {
                         .addComponent(endPointDirectRatioRadioButton)
                         .addGap(18, 18, 18)
                         .addComponent(directionAutocorrelationRadioButton)))
-                .addContainerGap(275, Short.MAX_VALUE))
+                .addContainerGap(124, Short.MAX_VALUE))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, radioButtonsPanelLayout.createSequentialGroup()
-                .addContainerGap(12, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(instTurnAngleRadioButton)
                     .addComponent(endPointDirectRatioRadioButton)
@@ -150,15 +147,9 @@ public class AngleDirectPanel extends javax.swing.JPanel {
         dataTablePanel.setLayout(new java.awt.BorderLayout());
         bottomSplitPane.setLeftComponent(dataTablePanel);
 
-        plotsSplitPane.setDividerLocation(400);
-
-        leftPlotParentPanel.setLayout(new java.awt.GridBagLayout());
-        plotsSplitPane.setLeftComponent(leftPlotParentPanel);
-
-        rightPlotParentPanel.setLayout(new java.awt.GridBagLayout());
-        plotsSplitPane.setRightComponent(rightPlotParentPanel);
-
-        bottomSplitPane.setRightComponent(plotsSplitPane);
+        turningAngleParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        turningAngleParentPanel.setLayout(new java.awt.GridBagLayout());
+        bottomSplitPane.setRightComponent(turningAngleParentPanel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -178,11 +169,9 @@ public class AngleDirectPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton dynamicDirectRatioRadioButton;
     private javax.swing.JRadioButton endPointDirectRatioRadioButton;
     private javax.swing.JRadioButton instTurnAngleRadioButton;
-    private javax.swing.JPanel leftPlotParentPanel;
-    private javax.swing.JSplitPane plotsSplitPane;
     private javax.swing.JPanel radioButtonsPanel;
-    private javax.swing.JPanel rightPlotParentPanel;
     private javax.swing.JLabel tableInfoLabel;
     private javax.swing.JRadioButton trackTurnAngleRadioButton;
+    private javax.swing.JPanel turningAngleParentPanel;
     // End of variables declaration//GEN-END:variables
 }

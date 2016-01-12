@@ -76,7 +76,6 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
         setLayout(new java.awt.GridBagLayout());
 
         radioButtonsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        radioButtonsPanel.setOpaque(false);
         radioButtonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         instantaneousDisplRadioButton.setText("instantaneous displacements");

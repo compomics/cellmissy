@@ -37,7 +37,11 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.PolarAxisLocation;
+import org.jfree.chart.plot.PolarPlot;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.DefaultPolarItemRenderer;
+import org.jfree.chart.renderer.PolarItemRenderer;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
@@ -445,6 +449,30 @@ public class JFreeChartUtils {
     }
 
     /**
+     * Set up a polar chart.
+     *
+     * @param chart
+     * @param wellIndex
+     */
+    public static void setupPolarChart(JFreeChart chart, int wellIndex) {
+        chart.getTitle().setFont(chartFont);
+        PolarPlot plot = (PolarPlot) chart.getPlot();
+        plot.setBackgroundPaint(Color.white);
+        plot.setOutlinePaint(Color.white);
+        plot.setCounterClockwise(true);
+        plot.setAxisLocation(PolarAxisLocation.EAST_BELOW);
+        plot.setAngleOffset(0);
+        int length = GuiUtils.getAvailableColors().length;
+        DefaultPolarItemRenderer renderer = (DefaultPolarItemRenderer) plot.getRenderer();
+        Color color = GuiUtils.getAvailableColors()[wellIndex % length];
+        renderer.setSeriesPaint(0, color);
+        renderer.setSeriesFilled(0, true);
+        renderer.setShapesVisible(false);
+//        chart.setBackgroundPaint(new Color(color.getRed(), color.getGreen(), color.getBlue(), 175));
+    }
+
+    /**
+     * Set up an histogram chart.
      *
      * @param chart
      * @param wellIndex
@@ -487,7 +515,8 @@ public class JFreeChartUtils {
         plot.setDomainAxis(domainAxis);
         int length = GuiUtils.getAvailableColors().length;
         XYItemRenderer renderer = plot.getRenderer();
-        renderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[wellIndex % length]);
+        Color color = GuiUtils.getAvailableColors()[wellIndex % length];
+        renderer.setSeriesPaint(0, new Color(color.getRed(), color.getGreen(), color.getBlue(), 175));
     }
 
     /**
