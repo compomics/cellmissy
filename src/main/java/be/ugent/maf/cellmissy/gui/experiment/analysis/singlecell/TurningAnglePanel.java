@@ -24,16 +24,16 @@ public class TurningAnglePanel extends javax.swing.JPanel {
         return histParentPanel;
     }
 
-    public JPanel getLeftParentPanel() {
-        return leftParentPanel;
+    public JPanel getMappedHistParentPanel() {
+        return mappedHistParentPanel;
     }
 
-    public JPanel getRightParentPanel() {
-        return rightParentPanel;
+    public JPanel getPolarPlotParentPanel() {
+        return polarPlotParentPanel;
     }
 
-    public JPanel getAngleHistogramParentPanel() {
-        return angleHistogramParentPanel;
+    public JPanel getRosePlotParentPanel() {
+        return rosePlotParentPanel;
     }
 
     /**
@@ -49,9 +49,9 @@ public class TurningAnglePanel extends javax.swing.JPanel {
         histParentPanel = new javax.swing.JPanel();
         histPolarPlotPanel = new javax.swing.JPanel();
         histPolarSplitPane = new javax.swing.JSplitPane();
-        leftParentPanel = new javax.swing.JPanel();
-        rightParentPanel = new javax.swing.JPanel();
-        angleHistogramParentPanel = new javax.swing.JPanel();
+        mappedHistParentPanel = new javax.swing.JPanel();
+        polarPlotParentPanel = new javax.swing.JPanel();
+        rosePlotParentPanel = new javax.swing.JPanel();
 
         histParentPanel.setLayout(new java.awt.GridBagLayout());
         turningAngleTabbedPane.addTab("histogram (−π, π]", histParentPanel);
@@ -59,13 +59,13 @@ public class TurningAnglePanel extends javax.swing.JPanel {
         histPolarSplitPane.setDividerLocation(400);
         histPolarSplitPane.setResizeWeight(0.5);
 
-        leftParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        leftParentPanel.setLayout(new java.awt.GridBagLayout());
-        histPolarSplitPane.setLeftComponent(leftParentPanel);
+        mappedHistParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        mappedHistParentPanel.setLayout(new java.awt.GridBagLayout());
+        histPolarSplitPane.setLeftComponent(mappedHistParentPanel);
 
-        rightParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        rightParentPanel.setLayout(new java.awt.GridBagLayout());
-        histPolarSplitPane.setRightComponent(rightParentPanel);
+        polarPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        polarPlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        histPolarSplitPane.setRightComponent(polarPlotParentPanel);
 
         javax.swing.GroupLayout histPolarPlotPanelLayout = new javax.swing.GroupLayout(histPolarPlotPanel);
         histPolarPlotPanel.setLayout(histPolarPlotPanelLayout);
@@ -90,8 +90,8 @@ public class TurningAnglePanel extends javax.swing.JPanel {
 
         turningAngleTabbedPane.addTab("histogram + polar plot [0, 2π)", histPolarPlotPanel);
 
-        angleHistogramParentPanel.setLayout(new java.awt.GridBagLayout());
-        turningAngleTabbedPane.addTab("angle histogram (rose plot)", angleHistogramParentPanel);
+        rosePlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        turningAngleTabbedPane.addTab("rose plot (angular histogram)", rosePlotParentPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -113,12 +113,12 @@ public class TurningAnglePanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel angleHistogramParentPanel;
     private javax.swing.JPanel histParentPanel;
     private javax.swing.JPanel histPolarPlotPanel;
     private javax.swing.JSplitPane histPolarSplitPane;
-    private javax.swing.JPanel leftParentPanel;
-    private javax.swing.JPanel rightParentPanel;
+    private javax.swing.JPanel mappedHistParentPanel;
+    private javax.swing.JPanel polarPlotParentPanel;
+    private javax.swing.JPanel rosePlotParentPanel;
     private javax.swing.JTabbedPane turningAngleTabbedPane;
     // End of variables declaration//GEN-END:variables
 }
