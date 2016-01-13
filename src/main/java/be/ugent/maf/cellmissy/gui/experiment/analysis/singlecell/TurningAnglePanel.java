@@ -32,6 +32,10 @@ public class TurningAnglePanel extends javax.swing.JPanel {
         return rightParentPanel;
     }
 
+    public JPanel getAngleHistogramParentPanel() {
+        return angleHistogramParentPanel;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -47,6 +51,7 @@ public class TurningAnglePanel extends javax.swing.JPanel {
         histPolarSplitPane = new javax.swing.JSplitPane();
         leftParentPanel = new javax.swing.JPanel();
         rightParentPanel = new javax.swing.JPanel();
+        angleHistogramParentPanel = new javax.swing.JPanel();
 
         histParentPanel.setLayout(new java.awt.GridBagLayout());
         turningAngleTabbedPane.addTab("histogram (−π, π]", histParentPanel);
@@ -85,6 +90,9 @@ public class TurningAnglePanel extends javax.swing.JPanel {
 
         turningAngleTabbedPane.addTab("histogram + polar plot [0, 2π)", histPolarPlotPanel);
 
+        angleHistogramParentPanel.setLayout(new java.awt.GridBagLayout());
+        turningAngleTabbedPane.addTab("angle histogram (rose plot)", angleHistogramParentPanel);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -105,6 +113,7 @@ public class TurningAnglePanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel angleHistogramParentPanel;
     private javax.swing.JPanel histParentPanel;
     private javax.swing.JPanel histPolarPlotPanel;
     private javax.swing.JSplitPane histPolarSplitPane;

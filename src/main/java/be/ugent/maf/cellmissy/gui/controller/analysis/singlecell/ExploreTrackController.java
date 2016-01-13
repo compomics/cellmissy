@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -62,10 +63,14 @@ import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.PolarPlot;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.DefaultPolarItemRenderer;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.statistics.HistogramDataset;
+import org.jfree.data.statistics.HistogramType;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -93,6 +98,8 @@ class ExploreTrackController {
     private ChartPanel displacementTChartPanel;
     private ChartPanel singleTrackCoordinatesChartPanel;
     private ChartPanel convexHullChartPanel;
+    private ChartPanel histogramChartPanel;
+    private ChartPanel polarPlotChartPanel;
     // parent controller
     @Autowired
     private TrackCoordinatesController trackCoordinatesController;
@@ -204,11 +211,20 @@ class ExploreTrackController {
         convexHullChartPanel = new ChartPanel(null);
         convexHullChartPanel.setOpaque(false);
 
+        histogramChartPanel = new ChartPanel(null);
+        histogramChartPanel.setOpaque(false);
+
+        polarPlotChartPanel = new ChartPanel(null);
+        polarPlotChartPanel.setOpaque(false);
+
         exploreTrackPanel.getxYTCoordinatesParentPanel().add(xYTCoordinateChartPanel, gridBagConstraints);
         exploreTrackPanel.getDisplacementTParentPanel().add(displacementTChartPanel, gridBagConstraints);
 
         exploreTrackPanel.getCoordinatesParentPanel().add(singleTrackCoordinatesChartPanel, gridBagConstraints);
         exploreTrackPanel.getConvexHullGraphicsParentPanel().add(convexHullChartPanel, gridBagConstraints);
+
+        exploreTrackPanel.getHistogramParentPanel().add(histogramChartPanel, gridBagConstraints);
+        exploreTrackPanel.getPolarPlotParentPanel().add(polarPlotChartPanel, gridBagConstraints);
 
         exploreTrackPanel.getTrackDataTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         exploreTrackPanel.getTrackDataTable().getTableHeader().setReorderingAllowed(false);
@@ -494,6 +510,10 @@ class ExploreTrackController {
         plotDisplacementsInTime(trackDataHolder);
         // plot the convex hull of the track
         plotConvexHull(trackDataHolder);
+        // plot the turning angles distribution
+        plotTurnAngleHistogram(trackDataHolder);
+        // plot the polar plot
+        plotPolarPlot(trackDataHolder);
         // plot the directionality ratio in time
         directionTrackController.plotDirectionalityRatioInTime(trackDataHolder);
         // plot the direction autocorrelation coefficients in time
@@ -672,6 +692,64 @@ class ExploreTrackController {
         xyPlot.setDataset(1, hullDataset);
         setupConvexHullChart(convexHullChart, trackDataHolder);
         convexHullChartPanel.setChart(convexHullChart);
+    }
+
+    /**
+     * Plot an histogram distribution of instantaneous turning angles for a
+     * given track.
+     *
+     * @param trackDataHolder
+     */
+    private void plotTurnAngleHistogram(TrackDataHolder trackDataHolder) {
+        HistogramDataset histDataset = getHistDataset(trackDataHolder);
+        JFreeChart histogramChart = ChartFactory.createHistogram("", "", "inst turn angle  - track " + trackDataHolder.getTrack().getTrackid(), histDataset,
+                  PlotOrientation.VERTICAL, true, true, false);
+        JFreeChartUtils.setShadowVisible(histogramChart, false);
+        JFreeChartUtils.setUpHistogramChart(histogramChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
+        histogramChartPanel.setChart(histogramChart);
+    }
+
+    /**
+     * For a given track, get the histogram dataset for its turning angles.
+     *
+     * @param trackDataHolder
+     * @return
+     */
+    private HistogramDataset getHistDataset(TrackDataHolder trackDataHolder) {
+        Double[] turningAngles = trackDataHolder.getStepCentricDataHolder().getTurningAngles();
+        double[] toPrimitive = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(turningAngles));
+        HistogramDataset dataset = new HistogramDataset();
+        dataset.setType(HistogramType.FREQUENCY);
+        double range = Arrays.stream(toPrimitive).max().getAsDouble() - Arrays.stream(toPrimitive).min().getAsDouble();
+        dataset.addSeries(trackDataHolder.getTrack().getTrackNumber(), toPrimitive, (int) range / 5);
+        return dataset;
+    }
+
+    /**
+     * Plot the polar plot for the instantaneous turning angles of a single cell
+     * track.
+     *
+     * @param trackDataHolder
+     */
+    private void plotPolarPlot(TrackDataHolder trackDataHolder) {
+        XYSeries series = new XYSeries(trackDataHolder.getTrack().getTrackNumber(), false);
+        HistogramDataset histDataset = getHistDataset(trackDataHolder);
+        for (int i = 0; i < histDataset.getSeriesCount(); i++) {
+            int itemCount = histDataset.getItemCount(i); // this is the number of bins
+            for (int j = 0; j < itemCount; j++) {
+                double startX = (double) histDataset.getStartX(i, j);
+                double endX = (double) histDataset.getEndX(i, j);
+                double theta = (startX + endX) / 2;
+                Double radius = (Double) histDataset.getY(i, j);
+                series.add(theta, radius);
+            }
+        }
+        XYSeriesCollection data = new XYSeriesCollection();
+        data.addSeries(series);
+        PolarPlot plot = new PolarPlot(data, new NumberAxis(), new DefaultPolarItemRenderer());
+        JFreeChart polarChart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+        JFreeChartUtils.setupPolarChart(polarChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
+        polarPlotChartPanel.setChart(polarChart);
     }
 
     /**

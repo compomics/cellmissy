@@ -89,6 +89,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         return clearSelectionButton;
     }
 
+    public JPanel getHistogramParentPanel() {
+        return histogramParentPanel;
+    }
+
+    public JPanel getPolarPlotParentPanel() {
+        return polarPlotParentPanel;
+    }
+
     /**
      * Creates new form ExploreTrackPanel
      */
@@ -138,6 +146,9 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         convexHullInfoPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         convexHullTable = new javax.swing.JTable();
+        turningAnglePanel = new javax.swing.JPanel();
+        histogramParentPanel = new javax.swing.JPanel();
+        polarPlotParentPanel = new javax.swing.JPanel();
         directionalityPanel = new javax.swing.JPanel();
         directionAutocorrelationsGraphicsParentPanel = new javax.swing.JPanel();
         directionAutocorrelationTimeOneGraphicsParentPanel = new javax.swing.JPanel();
@@ -173,7 +184,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                 .addGroup(rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(clearSelectionButton)
                     .addComponent(plotSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
         rightPanelLayout.setVerticalGroup(
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,7 +219,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             tracksListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tracksListPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tracksListPanelLayout.setVerticalGroup(
@@ -362,7 +373,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, playButton, stopButton);
+        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {playButton, stopButton});
 
         timeSliderPanelLayout.setVerticalGroup(
             timeSliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -388,7 +399,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                 .addContainerGap(124, Short.MAX_VALUE))
         );
 
-        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, playButton, stopButton);
+        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {playButton, stopButton});
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -480,6 +491,32 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("convex hull", convexHullPanel);
 
+        turningAnglePanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        turningAnglePanel.setLayout(new java.awt.GridBagLayout());
+
+        histogramParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        histogramParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 1.0;
+        turningAnglePanel.add(histogramParentPanel, gridBagConstraints);
+
+        polarPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        polarPlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 1.0;
+        turningAnglePanel.add(polarPlotParentPanel, gridBagConstraints);
+
+        jTabbedPane1.addTab("turning angles", turningAnglePanel);
+
         directionalityPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         directionalityPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         directionalityPanel.setLayout(new java.awt.GridBagLayout());
@@ -545,6 +582,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JPanel directionalityRatioGraphicsParentPanel;
     private javax.swing.JPanel displacementTParentPanel;
     private javax.swing.JPanel graphicsParentPanel;
+    private javax.swing.JPanel histogramParentPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
@@ -555,6 +593,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton playButton;
     private javax.swing.JPanel plotSettingsPanel;
+    private javax.swing.JPanel polarPlotParentPanel;
     private javax.swing.JPanel rightPanel;
     private javax.swing.JPanel shiftedCoordinatesPanel;
     private javax.swing.JButton stopButton;
@@ -566,6 +605,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JTable trackDataTable;
     private javax.swing.JList tracksList;
     private javax.swing.JPanel tracksListPanel;
+    private javax.swing.JPanel turningAnglePanel;
     private javax.swing.JTextField xTextField;
     private javax.swing.JPanel xYTCoordinatesParentPanel;
     private javax.swing.JTextField yTextField;

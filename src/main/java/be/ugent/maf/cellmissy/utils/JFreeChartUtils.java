@@ -468,7 +468,6 @@ public class JFreeChartUtils {
         renderer.setSeriesPaint(0, color);
         renderer.setSeriesFilled(0, true);
         renderer.setShapesVisible(false);
-//        chart.setBackgroundPaint(new Color(color.getRed(), color.getGreen(), color.getBlue(), 175));
     }
 
     /**

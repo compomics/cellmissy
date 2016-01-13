@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHo
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.AngleDirectPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TurningAnglePanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.AngularHistogramRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
@@ -137,8 +138,10 @@ public class AngleDirectController {
         if (angleDirectPanel.getInstTurnAngleRadioButton().isSelected()) {
             plotHistInstTurnAngles(plateCondition);
             plotPolarInstTurnAngles(plateCondition);
+            plotAngularHistogram(plateCondition);
         } else if (angleDirectPanel.getTrackTurnAngleRadioButton().isSelected()) {
             plotHistTrackTurnAngles(plateCondition);
+            plotPolarTrackTurnAngles(plateCondition);
         }
     }
 
@@ -180,6 +183,7 @@ public class AngleDirectController {
                     showInstAngleInTable(currentCondition);
                     plotHistInstTurnAngles(currentCondition);
                     plotPolarInstTurnAngles(currentCondition);
+                    plotAngularHistogram(currentCondition);
                 }
             }
         });
@@ -194,6 +198,7 @@ public class AngleDirectController {
                 if (currentCondition != null) {
                     showTrackAngleInTable(currentCondition);
                     plotHistTrackTurnAngles(currentCondition);
+                    plotPolarTrackTurnAngles(currentCondition);
                 }
             }
         });
@@ -280,28 +285,43 @@ public class AngleDirectController {
      */
     private void plotHistTrackTurnAngles(PlateCondition plateCondition) {
         turningAnglePanel.getHistParentPanel().removeAll();
+        turningAnglePanel.getLeftParentPanel().removeAll();
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         if (singleCellConditionDataHolder != null) {
-            List<HistogramDataset> histogramDatasets = getTrackTurnAngleHistDatasets(singleCellConditionDataHolder,
+            List<HistogramDataset> datasets = getTrackTurnAngleHistDatasets(singleCellConditionDataHolder,
                       getNumberOfBins(singleCellConditionDataHolder), false);
-            for (int i = 0; i < histogramDatasets.size(); i++) {
+            List<HistogramDataset> mappedDatasets = getTrackTurnAngleHistDatasets(singleCellConditionDataHolder,
+                      getNumberOfBins(singleCellConditionDataHolder), true); // these datasets are mapped to 0-360
+
+            for (int i = 0; i < datasets.size(); i++) {
                 JFreeChart chart = ChartFactory.createHistogram("", "", "MTA - RF",
-                          histogramDatasets.get(i), PlotOrientation.VERTICAL, true, true, false);
+                          datasets.get(i), PlotOrientation.VERTICAL, true, true, false);
                 JFreeChartUtils.setShadowVisible(chart, false);
                 JFreeChartUtils.setUpHistogramChart(chart, i);
                 ChartPanel histChartPanel = new ChartPanel(chart);
                 // compute the constraints
-                GridBagConstraints tempConstraints = getGridBagConstraints(histogramDatasets.size(), i);
+                GridBagConstraints tempConstraints = getGridBagConstraints(datasets.size(), i);
                 turningAnglePanel.getHistParentPanel().add(histChartPanel, tempConstraints);
                 turningAnglePanel.getHistParentPanel().revalidate();
                 turningAnglePanel.getHistParentPanel().repaint();
+
+                chart = ChartFactory.createHistogram("", "", "MTA - RF",
+                          mappedDatasets.get(i), PlotOrientation.VERTICAL, true, true, false);
+                JFreeChartUtils.setShadowVisible(chart, false);
+                JFreeChartUtils.setUpHistogramChart(chart, i);
+                histChartPanel = new ChartPanel(chart);
+                // compute the constraints
+                tempConstraints = getGridBagConstraints(datasets.size(), i);
+                turningAnglePanel.getLeftParentPanel().add(histChartPanel, tempConstraints);
+                turningAnglePanel.getLeftParentPanel().revalidate();
+                turningAnglePanel.getLeftParentPanel().repaint();
             }
         }
     }
 
     /**
-     * Compute number of bins for the angle histogram, so that bin size is
-     * always of 10 degrees.
+     * Compute number of bins for the angle histogram for a plate condition, so
+     * that bin size is always of 10 degrees.
      *
      * @param singleCellConditionDataHolder
      * @return the number of bins, integer.
@@ -312,6 +332,12 @@ public class AngleDirectController {
         return (int) range / 10;
     }
 
+    /**
+     * Same as previous method, but for a single well.
+     *
+     * @param singleCellWellDataHolder
+     * @return
+     */
     private int getNumberOfBins(SingleCellWellDataHolder singleCellWellDataHolder) {
         double[] toPrimitive = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(singleCellWellDataHolder.getTurningAnglesVector()));
         double range = Arrays.stream(toPrimitive).max().getAsDouble() - Arrays.stream(toPrimitive).min().getAsDouble();
@@ -329,6 +355,62 @@ public class AngleDirectController {
         if (singleCellConditionDataHolder != null) {
             // generate the datasets for the plots
             List<XYSeriesCollection> datasets = getInstTurnAngleDatasets(singleCellConditionDataHolder);
+            for (int i = 0; i < datasets.size(); i++) {
+                XYSeriesCollection dataset = datasets.get(i);
+                // create a new polar plot with this dataset
+                PolarPlot plot = new PolarPlot(dataset, new NumberAxis(), new DefaultPolarItemRenderer());
+                // create a new chart with this plot
+                JFreeChart chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+                JFreeChartUtils.setupPolarChart(chart, i);
+                ChartPanel polarChartPanel = new ChartPanel(chart);
+                // compute the constraints
+                GridBagConstraints tempConstraints = getGridBagConstraints(datasets.size(), i);
+                turningAnglePanel.getRightParentPanel().add(polarChartPanel, tempConstraints);
+                turningAnglePanel.getRightParentPanel().revalidate();
+                turningAnglePanel.getRightParentPanel().repaint();
+            }
+        }
+    }
+
+    /**
+     * Plot the angle histogram.
+     *
+     * @param plateCondition
+     */
+    private void plotAngularHistogram(PlateCondition plateCondition) {
+        turningAnglePanel.getAngleHistogramParentPanel().removeAll();
+        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        if (singleCellConditionDataHolder != null) {
+            // generate the datasets for the plots
+            List<XYSeriesCollection> datasets = getInstTurnAngleDatasets(singleCellConditionDataHolder);
+            for (int i = 0; i < datasets.size(); i++) {
+                XYSeriesCollection dataset = datasets.get(i);
+                // create a new polar plot with this dataset
+                PolarPlot plot = new PolarPlot(dataset, new NumberAxis(), new AngularHistogramRenderer(i, 5));
+                // create a new chart with this plot
+                JFreeChart chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+                JFreeChartUtils.setupPolarChart(chart, i);
+                ChartPanel angleHistChartPanel = new ChartPanel(chart);
+                // compute the constraints
+                GridBagConstraints tempConstraints = getGridBagConstraints(datasets.size(), i);
+                turningAnglePanel.getAngleHistogramParentPanel().add(angleHistChartPanel, tempConstraints);
+                turningAnglePanel.getAngleHistogramParentPanel().revalidate();
+                turningAnglePanel.getAngleHistogramParentPanel().repaint();
+            }
+        }
+    }
+
+    /**
+     * Plot the polar plots with the track turning angles.
+     *
+     * @param plateCondition
+     */
+    private void plotPolarTrackTurnAngles(PlateCondition plateCondition) {
+        turningAnglePanel.getRightParentPanel().removeAll();
+        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        if (singleCellConditionDataHolder != null) {
+            // generate the datasets for the plots
+            List<XYSeriesCollection> datasets = getTrackTurnAngleDatasets(singleCellConditionDataHolder);
             for (int i = 0; i < datasets.size(); i++) {
                 XYSeriesCollection dataset = datasets.get(i);
                 // create a new polar plot with this dataset
@@ -365,8 +447,8 @@ public class AngleDirectController {
     }
 
     /**
-     * Create a list of datasets for the histograms (for the track median
-     * turning angles).
+     * Create a list of datasets for the histograms (for the track turning
+     * angles).
      *
      * @param singleCellConditionDataHolder
      * @param bins
@@ -383,7 +465,8 @@ public class AngleDirectController {
     }
 
     /**
-     * Create a list of datasets for the polar plots.
+     * Create a list of datasets for the polar plots of instantaneous turning
+     * angles.
      *
      * @param singleCellConditionDataHolder
      * @return
@@ -391,7 +474,21 @@ public class AngleDirectController {
     private List<XYSeriesCollection> getInstTurnAngleDatasets(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         List<XYSeriesCollection> list = new ArrayList<>();
         for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
-            list.add(getPolarDatasetForAWell(singleCellWellDataHolder));
+            list.add(getPolarDatasetForAWell(singleCellWellDataHolder, singleCellWellDataHolder.getTurningAnglesVector()));
+        }
+        return list;
+    }
+
+    /**
+     * Create a list of datasets for the polar plots of track turning angles.
+     *
+     * @param singleCellConditionDataHolder
+     * @return
+     */
+    private List<XYSeriesCollection> getTrackTurnAngleDatasets(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        List<XYSeriesCollection> list = new ArrayList<>();
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+            list.add(getPolarDatasetForAWell(singleCellWellDataHolder, singleCellWellDataHolder.getMedianTurningAnglesVector()));
         }
         return list;
     }
@@ -427,32 +524,40 @@ public class AngleDirectController {
     }
 
     /**
+     * Create a polar dataset for a single well, given the data we want to make
+     * the plot for.
      *
      * @param singleCellWellDataHolder
+     * @param data
      * @return
      */
-    private XYSeriesCollection getPolarDatasetForAWell(SingleCellWellDataHolder singleCellWellDataHolder) {
-        XYSeriesCollection data = new XYSeriesCollection();
-        data.addSeries(createPolarSeries(singleCellWellDataHolder));
-        return data;
+    private XYSeriesCollection getPolarDatasetForAWell(SingleCellWellDataHolder singleCellWellDataHolder, Double[] data) {
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(createPolarSeries(singleCellWellDataHolder, data));
+        return dataset;
     }
 
     /**
+     * Create a polar series for a well, given the data we want to make the
+     * series (and downstream the plot) for.
      *
      * @param singleCellWellDataHolder
+     * @param data
      * @return the series.
      */
-    private XYSeries createPolarSeries(SingleCellWellDataHolder singleCellWellDataHolder) {
+    private XYSeries createPolarSeries(SingleCellWellDataHolder singleCellWellDataHolder, Double[] data) {
         XYSeries series = new XYSeries(singleCellWellDataHolder.getWell().toString(), false);
         HistogramDataset histogramDataset = getHistogramDatasetForAWell(singleCellWellDataHolder.getWell().toString(),
-                  singleCellWellDataHolder.getTurningAnglesVector(), getNumberOfBins(singleCellWellDataHolder), HistogramType.FREQUENCY, true);
+                  data, getNumberOfBins(singleCellWellDataHolder), HistogramType.FREQUENCY, true);
         // iterate through the series, even though we normally only have one here
         for (int i = 0; i < histogramDataset.getSeriesCount(); i++) {
             int itemCount = histogramDataset.getItemCount(i); // this is the number of bins
             for (int j = 0; j < itemCount; j++) {
                 double startX = (double) histogramDataset.getStartX(i, j);
                 double endX = (double) histogramDataset.getEndX(i, j);
+                // the angle in the middle of the bin
                 double theta = (startX + endX) / 2;
+                // the frequency of this angle in the histogram
                 Double radius = (Double) histogramDataset.getY(i, j);
                 series.add(theta, radius);
             }

@@ -156,7 +156,7 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
         Double[] excludeNullValues = AnalysisUtils.excludeNullValues(turningAngles);
         Double[] excludeNaNvalues = AnalysisUtils.excludeNaNvalues(excludeNullValues);
         // simply compute the median of the turning angles
-        double medianTurningAngle = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(excludeNaNvalues));
+        double medianTurningAngle = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNaNvalues));
         cellCentricDataHolder.setMedianTurningAngle(medianTurningAngle);
     }
 
