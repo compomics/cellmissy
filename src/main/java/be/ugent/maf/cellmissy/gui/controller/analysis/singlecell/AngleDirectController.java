@@ -11,6 +11,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.AngleDirectPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TurningAnglePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.AngularHistogramRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.CompassRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
@@ -142,10 +143,12 @@ public class AngleDirectController {
             plotHistTA(plateCondition);
             plotPolarTA(plateCondition);
             plotRoseTA(plateCondition);
+            plotCompassTA(plateCondition);
         } else if (angleDirectPanel.getTrackTurnAngleRadioButton().isSelected()) {
             plotHistTrackTA(plateCondition);
             plotPolarTrackTA(plateCondition);
             plotRoseTrackTA(plateCondition);
+            plotCompassTrackTA(plateCondition);
         }
     }
 
@@ -188,6 +191,7 @@ public class AngleDirectController {
                     plotHistTA(currentCondition);
                     plotPolarTA(currentCondition);
                     plotRoseTA(currentCondition);
+                    plotCompassTA(currentCondition);
                 }
             }
         });
@@ -204,6 +208,7 @@ public class AngleDirectController {
                     plotHistTrackTA(currentCondition);
                     plotPolarTrackTA(currentCondition);
                     plotRoseTrackTA(currentCondition);
+                    plotCompassTrackTA(currentCondition);
                 }
             }
         });
@@ -287,9 +292,9 @@ public class AngleDirectController {
         for (int i = 0; i < datasets.size(); i++) {
             XYSeriesCollection dataset = datasets.get(i);
             // create a new polar plot with this dataset
-            PolarPlot plot = new PolarPlot(dataset, new NumberAxis(), new DefaultPolarItemRenderer());
+            PolarPlot polarPlot = new PolarPlot(dataset, new NumberAxis(), new DefaultPolarItemRenderer());
             // create a new chart with this plot
-            JFreeChart chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+            JFreeChart chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, polarPlot, true);
             JFreeChartUtils.setupPolarChart(chart, i);
             ChartPanel polarChartPanel = new ChartPanel(chart);
             // compute the constraints
@@ -310,16 +315,38 @@ public class AngleDirectController {
         for (int i = 0; i < datasets.size(); i++) {
             XYSeriesCollection dataset = datasets.get(i);
             // create a new polar plot with this dataset, and set the custom renderer
-            PolarPlot plot = new PolarPlot(dataset, new NumberAxis(), new AngularHistogramRenderer(i, 5));
+            PolarPlot rosePlot = new PolarPlot(dataset, new NumberAxis(), new AngularHistogramRenderer(i, 5));
             // create a new chart with this plot
-            JFreeChart chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+            JFreeChart chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, rosePlot, true);
             JFreeChartUtils.setupPolarChart(chart, i);
-            ChartPanel angleHistChartPanel = new ChartPanel(chart);
+            ChartPanel rosePlotChartPanel = new ChartPanel(chart);
             // compute the constraints
             GridBagConstraints tempConstraints = getGridBagConstraints(datasets.size(), i);
-            turningAnglePanel.getRosePlotParentPanel().add(angleHistChartPanel, tempConstraints);
+            turningAnglePanel.getRosePlotParentPanel().add(rosePlotChartPanel, tempConstraints);
             turningAnglePanel.getRosePlotParentPanel().revalidate();
             turningAnglePanel.getRosePlotParentPanel().repaint();
+        }
+    }
+
+    /**
+     *
+     * @param datasets
+     */
+    private void renderCompassPlots(List<XYSeriesCollection> datasets) {
+        turningAnglePanel.getCompassPlotParentPanel().removeAll();
+        for (int i = 0; i < datasets.size(); i++) {
+            XYSeriesCollection dataset = datasets.get(i);
+            // create a new polar plot with this dataset, and set the custom renderer
+            PolarPlot polarPlot = new PolarPlot(dataset, new NumberAxis(), new CompassRenderer(i));
+            // create a new chart with this plot
+            JFreeChart chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, polarPlot, true);
+            JFreeChartUtils.setupPolarChart(chart, i);
+            ChartPanel compassChartPanel = new ChartPanel(chart);
+            // compute the constraints
+            GridBagConstraints tempConstraints = getGridBagConstraints(datasets.size(), i);
+            turningAnglePanel.getCompassPlotParentPanel().add(compassChartPanel, tempConstraints);
+            turningAnglePanel.getCompassPlotParentPanel().revalidate();
+            turningAnglePanel.getCompassPlotParentPanel().repaint();
         }
     }
 
@@ -416,6 +443,32 @@ public class AngleDirectController {
     }
 
     /**
+     *
+     * @param plateCondition
+     */
+    private void plotCompassTA(PlateCondition plateCondition) {
+        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        if (singleCellConditionDataHolder != null) {
+            // generate the datasets for the plots
+            List<XYSeriesCollection> datasets = getCompassTADataset(singleCellConditionDataHolder);
+            renderCompassPlots(datasets);
+        }
+    }
+
+    /**
+     *
+     * @param plateCondition
+     */
+    private void plotCompassTrackTA(PlateCondition plateCondition) {
+        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        if (singleCellConditionDataHolder != null) {
+            // generate the datasets for the plots
+            List<XYSeriesCollection> datasets = getCompassTrackTADatasets(singleCellConditionDataHolder);
+            renderCompassPlots(datasets);
+        }
+    }
+
+    /**
      * CREATE THE DATASETS FOR THE PLOTS.
      */
     /**
@@ -481,6 +534,54 @@ public class AngleDirectController {
             list.add(getPolarDatasetForAWell(singleCellWellDataHolder, singleCellWellDataHolder.getMedianTurningAnglesVector()));
         }
         return list;
+    }
+
+    /**
+     *
+     * @param singleCellConditionDataHolder
+     * @return
+     */
+    private List<XYSeriesCollection> getCompassTADataset(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        List<XYSeriesCollection> list = new ArrayList<>();
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+            double[] angles = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(singleCellWellDataHolder.getTurningAnglesVector()));
+            double[] displacements = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(singleCellWellDataHolder.getInstantaneousDisplacementsVector()));
+            list.add(getCompassDatasetForAWell(singleCellWellDataHolder, angles, displacements));
+        }
+        return list;
+    }
+
+    /**
+     *
+     * @param singleCellConditionDataHolder
+     * @return
+     */
+    private List<XYSeriesCollection> getCompassTrackTADatasets(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        List<XYSeriesCollection> list = new ArrayList<>();
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+            double[] angles = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(singleCellWellDataHolder.getMedianTurningAnglesVector()));
+            double[] displacements = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(singleCellWellDataHolder.getEuclideanDistancesVector()));
+            list.add(getCompassDatasetForAWell(singleCellWellDataHolder, angles, displacements));
+        }
+        return list;
+    }
+
+    /**
+     *
+     * @param singleCellWellDataHolder
+     * @param thetas: the angle values (x)
+     * @param radii: the displacement values (y)
+     * @return
+     */
+    private XYSeriesCollection getCompassDatasetForAWell(SingleCellWellDataHolder singleCellWellDataHolder, double[] thetas, double[] radii) {
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        XYSeries series = new XYSeries(singleCellWellDataHolder.getWell().toString(), false);
+
+        for (int i = 0; i < thetas.length; i++) {
+            series.add(thetas[i], radii[i]);
+        }
+        dataset.addSeries(series);
+        return dataset;
     }
 
     /**
