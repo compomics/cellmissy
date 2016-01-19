@@ -137,6 +137,10 @@ class ExploreTrackController {
         return trackCoordinatesController.getTrackDataHolderBindingList();
     }
 
+    public TrackDataHolder getSelectedTrackDataHolder() {
+        return trackCoordinatesController.getTrackDataHolderBindingList().get(exploreTrackPanel.getTracksList().getSelectedIndex());
+    }
+
     /**
      * Private methods
      */
@@ -466,6 +470,8 @@ class ExploreTrackController {
      * @param trackDataHolder
      */
     private void updateTrackData(TrackDataHolder trackDataHolder) {
+        // update the combo box with the time intervals
+        directionTrackController.updateDeltaTComboBox(trackDataHolder);
         // plot the data associated with the current track
         plotSingleTrackData(trackDataHolder);
         // update model for the track table
@@ -518,8 +524,10 @@ class ExploreTrackController {
         directionTrackController.plotDirectionalityRatioInTime(trackDataHolder);
         // plot the direction autocorrelation coefficients in time
         directionTrackController.plotDirectionAutocorrelationsInTime(trackDataHolder);
-        // plot direction autocorrelation at time one
+        // plot direction autocorrelation at time interval equal to 1
         directionTrackController.plotDirectionAutocorrelationTimeOne(trackDataHolder);
+        // plot direction autocorrelation with a specified time interval provided by the user
+        directionTrackController.plotDirectionAutocorrelationForDeltaT(trackDataHolder, (int) exploreTrackPanel.getDeltaTComboBox().getSelectedItem());
     }
 
     /**

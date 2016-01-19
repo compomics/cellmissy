@@ -9,7 +9,8 @@ import be.ugent.maf.cellmissy.entity.Track;
 import java.util.List;
 
 /**
- * This class keeps the instantaneous measurements about a certain track, i.e. step-centric measurements.
+ * This class keeps the instantaneous measurements about a certain track, i.e.
+ * step-centric measurements.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -48,6 +49,10 @@ public class StepCentricDataHolder {
     // a direction autocorrelation is defined as the cosine of the difference between turning angles at successive
     // time points
     private List<Double[]> directionAutocorrelations;
+
+    private double[][] dirAutoCorrMatrix;
+
+    private double[] diffAngles;
     // an array for the mean values of the direction autocorrelations
     // per each time point (overlapping time interval), a mean DA is computed
     private Double[] medianDirectionAutocorrelations;
@@ -150,6 +155,22 @@ public class StepCentricDataHolder {
 
     public void setDirectionAutocorrelations(List<Double[]> directionAutocorrelations) {
         this.directionAutocorrelations = directionAutocorrelations;
+    }
+
+    public double[][] getDirAutoCorrMatrix() {
+        return dirAutoCorrMatrix;
+    }
+
+    public void setDirAutoCorrMatrix(double[][] dirAutoCorrMatrix) {
+        this.dirAutoCorrMatrix = dirAutoCorrMatrix;
+    }
+
+    public double[] getDiffAngles() {
+        return diffAngles;
+    }
+
+    public void setDiffAngles(double[] diffAngles) {
+        this.diffAngles = diffAngles;
     }
 
     public Double[] getMedianDirectionAutocorrelations() {

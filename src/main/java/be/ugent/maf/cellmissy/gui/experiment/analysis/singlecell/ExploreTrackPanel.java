@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -97,6 +98,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         return polarPlotParentPanel;
     }
 
+    public JComboBox getDeltaTComboBox() {
+        return deltaTComboBox;
+    }
+
+    public JPanel getDirectionAutocorrelationDeltaTGraphicsParentPanel() {
+        return directionAutocorrelationDeltaTGraphicsParentPanel;
+    }
+
     /**
      * Creates new form ExploreTrackPanel
      */
@@ -114,13 +123,16 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        jSplitPane1 = new javax.swing.JSplitPane();
+        trackSelectionPanel = new javax.swing.JPanel();
         graphicsParentPanel = new javax.swing.JPanel();
-        rightPanel = new javax.swing.JPanel();
-        plotSettingsPanel = new javax.swing.JPanel();
-        clearSelectionButton = new javax.swing.JButton();
         tracksListPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tracksList = new javax.swing.JList();
+        rightPanel = new javax.swing.JPanel();
+        clearSelectionButton = new javax.swing.JButton();
+        plotSettingsPanel = new javax.swing.JPanel();
+        plotsPanel = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         shiftedCoordinatesPanel = new javax.swing.JPanel();
         coordinatesParentPanel = new javax.swing.JPanel();
@@ -151,59 +163,32 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         polarPlotParentPanel = new javax.swing.JPanel();
         directionalityPanel = new javax.swing.JPanel();
         directionAutocorrelationsGraphicsParentPanel = new javax.swing.JPanel();
-        directionAutocorrelationTimeOneGraphicsParentPanel = new javax.swing.JPanel();
         directionalityRatioGraphicsParentPanel = new javax.swing.JPanel();
+        directionAutocorrelationTimeOneGraphicsParentPanel = new javax.swing.JPanel();
+        directionAutocorrelationDeltaTPanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        deltaTComboBox = new javax.swing.JComboBox();
+        jLabel3 = new javax.swing.JLabel();
+        directionAutocorrelationDeltaTGraphicsParentPanel = new javax.swing.JPanel();
 
         setPreferredSize(new java.awt.Dimension(400, 600));
-        setLayout(new java.awt.GridBagLayout());
 
-        graphicsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        jSplitPane1.setDividerLocation(250);
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        trackSelectionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track Selection"));
+        trackSelectionPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        trackSelectionPanel.setLayout(new java.awt.GridBagLayout());
+
         graphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         graphicsParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.5;
-        add(graphicsParentPanel, gridBagConstraints);
-
-        rightPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        rightPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        plotSettingsPanel.setLayout(new java.awt.BorderLayout());
-
-        clearSelectionButton.setText("Clear Selection On List");
-
-        javax.swing.GroupLayout rightPanelLayout = new javax.swing.GroupLayout(rightPanel);
-        rightPanel.setLayout(rightPanelLayout);
-        rightPanelLayout.setHorizontalGroup(
-            rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(rightPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(clearSelectionButton)
-                    .addComponent(plotSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(21, Short.MAX_VALUE))
-        );
-        rightPanelLayout.setVerticalGroup(
-            rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(rightPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(plotSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(clearSelectionButton)
-                .addContainerGap(308, Short.MAX_VALUE))
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.2;
-        gridBagConstraints.weighty = 0.5;
-        add(rightPanel, gridBagConstraints);
+        gridBagConstraints.weightx = 0.35;
+        gridBagConstraints.weighty = 1.0;
+        trackSelectionPanel.add(graphicsParentPanel, gridBagConstraints);
 
         tracksListPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         tracksListPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -219,14 +204,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             tracksListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tracksListPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tracksListPanelLayout.setVerticalGroup(
             tracksListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tracksListPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -234,10 +219,49 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.35;
+        gridBagConstraints.weighty = 1.0;
+        trackSelectionPanel.add(tracksListPanel, gridBagConstraints);
+
+        rightPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        clearSelectionButton.setText("Clear Selection On List");
+
+        plotSettingsPanel.setLayout(new java.awt.BorderLayout());
+
+        javax.swing.GroupLayout rightPanelLayout = new javax.swing.GroupLayout(rightPanel);
+        rightPanel.setLayout(rightPanelLayout);
+        rightPanelLayout.setHorizontalGroup(
+            rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(rightPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(plotSettingsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
+                    .addComponent(clearSelectionButton))
+                .addContainerGap())
+        );
+        rightPanelLayout.setVerticalGroup(
+            rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(rightPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(plotSettingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(clearSelectionButton)
+                .addContainerGap(152, Short.MAX_VALUE))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.weighty = 0.5;
-        add(tracksListPanel, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        trackSelectionPanel.add(rightPanel, gridBagConstraints);
+
+        jSplitPane1.setTopComponent(trackSelectionPanel);
+
+        plotsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track Details"));
+        plotsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
 
@@ -282,14 +306,14 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         tablePanelLayout.setVerticalGroup(
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -311,7 +335,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         timeSliderPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Time Frames"));
         timeSliderPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         timeSliderPanel.setName(""); // NOI18N
-        timeSliderPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel5.setText("x (µm) =");
@@ -356,7 +379,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                             .addComponent(yTextField)))
                     .addGroup(timeSliderPanelLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(timeSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE))
+                        .addComponent(timeSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addGroup(timeSliderPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(timeSliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -372,9 +395,6 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                 .addComponent(stopButton, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {playButton, stopButton});
-
         timeSliderPanelLayout.setVerticalGroup(
             timeSliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(timeSliderPanelLayout.createSequentialGroup()
@@ -396,10 +416,8 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
                 .addComponent(playButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(stopButton)
-                .addContainerGap(124, Short.MAX_VALUE))
+                .addContainerGap(276, Short.MAX_VALUE))
         );
-
-        timeSliderPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {playButton, stopButton});
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -469,7 +487,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
             convexHullInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(convexHullInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
                 .addContainerGap())
         );
         convexHullInfoPanelLayout.setVerticalGroup(
@@ -515,7 +533,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         turningAnglePanel.add(polarPlotParentPanel, gridBagConstraints);
 
-        jTabbedPane1.addTab("turning angles", turningAnglePanel);
+        jTabbedPane1.addTab("turning angle", turningAnglePanel);
 
         directionalityPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         directionalityPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -533,41 +551,126 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         directionalityPanel.add(directionAutocorrelationsGraphicsParentPanel, gridBagConstraints);
 
-        directionAutocorrelationTimeOneGraphicsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        directionAutocorrelationTimeOneGraphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        directionAutocorrelationTimeOneGraphicsParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.weighty = 1.0;
-        directionalityPanel.add(directionAutocorrelationTimeOneGraphicsParentPanel, gridBagConstraints);
-
         directionalityRatioGraphicsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         directionalityRatioGraphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         directionalityRatioGraphicsParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.3;
         gridBagConstraints.weighty = 1.0;
         directionalityPanel.add(directionalityRatioGraphicsParentPanel, gridBagConstraints);
 
-        jTabbedPane1.addTab("directionality", directionalityPanel);
-
+        directionAutocorrelationTimeOneGraphicsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        directionAutocorrelationTimeOneGraphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        directionAutocorrelationTimeOneGraphicsParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.6;
-        gridBagConstraints.weighty = 0.5;
-        add(jTabbedPane1, gridBagConstraints);
+        gridBagConstraints.weightx = 0.3;
+        gridBagConstraints.weighty = 1.0;
+        directionalityPanel.add(directionAutocorrelationTimeOneGraphicsParentPanel, gridBagConstraints);
+
+        directionAutocorrelationDeltaTPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        directionAutocorrelationDeltaTPanel.setLayout(new java.awt.GridBagLayout());
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel3.setText("Δt: step size");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(deltaTComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(286, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(deltaTComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.1;
+        directionAutocorrelationDeltaTPanel.add(jPanel1, gridBagConstraints);
+
+        directionAutocorrelationDeltaTGraphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        directionAutocorrelationDeltaTGraphicsParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.9;
+        directionAutocorrelationDeltaTPanel.add(directionAutocorrelationDeltaTGraphicsParentPanel, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        directionalityPanel.add(directionAutocorrelationDeltaTPanel, gridBagConstraints);
+
+        jTabbedPane1.addTab("directionality", directionalityPanel);
+
+        javax.swing.GroupLayout plotsPanelLayout = new javax.swing.GroupLayout(plotsPanel);
+        plotsPanel.setLayout(plotsPanelLayout);
+        plotsPanelLayout.setHorizontalGroup(
+            plotsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1083, Short.MAX_VALUE)
+            .addGroup(plotsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(plotsPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jTabbedPane1)
+                    .addContainerGap()))
+        );
+        plotsPanelLayout.setVerticalGroup(
+            plotsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 537, Short.MAX_VALUE)
+            .addGroup(plotsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE))
+        );
+
+        jSplitPane1.setRightComponent(plotsPanel);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1117, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1097, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 838, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 816, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton clearSelectionButton;
@@ -576,6 +679,9 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JPanel convexHullPanel;
     private javax.swing.JTable convexHullTable;
     private javax.swing.JPanel coordinatesParentPanel;
+    private javax.swing.JComboBox deltaTComboBox;
+    private javax.swing.JPanel directionAutocorrelationDeltaTGraphicsParentPanel;
+    private javax.swing.JPanel directionAutocorrelationDeltaTPanel;
     private javax.swing.JPanel directionAutocorrelationTimeOneGraphicsParentPanel;
     private javax.swing.JPanel directionAutocorrelationsGraphicsParentPanel;
     private javax.swing.JPanel directionalityPanel;
@@ -585,14 +691,18 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JPanel histogramParentPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton playButton;
     private javax.swing.JPanel plotSettingsPanel;
+    private javax.swing.JPanel plotsPanel;
     private javax.swing.JPanel polarPlotParentPanel;
     private javax.swing.JPanel rightPanel;
     private javax.swing.JPanel shiftedCoordinatesPanel;
@@ -603,6 +713,7 @@ public class ExploreTrackPanel extends javax.swing.JPanel {
     private javax.swing.JSlider timeSlider;
     private javax.swing.JPanel timeSliderPanel;
     private javax.swing.JTable trackDataTable;
+    private javax.swing.JPanel trackSelectionPanel;
     private javax.swing.JList tracksList;
     private javax.swing.JPanel tracksListPanel;
     private javax.swing.JPanel turningAnglePanel;
