@@ -5,8 +5,8 @@
 package be.ugent.maf.cellmissy.entity.result.singlecell;
 
 /**
- * This class keeps the measurements about a certain track, on a cell-centric level,
- * i.e. averaged across all the time points.
+ * This class keeps the measurements about a certain track, on a cell-centric
+ * level, i.e. averaged across all the time points.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -59,6 +59,10 @@ public class CellCentricDataHolder {
     private double RMSDeviation;
     // the median direction autocorrelation, computed for time interval of size 1
     private double medianDirectionAutocorrelation;
+
+    private double[] interpolationX;
+
+    private double[] interpolatedY;
 
     /**
      * Empty Constructor
@@ -229,5 +233,21 @@ public class CellCentricDataHolder {
 
     public void setMedianDirectionAutocorrelation(double medianDirectionAutocorrelation) {
         this.medianDirectionAutocorrelation = medianDirectionAutocorrelation;
+    }
+
+    public double[] getInterpolationX() {
+        return interpolationX;
+    }
+
+    public void setInterpolationX(double[] interpolationX) {
+        this.interpolationX = interpolationX;
+    }
+
+    public double[] getInterpolatedY() {
+        return interpolatedY;
+    }
+
+    public void setInterpolatedY(double[] interpolatedY) {
+        this.interpolatedY = interpolatedY;
     }
 }

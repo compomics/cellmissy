@@ -8,13 +8,10 @@ import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
-import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.Assert;
-import org.jfree.data.xy.DefaultXYDataset;
-import org.jfree.data.xy.DefaultXYZDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

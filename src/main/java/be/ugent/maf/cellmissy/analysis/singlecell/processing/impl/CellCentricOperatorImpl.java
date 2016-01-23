@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 
+import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.CellCentricOperator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.ConvexHullOperator;
 import be.ugent.maf.cellmissy.entity.Track;
@@ -31,6 +32,8 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     private GrahamScanAlgorithm grahamScanAlgorithm;
     @Autowired
     private ConvexHullOperator convexHullOperator;
+    @Autowired
+    private TrackInterpolator trackSplineInterpolator;
 
     @Override
     public void computeTrackDuration(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder, double timeLapse) {
@@ -172,5 +175,10 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
         // simply compute the median of the direction autocorrelations
         double medianDirectionAutocorrelation = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(directionAutocorrelations));
         cellCentricDataHolder.setMedianDirectionAutocorrelation(medianDirectionAutocorrelation);
+    }
+
+    @Override
+    public void interpolateTrack(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder, int interpolationPoints) {
+        trackSplineInterpolator.interpolateTrack(cellCentricDataHolder, stepCentricDataHolder, interpolationPoints);
     }
 }

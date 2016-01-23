@@ -23,8 +23,7 @@ public interface CellCentricOperator {
      * @param cellCentricDataHolder
      * @param timeLapse
      */
-    void computeTrackDuration(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder
-            cellCentricDataHolder, double timeLapse);
+    void computeTrackDuration(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder, double timeLapse);
 
     /**
      * Compute the min and max x and y coordinates, along with the net
@@ -129,4 +128,12 @@ public interface CellCentricOperator {
      * @param cellCentricDataHolder
      */
     void computeMedianDirectionAutocorrelation(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+
+    /**
+     * 
+     * @param stepCentricDataHolder
+     * @param cellCentricDataHolder
+     * @param interpolationPoints 
+     */
+    void interpolateTrack(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder, int interpolationPoints);
 }

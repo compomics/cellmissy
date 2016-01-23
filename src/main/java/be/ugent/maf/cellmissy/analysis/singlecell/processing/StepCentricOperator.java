@@ -82,7 +82,7 @@ public interface StepCentricOperator {
      */
     void computeDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder);
 
-    
+    // these might not be needed in the end!!!
     void computeDiffAngles(StepCentricDataHolder stepCentricDataHolder);
     void computeDirAutocorrMatrix(StepCentricDataHolder stepCentricDataHolder);
 

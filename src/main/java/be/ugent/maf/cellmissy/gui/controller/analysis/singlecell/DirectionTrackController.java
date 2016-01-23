@@ -81,8 +81,8 @@ class DirectionTrackController {
         chart.getTitle().setFont(JFreeChartUtils.getChartFont());
         // modify renderer
         int trackIndex = exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder);
-        xyPlot.setRenderer(new DirectionAutocorrelationLineAndShapeRenderer(trackIndex));
         xyPlot.getRangeAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        xyPlot.setRenderer(new DirectionAutocorrelationLineAndShapeRenderer(trackIndex));
         xyPlot.getDomainAxis().setLowerBound(-0.3);
     }
 
