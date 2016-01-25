@@ -10,9 +10,7 @@ import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
-import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
-import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import java.util.ArrayList;
 import org.junit.Assert;
 import java.util.List;
@@ -44,9 +42,9 @@ public class TrackInterpolatorTest {
     public static void createHolders() {
         List<TrackPoint> trackPoints = new ArrayList<>();
         TrackPoint tpq = new TrackPoint(-2, 3);
-        TrackPoint tpr = new TrackPoint(10,6);
+        TrackPoint tpr = new TrackPoint(10, 6);
         TrackPoint tps = new TrackPoint(10, 9);
-        TrackPoint tpt = new TrackPoint(10, 10);
+        TrackPoint tpt = new TrackPoint(2, 10);
         TrackPoint tpu = new TrackPoint(-2, 5);
         TrackPoint tpv = new TrackPoint(7, -4);
         trackPoints.add(tpq);
@@ -64,8 +62,10 @@ public class TrackInterpolatorTest {
     @Test
     public void testInterpolation() {
         stepCentricOperator.generateCoordinatesMatrix(stepCentricDataHolder, 1.0);
+        cellCentricDataHolder.setxMin(-2);
+        cellCentricDataHolder.setxMax(10);
         trackSplineInterpolator.interpolateTrack(cellCentricDataHolder, stepCentricDataHolder, INTERPOLATION_POINTS);
-//        Assert.assertEquals(INTERPOLATION_POINTS, cellCentricDataHolder.getInterpolationX().length);
-//        Assert.assertEquals(INTERPOLATION_POINTS, cellCentricDataHolder.getInterpolatedY().length);
+        Assert.assertEquals(INTERPOLATION_POINTS, cellCentricDataHolder.getInterpolationX().length);
+        Assert.assertEquals(INTERPOLATION_POINTS, cellCentricDataHolder.getInterpolatedY().length);
     }
 }
