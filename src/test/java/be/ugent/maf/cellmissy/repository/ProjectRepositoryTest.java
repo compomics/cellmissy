@@ -9,13 +9,13 @@ import be.ugent.maf.cellmissy.entity.ProjectHasUser;
 import be.ugent.maf.cellmissy.entity.User;
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:mySpringXMLConfig.xml")
 @Transactional
-@TransactionConfiguration(defaultRollback = true)
+@Rollback
 public class ProjectRepositoryTest {
 
     @Autowired
@@ -69,16 +69,16 @@ public class ProjectRepositoryTest {
         user1.setProjectHasUserList(projectHasUsers);
         user2.setProjectHasUserList(projectHasUsers);
         // save the project has users
-        for (ProjectHasUser projectHasUser : projectHasUsers) {
+        projectHasUsers.stream().forEach((projectHasUser) -> {
             projectHasUserRepository.save(projectHasUser);
-        }
+        });
         // finally save the project
         projectRepository.save(project);
         // check for the id of the entities
         Assert.assertNotNull(project.getProjectid());
-        for (ProjectHasUser projectHasUser : projectHasUsers) {
+        projectHasUsers.stream().forEach((projectHasUser) -> {
             Assert.assertNotNull(projectHasUser.getProjectHasUserid());
-    }
+        });
         // count back the entitites from DB
         Assert.assertEquals(4, projectHasUserRepository.countAll());
     }

@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import static junit.framework.Assert.*;
+import org.junit.Assert;
 
 import java.io.File;
 import java.util.List;
@@ -49,13 +49,12 @@ public class PositionListParserTest {
         File setupFolder = new File(ObsepFileParserTest.class.getClassLoader().getResource("position_list_files").getPath());
         try {
             Map<ImagingType, List<WellHasImagingType>> imagingTypeMap = positionListParser.parsePositionList(imagingTypeToPosListMap, setupFolder);
-            assertTrue(!imagingTypeMap.isEmpty());
+            Assert.assertTrue(!imagingTypeMap.isEmpty());
             Collection<List<WellHasImagingType>> values = imagingTypeMap.values();
 
-            for (List<WellHasImagingType> list : values) {
-                int size = list.size();
+            values.stream().map((list) -> list.size()).forEach((size) -> {
                 System.out.println("size of list: " + size);
-            }
+            });
         } catch (FileParserException | PositionListMismatchException ex) {
             LOG.error(ex.getMessage());
         }

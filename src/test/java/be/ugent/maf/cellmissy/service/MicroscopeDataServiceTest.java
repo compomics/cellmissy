@@ -14,7 +14,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static junit.framework.Assert.*;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,9 @@ public class MicroscopeDataServiceTest {
     private MicroscopeDataService microscopeDataService;
 
     /**
-     * Test MicroscopeDataService: given obsepFile and setupFolder, initialize the service and process Microscope Data (get a map of ImagingType and WellhasImagingType)
+     * Test MicroscopeDataService: given obsepFile and setupFolder, initialize
+     * the service and process Microscope Data (get a map of ImagingType and
+     * WellhasImagingType)
      */
     @Test
     public void testMicroscopeDataService() {
@@ -50,7 +52,7 @@ public class MicroscopeDataServiceTest {
         try {
             imagingTypeMap = microscopeDataService.processMicroscopeData();
             //two position lists are parsed, map needs to contain 2 keys
-            assertTrue(imagingTypeMap.size() == 2);
+            Assert.assertTrue(imagingTypeMap.size() == 2);
         } catch (FileParserException | PositionListMismatchException ex) {
             LOG.debug(ex.getMessage());
         }

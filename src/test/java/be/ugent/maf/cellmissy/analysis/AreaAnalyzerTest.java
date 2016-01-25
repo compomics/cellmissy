@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import static junit.framework.Assert.*;
+import org.junit.Assert;
 
 /**
  *
@@ -44,11 +44,11 @@ public class AreaAnalyzerTest {
     @Test
     public void testLinearRegressor() {
         List<Double> linearModel = linearRegressor.estimateLinearModel(data);
-        assertNotNull(linearModel);
-        assertTrue(linearModel.size() == 2);
+        Assert.assertNotNull(linearModel);
+        Assert.assertTrue(linearModel.size() == 2);
         Double rSquared = linearModel.get(1);
         Double slope = linearModel.get(0);
-        assertEquals(1.0, rSquared);
-        assertEquals(1.0, slope);
+        Assert.assertEquals(1.0, rSquared, 0);
+        Assert.assertEquals(1.0, slope, 0);
     }
 }

@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy;
 
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,14 +37,14 @@ public class GeometricPointTest {
     }
 
     /**
-     * Test euclidean distance computation between points.
+     * Test Euclidean distance computation between points.
      */
     @Test
     public void testEuclideanDistance() {
         double euclideanDistanceTo = q.euclideanDistanceTo(r);
-        Assert.assertEquals(6.158733636065128, euclideanDistanceTo);
+        Assert.assertEquals(6.158733636065128, euclideanDistanceTo, 0.0);
         double zeroDistance = q.euclideanDistanceTo(q);
-        Assert.assertEquals(0.0, zeroDistance);
+        Assert.assertEquals(0.0, zeroDistance, 0.0);
     }
 
     /**
@@ -53,7 +53,7 @@ public class GeometricPointTest {
     @Test
     public void testSignedArea() {
         double area = GeometricPoint.computeSignedArea(q, r, s);
-        Assert.assertEquals(5.685999999999999 * 2, area);
+        Assert.assertEquals(5.685999999999999 * 2, area, 0.0);
     }
 
     /**

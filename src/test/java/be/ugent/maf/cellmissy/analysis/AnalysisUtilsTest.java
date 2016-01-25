@@ -5,7 +5,7 @@
 package be.ugent.maf.cellmissy.analysis;
 
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
-import static junit.framework.Assert.assertEquals;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,14 +23,14 @@ public class AnalysisUtilsTest {
     public void testMedianForOddDatasets() {
         double[] data = {4, 5, 7, 2, 1};
         double median = AnalysisUtils.computeMedian(data);
-        assertEquals(4.0, median);
+        Assert.assertEquals(4.0, median, 0);
     }
 
     @Test
     public void testMedianForEvenDatasets() {
         double[] data = {4, 5, 7, 2, 1, 8};
         double median = AnalysisUtils.computeMedian(data);
-        assertEquals(4.5, median);
+        Assert.assertEquals(4.5, median, 0);
     }
 
     @Test
@@ -38,15 +38,15 @@ public class AnalysisUtilsTest {
         double[] data = {13, 23, 12, 44, 55};
         double standardDeviation = AnalysisUtils.computeStandardDeviation(data);
         Double rounded = AnalysisUtils.roundThreeDecimals(standardDeviation);
-        assertEquals(17.212, rounded);
+        Assert.assertEquals(17.212, rounded, 0);
     }
 
     @Test
     public void testQuantilesEstimation() {
         double[] data = {13, 23, 12, 44, 55};
         double lowerQuartile = AnalysisUtils.estimateQuantile(data, 25);
-        assertEquals(13.0, lowerQuartile);
+        Assert.assertEquals(13.0, lowerQuartile, 0);
         double upperQuartile = AnalysisUtils.estimateQuantile(data, 75);
-        assertEquals(44.0, upperQuartile);
+        Assert.assertEquals(44.0, upperQuartile, 0);
     }
 }

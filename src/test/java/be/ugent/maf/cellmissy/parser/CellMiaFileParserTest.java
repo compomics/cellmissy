@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import static junit.framework.Assert.*;
+import org.junit.Assert;
 
 /**
  * A test unit for the CELLMIA file parser.
@@ -40,9 +40,9 @@ public class CellMiaFileParserTest {
         File bulkCellFile = new File(CellMiaFileParserTest.class.getClassLoader().getResource("bulkcell.txt").getPath());
         List<TimeStep> timeStepList = cellMiaFileParser.parseBulkCellFile(bulkCellFile);
 
-        assertTrue(!trackList.isEmpty());
-        assertTrue(trackList.size() == 91);
-        assertTrue(!timeStepList.isEmpty());
-        assertTrue(timeStepList.size() == 108);
+        Assert.assertTrue(!trackList.isEmpty());
+        Assert.assertTrue(trackList.size() == 91);
+        Assert.assertTrue(!timeStepList.isEmpty());
+        Assert.assertTrue(timeStepList.size() == 108);
     }
 }

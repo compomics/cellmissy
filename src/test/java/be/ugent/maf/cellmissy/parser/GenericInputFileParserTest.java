@@ -12,7 +12,7 @@ import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static junit.framework.Assert.*;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class GenericInputFileParserTest {
         File genericBulkCellFile = new File(GenericInputFileParserTest.class.getClassLoader().getResource("generic_bulkcell.txt").getPath());
         try {
             List<TimeStep> timeStepList = genericInputFileParser.parseBulkCellFile(genericBulkCellFile);
-            assertEquals(51, timeStepList.size());
+            Assert.assertEquals(51, timeStepList.size());
         } catch (FileParserException ex) {
             Logger.getLogger(GenericInputFileParserTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -48,12 +48,12 @@ public class GenericInputFileParserTest {
         try {
             List<Track> trackList = genericInputFileParser.parseTrackFile(genericTrackingFile);
 
-            assertEquals(45, trackList.size());
+            Assert.assertEquals(45, trackList.size());
             Track firstTrack = trackList.get(0);
-            assertEquals(30, firstTrack.getTrackPointList().size());
+            Assert.assertEquals(30, firstTrack.getTrackPointList().size());
 
             Track lastTrack = trackList.get(trackList.size() - 1);
-            assertEquals(58, lastTrack.getTrackPointList().size());
+            Assert.assertEquals(58, lastTrack.getTrackPointList().size());
         } catch (FileParserException ex) {
             Logger.getLogger(GenericInputFileParserTest.class.getName()).log(Level.SEVERE, null, ex);
         }

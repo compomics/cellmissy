@@ -13,7 +13,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,14 +67,14 @@ public class CellCentricOperatorTest {
         // test the euclidean distance
         cellCentricOperator.computeEuclideanDistance(stepCentricDataHolder, cellCentricDataHolder);
         double euclideanDistance = cellCentricDataHolder.getEuclideanDistance();
-        Assert.assertEquals(8.602, AnalysisUtils.roundThreeDecimals(euclideanDistance));
+        Assert.assertEquals(8.602, AnalysisUtils.roundThreeDecimals(euclideanDistance), 0);
         // test the cumulative distance
         cellCentricOperator.computeCumulativeDistance(stepCentricDataHolder, cellCentricDataHolder);
         double cumulativeDistance = cellCentricDataHolder.getCumulativeDistance();
-        Assert.assertEquals(37.688, AnalysisUtils.roundThreeDecimals(cumulativeDistance));
+        Assert.assertEquals(37.688, AnalysisUtils.roundThreeDecimals(cumulativeDistance), 0);
         // test end point directionality ratio
         cellCentricOperator.computeEndPointDirectionalityRatio(cellCentricDataHolder);
         double endPointDirectionalityRatio = cellCentricDataHolder.getEndPointDirectionalityRatio();
-        Assert.assertEquals(0.228, AnalysisUtils.roundThreeDecimals(endPointDirectionalityRatio));
+        Assert.assertEquals(0.228, AnalysisUtils.roundThreeDecimals(endPointDirectionalityRatio), 0);
     }
 }

@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import static junit.framework.Assert.*;
+import org.junit.Assert;
 
 /**
  *
@@ -43,6 +43,6 @@ public class StatisticsCalculatorTest {
     @Test
     public void testMannWhitney() {
         double pValue = mann_Whitney_Statistics.executeStatisticalTest(xData, yData);
-        assertEquals(0.855, pValue, 0.001);        
+        Assert.assertEquals(0.855, pValue, 0.001);        
     }
 }

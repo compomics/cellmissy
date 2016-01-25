@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.xml.sax.SAXException;
-import static junit.framework.Assert.*;
+import org.junit.Assert;
 
 /**
  *
@@ -43,10 +43,10 @@ public class XmlFileParserTest {
             experiment = xMLParser.unmarshal(Experiment.class, xmlFile);
             // get validation messages
             List<String> validationErrorMesage = xMLParser.getValidationErrorMesage();
-            assertTrue(validationErrorMesage.isEmpty());
-            assertTrue(experiment != null);
+            Assert.assertTrue(validationErrorMesage.isEmpty());
+            Assert.assertTrue(experiment != null);
             List<PlateCondition> plateConditionList = experiment.getPlateConditionList();
-            assertEquals(6, plateConditionList.size());
+            Assert.assertEquals(6, plateConditionList.size());
         } catch (JAXBException | SAXException | IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }
@@ -63,7 +63,7 @@ public class XmlFileParserTest {
             Experiment experiment = xMLParser.unmarshal(Experiment.class, xmlFile);
             // get validation messages
             List<String> validationErrorMesage = xMLParser.getValidationErrorMesage();
-            assertTrue(!validationErrorMesage.isEmpty());
+            Assert.assertTrue(!validationErrorMesage.isEmpty());
         } catch (JAXBException | SAXException | IOException ex) {
             LOG.error(ex.getMessage(), ex);
         }

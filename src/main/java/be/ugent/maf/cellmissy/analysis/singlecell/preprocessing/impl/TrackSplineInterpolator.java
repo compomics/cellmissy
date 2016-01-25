@@ -9,6 +9,12 @@ import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolato
 import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
@@ -40,37 +46,64 @@ public class TrackSplineInterpolator implements TrackInterpolator {
         // get the x and the y coordinates
         double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[0]));
         double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[1]));
-        // [x] needs to be strictly monotonic
-        MathArrays.sortInPlace(xCoord, yCoord);
-        double[] XMonotonic = makeXStrictlyMonotonic(xCoord);
-        // call the interpolator
-        PolynomialSplineFunction function = splineInterpolator.interpolate(XMonotonic, yCoord);
-        for (int i = 0; i < interpolationPoints; i++) {
-            interpolationX[i] = xMin + (i * interpolationStep);
-            interpolatedY[i] = function.value(interpolationX[i]);
+        // [x] needs to be monotonic
+//        MathArrays.sortInPlace(xCoord, yCoord);
+        // now check for STRICT monocitity
+        boolean monotonic = MathArrays.isMonotonic(xCoord, MathArrays.OrderDirection.INCREASING, true);
+        if (!monotonic) {
+            MathArrays.sortInPlace(xCoord, yCoord);
+            // make monotic
+            makeXStrictlyMonotonic(xCoord);
         }
-        cellCentricDataHolder.setInterpolationX(interpolationX);
-        cellCentricDataHolder.setInterpolatedY(interpolatedY);
+        // call the interpolator
+//        PolynomialSplineFunction function = splineInterpolator.interpolate(xCoord, yCoord);
+//        for (int i = 0; i < interpolationPoints; i++) {
+//            interpolationX[i] = xMin + (i * interpolationStep);
+//            interpolatedY[i] = function.value(interpolationX[i]);
+//        }
+//        cellCentricDataHolder.setInterpolationX(interpolationX);
+//        cellCentricDataHolder.setInterpolatedY(interpolatedY);
     }
 
     /**
+     * Given an array of double, make it strictly monotonic.
      *
      * @param xArray
      * @return
      */
-    private double[] makeXStrictlyMonotonic(double[] xArray) {
+    private void makeXStrictlyMonotonic(double[] xArray) {
+        // 
+        Map<Double, Integer> map = new LinkedHashMap<>();
+        double delta = .1;
+        int counter = 1;
+
         double previous = xArray[0];
+
         final int max = xArray.length;
-        double[] monotonic = new double[max];
         for (int i = 1; i < max; i++) {
-            if (previous < xArray[i] | previous > xArray[i]) {
-                monotonic[i - 1] = previous;
-            } else if (previous == xArray[i]) {
-                monotonic[i] = xArray[i] + .1;
+            double current = xArray[i];
+            if (previous < current) {
+                // reset the counter
+                counter = 1;
+//                xArray[i - 1] = previous;
+            } else if (previous == current) {
+//                xArray[i - 1] = current - delta;
+                counter++;
             }
+            map.put(current, counter);
             previous = xArray[i];
         }
-        monotonic[max - 1] = previous; // needs to be changed!
-        return monotonic;
+        Set<Double> keySet = map.keySet();
+        List<Double> list = new ArrayList<>();
+        for (double d : keySet) {
+            int count = map.get(d);
+            for (int i = 0; i < count; i++) {
+                double increment = delta / count;
+                list.add(d + (i) * increment);
+            }
+        }
+
+        Double[] array = list.stream().toArray(Double[]::new);
+        xArray = Arrays.stream(array).mapToDouble(Double::doubleValue).toArray();
     }
 }

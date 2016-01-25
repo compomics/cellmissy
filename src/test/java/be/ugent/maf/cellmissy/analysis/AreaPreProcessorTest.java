@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import static junit.framework.Assert.*;
+import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -44,7 +44,7 @@ public class AreaPreProcessorTest {
         List<double[]> estimateDensityFunction = normal_Kernel.estimateDensityFunction(data);
         double[] randomSamples = estimateDensityFunction.get(0);
         double[] estimatedValues = estimateDensityFunction.get(1);
-        assertTrue(randomSamples.length == 4096);
-        assertTrue(estimatedValues.length == 4096);
+        Assert.assertTrue(randomSamples.length == 4096);
+        Assert.assertTrue(estimatedValues.length == 4096);
     }
 }

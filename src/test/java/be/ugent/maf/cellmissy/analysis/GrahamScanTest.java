@@ -14,7 +14,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -93,10 +93,10 @@ public class GrahamScanTest {
         //compute perimeter
         convexHullOperator.computePerimeter(convexHull);
         double perimeter = convexHull.getPerimeter();
-        Assert.assertEquals(39.585, AnalysisUtils.roundThreeDecimals(perimeter));
+        Assert.assertEquals(39.585, AnalysisUtils.roundThreeDecimals(perimeter), 0);
         // compute area
         convexHullOperator.computeArea(convexHull);
         double area = convexHull.getArea();
-        Assert.assertEquals(86.5, area);
+        Assert.assertEquals(86.5, area, 0);
     }
 }
