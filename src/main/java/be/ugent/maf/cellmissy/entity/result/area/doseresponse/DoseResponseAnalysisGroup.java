@@ -6,7 +6,10 @@
 package be.ugent.maf.cellmissy.entity.result.area.doseresponse;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,22 +19,22 @@ import java.util.List;
  * @author Gwendolien
  */
 public class DoseResponseAnalysisGroup {
-    
-    // list of conditions
-    private List<PlateCondition> plateConditions;
-    
-    // linear model results, slopes are needed for dose-response analysis
-    private List<AreaAnalysisResults> areaAnalysisResults;
-    
+
+    //list of concentrations: iterate and get from Treatment
+    private List<Double> concentrations;
+
+    //list of velocities, coming from AreaAnalysisResults
+    private List<Double> velocities;
+
     // list of dose response analysis results to be shown in table
     private List<DoseResponseAnalysisResults> doseResponseAnalysisResults;
-    
+
     /**
      * Constructor
      */
     public DoseResponseAnalysisGroup() {
     }
-    
+
     /**
      * Constructor
      *
@@ -39,32 +42,40 @@ public class DoseResponseAnalysisGroup {
      * @param areaAnalysisResults
      */
     public DoseResponseAnalysisGroup(List<PlateCondition> plateConditions, List<AreaAnalysisResults> areaAnalysisResults) {
-        this.plateConditions = plateConditions;
-        this.areaAnalysisResults = areaAnalysisResults;
+
+        //concentrations are ONLY used for computation in the dose-response part        
+        //parameters for the methods are mostly always PlateCondition.
+        //PlateCondition has List<Treatment>, Treatment has double concentration AND concentrationunit
+        //this may need to be converted into standard form: xx * 10**-6 or 0.0000...xx
+        //maybe not, because velocities have a corresponding unit, otherwise these also need to be converted
+        
+        //this might be better in a separate method in main dose-response or input controller
+        this.concentrations = new ArrayList<>();
+        
+        for (PlateCondition plateCondition : plateConditions) {
+            //CAN a platecondition have multiple treatments, thus multiple concentrations???
+            List<Treatment> treatmentList = plateCondition.getTreatmentList();
+            
+            for (Treatment treatment : treatmentList) {
+                double concentration = treatment.getConcentration();
+                String concentrationUnit = treatment.getConcentrationUnit();
+            }
+        }
+        
+        //setting the velocities from areaAnalysisResults
+        //for every condition there are multiple replicates, this means multiple velocities
+        this.velocities = new ArrayList<>();
+        for (AreaAnalysisResults conditionResult : areaAnalysisResults) {
+            
+        }
+
     }
-    
-    
+
     /**
      * Getters and setters
-     * 
-     * @return 
+     *
+     * @return
      */
-    public List<PlateCondition> getPlateConditions() {
-        return plateConditions;
-    }
-
-    public void setPlateConditions(List<PlateCondition> plateConditions) {
-        this.plateConditions = plateConditions;
-    }
-
-    public List<AreaAnalysisResults> getAreaAnalysisResults() {
-        return areaAnalysisResults;
-    }
-
-    public void setAreaAnalysisResults(List<AreaAnalysisResults> areaAnalysisResults) {
-        this.areaAnalysisResults = areaAnalysisResults;
-    }
-
     public List<DoseResponseAnalysisResults> getDoseResponseAnalysisResults() {
         return doseResponseAnalysisResults;
     }
@@ -72,5 +83,5 @@ public class DoseResponseAnalysisGroup {
     public void setDoseResponseAnalysisResults(List<DoseResponseAnalysisResults> doseResponseAnalysisResults) {
         this.doseResponseAnalysisResults = doseResponseAnalysisResults;
     }
-    
+
 }

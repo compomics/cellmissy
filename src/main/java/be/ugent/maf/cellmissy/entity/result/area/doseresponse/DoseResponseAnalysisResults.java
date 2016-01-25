@@ -14,17 +14,11 @@ package be.ugent.maf.cellmissy.entity.result.area.doseresponse;
  */
 public class DoseResponseAnalysisResults {
 
-    //minimum response, best-fit value or constrained by user
-    private double bottomInitial;
+    //results of the fitting for the initial data
+    private SigmoidFittingResultsHolder initialFittingResults;
 
-    //maximum response, best-fit or constrained
-    private double topInitial;
-
-    //best-fit value or standard hillslope of curve
-    private double hillslopeInitial;
-
-    //log of 50% effective concentration
-    private double logEC50Initial;
+    //results of the fitting for the normalized data
+    private SigmoidFittingResultsHolder normalizedFittingResults;
 
     //50% effective concentration
     private double ec50Initial;
@@ -45,14 +39,6 @@ public class DoseResponseAnalysisResults {
     private Double[] confidenceIntervalHillslopeInitial;
 
     //same variables as above, only this time from fitting the normalized data
-    private double bottomNormalized;
-
-    private double topNormalized;
-
-    private double hillslopeNormalized;
-
-    private double logEC50Normalized;
-
     private double ec50Normalized;
 
     private double goodnessOfFitNormalized;
@@ -70,36 +56,12 @@ public class DoseResponseAnalysisResults {
      *
      * @return
      */
-    public double getBottomInitial() {
-        return bottomInitial;
+    public SigmoidFittingResultsHolder getInitialFittingResults() {
+        return initialFittingResults;
     }
 
-    public void setBottomInitial(double bottomInitial) {
-        this.bottomInitial = bottomInitial;
-    }
-
-    public double getTopInitial() {
-        return topInitial;
-    }
-
-    public void setTopInitial(double topInitial) {
-        this.topInitial = topInitial;
-    }
-
-    public double getHillslopeInitial() {
-        return hillslopeInitial;
-    }
-
-    public void setHillslopeInitial(double hillslopeInitial) {
-        this.hillslopeInitial = hillslopeInitial;
-    }
-
-    public double getLogEC50Initial() {
-        return logEC50Initial;
-    }
-
-    public void setLogEC50Initial(double logEC50Initial) {
-        this.logEC50Initial = logEC50Initial;
+    public SigmoidFittingResultsHolder getNormalizedFittingResults() {
+        return normalizedFittingResults;
     }
 
     public double getEc50Initial() {
@@ -148,38 +110,6 @@ public class DoseResponseAnalysisResults {
 
     public void setConfidenceIntervalHillslopeInitial(Double[] confidenceIntervalHillslopeInitial) {
         this.confidenceIntervalHillslopeInitial = confidenceIntervalHillslopeInitial;
-    }
-
-    public double getBottomNormalized() {
-        return bottomNormalized;
-    }
-
-    public void setBottomNormalized(double bottomNormalized) {
-        this.bottomNormalized = bottomNormalized;
-    }
-
-    public double getTopNormalized() {
-        return topNormalized;
-    }
-
-    public void setTopNormalized(double topNormalized) {
-        this.topNormalized = topNormalized;
-    }
-
-    public double getHillslopeNormalized() {
-        return hillslopeNormalized;
-    }
-
-    public void setHillslopeNormalized(double hillslopeNormalized) {
-        this.hillslopeNormalized = hillslopeNormalized;
-    }
-
-    public double getLogEC50Normalized() {
-        return logEC50Normalized;
-    }
-
-    public void setLogEC50Normalized(double logEC50Normalized) {
-        this.logEC50Normalized = logEC50Normalized;
     }
 
     public double getEc50Normalized() {

@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
+import be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse.DoseResponseController;
 import be.ugent.maf.cellmissy.analysis.area.AreaUnitOfMeasurement;
 import be.ugent.maf.cellmissy.analysis.factory.DistanceMetricFactory;
 import be.ugent.maf.cellmissy.analysis.factory.KernelDensityEstimatorFactory;
