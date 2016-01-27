@@ -128,12 +128,4 @@ public interface CellCentricOperator {
      * @param cellCentricDataHolder
      */
     void computeMedianDirectionAutocorrelation(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
-
-    /**
-     * 
-     * @param stepCentricDataHolder
-     * @param cellCentricDataHolder
-     * @param interpolationPoints 
-     */
-    void interpolateTrack(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder, int interpolationPoints);
 }

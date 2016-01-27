@@ -8,27 +8,32 @@ package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl;
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolator;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
-import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+import org.apache.commons.math3.analysis.interpolation.HermiteInterpolator;
 import org.apache.commons.math3.util.MathArrays;
 
 /**
- *
- * This implementation for the track interpolator computes a natural (also known
- * as "free", "un-clamped") cubic spline interpolation for the data set. The x
- * values passed to the interpolator must be ordered in ascending order. It is
- * not valid to evaluate the function for values outside the range x0..xN --
- * will throw an OutOfRangeException.
+ * An Hermite implementation for the track interpolation. This polynomial
+ * interpolator uses both sample values and sample derivatives.There is one
+ * polynomial for each component of the values vector. All polynomials have the
+ * same degree. The degree of the polynomials depends on the number of points
+ * and number of derivatives at each point. For example the interpolation
+ * polynomials for n sample points without any derivatives all have degree n-1.
+ * The interpolation polynomials for n sample points with the two extreme points
+ * having value and first derivative and the remaining points having value only
+ * all have degree n+1. The interpolation polynomial for n sample points with
+ * value, first and second derivative for all points all have degree 3n-1. The
+ * point abscissae for all calls must be different!
  *
  * @author Paola
  */
-public class TrackSplineInterpolator implements TrackInterpolator {
+public class TrackHermiteInterpolator implements TrackInterpolator {
 
     @Override
     public List<double[]> interpolateTrack(double[] time, double[] x, double[] y, int interpolationPoints) {
         List<double[]> interpolatedData = new ArrayList<>();
-        // create a new spline interpolator
-        SplineInterpolator splineInterpolator = new SplineInterpolator();
+        // create interpolators for X and Y
+        HermiteInterpolator xHermite = new HermiteInterpolator();
+        HermiteInterpolator yHermite = new HermiteInterpolator();
 
         // create arrays to hold the interpolant time, the interpolated X and the interpolated Y
         double[] interpolantTime = new double[interpolationPoints];
@@ -44,14 +49,17 @@ public class TrackSplineInterpolator implements TrackInterpolator {
             MathArrays.sortInPlace(time, x, y);
         }
 
-        // call the interpolator, and actually do the interpolation
-        PolynomialSplineFunction functionX = splineInterpolator.interpolate(time, x);
-        PolynomialSplineFunction functionY = splineInterpolator.interpolate(time, y);
+        // call the interpolator and add sample points to it
+        // we do add only the values, and not their derivatives
+        for (int i = 0; i < time.length; i++) {
+            xHermite.addSamplePoint(time[i], new double[]{x[i]});
+            yHermite.addSamplePoint(time[i], new double[]{y[i]});
+        }
 
         for (int i = 0; i < interpolationPoints; i++) {
             interpolantTime[i] = time[0] + (i * interpolationStep);
-            interpolatedX[i] = functionX.value(interpolantTime[i]);
-            interpolatedY[i] = functionY.value(interpolantTime[i]);
+            interpolatedX[i] = xHermite.value(interpolantTime[i])[0];
+            interpolatedY[i] = yHermite.value(interpolantTime[i])[0];
         }
         interpolatedData.add(interpolantTime);
         interpolatedData.add(interpolatedX);

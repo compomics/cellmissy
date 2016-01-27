@@ -5,13 +5,13 @@
 package be.ugent.maf.cellmissy.utils;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
-import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 /**
@@ -327,9 +327,7 @@ public class AnalysisUtils {
     public static int getNumberOfAreaAnalyzedSamples(PlateCondition plateCondition) {
         int areaAnalyzedSamples = 0;
         List<Well> areaAnalyzedWells = plateCondition.getAreaAnalyzedWells();
-        for (Well well : areaAnalyzedWells) {
-            areaAnalyzedSamples += getNumberOfAreaAnalyzedSamplesPerWell(well);
-        }
+        areaAnalyzedSamples = areaAnalyzedWells.stream().map((well) -> getNumberOfAreaAnalyzedSamplesPerWell(well)).reduce(areaAnalyzedSamples, Integer::sum);
         return areaAnalyzedSamples;
     }
 
@@ -342,9 +340,7 @@ public class AnalysisUtils {
     public static int getNumberOfSingleCellAnalyzedSamples(PlateCondition plateCondition) {
         int singleCellAnalyzedSamples = 0;
         List<Well> singleCellAnalyzedWells = plateCondition.getSingleCellAnalyzedWells();
-        for (Well well : singleCellAnalyzedWells) {
-            singleCellAnalyzedSamples += getNumberOfSingleCellAnalyzedSamplesPerWell(well);
-        }
+        singleCellAnalyzedSamples = singleCellAnalyzedWells.stream().map((well) -> getNumberOfSingleCellAnalyzedSamplesPerWell(well)).reduce(singleCellAnalyzedSamples, Integer::sum);
         return singleCellAnalyzedSamples;
     }
 
@@ -356,11 +352,7 @@ public class AnalysisUtils {
      */
     public static int getNumberOfAreaAnalyzedSamplesPerWell(Well well) {
         int numberOfSamplesPerWell = 0;
-        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
-            if (!wellHasImagingType.getTimeStepList().isEmpty()) {
-                numberOfSamplesPerWell++;
-            }
-        }
+        numberOfSamplesPerWell = well.getWellHasImagingTypeList().stream().filter((wellHasImagingType) -> (!wellHasImagingType.getTimeStepList().isEmpty())).map((_item) -> 1).reduce(numberOfSamplesPerWell, Integer::sum);
         return numberOfSamplesPerWell;
     }
 
@@ -371,11 +363,7 @@ public class AnalysisUtils {
      */
     public static int getNumberOfSingleCellAnalyzedSamplesPerWell(Well well) {
         int numberOfSamplesPerWell = 0;
-        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
-            if (!wellHasImagingType.getTrackList().isEmpty()) {
-                numberOfSamplesPerWell++;
-            }
-        }
+        numberOfSamplesPerWell = well.getWellHasImagingTypeList().stream().filter((wellHasImagingType) -> (!wellHasImagingType.getTrackList().isEmpty())).map((_item) -> 1).reduce(numberOfSamplesPerWell, Integer::sum);
         return numberOfSamplesPerWell;
     }
 
@@ -386,16 +374,13 @@ public class AnalysisUtils {
      */
     public static List<Integer> getNumbersOfTrackPoints(Well well) {
         List<Integer> list = new ArrayList<>();
-        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
-            List<Track> trackList = wellHasImagingType.getTrackList();
+        well.getWellHasImagingTypeList().stream().map((wellHasImagingType) -> wellHasImagingType.getTrackList()).forEach((trackList) -> {
             int number = 0;
             if (!trackList.isEmpty()) {
-                for (Track track : trackList) {
-                    number += track.getTrackPointList().size();
-                }
+                number = trackList.stream().map((track) -> track.getTrackPointList().size()).reduce(number, Integer::sum);
                 list.add(number);
             }
-        }
+        });
         return list;
     }
 
@@ -406,12 +391,9 @@ public class AnalysisUtils {
      */
     public static List<Integer> getNumbersOfTracks(Well well) {
         List<Integer> list = new ArrayList<>();
-        for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
-            List<Track> trackList = wellHasImagingType.getTrackList();
-            if (!trackList.isEmpty()) {
-                list.add(trackList.size());
-            }
-        }
+        well.getWellHasImagingTypeList().stream().map((wellHasImagingType) -> wellHasImagingType.getTrackList()).filter((trackList) -> (!trackList.isEmpty())).forEach((trackList) -> {
+            list.add(trackList.size());
+        });
         return list;
     }
 }

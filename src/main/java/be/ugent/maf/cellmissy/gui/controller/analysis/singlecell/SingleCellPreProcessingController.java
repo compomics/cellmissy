@@ -202,8 +202,8 @@ class SingleCellPreProcessingController {
     public void showInstAngleInTable(PlateCondition plateCondition) {
         angleDirectController.showInstAngleInTable(plateCondition);
     }
-    
-    public void showTrackAngleInTable(PlateCondition plateCondition){
+
+    public void showTrackAngleInTable(PlateCondition plateCondition) {
         angleDirectController.showTrackAngleInTable(plateCondition);
     }
 
@@ -214,7 +214,7 @@ class SingleCellPreProcessingController {
     public void plotAngleAndDirectData(PlateCondition plateCondition) {
         angleDirectController.plotAngleAndDirectData(plateCondition);
     }
-    
+
     public void showTrackDisplInTable(PlateCondition plateCondition) {
         displSpeedController.showTrackDisplInTable(plateCondition);
     }
@@ -329,11 +329,13 @@ class SingleCellPreProcessingController {
         if (!preProcessingMap.keySet().isEmpty()) {
             preProcessingMap.clear();
         }
-        for (PlateCondition plateCondition : singleCellMainController.getPlateConditionList()) {
+        singleCellMainController.getPlateConditionList().stream().map((plateCondition) -> {
             // each plateCondition is not loaded at the beginning
             plateCondition.setLoaded(false);
+            return plateCondition;
+        }).forEach((plateCondition) -> {
             preProcessingMap.put(plateCondition, null);
-        }
+        });
     }
 
     /**
@@ -495,17 +497,14 @@ class SingleCellPreProcessingController {
         preProcessingMap = new LinkedHashMap<>();
 
         // if you click on a row, the relative track points are fetched from Db and shown in another table
-        singleCellAnalysisPanel.getTracksTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    int selectedRow = singleCellAnalysisPanel.getTracksTable().getSelectedRow();
-                    PlateCondition selectedCondition = singleCellMainController.getSelectedCondition();
-                    if (selectedRow != -1) {
-                        Track selectedTrack = tracksBindingList.get(selectedRow);
-                        singleCellMainController.updateTrackPointsList(selectedCondition, selectedTrack);
-                        showTrackPointsInTable();
-                    }
+        singleCellAnalysisPanel.getTracksTable().getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = singleCellAnalysisPanel.getTracksTable().getSelectedRow();
+                PlateCondition selectedCondition = singleCellMainController.getSelectedCondition();
+                if (selectedRow != -1) {
+                    Track selectedTrack = tracksBindingList.get(selectedRow);
+                    singleCellMainController.updateTrackPointsList(selectedCondition, selectedTrack);
+                    showTrackPointsInTable();
                 }
             }
         });
@@ -571,22 +570,24 @@ class SingleCellPreProcessingController {
         List<Double> yShiftMinList = new ArrayList<>();
         List<Double> yShiftMaxList = new ArrayList<>();
 
-        for (PlateCondition plateCondition : preProcessingMap.keySet()) {
-            // now get back the coordinates and compute the ranges
-            SingleCellConditionDataHolder singleCellConditionDataHolder = getConditionDataHolder(plateCondition);
+        preProcessingMap.keySet().stream().map((plateCondition) -> getConditionDataHolder(plateCondition)).map((singleCellConditionDataHolder) -> {
             Double[][] rawCoordinatesRanges = singleCellConditionDataHolder.getRawCoordinatesRanges();
             Double[][] shiftedCoordinatesRanges = singleCellConditionDataHolder.getShiftedCoordinatesRanges();
-
             xRawMinList.add(rawCoordinatesRanges[0][0]);
             xRawMaxList.add(rawCoordinatesRanges[0][1]);
             yRawMinList.add(rawCoordinatesRanges[1][0]);
             yRawMaxList.add(rawCoordinatesRanges[1][1]);
-
             xShiftMinList.add(shiftedCoordinatesRanges[0][0]);
+            return shiftedCoordinatesRanges;
+        }).map((shiftedCoordinatesRanges) -> {
             xShiftMaxList.add(shiftedCoordinatesRanges[0][1]);
+            return shiftedCoordinatesRanges;
+        }).map((shiftedCoordinatesRanges) -> {
             yShiftMinList.add(shiftedCoordinatesRanges[1][0]);
+            return shiftedCoordinatesRanges;
+        }).forEach((shiftedCoordinatesRanges) -> {
             yShiftMaxList.add(shiftedCoordinatesRanges[1][1]);
-        }
+        });
         Double xRawMin = Collections.min(xRawMinList);
         Double xRawMax = Collections.max(xRawMaxList);
         Double yRawMin = Collections.min(yRawMinList);
@@ -628,11 +629,15 @@ class SingleCellPreProcessingController {
             singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             singleCellMainController.controlGuiComponents(false);
             // for each plateCondition, get the data from database and do computations
-            for (PlateCondition condition : experiment.getPlateConditionList()) {
+            experiment.getPlateConditionList().stream().map((condition) -> {
                 fetchTracks(condition);
+                return condition;
+            }).map((condition) -> {
                 updateMapWithCondition(condition);
+                return condition;
+            }).forEach((condition) -> {
                 singleCellMainController.showNotImagedWells(condition);
-            }
+            });
             return null;
         }
 
@@ -697,6 +702,13 @@ class SingleCellPreProcessingController {
                 appendInfo("Operating now on plateCondition: " + plateCondition);
                 appendInfo("operating on steps and cells...");
                 singleCellConditionOperator.operateOnStepsAndCells(singleCellConditionDataHolder);
+
+                String interpolationMethod = singleCellMainController.getInterpolationMethod();
+                if (!interpolationMethod.equalsIgnoreCase("none")) {
+                    singleCellConditionOperator.interpolateTracks(singleCellConditionDataHolder, 100, "");
+                    appendInfo("interpolating tracks...");
+                }
+
                 appendInfo("generating instantaneous displacements...");
                 singleCellConditionOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
                 appendInfo("generating directionality ratios...");

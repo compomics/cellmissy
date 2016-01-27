@@ -23,6 +23,14 @@ public interface SingleCellConditionOperator {
     void operateOnStepsAndCells(SingleCellConditionDataHolder singleCellConditionDataHolder);
 
     /**
+     * 
+     * @param singleCellConditionDataHolder
+     * @param interpolationPoints
+     * @param interpolatorBeanName 
+     */
+    void interpolateTracks(SingleCellConditionDataHolder singleCellConditionDataHolder, int interpolationPoints, String interpolatorBeanName);
+
+    /**
      * Generate the instantaneous displacement vector.
      *
      * @param singleCellConditionDataHolder

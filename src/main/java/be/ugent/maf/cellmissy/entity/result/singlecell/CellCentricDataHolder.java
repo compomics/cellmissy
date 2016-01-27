@@ -60,10 +60,6 @@ public class CellCentricDataHolder {
     // the median direction autocorrelation, computed for time interval of size 1
     private double medianDirectionAutocorrelation;
 
-    private double[] interpolationX;
-
-    private double[] interpolatedY;
-
     /**
      * Empty Constructor
      */
@@ -233,21 +229,5 @@ public class CellCentricDataHolder {
 
     public void setMedianDirectionAutocorrelation(double medianDirectionAutocorrelation) {
         this.medianDirectionAutocorrelation = medianDirectionAutocorrelation;
-    }
-
-    public double[] getInterpolationX() {
-        return interpolationX;
-    }
-
-    public void setInterpolationX(double[] interpolationX) {
-        this.interpolationX = interpolationX;
-    }
-
-    public double[] getInterpolatedY() {
-        return interpolatedY;
-    }
-
-    public void setInterpolatedY(double[] interpolatedY) {
-        this.interpolatedY = interpolatedY;
     }
 }

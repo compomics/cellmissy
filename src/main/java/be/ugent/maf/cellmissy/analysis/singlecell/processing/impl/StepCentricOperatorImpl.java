@@ -4,9 +4,12 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 
+import be.ugent.maf.cellmissy.analysis.factory.TrackInterpolatorFactory;
+import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -236,5 +239,18 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
             medianDirectionAutocorrelations[i] = medianDirectionAutocorrelation;
         }
         stepCentricDataHolder.setMedianDirectionAutocorrelations(medianDirectionAutocorrelations);
+    }
+
+    @Override
+    public void interpolateTrack(StepCentricDataHolder stepCentricDataHolder, int interpolationPoints, String interpolatorBeanName) {
+        TrackInterpolator trackInterpolator = TrackInterpolatorFactory.getInstance().getTrackInterpolator(interpolatorBeanName);
+        // get the time indexes of the track
+        double[] timeIndexes = stepCentricDataHolder.getTimeIndexes();
+        // get the x and the y coordinates
+        Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
+        double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[0]));
+        double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[1]));
+        List<double[]> interpolatedData = trackInterpolator.interpolateTrack(timeIndexes, xCoord, yCoord, interpolationPoints);
+        stepCentricDataHolder.setInterpolatedData(interpolatedData);
     }
 }

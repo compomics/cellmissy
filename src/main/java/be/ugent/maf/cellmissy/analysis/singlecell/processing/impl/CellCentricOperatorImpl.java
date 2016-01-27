@@ -176,9 +176,4 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
         double medianDirectionAutocorrelation = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(directionAutocorrelations));
         cellCentricDataHolder.setMedianDirectionAutocorrelation(medianDirectionAutocorrelation);
     }
-
-    @Override
-    public void interpolateTrack(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder, int interpolationPoints) {
-        trackSplineInterpolator.interpolateTrack(cellCentricDataHolder, stepCentricDataHolder, interpolationPoints);
-    }
 }

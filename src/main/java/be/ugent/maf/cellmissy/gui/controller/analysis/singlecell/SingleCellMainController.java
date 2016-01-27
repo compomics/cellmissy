@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.analysis.factory.KernelDensityEstimatorFactory;
 import be.ugent.maf.cellmissy.analysis.factory.OutliersHandlerFactory;
+import be.ugent.maf.cellmissy.analysis.factory.TrackInterpolatorFactory;
 import be.ugent.maf.cellmissy.analysis.singlecell.TrackCoordinatesUnitOfMeasurement;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.*;
@@ -189,6 +190,10 @@ public class SingleCellMainController {
 
     public AnalysisPlatePanel getAnalysisPlatePanel() {
         return analysisPlatePanel;
+    }
+
+    public String getInterpolationMethod() {
+        return (String) metadataSingleCellPanel.getInterpolatorsComboBox().getSelectedItem();
     }
 
     /**
@@ -678,6 +683,18 @@ public class SingleCellMainController {
         for (String estimatorName : kernelDensityEstimatorsBeanNames) {
             metadataSingleCellPanel.getKernelDensityEstimatorsComboBox().addItem(estimatorName);
         }
+
+        // do not apply any interpolation to the tracks
+        metadataSingleCellPanel.getInterpolatorsComboBox().addItem("none");
+
+        // and again for the track interpolators
+        Set<String> trackInterpolatorsBeanNames = TrackInterpolatorFactory.getInstance().getTrackInterpolatorsBeanNames();
+        for (String interpolatorName : trackInterpolatorsBeanNames) {
+            metadataSingleCellPanel.getInterpolatorsComboBox().addItem(interpolatorName);
+        }
+
+        // set ad default no interpolation
+        metadataSingleCellPanel.getInterpolatorsComboBox().setSelectedIndex(0);
 
         // add the action listener
         metadataSingleCellPanel.getKernelDensityEstimatorsComboBox().addActionListener(new ActionListener() {

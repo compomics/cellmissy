@@ -108,5 +108,13 @@
 
     <bean id="mann_Whitney_Statistics" class="be.ugent.maf.cellmissy.analysis.impl.MannWhitneyStatisticsCalculator">
     </bean>
-
+    
+    <bean id="linear_interpolator" class="be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl.TrackLinearInterpolator">
+    </bean>
+    
+    <bean id="spline_interpolator" class="be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl.TrackSplineInterpolator">
+    </bean>
+    
+    <bean id="hermite_interpolator" class="be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl.TrackHermiteInterpolator">
+    </bean>
 </beans>

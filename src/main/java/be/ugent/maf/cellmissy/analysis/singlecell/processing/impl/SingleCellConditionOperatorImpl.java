@@ -33,6 +33,13 @@ public class SingleCellConditionOperatorImpl implements SingleCellConditionOpera
     }
 
     @Override
+    public void interpolateTracks(SingleCellConditionDataHolder singleCellConditionDataHolder, int interpolationPoints, String interpolatorBeanName) {
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+            singleCellWellOperator.interpolateTracks(singleCellWellDataHolder, interpolationPoints, interpolatorBeanName);
+        }
+    }
+
+    @Override
     public void generateInstantaneousDisplacementsVector(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
             singleCellWellOperator.generateInstantaneousDisplacementsVector(singleCellWellDataHolder);

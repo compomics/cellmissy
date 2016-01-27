@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.processing;
 
+import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 
 /**
@@ -84,6 +85,7 @@ public interface StepCentricOperator {
 
     // these might not be needed in the end!!!
     void computeDiffAngles(StepCentricDataHolder stepCentricDataHolder);
+
     void computeDirAutocorrMatrix(StepCentricDataHolder stepCentricDataHolder);
 
     /**
@@ -92,4 +94,12 @@ public interface StepCentricOperator {
      * @param stepCentricDataHolder
      */
     void computeMeanDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder);
+
+    /**
+     * 
+     * @param stepCentricDataHolder
+     * @param interpolationPoints 
+     * @param interpolatorBeanName 
+     */
+    void interpolateTrack(StepCentricDataHolder stepCentricDataHolder, int interpolationPoints, String interpolatorBeanName);
 }

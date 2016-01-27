@@ -5,20 +5,25 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing;
 
-import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
-import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
+import java.util.List;
 
 /**
+ * An interface to perform track interpolation.
  *
  * @author Paola
  */
 public interface TrackInterpolator {
 
     /**
-     * 
-     * @param cellCentricDataHolder
-     * @param stepCentricDataHolder
-     * @param interpolationPoints 
+     * Interpolate a track with different interpolation techniques.
+     *
+     * @param time: the time points
+     * @param x: the x coordinates
+     * @param y: the y coordinates
+     * @param interpolationPoints: how many points shall I use for the
+     * interpolation?
+     * @return: a list of double arrays: 1) interpolant time points; 2)
+     * interpolated X and 3) interpolated Y.
      */
-    void interpolateTrack(CellCentricDataHolder cellCentricDataHolder, StepCentricDataHolder stepCentricDataHolder, int interpolationPoints);
+    List<double[]> interpolateTrack(double[] time, double[] x, double[] y, int interpolationPoints);
 }

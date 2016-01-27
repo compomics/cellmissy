@@ -64,7 +64,7 @@ public class StepCentricOperatorTest {
         double firstDR = directionalityRatios[0];
         double secondDR = directionalityRatios[1];
         double thirdDR = directionalityRatios[2];
-        Assert.assertEquals(1.0, firstDR,0);
+        Assert.assertEquals(1.0, firstDR, 0);
         Assert.assertEquals(0.866, AnalysisUtils.roundThreeDecimals(secondDR), 0);
         Assert.assertEquals(0.669, AnalysisUtils.roundThreeDecimals(thirdDR), 0);
         // test instantaneous turning angles
@@ -76,7 +76,7 @@ public class StepCentricOperatorTest {
         double fourthTA = turningAngles[3];
         double lastTurningAngle = turningAngles[4];
         Assert.assertEquals(20.556, AnalysisUtils.roundThreeDecimals(firstTA), 0);
-        Assert.assertEquals(90.0, secondTA,0);
+        Assert.assertEquals(90.0, secondTA, 0);
         Assert.assertEquals(153.435, AnalysisUtils.roundThreeDecimals(thirdTA), 0);
         Assert.assertEquals(-153.435, AnalysisUtils.roundThreeDecimals(fourthTA), 0);
         Assert.assertEquals(-45.0, AnalysisUtils.roundThreeDecimals(lastTurningAngle), 0);
@@ -100,11 +100,5 @@ public class StepCentricOperatorTest {
         Double[] lastTime = directionAutocorrelations.get(size - 1);
         Assert.assertEquals(1, lastTime.length);
         Assert.assertEquals(0.414, AnalysisUtils.roundThreeDecimals(lastTime[0]), 0);
-
-        // another method for the direction autocorrelations? 
-        stepCentricOperator.computeDirAutocorrMatrix(stepCentricDataHolder);
-
-        stepCentricOperator.computeDiffAngles(stepCentricDataHolder);
-
     }
 }

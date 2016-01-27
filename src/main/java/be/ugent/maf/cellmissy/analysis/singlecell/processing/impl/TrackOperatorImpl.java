@@ -41,6 +41,12 @@ public class TrackOperatorImpl implements TrackOperator {
     }
 
     @Override
+    public void interpolateTrack(TrackDataHolder trackDataHolder, int interpolationPoints, String interpolatorBeanName) {
+        StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
+        stepCentricOperator.interpolateTrack(stepCentricDataHolder, interpolationPoints, interpolatorBeanName);
+    }
+
+    @Override
     public void operateOnCells(TrackDataHolder trackDataHolder) {
         StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
         CellCentricDataHolder cellCentricDataHolder = trackDataHolder.getCellCentricDataHolder();
@@ -55,6 +61,5 @@ public class TrackOperatorImpl implements TrackOperator {
         cellCentricOperator.computeOutreachRatio(cellCentricDataHolder);
         cellCentricOperator.computeMedianTurningAngle(stepCentricDataHolder, cellCentricDataHolder);
         cellCentricOperator.computeMedianDirectionAutocorrelation(stepCentricDataHolder, cellCentricDataHolder);
-        cellCentricOperator.interpolateTrack(stepCentricDataHolder, cellCentricDataHolder, 100);
     }
 }

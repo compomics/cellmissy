@@ -33,6 +33,13 @@ public class SingleCellWellOperatorImpl implements SingleCellWellOperator {
     }
 
     @Override
+    public void interpolateTracks(SingleCellWellDataHolder singleCellWellDataHolder, int interpolationPoints, String interpolatorBeanName) {
+        for (TrackDataHolder trackDataHolder : singleCellWellDataHolder.getTrackDataHolders()) {
+            trackOperator.interpolateTrack(trackDataHolder, interpolationPoints, interpolatorBeanName);
+        }
+    }
+
+    @Override
     public void generateInstantaneousDisplacementsVector(SingleCellWellDataHolder singleCellWellDataHolder) {
         Double[] instantaneousDisplacementsVector = new Double[singleCellWellDataHolder.getDataStructure().length];
         int counter = 0;

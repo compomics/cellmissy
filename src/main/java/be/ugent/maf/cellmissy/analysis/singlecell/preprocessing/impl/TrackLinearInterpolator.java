@@ -8,27 +8,22 @@ package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl;
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolator;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
+import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.apache.commons.math3.util.MathArrays;
 
 /**
- *
- * This implementation for the track interpolator computes a natural (also known
- * as "free", "un-clamped") cubic spline interpolation for the data set. The x
- * values passed to the interpolator must be ordered in ascending order. It is
- * not valid to evaluate the function for values outside the range x0..xN --
- * will throw an OutOfRangeException.
+ * This class implements a linear function for interpolation of a track.
  *
  * @author Paola
  */
-public class TrackSplineInterpolator implements TrackInterpolator {
+public class TrackLinearInterpolator implements TrackInterpolator {
 
     @Override
     public List<double[]> interpolateTrack(double[] time, double[] x, double[] y, int interpolationPoints) {
         List<double[]> interpolatedData = new ArrayList<>();
-        // create a new spline interpolator
-        SplineInterpolator splineInterpolator = new SplineInterpolator();
+        // create a new linear interpolator
+        LinearInterpolator linearInterpolator = new LinearInterpolator();
 
         // create arrays to hold the interpolant time, the interpolated X and the interpolated Y
         double[] interpolantTime = new double[interpolationPoints];
@@ -45,8 +40,8 @@ public class TrackSplineInterpolator implements TrackInterpolator {
         }
 
         // call the interpolator, and actually do the interpolation
-        PolynomialSplineFunction functionX = splineInterpolator.interpolate(time, x);
-        PolynomialSplineFunction functionY = splineInterpolator.interpolate(time, y);
+        PolynomialSplineFunction functionX = linearInterpolator.interpolate(time, x);
+        PolynomialSplineFunction functionY = linearInterpolator.interpolate(time, y);
 
         for (int i = 0; i < interpolationPoints; i++) {
             interpolantTime[i] = time[0] + (i * interpolationStep);
