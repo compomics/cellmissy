@@ -13,6 +13,14 @@ import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResu
  * @author Gwendolien
  */
 public interface SigmoidFitter {
-    
+
+    /**
+     * Fits the data to a sigmoid model. Adds the fitted parameters to the
+     * results holder.
+     *
+     * @param analysisGroup The concentrations and corresponding velocities that
+     * will be fit
+     * @param resultsHolder Holds the results from the fitting.
+     */
     void fitData(DoseResponseAnalysisGroup analysisGroup, SigmoidFittingResultsHolder resultsHolder);
 }

@@ -53,11 +53,13 @@ public class DoseResponseAnalysisGroup {
         this.concentrations = new ArrayList<>();
         
         for (PlateCondition plateCondition : plateConditions) {
-            //CAN a platecondition have multiple treatments, thus multiple concentrations???
+            //1 platecondition = multiple wells
             List<Treatment> treatmentList = plateCondition.getTreatmentList();
             
             for (Treatment treatment : treatmentList) {
                 double concentration = treatment.getConcentration();
+                concentrations.add(concentration);
+                //concentration unit should be saved somehow, needed for log-transformation
                 String concentrationUnit = treatment.getConcentrationUnit();
             }
         }
@@ -65,8 +67,8 @@ public class DoseResponseAnalysisGroup {
         //setting the velocities from areaAnalysisResults
         //for every condition there are multiple replicates, this means multiple velocities
         this.velocities = new ArrayList<>();
-        for (AreaAnalysisResults conditionResult : areaAnalysisResults) {
-            
+        for (AreaAnalysisResults areaAnalysisResult : areaAnalysisResults) {
+            velocities.addAll(Arrays.asList(areaAnalysisResult.getSlopes()));
         }
 
     }
@@ -84,4 +86,12 @@ public class DoseResponseAnalysisGroup {
         this.doseResponseAnalysisResults = doseResponseAnalysisResults;
     }
 
+    public List<Double> getConcentrations() {
+        return concentrations;
+    }
+
+    public List<Double> getVelocities() {
+        return velocities;
+    }
+    
 }
