@@ -48,6 +48,7 @@ public class DRInputController {
     private BindingGroup bindingGroup;
     private List<PlateCondition> plateConditionsList;
     private List<AreaAnalysisResults> areaAnalysisResultsList;
+    private DoseResponseAnalysisGroup dRAnalysisGroup;
     //view
     private DRInputPanel dRInputPanel;
     // parent controller
@@ -73,6 +74,14 @@ public class DRInputController {
      */
     public DRInputPanel getdRInputPanel() {
         return dRInputPanel;
+    }
+
+    public void setdRAnalysisGroup(DoseResponseAnalysisGroup dRAnalysisGroup) {
+        this.dRAnalysisGroup = dRAnalysisGroup;
+    }
+
+    public DoseResponseAnalysisGroup getdRAnalysisGroup() {
+        return dRAnalysisGroup;
     }
 
     /**
@@ -175,7 +184,7 @@ public class DRInputController {
         }
         // make a new analysis group, with those conditions and those results
         // override variable if one existed already
-        DoseResponseAnalysisGroup dRAnalysisGroup = new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList);
+        setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
         // populate bottom table with the analysis group
 
     }
@@ -194,7 +203,7 @@ public class DRInputController {
                 areaAnalysisResultsList.remove(areaAnalysisResults);
             }
         }
-        DoseResponseAnalysisGroup dRAnalysisGroup = new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList);
+        setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
         // populate bottom table with the analysis group
     }
 

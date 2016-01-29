@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -20,14 +21,12 @@ import java.util.List;
  */
 public class DoseResponseAnalysisGroup {
 
-    //list of concentrations: iterate and get from Treatment
-    private List<Double> concentrations;
+    //An experiment might have multiple treatments. Per condition the concentrations for a treatment may vary.
+    //The concentration value is mapped to his unit of measurement.
+    private LinkedHashMap<Treatment, LinkedHashMap<Double, String>> concentrationsMap;
 
-    //list of velocities, coming from AreaAnalysisResults
-    private List<Double> velocities;
-
-    // list of dose response analysis results to be shown in table
-    private List<DoseResponseAnalysisResults> doseResponseAnalysisResults;
+    //A condition can have multiple replicates, each with their own velocity.
+    private LinkedHashMap<PlateCondition, List<Double>> velocitiesMap;
 
     /**
      * Constructor
@@ -43,30 +42,31 @@ public class DoseResponseAnalysisGroup {
      */
     public DoseResponseAnalysisGroup(List<PlateCondition> plateConditions, List<AreaAnalysisResults> areaAnalysisResults) {
 
-        //concentrations are ONLY used for computation in the dose-response part        
-        //parameters for the methods are mostly always PlateCondition.
         //PlateCondition has List<Treatment>, Treatment has double concentration AND concentrationunit
-        //this may need to be converted into standard form: xx * 10**-6 or 0.0000...xx
-        //maybe not, because velocities have a corresponding unit, otherwise these also need to be converted
-        
-        //this might be better in a separate method in main dose-response or input controller
-        this.concentrations = new ArrayList<>();
-        
+        this.concentrationsMap = new LinkedHashMap<>();
+        //initialize nested map
+        LinkedHashMap<Double, String> nestedMap = new LinkedHashMap<>();
+
         for (PlateCondition plateCondition : plateConditions) {
-            //1 platecondition = multiple wells
+            //1 platecondition might have multiple treatments
             List<Treatment> treatmentList = plateCondition.getTreatmentList();
-            
+
             for (Treatment treatment : treatmentList) {
                 double concentration = treatment.getConcentration();
-                concentrations.add(concentration);
-                //concentration unit should be saved somehow, needed for log-transformation
+                //concentration unit needs to be saved, needed for log-transformation
                 String concentrationUnit = treatment.getConcentrationUnit();
+
+                //put in map
+                nestedMap.put(concentration, concentrationUnit);
+                concentrationsMap.put(treatment, nestedMap);
             }
         }
-        
+
         //setting the velocities from areaAnalysisResults
         //for every condition there are multiple replicates, this means multiple velocities
-        this.velocities = new ArrayList<>();
+        this.velocitiesMap = new LinkedHashMap<>();
+        List<Double> replicateVelocities = new ArrayList<>();
+        
         for (AreaAnalysisResults areaAnalysisResult : areaAnalysisResults) {
             velocities.addAll(Arrays.asList(areaAnalysisResult.getSlopes()));
         }
@@ -78,20 +78,20 @@ public class DoseResponseAnalysisGroup {
      *
      * @return
      */
-    public List<DoseResponseAnalysisResults> getDoseResponseAnalysisResults() {
-        return doseResponseAnalysisResults;
+    public LinkedHashMap<Treatment, LinkedHashMap<Double, String>> getConcentrationsMap() {
+        return concentrationsMap;
     }
 
-    public void setDoseResponseAnalysisResults(List<DoseResponseAnalysisResults> doseResponseAnalysisResults) {
-        this.doseResponseAnalysisResults = doseResponseAnalysisResults;
+    public void setConcentrationsMap(LinkedHashMap<Treatment, LinkedHashMap<Double, String>> concentrationsMap) {
+        this.concentrationsMap = concentrationsMap;
     }
 
-    public List<Double> getConcentrations() {
-        return concentrations;
+    public LinkedHashMap<PlateCondition, List<Double>> getVelocitiesMap() {
+        return velocitiesMap;
     }
 
-    public List<Double> getVelocities() {
-        return velocities;
+    public void setVelocitiesMap(LinkedHashMap<PlateCondition, List<Double>> velocitiesMap) {
+        this.velocitiesMap = velocitiesMap;
     }
-    
+
 }
