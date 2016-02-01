@@ -4,7 +4,6 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.processing;
 
-import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 
 /**
@@ -99,7 +98,6 @@ public interface StepCentricOperator {
      * 
      * @param stepCentricDataHolder
      * @param interpolationPoints 
-     * @param interpolatorBeanName 
      */
-    void interpolateTrack(StepCentricDataHolder stepCentricDataHolder, int interpolationPoints, String interpolatorBeanName);
+    void interpolateTrack(StepCentricDataHolder stepCentricDataHolder, int interpolationPoints);
 }

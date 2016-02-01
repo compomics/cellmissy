@@ -250,7 +250,6 @@ public class ExtendedBoxAndWhiskerRenderer extends BoxAndWhiskerRenderer {
         dataset.getRowCount();
 
         String label = getLegendItemLabelGenerator().generateLabel(dataset, series);
-        String description = label;
         String toolTipText = null;
         if (getLegendItemToolTipGenerator() != null) {
             toolTipText = getLegendItemToolTipGenerator().generateLabel(dataset, series);
@@ -268,7 +267,7 @@ public class ExtendedBoxAndWhiskerRenderer extends BoxAndWhiskerRenderer {
         Paint paint = GuiUtils.getAvailableColors()[colorIndex];
         Stroke outlineStroke = getItemOutlineStroke(datasetIndex, series);
 
-        return new LegendItem(label, description, toolTipText, urlText, shape, paint, outlineStroke, paint);
+        return new LegendItem(label, label, toolTipText, urlText, shape, paint, outlineStroke, paint);
     }
 
     /**
@@ -279,8 +278,7 @@ public class ExtendedBoxAndWhiskerRenderer extends BoxAndWhiskerRenderer {
      *
      */
     private Shape createEllipse(Point2D point, double oRadius) {
-        Ellipse2D dot = new Ellipse2D.Double(point.getX(), point.getY(), oRadius * 2.0, oRadius * 2.0);
-        return dot;
+        return new Ellipse2D.Double(point.getX(), point.getY(), oRadius * 2.0, oRadius * 2.0);
     }
 
     /**

@@ -26,9 +26,8 @@ public interface SingleCellConditionOperator {
      * 
      * @param singleCellConditionDataHolder
      * @param interpolationPoints
-     * @param interpolatorBeanName 
      */
-    void interpolateTracks(SingleCellConditionDataHolder singleCellConditionDataHolder, int interpolationPoints, String interpolatorBeanName);
+    void interpolateTracks(SingleCellConditionDataHolder singleCellConditionDataHolder, int interpolationPoints);
 
     /**
      * Generate the instantaneous displacement vector.

@@ -26,7 +26,7 @@ public class DensityFunctionHolderCacheSingleCell extends LinkedHashMap<SingleCe
      */
     public enum DataCategory {
 
-        INST_DISPL, TRACK_DISPL, TRACK_SPEED;
+        INST_DISPL, TRACK_DISPL, TRACK_SPEED
     }
 
     @Override

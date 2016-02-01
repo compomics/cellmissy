@@ -41,9 +41,9 @@ public class TrackOperatorImpl implements TrackOperator {
     }
 
     @Override
-    public void interpolateTrack(TrackDataHolder trackDataHolder, int interpolationPoints, String interpolatorBeanName) {
+    public void interpolateTrack(TrackDataHolder trackDataHolder, int interpolationPoints) {
         StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
-        stepCentricOperator.interpolateTrack(stepCentricDataHolder, interpolationPoints, interpolatorBeanName);
+        stepCentricOperator.interpolateTrack(stepCentricDataHolder, interpolationPoints);
     }
 
     @Override

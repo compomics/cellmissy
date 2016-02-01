@@ -5,7 +5,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing;
 
-import java.util.List;
+import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 
 /**
  * An interface to perform track interpolation.
@@ -22,8 +22,7 @@ public interface TrackInterpolator {
      * @param y: the y coordinates
      * @param interpolationPoints: how many points shall I use for the
      * interpolation?
-     * @return: a list of double arrays: 1) interpolant time points; 2)
-     * interpolated X and 3) interpolated Y.
+     * @return: an interpolated track object
      */
-    List<double[]> interpolateTrack(double[] time, double[] x, double[] y, int interpolationPoints);
+    InterpolatedTrack interpolateTrack(double[] time, double[] x, double[] y, int interpolationPoints);
 }

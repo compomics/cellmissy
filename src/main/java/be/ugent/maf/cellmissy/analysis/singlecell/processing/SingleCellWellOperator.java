@@ -5,7 +5,6 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.processing;
 
-import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 
 /**
@@ -27,9 +26,8 @@ public interface SingleCellWellOperator {
      *
      * @param singleCellWellDataHolder 
      * @param interpolationPoints
-     * @param interpolatorBeanName
      */
-    void interpolateTracks(SingleCellWellDataHolder singleCellWellDataHolder, int interpolationPoints, String interpolatorBeanName);
+    void interpolateTracks(SingleCellWellDataHolder singleCellWellDataHolder, int interpolationPoints);
 
     /**
      * Generate the instantaneous displacement vector.

@@ -5,18 +5,23 @@
 package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 
 import be.ugent.maf.cellmissy.analysis.factory.TrackInterpolatorFactory;
+import be.ugent.maf.cellmissy.analysis.singlecell.InterpolationMethod;
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
-import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * An implementation of the step centric operator interface.
@@ -242,15 +247,21 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     }
 
     @Override
-    public void interpolateTrack(StepCentricDataHolder stepCentricDataHolder, int interpolationPoints, String interpolatorBeanName) {
-        TrackInterpolator trackInterpolator = TrackInterpolatorFactory.getInstance().getTrackInterpolator(interpolatorBeanName);
-        // get the time indexes of the track
-        double[] timeIndexes = stepCentricDataHolder.getTimeIndexes();
-        // get the x and the y coordinates
-        Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
-        double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[0]));
-        double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[1]));
-        List<double[]> interpolatedData = trackInterpolator.interpolateTrack(timeIndexes, xCoord, yCoord, interpolationPoints);
-        stepCentricDataHolder.setInterpolatedData(interpolatedData);
+    public void interpolateTrack(StepCentricDataHolder stepCentricDataHolder, int interpolationPoints) {
+        Map<InterpolationMethod, InterpolatedTrack> interpolationMap = new LinkedHashMap<>();
+        // get the right implementation of the track interpolator for each annotated bean
+        for (InterpolationMethod method : InterpolationMethod.values()) {
+            String interpolatorBeanName = method.getStringForType();
+            TrackInterpolator trackInterpolator = TrackInterpolatorFactory.getInstance().getTrackInterpolator(interpolatorBeanName);
+            // get the time indexes of the track
+            double[] timeIndexes = stepCentricDataHolder.getTimeIndexes();
+            // get the x and the y coordinates
+            Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
+            double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[0]));
+            double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[1]));
+            InterpolatedTrack interpolatedTrack = trackInterpolator.interpolateTrack(timeIndexes, xCoord, yCoord, interpolationPoints);
+            interpolationMap.put(method, interpolatedTrack);
+        }
+        stepCentricDataHolder.setInterpolationMap(interpolationMap);
     }
 }

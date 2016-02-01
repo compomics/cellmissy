@@ -21,11 +21,11 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="1117" max="32767" attributes="0"/>
+          <EmptySpace min="0" pref="943" max="32767" attributes="0"/>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jSplitPane1" pref="1097" max="32767" attributes="0"/>
+                  <Component id="jSplitPane1" pref="923" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -33,11 +33,11 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="838" max="32767" attributes="0"/>
+          <EmptySpace min="0" pref="756" max="32767" attributes="0"/>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jSplitPane1" pref="816" max="32767" attributes="0"/>
+                  <Component id="jSplitPane1" pref="734" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -106,7 +106,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane1" pref="358" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" pref="297" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -166,7 +166,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="plotSettingsPanel" alignment="0" pref="306" max="32767" attributes="0"/>
+                              <Component id="plotSettingsPanel" alignment="0" pref="254" max="32767" attributes="0"/>
                               <Component id="clearSelectionButton" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -219,7 +219,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="1083" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="909" max="32767" attributes="0"/>
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
@@ -231,9 +231,9 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="537" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="455" max="32767" attributes="0"/>
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                      <Component id="jTabbedPane1" alignment="0" pref="537" max="32767" attributes="0"/>
+                      <Component id="jTabbedPane1" alignment="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -302,9 +302,9 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                                  <Component id="jScrollPane2" pref="369" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jScrollPane2" min="-2" pref="452" max="-2" attributes="0"/>
-                                  <EmptySpace pref="14" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -312,7 +312,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jScrollPane2" pref="510" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane2" pref="428" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -351,6 +351,28 @@
                           </SubComponents>
                         </Container>
                       </SubComponents>
+                    </Container>
+                  </SubComponents>
+                </Container>
+                <Container class="javax.swing.JPanel" name="interpolationPanel">
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                      <JTabbedPaneConstraints tabName="interpolation">
+                        <Property name="tabTitle" type="java.lang.String" value="interpolation"/>
+                      </JTabbedPaneConstraints>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+                  <SubComponents>
+                    <Container class="javax.swing.JPanel" name="interpolatedTrackParentPanel">
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                          <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="11" weightX="1.0" weightY="1.0"/>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
                     </Container>
                   </SubComponents>
                 </Container>
@@ -457,7 +479,7 @@
                                   <Component id="playButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="stopButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="276" max="32767" attributes="0"/>
+                                  <EmptySpace pref="194" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -632,7 +654,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jScrollPane3" pref="365" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane3" pref="295" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -830,7 +852,7 @@
                                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="deltaTComboBox" min="-2" pref="101" max="-2" attributes="0"/>
-                                      <EmptySpace pref="286" max="32767" attributes="0"/>
+                                      <EmptySpace pref="199" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                             </DimensionLayout>

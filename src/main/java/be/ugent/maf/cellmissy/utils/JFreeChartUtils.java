@@ -7,41 +7,13 @@ package be.ugent.maf.cellmissy.utils;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
-
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Stroke;
-import java.awt.geom.Rectangle2D;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYLineAnnotation;
-import org.jfree.chart.axis.AxisState;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTick;
-
-import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.axis.TickType;
-
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.CombinedDomainXYPlot;
-import org.jfree.chart.plot.Plot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.PolarAxisLocation;
-import org.jfree.chart.plot.PolarPlot;
-import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.axis.*;
+import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.DefaultPolarItemRenderer;
-import org.jfree.chart.renderer.PolarItemRenderer;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
@@ -53,6 +25,13 @@ import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class contains some helpful JFreeChart utilities.
@@ -439,7 +418,7 @@ public class JFreeChartUtils {
         plot.setBackgroundPaint(Color.white);
         plot.setOutlinePaint(Color.white);
         // get domanin and range axes
-        CategoryAxis domainAxis = (CategoryAxis) plot.getDomainAxis();
+        CategoryAxis domainAxis = plot.getDomainAxis();
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         // set their label font and color
         rangeAxis.setLabelPaint(Color.black);

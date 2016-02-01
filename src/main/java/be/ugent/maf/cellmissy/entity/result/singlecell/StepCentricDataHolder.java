@@ -4,9 +4,11 @@
  */
 package be.ugent.maf.cellmissy.entity.result.singlecell;
 
+import be.ugent.maf.cellmissy.analysis.singlecell.InterpolationMethod;
 import be.ugent.maf.cellmissy.entity.Track;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class keeps the instantaneous measurements about a certain track, i.e.
@@ -56,8 +58,9 @@ public class StepCentricDataHolder {
     // an array for the mean values of the direction autocorrelations
     // per each time point (overlapping time interval), a mean DA is computed
     private Double[] medianDirectionAutocorrelations;
-    //
-    private List<double[]> interpolatedData;
+    // a map containing the interpolation method and the correspondent interpolated track objects
+    private Map<InterpolationMethod, InterpolatedTrack> interpolationMap;
+
 
     /**
      * Empty Constructor
@@ -183,11 +186,11 @@ public class StepCentricDataHolder {
         this.medianDirectionAutocorrelations = medianDirectionAutocorrelations;
     }
 
-    public List<double[]> getInterpolatedData() {
-        return interpolatedData;
+    public Map<InterpolationMethod, InterpolatedTrack> getInterpolationMap() {
+        return interpolationMap;
     }
 
-    public void setInterpolatedData(List<double[]> interpolatedData) {
-        this.interpolatedData = interpolatedData;
+    public void setInterpolationMap(Map<InterpolationMethod, InterpolatedTrack> interpolationMap) {
+        this.interpolationMap = interpolationMap;
     }
 }

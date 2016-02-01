@@ -9,16 +9,16 @@ import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellCondit
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellConditionOperator;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
-import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.AngleDirectPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplSpeedPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplSpeedPanel;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
@@ -26,18 +26,6 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
-
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.GridBagConstraints;
-import java.text.Format;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.JTableHeader;
-
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.ELProperty;
@@ -48,6 +36,15 @@ import org.jdesktop.swingbinding.JTableBinding.ColumnBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.JTableHeader;
+import java.awt.*;
+import java.text.Format;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Controller for single cell pre processing
@@ -263,9 +260,9 @@ class SingleCellPreProcessingController {
      * Show track data in a table.
      *
      * @param plateCondition: the condition to show the data for
-     * @param dataTable: the actual JTable
-     * @param columnNames: the header for the table
-     * @param dataToShow: the data to show in the table
+     * @param dataTable:      the actual JTable
+     * @param columnNames:    the header for the table
+     * @param dataToShow:     the data to show in the table
      */
     public void showTrackDataInTable(PlateCondition plateCondition, JTable dataTable, String columnNames[], Double[] dataToShow) {
         SingleCellConditionDataHolder singleCellConditionDataHolder = getConditionDataHolder(plateCondition);
@@ -359,7 +356,7 @@ class SingleCellPreProcessingController {
      * Given a certain category (selected index in a tabbed pane) generate the
      * random track data holders.
      *
-     * @param category: can be 0 or 1
+     * @param category:       can be 0 or 1
      * @param plateCondition: the plateCondition to generate the tracks from
      */
     public void generateRandomTrackDataHolders(int category, PlateCondition plateCondition) {
@@ -392,14 +389,14 @@ class SingleCellPreProcessingController {
             appendInfo("generating track data holders...");
             singleCellConditionPreProcessor.generateDataHolders(singleCellConditionDataHolder);
             appendInfo("--> current total number of cell tracks: " + singleCellConditionDataHolder
-                      .getTrackDataHolders().size());
+                    .getTrackDataHolders().size());
             // it can very well be that a plateCondition and/or a sample have been imaged, but there are no tracks in it
             // if this is not the case, go for the computation
             if (!singleCellConditionDataHolder.getTrackDataHolders().isEmpty()) {
                 singleCellConditionPreProcessor.generateDataStructure(singleCellConditionDataHolder);
                 appendInfo("pre-process step-centric and cell-centric data...");
                 singleCellConditionPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder, singleCellMainController
-                          .getConversionFactor(), singleCellMainController.getExperiment().getExperimentInterval());
+                        .getConversionFactor(), singleCellMainController.getExperiment().getExperimentInterval());
                 appendInfo("generating raw coordinates matrix...");
                 singleCellConditionPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
                 appendInfo("computing shifted-to-zero coordinates matrix...");
@@ -416,7 +413,7 @@ class SingleCellPreProcessingController {
                 // remove the plateCondition from the map and inform the user
                 preProcessingMap.remove(plateCondition);
                 appendInfo("No tracks recorded for condition: " + plateCondition + "; no coordinates to retrieve from"
-                          + " DB!");
+                        + " DB!");
             }
         }
     }
@@ -428,10 +425,10 @@ class SingleCellPreProcessingController {
     public void showTracksInTable() {
         // table binding
         JTableBinding tracksTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ,
-                  tracksBindingList, singleCellAnalysisPanel.getTracksTable());
+                tracksBindingList, singleCellAnalysisPanel.getTracksTable());
         // add column bindings
         ColumnBinding columnBinding = tracksTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType"
-                  + ".well.columnNumber}"));
+                + ".well.columnNumber}"));
         columnBinding.setColumnName("Column");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
@@ -464,7 +461,7 @@ class SingleCellPreProcessingController {
         String newLine = JFreeChartUtils.getNewLine();
         singleCellAnalysisPanel.getLogTextArea().append(info + newLine);
         singleCellAnalysisPanel.getLogTextArea().setCaretPosition(singleCellAnalysisPanel.getLogTextArea()
-                  .getDocument().getLength());
+                .getDocument().getLength());
     }
 
     /**
@@ -511,7 +508,7 @@ class SingleCellPreProcessingController {
 
         // add view to parent panel
         singleCellMainController.getDataAnalysisPanel().getAreaAnalysisParentPanel().add(singleCellAnalysisPanel,
-                  gridBagConstraints);
+                gridBagConstraints);
     }
 
     /**
@@ -520,15 +517,15 @@ class SingleCellPreProcessingController {
     private void showTrackPointsInTable() {
         // get the tracking coordinates unit of measurement
         TrackCoordinatesUnitOfMeasurement coordinatesUnitOfMeasurement = singleCellMainController
-                  .getCoordinatesUnitOfMeasurement();
+                .getCoordinatesUnitOfMeasurement();
         String unitOfMeasurementString = coordinatesUnitOfMeasurement.getUnitOfMeasurementString();
 
         // table binding
         JTableBinding trackPointsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ,
-                  trackPointsBindingList, singleCellAnalysisPanel.getTrackPointsTable());
+                trackPointsBindingList, singleCellAnalysisPanel.getTrackPointsTable());
 
         ColumnBinding columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${track"
-                  + ".trackNumber}"));
+                + ".trackNumber}"));
         columnBinding.setColumnName("Track");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
@@ -603,7 +600,7 @@ class SingleCellPreProcessingController {
         experimentShiftedCoordinatesRanges[1] = new Double[]{yShiftMin, yShiftMax};
         appendInfo("raw range x: (" + xRawMin + ", " + xRawMax + ")" + "; y: (" + yRawMin + ", " + yRawMax + ")");
         appendInfo("shifted range x: (" + xShiftMin + ", " + xShiftMax + ")" + "; y: (" + yShiftMin + ", " + yShiftMax
-                  + ")");
+                + ")");
     }
 
     /**
@@ -652,17 +649,17 @@ class SingleCellPreProcessingController {
                 } else {
                     singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                     showMessage("Sorry, I did not find any single cell tracks in the DB!\n"
-                              + "Please make sure you select the right combination of algorithm-imaging type.", "error-nothing to analyze", JOptionPane.ERROR_MESSAGE);
+                            + "Please make sure you select the right combination of algorithm-imaging type.", "error-nothing to analyze", JOptionPane.ERROR_MESSAGE);
                     // should get back here to the main window....!!!
                     return;
                 }
                 // when done, enable back the list, but keep buttons disabled!
                 showMessage("Tracks retrieved!\nSelect a condition to start with the"
-                          + " analysis.", "tracks retrieved", JOptionPane.INFORMATION_MESSAGE);
+                        + " analysis.", "tracks retrieved", JOptionPane.INFORMATION_MESSAGE);
                 singleCellMainController.getDataAnalysisPanel().getConditionsList().setEnabled(true);
                 singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 singleCellMainController.showInfoMessage("Tracks retrieved from DB. Select a condition to "
-                          + "start the analysis.");
+                        + "start the analysis.");
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 singleCellMainController.handleUnexpectedError(ex);
@@ -702,13 +699,8 @@ class SingleCellPreProcessingController {
                 appendInfo("Operating now on plateCondition: " + plateCondition);
                 appendInfo("operating on steps and cells...");
                 singleCellConditionOperator.operateOnStepsAndCells(singleCellConditionDataHolder);
-
-                String interpolationMethod = singleCellMainController.getInterpolationMethod();
-                if (!interpolationMethod.equalsIgnoreCase("none")) {
-                    singleCellConditionOperator.interpolateTracks(singleCellConditionDataHolder, 100, "");
-                    appendInfo("interpolating tracks...");
-                }
-
+                appendInfo("interpolating tracks...");
+                singleCellConditionOperator.interpolateTracks(singleCellConditionDataHolder, 100);
                 appendInfo("generating instantaneous displacements...");
                 singleCellConditionOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
                 appendInfo("generating directionality ratios...");
@@ -740,7 +732,7 @@ class SingleCellPreProcessingController {
                 // if not, just inform the user and skip the computation
                 appendInfo("Apparently this condition was not imaged/analyzed!");
                 singleCellMainController.showInfoMessage("Apparently this condition was not imaged/analyzed!\nNothing"
-                          + " to compute!");
+                        + " to compute!");
             }
             return null;
         }

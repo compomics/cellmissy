@@ -28,9 +28,8 @@ public interface TrackOperator {
      *
      * @param trackDataHolder
      * @param interpolationPoints
-     * @param interpolatorBeanName
      */
-    void interpolateTrack(TrackDataHolder trackDataHolder, int interpolationPoints, String interpolatorBeanName);
+    void interpolateTrack(TrackDataHolder trackDataHolder, int interpolationPoints);
 
     /**
      * Do the operations on the cell-centric level, i.e. compute all the

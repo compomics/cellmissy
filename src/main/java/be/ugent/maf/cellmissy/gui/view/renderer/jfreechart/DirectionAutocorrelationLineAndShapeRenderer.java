@@ -79,7 +79,6 @@ public class DirectionAutocorrelationLineAndShapeRenderer extends XYLineAndShape
         float brightness = 0.7f; //brightness
         float hue = 0.2f * (float) value;//hue
 
-        Color color = Color.getHSBColor(hue, saturation, brightness);
-        return color;
+        return Color.getHSBColor(hue, saturation, brightness);
     }
 }

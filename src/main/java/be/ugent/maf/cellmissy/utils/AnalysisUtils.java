@@ -6,13 +6,12 @@ package be.ugent.maf.cellmissy.utils;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 /**
  * Utility class for Analysis -- basic math and statistics methods

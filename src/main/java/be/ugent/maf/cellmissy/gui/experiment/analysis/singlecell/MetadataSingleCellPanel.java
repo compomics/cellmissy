@@ -81,10 +81,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
         return outliersAlgorithmsComboBox;
     }
 
-    public JComboBox getInterpolatorsComboBox() {
-        return interpolatorsComboBox;
-    }
-
     /**
      * Creates new form MetadataSingleCellPanel
      */
@@ -135,8 +131,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
         distanceMetricsComboBox = new javax.swing.JComboBox();
         jLabel18 = new javax.swing.JLabel();
         kernelDensityEstimatorsComboBox = new javax.swing.JComboBox();
-        jLabel1 = new javax.swing.JLabel();
-        interpolatorsComboBox = new javax.swing.JComboBox();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -358,8 +352,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
 
         jLabel18.setText("Kernel Density Estimation");
 
-        jLabel1.setText("Trajectory Interpolation");
-
         javax.swing.GroupLayout analysisPreferencesPanelLayout = new javax.swing.GroupLayout(analysisPreferencesPanel);
         analysisPreferencesPanel.setLayout(analysisPreferencesPanelLayout);
         analysisPreferencesPanelLayout.setHorizontalGroup(
@@ -367,7 +359,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
             .addGroup(analysisPreferencesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(analysisPreferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
                     .addComponent(jLabel18)
                     .addComponent(jLabel17)
                     .addComponent(jLabel16))
@@ -375,12 +366,11 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
                 .addGroup(analysisPreferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(outliersAlgorithmsComboBox, 0, 184, Short.MAX_VALUE)
                     .addComponent(kernelDensityEstimatorsComboBox, 0, 184, Short.MAX_VALUE)
-                    .addComponent(distanceMetricsComboBox, 0, 184, Short.MAX_VALUE)
-                    .addComponent(interpolatorsComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(distanceMetricsComboBox, 0, 184, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        analysisPreferencesPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel16, jLabel17, jLabel18});
+        analysisPreferencesPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel16, jLabel17, jLabel18});
 
         analysisPreferencesPanelLayout.setVerticalGroup(
             analysisPreferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -397,10 +387,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
                 .addGroup(analysisPreferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel18)
                     .addComponent(kernelDensityEstimatorsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(analysisPreferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(interpolatorsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -446,8 +432,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
     private javax.swing.JLabel infoLabel1;
     private javax.swing.JLabel infoLabel2;
     private javax.swing.JTextField instrumentTextField;
-    private javax.swing.JComboBox interpolatorsComboBox;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;

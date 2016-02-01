@@ -506,7 +506,6 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabel1" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel18" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel17" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel16" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -516,7 +515,6 @@
                       <Component id="outliersAlgorithmsComboBox" alignment="0" pref="184" max="32767" attributes="1"/>
                       <Component id="kernelDensityEstimatorsComboBox" alignment="0" pref="184" max="32767" attributes="1"/>
                       <Component id="distanceMetricsComboBox" pref="184" max="32767" attributes="1"/>
-                      <Component id="interpolatorsComboBox" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -539,11 +537,6 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel18" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="kernelDensityEstimatorsComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="interpolatorsComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -581,18 +574,6 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="kernelDensityEstimatorsComboBox">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="0"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel1">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Trajectory Interpolation"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JComboBox" name="interpolatorsComboBox">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="0"/>

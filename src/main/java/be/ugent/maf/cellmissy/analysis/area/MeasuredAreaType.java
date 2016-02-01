@@ -34,6 +34,5 @@ public enum MeasuredAreaType {
                 break;
         }
         return string;
-
     }
 }

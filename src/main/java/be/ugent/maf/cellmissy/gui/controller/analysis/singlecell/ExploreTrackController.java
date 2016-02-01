@@ -4,60 +4,33 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
+import be.ugent.maf.cellmissy.analysis.singlecell.InterpolationMethod;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.ExploreTrackPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsRendererGiver;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsMenuBar;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsRendererGiver;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TimePointTrackXYLineAndShapeRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.jfreechart.TrackXYLineAndShapeRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.PlottedTracksListRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.SingleCellDataTableRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.ConvexHullTableModel;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataHolderTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import javax.swing.AbstractButton;
-import javax.swing.JLabel;
-import javax.swing.JSlider;
-import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartMouseEvent;
-import org.jfree.chart.ChartMouseListener;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
+import org.jfree.chart.*;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
@@ -76,6 +49,26 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * This controller takes care of logic for exploring a track. Parent controller:
@@ -97,6 +90,7 @@ class ExploreTrackController {
     private ChartPanel xYTCoordinateChartPanel;
     private ChartPanel displacementTChartPanel;
     private ChartPanel singleTrackCoordinatesChartPanel;
+    private List<ChartPanel> interpolatedTrackChartPanels;
     private ChartPanel convexHullChartPanel;
     private ChartPanel histogramChartPanel;
     private ChartPanel polarPlotChartPanel;
@@ -212,6 +206,7 @@ class ExploreTrackController {
 
         singleTrackCoordinatesChartPanel = new ChartPanel(null);
         singleTrackCoordinatesChartPanel.setOpaque(false);
+        interpolatedTrackChartPanels = new ArrayList<>();
         convexHullChartPanel = new ChartPanel(null);
         convexHullChartPanel.setOpaque(false);
 
@@ -511,6 +506,14 @@ class ExploreTrackController {
     private void plotSingleTrackData(TrackDataHolder trackDataHolder) {
         // plot the shifted track coordinates
         plotCoordinatesInSpace(trackDataHolder);
+        // plot the interpolated track
+        if (!interpolatedTrackChartPanels.isEmpty()) {
+            interpolatedTrackChartPanels.clear();
+            exploreTrackPanel.getInterpolatedTrackParentPanel().removeAll();
+            exploreTrackPanel.getInterpolatedTrackParentPanel().revalidate();
+            exploreTrackPanel.getInterpolatedTrackParentPanel().repaint();
+        }
+        plotInterpolatedTrack(trackDataHolder);
         // plot x and y coordinates in time + displacements in time
         plotCoordinatesInTime(trackDataHolder);
         plotDisplacementsInTime(trackDataHolder);
@@ -617,6 +620,70 @@ class ExploreTrackController {
         JFreeChart shiftedCoordinatesChart = ChartFactory.createXYLineChart(seriesKey + " - shifted coordinates", "x (µm)", "y (µm)", ySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         JFreeChartUtils.setupSingleTrackPlot(shiftedCoordinatesChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), false);
         singleTrackCoordinatesChartPanel.setChart(shiftedCoordinatesChart);
+    }
+
+    /**
+     * Plot the interpolated track coordinates.
+     *
+     * @param trackDataHolder
+     */
+    private void plotInterpolatedTrack(TrackDataHolder trackDataHolder) {
+        List<XYSeriesCollection> collectionsForInterpolationPlots = getCollectionsForInterpolationPlots(trackDataHolder);
+        for (int i = 0; i < collectionsForInterpolationPlots.size(); i++) {
+            XYSeriesCollection collection = collectionsForInterpolationPlots.get(i);
+            JFreeChart interpolatedTrackChart = ChartFactory.createXYLineChart("" + collection.getSeriesKey(0), "x (µm)", "y (µm)", collection,
+                      PlotOrientation.VERTICAL, false, true, false);
+            ChartPanel interpolatedTrackChartPanel = new ChartPanel(null);
+            interpolatedTrackChartPanel.setOpaque(false);
+            // compute the constraints
+            GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(collectionsForInterpolationPlots.size(), i, 2);
+            XYPlot xyPlot = interpolatedTrackChart.getXYPlot();
+            JFreeChartUtils.setupSingleTrackPlot(interpolatedTrackChart,
+                      trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), false);
+
+            NumberAxis axis = (NumberAxis) xyPlot.getDomainAxis();
+            axis.setAutoRange(true);
+//            axis.setAutoRangeIncludesZero(false);
+            
+            axis = (NumberAxis) xyPlot.getRangeAxis();
+//            axis.setAutoRangeIncludesZero(false);
+            axis.setAutoRange(true);
+
+            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xyPlot.getRenderer();
+            // show no points
+            renderer.setSeriesShapesVisible(0, false);
+            interpolatedTrackChartPanel.setChart(interpolatedTrackChart);
+            exploreTrackPanel.getInterpolatedTrackParentPanel().add(interpolatedTrackChartPanel, tempBagConstraints);
+
+            interpolatedTrackChartPanels.add(interpolatedTrackChartPanel);
+            exploreTrackPanel.getInterpolatedTrackParentPanel().revalidate();
+            exploreTrackPanel.getInterpolatedTrackParentPanel().repaint();
+        }
+    }
+
+    /**
+     *
+     * @param trackDataHolder
+     * @return
+     */
+    private List<XYSeriesCollection> getCollectionsForInterpolationPlots(TrackDataHolder trackDataHolder) {
+        List<XYSeriesCollection> collections = new ArrayList<>();
+        Track track = trackDataHolder.getTrack();
+        int trackNumber = track.getTrackNumber();
+        Well well = track.getWellHasImagingType().getWell();
+        Map<InterpolationMethod, InterpolatedTrack> interpolationMap = trackDataHolder.getStepCentricDataHolder().getInterpolationMap();
+        interpolationMap.keySet().stream().map((method) -> {
+            InterpolatedTrack interpolatedTrack = interpolationMap.get(method);
+            double[] interpolatedX = interpolatedTrack.getInterpolatedX();
+            double[] interpolatedY = interpolatedTrack.getInterpolatedY();
+            XYSeries xYSeries = JFreeChartUtils.generateXYSeries(interpolatedX, interpolatedY);
+            String seriesKey = "interpolated track " + trackNumber + ", well " + well + ", " + method.getStringForType();
+            xYSeries.setKey(seriesKey);
+            return xYSeries;
+        }).map((xYSeries) -> new XYSeriesCollection(xYSeries)).forEach((collection) -> {
+            collections.add(collection);
+        });
+        return collections;
     }
 
     /**

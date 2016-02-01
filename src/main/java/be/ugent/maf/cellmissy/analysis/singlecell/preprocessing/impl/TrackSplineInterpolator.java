@@ -8,7 +8,10 @@ package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl;
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolator;
 import java.util.ArrayList;
 import java.util.List;
+
+import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.apache.commons.math3.util.MathArrays;
 
@@ -25,8 +28,7 @@ import org.apache.commons.math3.util.MathArrays;
 public class TrackSplineInterpolator implements TrackInterpolator {
 
     @Override
-    public List<double[]> interpolateTrack(double[] time, double[] x, double[] y, int interpolationPoints) {
-        List<double[]> interpolatedData = new ArrayList<>();
+    public InterpolatedTrack interpolateTrack(double[] time, double[] x, double[] y, int interpolationPoints) {
         // create a new spline interpolator
         SplineInterpolator splineInterpolator = new SplineInterpolator();
 
@@ -35,11 +37,11 @@ public class TrackSplineInterpolator implements TrackInterpolator {
         double[] interpolatedX = new double[interpolationPoints];
         double[] interpolatedY = new double[interpolationPoints];
         // the step used for the interpolation in both direction
-        double interpolationStep = (double) (time[time.length - 1] - time[0]) / interpolationPoints;
+        double interpolationStep = (time[time.length - 1] - time[0]) / interpolationPoints;
 
         // check for monotonicity
         boolean monotonic = MathArrays.isMonotonic(time, MathArrays.OrderDirection.INCREASING, false);
-        // in case time is not monotonic, sort in place time, x and y coodrinates
+        // in case time is not monotonic, sort in place time, x and y coordinates
         if (!monotonic) {
             MathArrays.sortInPlace(time, x, y);
         }
@@ -48,14 +50,16 @@ public class TrackSplineInterpolator implements TrackInterpolator {
         PolynomialSplineFunction functionX = splineInterpolator.interpolate(time, x);
         PolynomialSplineFunction functionY = splineInterpolator.interpolate(time, y);
 
+        // get the polynomial functions in both directions
+        PolynomialFunction polynomialFunctionX = functionX.getPolynomials()[0];
+        PolynomialFunction polynomialFunctionY = functionY.getPolynomials()[0];
+
         for (int i = 0; i < interpolationPoints; i++) {
             interpolantTime[i] = time[0] + (i * interpolationStep);
             interpolatedX[i] = functionX.value(interpolantTime[i]);
             interpolatedY[i] = functionY.value(interpolantTime[i]);
         }
-        interpolatedData.add(interpolantTime);
-        interpolatedData.add(interpolatedX);
-        interpolatedData.add(interpolatedY);
-        return interpolatedData;
+
+        return new InterpolatedTrack(interpolantTime, interpolatedX, interpolatedY, polynomialFunctionX, polynomialFunctionY);
     }
 }

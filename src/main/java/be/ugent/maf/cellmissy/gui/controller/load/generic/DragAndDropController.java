@@ -42,6 +42,7 @@ import org.springframework.stereotype.Component;
  *
  * @author Paola
  */
+@SuppressWarnings("MagicConstant")
 @Component("dragAndDropController")
 public class DragAndDropController {
 
@@ -162,7 +163,7 @@ public class DragAndDropController {
     private class JPanelDropTargetListener extends DropTargetAdapter implements DropTargetListener {
 
         // we need to connect the target with a component
-        DropTarget dropTarget;
+        final DropTarget dropTarget;
         // in our case, the component is a JPanel
 
         /**

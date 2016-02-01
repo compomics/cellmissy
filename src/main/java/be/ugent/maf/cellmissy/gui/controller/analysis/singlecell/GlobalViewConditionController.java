@@ -349,7 +349,7 @@ public class GlobalViewConditionController {
             coordinatesChartPanel.setOpaque(false);
 
             // compute the constraints
-            GridBagConstraints tempBagConstraints = getTempBagConstraints(nPlots, i, nCols);
+            GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(nPlots, i, nCols);
             trackCoordinatesController.getTrackCoordinatesPanel().getGlobalViewConditionParentPanel().add(coordinatesChartPanel,
                       tempBagConstraints);
             // see if exes need to be scaled
@@ -369,31 +369,6 @@ public class GlobalViewConditionController {
             trackCoordinatesController.getTrackCoordinatesPanel().getGlobalViewConditionParentPanel().revalidate();
             trackCoordinatesController.getTrackCoordinatesPanel().getGlobalViewConditionParentPanel().repaint();
         }
-    }
-
-    /**
-     * Given the amount of plots to render, and the index of the current plot,
-     * as well as the number of columns to use, get the appropriate
-     * GridBagConstraints.
-     *
-     * @param nPlots
-     * @param index
-     * @param nCols
-     * @return the GridBagConstraints
-     */
-    private GridBagConstraints getTempBagConstraints(int nPlots, int index, int nCols) {
-        GridBagConstraints tempConstraints = new GridBagConstraints();
-        int nRows = (int) Math.ceil(nPlots / nCols);
-        tempConstraints.fill = GridBagConstraints.BOTH;
-        tempConstraints.weightx = 1.0 / nCols;
-        tempConstraints.weighty = 1.0 / nRows;
-        tempConstraints.gridy = (int) Math.floor(index / nCols);
-        if (index < nCols) {
-            tempConstraints.gridx = index;
-        } else {
-            tempConstraints.gridx = index - ((index / nCols) * nCols);
-        }
-        return tempConstraints;
     }
 
     /**

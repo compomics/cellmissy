@@ -33,9 +33,9 @@ public class SingleCellWellOperatorImpl implements SingleCellWellOperator {
     }
 
     @Override
-    public void interpolateTracks(SingleCellWellDataHolder singleCellWellDataHolder, int interpolationPoints, String interpolatorBeanName) {
+    public void interpolateTracks(SingleCellWellDataHolder singleCellWellDataHolder, int interpolationPoints) {
         for (TrackDataHolder trackDataHolder : singleCellWellDataHolder.getTrackDataHolders()) {
-            trackOperator.interpolateTrack(trackDataHolder, interpolationPoints, interpolatorBeanName);
+            trackOperator.interpolateTrack(trackDataHolder, interpolationPoints);
         }
     }
 

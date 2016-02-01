@@ -33,9 +33,9 @@ public class SingleCellConditionOperatorImpl implements SingleCellConditionOpera
     }
 
     @Override
-    public void interpolateTracks(SingleCellConditionDataHolder singleCellConditionDataHolder, int interpolationPoints, String interpolatorBeanName) {
+    public void interpolateTracks(SingleCellConditionDataHolder singleCellConditionDataHolder, int interpolationPoints) {
         for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
-            singleCellWellOperator.interpolateTracks(singleCellWellDataHolder, interpolationPoints, interpolatorBeanName);
+            singleCellWellOperator.interpolateTracks(singleCellWellDataHolder, interpolationPoints);
         }
     }
 

@@ -40,11 +40,9 @@ public class GuiUtils {
     private static final Color nonImagedColor = new Color(169, 169, 169);
     // Available colors (for set-up the experiment)
     private static final Color[] availableColors = {new Color(0, 0, 139), new Color(255, 0, 0), new Color(34, 139,
-            34), new Color(148, 0, 211), new Color(255, 140, 0), new Color(30, 144, 255), new Color(255, 0, 255), new
-            Color(0, 140, 140), new Color(128, 0, 0), new Color(128, 128, 0)};
+        34), new Color(148, 0, 211), new Color(255, 140, 0), new Color(30, 144, 255), new Color(255, 0, 255), new Color(0, 140, 140), new Color(128, 0, 0), new Color(128, 128, 0)};
     // Colors used for Imaging Type Rendering
-    private static final Color[] imagingTypeColors = {new Color(138, 43, 226), new Color(135, 206, 250), new Color
-            (255, 0, 255), new Color(255, 204, 51)};
+    private static final Color[] imagingTypeColors = {new Color(138, 43, 226), new Color(135, 206, 250), new Color(255, 0, 255), new Color(255, 204, 51)};
     // Font for highlighted labels
     private static final Font boldFont = new Font("Tahoma", Font.BOLD, 14);
     // Font for normal labels
@@ -87,6 +85,31 @@ public class GuiUtils {
     }
 
     /**
+     * Given the amount of plots to render, and the index of the current plot,
+     * as well as the number of columns to use, get the appropriate
+     * GridBagConstraints.
+     *
+     * @param nPlots
+     * @param index
+     * @param nCols
+     * @return the GridBagConstraints
+     */
+    public static GridBagConstraints getTempBagConstraints(int nPlots, int index, int nCols) {
+        GridBagConstraints tempConstraints = new GridBagConstraints();
+        int nRows = (int) Math.ceil(nPlots / nCols);
+        tempConstraints.fill = GridBagConstraints.BOTH;
+        tempConstraints.weightx = 1.0 / nCols;
+        tempConstraints.weighty = 1.0 / nRows;
+        tempConstraints.gridy = (int) Math.floor(index / nCols);
+        if (index < nCols) {
+            tempConstraints.gridx = index;
+        } else {
+            tempConstraints.gridx = index - ((index / nCols) * nCols);
+        }
+        return tempConstraints;
+    }
+
+    /**
      * Check if a parent component already contains a child component
      *
      * @param parentContainer
@@ -123,7 +146,7 @@ public class GuiUtils {
      * Center the dialog on the parent frame.
      *
      * @param parentFrame the parent frame
-     * @param dialog      the dialog
+     * @param dialog the dialog
      */
     public static void centerDialogOnFrame(JFrame parentFrame, JDialog dialog) {
         Point topLeft = parentFrame.getLocationOnScreen();
@@ -230,7 +253,7 @@ public class GuiUtils {
         }
         // get the component used to draw the cell -- for the header, row and coumn: zero
         Component component = renderer.getTableCellRendererComponent(table, column.getHeaderValue(), false, false, 0,
-                0);
+                  0);
         width = component.getPreferredSize().width;
         // get maximum width of column data
         // iterate through the rows
@@ -238,7 +261,7 @@ public class GuiUtils {
             renderer = table.getCellRenderer(r, colIndex);
             // get the component used to draw the cell -- for the current cell: row and coumn are index r and colIndex
             component = renderer.getTableCellRendererComponent(table, table.getValueAt(r, colIndex), false, false, r,
-                    colIndex);
+                      colIndex);
             width = Math.max(width, component.getPreferredSize().width);
         }
         // add margin
