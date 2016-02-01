@@ -157,7 +157,7 @@ public class DoseResponseController {
         mainDRRadioButtonGroup.add(dRPanel.getInitialPlotDRButton());
         mainDRRadioButtonGroup.add(dRPanel.getNormalizedPlotDRButton());
         mainDRRadioButtonGroup.add(dRPanel.getResultsDRButton());
-        //select as default first button (Normalized Area values Computation)
+        //select as default first button
         dRPanel.getInputDRButton().setSelected(true);
         //init dataTable
         dataTable = new JTable();

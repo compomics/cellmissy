@@ -23,6 +23,7 @@ import be.ugent.maf.cellmissy.entity.ProjectHasUser;
 import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.result.TimeInterval;
 import be.ugent.maf.cellmissy.entity.TimeStep;
+import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
@@ -529,8 +530,12 @@ public class AreaMainController {
                 updateInfoMessage("Temporal evolution of the area is plotted for each biological condition");
                 break;
             case "linearModelPanel":
-                // enable next button
-                analysisExperimentPanel.getNextButton().setEnabled(true);
+                // if dose-response analysis is possible enable next button, otherwise disable
+                if (DoseResponsePossible()) {
+                    analysisExperimentPanel.getNextButton().setEnabled(true);
+                } else {
+                    analysisExperimentPanel.getNextButton().setEnabled(false);
+                }
                 // disable conditions list
                 dataAnalysisPanel.getConditionsList().setEnabled(false);
                 dataAnalysisPanel.getConditionsList().clearSelection();
@@ -1085,6 +1090,21 @@ public class AreaMainController {
             }
         }
     }
+    
+    /**
+     * Check if dose-response analysis is possible for the current experiment.
+     * @return True if at least one condition has a treatment of category 1
+     */
+    private boolean DoseResponsePossible() {
+        for (PlateCondition plateCondition : plateConditionList) {
+            for (Treatment treatment : plateCondition.getTreatmentList()) {
+                if (treatment.getTreatmentType().getTreatmentCategory() == 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }            
 
     /**
      * Swing Worker to fetch one condition time steps at once: The user selects

@@ -63,14 +63,18 @@ public class DoseResponseAnalysisGroup {
         }
 
         //setting the velocities from areaAnalysisResults
-        //for every condition there are multiple replicates, this means multiple velocities
         this.velocitiesMap = new LinkedHashMap<>();
-        List<Double> replicateVelocities = new ArrayList<>();
-        
-        for (AreaAnalysisResults areaAnalysisResult : areaAnalysisResults) {
-            velocities.addAll(Arrays.asList(areaAnalysisResult.getSlopes()));
-        }
 
+        for (int i = 0; i < plateConditions.size(); i++) {
+            //for every condition there are multiple replicates, this means multiple velocities
+            List<Double> replicateVelocities = new ArrayList<>();
+            //get condition and corresponding velocities
+            PlateCondition condition = plateConditions.get(i);
+            replicateVelocities.addAll(Arrays.asList(areaAnalysisResults.get(i).getSlopes()));
+
+            //put in map
+            velocitiesMap.put(condition, replicateVelocities);
+        }
     }
 
     /**
