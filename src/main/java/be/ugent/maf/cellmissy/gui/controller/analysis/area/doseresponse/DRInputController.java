@@ -8,6 +8,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.ChooseTreatmentDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.RectIconListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
@@ -51,6 +52,7 @@ public class DRInputController {
     private DoseResponseAnalysisGroup dRAnalysisGroup;
     //view
     private DRInputPanel dRInputPanel;
+    private ChooseTreatmentDialog chooseTreatmentDialog;
     // parent controller
     @Autowired
     private DoseResponseController doseResponseController;
@@ -76,6 +78,10 @@ public class DRInputController {
         return dRInputPanel;
     }
 
+    public ChooseTreatmentDialog getChooseTreatmentDialog() {
+        return chooseTreatmentDialog;
+    }
+    
     public void setdRAnalysisGroup(DoseResponseAnalysisGroup dRAnalysisGroup) {
         this.dRAnalysisGroup = dRAnalysisGroup;
     }
