@@ -127,6 +127,10 @@ public class DRInputController {
         experimentTypeRadioButtonGroup.add(dRInputPanel.getInhibitionRadioButton());
         //select as default first button (Stimulation)
         dRInputPanel.getStimulationRadioButton().setSelected(true);
+        
+        //initialize treatment choice dialog
+        chooseTreatmentDialog = new ChooseTreatmentDialog(doseResponseController.getCellMissyFrame(), true);
+        
 
         /*
          * Action listeners for buttons

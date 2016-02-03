@@ -5,17 +5,27 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse;
 
+import javax.swing.JButton;
+
 /**
  *
  * @author Gwendolien
  */
-public class ChooseTreatmentDialog extends javax.swing.JPanel {
+public class ChooseTreatmentDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form ChooseTreatmentDialog
      */
     public ChooseTreatmentDialog() {
         initComponents();
+    }
+    
+    /**
+     * Getters
+     * @return 
+     */
+    public JButton getSelectTreatmentButton() {
+        return selectTreatmentButton;
     }
 
     /**

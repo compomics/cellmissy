@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
+import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRResultsPanel;
@@ -90,6 +91,10 @@ public class DoseResponseController {
 
     public List<PlateCondition> getPlateConditionList() {
         return areaMainController.getPlateConditionList();
+    }
+    
+    public CellMissyFrame getCellMissyFrame() {
+        return areaMainController.getCellMissyFrame();
     }
 
     /**
