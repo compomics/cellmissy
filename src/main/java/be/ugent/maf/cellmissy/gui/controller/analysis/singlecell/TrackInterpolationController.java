@@ -9,7 +9,6 @@ import java.awt.GridBagConstraints;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -37,7 +36,6 @@ public class TrackInterpolationController {
 
     // model
     private BindingGroup bindingGroup;
-
     // view
     private List<ChartPanel> interpolatedTrackChartPanels;
     private List<ChartPanel> combinedChartPanels;
@@ -83,13 +81,12 @@ public class TrackInterpolationController {
         }
         List<XYSeriesCollection> collections = makeInterpolationCoordinatesCollections(trackDataHolder);
         for (int i = 0; i < collections.size(); i++) {
-            XYSeriesCollection collection = collections.get(i);
-            JFreeChart interpolatedTrackChart = ChartFactory.createXYLineChart("" + collection.getSeriesKey(0), "x (µm)", "y (µm)", collection,
+            JFreeChart interpolatedTrackChart = ChartFactory.createXYLineChart("" + collections.get(i).getSeriesKey(0), "x (µm)", "y (µm)", collections.get(i),
                       PlotOrientation.VERTICAL, false, true, false);
             ChartPanel interpolatedTrackChartPanel = new ChartPanel(null);
             interpolatedTrackChartPanel.setOpaque(false);
             // compute the constraints
-            GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(collections.size(), i, 3);
+            GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(collections.size(), i, collections.size());
             XYPlot xyPlot = interpolatedTrackChart.getXYPlot();
             JFreeChartUtils.setupSingleTrackPlot(interpolatedTrackChart,
                       exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder), false);
@@ -127,7 +124,6 @@ public class TrackInterpolationController {
             exploreTrackController.getExploreTrackPanel().getInterpolatedTemporalEvolutionParentPanel().revalidate();
             exploreTrackController.getExploreTrackPanel().getInterpolatedTemporalEvolutionParentPanel().repaint();
         }
-        Map<InterpolationMethod, InterpolatedTrack> interpolationMap = trackDataHolder.getStepCentricDataHolder().getInterpolationMap();
         List<XYSeriesCollection> xtCollections = makeInterpolationXTSeriesCollections(trackDataHolder);
         List<XYSeriesCollection> ytCollections = makeInterpolationYTSeriesCollections(trackDataHolder);
         XYItemRenderer renderer = new StandardXYItemRenderer();
@@ -147,7 +143,7 @@ public class TrackInterpolationController {
                       JFreeChartUtils.getChartFont(), combinedDomainXYPlot, Boolean.FALSE);
             JFreeChartUtils.setupCombinedChart(combinedChart, exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
             ChartPanel combinedChartPanel = new ChartPanel(combinedChart);
-            GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(xtCollections.size(), i, 3);
+            GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(xtCollections.size(), i, xtCollections.size());
             exploreTrackController.getExploreTrackPanel().getInterpolatedTemporalEvolutionParentPanel().add(combinedChartPanel, tempBagConstraints);
 
             combinedChartPanels.add(combinedChartPanel);
@@ -171,7 +167,8 @@ public class TrackInterpolationController {
             double[] interpolatedX = interpolationMap.get(method).getInterpolatedX();
             double[] interpolatedY = interpolationMap.get(method).getInterpolatedY();
             String seriesKey = "interpolated track " + trackDataHolder.getTrack().getTrackNumber()
-                      + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType();
+                      + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType() +
+                      "\n" + interpolationMap.get(method).toString();
             XYSeries xYSeries = makeSeries(seriesKey, interpolatedX, interpolatedY);
             return xYSeries;
         }).map((xYSeries) -> new XYSeriesCollection(xYSeries)).forEach((collection) -> {
