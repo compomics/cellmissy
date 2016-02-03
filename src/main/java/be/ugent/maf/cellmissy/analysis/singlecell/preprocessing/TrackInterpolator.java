@@ -24,5 +24,5 @@ public interface TrackInterpolator {
      * interpolation?
      * @return: an interpolated track object
      */
-    InterpolatedTrack interpolateTrack(double[] time, double[] x, double[] y, int interpolationPoints);
+    InterpolatedTrack interpolateTrack(double[] time, double[] x, double[] y);
 }

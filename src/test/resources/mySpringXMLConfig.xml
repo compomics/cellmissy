@@ -113,6 +113,7 @@
     <bean id="spline_interpolator" class="be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl.TrackSplineInterpolator">
     </bean>
     
-    <bean id="hermite_interpolator" class="be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl.TrackHermiteInterpolator">
+    <bean id="loess_interpolator" class="be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl.TrackLoessInterpolator">
     </bean>
+    
 </beans>

@@ -247,7 +247,7 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     }
 
     @Override
-    public void interpolateTrack(StepCentricDataHolder stepCentricDataHolder, int interpolationPoints) {
+    public void interpolateTrack(StepCentricDataHolder stepCentricDataHolder) {
         Map<InterpolationMethod, InterpolatedTrack> interpolationMap = new LinkedHashMap<>();
         // get the right implementation of the track interpolator for each annotated bean
         for (InterpolationMethod method : InterpolationMethod.values()) {
@@ -259,7 +259,7 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
             Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
             double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[0]));
             double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[1]));
-            InterpolatedTrack interpolatedTrack = trackInterpolator.interpolateTrack(timeIndexes, xCoord, yCoord, interpolationPoints);
+            InterpolatedTrack interpolatedTrack = trackInterpolator.interpolateTrack(timeIndexes, xCoord, yCoord);
             interpolationMap.put(method, interpolatedTrack);
         }
         stepCentricDataHolder.setInterpolationMap(interpolationMap);

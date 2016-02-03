@@ -23,13 +23,6 @@ public interface SingleCellWellOperator {
     void operateOnStepsAndCells(SingleCellWellDataHolder singleCellWellDataHolder);
 
     /**
-     *
-     * @param singleCellWellDataHolder 
-     * @param interpolationPoints
-     */
-    void interpolateTracks(SingleCellWellDataHolder singleCellWellDataHolder, int interpolationPoints);
-
-    /**
      * Generate the instantaneous displacement vector.
      *
      * @param singleCellWellDataHolder

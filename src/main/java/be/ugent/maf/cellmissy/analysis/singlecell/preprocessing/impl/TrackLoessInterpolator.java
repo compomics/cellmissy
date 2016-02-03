@@ -7,29 +7,26 @@ package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl;
 
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolator;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
-
 import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
-import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
+import org.apache.commons.math3.analysis.interpolation.LoessInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.apache.commons.math3.util.MathArrays;
 
 /**
- *
- * This implementation for the track interpolator computes a natural (also known
- * as "free", "un-clamped") cubic spline interpolation for the data set. The x
- * values passed to the interpolator must be ordered in ascending order. It is
- * not valid to evaluate the function for values outside the range x0..xN --
- * will throw an OutOfRangeException.
+ * A loess implementation for the track interpolation. This class computes an
+ * interpolating function by performing a loess fit on the data at the original
+ * abscissae and then building a cubic spline with a SplineInterpolator on the
+ * resulting fit.
  *
  * @author Paola
  */
-public class TrackSplineInterpolator implements TrackInterpolator {
+public class TrackLoessInterpolator implements TrackInterpolator {
 
     @Override
     public InterpolatedTrack interpolateTrack(double[] time, double[] x, double[] y) {
-        // create a new spline interpolator
-        SplineInterpolator splineInterpolator = new SplineInterpolator();
+        // create a new interpolator
+        LoessInterpolator loessInterpolator = new LoessInterpolator();
         int interpolationPoints = PropertiesConfigurationHolder.getInstance().getInt("numberOfInterpolationPoints");
 
         // create arrays to hold the interpolant time, the interpolated X and the interpolated Y
@@ -47,8 +44,8 @@ public class TrackSplineInterpolator implements TrackInterpolator {
         }
 
         // call the interpolator, and actually do the interpolation
-        PolynomialSplineFunction functionX = splineInterpolator.interpolate(time, x);
-        PolynomialSplineFunction functionY = splineInterpolator.interpolate(time, y);
+        PolynomialSplineFunction functionX = loessInterpolator.interpolate(time, x);
+        PolynomialSplineFunction functionY = loessInterpolator.interpolate(time, y);
 
         // get the polynomial functions in both directions
         PolynomialFunction polynomialFunctionX = functionX.getPolynomials()[0];
@@ -62,4 +59,5 @@ public class TrackSplineInterpolator implements TrackInterpolator {
 
         return new InterpolatedTrack(interpolantTime, interpolatedX, interpolatedY, polynomialFunctionX, polynomialFunctionY);
     }
+
 }

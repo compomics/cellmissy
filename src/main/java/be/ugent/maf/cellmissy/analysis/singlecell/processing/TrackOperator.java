@@ -24,14 +24,6 @@ public interface TrackOperator {
     void operateOnSteps(TrackDataHolder trackDataHolder);
 
     /**
-     * An (optional) method to interpolate a track.
-     *
-     * @param trackDataHolder
-     * @param interpolationPoints
-     */
-    void interpolateTrack(TrackDataHolder trackDataHolder, int interpolationPoints);
-
-    /**
      * Do the operations on the cell-centric level, i.e. compute all the
      * features related to aggregated measurements.
      *

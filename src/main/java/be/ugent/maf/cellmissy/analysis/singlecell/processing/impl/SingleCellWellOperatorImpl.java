@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.analysis.singlecell.processing.TrackOperator;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
+import java.util.Iterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,24 +27,20 @@ public class SingleCellWellOperatorImpl implements SingleCellWellOperator {
 
     @Override
     public void operateOnStepsAndCells(SingleCellWellDataHolder singleCellWellDataHolder) {
-        for (TrackDataHolder trackDataHolder : singleCellWellDataHolder.getTrackDataHolders()) {
+        singleCellWellDataHolder.getTrackDataHolders().stream().map((trackDataHolder) -> {
             trackOperator.operateOnSteps(trackDataHolder);
+            return trackDataHolder;
+        }).forEach((trackDataHolder) -> {
             trackOperator.operateOnCells(trackDataHolder);
-        }
-    }
-
-    @Override
-    public void interpolateTracks(SingleCellWellDataHolder singleCellWellDataHolder, int interpolationPoints) {
-        for (TrackDataHolder trackDataHolder : singleCellWellDataHolder.getTrackDataHolders()) {
-            trackOperator.interpolateTrack(trackDataHolder, interpolationPoints);
-        }
+        });
     }
 
     @Override
     public void generateInstantaneousDisplacementsVector(SingleCellWellDataHolder singleCellWellDataHolder) {
         Double[] instantaneousDisplacementsVector = new Double[singleCellWellDataHolder.getDataStructure().length];
         int counter = 0;
-        for (TrackDataHolder trackDataHolder : singleCellWellDataHolder.getTrackDataHolders()) {
+        for (Iterator<TrackDataHolder> it = singleCellWellDataHolder.getTrackDataHolders().iterator(); it.hasNext();) {
+            TrackDataHolder trackDataHolder = it.next();
             Double[] instantaneousDisplacements = trackDataHolder.getStepCentricDataHolder()
                       .getInstantaneousDisplacements();
             for (Double instantaneousDisplacement : instantaneousDisplacements) {
@@ -58,7 +55,8 @@ public class SingleCellWellOperatorImpl implements SingleCellWellOperator {
     public void generateDirectionalityRatiosVector(SingleCellWellDataHolder singleCellWellDataHolder) {
         Double[] directionalityRatiosVector = new Double[singleCellWellDataHolder.getDataStructure().length];
         int counter = 0;
-        for (TrackDataHolder trackDataHolder : singleCellWellDataHolder.getTrackDataHolders()) {
+        for (Iterator<TrackDataHolder> it = singleCellWellDataHolder.getTrackDataHolders().iterator(); it.hasNext();) {
+            TrackDataHolder trackDataHolder = it.next();
             Double[] directionalityRatios = trackDataHolder.getStepCentricDataHolder().getDirectionalityRatios();
             for (Double directionalityRatio : directionalityRatios) {
                 directionalityRatiosVector[counter] = directionalityRatio;

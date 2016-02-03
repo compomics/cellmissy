@@ -38,12 +38,7 @@ public class TrackOperatorImpl implements TrackOperator {
         stepCentricOperator.computeDirAutocorrMatrix(stepCentricDataHolder);
         stepCentricOperator.computeDiffAngles(stepCentricDataHolder);
         stepCentricOperator.computeMeanDirectionAutocorrelations(stepCentricDataHolder);
-    }
-
-    @Override
-    public void interpolateTrack(TrackDataHolder trackDataHolder, int interpolationPoints) {
-        StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
-        stepCentricOperator.interpolateTrack(stepCentricDataHolder, interpolationPoints);
+        stepCentricOperator.interpolateTrack(stepCentricDataHolder);
     }
 
     @Override

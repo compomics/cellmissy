@@ -27,23 +27,16 @@ public class SingleCellConditionOperatorImpl implements SingleCellConditionOpera
 
     @Override
     public void operateOnStepsAndCells(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             singleCellWellOperator.operateOnStepsAndCells(singleCellWellDataHolder);
-        }
-    }
-
-    @Override
-    public void interpolateTracks(SingleCellConditionDataHolder singleCellConditionDataHolder, int interpolationPoints) {
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
-            singleCellWellOperator.interpolateTracks(singleCellWellDataHolder, interpolationPoints);
-        }
+        });
     }
 
     @Override
     public void generateInstantaneousDisplacementsVector(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             singleCellWellOperator.generateInstantaneousDisplacementsVector(singleCellWellDataHolder);
-        }
+        });
         Double[] instantaneousDisplacementsVector = new Double[singleCellConditionDataHolder.getDataStructure().length];
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellConditionDataHolder.getTrackDataHolders()) {
@@ -59,9 +52,9 @@ public class SingleCellConditionOperatorImpl implements SingleCellConditionOpera
 
     @Override
     public void generateDirectionalityRatiosVector(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             singleCellWellOperator.generateDirectionalityRatiosVector(singleCellWellDataHolder);
-        }
+        });
         Double[] directionalityRatiosVector = new Double[singleCellConditionDataHolder.getDataStructure().length];
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellConditionDataHolder.getTrackDataHolders()) {
@@ -76,9 +69,9 @@ public class SingleCellConditionOperatorImpl implements SingleCellConditionOpera
 
     @Override
     public void generateMedianDirectionalityRatiosVector(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             singleCellWellOperator.generateMedianDirectionalityRatiosVector(singleCellWellDataHolder);
-        }
+        });
         Double[] medianDirectionalityRatiosVector = new Double[singleCellConditionDataHolder.getTrackDataHolders().size()];
         for (int i = 0; i < medianDirectionalityRatiosVector.length; i++) {
             TrackDataHolder trackDataHolder = singleCellConditionDataHolder.getTrackDataHolders().get(i);
@@ -90,9 +83,9 @@ public class SingleCellConditionOperatorImpl implements SingleCellConditionOpera
 
     @Override
     public void generateTrackDisplacementsVector(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             singleCellWellOperator.generateTrackDisplacementsVector(singleCellWellDataHolder);
-        }
+        });
         Double[] trackDisplacementsVector = new Double[singleCellConditionDataHolder.getTrackDataHolders().size()];
         for (int i = 0; i < trackDisplacementsVector.length; i++) {
             TrackDataHolder trackDataHolder = singleCellConditionDataHolder.getTrackDataHolders().get(i);

@@ -6,14 +6,12 @@
 package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl;
 
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolator;
+import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.apache.commons.math3.util.MathArrays;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class implements a linear function for interpolation of a track.
@@ -23,9 +21,10 @@ import java.util.List;
 public class TrackLinearInterpolator implements TrackInterpolator {
 
     @Override
-    public InterpolatedTrack interpolateTrack(double[] time, double[] x, double[] y, int interpolationPoints) {
+    public InterpolatedTrack interpolateTrack(double[] time, double[] x, double[] y) {
         // create a new linear interpolator
         LinearInterpolator linearInterpolator = new LinearInterpolator();
+        int interpolationPoints = PropertiesConfigurationHolder.getInstance().getInt("numberOfInterpolationPoints");
 
         // create arrays to hold the interpolant time, the interpolated X and the interpolated Y
         double[] interpolantTime = new double[interpolationPoints];

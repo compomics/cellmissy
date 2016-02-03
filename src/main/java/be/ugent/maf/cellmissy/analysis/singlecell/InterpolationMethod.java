@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.analysis.singlecell;
  */
 public enum InterpolationMethod {
 
-    LINEAR(1), SPLINE(2), HERMITE(3);
+    LINEAR(1), SPLINE(2), LOESS(3);
     private final int type;
 
     /**
@@ -34,7 +34,7 @@ public enum InterpolationMethod {
                 string = "spline_interpolator";
                 break;
             case 3:
-                string = "hermite_interpolator";
+                string = "loess_interpolator";
                 break;
         }
         return string;

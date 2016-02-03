@@ -4,12 +4,10 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.InterpolationMethod;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
-import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.ExploreTrackPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsMenuBar;
@@ -66,7 +64,6 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
@@ -90,16 +87,17 @@ class ExploreTrackController {
     private ChartPanel xYTCoordinateChartPanel;
     private ChartPanel displacementTChartPanel;
     private ChartPanel singleTrackCoordinatesChartPanel;
-    private List<ChartPanel> interpolatedTrackChartPanels;
     private ChartPanel convexHullChartPanel;
     private ChartPanel histogramChartPanel;
     private ChartPanel polarPlotChartPanel;
     // parent controller
     @Autowired
     private TrackCoordinatesController trackCoordinatesController;
-    // child controller
+    // child controllers
     @Autowired
     private DirectionTrackController directionTrackController;
+    @Autowired
+    private TrackInterpolationController trackInterpolationController;
     // services
     private GridBagConstraints gridBagConstraints;
 
@@ -114,6 +112,7 @@ class ExploreTrackController {
         initExploreTrackPanel();
         // init child controller
         directionTrackController.init();
+        trackInterpolationController.init();
     }
 
     /**
@@ -206,7 +205,7 @@ class ExploreTrackController {
 
         singleTrackCoordinatesChartPanel = new ChartPanel(null);
         singleTrackCoordinatesChartPanel.setOpaque(false);
-        interpolatedTrackChartPanels = new ArrayList<>();
+
         convexHullChartPanel = new ChartPanel(null);
         convexHullChartPanel.setOpaque(false);
 
@@ -423,6 +422,10 @@ class ExploreTrackController {
         timeSlider.setPaintTicks(true);
         timeSlider.setPaintLabels(true);
         timeSlider.setValue(0); // this triggers the stateChanged
+        // please note that HashTable is an obsolete collection
+        // which was replaced by HashMap
+        // however, for the purpose of assigning labels to a setLabelTable
+        // the "deficiencies" of Hashtable are not a problem
         Hashtable labelsTable = new Hashtable();
         // adjust the labels of the time slider to actually show the real time points
         for (int i = 0; i < numberOfTimePoints - 1; i++) {
@@ -506,14 +509,6 @@ class ExploreTrackController {
     private void plotSingleTrackData(TrackDataHolder trackDataHolder) {
         // plot the shifted track coordinates
         plotCoordinatesInSpace(trackDataHolder);
-        // plot the interpolated track
-        if (!interpolatedTrackChartPanels.isEmpty()) {
-            interpolatedTrackChartPanels.clear();
-            exploreTrackPanel.getInterpolatedTrackParentPanel().removeAll();
-            exploreTrackPanel.getInterpolatedTrackParentPanel().revalidate();
-            exploreTrackPanel.getInterpolatedTrackParentPanel().repaint();
-        }
-        plotInterpolatedTrack(trackDataHolder);
         // plot x and y coordinates in time + displacements in time
         plotCoordinatesInTime(trackDataHolder);
         plotDisplacementsInTime(trackDataHolder);
@@ -531,6 +526,11 @@ class ExploreTrackController {
         directionTrackController.plotDirectionAutocorrelationTimeOne(trackDataHolder);
         // plot direction autocorrelation with a specified time interval provided by the user
         directionTrackController.plotDirectionAutocorrelationForDeltaT(trackDataHolder, (int) exploreTrackPanel.getDeltaTComboBox().getSelectedItem());
+        // all the interpolation logic goes here:
+        // plot the interpolated track coordinates
+        trackInterpolationController.plotInterpolatedTrackCoordinates(trackDataHolder);
+        // plot the interpolated x and y time series
+        trackInterpolationController.plotInterpolatedTrackTimeSeries(trackDataHolder);
     }
 
     /**
@@ -620,70 +620,6 @@ class ExploreTrackController {
         JFreeChart shiftedCoordinatesChart = ChartFactory.createXYLineChart(seriesKey + " - shifted coordinates", "x (µm)", "y (µm)", ySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         JFreeChartUtils.setupSingleTrackPlot(shiftedCoordinatesChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), false);
         singleTrackCoordinatesChartPanel.setChart(shiftedCoordinatesChart);
-    }
-
-    /**
-     * Plot the interpolated track coordinates.
-     *
-     * @param trackDataHolder
-     */
-    private void plotInterpolatedTrack(TrackDataHolder trackDataHolder) {
-        List<XYSeriesCollection> collectionsForInterpolationPlots = getCollectionsForInterpolationPlots(trackDataHolder);
-        for (int i = 0; i < collectionsForInterpolationPlots.size(); i++) {
-            XYSeriesCollection collection = collectionsForInterpolationPlots.get(i);
-            JFreeChart interpolatedTrackChart = ChartFactory.createXYLineChart("" + collection.getSeriesKey(0), "x (µm)", "y (µm)", collection,
-                      PlotOrientation.VERTICAL, false, true, false);
-            ChartPanel interpolatedTrackChartPanel = new ChartPanel(null);
-            interpolatedTrackChartPanel.setOpaque(false);
-            // compute the constraints
-            GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(collectionsForInterpolationPlots.size(), i, 2);
-            XYPlot xyPlot = interpolatedTrackChart.getXYPlot();
-            JFreeChartUtils.setupSingleTrackPlot(interpolatedTrackChart,
-                      trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), false);
-
-            NumberAxis axis = (NumberAxis) xyPlot.getDomainAxis();
-            axis.setAutoRange(true);
-//            axis.setAutoRangeIncludesZero(false);
-            
-            axis = (NumberAxis) xyPlot.getRangeAxis();
-//            axis.setAutoRangeIncludesZero(false);
-            axis.setAutoRange(true);
-
-            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xyPlot.getRenderer();
-            // show no points
-            renderer.setSeriesShapesVisible(0, false);
-            interpolatedTrackChartPanel.setChart(interpolatedTrackChart);
-            exploreTrackPanel.getInterpolatedTrackParentPanel().add(interpolatedTrackChartPanel, tempBagConstraints);
-
-            interpolatedTrackChartPanels.add(interpolatedTrackChartPanel);
-            exploreTrackPanel.getInterpolatedTrackParentPanel().revalidate();
-            exploreTrackPanel.getInterpolatedTrackParentPanel().repaint();
-        }
-    }
-
-    /**
-     *
-     * @param trackDataHolder
-     * @return
-     */
-    private List<XYSeriesCollection> getCollectionsForInterpolationPlots(TrackDataHolder trackDataHolder) {
-        List<XYSeriesCollection> collections = new ArrayList<>();
-        Track track = trackDataHolder.getTrack();
-        int trackNumber = track.getTrackNumber();
-        Well well = track.getWellHasImagingType().getWell();
-        Map<InterpolationMethod, InterpolatedTrack> interpolationMap = trackDataHolder.getStepCentricDataHolder().getInterpolationMap();
-        interpolationMap.keySet().stream().map((method) -> {
-            InterpolatedTrack interpolatedTrack = interpolationMap.get(method);
-            double[] interpolatedX = interpolatedTrack.getInterpolatedX();
-            double[] interpolatedY = interpolatedTrack.getInterpolatedY();
-            XYSeries xYSeries = JFreeChartUtils.generateXYSeries(interpolatedX, interpolatedY);
-            String seriesKey = "interpolated track " + trackNumber + ", well " + well + ", " + method.getStringForType();
-            xYSeries.setKey(seriesKey);
-            return xYSeries;
-        }).map((xYSeries) -> new XYSeriesCollection(xYSeries)).forEach((collection) -> {
-            collections.add(collection);
-        });
-        return collections;
     }
 
     /**
