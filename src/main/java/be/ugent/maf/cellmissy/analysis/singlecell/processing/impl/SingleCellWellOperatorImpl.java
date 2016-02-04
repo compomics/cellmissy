@@ -5,12 +5,16 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 
+import be.ugent.maf.cellmissy.analysis.singlecell.InterpolationMethod;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellWellOperator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.TrackOperator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.interpolation.InterpolatedTrackOperator;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
+import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import java.util.Iterator;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +27,9 @@ import org.springframework.stereotype.Component;
 public class SingleCellWellOperatorImpl implements SingleCellWellOperator {
 
     @Autowired
-    private TrackOperator trackOperator;
+    private TrackOperator trackOperator; // the operator for the track
+    @Autowired
+    private InterpolatedTrackOperator interpolatedTrackOperator; // the operator for the interpolated track
 
     @Override
     public void operateOnStepsAndCells(SingleCellWellDataHolder singleCellWellDataHolder) {
@@ -201,5 +207,21 @@ public class SingleCellWellOperatorImpl implements SingleCellWellOperator {
             medianDirectionAutocorrelationsVector[i] = medianDirectionAutocorrelation;
         }
         singleCellWellDataHolder.setMedianDirectionAutocorrelationsVector(medianDirectionAutocorrelationsVector);
+    }
+
+    @Override
+    public void operateOnInterpolatedTracks(SingleCellWellDataHolder singleCellWellDataHolder) {
+        // iterate through the track data holders and get the interpolation map
+        singleCellWellDataHolder.getTrackDataHolders().stream().forEach((trackDataHolder) -> {
+            Map<InterpolationMethod, InterpolatedTrack> interpolationMap = trackDataHolder.getStepCentricDataHolder().getInterpolationMap();
+            // for each method, get the interpolated track
+            interpolationMap.keySet().stream().forEach((method) -> {
+                InterpolatedTrack interpolatedTrack = interpolationMap.get(method);
+                // now do the computations
+                interpolatedTrackOperator.computeCoordinatesMatrix(interpolatedTrack);
+                interpolatedTrackOperator.computeDeltaMovements(interpolatedTrack);
+                interpolatedTrackOperator.computeTurningAngles(interpolatedTrack);
+            });
+        });
     }
 }

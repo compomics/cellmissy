@@ -5,7 +5,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.factory;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.interpolation.TrackInterpolator;
 import be.ugent.maf.cellmissy.spring.ApplicationContextProvider;
 import java.util.Map;
 import java.util.Set;

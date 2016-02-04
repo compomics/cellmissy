@@ -525,11 +525,8 @@ class ExploreTrackController {
         directionTrackController.plotDirectionAutocorrelationTimeOne(trackDataHolder);
         // plot direction autocorrelation with a specified time interval provided by the user
         directionTrackController.plotDirectionAutocorrelationForDeltaT(trackDataHolder, (int) exploreTrackPanel.getDeltaTComboBox().getSelectedItem());
-        // all the interpolation logic goes here:
-        // plot the interpolated track coordinates
-        trackInterpolationController.plotInterpolatedTrackCoordinates(trackDataHolder);
-        // plot the interpolated x and y time series
-        trackInterpolationController.plotInterpolatedTrackTimeSeries(trackDataHolder);
+        // the interpolation logic goes here:
+        trackInterpolationController.plotInterpolatedTrackData(trackDataHolder);
     }
 
     /**

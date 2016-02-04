@@ -7,19 +7,25 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.GridBagConstraints;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.PolarChartPanel;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.PolarPlot;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.DefaultPolarItemRenderer;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.statistics.HistogramDataset;
+import org.jfree.data.statistics.HistogramType;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +45,8 @@ public class TrackInterpolationController {
     // view
     private List<ChartPanel> interpolatedTrackChartPanels;
     private List<ChartPanel> combinedChartPanels;
+    private List<ChartPanel> histChartPanels;
+    private List<ChartPanel> polarChartPanels;
     // parent controller
     @Autowired
     private ExploreTrackController exploreTrackController;
@@ -64,6 +72,20 @@ public class TrackInterpolationController {
     private void initMainViewComponents() {
         interpolatedTrackChartPanels = new ArrayList<>();
         combinedChartPanels = new ArrayList<>();
+        histChartPanels = new ArrayList<>();
+        polarChartPanels = new ArrayList<>();
+    }
+
+    /**
+     * Plot data for an interpolated track.
+     *
+     * @param trackDataHolder
+     */
+    public void plotInterpolatedTrackData(TrackDataHolder trackDataHolder) {
+        plotInterpolatedTrackCoordinates(trackDataHolder);
+        plotInterpolatedTrackTimeSeries(trackDataHolder);
+        plotInterpolatedHistograms(trackDataHolder);
+        plotInterpolatedPolarPlots(trackDataHolder);
     }
 
     /**
@@ -71,7 +93,7 @@ public class TrackInterpolationController {
      *
      * @param trackDataHolder
      */
-    public void plotInterpolatedTrackCoordinates(TrackDataHolder trackDataHolder) {
+    private void plotInterpolatedTrackCoordinates(TrackDataHolder trackDataHolder) {
         // first reset the view
         if (!interpolatedTrackChartPanels.isEmpty()) {
             interpolatedTrackChartPanels.clear();
@@ -116,7 +138,7 @@ public class TrackInterpolationController {
      *
      * @param trackDataHolder
      */
-    public void plotInterpolatedTrackTimeSeries(TrackDataHolder trackDataHolder) {
+    private void plotInterpolatedTrackTimeSeries(TrackDataHolder trackDataHolder) {
         // first reset the view
         if (!combinedChartPanels.isEmpty()) {
             combinedChartPanels.clear();
@@ -153,6 +175,120 @@ public class TrackInterpolationController {
     }
 
     /**
+     * Plot the histogram distribution for the turning angle for a given track
+     * data holder.
+     *
+     * @param trackDataHolder
+     */
+    private void plotInterpolatedHistograms(TrackDataHolder trackDataHolder) {
+        // first reset the view
+        if (!histChartPanels.isEmpty()) {
+            histChartPanels.clear();
+            exploreTrackController.getExploreTrackPanel().getInterpolatedHistogramParentPanel().removeAll();
+            exploreTrackController.getExploreTrackPanel().getInterpolatedHistogramParentPanel().revalidate();
+            exploreTrackController.getExploreTrackPanel().getInterpolatedHistogramParentPanel().repaint();
+        }
+        List<HistogramDataset> datasets = makeHistDatasets(trackDataHolder);
+        for (int i = 0; i < datasets.size(); i++) {
+            JFreeChart histogramChart = ChartFactory.createHistogram("",
+                      "", "inst turn angle  - track " + trackDataHolder.getTrack().getTrackid(),
+                      datasets.get(i), PlotOrientation.VERTICAL, false, true, false);
+            JFreeChartUtils.setShadowVisible(histogramChart, false);
+            JFreeChartUtils.setUpHistogramChart(histogramChart, exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
+            ChartPanel histChartPanel = new ChartPanel(histogramChart);
+            GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(datasets.size(), i, datasets.size());
+            exploreTrackController.getExploreTrackPanel().getInterpolatedHistogramParentPanel().add(histChartPanel, tempBagConstraints);
+
+            histChartPanels.add(histChartPanel);
+            exploreTrackController.getExploreTrackPanel().getInterpolatedHistogramParentPanel().revalidate();
+            exploreTrackController.getExploreTrackPanel().getInterpolatedHistogramParentPanel().repaint();
+        }
+    }
+
+    /**
+     * Plot the polar plot for turning angle for a given track data holder.
+     *
+     * @param trackDataHolder
+     */
+    private void plotInterpolatedPolarPlots(TrackDataHolder trackDataHolder) {
+        // first reset the view
+        if (!polarChartPanels.isEmpty()) {
+            polarChartPanels.clear();
+            exploreTrackController.getExploreTrackPanel().getInterpolatedPolarParentPanel().removeAll();
+            exploreTrackController.getExploreTrackPanel().getInterpolatedPolarParentPanel().revalidate();
+            exploreTrackController.getExploreTrackPanel().getInterpolatedPolarParentPanel().repaint();
+        }
+        List<XYSeriesCollection> polarData = makePolarDatasets(trackDataHolder);
+        for (int i = 0; i < polarData.size(); i++) {
+            PolarPlot plot = new PolarPlot(polarData.get(i), new NumberAxis(), new DefaultPolarItemRenderer());
+            JFreeChart polarChart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
+            JFreeChartUtils.setupPolarChart(polarChart, exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
+            ChartPanel polarChartPanel = new PolarChartPanel(polarChart);
+            GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(polarData.size(), i, 1);
+            exploreTrackController.getExploreTrackPanel().getInterpolatedPolarParentPanel().add(polarChartPanel, tempBagConstraints);
+
+            polarChartPanels.add(polarChartPanel);
+            exploreTrackController.getExploreTrackPanel().getInterpolatedPolarParentPanel().revalidate();
+            exploreTrackController.getExploreTrackPanel().getInterpolatedPolarParentPanel().repaint();
+        }
+    }
+
+    /**
+     * For a specific track data holder, create the datasets for the histogram.
+     *
+     * @param trackDataHolder
+     * @return
+     */
+    private List<HistogramDataset> makeHistDatasets(TrackDataHolder trackDataHolder) {
+        List<HistogramDataset> datasets = new ArrayList<>();
+        Map<InterpolationMethod, InterpolatedTrack> interpolationMap = trackDataHolder.getStepCentricDataHolder().getInterpolationMap();
+        interpolationMap.keySet().stream().forEach((method) -> {
+            double[] turningAngles = interpolationMap.get(method).getTurningAngles();
+            HistogramDataset dataset = new HistogramDataset();
+            dataset.setType(HistogramType.FREQUENCY);
+            double range = Arrays.stream(turningAngles).max().getAsDouble() - Arrays.stream(turningAngles).min().getAsDouble();
+            String seriesKey = method.getStringForType() + "\n" + interpolationMap.get(method).toString();
+            dataset.addSeries(seriesKey, turningAngles, (int) range / 5);
+            datasets.add(dataset);
+        });
+        return datasets;
+    }
+
+    /**
+     * Make the datasets for the turning angle polar plot.
+     *
+     * @param trackDataHolder
+     * @return
+     */
+    private List<XYSeriesCollection> makePolarDatasets(TrackDataHolder trackDataHolder) {
+        List<XYSeriesCollection> collections = new ArrayList<>();
+        Map<InterpolationMethod, InterpolatedTrack> interpolationMap = trackDataHolder.getStepCentricDataHolder().getInterpolationMap();
+        List<InterpolationMethod> methods = new ArrayList<>(interpolationMap.keySet());
+        List<HistogramDataset> histDatasets = makeHistDatasets(trackDataHolder);
+
+        for (int i = 0; i < methods.size(); i++) {
+            XYSeriesCollection data = new XYSeriesCollection();
+            InterpolationMethod method = methods.get(i);
+            String seriesKey = "interpolated track " + trackDataHolder.getTrack().getTrackNumber()
+                      + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType()
+                      + "\n" + interpolationMap.get(method).toString();
+            XYSeries series = new XYSeries(seriesKey, false);
+            for (int seriesCount = 0; seriesCount < histDatasets.get(i).getSeriesCount(); seriesCount++) {
+                for (int itemCount = 0; itemCount < histDatasets.get(i).getItemCount(seriesCount); itemCount++) {
+                    double startX = (double) histDatasets.get(i).getStartX(seriesCount, itemCount);
+                    double endX = (double) histDatasets.get(i).getEndX(seriesCount, itemCount);
+                    double theta = (startX + endX) / 2;
+                    Double radius = (Double) histDatasets.get(i).getY(seriesCount, itemCount);
+                    series.add(theta, radius);
+                }
+            }
+            data.addSeries(series);
+            collections.add(data);
+        }
+        return collections;
+    }
+
+    /**
      * For a specific track data holder (the one selected in the parent
      * controller (explore-track-controller), create collections to generate x-y
      * plot for interpolated track coordinates.
@@ -167,8 +303,8 @@ public class TrackInterpolationController {
             double[] interpolatedX = interpolationMap.get(method).getInterpolatedX();
             double[] interpolatedY = interpolationMap.get(method).getInterpolatedY();
             String seriesKey = "interpolated track " + trackDataHolder.getTrack().getTrackNumber()
-                      + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType() +
-                      "\n" + interpolationMap.get(method).toString();
+                      + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType()
+                      + "\n" + interpolationMap.get(method).toString();
             XYSeries xYSeries = makeSeries(seriesKey, interpolatedX, interpolatedY);
             return xYSeries;
         }).map((xYSeries) -> new XYSeriesCollection(xYSeries)).forEach((collection) -> {
@@ -191,7 +327,8 @@ public class TrackInterpolationController {
             double[] interpolantTime = interpolationMap.get(method).getInterpolantTime();
             double[] interpolatedX = interpolationMap.get(method).getInterpolatedX();
             String seriesKey = "interpolated track " + trackDataHolder.getTrack().getTrackNumber()
-                      + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType();
+                      + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType()
+                      + "\n" + interpolationMap.get(method).toString();
             XYSeries xtSeries = makeSeries(seriesKey, interpolantTime, interpolatedX);
             return xtSeries;
         }).map((xYSeries) -> new XYSeriesCollection(xYSeries)).forEach((collection) -> {
@@ -214,7 +351,8 @@ public class TrackInterpolationController {
             double[] interpolantTime = interpolationMap.get(method).getInterpolantTime();
             double[] interpolatedY = interpolationMap.get(method).getInterpolatedY();
             String seriesKey = "interpolated track " + trackDataHolder.getTrack().getTrackNumber()
-                      + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType();
+                      + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType()
+                      + "\n" + interpolationMap.get(method).toString();
             XYSeries ytSeries = makeSeries(seriesKey, interpolantTime, interpolatedY);
             return ytSeries;
         }).map((xYSeries) -> new XYSeriesCollection(xYSeries)).forEach((collection) -> {

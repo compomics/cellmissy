@@ -3,27 +3,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl;
+package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl.interpolation;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.interpolation.TrackInterpolator;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
-import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
+import org.apache.commons.math3.analysis.interpolation.LoessInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.apache.commons.math3.util.MathArrays;
 
 /**
- * This class implements a linear function for interpolation of a track.
+ * A loess implementation for the track interpolation. This class computes an
+ * interpolating function by performing a loess fit on the data at the original
+ * abscissae and then building a cubic spline with a SplineInterpolator on the
+ * resulting fit.
  *
  * @author Paola
  */
-public class TrackLinearInterpolator implements TrackInterpolator {
+public class TrackLoessInterpolator implements TrackInterpolator {
 
     @Override
     public InterpolatedTrack interpolateTrack(double[] time, double[] x, double[] y) {
-        // create a new linear interpolator
-        LinearInterpolator linearInterpolator = new LinearInterpolator();
+        // create a new interpolator
+        LoessInterpolator loessInterpolator = new LoessInterpolator();
         int interpolationPoints = PropertiesConfigurationHolder.getInstance().getInt("numberOfInterpolationPoints");
 
         // create arrays to hold the interpolant time, the interpolated X and the interpolated Y
@@ -41,8 +44,8 @@ public class TrackLinearInterpolator implements TrackInterpolator {
         }
 
         // call the interpolator, and actually do the interpolation
-        PolynomialSplineFunction functionX = linearInterpolator.interpolate(time, x);
-        PolynomialSplineFunction functionY = linearInterpolator.interpolate(time, y);
+        PolynomialSplineFunction functionX = loessInterpolator.interpolate(time, x);
+        PolynomialSplineFunction functionY = loessInterpolator.interpolate(time, y);
 
         // get the polynomial functions in both directions
         PolynomialFunction polynomialFunctionX = functionX.getPolynomials()[0];
@@ -56,4 +59,5 @@ public class TrackLinearInterpolator implements TrackInterpolator {
 
         return new InterpolatedTrack(interpolantTime, interpolatedX, interpolatedY, polynomialFunctionX, polynomialFunctionY);
     }
+
 }

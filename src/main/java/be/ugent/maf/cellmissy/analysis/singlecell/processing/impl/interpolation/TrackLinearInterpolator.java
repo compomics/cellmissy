@@ -3,33 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl;
+package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl.interpolation;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.interpolation.TrackInterpolator;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
-
 import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
-import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
+import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.apache.commons.math3.util.MathArrays;
 
 /**
- *
- * This implementation for the track interpolator computes a natural (also known
- * as "free", "un-clamped") cubic spline interpolation for the data set. The x
- * values passed to the interpolator must be ordered in ascending order. It is
- * not valid to evaluate the function for values outside the range x0..xN --
- * will throw an OutOfRangeException.
+ * This class implements a linear function for interpolation of a track.
  *
  * @author Paola
  */
-public class TrackSplineInterpolator implements TrackInterpolator {
+public class TrackLinearInterpolator implements TrackInterpolator {
 
     @Override
     public InterpolatedTrack interpolateTrack(double[] time, double[] x, double[] y) {
-        // create a new spline interpolator
-        SplineInterpolator splineInterpolator = new SplineInterpolator();
+        // create a new linear interpolator
+        LinearInterpolator linearInterpolator = new LinearInterpolator();
         int interpolationPoints = PropertiesConfigurationHolder.getInstance().getInt("numberOfInterpolationPoints");
 
         // create arrays to hold the interpolant time, the interpolated X and the interpolated Y
@@ -47,8 +41,8 @@ public class TrackSplineInterpolator implements TrackInterpolator {
         }
 
         // call the interpolator, and actually do the interpolation
-        PolynomialSplineFunction functionX = splineInterpolator.interpolate(time, x);
-        PolynomialSplineFunction functionY = splineInterpolator.interpolate(time, y);
+        PolynomialSplineFunction functionX = linearInterpolator.interpolate(time, x);
+        PolynomialSplineFunction functionY = linearInterpolator.interpolate(time, y);
 
         // get the polynomial functions in both directions
         PolynomialFunction polynomialFunctionX = functionX.getPolynomials()[0];

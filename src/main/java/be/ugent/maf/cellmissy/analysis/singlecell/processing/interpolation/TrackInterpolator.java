@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing;
+package be.ugent.maf.cellmissy.analysis.singlecell.processing.interpolation;
 
 import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 
@@ -20,8 +20,6 @@ public interface TrackInterpolator {
      * @param time: the time points
      * @param x: the x coordinates
      * @param y: the y coordinates
-     * @param interpolationPoints: how many points shall I use for the
-     * interpolation?
      * @return: an interpolated track object
      */
     InterpolatedTrack interpolateTrack(double[] time, double[] x, double[] y);

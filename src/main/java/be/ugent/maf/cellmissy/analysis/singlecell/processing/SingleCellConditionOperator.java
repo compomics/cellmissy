@@ -120,4 +120,11 @@ public interface SingleCellConditionOperator {
      */
     void generateMedianDirectionAutocorrelationsVector(SingleCellConditionDataHolder singleCellConditionDataHolder);
 
+    /**
+     * Operate (i.e. perform computations) on interpolated tracks for a single
+     * cell condition data holder.
+     *
+     * @param singleCellConditionDataHolder
+     */
+    void operateOnInterpolatedTracks(SingleCellConditionDataHolder singleCellConditionDataHolder);
 }

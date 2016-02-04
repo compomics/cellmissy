@@ -6,7 +6,7 @@ package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 
 import be.ugent.maf.cellmissy.analysis.factory.TrackInterpolatorFactory;
 import be.ugent.maf.cellmissy.analysis.singlecell.InterpolationMethod;
-import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.interpolation.TrackInterpolator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
@@ -18,7 +18,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,7 +125,7 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
             // to polar coordinates (r, theta).
             // This method computes the phase theta by computing an arc tangent of y/x in the range of -pi to pi
             // please see: https://en.wikipedia.org/wiki/Atan2
-            Double angleRadians = Math.atan2(deltaY, deltaX); // need to add 0 to avoid signed 0 in Java
+            Double angleRadians = Math.atan2(deltaY, deltaX); 
             // go from radians to degrees
             Double angleDegrees = Math.toDegrees(angleRadians);
             // if the angle is NaN (both deltaX and deltaY are zero), the cell stays exactly on place 

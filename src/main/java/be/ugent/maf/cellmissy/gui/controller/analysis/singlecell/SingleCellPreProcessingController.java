@@ -729,6 +729,8 @@ class SingleCellPreProcessingController {
                 singleCellConditionOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
                 appendInfo("generating median turning angles...");
                 singleCellConditionOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
+                appendInfo("computing for interpolated tracks...");
+                singleCellConditionOperator.operateOnInterpolatedTracks(singleCellConditionDataHolder);
                 plateCondition.setComputed(true);
             } else {
                 // if not, just inform the user and skip the computation

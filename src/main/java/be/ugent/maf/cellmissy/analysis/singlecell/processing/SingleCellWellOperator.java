@@ -120,4 +120,12 @@ public interface SingleCellWellOperator {
      */
     void generateMedianDirectionAutocorrelationsVector(SingleCellWellDataHolder singleCellWellDataHolder);
 
+    /**
+     * Operate (i.e. perform computations) on the interpolated tracks of a
+     * single cell well data holder.
+     *
+     * @param singleCellWellDataHolder
+     */
+    void operateOnInterpolatedTracks(SingleCellWellDataHolder singleCellWellDataHolder);
+
 }

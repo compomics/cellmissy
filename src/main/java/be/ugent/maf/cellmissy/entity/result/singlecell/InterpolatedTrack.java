@@ -22,6 +22,12 @@ public class InterpolatedTrack {
     private PolynomialFunction polynomialFunctionX;
     // the polynomial function for the y interpolation
     private PolynomialFunction polynomialFunctionY;
+    // the coordinates matrix
+    private double[][] coordinatesMatrix;
+    // the delta movements
+    private double[][] deltaMovements;
+    // the turning angles
+    private double[] turningAngles;
 
     /**
      * Empty constructor.
@@ -86,12 +92,37 @@ public class InterpolatedTrack {
         this.polynomialFunctionY = polynomialFunctionY;
     }
 
+    public double[][] getCoordinatesMatrix() {
+        return coordinatesMatrix;
+    }
+
+    public void setCoordinatesMatrix(double[][] coordinatesMatrix) {
+        this.coordinatesMatrix = coordinatesMatrix;
+    }
+
+    public double[][] getDeltaMovements() {
+        return deltaMovements;
+    }
+
+    public void setDeltaMovements(double[][] deltaMovements) {
+        this.deltaMovements = deltaMovements;
+    }
+
+    public double[] getTurningAngles() {
+        return turningAngles;
+    }
+
+    public void setTurningAngles(double[] turningAngles) {
+        this.turningAngles = turningAngles;
+    }
+
     @Override
     public String toString() {
         double[] xCoeff = polynomialFunctionX.getCoefficients();
         double[] yCoeff = polynomialFunctionY.getCoefficients();
 
         StringBuilder s1 = new StringBuilder();
+        s1.append("x(t) = ");
         if (xCoeff[0] == 0.0) {
             if (xCoeff.length == 1) {
                 return "0";
@@ -120,7 +151,7 @@ public class InterpolatedTrack {
                     s1.append(' ');
                 }
 
-                s1.append("x");
+                s1.append("t");
                 if (i > 1) {
                     s1.append('^');
                     s1.append(Integer.toString(i));
@@ -129,6 +160,7 @@ public class InterpolatedTrack {
         }
 
         StringBuilder s2 = new StringBuilder();
+        s2.append("y(t) = ");
         if (yCoeff[0] == 0.0) {
             if (yCoeff.length == 1) {
                 return "0";
@@ -157,10 +189,10 @@ public class InterpolatedTrack {
                     s2.append(' ');
                 }
 
-                s1.append("y");
+                s2.append("t");
                 if (i > 1) {
-                    s1.append('^');
-                    s1.append(Integer.toString(i));
+                    s2.append('^');
+                    s2.append(Integer.toString(i));
                 }
             }
         }

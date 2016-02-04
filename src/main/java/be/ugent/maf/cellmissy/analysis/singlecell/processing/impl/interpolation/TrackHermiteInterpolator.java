@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.impl;
+package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl.interpolation;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.TrackInterpolator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.interpolation.TrackInterpolator;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 
 import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
