@@ -5,6 +5,7 @@
 package be.ugent.maf.cellmissy.gui.view.table.model;
 
 import be.ugent.maf.cellmissy.entity.Track;
+import be.ugent.maf.cellmissy.entity.result.singlecell.BoundingBox;
 import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
@@ -80,12 +81,13 @@ public class TrackDataHolderTableModel extends AbstractTableModel {
         CellCentricDataHolder cellCentricDataHolder = trackDataHolder.getCellCentricDataHolder();
         data[3][1] = stepCentricDataHolder.getTimeIndexes().length;
         data[4][1] = cellCentricDataHolder.getTrackDuration();
-        data[5][1] = cellCentricDataHolder.getxMin();
-        data[6][1] = cellCentricDataHolder.getxMax();
-        data[7][1] = cellCentricDataHolder.getyMin();
-        data[8][1] = cellCentricDataHolder.getyMax();
-        data[9][1] = cellCentricDataHolder.getxNetDisplacement();
-        data[10][1] = cellCentricDataHolder.getyNetDisplacement();
+        BoundingBox boundingBox = cellCentricDataHolder.getBoundingBox();
+        data[5][1] = boundingBox.getxMin();
+        data[6][1] = boundingBox.getxMax();
+        data[7][1] = boundingBox.getyMin();
+        data[8][1] = boundingBox.getyMax();
+        data[9][1] = boundingBox.getxNetDisplacement();
+        data[10][1] = boundingBox.getyNetDisplacement();
         data[11][1] = cellCentricDataHolder.getMedianDisplacement();
         data[12][1] = cellCentricDataHolder.getMedianSpeed();
         data[13][1] = cellCentricDataHolder.getCumulativeDistance();

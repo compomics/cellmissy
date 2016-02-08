@@ -6,14 +6,17 @@ package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 
 import be.ugent.maf.cellmissy.analysis.factory.TrackInterpolatorFactory;
 import be.ugent.maf.cellmissy.analysis.singlecell.InterpolationMethod;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.EnclosingBallsCalculator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.interpolation.TrackInterpolator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator;
+import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
+import java.awt.geom.Ellipse2D;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * An implementation of the step centric operator interface.
@@ -29,6 +33,9 @@ import java.util.Map;
  */
 @Component("stepCentricOperator")
 public class StepCentricOperatorImpl implements StepCentricOperator {
+
+    @Autowired
+    private EnclosingBallsCalculator enclosingBallsCalculator;
 
     @Override
     public void generateTimeIndexes(StepCentricDataHolder stepCentricDataHolder) {
@@ -125,7 +132,7 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
             // to polar coordinates (r, theta).
             // This method computes the phase theta by computing an arc tangent of y/x in the range of -pi to pi
             // please see: https://en.wikipedia.org/wiki/Atan2
-            Double angleRadians = Math.atan2(deltaY, deltaX); 
+            Double angleRadians = Math.atan2(deltaY, deltaX);
             // go from radians to degrees
             Double angleDegrees = Math.toDegrees(angleRadians);
             // if the angle is NaN (both deltaX and deltaY are zero), the cell stays exactly on place 
@@ -243,6 +250,22 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
             medianDirectionAutocorrelations[i] = medianDirectionAutocorrelation;
         }
         stepCentricDataHolder.setMedianDirectionAutocorrelations(medianDirectionAutocorrelations);
+    }
+
+    @Override
+    public void computeEnclosingBalls(StepCentricDataHolder stepCentricDataHolder) {
+        List<List<Ellipse2D>> list = new ArrayList<>();
+        double r_min = PropertiesConfigurationHolder.getInstance().getDouble("r_min");
+        double r_max = PropertiesConfigurationHolder.getInstance().getDouble("r_max");
+        double r_step = PropertiesConfigurationHolder.getInstance().getDouble("r_step");
+        int N = (int) ((r_max - r_min) /  r_step);
+        double[] radii = new double[N];
+        for (int i = 0; i < N; i++) {
+            radii[i] = r_min + (i * r_step);
+            List<Ellipse2D> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(stepCentricDataHolder, radii[i]);
+            list.add(enclosingBalls);
+        }
+        stepCentricDataHolder.setEnclosingBalls(list);
     }
 
     @Override

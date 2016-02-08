@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.CellCentricOperator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.ConvexHullOperator;
 import be.ugent.maf.cellmissy.entity.Track;
+import be.ugent.maf.cellmissy.entity.result.singlecell.BoundingBox;
 import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
@@ -41,7 +42,7 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     }
 
     @Override
-    public void computeCoordinatesRange(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
+    public void computeBoundingBox(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
         Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
         Double[][] transposedCoordinatesMatrix = AnalysisUtils.transpose2DArray(coordinatesMatrix);
         List<Double> xCoordAsList = Arrays.asList(transposedCoordinatesMatrix[0]);
@@ -50,12 +51,10 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
         Double xMax = Collections.max(xCoordAsList);
         Double yMin = Collections.min(yCoordAsList);
         Double yMax = Collections.max(yCoordAsList);
-        cellCentricDataHolder.setxMin(xMin);
-        cellCentricDataHolder.setxMax(xMax);
-        cellCentricDataHolder.setyMin(yMin);
-        cellCentricDataHolder.setyMax(yMax);
-        cellCentricDataHolder.setxNetDisplacement(xMax - xMin);
-        cellCentricDataHolder.setyNetDisplacement(yMax - yMin);
+        BoundingBox boundingBox = new BoundingBox(xMin, xMax, yMin, yMax);
+        boundingBox.setxNetDisplacement(xMax - xMin);
+        boundingBox.setyNetDisplacement(yMax - yMin);
+        cellCentricDataHolder.setBoundingBox(boundingBox);
     }
 
     @Override

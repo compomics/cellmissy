@@ -95,6 +95,13 @@ public interface StepCentricOperator {
     void computeMeanDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder);
 
     /**
+     *
+     *
+     * @param stepCentricDataHolder
+     */
+    void computeEnclosingBalls(StepCentricDataHolder stepCentricDataHolder);
+
+    /**
      * Interpolate cell trajectory.
      *
      * @param stepCentricDataHolder

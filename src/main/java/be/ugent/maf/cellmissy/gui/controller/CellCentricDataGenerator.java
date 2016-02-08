@@ -143,17 +143,17 @@ class CellCentricDataGenerator {
 
                             bufferedWriter.append("" + trackDataHolder.getTrack().getTrackPointList().size());
                             bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getxMin());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getxMax());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getyMin());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getyMax());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + (cellCentricDataHolder.getxNetDisplacement()));
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + (cellCentricDataHolder.getyNetDisplacement()));
+//                            bufferedWriter.append("" + cellCentricDataHolder.getxMin());
+//                            bufferedWriter.append(" ");
+//                            bufferedWriter.append("" + cellCentricDataHolder.getxMax());
+//                            bufferedWriter.append(" ");
+//                            bufferedWriter.append("" + cellCentricDataHolder.getyMin());
+//                            bufferedWriter.append(" ");
+//                            bufferedWriter.append("" + cellCentricDataHolder.getyMax());
+//                            bufferedWriter.append(" ");
+//                            bufferedWriter.append("" + (cellCentricDataHolder.getxNetDisplacement()));
+//                            bufferedWriter.append(" ");
+//                            bufferedWriter.append("" + (cellCentricDataHolder.getyNetDisplacement()));
                             bufferedWriter.append(" ");
                             bufferedWriter.append("" + cellCentricDataHolder.getCumulativeDistance());
                             bufferedWriter.append(" ");

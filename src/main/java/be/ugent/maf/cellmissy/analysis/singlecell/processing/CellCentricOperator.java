@@ -32,7 +32,7 @@ public interface CellCentricOperator {
      * @param stepCentricDataHolder
      * @param cellCentricDataHolder
      */
-    void computeCoordinatesRange(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+    void computeBoundingBox(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute track median displacement.

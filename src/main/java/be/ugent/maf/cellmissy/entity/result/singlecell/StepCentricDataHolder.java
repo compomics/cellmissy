@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.entity.result.singlecell;
 
 import be.ugent.maf.cellmissy.analysis.singlecell.InterpolationMethod;
 import be.ugent.maf.cellmissy.entity.Track;
+import java.awt.geom.Ellipse2D;
 
 import java.util.List;
 import java.util.Map;
@@ -52,15 +53,18 @@ public class StepCentricDataHolder {
     // time points
     private List<Double[]> directionAutocorrelations;
 
-    private double[][] dirAutoCorrMatrix;
+    // a list of list of ellipse2D for the eclosing balls reference
+    // a list of enclosing balls is computed for each radius value
+    private List<List<Ellipse2D>> enclosingBalls;
 
-    private double[] diffAngles;
+    private double[][] dirAutoCorrMatrix; // might not be needed
+    private double[] diffAngles; // might not be needed
+
     // an array for the mean values of the direction autocorrelations
     // per each time point (overlapping time interval), a mean DA is computed
     private Double[] medianDirectionAutocorrelations;
     // a map containing the interpolation method and the correspondent interpolated track objects
     private Map<InterpolationMethod, InterpolatedTrack> interpolationMap;
-
 
     /**
      * Empty Constructor
@@ -184,6 +188,14 @@ public class StepCentricDataHolder {
 
     public void setMedianDirectionAutocorrelations(Double[] medianDirectionAutocorrelations) {
         this.medianDirectionAutocorrelations = medianDirectionAutocorrelations;
+    }
+
+    public List<List<Ellipse2D>> getEnclosingBalls() {
+        return enclosingBalls;
+    }
+
+    public void setEnclosingBalls(List<List<Ellipse2D>> enclosingBalls) {
+        this.enclosingBalls = enclosingBalls;
     }
 
     public Map<InterpolationMethod, InterpolatedTrack> getInterpolationMap() {

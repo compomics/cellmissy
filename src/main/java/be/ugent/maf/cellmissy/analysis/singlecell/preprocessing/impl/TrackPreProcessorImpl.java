@@ -35,6 +35,6 @@ public class TrackPreProcessorImpl implements TrackPreProcessor {
         StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
         CellCentricDataHolder cellCentricDataHolder = trackDataHolder.getCellCentricDataHolder();
         cellCentricOperator.computeTrackDuration(stepCentricDataHolder, cellCentricDataHolder, timeLapse);
-        cellCentricOperator.computeCoordinatesRange(stepCentricDataHolder, cellCentricDataHolder);
+        cellCentricOperator.computeBoundingBox(stepCentricDataHolder, cellCentricDataHolder);
     }
 }

@@ -14,18 +14,8 @@ public class CellCentricDataHolder {
 
     // track duration, in minutes
     private double trackDuration;
-    // minimum value for the x coordinate
-    private double xMin;
-    // maximum value for the x coordinate
-    private double xMax;
-    // minimum value for the y coordinate
-    private double yMin;
-    // maximum value for the y coordinate
-    private double yMax;
-    // net displacement in the x direction
-    private double xNetDisplacement;
-    // net displacement in the y direction
-    private double yNetDisplacement;
+    // the bounding box
+    private BoundingBox boundingBox;
     // track median displacement
     // this is the median displacement computed from all time intervals throughout a track
     private double medianDisplacement;
@@ -53,6 +43,8 @@ public class CellCentricDataHolder {
     private double outreachRatio;
     // track angle: the median turning angle computed from all time intervals throughout a track
     private double medianTurningAngle;
+
+    private double[] fractalDimensions;
     //@todo: to be deleted afterwards, for testing only
     private int label;
     // the root mean squared deviation from average displacement
@@ -79,52 +71,12 @@ public class CellCentricDataHolder {
         this.trackDuration = trackDuration;
     }
 
-    public double getxMin() {
-        return xMin;
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
     }
 
-    public void setxMin(double xMin) {
-        this.xMin = xMin;
-    }
-
-    public double getxMax() {
-        return xMax;
-    }
-
-    public void setxMax(double xMax) {
-        this.xMax = xMax;
-    }
-
-    public double getyMin() {
-        return yMin;
-    }
-
-    public void setyMin(double yMin) {
-        this.yMin = yMin;
-    }
-
-    public double getyMax() {
-        return yMax;
-    }
-
-    public void setyMax(double yMax) {
-        this.yMax = yMax;
-    }
-
-    public double getxNetDisplacement() {
-        return xNetDisplacement;
-    }
-
-    public void setxNetDisplacement(double xNetDisplacement) {
-        this.xNetDisplacement = xNetDisplacement;
-    }
-
-    public double getyNetDisplacement() {
-        return yNetDisplacement;
-    }
-
-    public void setyNetDisplacement(double yNetDisplacement) {
-        this.yNetDisplacement = yNetDisplacement;
+    public void setBoundingBox(BoundingBox boundingBox) {
+        this.boundingBox = boundingBox;
     }
 
     public double getMedianDisplacement() {
@@ -205,6 +157,14 @@ public class CellCentricDataHolder {
 
     public void setMedianTurningAngle(double medianTurningAngle) {
         this.medianTurningAngle = medianTurningAngle;
+    }
+
+    public double[] getFractalDimensions() {
+        return fractalDimensions;
+    }
+
+    public void setFractalDimensions(double[] fractalDimensions) {
+        this.fractalDimensions = fractalDimensions;
     }
 
     public int getLabel() {
