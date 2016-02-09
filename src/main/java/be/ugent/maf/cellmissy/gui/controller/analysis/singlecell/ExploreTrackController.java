@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
+import be.ugent.maf.cellmissy.entity.result.singlecell.EnclosingBall;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.ExploreTrackPanel;
@@ -801,8 +802,8 @@ class ExploreTrackController {
      */
     private void plotEnclosingBalls(TrackDataHolder trackDataHolder) {
         int selectedIndexRadius = exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex();
-        List<List<Ellipse2D>> enclosingBallsList = trackDataHolder.getStepCentricDataHolder().getEnclosingBalls();
-        List<Ellipse2D> enclosingBalls = enclosingBallsList.get(selectedIndexRadius);
+        List<List<EnclosingBall>> enclosingBallsList = trackDataHolder.getStepCentricDataHolder().getEnclosingBalls();
+        List<EnclosingBall> enclosingBalls = enclosingBallsList.get(selectedIndexRadius);
         // get the coordinates matrix
         Double[][] coordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getCoordinatesMatrix();
         XYSeries xYSeries = JFreeChartUtils.generateXYSeries(coordinatesMatrix);
@@ -836,7 +837,7 @@ class ExploreTrackController {
  
         enclosingBallsChartPanel.setChart(chart);
         enclosingBalls.stream().forEach((ball) -> {
-            xyPlot.addAnnotation(new XYShapeAnnotation(ball, JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
+            xyPlot.addAnnotation(new XYShapeAnnotation(ball.getBall(), JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
         });
     }
 
@@ -846,7 +847,7 @@ class ExploreTrackController {
      * @param index
      */
     private void updateEnclosingBallsNumber(TrackDataHolder trackDataHolder, int index) {
-        List<Ellipse2D> balls = trackDataHolder.getStepCentricDataHolder().getEnclosingBalls().get(index);
+        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getEnclosingBalls().get(index);
         exploreTrackPanel.getEnclosingBallsTextField().setText("" + balls.size());
     }
 

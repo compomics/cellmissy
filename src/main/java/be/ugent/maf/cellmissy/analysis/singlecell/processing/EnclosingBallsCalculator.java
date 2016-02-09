@@ -5,8 +5,8 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.processing;
 
+import be.ugent.maf.cellmissy.entity.result.singlecell.EnclosingBall;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
-import java.awt.geom.Ellipse2D;
 import java.util.List;
 
 /**
@@ -23,6 +23,6 @@ public interface EnclosingBallsCalculator {
      * @param radius
      * @return
      */
-    List<Ellipse2D> computeEnclosingBalls(StepCentricDataHolder stepCentricDataHolder, double radius);
+    List<EnclosingBall> computeEnclosingBalls(StepCentricDataHolder stepCentricDataHolder, double radius);
 
 }

@@ -13,9 +13,9 @@ import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.impl.EnclosingBallsCalculatorImpl;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.EnclosingBall;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
-import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -68,7 +68,7 @@ public class EnclosingBallsCalculatorTest {
         stepCentricOperator.generateCoordinatesMatrix(stepCentricDataHolder, 1.0);
         final KDTree<GeometricPoint> tree = new KDTree(2);
         initKDTree(stepCentricDataHolder, tree);
-        List<Ellipse2D> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(stepCentricDataHolder, 0.1);
+        List<EnclosingBall> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(stepCentricDataHolder, 0.1);
         Assert.assertEquals(6, enclosingBalls.size());
 
         enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(stepCentricDataHolder, 0.5);

@@ -15,6 +15,7 @@ import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.EnclosingBall;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
@@ -261,14 +262,14 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     public void computeEnclosingBalls(StepCentricDataHolder stepCentricDataHolder) {
         KDTree<GeometricPoint> tree = new KDTree(2);
         initKDTree(stepCentricDataHolder, tree);
-        List<List<Ellipse2D>> list = new ArrayList<>();
+        List<List<EnclosingBall>> list = new ArrayList<>();
         double r_min = PropertiesConfigurationHolder.getInstance().getDouble("r_min");
         double r_max = PropertiesConfigurationHolder.getInstance().getDouble("r_max");
         double r_step = PropertiesConfigurationHolder.getInstance().getDouble("r_step");
         int N = (int) ((r_max - r_min) / r_step) + 1;
        
         for (int i = 0; i < N; i++) {
-            List<Ellipse2D> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(stepCentricDataHolder, (r_min + (i * r_step)));
+            List<EnclosingBall> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(stepCentricDataHolder, (r_min + (i * r_step)));
             list.add(enclosingBalls);
         }
         stepCentricDataHolder.setEnclosingBalls(list);
