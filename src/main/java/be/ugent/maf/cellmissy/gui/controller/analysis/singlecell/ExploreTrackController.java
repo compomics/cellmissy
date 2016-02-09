@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
+import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
@@ -58,6 +59,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.geom.Ellipse2D;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -65,6 +67,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import org.jfree.chart.annotations.XYShapeAnnotation;
 
 /**
  * This controller takes care of logic for exploring a track. Parent controller:
@@ -89,6 +92,7 @@ class ExploreTrackController {
     private ChartPanel convexHullChartPanel;
     private ChartPanel histogramChartPanel;
     private ChartPanel polarPlotChartPanel;
+    private ChartPanel enclosingBallsChartPanel;
     // parent controller
     @Autowired
     private TrackCoordinatesController trackCoordinatesController;
@@ -214,6 +218,9 @@ class ExploreTrackController {
         polarPlotChartPanel = new ChartPanel(null);
         polarPlotChartPanel.setOpaque(false);
 
+        enclosingBallsChartPanel = new ChartPanel(null);
+        enclosingBallsChartPanel.setOpaque(false);
+
         exploreTrackPanel.getxYTCoordinatesParentPanel().add(xYTCoordinateChartPanel, gridBagConstraints);
         exploreTrackPanel.getDisplacementTParentPanel().add(displacementTChartPanel, gridBagConstraints);
 
@@ -223,10 +230,35 @@ class ExploreTrackController {
         exploreTrackPanel.getHistogramParentPanel().add(histogramChartPanel, gridBagConstraints);
         exploreTrackPanel.getPolarPlotParentPanel().add(polarPlotChartPanel, gridBagConstraints);
 
+        exploreTrackPanel.getEnclosingBallsParentPanel().add(enclosingBallsChartPanel, gridBagConstraints);
+
         exploreTrackPanel.getTrackDataTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         exploreTrackPanel.getTrackDataTable().getTableHeader().setReorderingAllowed(false);
         exploreTrackPanel.getConvexHullTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         exploreTrackPanel.getConvexHullTable().getTableHeader().setReorderingAllowed(false);
+
+        double r_min = PropertiesConfigurationHolder.getInstance().getDouble("r_min");
+        double r_max = PropertiesConfigurationHolder.getInstance().getDouble("r_max");
+        double r_step = PropertiesConfigurationHolder.getInstance().getDouble("r_step");
+        int N = (int) ((r_max - r_min) / r_step) + 1;
+
+        for (int i = 0; i < N; i++) {
+            exploreTrackPanel.getEnclosingBallRadiusCombobox().addItem(r_min + (i * r_step));
+        }
+
+        exploreTrackPanel.getEnclosingBallRadiusCombobox().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
+                if (selectedTrackIndex != -1) {
+                    plotEnclosingBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex));
+                    updateEnclosingBallsNumber(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
+                }
+            }
+        });
+
+        exploreTrackPanel.getEnclosingBallRadiusCombobox().setSelectedIndex(0);
 
         // add chart mouse listener to the chart panel: clicking on a track will make the track selected in the list and it will be highlighed in the plot
         coordinatesChartPanel.addChartMouseListener(new ChartMouseListener() {
@@ -525,6 +557,9 @@ class ExploreTrackController {
         directionTrackController.plotDirectionAutocorrelationTimeOne(trackDataHolder);
         // plot direction autocorrelation with a specified time interval provided by the user
         directionTrackController.plotDirectionAutocorrelationForDeltaT(trackDataHolder, (int) exploreTrackPanel.getDeltaTComboBox().getSelectedItem());
+        // plot enclosing balls
+        plotEnclosingBalls(trackDataHolder);
+        updateEnclosingBallsNumber(trackDataHolder, exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
         // the interpolation logic goes here:
         trackInterpolationController.plotInterpolatedTrackData(trackDataHolder);
     }
@@ -757,6 +792,62 @@ class ExploreTrackController {
         JFreeChart polarChart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
         JFreeChartUtils.setupPolarChart(polarChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
         polarPlotChartPanel.setChart(polarChart);
+    }
+
+    /**
+     * Plot enclosing balls for a specific track.
+     *
+     * @param trackDataHolder
+     */
+    private void plotEnclosingBalls(TrackDataHolder trackDataHolder) {
+        int selectedIndexRadius = exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex();
+        List<List<Ellipse2D>> enclosingBallsList = trackDataHolder.getStepCentricDataHolder().getEnclosingBalls();
+        List<Ellipse2D> enclosingBalls = enclosingBallsList.get(selectedIndexRadius);
+        // get the coordinates matrix
+        Double[][] coordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getCoordinatesMatrix();
+        XYSeries xYSeries = JFreeChartUtils.generateXYSeries(coordinatesMatrix);
+        int trackNumber = trackDataHolder.getTrack().getTrackNumber();
+        Well well = trackDataHolder.getTrack().getWellHasImagingType().getWell();
+        String seriesKey = "track " + trackNumber + ", well " + well;
+        xYSeries.setKey(seriesKey);
+        XYSeriesCollection ySeriesCollection = new XYSeriesCollection(xYSeries);
+        JFreeChart chart = ChartFactory.createXYLineChart(seriesKey + " - coordinates", "x (µm)", "y (µm)", ySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        XYPlot xyPlot = chart.getXYPlot();
+        JFreeChartUtils.setupXYPlot(xyPlot);
+        // set title font
+        chart.getTitle().setFont(JFreeChartUtils.getChartFont());
+        // set up the chart
+        int trackIndex = trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder);
+        // assign 2 renderers: one for the coordinates line and one for the convex hull plot
+        XYLineAndShapeRenderer coordinatesRenderer = new XYLineAndShapeRenderer();
+        coordinatesRenderer.setSeriesStroke(0, JFreeChartUtils.getWideLine());
+        int length = GuiUtils.getAvailableColors().length;
+        int colorIndex = trackIndex % length;
+        coordinatesRenderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[colorIndex]);
+        // show both lines and points
+        coordinatesRenderer.setSeriesLinesVisible(0, true);
+        coordinatesRenderer.setSeriesShapesVisible(0, true);
+        xyPlot.setRenderer(0, coordinatesRenderer);
+        XYSeriesCollection dataset = (XYSeriesCollection) xyPlot.getDataset(0);
+        double minY = dataset.getSeries(0).getMinY();
+        double maxY = dataset.getSeries(0).getMaxY();
+        xyPlot.getRangeAxis().setRange(minY - 10, maxY + 10);
+        
+ 
+        enclosingBallsChartPanel.setChart(chart);
+        enclosingBalls.stream().forEach((ball) -> {
+            xyPlot.addAnnotation(new XYShapeAnnotation(ball, JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
+        });
+    }
+
+    /**
+     *
+     * @param trackDataHolder
+     * @param index
+     */
+    private void updateEnclosingBallsNumber(TrackDataHolder trackDataHolder, int index) {
+        List<Ellipse2D> balls = trackDataHolder.getStepCentricDataHolder().getEnclosingBalls().get(index);
+        exploreTrackPanel.getEnclosingBallsTextField().setText("" + balls.size());
     }
 
     /**

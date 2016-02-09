@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.entity.result.singlecell;
 
+import be.ugent.maf.cellmissy.analysis.kdtree.KDTree;
 import be.ugent.maf.cellmissy.analysis.singlecell.InterpolationMethod;
 import be.ugent.maf.cellmissy.entity.Track;
 import java.awt.geom.Ellipse2D;
@@ -53,6 +54,8 @@ public class StepCentricDataHolder {
     // time points
     private List<Double[]> directionAutocorrelations;
 
+    // a 2D tree of geometric points
+    private KDTree<GeometricPoint> kDTree;
     // a list of list of ellipse2D for the eclosing balls reference
     // a list of enclosing balls is computed for each radius value
     private List<List<Ellipse2D>> enclosingBalls;
@@ -188,6 +191,14 @@ public class StepCentricDataHolder {
 
     public void setMedianDirectionAutocorrelations(Double[] medianDirectionAutocorrelations) {
         this.medianDirectionAutocorrelations = medianDirectionAutocorrelations;
+    }
+
+    public KDTree<GeometricPoint> getkDTree() {
+        return kDTree;
+    }
+
+    public void setkDTree(KDTree<GeometricPoint> kDTree) {
+        this.kDTree = kDTree;
     }
 
     public List<List<Ellipse2D>> getEnclosingBalls() {

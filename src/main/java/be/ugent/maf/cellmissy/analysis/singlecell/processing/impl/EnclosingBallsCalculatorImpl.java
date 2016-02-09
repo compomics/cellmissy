@@ -6,10 +6,8 @@
 package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 
 import be.ugent.maf.cellmissy.analysis.kdtree.KDTree;
-import be.ugent.maf.cellmissy.analysis.kdtree.exception.KeyDuplicateException;
 import be.ugent.maf.cellmissy.analysis.kdtree.exception.KeySizeException;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.EnclosingBallsCalculator;
-import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import java.awt.geom.Ellipse2D;
@@ -27,29 +25,43 @@ import org.springframework.stereotype.Component;
 @Component("enclosingBallsCalculator")
 public class EnclosingBallsCalculatorImpl implements EnclosingBallsCalculator {
 
-    // a KD tree of geometric points
-    private final KDTree<GeometricPoint> tree = new KDTree(2);
-
     @Override
     public List<Ellipse2D> computeEnclosingBalls(StepCentricDataHolder stepCentricDataHolder, double radius) {
 
-        initKDTree(stepCentricDataHolder);
         List<Ellipse2D> enclosingBalls = new ArrayList<>();
+        KDTree<GeometricPoint> kdTree = stepCentricDataHolder.getkDTree();
+        GeometricPoint m_0 = stepCentricDataHolder.getTrack().getTrackPointList().get(0).getGeometricPoint();
 
-        for (TrackPoint trackPoint : stepCentricDataHolder.getTrack().getTrackPointList()) {
-            GeometricPoint geometricPoint = trackPoint.getGeometricPoint();
-            Ellipse2D currentBall = new Ellipse2D.Double(geometricPoint.getX() - radius, geometricPoint.getY() + radius, radius, radius);
+        Ellipse2D ball = new Ellipse2D.Double();
+        ball.setFrameFromCenter(m_0.getX(), m_0.getY(), m_0.getX() + radius, m_0.getY() + radius);
 
-            double[] key = new double[]{geometricPoint.getX(), geometricPoint.getY()};
+        enclosingBalls.add(ball); // first ball: always add it to the list!
+
+        // now start counting from 1
+        for (int i = 1; i < stepCentricDataHolder.getTrack().getTrackPointList().size(); i++) {
+            GeometricPoint m_i = stepCentricDataHolder.getTrack().getTrackPointList().get(i).getGeometricPoint();
+            // try to get the points close to the current point:
+            // i.e. points m_i such that ||m_i - m_t|| 2 <= radius 
             try {
-                // get the nearest points inside the distance given by the radius
-                List<GeometricPoint> nearestNeigh = tree.nearestEuclidean(key, radius);
-                for (GeometricPoint neigh : nearestNeigh) {
-                    if (!geometricPoint.equals(neigh)) {
-                        if (!ballsContainPoint(enclosingBalls, neigh)) {
-                            enclosingBalls.add(currentBall);
-                            Ellipse2D nextEll = new Ellipse2D.Double(neigh.getX() - radius, neigh.getY() + radius, radius, radius);
-                            enclosingBalls.add(nextEll);
+                List<GeometricPoint> nearestPoints = kdTree.nearestEuclidean(new double[]{m_i.getX(), m_i.getY()}, radius);
+                if (nearestPoints.size() == 1) {
+                    GeometricPoint nearest = nearestPoints.get(0);
+                    ball = new Ellipse2D.Double();
+                    ball.setFrameFromCenter(nearest.getX(), nearest.getY(), nearest.getX() + radius, nearest.getY() + radius);
+                    if (!enclosingBalls.contains(ball)) {
+                        enclosingBalls.add(ball);
+                    }
+                } else {
+                    for (GeometricPoint nearest : nearestPoints) {
+                        if (!nearest.equals(m_i)) {
+                            boolean ballsContainPoint = ballsContainPoint(enclosingBalls, nearest);
+                            if (!ballsContainPoint) {
+                                ball = new Ellipse2D.Double();
+                                ball.setFrameFromCenter(nearest.getX(), nearest.getY(), nearest.getX() + radius, nearest.getY() + radius);
+                                if (!enclosingBalls.contains(ball)) {
+                                    enclosingBalls.add(ball);
+                                }
+                            }
                         }
                     }
                 }
@@ -57,41 +69,19 @@ public class EnclosingBallsCalculatorImpl implements EnclosingBallsCalculator {
                 Logger.getLogger(EnclosingBallsCalculatorImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
         return enclosingBalls;
 
     }
 
     /**
-     * Initialize the KD-tree.
-     *
-     * @param stepCentricDataHolder
-     */
-    private void initKDTree(StepCentricDataHolder stepCentricDataHolder) {
-        for (TrackPoint trackPoint : stepCentricDataHolder.getTrack().getTrackPointList()) {
-            GeometricPoint geometricPoint = trackPoint.getGeometricPoint();
-            double[] key = new double[]{geometricPoint.getX(), geometricPoint.getY()};
-            try {
-                tree.insert(key, geometricPoint);
-            } catch (KeySizeException | KeyDuplicateException ex) {
-                Logger.getLogger(EnclosingBallsCalculatorImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    /**
+     * Check if the current list of balls contain a specific geometric point.
      *
      * @param balls
      * @param point
      * @return
      */
     private boolean ballsContainPoint(List<Ellipse2D> balls, GeometricPoint point) {
-
-        for (Ellipse2D ball : balls) {
-            if (ball.contains(point.getX(), point.getY())) {
-                return true;
-            }
-        }
-
-        return false;
+        return balls.stream().anyMatch((ball) -> (ball.contains(point.getX(), point.getY())));
     }
 }

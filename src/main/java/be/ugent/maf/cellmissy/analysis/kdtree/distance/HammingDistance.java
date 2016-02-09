@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.analysis.kdtree.distance;
 
 /**
+ * An implementation of the distance metric implementing the hamming distance.
  *
  * @author Paola
  */

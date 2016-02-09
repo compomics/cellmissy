@@ -5,6 +5,9 @@
 package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 
 import be.ugent.maf.cellmissy.analysis.factory.TrackInterpolatorFactory;
+import be.ugent.maf.cellmissy.analysis.kdtree.KDTree;
+import be.ugent.maf.cellmissy.analysis.kdtree.exception.KeyDuplicateException;
+import be.ugent.maf.cellmissy.analysis.kdtree.exception.KeySizeException;
 import be.ugent.maf.cellmissy.analysis.singlecell.InterpolationMethod;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.EnclosingBallsCalculator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.interpolation.TrackInterpolator;
@@ -24,6 +27,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -254,15 +259,16 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
 
     @Override
     public void computeEnclosingBalls(StepCentricDataHolder stepCentricDataHolder) {
+        KDTree<GeometricPoint> tree = new KDTree(2);
+        initKDTree(stepCentricDataHolder, tree);
         List<List<Ellipse2D>> list = new ArrayList<>();
         double r_min = PropertiesConfigurationHolder.getInstance().getDouble("r_min");
         double r_max = PropertiesConfigurationHolder.getInstance().getDouble("r_max");
         double r_step = PropertiesConfigurationHolder.getInstance().getDouble("r_step");
-        int N = (int) ((r_max - r_min) /  r_step);
-        double[] radii = new double[N];
+        int N = (int) ((r_max - r_min) / r_step) + 1;
+       
         for (int i = 0; i < N; i++) {
-            radii[i] = r_min + (i * r_step);
-            List<Ellipse2D> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(stepCentricDataHolder, radii[i]);
+            List<Ellipse2D> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(stepCentricDataHolder, (r_min + (i * r_step)));
             list.add(enclosingBalls);
         }
         stepCentricDataHolder.setEnclosingBalls(list);
@@ -285,5 +291,23 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
             interpolationMap.put(method, interpolatedTrack);
         }
         stepCentricDataHolder.setInterpolationMap(interpolationMap);
+    }
+
+    /**
+     * Initialize the KD-tree.
+     *
+     * @param stepCentricDataHolder
+     */
+    private void initKDTree(StepCentricDataHolder stepCentricDataHolder, KDTree tree) {
+        for (TrackPoint trackPoint : stepCentricDataHolder.getTrack().getTrackPointList()) {
+            GeometricPoint geometricPoint = trackPoint.getGeometricPoint();
+            double[] key = new double[]{geometricPoint.getX(), geometricPoint.getY()};
+            try {
+                tree.insert(key, geometricPoint);
+            } catch (KeySizeException | KeyDuplicateException ex) {
+                Logger.getLogger(EnclosingBallsCalculatorImpl.class.getName()).log(Level.INFO, "", ex);
+            }
+        }
+        stepCentricDataHolder.setkDTree(tree);
     }
 }

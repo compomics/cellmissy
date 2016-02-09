@@ -6,10 +6,12 @@
 package be.ugent.maf.cellmissy.analysis.kdtree.exception;
 
 /**
+ * An exception class for the KD tree.
  *
  * @author Paola
  */
 public class KDException extends Exception {
+
     protected KDException(String s) {
         super(s);
     }

@@ -6,7 +6,7 @@
 package be.ugent.maf.cellmissy.analysis.kdtree;
 
 /**
- * The hyper-rectangle implementation supporting the kd-tree class.
+ * The hyper-rectangle implementation supporting the KD tree class.
  *
  * @author Paola
  */

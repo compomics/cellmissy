@@ -6,16 +6,17 @@
 package be.ugent.maf.cellmissy.analysis.kdtree.exception;
 
 /**
+ * An exception thrown if there is a mismatch in the key size.
  *
  * @author Paola
  */
 public class KeySizeException extends KDException {
 
     public KeySizeException() {
-	super("Key size mismatch");
+        super("Key size mismatch");
     }
-    
+
     // arbitrary; every serializable class has to have one of these
     public static final long serialVersionUID = 2L;
-    
+
 }

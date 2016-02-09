@@ -48,8 +48,6 @@ public class TrackXYLineAndShapeRenderer extends XYLineAndShapeRenderer {
      * @param lineWidth: thickness to render the line
      * @param useCellMissyColor: use single color or not? - the one CellMissy
      * uses
-     * @param useCustomColor: use single color or not? the one the user will
-     * select
      */
     public TrackXYLineAndShapeRenderer(boolean plotLines, boolean plotPoints, boolean showEndPoints, List<Integer> endPoints,
               int selectedTrackIndex, float lineWidth, boolean useCellMissyColor) {
