@@ -191,6 +191,9 @@ class AreaPreProcessingController {
     }
 
     /**
+     * public methods and classes
+     */
+    /**
      * Get conditions that were actually imaged/processed
      *
      * @return
@@ -206,8 +209,25 @@ class AreaPreProcessingController {
     }
 
     /**
-     * public methods and classes
+     * Get all numbers of replicates (for all conditions)
+     *
+     * @return
      */
+    public List<Integer> getNumberOfReplicates() {
+        List<Integer> numberOfReplicates = new ArrayList<>();
+        for (PlateCondition plateCondition : getProcessedConditions()) {
+            int numberOfReplicatesPerCondition = 0;
+            boolean[] excludeReplicates = preProcessingMap.get(plateCondition).getExcludeReplicates();
+            for (boolean excludeReplicate : excludeReplicates) {
+                if (!excludeReplicate) {
+                    numberOfReplicatesPerCondition++;
+                }
+            }
+            numberOfReplicates.add(numberOfReplicatesPerCondition);
+        }
+        return numberOfReplicates;
+    }
+
     /**
      * Initialize map with plate conditions as keys and null objects as values
      */
@@ -1946,26 +1966,6 @@ class AreaPreProcessingController {
             selectedConditions.add(selectedCondition);
         }
         return selectedConditions;
-    }
-
-    /**
-     * Get all numbers of replicates (for all conditions)
-     *
-     * @return
-     */
-    private List<Integer> getNumberOfReplicates() {
-        List<Integer> numberOfReplicates = new ArrayList<>();
-        for (PlateCondition plateCondition : getProcessedConditions()) {
-            int numberOfReplicatesPerCondition = 0;
-            boolean[] excludeReplicates = preProcessingMap.get(plateCondition).getExcludeReplicates();
-            for (boolean excludeReplicate : excludeReplicates) {
-                if (!excludeReplicate) {
-                    numberOfReplicatesPerCondition++;
-                }
-            }
-            numberOfReplicates.add(numberOfReplicatesPerCondition);
-        }
-        return numberOfReplicates;
     }
 
     /**

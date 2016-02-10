@@ -49,7 +49,6 @@ public class DRInputController {
     private BindingGroup bindingGroup;
     private List<PlateCondition> plateConditionsList;
     private List<AreaAnalysisResults> areaAnalysisResultsList;
-    private DoseResponseAnalysisGroup dRAnalysisGroup;
     //view
     private DRInputPanel dRInputPanel;
     private ChooseTreatmentDialog chooseTreatmentDialog;
@@ -81,14 +80,6 @@ public class DRInputController {
     public ChooseTreatmentDialog getChooseTreatmentDialog() {
         return chooseTreatmentDialog;
     }
-    
-    public void setdRAnalysisGroup(DoseResponseAnalysisGroup dRAnalysisGroup) {
-        this.dRAnalysisGroup = dRAnalysisGroup;
-    }
-
-    public DoseResponseAnalysisGroup getdRAnalysisGroup() {
-        return dRAnalysisGroup;
-    }
 
     /**
      * Initialize view
@@ -98,11 +89,8 @@ public class DRInputController {
 
         //get conditions processed in area analysis
         List<PlateCondition> processedConditions = doseResponseController.getProcessedConditions();
-        //variable that constains selected indices in list:
-        //these conditions will be added or removed from dose-response analysis on corresponding button press
-        List<PlateCondition> selectedConditions = getSelectedConditions();
         //number of replicates per condition will be added to list as information
-        List<Integer> numberOfReplicates = getNumberOfReplicates();
+        List<Integer> numberOfReplicates = doseResponseController.getNumberOfReplicates();
 
         //update table info label
         doseResponseController.updateTableInfoMessage("This table contains all conditions and their respective slopes");
@@ -127,10 +115,10 @@ public class DRInputController {
         experimentTypeRadioButtonGroup.add(dRInputPanel.getInhibitionRadioButton());
         //select as default first button (Stimulation)
         dRInputPanel.getStimulationRadioButton().setSelected(true);
-        
+
         //initialize treatment choice dialog
         chooseTreatmentDialog = new ChooseTreatmentDialog(doseResponseController.getCellMissyFrame(), true);
-        
+
 
         /*
          * Action listeners for buttons
@@ -194,7 +182,7 @@ public class DRInputController {
         }
         // make a new analysis group, with those conditions and those results
         // override variable if one existed already
-        setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
+        doseResponseController.setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
         // populate bottom table with the analysis group
 
     }
@@ -213,13 +201,13 @@ public class DRInputController {
                 areaAnalysisResultsList.remove(areaAnalysisResults);
             }
         }
-        setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
+        doseResponseController.setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
         // populate bottom table with the analysis group
     }
 
     /**
-     * Get drug IDs for all conditions. It is necessary to show this in case of
-     * an experiment where different drugs were used.
+     * Get drug IDs for all conditions. It is necessary to show this in table in
+     * case of an experiment where different drugs were used.
      */
     private List<String> getDrugIDs() {
         List<String> drugIDs = new ArrayList<>();

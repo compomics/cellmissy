@@ -293,6 +293,10 @@ public class AreaMainController {
     public Map<PlateCondition, AreaAnalysisResults> getLinearResultsAnalysisMap() {
         return areaAnalysisController.getAnalysisMap();
     }
+    
+    public List<Integer> getNumberOfReplicates() {
+        return areaPreProcessingController.getNumberOfReplicates();
+    }
 
     /**
      * Check if current analysis has been saved before leaving the view

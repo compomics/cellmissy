@@ -5,6 +5,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 
+import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRNormalizedPlotPanel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -13,6 +14,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.swing.ButtonGroup;
 import org.jfree.chart.ChartPanel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,15 +78,11 @@ public class DRNormalizedController {
         //set text field for standard hillslope and make uneditable
         dRNormalizedPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
         dRNormalizedPlotPanel.getStandardHillslopeTextField().setEditable(false);
-        
-        //Perform initial normalization (mean values)
-        
-        //Populate table with normalized data
-        
-        //Perform initial curve fitting (standard hillslope, no constraints)
-        
-        //Plot fitted data in dose-response curve, along with R² annotation
 
+        //Perform initial normalization (mean values)
+        //Populate table with normalized data
+        //Perform initial curve fitting (standard hillslope, no constraints)
+        //Plot fitted data in dose-response curve, along with R² annotation
         /**
          * Action listeners for buttons
          */
@@ -121,11 +121,11 @@ public class DRNormalizedController {
                 switch (value) {
                     case "Smallest Mean Value":
                         dRNormalizedPlotPanel.getBottomTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getBottomTextField().setText(AnalysisUtils.computeMean(data));
+                        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
                         break;
                     case "Smallest Median Value":
                         dRNormalizedPlotPanel.getBottomTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getBottomTextField().setText(AnalysisUtils.computeMedian(data));
+                        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMedians(doseResponseController.getdRAnalysisGroup())).toString());
                         break;
                     case "Other Value":
                         dRNormalizedPlotPanel.getBottomTextField().setText("");
@@ -147,11 +147,11 @@ public class DRNormalizedController {
                 switch (choice) {
                     case "Largest Mean Value":
                         dRNormalizedPlotPanel.getTopTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.computeMean(data));
+                        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
                         break;
                     case "Largest Median Value":
                         dRNormalizedPlotPanel.getTopTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.computeMedian(data));
+                        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
                         break;
                     case "Other Value":
                         dRNormalizedPlotPanel.getTopTextField().setText("");
@@ -198,13 +198,47 @@ public class DRNormalizedController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+
                 doseResponseController.populateTable();
             }
         });
 
         //add view to parent panel
         doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRNormalizedPlotPanel, gridBagConstraints);
+    }
+
+    /**
+     * Private methods
+     */
+    /**
+     * Compute mean values of every condition in the dose response analysis
+     * group
+     */
+    private List<Double> computeMeans(DoseResponseAnalysisGroup doseResponseAnalysisGroup) {
+        List<Double> allMeans = new ArrayList();
+        for (List<Double> velocities : doseResponseAnalysisGroup.getVelocitiesMap().values()) {
+            double[] data = new double[velocities.size()];
+            for (int i = 0; i < data.length; i++) {
+                data[i] = velocities.get(i);
+            }
+            allMeans.add(AnalysisUtils.computeMean(data));
+        }
+        return allMeans;
+    }
+
+    /**
+     * Compute median values of every condition in DR analysis group
+     */
+    private List<Double> computeMedians(DoseResponseAnalysisGroup doseResponseAnalysisGroup) {
+        List<Double> allMedians = new ArrayList();
+        for (List<Double> velocities : doseResponseAnalysisGroup.getVelocitiesMap().values()) {
+            double[] data = new double[velocities.size()];
+            for (int i = 0; i < data.length; i++) {
+                data[i] = velocities.get(i);
+            }
+            allMedians.add(AnalysisUtils.computeMedian(data));
+        }
+        return allMedians;
     }
 
 }

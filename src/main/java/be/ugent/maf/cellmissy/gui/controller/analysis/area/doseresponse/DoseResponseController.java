@@ -7,10 +7,10 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
+import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRResultsPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 
 import java.awt.Color;
@@ -23,8 +23,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JScrollPane;
 
 import javax.swing.JTable;
-
-import org.jfree.chart.ChartPanel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,6 +39,7 @@ public class DoseResponseController {
     //model
     private JTable dataTable;
     private int standardHillslope;
+    private DoseResponseAnalysisGroup dRAnalysisGroup;
     //view
     private DRPanel dRPanel;
     // parent controller
@@ -85,6 +84,14 @@ public class DoseResponseController {
         this.standardHillslope = standardHillslope;
     }
 
+    public void setdRAnalysisGroup(DoseResponseAnalysisGroup dRAnalysisGroup) {
+        this.dRAnalysisGroup = dRAnalysisGroup;
+    }
+
+    public DoseResponseAnalysisGroup getdRAnalysisGroup() {
+        return dRAnalysisGroup;
+    }
+
     public Map<PlateCondition, AreaAnalysisResults> getLinearResultsAnalysisMap() {
         return areaMainController.getLinearResultsAnalysisMap();
     }
@@ -92,7 +99,11 @@ public class DoseResponseController {
     public List<PlateCondition> getPlateConditionList() {
         return areaMainController.getPlateConditionList();
     }
-    
+
+    public List<Integer> getNumberOfReplicates() {
+        return areaMainController.getNumberOfReplicates();
+    }
+
     public CellMissyFrame getCellMissyFrame() {
         return areaMainController.getCellMissyFrame();
     }
