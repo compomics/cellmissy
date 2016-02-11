@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.entity.result.singlecell;
 import be.ugent.maf.cellmissy.analysis.kdtree.KDTree;
 import be.ugent.maf.cellmissy.analysis.singlecell.InterpolationMethod;
 import be.ugent.maf.cellmissy.entity.Track;
+import java.awt.geom.Point2D;
 
 import java.util.List;
 import java.util.Map;
@@ -53,11 +54,17 @@ public class StepCentricDataHolder {
     // time points
     private List<Double[]> directionAutocorrelations;
 
-    // a 2D tree of geometric points
-    private KDTree<GeometricPoint> kDTree;
+    // a 2D tree of points (spatially)
+    private KDTree<Point2D> spatial2DTree;
+    // the 2D trees of points (for the time series: x(t) and y(t))
+    private KDTree<Point2D> timeX2DTree;
+    private KDTree<Point2D> timeY2DTree;
     // a list of list of ellipse2D for the eclosing balls reference
     // a list of enclosing balls is computed for each radius value
-    private List<List<EnclosingBall>> enclosingBalls;
+    private List<List<EnclosingBall>> spatialEnclosingBalls;
+    
+    private List<List<EnclosingBall>> xTemporalEnclosingBalls;
+    private List<List<EnclosingBall>> yTemporalEnclosingBalls;
 
     private double[][] dirAutoCorrMatrix; // might not be needed
     private double[] diffAngles; // might not be needed
@@ -192,20 +199,52 @@ public class StepCentricDataHolder {
         this.medianDirectionAutocorrelations = medianDirectionAutocorrelations;
     }
 
-    public KDTree<GeometricPoint> getkDTree() {
-        return kDTree;
+    public KDTree<Point2D> getSpatial2DTree() {
+        return spatial2DTree;
     }
 
-    public void setkDTree(KDTree<GeometricPoint> kDTree) {
-        this.kDTree = kDTree;
+    public void setSpatial2DTree(KDTree<Point2D> spatial2DTree) {
+        this.spatial2DTree = spatial2DTree;
     }
 
-    public List<List<EnclosingBall>> getEnclosingBalls() {
-        return enclosingBalls;
+    public KDTree<Point2D> getTimeX2DTree() {
+        return timeX2DTree;
     }
 
-    public void setEnclosingBalls(List<List<EnclosingBall>> enclosingBalls) {
-        this.enclosingBalls = enclosingBalls;
+    public void setTimeX2DTree(KDTree<Point2D> timeX2DTree) {
+        this.timeX2DTree = timeX2DTree;
+    }
+
+    public KDTree<Point2D> getTimeY2DTree() {
+        return timeY2DTree;
+    }
+
+    public void setTimeY2DTree(KDTree<Point2D> timeY2DTree) {
+        this.timeY2DTree = timeY2DTree;
+    }
+
+    public List<List<EnclosingBall>> getSpatialEnclosingBalls() {
+        return spatialEnclosingBalls;
+    }
+
+    public void setSpatialEnclosingBalls(List<List<EnclosingBall>> spatialEnclosingBalls) {
+        this.spatialEnclosingBalls = spatialEnclosingBalls;
+    }
+
+    public List<List<EnclosingBall>> getxTemporalEnclosingBalls() {
+        return xTemporalEnclosingBalls;
+    }
+
+    public void setxTemporalEnclosingBalls(List<List<EnclosingBall>> xTemporalEnclosingBalls) {
+        this.xTemporalEnclosingBalls = xTemporalEnclosingBalls;
+    }
+
+    public List<List<EnclosingBall>> getyTemporalEnclosingBalls() {
+        return yTemporalEnclosingBalls;
+    }
+
+    public void setyTemporalEnclosingBalls(List<List<EnclosingBall>> yTemporalEnclosingBalls) {
+        this.yTemporalEnclosingBalls = yTemporalEnclosingBalls;
     }
 
     public Map<InterpolationMethod, InterpolatedTrack> getInterpolationMap() {

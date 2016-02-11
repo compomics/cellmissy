@@ -464,8 +464,8 @@ class TrackCoordinatesController {
         scaleAxesButtonGroup.add(trackCoordinatesPanel.getScaleToExperimentRadioButton());
         trackCoordinatesPanel.getDoNotScaleRadioButton().setSelected(true);
         // init well binding list
-        wellBindingList = ObservableCollections.observableList(new ArrayList<Well>());
-        trackDataHolderBindingList = ObservableCollections.observableList(new ArrayList<TrackDataHolder>());
+        wellBindingList = ObservableCollections.observableList(new ArrayList<>());
+        trackDataHolderBindingList = ObservableCollections.observableList(new ArrayList<>());
         // init jcombo box binding: wells
         JComboBoxBinding jComboBoxBinding = SwingBindings.createJComboBoxBinding(AutoBinding.UpdateStrategy.READ_WRITE, wellBindingList, trackCoordinatesPanel.getWellsComboBox());
         bindingGroup.addBinding(jComboBoxBinding);

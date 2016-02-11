@@ -21,6 +21,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Component;
 
@@ -259,20 +260,73 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     }
 
     @Override
-    public void computeEnclosingBalls(StepCentricDataHolder stepCentricDataHolder) {
-        KDTree<GeometricPoint> tree = new KDTree(2);
-        initKDTree(stepCentricDataHolder, tree);
+    public void init2Dtrees(StepCentricDataHolder stepCentricDataHolder) {
+        Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
+        double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[0]));
+        double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[1]));
+        // the 2D spatial tree
+        KDTree tree = init2DTree(xCoord, yCoord);
+        stepCentricDataHolder.setSpatial2DTree(tree);
+        // now the time series-trees
+        double[] time = stepCentricDataHolder.getTimeIndexes();
+        tree = init2DTree(time, xCoord); // for the x coordinates
+        stepCentricDataHolder.setTimeX2DTree(tree);
+        tree = init2DTree(time, yCoord); // for the y coordinates
+        stepCentricDataHolder.setTimeY2DTree(tree);
+    }
+
+    @Override
+    public void computeSpatialEnclosingBalls(StepCentricDataHolder stepCentricDataHolder) {
+        KDTree<Point2D> kdTree = stepCentricDataHolder.getSpatial2DTree();
         List<List<EnclosingBall>> list = new ArrayList<>();
-        double r_min = PropertiesConfigurationHolder.getInstance().getDouble("r_min");
-        double r_max = PropertiesConfigurationHolder.getInstance().getDouble("r_max");
-        double r_step = PropertiesConfigurationHolder.getInstance().getDouble("r_step");
-        int N = (int) ((r_max - r_min) / r_step) + 1;
-       
+        double eps_min = PropertiesConfigurationHolder.getInstance().getDouble("eps_min");
+        double eps_max = PropertiesConfigurationHolder.getInstance().getDouble("eps_max");
+        double eps_step = PropertiesConfigurationHolder.getInstance().getDouble("eps_step");
+        int N = (int) ((eps_max - eps_min) / eps_step) + 1;
+
+        double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(stepCentricDataHolder.getCoordinatesMatrix())[0]));
+        double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(stepCentricDataHolder.getCoordinatesMatrix())[1]));
         for (int i = 0; i < N; i++) {
-            List<EnclosingBall> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(stepCentricDataHolder, (r_min + (i * r_step)));
+            List<EnclosingBall> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(xCoord, yCoord, kdTree, (eps_min + (i * eps_step)));
             list.add(enclosingBalls);
         }
-        stepCentricDataHolder.setEnclosingBalls(list);
+        stepCentricDataHolder.setSpatialEnclosingBalls(list);
+    }
+
+    @Override
+    public void computeXTemporalEnclosingBalls(StepCentricDataHolder stepCentricDataHolder) {
+        KDTree<Point2D> kdTree = stepCentricDataHolder.getTimeX2DTree();
+        List<List<EnclosingBall>> list = new ArrayList<>();
+        double eps_min = PropertiesConfigurationHolder.getInstance().getDouble("eps_min");
+        double eps_max = PropertiesConfigurationHolder.getInstance().getDouble("eps_max");
+        double eps_step = PropertiesConfigurationHolder.getInstance().getDouble("eps_step");
+        int N = (int) ((eps_max - eps_min) / eps_step) + 1;
+
+        double[] time = stepCentricDataHolder.getTimeIndexes();
+        double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(stepCentricDataHolder.getCoordinatesMatrix())[0]));
+        for (int i = 0; i < N; i++) {
+            List<EnclosingBall> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(time, xCoord, kdTree, (eps_min + (i * eps_step)));
+            list.add(enclosingBalls);
+        }
+        stepCentricDataHolder.setxTemporalEnclosingBalls(list);
+    }
+
+    @Override
+    public void computeYTemporalEnclosingBalls(StepCentricDataHolder stepCentricDataHolder) {
+        KDTree<Point2D> kdTree = stepCentricDataHolder.getTimeY2DTree();
+        List<List<EnclosingBall>> list = new ArrayList<>();
+        double eps_min = PropertiesConfigurationHolder.getInstance().getDouble("eps_min");
+        double eps_max = PropertiesConfigurationHolder.getInstance().getDouble("eps_max");
+        double eps_step = PropertiesConfigurationHolder.getInstance().getDouble("eps_step");
+        int N = (int) ((eps_max - eps_min) / eps_step) + 1;
+
+        double[] time = stepCentricDataHolder.getTimeIndexes();
+        double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(stepCentricDataHolder.getCoordinatesMatrix())[1]));
+        for (int i = 0; i < N; i++) {
+            List<EnclosingBall> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(time, yCoord, kdTree, (eps_min + (i * eps_step)));
+            list.add(enclosingBalls);
+        }
+        stepCentricDataHolder.setyTemporalEnclosingBalls(list);
     }
 
     @Override
@@ -295,20 +349,22 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     }
 
     /**
-     * Initialize the KD-tree.
      *
-     * @param stepCentricDataHolder
+     * @param firstDimension
+     * @param secondDimension
+     * @return
      */
-    private void initKDTree(StepCentricDataHolder stepCentricDataHolder, KDTree tree) {
-        for (TrackPoint trackPoint : stepCentricDataHolder.getTrack().getTrackPointList()) {
-            GeometricPoint geometricPoint = trackPoint.getGeometricPoint();
-            double[] key = new double[]{geometricPoint.getX(), geometricPoint.getY()};
+    private KDTree init2DTree(double[] firstDimension, double[] secondDimension) {
+        KDTree<Point2D> tree = new KDTree(2);
+        for (int i = 0; i < firstDimension.length; i++) {
+            Point2D point = new Point2D.Double(firstDimension[i], secondDimension[i]);
+            double[] key = new double[]{firstDimension[i], secondDimension[i]};
             try {
-                tree.insert(key, geometricPoint);
+                tree.insert(key, point);
             } catch (KeySizeException | KeyDuplicateException ex) {
                 Logger.getLogger(EnclosingBallsCalculatorImpl.class.getName()).log(Level.INFO, "", ex);
             }
         }
-        stepCentricDataHolder.setkDTree(tree);
+        return tree;
     }
 }

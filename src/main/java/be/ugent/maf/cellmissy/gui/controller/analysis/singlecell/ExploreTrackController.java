@@ -27,7 +27,6 @@ import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
-import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.jfree.chart.*;
@@ -60,14 +59,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.geom.Ellipse2D;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import org.jdesktop.observablecollections.ObservableCollections;
+import org.jdesktop.observablecollections.ObservableList;
 import org.jfree.chart.annotations.XYShapeAnnotation;
 
 /**
@@ -83,6 +84,7 @@ class ExploreTrackController {
     // model
     private BindingGroup bindingGroup;
     private PlayTrackSwingWorker playTrackSwingWorker;
+    private ObservableList<EnclosingBall> enclosingBallList;
     // view
     private ExploreTrackPanel exploreTrackPanel;
     private PlotSettingsMenuBar plotSettingsMenuBar;
@@ -194,6 +196,11 @@ class ExploreTrackController {
         // init jlist binding: track data holders
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackDataHolderBindingList, exploreTrackPanel.getTracksList());
         bindingGroup.addBinding(jListBinding);
+        
+        enclosingBallList =  ObservableCollections.observableList(new ArrayList<>());
+        jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, enclosingBallList, exploreTrackPanel.getEnclosingBallsList());
+        bindingGroup.addBinding(jListBinding);
+        
         // do the binding
         bindingGroup.bind();
         // set cell renderer for the tracks list
@@ -255,6 +262,7 @@ class ExploreTrackController {
                 if (selectedTrackIndex != -1) {
                     plotEnclosingBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex));
                     updateEnclosingBallsNumber(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
+                    updateEnclosingBallsList(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
                 }
             }
         });
@@ -561,6 +569,7 @@ class ExploreTrackController {
         // plot enclosing balls
         plotEnclosingBalls(trackDataHolder);
         updateEnclosingBallsNumber(trackDataHolder, exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
+        updateEnclosingBallsList(trackDataHolder, exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
         // the interpolation logic goes here:
         trackInterpolationController.plotInterpolatedTrackData(trackDataHolder);
     }
@@ -802,7 +811,7 @@ class ExploreTrackController {
      */
     private void plotEnclosingBalls(TrackDataHolder trackDataHolder) {
         int selectedIndexRadius = exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex();
-        List<List<EnclosingBall>> enclosingBallsList = trackDataHolder.getStepCentricDataHolder().getEnclosingBalls();
+        List<List<EnclosingBall>> enclosingBallsList = trackDataHolder.getStepCentricDataHolder().getSpatialEnclosingBalls();
         List<EnclosingBall> enclosingBalls = enclosingBallsList.get(selectedIndexRadius);
         // get the coordinates matrix
         Double[][] coordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getCoordinatesMatrix();
@@ -847,8 +856,14 @@ class ExploreTrackController {
      * @param index
      */
     private void updateEnclosingBallsNumber(TrackDataHolder trackDataHolder, int index) {
-        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getEnclosingBalls().get(index);
+        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getSpatialEnclosingBalls().get(index);
         exploreTrackPanel.getEnclosingBallsTextField().setText("" + balls.size());
+    }
+    
+    private void updateEnclosingBallsList(TrackDataHolder trackDataHolder, int index){
+         List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getSpatialEnclosingBalls().get(index);
+         enclosingBallList.clear();
+         enclosingBallList.addAll(balls);
     }
 
     /**

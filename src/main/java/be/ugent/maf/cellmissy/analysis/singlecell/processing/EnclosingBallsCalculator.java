@@ -5,8 +5,9 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.processing;
 
+import be.ugent.maf.cellmissy.analysis.kdtree.KDTree;
 import be.ugent.maf.cellmissy.entity.result.singlecell.EnclosingBall;
-import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
+import java.awt.geom.Point2D;
 import java.util.List;
 
 /**
@@ -15,14 +16,23 @@ import java.util.List;
  */
 public interface EnclosingBallsCalculator {
 
+//    /**
+//     * For a specific radius, get the minimum number of enclosing balls of a
+//     * track (in the given step centric data holder), containing the track.
+//     *
+//     * @param stepCentricDataHolder
+//     * @param radius
+//     * @return
+//     */
+//    List<EnclosingBall> computeEnclosingBalls(StepCentricDataHolder stepCentricDataHolder, double radius);
     /**
-     * For a specific radius, get the minimum number of enclosing balls of a
-     * track (in the given step centric data holder), containing the track.
-     *
-     * @param stepCentricDataHolder
-     * @param radius
-     * @return
+     * 
+     * @param firstDimension
+     * @param secondDimension
+     * @param tree
+     * @param eps
+     * @return 
      */
-    List<EnclosingBall> computeEnclosingBalls(StepCentricDataHolder stepCentricDataHolder, double radius);
+    List<EnclosingBall> computeEnclosingBalls(double[] firstDimension, double[] secondDimension, KDTree<Point2D> tree, double eps);
 
 }

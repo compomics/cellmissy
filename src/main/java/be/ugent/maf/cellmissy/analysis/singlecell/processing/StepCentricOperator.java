@@ -96,10 +96,22 @@ public interface StepCentricOperator {
 
     /**
      *
+     * @param stepCentricDataHolder
+     */
+    void init2Dtrees(StepCentricDataHolder stepCentricDataHolder);
+
+    /**
+     *
      *
      * @param stepCentricDataHolder
      */
-    void computeEnclosingBalls(StepCentricDataHolder stepCentricDataHolder);
+    void computeSpatialEnclosingBalls(StepCentricDataHolder stepCentricDataHolder);
+
+    void computeXTemporalEnclosingBalls(StepCentricDataHolder stepCentricDataHolder);
+    
+    
+    void computeYTemporalEnclosingBalls(StepCentricDataHolder stepCentricDataHolder);
+
 
     /**
      * Interpolate cell trajectory.

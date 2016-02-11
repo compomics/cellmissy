@@ -5,7 +5,9 @@
  */
 package be.ugent.maf.cellmissy.entity.result.singlecell;
 
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +25,7 @@ public class EnclosingBall {
     // the radius of the ball
     private double radius;
     // the points inside the ball
-    private List<GeometricPoint> points;
+    private List<Point2D> points;
 
     /**
      * Empty constructor.
@@ -31,7 +33,7 @@ public class EnclosingBall {
     public EnclosingBall() {
     }
 
-    public EnclosingBall(Ellipse2D ball, double radius, List<GeometricPoint> points) {
+    public EnclosingBall(Ellipse2D ball, double radius, List<Point2D> points) {
         this.ball = ball;
         this.radius = radius;
         this.points = points;
@@ -60,17 +62,18 @@ public class EnclosingBall {
         this.radius = radius;
     }
 
-    public List<GeometricPoint> getPoints() {
+    public List<Point2D> getPoints() {
         return points;
     }
 
-    public void setPoints(List<GeometricPoint> points) {
+    public void setPoints(List<Point2D> points) {
         this.points = points;
     }
 
     @Override
     public String toString() {
-        return "ball radius: " + radius + "; centerX: " + ball.getCenterX() + ", centerY: " + ball.getCenterY() + "; N: " + points.size();
+        return "centerX: " + AnalysisUtils.roundTwoDecimals(ball.getCenterX()) + ", centerY: "
+                + AnalysisUtils.roundTwoDecimals(ball.getCenterY()) + "; N: " + points.size();
     }
 
     @Override
@@ -88,9 +91,6 @@ public class EnclosingBall {
             return false;
         }
         final EnclosingBall other = (EnclosingBall) obj;
-        if (!Objects.equals(this.ball, other.ball)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.ball, other.ball);
     }
 }

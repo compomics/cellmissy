@@ -5,21 +5,16 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.analysis.kdtree.KDTree;
-import be.ugent.maf.cellmissy.analysis.kdtree.exception.KeyDuplicateException;
-import be.ugent.maf.cellmissy.analysis.kdtree.exception.KeySizeException;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.EnclosingBallsCalculator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator;
-import be.ugent.maf.cellmissy.analysis.singlecell.processing.impl.EnclosingBallsCalculatorImpl;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.EnclosingBall;
-import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.commons.lang.ArrayUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -66,28 +61,30 @@ public class EnclosingBallsCalculatorTest {
     @Test
     public void testEnclosingBalls() {
         stepCentricOperator.generateCoordinatesMatrix(stepCentricDataHolder, 1.0);
-        final KDTree<GeometricPoint> tree = new KDTree(2);
-        initKDTree(stepCentricDataHolder, tree);
-        List<EnclosingBall> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(stepCentricDataHolder, 0.1);
+        double[] timeIndexes = new double[]{2, 3, 5, 6, 7, 10}; // time indexes of the track
+        stepCentricDataHolder.setTimeIndexes(timeIndexes);
+        stepCentricOperator.init2Dtrees(stepCentricDataHolder);
+
+        Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
+        double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[0]));
+        double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[1]));
+        List<EnclosingBall> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getSpatial2DTree(), 0.1);
         Assert.assertEquals(6, enclosingBalls.size());
 
-        enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(stepCentricDataHolder, 0.5);
+        enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getSpatial2DTree(), 0.5);
         Assert.assertEquals(5, enclosingBalls.size());
 
-        enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(stepCentricDataHolder, 1.1);
+        enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getSpatial2DTree(), 1.1);
         Assert.assertEquals(3, enclosingBalls.size());
+        Assert.assertEquals(3, enclosingBalls.get(0).getPoints().size());
+        Assert.assertEquals(2, enclosingBalls.get(1).getPoints().size());
+        Assert.assertEquals(1, enclosingBalls.get(2).getPoints().size());
 
-    }
-
-    private void initKDTree(StepCentricDataHolder stepCentricDataHolder, KDTree tree) {
-        stepCentricDataHolder.getTrack().getTrackPointList().stream().map((trackPoint) -> trackPoint.getGeometricPoint()).forEach((geometricPoint) -> {
-            double[] key = new double[]{geometricPoint.getX(), geometricPoint.getY()};
-            try {
-                tree.insert(key, geometricPoint);
-            } catch (KeySizeException | KeyDuplicateException ex) {
-                Logger.getLogger(EnclosingBallsCalculatorImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
-        stepCentricDataHolder.setkDTree(tree);
+        enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(timeIndexes, xCoord, stepCentricDataHolder.getTimeX2DTree(), 0.5);
+        Assert.assertEquals(6, enclosingBalls.size());
+        enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(timeIndexes, xCoord, stepCentricDataHolder.getTimeX2DTree(), 1.0);
+        Assert.assertEquals(6, enclosingBalls.size());
+        enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(timeIndexes, xCoord, stepCentricDataHolder.getTimeX2DTree(), 1.5);
+        Assert.assertEquals(4, enclosingBalls.size());
     }
 }
