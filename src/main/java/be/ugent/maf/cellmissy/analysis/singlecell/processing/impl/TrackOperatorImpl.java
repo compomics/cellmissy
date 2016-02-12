@@ -41,6 +41,8 @@ public class TrackOperatorImpl implements TrackOperator {
         stepCentricOperator.interpolateTrack(stepCentricDataHolder);
         stepCentricOperator.init2Dtrees(stepCentricDataHolder);
         stepCentricOperator.computeSpatialEnclosingBalls(stepCentricDataHolder);
+        stepCentricOperator.computeXTemporalEnclosingBalls(stepCentricDataHolder);
+        stepCentricOperator.computeYTemporalEnclosingBalls(stepCentricDataHolder);
     }
 
     @Override

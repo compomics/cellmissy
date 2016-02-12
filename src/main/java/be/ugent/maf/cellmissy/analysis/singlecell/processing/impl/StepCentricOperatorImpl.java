@@ -20,7 +20,6 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.stereotype.Component;
@@ -279,9 +278,9 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     public void computeSpatialEnclosingBalls(StepCentricDataHolder stepCentricDataHolder) {
         KDTree<Point2D> kdTree = stepCentricDataHolder.getSpatial2DTree();
         List<List<EnclosingBall>> list = new ArrayList<>();
-        double eps_min = PropertiesConfigurationHolder.getInstance().getDouble("eps_min");
-        double eps_max = PropertiesConfigurationHolder.getInstance().getDouble("eps_max");
-        double eps_step = PropertiesConfigurationHolder.getInstance().getDouble("eps_step");
+        double eps_min = PropertiesConfigurationHolder.getInstance().getDouble("r_min");
+        double eps_max = PropertiesConfigurationHolder.getInstance().getDouble("r_max");
+        double eps_step = PropertiesConfigurationHolder.getInstance().getDouble("r_step");
         int N = (int) ((eps_max - eps_min) / eps_step) + 1;
 
         double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(stepCentricDataHolder.getCoordinatesMatrix())[0]));

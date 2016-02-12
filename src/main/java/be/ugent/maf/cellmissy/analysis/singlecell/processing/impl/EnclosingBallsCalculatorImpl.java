@@ -28,14 +28,14 @@ public class EnclosingBallsCalculatorImpl implements EnclosingBallsCalculator {
 
     @Override
     public List<EnclosingBall> computeEnclosingBalls(double[] firstDimension, double[] secondDimension, KDTree<Point2D> tree, double eps) {
-        List<EnclosingBall> enclosingBalls = new ArrayList<>();
 
+        // an empty list of enclosing balls
+        List<EnclosingBall> enclosingBalls = new ArrayList<>();
         // first ball: always add it to the list
         Point2D m_0 = new Point2D.Double(firstDimension[0], secondDimension[0]);
-
         Ellipse2D ball = new Ellipse2D.Double();
         ball.setFrameFromCenter(m_0.getX(), m_0.getY(), m_0.getX() + eps, m_0.getY() + eps);
-
+        // make a new enclosing ball object
         EnclosingBall enclosingBall = new EnclosingBall(ball, eps);
         enclosingBall.getPoints().add(m_0);
         enclosingBalls.add(enclosingBall);
@@ -48,19 +48,18 @@ public class EnclosingBallsCalculatorImpl implements EnclosingBallsCalculator {
             try {
                 List<Point2D> nearestPoints = tree.nearestEuclidean(new double[]{m_i.getX(), m_i.getY()}, eps);
                 for (Point2D nearest : nearestPoints) {
-                    boolean ballsContainPoint = ballsContainPoint(enclosingBalls, nearest);
-                    if (!ballsContainPoint) {
+                    EnclosingBall whichBallContainsPoint = whichBallContainsPoint(enclosingBalls, nearest);
+                    if (whichBallContainsPoint != null) {
+                        if (!whichBallContainsPoint.getPoints().contains(m_i)) {
+                            whichBallContainsPoint.getPoints().add(m_i);
+                        }
+                    } else {
                         ball = new Ellipse2D.Double();
                         ball.setFrameFromCenter(nearest.getX(), nearest.getY(), nearest.getX() + eps, nearest.getY() + eps);
                         enclosingBall = new EnclosingBall(ball, eps);
                         enclosingBall.getPoints().add(nearest);
                         if (!enclosingBalls.contains(enclosingBall)) {
                             enclosingBalls.add(enclosingBall);
-                        }
-                    } else {
-                        EnclosingBall whichBallContainsPoint = whichBallContainsPoint(enclosingBalls, nearest);
-                        if (!whichBallContainsPoint.getPoints().contains(m_i)) {
-                            whichBallContainsPoint.getPoints().add(m_i);
                         }
                     }
                 }
@@ -71,14 +70,10 @@ public class EnclosingBallsCalculatorImpl implements EnclosingBallsCalculator {
         return enclosingBalls;
     }
 
-    private boolean ballsContainPoint(List<EnclosingBall> enclosingBalls, Point2D point) {
-        return enclosingBalls.stream().map((enclosingBall) -> enclosingBall.getBall()).anyMatch((ball) -> (ball.contains(point)));
-    }
-
+    // check which ball contains a given point
     private EnclosingBall whichBallContainsPoint(List<EnclosingBall> enclosingBalls, Point2D point) {
         EnclosingBall found = null;
-        for (Iterator<EnclosingBall> it = enclosingBalls.iterator(); it.hasNext();) {
-            EnclosingBall ball = it.next();
+        for (EnclosingBall ball : enclosingBalls) {
             if (ball.getBall().contains(point)) {
                 found = ball;
             }

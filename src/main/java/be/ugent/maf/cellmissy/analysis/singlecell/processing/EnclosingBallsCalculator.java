@@ -11,27 +11,22 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 /**
+ * An interface to compute enclosing balls for a 2D series.
  *
  * @author Paola
  */
 public interface EnclosingBallsCalculator {
 
-//    /**
-//     * For a specific radius, get the minimum number of enclosing balls of a
-//     * track (in the given step centric data holder), containing the track.
-//     *
-//     * @param stepCentricDataHolder
-//     * @param radius
-//     * @return
-//     */
-//    List<EnclosingBall> computeEnclosingBalls(StepCentricDataHolder stepCentricDataHolder, double radius);
     /**
-     * 
-     * @param firstDimension
-     * @param secondDimension
-     * @param tree
-     * @param eps
-     * @return 
+     * Given a 2D series, compute the enclosing balls necessary to cover it.
+     *
+     * @param firstDimension: the x dimension
+     * @param secondDimension: the y dimension
+     * @param tree: the 2D tree containing the series points (we need to pass
+     * this as an argument to the method, to avoid to initialize the tree every
+     * time we change the value of epsilon).
+     * @param eps: the epsilon (radius) of the enclosing balls
+     * @return: a list of enclosing ball objects
      */
     List<EnclosingBall> computeEnclosingBalls(double[] firstDimension, double[] secondDimension, KDTree<Point2D> tree, double eps);
 
