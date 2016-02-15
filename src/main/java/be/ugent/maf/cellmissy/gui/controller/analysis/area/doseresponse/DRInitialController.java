@@ -135,7 +135,7 @@ public class DRInitialController {
         });
 
         /**
-         * Plot new dose-response graph, taking into account any choices made by
+         * Perform fitting and plot new dose-response graph, taking into account any choices made by
          * the user.
          */
         dRInitialPlotPanel.getPlotGraphButton().addActionListener(new ActionListener() {
