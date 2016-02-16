@@ -24,8 +24,8 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataTableModel;
+import be.ugent.maf.cellmissy.logging.LogTextAreaAppender;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.beansbinding.ELProperty;
@@ -95,6 +95,8 @@ class SingleCellPreProcessingController {
         trackCoordinatesController.init();
         displSpeedController.init();
         angleDirectController.init();
+        LogTextAreaAppender appender = (LogTextAreaAppender) org.apache.log4j.Logger.getLogger("gui").getAppender("gui");
+        appender.setTextArea(singleCellAnalysisPanel.getLogTextArea());
     }
 
     /**
@@ -390,34 +392,35 @@ class SingleCellPreProcessingController {
             // create a new object to hold pre-processing results
             SingleCellConditionDataHolder singleCellConditionDataHolder = new SingleCellConditionDataHolder(plateCondition);
             // do some pre-processing
-            appendInfo("generating track data holders...");
+
+            LOG.info("generating track data holders...");
             singleCellConditionPreProcessor.generateDataHolders(singleCellConditionDataHolder);
-            appendInfo("--> current total number of cell tracks: " + singleCellConditionDataHolder
-                      .getTrackDataHolders().size());
+            LOG.info("--> current total number of cell tracks: " + singleCellConditionDataHolder
+                    .getTrackDataHolders().size());
             // it can very well be that a plateCondition and/or a sample have been imaged, but there are no tracks in it
             // if this is not the case, go for the computation
             if (!singleCellConditionDataHolder.getTrackDataHolders().isEmpty()) {
                 singleCellConditionPreProcessor.generateDataStructure(singleCellConditionDataHolder);
-                appendInfo("pre-process step-centric and cell-centric data...");
+                LOG.info("pre-process step-centric and cell-centric data...");
                 singleCellConditionPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder, singleCellMainController
-                          .getConversionFactor(), singleCellMainController.getExperiment().getExperimentInterval());
-                appendInfo("generating raw coordinates matrix...");
+                        .getConversionFactor(), singleCellMainController.getExperiment().getExperimentInterval());
+                LOG.info("generating raw coordinates matrix...");
                 singleCellConditionPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
-                appendInfo("computing shifted-to-zero coordinates matrix...");
+                LOG.info("computing shifted-to-zero coordinates matrix...");
                 singleCellConditionPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellConditionDataHolder);
-                appendInfo("computing raw coordinates ranges...");
+                LOG.info("computing raw coordinates ranges...");
                 singleCellConditionPreProcessor.generateRawCoordinatesRanges(singleCellConditionDataHolder);
-                appendInfo("computing shifted coordinates ranges...");
+                LOG.info("computing shifted coordinates ranges...");
                 singleCellConditionPreProcessor.generateShiftedCoordinatesRanges(singleCellConditionDataHolder);
                 // fill in the map
                 preProcessingMap.put(plateCondition, singleCellConditionDataHolder);
-                appendInfo("**************************");
-                appendInfo("plate condition: " + plateCondition + " processed!");
+                LOG.info("**************************");
+                LOG.info("plate condition: " + plateCondition + " processed!");
             } else {
                 // remove the plateCondition from the map and inform the user
                 preProcessingMap.remove(plateCondition);
-                appendInfo("No tracks recorded for condition: " + plateCondition + "; no coordinates to retrieve from"
-                          + " DB!");
+                LOG.info("No tracks recorded for condition: " + plateCondition + "; no coordinates to retrieve from"
+                        + " DB!");
             }
         }
     }
@@ -429,10 +432,10 @@ class SingleCellPreProcessingController {
     public void showTracksInTable() {
         // table binding
         JTableBinding tracksTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ,
-                  tracksBindingList, singleCellAnalysisPanel.getTracksTable());
+                tracksBindingList, singleCellAnalysisPanel.getTracksTable());
         // add column bindings
         ColumnBinding columnBinding = tracksTableBinding.addColumnBinding(ELProperty.create("${wellHasImagingType"
-                  + ".well.columnNumber}"));
+                + ".well.columnNumber}"));
         columnBinding.setColumnName("Column");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
@@ -454,18 +457,6 @@ class SingleCellPreProcessingController {
 
         bindingGroup.addBinding(tracksTableBinding);
         bindingGroup.bind();
-    }
-
-    /**
-     * Append the info in the log text area.
-     *
-     * @param info
-     */
-    public void appendInfo(String info) {
-        String newLine = JFreeChartUtils.getNewLine();
-        singleCellAnalysisPanel.getLogTextArea().append(info + newLine);
-        singleCellAnalysisPanel.getLogTextArea().setCaretPosition(singleCellAnalysisPanel.getLogTextArea()
-                  .getDocument().getLength());
     }
 
     /**
@@ -512,7 +503,7 @@ class SingleCellPreProcessingController {
 
         // add view to parent panel
         singleCellMainController.getDataAnalysisPanel().getAreaAnalysisParentPanel().add(singleCellAnalysisPanel,
-                  gridBagConstraints);
+                gridBagConstraints);
     }
 
     /**
@@ -521,15 +512,15 @@ class SingleCellPreProcessingController {
     private void showTrackPointsInTable() {
         // get the tracking coordinates unit of measurement
         TrackCoordinatesUnitOfMeasurement coordinatesUnitOfMeasurement = singleCellMainController
-                  .getCoordinatesUnitOfMeasurement();
+                .getCoordinatesUnitOfMeasurement();
         String unitOfMeasurementString = coordinatesUnitOfMeasurement.getUnitOfMeasurementString();
 
         // table binding
         JTableBinding trackPointsTableBinding = SwingBindings.createJTableBinding(AutoBinding.UpdateStrategy.READ,
-                  trackPointsBindingList, singleCellAnalysisPanel.getTrackPointsTable());
+                trackPointsBindingList, singleCellAnalysisPanel.getTrackPointsTable());
 
         ColumnBinding columnBinding = trackPointsTableBinding.addColumnBinding(ELProperty.create("${track"
-                  + ".trackNumber}"));
+                + ".trackNumber}"));
         columnBinding.setColumnName("Track");
         columnBinding.setEditable(false);
         columnBinding.setColumnClass(Integer.class);
@@ -602,9 +593,9 @@ class SingleCellPreProcessingController {
         Double yShiftMax = Collections.max(yShiftMaxList);
         experimentShiftedCoordinatesRanges[0] = new Double[]{xShiftMin, xShiftMax};
         experimentShiftedCoordinatesRanges[1] = new Double[]{yShiftMin, yShiftMax};
-        appendInfo("raw range x: (" + xRawMin + ", " + xRawMax + ")" + "; y: (" + yRawMin + ", " + yRawMax + ")");
-        appendInfo("shifted range x: (" + xShiftMin + ", " + xShiftMax + ")" + "; y: (" + yShiftMin + ", " + yShiftMax
-                  + ")");
+        LOG.info("raw range x: (" + xRawMin + ", " + xRawMax + ")" + "; y: (" + yRawMin + ", " + yRawMax + ")");
+        LOG.info("shifted range x: (" + xShiftMin + ", " + xShiftMax + ")" + "; y: (" + yShiftMin + ", " + yShiftMax
+                + ")");
     }
 
     /**
@@ -653,17 +644,17 @@ class SingleCellPreProcessingController {
                 } else {
                     singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                     showMessage("Sorry, I did not find any single cell tracks in the DB!\n"
-                              + "Please make sure you select the right combination of algorithm-imaging type.", "error-nothing to analyze", JOptionPane.ERROR_MESSAGE);
+                            + "Please make sure you select the right combination of algorithm-imaging type.", "error-nothing to analyze", JOptionPane.ERROR_MESSAGE);
                     // should get back here to the main window....!!!
                     return;
                 }
                 // when done, enable back the list, but keep buttons disabled!
                 showMessage("Tracks retrieved!\nSelect a condition to start with the"
-                          + " analysis.", "tracks retrieved", JOptionPane.INFORMATION_MESSAGE);
+                        + " analysis.", "tracks retrieved", JOptionPane.INFORMATION_MESSAGE);
                 singleCellMainController.getDataAnalysisPanel().getConditionsList().setEnabled(true);
                 singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 singleCellMainController.showInfoMessage("Tracks retrieved from DB. Select a condition to "
-                          + "start the analysis.");
+                        + "start the analysis.");
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 singleCellMainController.handleUnexpectedError(ex);
@@ -700,43 +691,46 @@ class SingleCellPreProcessingController {
             SingleCellConditionDataHolder singleCellConditionDataHolder = preProcessingMap.get(plateCondition);
             // check if the condition is actually to be analyzed
             if (singleCellConditionDataHolder != null) {
-                appendInfo("Operating now on plateCondition: " + plateCondition);
-                appendInfo("operating on steps and cells...");
+
+                LOG.info("****************");
+                LOG.info("Operating now on: " + singleCellConditionDataHolder);
+
+                LOG.info("operating on steps and cells...");
                 singleCellConditionOperator.operateOnStepsAndCells(singleCellConditionDataHolder);
-                appendInfo("generating instantaneous displacements...");
+                LOG.info("generating instantaneous displacements...");
                 singleCellConditionOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
-                appendInfo("generating directionality ratios...");
+                LOG.info("generating directionality ratios...");
                 singleCellConditionOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
-                appendInfo("generating track displacements...");
+                LOG.info("generating track displacements...");
                 singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
-                appendInfo("generating median directionality ratios...");
+                LOG.info("generating median directionality ratios...");
                 singleCellConditionOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
-                appendInfo("generating cumulative distances...");
+                LOG.info("generating cumulative distances...");
                 singleCellConditionOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
-                appendInfo("generating euclidean distances...");
+                LOG.info("generating euclidean distances...");
                 singleCellConditionOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
-                appendInfo("generating track speeds...");
+                LOG.info("generating track speeds...");
                 singleCellConditionOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
-                appendInfo("generating track end-point directionality ratios...");
+                LOG.info("generating track end-point directionality ratios...");
                 singleCellConditionOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
-                appendInfo("generating convex hulls...");
+                LOG.info("generating convex hulls...");
                 singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
-                appendInfo("generating track displacements...");
+                LOG.info("generating track displacements...");
                 singleCellConditionOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
-                appendInfo("generating outreach ratios...");
+                LOG.info("generating outreach ratios...");
                 singleCellConditionOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
-                appendInfo("generating turning angles...");
+                LOG.info("generating turning angles...");
                 singleCellConditionOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
-                appendInfo("generating median turning angles...");
+                LOG.info("generating median turning angles...");
                 singleCellConditionOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
-                appendInfo("computing for interpolated tracks...");
+                LOG.info("computing for interpolated tracks...");
                 singleCellConditionOperator.operateOnInterpolatedTracks(singleCellConditionDataHolder);
                 plateCondition.setComputed(true);
             } else {
                 // if not, just inform the user and skip the computation
-                appendInfo("Apparently this condition was not imaged/analyzed!");
+                LOG.info("Apparently this condition was not imaged/analyzed!");
                 singleCellMainController.showInfoMessage("Apparently this condition was not imaged/analyzed!\nNothing"
-                          + " to compute!");
+                        + " to compute!");
             }
             return null;
         }

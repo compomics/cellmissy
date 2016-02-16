@@ -12,15 +12,18 @@ import java.util.Stack;
  * A Graham Scan class. For a list of geometric points on the plane, it
  * calculates the hull of the set associated to the list.
  *
- * @author Paola Masuzzo <paola.masuzzo@ugent.be>
+ * @author Paola Masuzzo <paola.masuzzo@ugent.be>s
  */
 public class GrahamScan {
 
     // the hull, in a form of a Stack
     private final Stack<GeometricPoint> hull = new Stack<>();
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GrahamScan.class);
 
     /**
      * Get the constructed hull
+     *
+     * @return
      */
     public Stack<GeometricPoint> getHull() {
         return hull;
@@ -29,6 +32,7 @@ public class GrahamScan {
     /**
      * Constructor, this will create the hull.
      *
+     * @param geometricPointList
      */
     public GrahamScan(List<GeometricPoint> geometricPointList) {
         constructHull(geometricPointList);
@@ -68,7 +72,8 @@ public class GrahamScan {
             if (GeometricPoint.counterClockWise(geometricPoints[0], geometricPoints[k1], geometricPoints[k2]) != 0) {
                 break;
             } else {
-                System.out.println("points: " + geometricPoints[0] + ", " + geometricPoints[k1] + ", " + geometricPoints[k2] + " are collinear on the plane.");
+                String info = "points: " + geometricPoints[0] + ", " + geometricPoints[k1] + ", " + geometricPoints[k2] + " are collinear on the plane.";
+                LOG.info(info);
             }
         }
         hull.push(geometricPoints[k2 - 1]);    // points[k2-1] is the second extreme point, push it to the stack

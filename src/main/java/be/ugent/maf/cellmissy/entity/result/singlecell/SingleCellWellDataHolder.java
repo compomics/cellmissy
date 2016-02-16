@@ -237,4 +237,9 @@ public class SingleCellWellDataHolder {
         this.medianDirectionAutocorrelationsVector = medianDirectionAutocorrelationsVector;
     }
 
+    @Override
+    public String toString() {
+        return "SingleCellWellDataHolder{" + "well=" + well + ", trackDataHolders=" + trackDataHolders + '}';
+    }
+
 }

@@ -6,7 +6,6 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
 import be.ugent.maf.cellmissy.analysis.factory.KernelDensityEstimatorFactory;
 import be.ugent.maf.cellmissy.analysis.factory.OutliersHandlerFactory;
-import be.ugent.maf.cellmissy.analysis.factory.TrackInterpolatorFactory;
 import be.ugent.maf.cellmissy.analysis.singlecell.TrackCoordinatesUnitOfMeasurement;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.*;
@@ -181,7 +180,6 @@ public class SingleCellMainController {
         return analysisPlatePanel;
     }
 
-
     /**
      * Show the waiting dialog: set the title and center the dialog on the main
      * frame. Set the dialog to visible.
@@ -263,12 +261,12 @@ public class SingleCellMainController {
         Algorithm selectedAlgorithm = getSelectedAlgorithm();
         ImagingType selectedImagingType = getSelectedImagingType();
         List<Well> imagedWells = plateCondition.getImagedWells();
-        for (Well imagedWell : imagedWells) {
+        imagedWells.stream().forEach((imagedWell) -> {
             String info = "** fetching cell track points for sample: " + imagedWell + " **";
-            singleCellPreProcessingController.appendInfo(info);
+            LOG.info(info);
             wellService.fetchTrackPoints(imagedWell, selectedAlgorithm.getAlgorithmid(), selectedImagingType
                     .getImagingTypeid());
-        }
+        });
     }
 
     /**
@@ -277,14 +275,14 @@ public class SingleCellMainController {
      * @param plateCondition
      */
     public void fetchTracks(PlateCondition plateCondition) {
-        singleCellPreProcessingController.appendInfo("* Fetching data for plate condition: " + plateCondition + " *");
+        LOG.info("* Fetching data for plate condition: " + plateCondition + " *");
         // fetch tracks for each well of condition
         for (Well well : plateCondition.getWellList()) {
             // fetch tracks collection for the well has imaging type of interest
             Algorithm algorithm = getSelectedAlgorithm();
             ImagingType imagingType = getSelectedImagingType();
             String info = "** fetching cell tracks for sample: " + well + " **";
-            singleCellPreProcessingController.appendInfo(info);
+            LOG.info(info);
             wellService.fetchTracks(well, algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
         }
     }
@@ -302,17 +300,15 @@ public class SingleCellMainController {
             singleCellPreProcessingController.getTrackPointsBindingList().clear();
         }
         // get only the wells that have been imaged
-        for (Well well : plateCondition.getImagedWells()) {
-            for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
-                for (Track track : wellHasImagingType.getTrackList()) {
-                    if (track.equals(selectedTrack)) {
-                        for (TrackPoint trackPoint : track.getTrackPointList()) {
-                            singleCellPreProcessingController.getTrackPointsBindingList().add(trackPoint);
-                        }
-                    }
-                }
-            }
-        }
+        plateCondition.getImagedWells().stream().forEach((well) -> {
+            well.getWellHasImagingTypeList().stream().forEach((wellHasImagingType) -> {
+                wellHasImagingType.getTrackList().stream().filter((track) -> (track.equals(selectedTrack))).forEach((track) -> {
+                    track.getTrackPointList().stream().forEach((trackPoint) -> {
+                        singleCellPreProcessingController.getTrackPointsBindingList().add(trackPoint);
+                    });
+                });
+            });
+        });
     }
 
     /**
@@ -519,7 +515,7 @@ public class SingleCellMainController {
                 // warn the user and reset everything
                 Object[] options = {"Yes", "No"};
                 int showOptionDialog = JOptionPane.showOptionDialog(null, "Current analysis won't be saved. "
-                                + "Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null,
+                        + "Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null,
                         options,
                         options[1]);
                 if (showOptionDialog == 0) {
@@ -634,7 +630,7 @@ public class SingleCellMainController {
         bindingGroup.addBinding(binding);
         // instrument
         binding = Bindings.createAutoBinding(AutoBinding.UpdateStrategy.READ, metadataSingleCellPanel
-                        .getExperimentsList(), BeanProperty.create("selectedElement.instrument.name"),
+                .getExperimentsList(), BeanProperty.create("selectedElement.instrument.name"),
                 metadataSingleCellPanel.getInstrumentTextField(), BeanProperty.create("text"), "instrumentbinding");
         bindingGroup.addBinding(binding);
         // exp time frames

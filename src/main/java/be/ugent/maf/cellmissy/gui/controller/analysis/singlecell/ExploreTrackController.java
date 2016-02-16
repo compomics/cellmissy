@@ -881,9 +881,9 @@ class ExploreTrackController {
         coordinatesRenderer.setSeriesShapesVisible(0, true);
         xyPlot.setRenderer(0, coordinatesRenderer);
         XYSeriesCollection dataset = (XYSeriesCollection) xyPlot.getDataset(0);
-        double minX = dataset.getSeries(0).getMinX();
-        double maxX = dataset.getSeries(0).getMaxX();
-        xyPlot.getRangeAxis().setRange(minX - 10, maxX + 10);
+        double minY = dataset.getSeries(0).getMinY();
+        double maxY = dataset.getSeries(0).getMaxY();
+        xyPlot.getRangeAxis().setRange(minY - 10, maxY + 10);
 
         spatEnclosingBallChartPanel.setChart(chart);
         enclosingBalls.stream().forEach((ball) -> {

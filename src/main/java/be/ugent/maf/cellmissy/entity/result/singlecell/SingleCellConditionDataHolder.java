@@ -63,6 +63,8 @@ public class SingleCellConditionDataHolder {
     private Double[] medianTurningAnglesVector;
     // array with the median direction autocorrelations
     private Double[] medianDirectionAutocorrelationsVector;
+    // a string for the computation process
+    private String info;
 
     /**
      * Empty Constructor.
@@ -249,4 +251,10 @@ public class SingleCellConditionDataHolder {
     public void setMedianDirectionAutocorrelationsVector(Double[] medianDirectionAutocorrelationsVector) {
         this.medianDirectionAutocorrelationsVector = medianDirectionAutocorrelationsVector;
     }
+
+    @Override
+    public String toString() {
+        return "SingleCellConditionDataHolder{" + "plateCondition=" + plateCondition + ", singleCellWellDataHolders=" + singleCellWellDataHolders.size() + '}';
+    }
+
 }
