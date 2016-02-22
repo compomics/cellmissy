@@ -35,10 +35,8 @@ import org.springframework.stereotype.Controller;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
@@ -240,7 +238,7 @@ public class SingleCellMainController {
     }
 
     /**
-     * Show the wells analysed for current condition: put a star inside each
+     * Show the wells analyzed for current condition: put a star inside each
      * well.
      *
      * @param plateCondition
@@ -277,14 +275,10 @@ public class SingleCellMainController {
     public void fetchTracks(PlateCondition plateCondition) {
         LOG.info("* Fetching data for plate condition: " + plateCondition + " *");
         // fetch tracks for each well of condition
-        for (Well well : plateCondition.getWellList()) {
-            // fetch tracks collection for the well has imaging type of interest
-            Algorithm algorithm = getSelectedAlgorithm();
-            ImagingType imagingType = getSelectedImagingType();
-            String info = "** fetching cell tracks for sample: " + well + " **";
-            LOG.info(info);
-            wellService.fetchTracks(well, algorithm.getAlgorithmid(), imagingType.getImagingTypeid());
-        }
+        plateCondition.getWellList().stream().forEach((well) -> {       
+            LOG.info("** fetching cell tracks for sample: " + well + " **");
+            wellService.fetchTracks(well, getSelectedAlgorithm().getAlgorithmid(), getSelectedImagingType().getImagingTypeid());
+        });
     }
 
     /**
@@ -461,67 +455,55 @@ public class SingleCellMainController {
         String message = "Please select a project and an experiment to visualize and analyse single cell data.";
         showInfoMessage(message);
         // action listener on start button: this is switching the views in order to start the analysis
-        analysisExperimentPanel.getStartButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                analysisExperimentPanel.getStartButton().setEnabled(false);
-                analysisExperimentPanel.getCancelButton().setEnabled(true);
-                // switch between the two panels
-                GuiUtils.switchChildPanels(analysisExperimentPanel.getTopPanel(), dataAnalysisPanel,
-                        metadataSingleCellPanel);
-                analysisExperimentPanel.getTopPanel().repaint();
-                analysisExperimentPanel.getTopPanel().revalidate();
-                getCardLayout().first(singleCellPreProcessingController.getSingleCellAnalysisPanel().getBottomPanel());
-                onCardSwitch();
-                // update experiment info
-                dataAnalysisPanel.getExperimentNumberTextField().setText(experiment.toString());
-                dataAnalysisPanel.getTimeFramesNumberTextField().setText("" + experiment.getTimeFrames());
-                dataAnalysisPanel.getDatasetTextField().setText(getSelectedAlgorithm().getAlgorithmName());
-                dataAnalysisPanel.getImagingTypeTextField().setText(getSelectedImagingType().getName());
-                showInfoMessage("CellMissy is retrieving data and computing... please wait.");
-                // now we do all the computations, and then the user can start selecting conditions and look at them
-                singleCellPreProcessingController.preProcessExperiment(experiment);
-            }
+        analysisExperimentPanel.getStartButton().addActionListener((ActionEvent e) -> {
+            analysisExperimentPanel.getStartButton().setEnabled(false);
+            analysisExperimentPanel.getCancelButton().setEnabled(true);
+            // switch between the two panels
+            GuiUtils.switchChildPanels(analysisExperimentPanel.getTopPanel(), dataAnalysisPanel,
+                    metadataSingleCellPanel);
+            analysisExperimentPanel.getTopPanel().repaint();
+            analysisExperimentPanel.getTopPanel().revalidate();
+            getCardLayout().first(singleCellPreProcessingController.getSingleCellAnalysisPanel().getBottomPanel());
+            onCardSwitch();
+            // update experiment info
+            dataAnalysisPanel.getExperimentNumberTextField().setText(experiment.toString());
+            dataAnalysisPanel.getTimeFramesNumberTextField().setText("" + experiment.getTimeFrames());
+            dataAnalysisPanel.getDatasetTextField().setText(getSelectedAlgorithm().getAlgorithmName());
+            dataAnalysisPanel.getImagingTypeTextField().setText(getSelectedImagingType().getName());
+            showInfoMessage("CellMissy is retrieving data and computing... please wait.");
+            // now we do all the computations, and then the user can start selecting conditions and look at them
+            singleCellPreProcessingController.preProcessExperiment(experiment);
         });
 
         // action listener on previous button
-        analysisExperimentPanel.getPreviousButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // go back of one step
-                getCardLayout().previous(singleCellPreProcessingController.getSingleCellAnalysisPanel()
-                        .getBottomPanel());
-                onCardSwitch();
-            }
+        analysisExperimentPanel.getPreviousButton().addActionListener((ActionEvent e) -> {
+            // go back of one step
+            getCardLayout().previous(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                    .getBottomPanel());
+            onCardSwitch();
         });
 
         // action listener on next button
-        analysisExperimentPanel.getNextButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // go forward of one step
-                getCardLayout().next(singleCellPreProcessingController.getSingleCellAnalysisPanel().getBottomPanel());
-                onCardSwitch();
-                if (!analysisExperimentPanel.getPreviousButton().isEnabled()) {
-                    analysisExperimentPanel.getPreviousButton().setEnabled(true);
-                }
+        analysisExperimentPanel.getNextButton().addActionListener((ActionEvent e) -> {
+            // go forward of one step
+            getCardLayout().next(singleCellPreProcessingController.getSingleCellAnalysisPanel().getBottomPanel());
+            onCardSwitch();
+            if (!analysisExperimentPanel.getPreviousButton().isEnabled()) {
+                analysisExperimentPanel.getPreviousButton().setEnabled(true);
             }
         });
 
         // action listener on cancel button
-        analysisExperimentPanel.getCancelButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // warn the user and reset everything
-                Object[] options = {"Yes", "No"};
-                int showOptionDialog = JOptionPane.showOptionDialog(null, "Current analysis won't be saved. "
-                        + "Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null,
-                        options,
-                        options[1]);
-                if (showOptionDialog == 0) {
-                    // reset everything
-                    //onCancel();
-                }
+        analysisExperimentPanel.getCancelButton().addActionListener((ActionEvent e) -> {
+            // warn the user and reset everything
+            Object[] options = {"Yes", "No"};
+            int showOptionDialog = JOptionPane.showOptionDialog(null, "Current analysis won't be saved. "
+                    + "Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null,
+                    options,
+                    options[1]);
+            if (showOptionDialog == 0) {
+                // reset everything
+                //onCancel();
             }
         });
 
@@ -573,18 +555,15 @@ public class SingleCellMainController {
          * add mouse listeners
          */
         //when a project from the list is selected, show all experiments performed for that project
-        metadataSingleCellPanel.getProjectsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    // retrieve selected project
-                    Project selectedProject = (Project) metadataSingleCellPanel.getProjectsList().getSelectedValue();
-                    if (selectedProject != null) {
-                        if (experiment == null || !selectedProject.equals(experiment.getProject())
-                                || experimentBindingList.isEmpty()) {
-                            // project is being selected for the first time
-                            onSelectedProject(selectedProject);
-                        }
+        metadataSingleCellPanel.getProjectsList().getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            if (!e.getValueIsAdjusting()) {
+                // retrieve selected project
+                Project selectedProject = (Project) metadataSingleCellPanel.getProjectsList().getSelectedValue();
+                if (selectedProject != null) {
+                    if (experiment == null || !selectedProject.equals(experiment.getProject())
+                            || experimentBindingList.isEmpty()) {
+                        // project is being selected for the first time
+                        onSelectedProject(selectedProject);
                     }
                 }
             }
@@ -592,29 +571,23 @@ public class SingleCellMainController {
 
         //when an experiment is selected, show algorithms and imaging types used for that experiment
         //show also conditions in the Jlist behind and plate view according to the conditions setup
-        metadataSingleCellPanel.getExperimentsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    // retrieve selected experiment
-                    Experiment selectedExperiment = (Experiment) metadataSingleCellPanel.getExperimentsList()
-                            .getSelectedValue();
-                    if (selectedExperiment != null) {
-                        if (experiment == null || !selectedExperiment.equals(experiment)) {
-                            onSelectedExperiment(selectedExperiment);
-                        }
+        metadataSingleCellPanel.getExperimentsList().getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            if (!e.getValueIsAdjusting()) {
+                // retrieve selected experiment
+                Experiment selectedExperiment = (Experiment) metadataSingleCellPanel.getExperimentsList()
+                        .getSelectedValue();
+                if (selectedExperiment != null) {
+                    if (experiment == null || !selectedExperiment.equals(experiment)) {
+                        onSelectedExperiment(selectedExperiment);
                     }
                 }
             }
         });
         // add action Listener to the question/info button
-        metadataSingleCellPanel.getQuestionButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // pack and show info dialog
-                GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), singleCellAnalysisInfoDialog);
-                singleCellAnalysisInfoDialog.setVisible(true);
-            }
+        metadataSingleCellPanel.getQuestionButton().addActionListener((ActionEvent e) -> {
+            // pack and show info dialog
+            GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), singleCellAnalysisInfoDialog);
+            singleCellAnalysisInfoDialog.setVisible(true);
         });
 
         // bind information fields
@@ -645,34 +618,28 @@ public class SingleCellMainController {
         // these values are read from the spring XML config file
         // get all the outliers correction and detection algoritms from the factory
         Set<String> outliersHandlersBeanNames = OutliersHandlerFactory.getInstance().getOutliersHandlersBeanNames();
-        for (String outliersAlgorithm : outliersHandlersBeanNames) {
+        outliersHandlersBeanNames.stream().forEach((outliersAlgorithm) -> {
             metadataSingleCellPanel.getOutliersAlgorithmsComboBox().addItem(outliersAlgorithm);
-        }
+        });
 
         // add the action listener
-        metadataSingleCellPanel.getOutliersAlgorithmsComboBox().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedOutliersAlgorithm = metadataSingleCellPanel.getOutliersAlgorithmsComboBox().getSelectedItem().toString();
-                singleCellPreProcessingController.setOutliersHandlerBeanName(selectedOutliersAlgorithm);
-            }
+        metadataSingleCellPanel.getOutliersAlgorithmsComboBox().addActionListener((ActionEvent e) -> {
+            String selectedOutliersAlgorithm = metadataSingleCellPanel.getOutliersAlgorithmsComboBox().getSelectedItem().toString();
+            singleCellPreProcessingController.setOutliersHandlerBeanName(selectedOutliersAlgorithm);
         });
         // set as default the first one
         metadataSingleCellPanel.getOutliersAlgorithmsComboBox().setSelectedIndex(0);
 
         // do exactly the same for the kernel density estimation and the distance metric
         Set<String> kernelDensityEstimatorsBeanNames = KernelDensityEstimatorFactory.getInstance().getKernelDensityEstimatorsBeanNames();
-        for (String estimatorName : kernelDensityEstimatorsBeanNames) {
+        kernelDensityEstimatorsBeanNames.stream().forEach((estimatorName) -> {
             metadataSingleCellPanel.getKernelDensityEstimatorsComboBox().addItem(estimatorName);
-        }
+        });
 
         // add the action listener
-        metadataSingleCellPanel.getKernelDensityEstimatorsComboBox().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedKDEAlgorithm = metadataSingleCellPanel.getKernelDensityEstimatorsComboBox().getSelectedItem().toString();
-                singleCellPreProcessingController.setKernelDensityEstimatorBeanName(selectedKDEAlgorithm);
-            }
+        metadataSingleCellPanel.getKernelDensityEstimatorsComboBox().addActionListener((ActionEvent e) -> {
+            String selectedKDEAlgorithm = metadataSingleCellPanel.getKernelDensityEstimatorsComboBox().getSelectedItem().toString();
+            singleCellPreProcessingController.setKernelDensityEstimatorBeanName(selectedKDEAlgorithm);
         });
         // set as default the first one
         metadataSingleCellPanel.getKernelDensityEstimatorsComboBox().setSelectedIndex(0);
@@ -685,16 +652,13 @@ public class SingleCellMainController {
      */
     private void initDataAnalysisPanel() {
         //when a certain condition is selected, fetch tracks for each well of the condition
-        dataAnalysisPanel.getConditionsList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                controlGuiComponents(true);
-                if (!e.getValueIsAdjusting()) {
-                    PlateCondition selectedCondition = (PlateCondition) dataAnalysisPanel.getConditionsList()
-                            .getSelectedValue();
-                    if (selectedCondition != null) {
-                        onSelectedCondition(selectedCondition);
-                    }
+        dataAnalysisPanel.getConditionsList().getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            controlGuiComponents(true);
+            if (!e.getValueIsAdjusting()) {
+                PlateCondition selectedCondition = (PlateCondition) dataAnalysisPanel.getConditionsList()
+                        .getSelectedValue();
+                if (selectedCondition != null) {
+                    onSelectedCondition(selectedCondition);
                 }
             }
         });
@@ -842,7 +806,7 @@ public class SingleCellMainController {
 
     /**
      * Proceed with the analysis of the data, given a chosen experiment to
-     * analyse.
+     * analyze.
      *
      * @param selectedExperiment
      */
@@ -869,27 +833,22 @@ public class SingleCellMainController {
         //show conditions JList
         showConditionsList();
         // show algorithms and imaging types
-        for (PlateCondition plateCondition : plateConditionList) {
-            for (Well well : plateCondition.getWellList()) {
+        plateConditionList.stream().forEach((plateCondition) -> {
+            plateCondition.getWellList().stream().map((well) -> {
                 List<Algorithm> algorithms = wellService.findAlgosByWellId(well.getWellid());
                 if (algorithms != null) {
-                    for (Algorithm algorithm : algorithms) {
-                        if (!algorithmBindingList.contains(algorithm)) {
-                            algorithmBindingList.add(algorithm);
-                        }
-                    }
+                    algorithms.stream().filter((algorithm) -> (!algorithmBindingList.contains(algorithm))).forEach((algorithm) -> {
+                        algorithmBindingList.add(algorithm);
+                    });
                 }
-
                 List<ImagingType> imagingTypes = wellService.findImagingTypesByWellId(well.getWellid());
-                if (imagingTypes != null) {
-                    for (ImagingType imagingType : imagingTypes) {
-                        if (imagingType != null && !imagingTypeBindingList.contains(imagingType)) {
-                            imagingTypeBindingList.add(imagingType);
-                        }
-                    }
-                }
-            }
-        }
+                return imagingTypes;
+            }).filter((imagingTypes) -> (imagingTypes != null)).forEach((imagingTypes) -> {
+                imagingTypes.stream().filter((imagingType) -> (imagingType != null && !imagingTypeBindingList.contains(imagingType))).forEach((imagingType) -> {
+                    imagingTypeBindingList.add(imagingType);
+                });
+            });
+        });
         //init map with conditions and results holders
         singleCellPreProcessingController.initMapWithConditions();
         //set selected algorithm to the first of the list
@@ -934,15 +893,13 @@ public class SingleCellMainController {
         }
         // get only the wells that have been imaged
         List<Well> imagedWells = plateCondition.getImagedWells();
-        for (Well well : imagedWells) {
-            List<WellHasImagingType> wellHasImagingTypeList = well.getWellHasImagingTypeList();
-            for (WellHasImagingType wellHasImagingType : wellHasImagingTypeList) {
-                List<Track> trackList = wellHasImagingType.getTrackList();
-                for (Track track : trackList) {
+        imagedWells.stream().map((well) -> well.getWellHasImagingTypeList()).forEach((wellHasImagingTypeList) -> {
+            wellHasImagingTypeList.stream().map((wellHasImagingType) -> wellHasImagingType.getTrackList()).forEach((trackList) -> {
+                trackList.stream().forEach((track) -> {
                     singleCellPreProcessingController.getTracksBindingList().add(track);
-                }
-            }
-        }
+                });
+            });
+        });
     }
 
     /**

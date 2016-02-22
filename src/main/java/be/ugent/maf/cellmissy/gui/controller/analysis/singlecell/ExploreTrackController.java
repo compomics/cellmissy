@@ -51,12 +51,9 @@ import org.springframework.stereotype.Controller;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
@@ -144,7 +141,7 @@ class ExploreTrackController {
     }
 
     /**
-     * Private methods
+     * Private methods and classes.
      */
     /**
      * Action performed on selection of a single track: set the renderer for the
@@ -184,9 +181,7 @@ class ExploreTrackController {
             AbstractButton button = buttons.nextElement();
             button.addItemListener(itemActionListener);
         }
-
         plotSettingsMenuBar.getUseCellMissyColors().addItemListener(new ColorItemActionListener());
-
     }
 
     /**
@@ -278,29 +273,21 @@ class ExploreTrackController {
             exploreTrackPanel.getEnclosingBallEpsCombobox().addItem(r_min + (i * r_step));
         }
 
-        exploreTrackPanel.getEnclosingBallRadiusCombobox().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
-                if (selectedTrackIndex != -1) {
-                    plotSpatEnclosingBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex));
-                    updateSpatEnclosingBallNumber(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
-                    updateSpatEnclosingBallsList(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
-                }
+        exploreTrackPanel.getEnclosingBallRadiusCombobox().addActionListener((ActionEvent e) -> {
+            int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
+            if (selectedTrackIndex != -1) {
+                plotSpatEnclosingBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex));
+                updateSpatEnclosingBallNumber(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
+                updateSpatEnclosingBallsList(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
             }
         });
 
-        exploreTrackPanel.getEnclosingBallEpsCombobox().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
-                if (selectedTrackIndex != -1) {
-                    plotTempEnclosingBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex));
-                    updateTempEnclosingBallNumber(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
-                    updateTempEnclosingBallsList(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
-                }
+        exploreTrackPanel.getEnclosingBallEpsCombobox().addActionListener((ActionEvent e) -> {
+            int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
+            if (selectedTrackIndex != -1) {
+                plotTempEnclosingBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex));
+                updateTempEnclosingBallNumber(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
+                updateTempEnclosingBallsList(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
             }
         });
 
@@ -332,68 +319,53 @@ class ExploreTrackController {
 
         exploreTrackPanel.getGraphicsParentPanel().add(coordinatesChartPanel, gridBagConstraints);
         // add change listener to the slider
-        exploreTrackPanel.getTimeSlider().addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSlider source = (JSlider) e.getSource();
-                // we don't check for the adjustment of the value, because we want a continuous time scale
-                int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
-                if (selectedTrackIndex != -1) {
-                    // get the current time value from the slider
-                    int timePoint = source.getValue();
-                    // show the track point in time: basically set the renderer for the chart
-                    showTrackPointInTime(selectedTrackIndex, timePoint);
-                    // update x and y coordinates field
-                    updateCoordinatesInfoInTime(selectedTrackIndex, timePoint);
-                }
+        exploreTrackPanel.getTimeSlider().addChangeListener((ChangeEvent e) -> {
+            JSlider source = (JSlider) e.getSource();
+            // we don't check for the adjustment of the value, because we want a continuous time scale
+            int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
+            if (selectedTrackIndex != -1) {
+                // get the current time value from the slider
+                int timePoint = source.getValue();
+                // show the track point in time: basically set the renderer for the chart
+                showTrackPointInTime(selectedTrackIndex, timePoint);
+                // update x and y coordinates field
+                updateCoordinatesInfoInTime(selectedTrackIndex, timePoint);
             }
         });
 
         // action listeners
         // play a track in time
-        exploreTrackPanel.getPlayButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
-                if (selectedTrackIndex != -1) {
-                    playTrack(selectedTrackIndex);
-                }
+        exploreTrackPanel.getPlayButton().addActionListener((ActionEvent e) -> {
+            int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
+            if (selectedTrackIndex != -1) {
+                playTrack(selectedTrackIndex);
             }
         });
 
         // stop a track in time
-        exploreTrackPanel.getStopButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // check for the status of the start button, if enables, worker is ongoing, we can stop it
-                if (!exploreTrackPanel.getPlayButton().isEnabled()) {
-                    // stop the worker
-                    playTrackSwingWorker.cancel(true);
-                    // enable the play button
-                    exploreTrackPanel.getPlayButton().setEnabled(true);
-                }
+        exploreTrackPanel.getStopButton().addActionListener((ActionEvent e) -> {
+            // check for the status of the start button, if enables, worker is ongoing, we can stop it
+            if (!exploreTrackPanel.getPlayButton().isEnabled()) {
+                // stop the worker
+                playTrackSwingWorker.cancel(true);
+                // enable the play button
+                exploreTrackPanel.getPlayButton().setEnabled(true);
             }
         });
 
         // select a track and highlight it in the current plot
-        exploreTrackPanel.getTracksList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
-                    if (selectedTrackIndex != -1) {
-                        onSelectedTrack(selectedTrackIndex);
-                    }
+        exploreTrackPanel.getTracksList().getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
+                if (selectedTrackIndex != -1) {
+                    onSelectedTrack(selectedTrackIndex);
                 }
             }
         });
 
         // clear selection on the tracks list
-        exploreTrackPanel.getClearSelectionButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                onClearSelection();
-            }
+        exploreTrackPanel.getClearSelectionButton().addActionListener((ActionEvent e) -> {
+            onClearSelection();
         });
 
         exploreTrackPanel.getPlotSettingsPanel().add(plotSettingsMenuBar, BorderLayout.EAST);
@@ -945,7 +917,7 @@ class ExploreTrackController {
 //        yTPlot.getRangeAxis().setRange(minY - 10, maxY + 10);
         XYLineAndShapeRenderer r = (XYLineAndShapeRenderer) combinedDomainXYPlot.getRenderer();
         r.setSeriesShapesVisible(0, true);
-        
+
         tempEnclosingBallChartPanel.setChart(combinedChart);
         xTempBalls.stream().forEach((ball) -> {
             xTPlot.addAnnotation(new XYShapeAnnotation(ball.getBall(), JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
@@ -955,17 +927,20 @@ class ExploreTrackController {
         });
     }
 
+    // update the number of enclosing balls in space
     private void updateSpatEnclosingBallNumber(TrackDataHolder trackDataHolder, int index) {
         List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getSpatialEnclosingBalls().get(index);
         exploreTrackPanel.getSpatEnclosingBallsTextField().setText("" + balls.size());
     }
-
+    
+    // update the list of enclosing balls in space
     private void updateSpatEnclosingBallsList(TrackDataHolder trackDataHolder, int index) {
         List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getSpatialEnclosingBalls().get(index);
         spatEnclosingBalls.clear();
         spatEnclosingBalls.addAll(balls);
     }
 
+    // update the number of enclosing balls in time
     private void updateTempEnclosingBallNumber(TrackDataHolder trackDataHolder, int index) {
         List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getxTemporalEnclosingBalls().get(index);
         exploreTrackPanel.getXtEnclosingBallsTextField().setText("" + balls.size());
@@ -973,6 +948,7 @@ class ExploreTrackController {
         exploreTrackPanel.getYtEnclosingBallsTextField().setText("" + balls.size());
     }
 
+    // update the list of enclosing balls in time
     private void updateTempEnclosingBallsList(TrackDataHolder trackDataHolder, int index) {
         List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getxTemporalEnclosingBalls().get(index);
         xtEnclosingBalls.clear();
@@ -1001,7 +977,7 @@ class ExploreTrackController {
             double[] timeIndexes = trackDataHolder.getStepCentricDataHolder().getTimeIndexes();
             for (int i = 0; i < timeIndexes.length; i++) {
                 showTrackPointInTime(selectedTrackIndex, i);
-                Thread.sleep(50);
+                Thread.sleep(70);
             }
             return null;
         }

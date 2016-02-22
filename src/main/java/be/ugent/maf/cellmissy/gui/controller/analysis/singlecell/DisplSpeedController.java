@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -111,7 +110,7 @@ class DisplSpeedController {
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         if (singleCellConditionDataHolder != null) {
             dataTable.setModel(new InstantaneousDataTableModel(singleCellConditionDataHolder.getDataStructure(),
-                      singleCellConditionDataHolder.getInstantaneousDisplacementsVector(), "inst displ"));
+                    singleCellConditionDataHolder.getInstantaneousDisplacementsVector(), "inst displ"));
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
             for (int i = 0; i < dataTable.getColumnModel().getColumnCount(); i++) {
@@ -169,6 +168,9 @@ class DisplSpeedController {
     }
 
     /**
+     * Private methods and classes.
+     */
+    /**
      * Initialize main panel
      */
     private void initDisplSpeedPanel() {
@@ -196,41 +198,32 @@ class DisplSpeedController {
          * Add action listeners
          */
         // show instantaneous displacements
-        displSpeedPanel.getInstantaneousDisplRadioButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-                //check that a condition is selected
-                if (currentCondition != null) {
-                    showInstantaneousDisplInTable(currentCondition); // show the data
-                    plotDisplAndSpeedData(currentCondition); // plot the data
-                }
+        displSpeedPanel.getInstantaneousDisplRadioButton().addActionListener((ActionEvent e) -> {
+            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+            //check that a condition is selected
+            if (currentCondition != null) {
+                showInstantaneousDisplInTable(currentCondition); // show the data
+                plotDisplAndSpeedData(currentCondition); // plot the data
             }
         });
 
         // show track displacements
-        displSpeedPanel.getTrackDisplRadioButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-                //check that a condition is selected
-                if (currentCondition != null) {
-                    showTrackDisplInTable(currentCondition); // show the data
-                    plotDisplAndSpeedData(currentCondition); // plot the data
-                }
+        displSpeedPanel.getTrackDisplRadioButton().addActionListener((ActionEvent e) -> {
+            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+            //check that a condition is selected
+            if (currentCondition != null) {
+                showTrackDisplInTable(currentCondition); // show the data
+                plotDisplAndSpeedData(currentCondition); // plot the data
             }
         });
 
         // show track speeds
-        displSpeedPanel.getTrackSpeedsRadioButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-                //check that a condition is selected
-                if (currentCondition != null) {
-                    showTrackSpeedsInTable(currentCondition); // show the data
-                    plotDisplAndSpeedData(currentCondition); // plot the data
-                }
+        displSpeedPanel.getTrackSpeedsRadioButton().addActionListener((ActionEvent e) -> {
+            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+            //check that a condition is selected
+            if (currentCondition != null) {
+                showTrackSpeedsInTable(currentCondition); // show the data
+                plotDisplAndSpeedData(currentCondition); // plot the data
             }
         });
 
@@ -249,9 +242,9 @@ class DisplSpeedController {
      */
     private DefaultBoxAndWhiskerCategoryDataset getInstDisplBoxPlotDataset(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             dataset.add(Arrays.asList(singleCellWellDataHolder.getInstantaneousDisplacementsVector()), singleCellWellDataHolder.getWell().toString(), "");
-        }
+        });
         return dataset;
     }
 
@@ -264,9 +257,9 @@ class DisplSpeedController {
      */
     private DefaultBoxAndWhiskerCategoryDataset getTrackDisplBoxPlotDataset(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             dataset.add(Arrays.asList(singleCellWellDataHolder.getTrackDisplacementsVector()), singleCellWellDataHolder.getWell().toString(), "");
-        }
+        });
         return dataset;
     }
 
@@ -279,9 +272,9 @@ class DisplSpeedController {
      */
     private DefaultBoxAndWhiskerCategoryDataset getTrackSpeedBoxPlotDataset(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             dataset.add(Arrays.asList(singleCellWellDataHolder.getTrackSpeedsVector()), singleCellWellDataHolder.getWell().toString(), "");
-        }
+        });
         return dataset;
     }
 
@@ -298,27 +291,24 @@ class DisplSpeedController {
         String kernelDensityEstimatorBeanName = singleCellPreProcessingController.getKernelDensityEstimatorBeanName();
         Map<DataCategory, List<List<double[]>>> densityFunctions = new HashMap<>();
         List<List<double[]>> instDisplDensityFunctions = new ArrayList<>();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
-            List<double[]> oneReplicateInstDisplDensityFunction = singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getInstantaneousDisplacementsVector(),
-                      kernelDensityEstimatorBeanName);
-            instDisplDensityFunctions.add(oneReplicateInstDisplDensityFunction);
-        }
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().map((singleCellWellDataHolder) -> singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getInstantaneousDisplacementsVector(),
+                kernelDensityEstimatorBeanName)).forEach((oneReplicateInstDisplDensityFunction) -> {
+                    instDisplDensityFunctions.add(oneReplicateInstDisplDensityFunction);
+                });
         densityFunctions.put(DensityFunctionHolderCacheSingleCell.DataCategory.INST_DISPL, instDisplDensityFunctions);
 
         List<List<double[]>> trackDisplDensityFunctions = new ArrayList<>();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
-            List<double[]> oneReplicateTrackDisplDensityFunction = singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getTrackDisplacementsVector(),
-                      kernelDensityEstimatorBeanName);
-            trackDisplDensityFunctions.add(oneReplicateTrackDisplDensityFunction);
-        }
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().map((singleCellWellDataHolder) -> singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getTrackDisplacementsVector(),
+                kernelDensityEstimatorBeanName)).forEach((oneReplicateTrackDisplDensityFunction) -> {
+                    trackDisplDensityFunctions.add(oneReplicateTrackDisplDensityFunction);
+                });
         densityFunctions.put(DensityFunctionHolderCacheSingleCell.DataCategory.TRACK_DISPL, trackDisplDensityFunctions);
 
         List<List<double[]>> trackSpeedDensityFunctions = new ArrayList<>();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
-            List<double[]> oneReplicateTrackSpeedDensityFunction = singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getTrackDisplacementsVector(),
-                      kernelDensityEstimatorBeanName);
-            trackSpeedDensityFunctions.add(oneReplicateTrackSpeedDensityFunction);
-        }
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().map((singleCellWellDataHolder) -> singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getTrackDisplacementsVector(),
+                kernelDensityEstimatorBeanName)).forEach((oneReplicateTrackSpeedDensityFunction) -> {
+                    trackSpeedDensityFunctions.add(oneReplicateTrackSpeedDensityFunction);
+                });
         densityFunctions.put(DensityFunctionHolderCacheSingleCell.DataCategory.TRACK_SPEED, trackSpeedDensityFunctions);
 
         // put the estimated functions into the map
@@ -377,19 +367,19 @@ class DisplSpeedController {
                 JFreeChart boxPlotChart;
                 if (displSpeedPanel.getInstantaneousDisplRadioButton().isSelected()) {
                     densityChart = JFreeChartUtils.generateDensityFunctionChart(singleCellConditionDataHolder,
-                              instDisplCollection, "KDE inst displ", "inst displ");
+                            instDisplCollection, "KDE inst displ", "inst displ");
                     boxPlotChart = generateBoxPlotChart(singleCellConditionDataHolder, instDisplDataset,
-                              "inst displ");
+                            "inst displ");
                 } else if (displSpeedPanel.getTrackDisplRadioButton().isSelected()) {
                     densityChart = JFreeChartUtils.generateDensityFunctionChart(singleCellConditionDataHolder,
-                              trackDisplCollection, "KDE track displ", "track displ");
+                            trackDisplCollection, "KDE track displ", "track displ");
                     boxPlotChart = generateBoxPlotChart(singleCellConditionDataHolder, trackDisplDataset,
-                              "track displ");
+                            "track displ");
                 } else {
                     densityChart = JFreeChartUtils.generateDensityFunctionChart(singleCellConditionDataHolder,
-                              trackSpeedCollection, "KDE track spped", "track speed");
+                            trackSpeedCollection, "KDE track spped", "track speed");
                     boxPlotChart = generateBoxPlotChart(singleCellConditionDataHolder, trackSpeedDataset,
-                              "track speed");
+                            "track speed");
                 }
                 plotDensityChart(densityChart);
                 plotBoxPlotChart(boxPlotChart);

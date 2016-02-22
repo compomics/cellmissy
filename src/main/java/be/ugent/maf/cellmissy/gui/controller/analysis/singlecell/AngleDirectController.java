@@ -22,7 +22,6 @@ import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -107,7 +106,7 @@ public class AngleDirectController {
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         if (singleCellConditionDataHolder != null) {
             dataTable.setModel(new InstantaneousDataTableModel(singleCellConditionDataHolder.getDataStructure(),
-                      singleCellConditionDataHolder.getTurningAnglesVector(), "inst turn angle"));
+                    singleCellConditionDataHolder.getTurningAnglesVector(), "inst turn angle"));
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
             FormatRenderer formatRenderer = new FormatRenderer(singleCellPreProcessingController.getFormat(), SwingConstants.CENTER);
             for (int i = 0; i < dataTable.getColumnModel().getColumnCount(); i++) {
@@ -153,6 +152,9 @@ public class AngleDirectController {
     }
 
     /**
+     * Private methods and classes.
+     */
+    /**
      * Initialize the main view.
      */
     private void initAngleDirectPanel() {
@@ -181,61 +183,46 @@ public class AngleDirectController {
          * Add action listeners
          */
         // show instantaneous turning angles
-        angleDirectPanel.getInstTurnAngleRadioButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-                //check that a condition is selected
-                if (currentCondition != null) {
-                    showInstAngleInTable(currentCondition);
-                    plotHistTA(currentCondition);
-                    plotPolarTA(currentCondition);
-                    plotRoseTA(currentCondition);
-                    plotCompassTA(currentCondition);
-                }
+        angleDirectPanel.getInstTurnAngleRadioButton().addActionListener((ActionEvent e) -> {
+            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+            //check that a condition is selected
+            if (currentCondition != null) {
+                showInstAngleInTable(currentCondition);
+                plotHistTA(currentCondition);
+                plotPolarTA(currentCondition);
+                plotRoseTA(currentCondition);
+                plotCompassTA(currentCondition);
             }
         });
 
         // show and plot averaged-track turning angles
-        angleDirectPanel.getTrackTurnAngleRadioButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-                //check that a condition is selected
-                if (currentCondition != null) {
-                    showTrackAngleInTable(currentCondition);
-                    plotHistTrackTA(currentCondition);
-                    plotPolarTrackTA(currentCondition);
-                    plotRoseTrackTA(currentCondition);
-                    plotCompassTrackTA(currentCondition);
-                }
+        angleDirectPanel.getTrackTurnAngleRadioButton().addActionListener((ActionEvent e) -> {
+            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+            //check that a condition is selected
+            if (currentCondition != null) {
+                showTrackAngleInTable(currentCondition);
+                plotHistTrackTA(currentCondition);
+                plotPolarTrackTA(currentCondition);
+                plotRoseTrackTA(currentCondition);
+                plotCompassTrackTA(currentCondition);
             }
         });
 
         // show dynamic directionality ratios
-        angleDirectPanel.getDynamicDirectRatioRadioButton().addActionListener(new ActionListener() {
+        angleDirectPanel.getDynamicDirectRatioRadioButton().addActionListener((ActionEvent e) -> {
+            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+            //check that a condition is selected
+            if (currentCondition != null) {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-                //check that a condition is selected
-                if (currentCondition != null) {
-
-                }
             }
         });
 
         // show end-point directionality ratios
-        angleDirectPanel.getEndPointDirectRatioRadioButton().addActionListener(new ActionListener() {
+        angleDirectPanel.getEndPointDirectRatioRadioButton().addActionListener((ActionEvent e) -> {
+            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+            //check that a condition is selected
+            if (currentCondition != null) {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-                //check that a condition is selected
-                if (currentCondition != null) {
-
-                }
             }
         });
 
@@ -362,9 +349,9 @@ public class AngleDirectController {
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         if (singleCellConditionDataHolder != null) {
             List<HistogramDataset> datasets = getHistTADatasets(singleCellConditionDataHolder,
-                      getNumberOfBins(singleCellConditionDataHolder), false);
+                    getNumberOfBins(singleCellConditionDataHolder), false);
             List<HistogramDataset> mappedDatasets = getHistTADatasets(singleCellConditionDataHolder,
-                      getNumberOfBins(singleCellConditionDataHolder), true);
+                    getNumberOfBins(singleCellConditionDataHolder), true);
             renderHistograms(datasets, mappedDatasets);
         }
     }
@@ -379,9 +366,9 @@ public class AngleDirectController {
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         if (singleCellConditionDataHolder != null) {
             List<HistogramDataset> datasets = getHistTrackTADatasets(singleCellConditionDataHolder,
-                      getNumberOfBins(singleCellConditionDataHolder), false);
+                    getNumberOfBins(singleCellConditionDataHolder), false);
             List<HistogramDataset> mappedDatasets = getHistTrackTADatasets(singleCellConditionDataHolder,
-                      getNumberOfBins(singleCellConditionDataHolder), true); // these datasets are mapped to 0-360
+                    getNumberOfBins(singleCellConditionDataHolder), true); // these datasets are mapped to 0-360
             renderHistograms(datasets, mappedDatasets);
         }
     }
@@ -482,10 +469,10 @@ public class AngleDirectController {
      */
     private List<HistogramDataset> getHistTADatasets(SingleCellConditionDataHolder singleCellConditionDataHolder, int bins, boolean mapTo360) {
         List<HistogramDataset> datasets = new ArrayList<>();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             datasets.add(getHistogramDatasetForAWell(singleCellWellDataHolder.getWell().toString(),
-                      singleCellWellDataHolder.getTurningAnglesVector(), bins, HistogramType.RELATIVE_FREQUENCY, mapTo360));
-        }
+                    singleCellWellDataHolder.getTurningAnglesVector(), bins, HistogramType.RELATIVE_FREQUENCY, mapTo360));
+        });
         return datasets;
     }
 
@@ -500,10 +487,10 @@ public class AngleDirectController {
      */
     private List<HistogramDataset> getHistTrackTADatasets(SingleCellConditionDataHolder singleCellConditionDataHolder, int bins, boolean mapTo360) {
         List<HistogramDataset> datasets = new ArrayList<>();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             datasets.add(getHistogramDatasetForAWell(singleCellWellDataHolder.getWell().toString(),
-                      singleCellWellDataHolder.getMedianTurningAnglesVector(), bins, HistogramType.RELATIVE_FREQUENCY, mapTo360));
-        }
+                    singleCellWellDataHolder.getMedianTurningAnglesVector(), bins, HistogramType.RELATIVE_FREQUENCY, mapTo360));
+        });
         return datasets;
     }
 
@@ -516,9 +503,9 @@ public class AngleDirectController {
      */
     private List<XYSeriesCollection> getPolarTADatasets(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         List<XYSeriesCollection> list = new ArrayList<>();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             list.add(getPolarDatasetForAWell(singleCellWellDataHolder, singleCellWellDataHolder.getTurningAnglesVector()));
-        }
+        });
         return list;
     }
 
@@ -530,9 +517,9 @@ public class AngleDirectController {
      */
     private List<XYSeriesCollection> getPolarTrackTADatasets(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         List<XYSeriesCollection> list = new ArrayList<>();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             list.add(getPolarDatasetForAWell(singleCellWellDataHolder, singleCellWellDataHolder.getMedianTurningAnglesVector()));
-        }
+        });
         return list;
     }
 
@@ -543,11 +530,11 @@ public class AngleDirectController {
      */
     private List<XYSeriesCollection> getCompassTADataset(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         List<XYSeriesCollection> list = new ArrayList<>();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             double[] angles = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(singleCellWellDataHolder.getTurningAnglesVector()));
             double[] displacements = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(singleCellWellDataHolder.getInstantaneousDisplacementsVector()));
             list.add(getCompassDatasetForAWell(singleCellWellDataHolder, angles, displacements));
-        }
+        });
         return list;
     }
 
@@ -558,11 +545,11 @@ public class AngleDirectController {
      */
     private List<XYSeriesCollection> getCompassTrackTADatasets(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         List<XYSeriesCollection> list = new ArrayList<>();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             double[] angles = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(singleCellWellDataHolder.getMedianTurningAnglesVector()));
             double[] displacements = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(singleCellWellDataHolder.getEuclideanDistancesVector()));
             list.add(getCompassDatasetForAWell(singleCellWellDataHolder, angles, displacements));
-        }
+        });
         return list;
     }
 
@@ -576,7 +563,6 @@ public class AngleDirectController {
     private XYSeriesCollection getCompassDatasetForAWell(SingleCellWellDataHolder singleCellWellDataHolder, double[] thetas, double[] radii) {
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries series = new XYSeries(singleCellWellDataHolder.getWell().toString(), false);
-
         for (int i = 0; i < thetas.length; i++) {
             series.add(thetas[i], radii[i]);
         }
@@ -639,7 +625,7 @@ public class AngleDirectController {
     private XYSeries createPolarSeries(SingleCellWellDataHolder singleCellWellDataHolder, Double[] data) {
         XYSeries series = new XYSeries(singleCellWellDataHolder.getWell().toString(), false);
         HistogramDataset histogramDataset = getHistogramDatasetForAWell(singleCellWellDataHolder.getWell().toString(),
-                  data, getNumberOfBins(singleCellWellDataHolder), HistogramType.FREQUENCY, true);
+                data, getNumberOfBins(singleCellWellDataHolder), HistogramType.FREQUENCY, true);
         // iterate through the series, even though we normally only have one here
         for (int i = 0; i < histogramDataset.getSeriesCount(); i++) {
             int itemCount = histogramDataset.getItemCount(i); // this is the number of bins

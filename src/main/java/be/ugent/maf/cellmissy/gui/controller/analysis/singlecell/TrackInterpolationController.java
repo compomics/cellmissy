@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import org.jdesktop.beansbinding.BindingGroup;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -41,7 +40,6 @@ import org.springframework.stereotype.Controller;
 public class TrackInterpolationController {
 
     // model
-    private BindingGroup bindingGroup;
     // view
     private List<ChartPanel> interpolatedTrackChartPanels;
     private List<ChartPanel> combinedChartPanels;
@@ -52,7 +50,6 @@ public class TrackInterpolationController {
     private ExploreTrackController exploreTrackController;
     // child controllers
     // services
-    private GridBagConstraints gridBagConstraints;
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TrackInterpolationController.class);
 
@@ -60,20 +57,8 @@ public class TrackInterpolationController {
      * Initialize controller.
      */
     public void init() {
-        bindingGroup = new BindingGroup();
-        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         // initialize components for the main view
         initMainViewComponents();
-    }
-
-    /**
-     * Initialize main view components.
-     */
-    private void initMainViewComponents() {
-        interpolatedTrackChartPanels = new ArrayList<>();
-        combinedChartPanels = new ArrayList<>();
-        histChartPanels = new ArrayList<>();
-        polarChartPanels = new ArrayList<>();
     }
 
     /**
@@ -86,6 +71,19 @@ public class TrackInterpolationController {
         plotInterpolatedTrackTimeSeries(trackDataHolder);
         plotInterpolatedHistograms(trackDataHolder);
         plotInterpolatedPolarPlots(trackDataHolder);
+    }
+
+    /**
+     * Private methods and classes.
+     */
+    /**
+     * Initialize main view components.
+     */
+    private void initMainViewComponents() {
+        interpolatedTrackChartPanels = new ArrayList<>();
+        combinedChartPanels = new ArrayList<>();
+        histChartPanels = new ArrayList<>();
+        polarChartPanels = new ArrayList<>();
     }
 
     /**
@@ -104,14 +102,14 @@ public class TrackInterpolationController {
         List<XYSeriesCollection> collections = makeInterpolationCoordinatesCollections(trackDataHolder);
         for (int i = 0; i < collections.size(); i++) {
             JFreeChart interpolatedTrackChart = ChartFactory.createXYLineChart("" + collections.get(i).getSeriesKey(0), "x (µm)", "y (µm)", collections.get(i),
-                      PlotOrientation.VERTICAL, false, true, false);
+                    PlotOrientation.VERTICAL, false, true, false);
             ChartPanel interpolatedTrackChartPanel = new ChartPanel(null);
             interpolatedTrackChartPanel.setOpaque(false);
             // compute the constraints
             GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(collections.size(), i, collections.size());
             XYPlot xyPlot = interpolatedTrackChart.getXYPlot();
             JFreeChartUtils.setupSingleTrackPlot(interpolatedTrackChart,
-                      exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder), false);
+                    exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder), false);
 
             NumberAxis axis = (NumberAxis) xyPlot.getDomainAxis();
             axis.setAutoRangeIncludesZero(false);
@@ -162,7 +160,7 @@ public class TrackInterpolationController {
             combinedDomainXYPlot.add(yTPlot);
             combinedDomainXYPlot.setOrientation(PlotOrientation.VERTICAL);
             JFreeChart combinedChart = new JFreeChart("" + xtCollections.get(i).getSeries(0).getKey(),
-                      JFreeChartUtils.getChartFont(), combinedDomainXYPlot, Boolean.FALSE);
+                    JFreeChartUtils.getChartFont(), combinedDomainXYPlot, Boolean.FALSE);
             JFreeChartUtils.setupCombinedChart(combinedChart, exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
             ChartPanel combinedChartPanel = new ChartPanel(combinedChart);
             GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(xtCollections.size(), i, xtCollections.size());
@@ -191,8 +189,8 @@ public class TrackInterpolationController {
         List<HistogramDataset> datasets = makeHistDatasets(trackDataHolder);
         for (int i = 0; i < datasets.size(); i++) {
             JFreeChart histogramChart = ChartFactory.createHistogram("",
-                      "", "inst turn angle  - track " + trackDataHolder.getTrack().getTrackid(),
-                      datasets.get(i), PlotOrientation.VERTICAL, false, true, false);
+                    "", "inst turn angle  - track " + trackDataHolder.getTrack().getTrackid(),
+                    datasets.get(i), PlotOrientation.VERTICAL, false, true, false);
             JFreeChartUtils.setShadowVisible(histogramChart, false);
             JFreeChartUtils.setUpHistogramChart(histogramChart, exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
             ChartPanel histChartPanel = new ChartPanel(histogramChart);
@@ -270,8 +268,8 @@ public class TrackInterpolationController {
             XYSeriesCollection data = new XYSeriesCollection();
             InterpolationMethod method = methods.get(i);
             String seriesKey = "interpolated track " + trackDataHolder.getTrack().getTrackNumber()
-                      + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType()
-                      + "\n" + interpolationMap.get(method).toString();
+                    + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType()
+                    + "\n" + interpolationMap.get(method).toString();
             XYSeries series = new XYSeries(seriesKey, false);
             for (int seriesCount = 0; seriesCount < histDatasets.get(i).getSeriesCount(); seriesCount++) {
                 for (int itemCount = 0; itemCount < histDatasets.get(i).getItemCount(seriesCount); itemCount++) {
@@ -303,8 +301,8 @@ public class TrackInterpolationController {
             double[] interpolatedX = interpolationMap.get(method).getInterpolatedX();
             double[] interpolatedY = interpolationMap.get(method).getInterpolatedY();
             String seriesKey = "interpolated track " + trackDataHolder.getTrack().getTrackNumber()
-                      + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType()
-                      + "\n" + interpolationMap.get(method).toString();
+                    + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType()
+                    + "\n" + interpolationMap.get(method).toString();
             XYSeries xYSeries = makeSeries(seriesKey, interpolatedX, interpolatedY);
             return xYSeries;
         }).map((xYSeries) -> new XYSeriesCollection(xYSeries)).forEach((collection) -> {
@@ -327,8 +325,8 @@ public class TrackInterpolationController {
             double[] interpolantTime = interpolationMap.get(method).getInterpolantTime();
             double[] interpolatedX = interpolationMap.get(method).getInterpolatedX();
             String seriesKey = "interpolated track " + trackDataHolder.getTrack().getTrackNumber()
-                      + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType()
-                      + "\n" + interpolationMap.get(method).toString();
+                    + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType()
+                    + "\n" + interpolationMap.get(method).toString();
             XYSeries xtSeries = makeSeries(seriesKey, interpolantTime, interpolatedX);
             return xtSeries;
         }).map((xYSeries) -> new XYSeriesCollection(xYSeries)).forEach((collection) -> {
@@ -351,8 +349,8 @@ public class TrackInterpolationController {
             double[] interpolantTime = interpolationMap.get(method).getInterpolantTime();
             double[] interpolatedY = interpolationMap.get(method).getInterpolatedY();
             String seriesKey = "interpolated track " + trackDataHolder.getTrack().getTrackNumber()
-                      + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType()
-                      + "\n" + interpolationMap.get(method).toString();
+                    + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + ", " + method.getStringForType()
+                    + "\n" + interpolationMap.get(method).toString();
             XYSeries ytSeries = makeSeries(seriesKey, interpolantTime, interpolatedY);
             return ytSeries;
         }).map((xYSeries) -> new XYSeriesCollection(xYSeries)).forEach((collection) -> {

@@ -95,6 +95,7 @@ class SingleCellPreProcessingController {
         trackCoordinatesController.init();
         displSpeedController.init();
         angleDirectController.init();
+        // get the GUI appender and set the text area for it
         LogTextAreaAppender appender = (LogTextAreaAppender) org.apache.log4j.Logger.getLogger("gui").getAppender("gui");
         appender.setTextArea(singleCellAnalysisPanel.getLogTextArea());
     }
@@ -379,53 +380,6 @@ class SingleCellPreProcessingController {
     }
 
     /**
-     * When a plateCondition is selected pre processing results are computed and
-     * plateCondition is put into the map together with its results holder
-     * object
-     *
-     * @param plateCondition
-     */
-    private void updateMapWithCondition(PlateCondition plateCondition) {
-        // fetch the track points from DB
-        singleCellMainController.fetchTrackPoints(plateCondition);
-        if (preProcessingMap.get(plateCondition) == null) {
-            // create a new object to hold pre-processing results
-            SingleCellConditionDataHolder singleCellConditionDataHolder = new SingleCellConditionDataHolder(plateCondition);
-            // do some pre-processing
-
-            LOG.info("generating track data holders...");
-            singleCellConditionPreProcessor.generateDataHolders(singleCellConditionDataHolder);
-            LOG.info("--> current total number of cell tracks: " + singleCellConditionDataHolder
-                    .getTrackDataHolders().size());
-            // it can very well be that a plateCondition and/or a sample have been imaged, but there are no tracks in it
-            // if this is not the case, go for the computation
-            if (!singleCellConditionDataHolder.getTrackDataHolders().isEmpty()) {
-                singleCellConditionPreProcessor.generateDataStructure(singleCellConditionDataHolder);
-                LOG.info("pre-process step-centric and cell-centric data...");
-                singleCellConditionPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder, singleCellMainController
-                        .getConversionFactor(), singleCellMainController.getExperiment().getExperimentInterval());
-                LOG.info("generating raw coordinates matrix...");
-                singleCellConditionPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
-                LOG.info("computing shifted-to-zero coordinates matrix...");
-                singleCellConditionPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellConditionDataHolder);
-                LOG.info("computing raw coordinates ranges...");
-                singleCellConditionPreProcessor.generateRawCoordinatesRanges(singleCellConditionDataHolder);
-                LOG.info("computing shifted coordinates ranges...");
-                singleCellConditionPreProcessor.generateShiftedCoordinatesRanges(singleCellConditionDataHolder);
-                // fill in the map
-                preProcessingMap.put(plateCondition, singleCellConditionDataHolder);
-                LOG.info("**************************");
-                LOG.info("plate condition: " + plateCondition + " processed!");
-            } else {
-                // remove the plateCondition from the map and inform the user
-                preProcessingMap.remove(plateCondition);
-                LOG.info("No tracks recorded for condition: " + plateCondition + "; no coordinates to retrieve from"
-                        + " DB!");
-            }
-        }
-    }
-
-    /**
      * Show table with Tracking results from image analysis (Tracks fetched from
      * DB) this is populating the JTable in the ResultsImporter Panel
      */
@@ -457,6 +411,55 @@ class SingleCellPreProcessingController {
 
         bindingGroup.addBinding(tracksTableBinding);
         bindingGroup.bind();
+    }
+
+    /**
+     * Private methods and classes
+     */
+    /**
+     * When a plateCondition is selected pre processing results are computed and
+     * plateCondition is put into the map together with its results holder
+     * object
+     *
+     * @param plateCondition
+     */
+    private void updateMapWithCondition(PlateCondition plateCondition) {
+        // fetch the track points from DB
+        singleCellMainController.fetchTrackPoints(plateCondition);
+        if (preProcessingMap.get(plateCondition) == null) {
+            // create a new object to hold pre-processing results
+            SingleCellConditionDataHolder singleCellConditionDataHolder = new SingleCellConditionDataHolder(plateCondition);
+            // do some pre-processing
+            LOG.info("generating track data holders...");
+            singleCellConditionPreProcessor.generateDataHolders(singleCellConditionDataHolder);
+            LOG.info("--> current total number of cell tracks: " + singleCellConditionDataHolder
+                    .getTrackDataHolders().size());
+            // it can very well be that a plateCondition and/or a sample have been imaged, but there are no tracks in it
+            // if this is not the case, go for the computation
+            if (!singleCellConditionDataHolder.getTrackDataHolders().isEmpty()) {
+                singleCellConditionPreProcessor.generateDataStructure(singleCellConditionDataHolder);
+                LOG.info("pre-process step-centric and cell-centric data...");
+                singleCellConditionPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder, singleCellMainController
+                        .getConversionFactor(), singleCellMainController.getExperiment().getExperimentInterval());
+                LOG.info("generating raw coordinates matrix...");
+                singleCellConditionPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
+                LOG.info("computing shifted-to-zero coordinates matrix...");
+                singleCellConditionPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellConditionDataHolder);
+                LOG.info("computing raw coordinates ranges...");
+                singleCellConditionPreProcessor.generateRawCoordinatesRanges(singleCellConditionDataHolder);
+                LOG.info("computing shifted coordinates ranges...");
+                singleCellConditionPreProcessor.generateShiftedCoordinatesRanges(singleCellConditionDataHolder);
+                // fill in the map
+                preProcessingMap.put(plateCondition, singleCellConditionDataHolder);
+                LOG.info("**************************");
+                LOG.info("plate condition: " + plateCondition + " processed!");
+            } else {
+                // remove the plateCondition from the map and inform the user
+                preProcessingMap.remove(plateCondition);
+                LOG.info("No tracks recorded for condition: " + plateCondition + "; no coordinates to retrieve from"
+                        + " DB!");
+            }
+        }
     }
 
     /**
@@ -668,6 +671,7 @@ class SingleCellPreProcessingController {
      */
     private class ConditionOperatorSwingWorker extends SwingWorker<Void, Void> {
 
+        // the condition
         private final PlateCondition plateCondition;
 
         /**

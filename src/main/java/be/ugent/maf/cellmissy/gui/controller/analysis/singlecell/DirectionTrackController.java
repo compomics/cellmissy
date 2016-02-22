@@ -17,7 +17,6 @@ import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -34,7 +33,7 @@ import org.springframework.stereotype.Controller;
 
 /**
  * This class takes care of logic for directionality (computations) and
- * visualisation.
+ * visualization.
  *
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
@@ -62,56 +61,6 @@ class DirectionTrackController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         // init main view
         initMainView();
-    }
-
-    /**
-     * Set up direction autocorrelation plot.
-     *
-     * @param chart: the chart to get the plot from
-     * @param trackDataHolder: to get the right color for the line
-     */
-    private void setupDirectionAutocorrelationPlot(JFreeChart chart, TrackDataHolder trackDataHolder) {
-        // set up the plot
-        XYPlot xyPlot = chart.getXYPlot();
-        JFreeChartUtils.setupXYPlot(xyPlot);
-        xyPlot.setOutlineStroke(JFreeChartUtils.getWideLine());
-        xyPlot.setRangeGridlinePaint(Color.black);
-        xyPlot.setDomainGridlinePaint(Color.black);
-        // set title font
-        chart.getTitle().setFont(JFreeChartUtils.getChartFont());
-        // modify renderer
-        int trackIndex = exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder);
-        xyPlot.getRangeAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        xyPlot.setRenderer(new DirectionAutocorrelationLineAndShapeRenderer(trackIndex));
-        xyPlot.getDomainAxis().setLowerBound(-0.3);
-    }
-
-    /**
-     * Create a chart with a specific delta t value.
-     *
-     * @param trackDataHolder
-     * @param deltaT
-     * @return
-     */
-    private JFreeChart createDeltaTChart(TrackDataHolder trackDataHolder, int deltaT) {
-        StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
-        List<Double[]> directionAutocorrelationsList = stepCentricDataHolder.getDirectionAutocorrelations();
-        Double[] coefficients = directionAutocorrelationsList.get(deltaT);
-        double[] timeIndexes = stepCentricDataHolder.getTimeIndexes(); // x axis: time points
-        double[] timePoints = new double[timeIndexes.length];
-        for (int i = 0; i < timePoints.length; i++) {
-            timePoints[i] = i;
-        }
-        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
-        XYSeries xySeries = JFreeChartUtils.generateXYSeries(timePoints, ArrayUtils.toPrimitive(coefficients));
-        xySeries.setKey("track " + trackDataHolder.getTrack().getTrackNumber() + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell()
-                  + "_Δt=" + deltaT);
-        xySeriesCollection.addSeries(xySeries);
-        JFreeChart deltaTChart = ChartFactory.createScatterPlot("track " + trackDataHolder.getTrack().getTrackNumber()
-                  + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + " - Direction Autocorrelation-Δt=" + deltaT,
-                  "time index", "dir autocorr", xySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-        setupDirectionAutocorrelationPlot(deltaTChart, trackDataHolder);
-        return deltaTChart;
     }
 
     /**
@@ -197,8 +146,8 @@ class DirectionTrackController {
             xySeriesCollection.addSeries(xySeries);
         }
         JFreeChart directionAutocorrelationsChart = ChartFactory.createScatterPlot("track " + trackNumber + ", well " + well
-                  + " - Direction Autocorrelation", "Δt (step size)", "direction autocorrelation",
-                  xySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+                + " - Direction Autocorrelation", "Δt (step size)", "direction autocorrelation",
+                xySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         setupDirectionAutocorrelationPlot(directionAutocorrelationsChart, trackDataHolder);
         directionAutocorrelationsChartPanel.setChart(directionAutocorrelationsChart);
     }
@@ -211,6 +160,59 @@ class DirectionTrackController {
     public void plotDirectionAutocorrelationTimeOne(TrackDataHolder trackDataHolder) {
         JFreeChart deltaTChart = createDeltaTChart(trackDataHolder, 1);
         directionAutocorrelationTimeOneChartPanel.setChart(deltaTChart);
+    }
+
+    /**
+     * Private methods and classes.
+     */
+    /**
+     * Set up direction autocorrelation plot.
+     *
+     * @param chart: the chart to get the plot from
+     * @param trackDataHolder: to get the right color for the line
+     */
+    private void setupDirectionAutocorrelationPlot(JFreeChart chart, TrackDataHolder trackDataHolder) {
+        // set up the plot
+        XYPlot xyPlot = chart.getXYPlot();
+        JFreeChartUtils.setupXYPlot(xyPlot);
+        xyPlot.setOutlineStroke(JFreeChartUtils.getWideLine());
+        xyPlot.setRangeGridlinePaint(Color.black);
+        xyPlot.setDomainGridlinePaint(Color.black);
+        // set title font
+        chart.getTitle().setFont(JFreeChartUtils.getChartFont());
+        // modify renderer
+        int trackIndex = exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder);
+        xyPlot.getRangeAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        xyPlot.setRenderer(new DirectionAutocorrelationLineAndShapeRenderer(trackIndex));
+        xyPlot.getDomainAxis().setLowerBound(-0.3);
+    }
+
+    /**
+     * Create a chart with a specific delta t value.
+     *
+     * @param trackDataHolder
+     * @param deltaT
+     * @return
+     */
+    private JFreeChart createDeltaTChart(TrackDataHolder trackDataHolder, int deltaT) {
+        StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
+        List<Double[]> directionAutocorrelationsList = stepCentricDataHolder.getDirectionAutocorrelations();
+        Double[] coefficients = directionAutocorrelationsList.get(deltaT);
+        double[] timeIndexes = stepCentricDataHolder.getTimeIndexes(); // x axis: time points
+        double[] timePoints = new double[timeIndexes.length];
+        for (int i = 0; i < timePoints.length; i++) {
+            timePoints[i] = i;
+        }
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        XYSeries xySeries = JFreeChartUtils.generateXYSeries(timePoints, ArrayUtils.toPrimitive(coefficients));
+        xySeries.setKey("track " + trackDataHolder.getTrack().getTrackNumber() + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell()
+                + "_Δt=" + deltaT);
+        xySeriesCollection.addSeries(xySeries);
+        JFreeChart deltaTChart = ChartFactory.createScatterPlot("track " + trackDataHolder.getTrack().getTrackNumber()
+                + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell() + " - Direction Autocorrelation-Δt=" + deltaT,
+                "time index", "dir autocorr", xySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        setupDirectionAutocorrelationPlot(deltaTChart, trackDataHolder);
+        return deltaTChart;
     }
 
     /**
@@ -235,16 +237,12 @@ class DirectionTrackController {
         /**
          * Add Action Listener to the delta-t combo box:
          */
-        exploreTrackPanel.getDeltaTComboBox().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // get the selected item in the combo box: we know it's an int
-                Object selectedItem = exploreTrackPanel.getDeltaTComboBox().getSelectedItem();
-                if (selectedItem != null) {
-                    int deltaT = (int) exploreTrackPanel.getDeltaTComboBox().getSelectedItem();
-                    plotDirectionAutocorrelationForDeltaT(exploreTrackController.getSelectedTrackDataHolder(), deltaT);
-                }
+        exploreTrackPanel.getDeltaTComboBox().addActionListener((ActionEvent e) -> {
+            // get the selected item in the combo box: we know it's an int
+            Object selectedItem = exploreTrackPanel.getDeltaTComboBox().getSelectedItem();
+            if (selectedItem != null) {
+                int deltaT = (int) exploreTrackPanel.getDeltaTComboBox().getSelectedItem();
+                plotDirectionAutocorrelationForDeltaT(exploreTrackController.getSelectedTrackDataHolder(), deltaT);
             }
         });
     }

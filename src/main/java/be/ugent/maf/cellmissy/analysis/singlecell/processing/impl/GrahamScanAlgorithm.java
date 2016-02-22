@@ -32,9 +32,9 @@ public class GrahamScanAlgorithm implements ConvexHullCalculator {
         // create a list of geometric points from the track points
         List<TrackPoint> trackPointList = track.getTrackPointList();
         List<GeometricPoint> geometricPoints = new ArrayList<>();
-        for (TrackPoint trackPoint : trackPointList) {
+        trackPointList.stream().forEach((trackPoint) -> {
             geometricPoints.add(trackPoint.getGeometricPoint());
-        }
+        });
         // create a new Graham Scan object for these points
         GrahamScan grahamScan = new GrahamScan(geometricPoints);
         // get the hull from this object and pass it to the convex hull object
