@@ -8,12 +8,13 @@ package be.ugent.maf.cellmissy.analysis.area.impl.doseresponse;
 import be.ugent.maf.cellmissy.analysis.area.doseresponse.SigmoidFitter;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResultsHolder;
+import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 
-import org.apache.commons.math.optimization.fitting.CurveFitter;
-import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
-import org.apache.commons.math.optimization.fitting.ParametricRealFunction;
+import org.apache.commons.math3.optimization.fitting.CurveFitter;
+import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
+import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
 
 /**
  *
@@ -24,65 +25,70 @@ public class SigmoidFitterImpl implements SigmoidFitter {
     //implementation of interface method
     @Override
     public void fitData(DoseResponseAnalysisGroup analysisGroup, SigmoidFittingResultsHolder resultsHolder) {
+        
         LevenbergMarquardtOptimizer optimizer = new LevenbergMarquardtOptimizer();
         CurveFitter fitter = new CurveFitter( optimizer );
         
         LinkedHashMap concentrations = analysisGroup.getConcentrationsMap().get( analysisGroup.getTreatmentToAnalyse() );
-        analysisGroup.getVelocitiesMap();
+        Collection<List<Double>> velocities = analysisGroup.getVelocitiesMap().values();
         
-        for (Map.Entry<Double,String> entry : concentrations.entrySet()) {
+        for (Double concentration : concentrations.entrySet()) {
             
-            
+            for (int i = 0; i<velocities.size();i++)
             
             fitter.addObservedPoint(concentration, velocity);
         }
         
-        ParametricRealFunction function = new ParametricRealFunction() {
+        ParametricUnivariateFunction function = new ParametricUnivariateFunction() {
+            /**
+             * @param conc The concentration of the drug, log transformed
+             * @param paramaters The fitted parameters (bottom, top, logEC50 and hillslope)
+             * @return The velocity
+             */
             @Override
-            public double value( double c, double[] paramaters ) {
+            public double value( double conc, double[] parameters ) {
+                double bottom = parameters[0];
+                double top = parameters[1];
+                double logEC50 = parameters[2];
+                double hillslope = parameters[3];
                 
-            double d = paramaters[0];
-            double n = paramaters[1];
-            double c_pow_n = Math.pow( c, n );
-                
-            return c_pow_n / (c_pow_n + Math.pow(d, n) );
+                return ( bottom + (top-bottom) / (1+ Math.pow(10,(logEC50-conc)*hillslope)) );
             }
             
             @Override
-            public double[] gradient( double c, double[] paramaters ) {
-        
-                double d = paramaters[0];
-                double n = paramaters[1];
-                double c_pow_n = Math.pow( c, n );
-                double d_pow_n = Math.pow( d, n );
+            public double[] gradient( double conc, double[] parameters ) {
+                double bottom = parameters[0];
+                double top = parameters[1];
+                double logEC50 = parameters[2];
+                double hillslope = parameters[3];
                 
-                double ddd = -n * c_pow_n * Math.pow( d, n-1 )
-                             /
-                             Math.pow( c_pow_n + d_pow_n, 2 );
+                return new double[] { 
+                    1- (1/ (Math.pow(10,(logEC50-conc)*hillslope) +1 )),
+                    1/ (Math.pow(10, (logEC50-conc)*hillslope)+1) ,
+                    (hillslope*Math.log(10)*Math.pow(10, hillslope*(conc+logEC50))*(bottom-top)) / 
+                        (Math.pow((Math.pow(10, conc*hillslope) + Math.pow(10,logEC50*hillslope)) ,2)),
+                    -( (Math.log(10)*(logEC50-conc)*(top-bottom)*Math.pow(10, (logEC50-conc)*hillslope)) / 
+                        (Math.pow( (Math.pow(10,(logEC50-conc)*hillslope)+1),2)))
                 
-                double ddn = (c_pow_n * d_pow_n * (Math.log(c) - Math.log(d))) 
-                             /
-                             Math.pow( c_pow_n + d_pow_n, 2);
+                };
                 
-                return new double[] {ddd, ddn};
             }
             
         };
         
         double[] params = null;
         
-        params = fitter.fit(function, new double[] {1,1} );
+        params = fitter.fit(function, new double[] {1,1,1,1} );
         
-        double d = params[0]; 
-        double n = params[1];
+        double bottom = params[0]; 
+        double top = params[1];
+        double logEC50 = params[2];
+        double hillslope = params[3];
         
-        System.out.println("d=" + d);
-        System.out.println("n=" + n);
-        
-        resultsHolder.se Math.pow( -(0.5 - 1) * Math.pow( d, -n ) 
-                             /
-                             0.5, 
-                         -1/n );
+        resultsHolder.setBottom(bottom);
+        resultsHolder.setTop(top);
+        resultsHolder.setLogEC50(logEC50);
+        resultsHolder.setHillslope(hillslope);
     }
 
 }

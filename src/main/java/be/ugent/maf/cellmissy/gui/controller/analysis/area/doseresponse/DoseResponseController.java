@@ -17,6 +17,8 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.ButtonGroup;
@@ -156,6 +158,26 @@ public class DoseResponseController {
      */
     public void resetOnCancel() {
 
+    }
+    
+    /**
+     * Prepare data for fitting. This can be for the initial fit (conc - velocities)
+     * or the normalized fit (conc - normalized velocities)
+     * @param dRAnalysisGroup
+     * @return LinkedHashMap That maps the concentration (log-transformed!) to the replicate velocites
+     */
+    public LinkedHashMap<Double, List<Double>> makeFittingData(DoseResponseAnalysisGroup dRAnalysisGroup) {
+        LinkedHashMap<Double,String> nestedMap = dRAnalysisGroup.getConcentrationsMap().get( dRAnalysisGroup.getTreatmentToAnalyse() );
+        for (Double concentration : nestedMap.keySet()) {
+            String unit = nestedMap.get(concentration);
+            
+            logTransform(concentration, unit);
+        }
+        
+        for (PlateCondition plateCondition : dRAnalysisGroup.getVelocitiesMap().keySet()){
+            List<Double> replicateVelocities = dRAnalysisGroup.getVelocitiesMap().get(plateCondition);
+        }
+        
     }
 
     /**
